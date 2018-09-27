@@ -1,0 +1,11 @@
+<svg width="12px" height="1px" viewBox="0 0 12 1" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="window_btn" transform="translate(-30.000000, -27.000000)" fill="#000000">
+      <g id="Group" transform="translate(12.000000, 12.000000)">
+        <g id="top-right-controls" transform="translate(18.000000, 10.000000)">
+          <rect id="minimize" x="0" y="5" width="12" height="1"></rect>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,1 +1,1 @@
-# vk-desktop
+# VK Desktop
