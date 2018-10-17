@@ -5,7 +5,7 @@ let win,
     lastChangeTime,
     appPath = app.getAppPath().replace(/\\/g, '/');
 
-if(!appPath.match(/resources\/app$/)) {
+if(!/resources\/app$/.test(appPath)) {
   fs.watch('.', { recursive: true }, (event, filename) => {
     let prevChangeTime = lastChangeTime;
     lastChangeTime = new Date().getTime();
@@ -37,7 +37,6 @@ app.on('ready', () => {
     minHeight: 480,
     show: false,
     frame: false,
-    icon: 'renderer/images/logo.png',
     titleBarStyle: 'hidden'
   });
 
@@ -82,7 +81,7 @@ app.on('ready', () => {
     Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
   } else win.setMenu(null);
 
-  win.loadFile('src/index.html');
+  win.loadFile('renderer/index.html');
   win.on('closed', () => win = null);
 });
 

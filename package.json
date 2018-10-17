@@ -2,8 +2,6 @@
   "main": "index.js",
   "name": "vk-desktop",
   "version": "0.0.1",
-  "build": 1,
-  "electron": "3.0.0",
   "author": "danyadev",
-  "license": "Apache 2.0"
+  "license": "Apache-2.0"
 }

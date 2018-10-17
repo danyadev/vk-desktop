@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <link rel='stylesheet' href='main.css'>
-    <script src='main.js' defer></script>
+    <link rel="stylesheet" href="main.css">
+    <script src="main.js" defer></script>
   </head>
   <body>
     <div class="titlebar">
@@ -16,6 +16,8 @@
         <div class="titlebar_button close"></div>
       </div>
     </div>
-    <div class="root"></div>
+    <div class="root">
+      <auth v-if="auth"></auth>
+    </div>
   </body>
 </html>

@@ -1,0 +1,24 @@
+.auth {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.auth_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 275px;
+}
+
+.auth_logo {
+  width: 125px;
+  height: 125px;
+}
+
+.auth_name {
+  font-size: 20px;
+  margin: 15px 0 30px 0;
+}
