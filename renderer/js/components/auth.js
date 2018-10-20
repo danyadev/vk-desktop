@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports = {
-  props: ['auth'],
   data: () => ({
     disableButton: false,
     loading: false
@@ -38,7 +37,7 @@ module.exports = {
               user = data.response[0];
 
           users.set(user.id, Object.assign(user, { access_token: accessToken }));
-          settings.set('activeUser', user.id);
+          settings.set('activeID', user.id);
           this.$root.auth = false;
         }
       });

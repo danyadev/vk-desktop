@@ -8,7 +8,6 @@
   <body>
     <div class="titlebar">
       <div class="titlebar_drag">VK Desktop</div>
-      <img class="titlebar_icon" src="images/logo.png">
       <div class="titlebar_buttons">
         <div class="titlebar_button minimize"></div>
         <div class="titlebar_button maximize"></div>
@@ -18,6 +17,11 @@
     </div>
     <div class="root">
       <auth v-if="auth"></auth>
+      <div v-if="!auth" class="main">
+        <main-menu></main-menu>
+        <profile></profile>
+        <news></news>
+      </div>
     </div>
   </body>
 </html>

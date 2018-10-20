@@ -47,7 +47,7 @@ class Users extends Storage {
   get(id) {
     if(id) return this.data[id];
     else {
-      let uid = Object.keys(this.data).find((id) => id == settings.get('activeUser'));
+      let uid = Object.keys(this.data).find((id) => id == settings.get('activeID'));
       return this.data[uid];
     }
   }

@@ -3,7 +3,7 @@
 const querystring = require('querystring');
 const request = require('./request');
 
-const API_VERSION = '5.85';
+const API_VERSION = '5.87';
 
 let methods = [],
     openedCaptcha = false;
@@ -23,6 +23,7 @@ setInterval(() => {
 
 let method = (name, params, _resolve) => {
   return new Promise(async (resolve) => {
+    params = params || {};
     params.v = params.v || API_VERSION;
     params.access_token = params.access_token || (users.get() || {}).access_token;
 

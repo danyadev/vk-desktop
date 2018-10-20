@@ -1,0 +1,140 @@
+/* основные элементы интрефейса */
+
+.input {
+  width: 250px;
+  outline: none;
+  border: 1px solid #d2d8de;
+  border-radius: 5px;
+  font-size: 15px;
+  color: #3c3c3c;
+  background-color: #fff;
+  line-height: 32px;
+  padding: 0 9px;
+  transition: border-color .3s, color .3s, background-color .3s;
+}
+
+.input:disabled { color: #999 }
+.input:hover { border: 1px solid #a2a5a8 }
+.input:focus { border: 1px solid #7e7f7f }
+.input::-webkit-input-placeholder { color: #a0a0a0 }
+
+.button {
+  width: 250px;
+  height: 35px;
+  outline: none;
+  font-size: 15px;
+  line-height: 32px;
+  padding: 0 9px;
+  background-color: #5181b8;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  user-select: none;
+  text-align: center;
+  transition: opacity .3s, background-color .3s;
+}
+
+.button:not(:disabled) { cursor: pointer }
+.button:not(:disabled):hover { background-color: #638bba }
+.button:not(:disabled):active { background-color: #4e7bac }
+.button:disabled { opacity: .5 }
+
+.link {
+  display: inline-block;
+  color: #2a5885;
+  cursor: pointer;
+  transition: color .3s;
+}
+
+.link:hover { text-decoration: underline }
+
+.checkbox {
+  display: inline-block;
+  position: relative;
+  line-height: 1em;
+  margin-bottom: 5px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.checkbox::before {
+  content: '';
+  float: left;
+  background-color: #fff;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  margin-right: 7px;
+  width: 15px;
+  height: 15px;
+  transition: background-color .2s, border-color .2s;
+}
+
+.checkbox:hover::before {
+  background-color: #eee;
+  border-color: #aaa;
+}
+
+.checkbox.active::before {
+  background-color: #5181b8;
+  border: 1px solid #5181b8;
+}
+
+.checkbox::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1.5px;
+  width: 13px;
+  height: 13px;
+  background-color: #fff;
+  visibility: hidden;
+  clip-path: polygon(81% 19%, 91% 28%, 38% 85%, 5% 55%, 15% 44%, 37% 66%);
+  transition: visibility .2s;
+}
+
+.checkbox.active::after { visibility: visible }
+
+.checkbox.active:hover::before {
+  background-color: #4272a8;
+  border: 1px solid #4272a8;
+}
+
+@keyframes spinner {
+  0% { transform: rotate(0deg) }
+  to { transform: rotate(360deg) }
+}
+
+.loading::after {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 10px auto;
+  animation: spinner .7s infinite linear;
+  background-image: url('../images/spinner.png');
+  background-size: contain;
+}
+
+/* меню */
+
+.menu {
+  position: absolute;
+  top: 0;
+  left: -260px;
+  width: 250px;
+  height: 100%;
+  z-index: 2;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  transition: left .4s;
+}
+
+.menu_item_icon.news { -webkit-mask-image: url('../images/menu_news.png') }
+.menu_item_icon.notifications { -webkit-mask-image: url('../images/menu_notifications.png') }
+.menu_item_icon.messages { -webkit-mask-image: url('../images/menu_messages.png') }
+.menu_item_icon.audios { -webkit-mask-image: url('../images/menu_audios.png') }
+.menu_item_icon.friends { -webkit-mask-image: url('../images/menu_friends.png') }
+.menu_item_icon.groups { -webkit-mask-image: url('../images/menu_groups.png') }
+.menu_item_icon.photos { -webkit-mask-image: url('../images/menu_photos.png') }
+.menu_item_icon.videos { -webkit-mask-image: url('../images/menu_videos.png') }
