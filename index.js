@@ -1,20 +1,19 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const fs = require('fs');
 
-let win, lastChangeTime,
-    appPath = app.getAppPath().replace(/\\/g, '/');
+let win, lastChangeTime;
 
-if(!/resources\/app$/i.test(appPath)) {
+// Упрощенная версия electron-reload, только без десятков зависимостей :)
+if(!app.isPackaged) {
   fs.watch('.', { recursive: true }, (event, filename) => {
     let prevChangeTime = lastChangeTime;
     lastChangeTime = new Date().getTime();
-
     if(prevChangeTime < lastChangeTime - 250 || !filename) return;
 
     let path = filename.replace(/\\/g, '/'),
         ignoredFiles = [
-          '.git', 'core', '.gitignore', 'index.js',
-          'LICENSE', 'package.json', 'README.md'
+          '.git', 'core', 'node_modules', '.gitignore',
+          'index.js', 'LICENSE', 'package.json', 'README.md'
         ],
         isIgnored = ignoredFiles.find((ignoredPath) => {
           return ignoredPath == path || path.match(new RegExp(`${ignoredPath}/`));
@@ -48,7 +47,7 @@ app.on('ready', () => {
       let settings = JSON.parse(data);
 
       if(settings.window) {
-        let maximized = settings.window.width > width && settings.window.height > height;
+        let maximized = settings.window.width >= width && settings.window.height >= height;
 
         win.setBounds({
           x: settings.window.x,

@@ -17,10 +17,11 @@
     </div>
     <div class="root">
       <auth v-if="auth"></auth>
-      <div v-if="!auth" class="main">
-        <main-menu></main-menu>
-        <profile></profile>
-        <news></news>
+      <div v-else>
+        <blocked-profile v-if="blocked"></blocked-profile>
+        <div v-else>
+          все ок контент
+        </div>
       </div>
     </div>
   </body>
