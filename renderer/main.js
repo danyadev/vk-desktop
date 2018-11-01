@@ -28,7 +28,7 @@ let app = new Vue({
     auth: !settings.get('activeID'),
     blocked: false,
     // ставить blocked-profile когда (внезапно) профиль заблокирован
-    activeComponent: 'messages' || settings.get('section'),
+    activeComponent: settings.get('section'),
     activeMenu: false
   },
   methods: {

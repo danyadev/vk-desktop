@@ -79,9 +79,15 @@ class Users extends Storage {
 class Settings extends Storage {
   constructor() {
     super('settings');
+
+    this.setData(Object.assign({}, this.defaults, this.get()));
   }
 
-  // TODO: defaults
+  get defaults() {
+    return {
+      section: 'messages'
+    }
+  }
 }
 
 module.exports = {
