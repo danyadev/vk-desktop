@@ -1,0 +1,30 @@
+.messages_container {
+  display: flex;
+  height: 100%;
+}
+
+.conversations_container {
+  width: 300px;
+  height: 100%;
+}
+
+.conversations_wrap, .dialogs_wrap {
+  width: 100%;
+  height: calc(100% - 40px);
+}
+
+.conversations_wrap {
+  border-right: 1px solid #ccc;
+  overflow: auto;
+}
+
+.dialogs_container {
+  height: 100%;
+  flex-grow: 1;
+}
+
+/* @media screen and (max-width: 500px) {
+  .conversations_wrap {
+    width: 200px;
+  }
+} */

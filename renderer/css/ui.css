@@ -115,26 +115,52 @@
   background-size: contain;
 }
 
-/* меню */
-
-.menu {
-  position: absolute;
-  top: 0;
-  left: -260px;
-  width: 250px;
+.content {
   height: 100%;
-  z-index: 2;
-  overflow: hidden;
-  background-color: white;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-  transition: left .4s;
 }
 
-.menu_item_icon.news { -webkit-mask-image: url('../images/menu_news.png') }
-.menu_item_icon.notifications { -webkit-mask-image: url('../images/menu_notifications.png') }
-.menu_item_icon.messages { -webkit-mask-image: url('../images/menu_messages.png') }
-.menu_item_icon.audios { -webkit-mask-image: url('../images/menu_audios.png') }
-.menu_item_icon.friends { -webkit-mask-image: url('../images/menu_friends.png') }
-.menu_item_icon.groups { -webkit-mask-image: url('../images/menu_groups.png') }
-.menu_item_icon.photos { -webkit-mask-image: url('../images/menu_photos.png') }
-.menu_item_icon.videos { -webkit-mask-image: url('../images/menu_videos.png') }
+.content::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity .2s, visibility .2s;
+}
+
+.content.active::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* header */
+
+.header {
+  display: flex;
+  align-items: center;
+  background-color: #4a76a8;
+  width: 100%;
+  height: 40px;
+}
+
+.header_name {
+  color: white;
+  padding: 0 0 1px 10px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+}
+
+.open_menu_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: background-color .3s;
+}
+
+.open_menu_btn:hover { background-color: #3f638c }

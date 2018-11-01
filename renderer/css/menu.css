@@ -1,0 +1,114 @@
+.menu {
+  position: absolute;
+  top: 0;
+  left: -260px;
+  width: 250px;
+  height: 100%;
+  z-index: 3;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+  transition: left .4s;
+}
+
+.content.active .menu { left: 0 }
+
+/* панелька профиля */
+
+.menu_account_item {
+  position: relative;
+  overflow: hidden;
+  height: 125px;
+  padding: 8px 10px 10px 12px;
+  background-color: rgba(38, 37, 37, 0.5);
+}
+
+.menu_account_bgc {
+  width: 260px;
+  height: 135px;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: -1;
+  object-fit: cover;
+  filter: blur(4px);
+}
+
+.menu_multiacc {
+  width: 24px;
+  height: 22px;
+  position: absolute;
+  right: 10px;
+  background-color: white;
+  -webkit-mask-size: cover;
+  -webkit-mask-image: url('../images/menu_groups.png');
+  cursor: pointer;
+}
+
+.acc_icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-size: 100%;
+  cursor: pointer;
+}
+
+.menu_acc_name, .menu_acc_status {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, .4);
+}
+
+.menu_acc_name {
+  margin-top: 12px;
+  color: #fff;
+}
+
+.menu_acc_status {
+  font-size: 13px;
+  color: #d9d9d9;
+}
+
+/* остальные кнопки меню */
+
+.menu_items {
+  padding-top: 5px;
+  overflow-y: auto;
+  height: calc(100% - 125px);
+}
+
+.menu_item {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color .3s;
+}
+
+.menu_item:hover, .menu_item.active:not(.menu_account_item) {
+  background-color: #ebeced;
+}
+
+.menu_item.active .menu_item_icon, .menu_settings.active {
+  background-color: #4d81bd;
+}
+
+.menu_item_icon {
+  width: 24px;
+  height: 22px;
+  margin: 0 10px;
+  background-color: #a6a6a6;
+  -webkit-mask-size: cover;
+  transition: background-color .3s;
+}
+
+.menu_item_icon.news { -webkit-mask-image: url('../images/menu_news.png') }
+.menu_item_icon.notifications { -webkit-mask-image: url('../images/menu_notifications.png') }
+.menu_item_icon.messages { -webkit-mask-image: url('../images/menu_messages.png') }
+.menu_item_icon.audios { -webkit-mask-image: url('../images/menu_audios.png') }
+.menu_item_icon.friends { -webkit-mask-image: url('../images/menu_friends.png') }
+.menu_item_icon.groups { -webkit-mask-image: url('../images/menu_groups.png') }
+.menu_item_icon.photos { -webkit-mask-image: url('../images/menu_photos.png') }
+.menu_item_icon.videos { -webkit-mask-image: url('../images/menu_videos.png') }
+.menu_item_icon.settings { -webkit-mask-image: url('../images/menu_settings.png') }
