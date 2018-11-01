@@ -67,12 +67,15 @@ class Users extends Storage {
   }
 
   update(id, key, value) {
-    let user = this.data[id];
+    if(!this.data[id]) return;
 
-    if(user) {
+    if(key instanceof Object) {
+      this.data[id] = Object.assign({}, this.data[id], key);
+    } else {
       this.data[id][key] = value;
-      this.save();
     }
+
+    this.save();
   }
 }
 

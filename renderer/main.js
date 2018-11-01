@@ -4,10 +4,7 @@ window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 const qs = (selector, target) => (target || document).querySelector(selector);
 const qsa = (selector, target) => (target || document).querySelectorAll(selector);
-const getComponent = (n) => {
-  console.log(app.$children);
-  return app.$children.find((c) => c.$options._componentTag == n)
-};
+const getComponent = (n) => app.$children.find((c) => c.$options._componentTag == n);
 
 const fs = require('fs');
 const { getCurrentWindow, Menu, BrowserWindow } = require('electron').remote;
@@ -27,7 +24,6 @@ let app = new Vue({
   data: {
     auth: !settings.get('activeID'),
     blocked: false,
-    // ставить blocked-profile когда (внезапно) профиль заблокирован
     activeComponent: settings.get('section'),
     activeMenu: false
   },
