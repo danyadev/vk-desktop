@@ -12,7 +12,7 @@
         <auth v-if="auth"></auth>
         <div v-else class="content" :class="{ active: activeMenu }" @click="closeMenu">
           <main-menu></main-menu>
-          <keep-alive><component :is="activeComponent"></component></keep-alive>
+          <keep-alive><component :is="section"></component></keep-alive>
         </div>
       </div>
     </div>

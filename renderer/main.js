@@ -5,11 +5,13 @@ window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 const qs = (selector, target) => (target || document).querySelector(selector);
 const qsa = (selector, target) => (target || document).querySelectorAll(selector);
 const getComponent = (n) => app.$children.find((c) => c.$options._componentTag == n);
+const escape = (t) => String(t).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 const fs = require('fs');
 const { getCurrentWindow, Menu, BrowserWindow } = require('electron').remote;
 const Vue = require('./js/lib/Vue');
 const contextMenu = require('./js/contextMenu');
+const emoji = require('./js/lib/emoji');
 const { users, settings } = require('./js/Storage');
 const vkapi = require('./js/vkapi');
 
@@ -24,7 +26,7 @@ let app = new Vue({
   data: {
     auth: !settings.get('activeID'),
     blocked: false,
-    activeComponent: settings.get('section'),
+    section: settings.get('section'),
     activeMenu: false
   },
   methods: {

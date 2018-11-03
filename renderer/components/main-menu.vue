@@ -5,16 +5,16 @@
       <div class="menu_multiacc"></div>
       <img class="acc_icon"
            :src="user.photo_100"
-           @click="openPage(0)">
+           @click="/*openPage(0)*/">
       <div class="menu_acc_name">{{ `${user.first_name} ${user.last_name}` }}</div>
-      <div class="menu_acc_status">{{ user.status }}</div>
+      <div class="menu_acc_status"><emoji>{{ user.status }}</emoji></div>
     </div>
     <div class="menu_items">
       <div class="menu_item"
            v-for="(item, id) of list"
            v-if="!item.disabled"
            @click="openPage(id)"
-           :class="{ active: activeTab == id, disabled: item.disabled }">
+           :class="{ active: $root.section == item.type, disabled: item.disabled }">
         <div class="menu_item_icon" :class="item.type"></div>
         <div class="menu_item_name">{{ item.name }}</div>
       </div>
@@ -37,23 +37,20 @@
         { name: 'Видеозаписи',  type: 'videos',        disabled: true  },
         { name: 'Настройки',    type: 'settings',      disabled: true  }
       ],
-      activeTab: 3,
-      tempComp: vm.$root.activeComponent,
       user: users.get()
     }),
     methods: {
       openPage(id) {
-        this.activeTab = id;
-        this.$root.activeComponent = this.list[id].type;
+        this.$root.section = this.list[id].type;
       }
     },
     async mounted() {
-      let data = await vkapi('users.get', {
+      let [ user ] = await vkapi('users.get', {
         fields: 'status,photo_100,screen_name,nickname'
       });
 
-      this.user = data.response[0];
-      users.update(this.user.id, this.user);
+      this.user = user;
+      users.update(user.id, user);
     }
   }
 </script>
