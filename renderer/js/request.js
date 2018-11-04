@@ -14,7 +14,7 @@ module.exports = (url, data) => {
 
     req.on('error', reject);
 
-    if(typeof data == 'string' && typeof data.pipe == 'function') {
+    if(typeof data == 'object' && typeof data.pipe == 'function') {
       data.pipe(req);
     } else req.end(data || '');
   });

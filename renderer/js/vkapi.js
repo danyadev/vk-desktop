@@ -22,17 +22,24 @@ setInterval(() => {
 }, 1000 / 3);
 
 let method = (name, params, _resolve) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     params = params || {};
     params.v = params.v || API_VERSION;
     params.access_token = params.access_token || (users.get() || {}).access_token;
 
     let data = await request({
       host: 'api.vk.com',
-      path: `/method/${name}?${querystring.stringify(params)}`
-    });
+      path: `/method/${name}`,
+      method: 'POST'
+    }, querystring.stringify(params));
 
-    (_resolve || resolve)(JSON.parse(data));
+    let resp = JSON.parse(data);
+
+    if(resp.response !== undefined) {
+      (_resolve || resolve)(resp.response);
+    } else reject(resp);
+
+    if(params.log) console.log(Object.assign({}, resp.response, { $options: params }));
 
     // TODO: add captcha
   });

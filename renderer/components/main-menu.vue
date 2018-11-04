@@ -6,7 +6,10 @@
       <img class="acc_icon"
            :src="user.photo_100"
            @click="/*openPage(0)*/">
-      <div class="menu_acc_name">{{ `${user.first_name} ${user.last_name}` }}</div>
+      <div class="menu_acc_name">
+        {{ user.first_name }} {{ user.last_name }}
+        <div class="verified" v-if="user.verified"></div>
+      </div>
       <div class="menu_acc_status"><emoji>{{ user.status }}</emoji></div>
     </div>
     <div class="menu_items">
@@ -46,7 +49,7 @@
     },
     async mounted() {
       let [ user ] = await vkapi('users.get', {
-        fields: 'status,photo_100,screen_name,nickname'
+        fields: 'status,photo_100,screen_name,nickname,verified'
       });
 
       this.user = user;

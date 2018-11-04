@@ -1,12 +1,8 @@
 'use strict';
 
-var inArray = (el, arr) => arr.includes(el);
+let inArray = (el, arr) => arr.includes(el);
 
-var imgEmoji = {
-      'D83DDE15': 1, 'D83DDE1F': 1,
-      'D83DDE2E': 1, 'D83DDE34': 1
-    },
-    cssEmoji = {
+let cssEmoji = {
       'D83DDE0A': [0,  ':-)'      ], 'D83DDE03': [1,  ':-D'], 'D83DDE09': [2,  ';-)'],
       '261D'    : [29, ':up:'     ], 'D83DDE1C': [4,  ';-P'], 'D83DDE0B': [5,  ':-p'],
       'D83DDE0D': [6,  '8-)'      ], 'D83DDE0E': [7,  'B-)'], 'D83DDE12': [8,  ':-('],
@@ -19,7 +15,6 @@ var imgEmoji = {
       'D83DDC4E': [28, ':dislike:'], 'D83DDE08': [25, '}:)'], '2764'    : [26, '<3' ],
       'D83DDC4D': [27, ':like:'   ], 'D83DDE30': [20, ';o' ]
     },
-    EMOJI_SPRITES_NUM = 3,
     emojiJoiners = ['2640', '2642', '200D', '200C'],
     emojiWithJoiners = [
       'D83DDC71200D2640FE0F','D83DDC6E200D2640FE0F','D83DDC77200D2640FE0F','D83DDD75200D2640FE0F',
@@ -57,11 +52,13 @@ var imgEmoji = {
       'D83DDC69200D2708FE0F','D83DDC68200DD83DDE80FE0F','D83DDC69200DD83DDE80FE0F'
     ];
 
-var isEmoji = (text) => {
-  return text.match(/((?:[\u203C\u2049\u2122\u2328\u2601\u260E\u261d\u2626\u262A\u2638\u2639\u263a\u267B\u267F\u2702\u2708]|[\u2600\u26C4\u26BE\u2705\u2764]|[\u2194-\u2199\u21AA\u21A9]|[\u231A-\u231B]|[\u23E9-\u23EF]|[\u23F0-\u23F4]|[\u23F8-\u23FA]|[\u24C2]|[\u25AA-\u25AB]|[\u25B6\u25C0]|[\u25FB-\u25FE]|[\u2602-\u2618]|[\u2648-\u2653]|[\u2660-\u2668]|[\u26A0-\u26FA]|[\u2692-\u269C]|[\u262E-\u262F]|[\u2622-\u2623]|[\u2709-\u2764]|[\u2795-\u2797]|[\u27A1]|[\u27BF]|[\u2934-\u2935]|[\u2B05-\u2B07]|[\u2B1B]|[\u2B50\u2B55]|[\u303D]|[\u3297\u3299]|[\uE000-\uF8FF]|[\uD83D\uD83C\uD83E][\uDC00-\uDFFF]|[0-9]\u20E3|[\u0023-\u0039\u203C-\u21AA\u1F3F3]\uFE0F\u20E3|[\u200C\u200D\u2640\u2642\uFE0F])+)/g);
+let isEmoji = (text) => {
+  const expression = /((?:[\u203C\u2049\u2122\u2328\u2601\u260E\u261d\u2626\u262A\u2638\u2639\u263a\u267B\u267F\u2702\u2708]|[\u2600\u26C4\u26BE\u2705\u2764]|[\u2194-\u2199\u21AA\u21A9]|[\u231A-\u231B]|[\u23E9-\u23EF]|[\u23F0-\u23F4]|[\u23F8-\u23FA]|[\u24C2]|[\u25AA-\u25AB]|[\u25B6\u25C0]|[\u25FB-\u25FE]|[\u2602-\u2618]|[\u2648-\u2653]|[\u2660-\u2668]|[\u26A0-\u26FA]|[\u2692-\u269C]|[\u262E-\u262F]|[\u2622-\u2623]|[\u2709-\u2764]|[\u2795-\u2797]|[\u27A1]|[\u27BF]|[\u2934-\u2935]|[\u2B05-\u2B07]|[\u2B1B]|[\u2B50\u2B55]|[\u303D]|[\u3297\u3299]|[\uE000-\uF8FF]|[\uD83D\uD83C\uD83E][\uDC00-\uDFFF]|[0-9]\u20E3|[\u0023-\u0039\u203C-\u21AA\u1F3F3]\uFE0F\u20E3|[\u200C\u200D\u2640\u2642\uFE0F])+)/g;
+
+  return (text.match(expression) || [])[0];
 };
 
-var codeToChr = (code) => {
+let codeToChr = (code) => {
   let len = Math.round(code.length / 4),
       chr = '', i = 0;
 
@@ -73,8 +70,8 @@ var codeToChr = (code) => {
   return chr;
 }
 
-var getEmojiHTML = (code, symbol) => {
-  if(code.match(/2640|2642|200D|200C/g)) {
+let getEmojiHTML = (code, symbol) => {
+  if(code.match(/2640|2642|200D|200C/)) {
     code = code.replace('FE0F', '') + 'FE0F';
 
     if(!inArray(code, emojiWithJoiners)) {
@@ -82,28 +79,30 @@ var getEmojiHTML = (code, symbol) => {
           out = '';
 
       for(let smile of smiles) out += codeToChr(smile);
-
       return out;
-    } else if(symbol) {
-      let s = symbol[0] || symbol;
-
-      symbol = s.replace(/\uFE0F/g, '');
-      symbol += codeToChr('FE0F');
-    }
+    } else if(symbol) symbol = symbol.replace(/\uFE0F/g, '') + codeToChr('FE0F');
   }
 
-  let editable = '';
-
   if(cssEmoji[code] != undefined) {
-    let num = -cssEmoji[code][0] * 17;
+    let pos = -cssEmoji[code][0] * 17;
 
-    return `<img src="images/blank.gif" alt="${symbol}" class="emoji _emoji" style="background-position: 0px ${num}px">`;
+    return `<img src="images/blank.gif" alt="${symbol}" class="emoji _emoji" style="background-position: 0px ${pos}px">`;
   } else {
     return `<img class="emoji" alt="${symbol}" src="https://vk.com/images/emoji/${code}.png">`;
   }
 }
 
-var replace = (symbolstr) => {
+let toCharCode = (num) => {
+  let r = '';
+
+  for(let i=0; i<num.length; i++) {
+    r += num.charCodeAt(i).toString(16).toUpperCase();
+  }
+
+  return r;
+}
+
+let replace = (symbolstr) => {
   let i = 0,
       buffer = '',
       altBuffer = '',
@@ -150,7 +149,6 @@ var replace = (symbolstr) => {
       buffer = '';
       altBuffer = '';
     }
-
   } while(collectCodes);
 
   if(buffer) {
@@ -214,19 +212,8 @@ var replace = (symbolstr) => {
     if(buffer) {
       if(isEmoji(altBuffer)) {
         let tmab = isEmoji(altBuffer),
-            nmab = altBuffer.replace(tmab, '');
-
-        let toCharCode = (num) => {
-          let r = '';
-
-          for(let i=0; i<num.length; i++) {
-            r += num.charCodeAt(i).toString(16).toUpperCase();
-          }
-
-          return r;
-        }
-
-        let bmab = buffer.replace(toCharCode(nmab), '');
+            nmab = altBuffer.replace(tmab, ''),
+            bmab = buffer.replace(toCharCode(nmab), '');
 
         out += nmab + getEmojiHTML(bmab, tmab);
       } else out += altBuffer;
@@ -238,11 +225,16 @@ var replace = (symbolstr) => {
 
   if(buffer) {
     if(isEmoji(altBuffer)) {
-      out += getEmojiHTML(buffer, altBuffer);
+      let emoji = isEmoji(altBuffer),
+          code = toCharCode(emoji);
+
+      out += getEmojiHTML(code, emoji);
     } else out += altBuffer;
   }
 
   return out;
 }
+
+replace.isEmoji = isEmoji;
 
 module.exports = replace;

@@ -18,6 +18,81 @@
   overflow: auto;
 }
 
+.conversation {
+  display: flex;
+  padding: 8px;
+}
+
+.conversation:not(:last-child) { border-bottom: 1px solid #ccc }
+
+.conversation_photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  font-size: 25px;
+  text-transform: uppercase;
+  color: white;
+  user-select: none;
+  cursor: default;
+}
+
+.conversation_photo span { line-height: 0 }
+
+.conversation_content {
+  width: calc(100% - 60px);
+}
+
+.conversation_title { display: flex }
+
+.conversation_title .verified {
+  flex: none;
+  margin: 2px 0 1px 3px;
+}
+
+.conversation_name {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.conversation_name span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.conversation_time {
+  margin-left: 5px;
+  color: #777e8c;
+}
+
+.conversation_message_wrap {
+  margin-top: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.conversation_author:not(:empty) {
+  display: inline;
+  color: #656565;
+}
+
+.conversation_message {
+  display: inline;
+  color: #222;
+}
+
+.conversation_message .link:hover {
+  cursor: text;
+  text-decoration: none;
+}
+
 .dialogs_container {
   height: 100%;
   flex-grow: 1;

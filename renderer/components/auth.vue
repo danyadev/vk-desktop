@@ -42,7 +42,7 @@
 
             let data = await vkapi('users.get', {
                   access_token: accessToken,
-                  fields: 'status,photo_100,screen_name,nickname'
+                  fields: 'status,photo_100,screen_name,nickname,verified'
                 }),
                 user = data.response[0];
 

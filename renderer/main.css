@@ -2,6 +2,7 @@
 @import 'css/titlebar.css';
 @import 'css/auth.css';
 @import 'css/menu.css';
+@import 'css/profile.css';
 @import 'css/messages.css';
 
 *, *::before, *::after { box-sizing: border-box }

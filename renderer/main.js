@@ -12,6 +12,8 @@ const { getCurrentWindow, Menu, BrowserWindow } = require('electron').remote;
 const Vue = require('./js/lib/Vue');
 const contextMenu = require('./js/contextMenu');
 const emoji = require('./js/lib/emoji');
+const other = require('./js/other');
+const { random, endScroll } = other;
 const { users, settings } = require('./js/Storage');
 const vkapi = require('./js/vkapi');
 

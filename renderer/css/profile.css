@@ -1,0 +1,25 @@
+.profile_container { height: 100% }
+
+.profile_wrap {
+  display: flex;
+  background: #edeef0;
+  height: 100%;
+  padding: 10px;
+}
+
+.profile_block {
+  display: flex;
+  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+  border-radius: 3px;
+  background-color: #fff;
+  padding: 10px;
+}
+
+.profile_photo_wrap {
+  max-width: 220px;
+  max-height: 220px;
+}
+
+.profile_photo {
+  border-radius: 3px;
+}
