@@ -39,7 +39,13 @@ let method = (name, params, _resolve) => {
       (_resolve || resolve)(resp.response);
     } else reject(resp);
 
-    if(params.log) console.log(Object.assign({}, resp.response, { $options: params }));
+    if(params.log) {
+      delete params.access_token;
+      delete params.log;
+      params.$method = name;
+
+      console.log(Object.assign(resp.response, { $options: params }));
+    }
 
     // TODO: add captcha
   });

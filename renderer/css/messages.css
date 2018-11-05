@@ -14,16 +14,12 @@
 }
 
 .conversations_wrap {
-  border-right: 1px solid #ccc;
-  overflow: auto;
+  border-right: 1px solid #e7e8ec;
+  overflow-x: auto;
 }
 
-.conversation {
-  display: flex;
-  padding: 8px;
-}
-
-.conversation:not(:last-child) { border-bottom: 1px solid #ccc }
+.conversation { display: flex }
+.conversation:not(:last-child) .conversation_content { border-bottom: 1px solid #e7e8ec }
 
 .conversation_photo {
   display: flex;
@@ -33,7 +29,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin: 10px;
   font-size: 25px;
   text-transform: uppercase;
   color: white;
@@ -44,10 +40,12 @@
 .conversation_photo span { line-height: 0 }
 
 .conversation_content {
-  width: calc(100% - 60px);
+  width: calc(100% - 70px);
+  padding: 10px 10px 10px 0;
 }
 
 .conversation_title { display: flex }
+.conversation_title, .conversation_message_wrap { margin-top: 4px }
 
 .conversation_title .verified {
   flex: none;
@@ -68,29 +66,50 @@
 
 .conversation_time {
   margin-left: 5px;
-  color: #777e8c;
+  color: #848a96;
+  font-size: 13px;
 }
 
-.conversation_message_wrap {
-  margin-top: 4px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+.conversation_message_wrap { display: flex }
 
 .conversation_author:not(:empty) {
   display: inline;
-  color: #656565;
+  color: #7f8891;
 }
 
 .conversation_message {
-  display: inline;
-  color: #222;
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #353535;
 }
 
 .conversation_message .link:hover {
   cursor: text;
   text-decoration: none;
+}
+
+.conversation_message_unread {
+  padding: 0 6px;
+  margin: 2px 0 0 3px;
+  border-radius: 10px;
+  background-color: #5181b8;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.conversation_message_unread:not(.outread):empty { display: none }
+.conversation_message_unread:not(.outread).muted { background-color: #b2b7c2 }
+
+.conversation_message_unread.outread {
+  padding: 0;
+  margin: 7px 4px 0 4px;
+  min-width: 8px;
+  height: 8px;
+  background-color: rgba(147, 173, 200, 1);
 }
 
 .dialogs_container {

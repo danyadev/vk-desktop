@@ -25,20 +25,7 @@ img {
   user-select: none;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track-piece  {
-  background-color: #EDEDED;
-  border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #CBCBCB;
-  border-radius: 6px;
-}
+::-webkit-scrollbar { display: none }
 
 .app { height: 100% }
 

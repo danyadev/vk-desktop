@@ -12,8 +12,8 @@ if(!app.isPackaged) {
 
     let path = filename.replace(/\\/g, '/'),
         ignoredFiles = [
-          '.git', 'core', 'node_modules', '.gitignore',
-          'index.js', 'LICENSE', 'package.json', 'README.md'
+          '.git', 'core', '.gitignore', 'index.js',
+          'LICENSE', 'package.json', 'README.md'
         ],
         isIgnored = ignoredFiles.find((ignoredPath) => {
           return ignoredPath == path || path.match(new RegExp(`${ignoredPath}/`));
@@ -60,10 +60,10 @@ app.on('ready', () => {
       }
     }
 
-    // ready-to-show вызывается первее окончания выполнения executeJavaScript
-    // и окно показывается еще до смены его координат.
-    // Чтобы не видеть перемещение окна после его открытия
-    // можно просто показывать окно только после смены его координат:
+    // событие ready-to-show вызывается до окончания выполнения
+    // executeJavaScript и окно показывается до смены координат.
+    // И чтобы не видеть перемещение окна после его открытия,
+    // мы просто показываем окно после смены этих координат.
     win.show();
   });
 
