@@ -3,7 +3,7 @@
     <div class="auth_wrap">
       <img src="images/logo.png" class="auth_logo">
       <div class="auth_name">VK Desktop</div>
-      <button class="button auth_button" @click="enterAuth" :disabled="disableButton">Войти</button>
+      <button class="button auth_button" @click="enterAuth" :disabled="disabled">Войти</button>
       <div class="loading" v-if="loading"></div>
     </div>
   </div>
@@ -12,12 +12,12 @@
 <script>
   module.exports = {
     data: () => ({
-      disableButton: false,
+      disabled: false,
       loading: false
     }),
     methods: {
       async enterAuth() {
-        this.disableButton = true;
+        this.disabled = true;
 
         let accessToken = null,
             authWindow = new BrowserWindow({
@@ -30,7 +30,7 @@
         authWindow.loadURL('https://oauth.vk.com/authorize?client_id=6717234&display=popup&scope=136297695&response_type=token');
 
         authWindow.on('close', () => {
-          if(!accessToken) this.disableButton = false;
+          if(!accessToken) this.disabled = false;
         });
 
         authWindow.webContents.on('did-navigate', async (event, url) => {

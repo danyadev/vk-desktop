@@ -59,7 +59,7 @@
       vkapi('stats.trackVisitor');
 
       // инициализация longpoll
-      require('./../js/longpoll').init();
+      require('./../../js/longpoll').init();
     }
   }
 </script>

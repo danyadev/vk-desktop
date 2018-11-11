@@ -16,7 +16,7 @@
 @font-face {
 	font-family: 'Segoe UI';
 	font-weight: 500;
-	src: local("SegoeUISemiBold.ttf");
+	src: url("css/SegoeUISemiBold.ttf");
 }
 
 body {

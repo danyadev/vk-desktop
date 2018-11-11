@@ -14,8 +14,8 @@
         default: false
       },
       push: {
-        type: Array,
-        default: [0, 0]
+        type: Boolean,
+        default: false
       }
     },
     methods: {
@@ -24,11 +24,7 @@
 
         if(this.link) text = text.replace(other.regexp.url, '<div class="link">$1</div>');
         if(this.emoji) text = emoji(text);
-        if(this.push[0]) {
-          let template = this.push[1] ? '<div class="link">$3</div>' : '$3';
-
-          text = text.replace(other.regexp.push, template);
-        }
+        if(this.push[0]) text = text.replace(other.regexp.push, '$3');
 
         return text;
       }

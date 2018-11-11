@@ -1,5 +1,5 @@
 <template>
-  <div class="titlebar" :class="{ maximized: isMaximized, mac: isMac }">
+  <div class="titlebar" :class="{ maximized, mac }">
     <div class="titlebar_drag">VK Desktop</div>
     <div class="titlebar_buttons">
       <div v-for="name in names"
@@ -14,12 +14,12 @@
 <script>
   module.exports = {
     data: () => ({
-      isMac: process.platform == 'darwin',
-      isMaximized: false,
+      mac: process.platform == 'darwin',
+      maximized: false,
       names: ['minimize', 'maximize', 'restore', 'close']
     }),
-    mounted: function() {
-      if(this.isMac) {
+    mounted() {
+      if(this.mac) {
         qs('.titlebar_drag').addEventListener('dblclick', () => {
           if(getCurrentWindow().isFullScreen()) return;
 
@@ -27,8 +27,8 @@
         });
       }
 
-      getCurrentWindow().on('maximize', () => this.isMaximized = true);
-      getCurrentWindow().on('unmaximize', () => this.isMaximized = false);
+      getCurrentWindow().on('maximize', () => this.maximized = true);
+      getCurrentWindow().on('unmaximize', () => this.maximized = false);
       getCurrentWindow().emit(getCurrentWindow().isMaximized() ? 'maximize' : 'unmaximize');
     }
   }
