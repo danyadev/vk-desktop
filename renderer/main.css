@@ -8,13 +8,20 @@
 *, *::before, *::after { box-sizing: border-box }
 
 @font-face {
-  font-family: 'Open Sans';
-  src: url('css/OpenSans.ttf');
+	font-family: 'Segoe UI';
+	font-weight: 400;
+	src: url('css/SegoeUI.ttf');
+}
+
+@font-face {
+	font-family: 'Segoe UI';
+	font-weight: 500;
+	src: local("SegoeUISemiBold.ttf");
 }
 
 body {
-  font-family: 'Open Sans';
-  font-size: 14px;
+  font-family: 'Segoe UI';
+  font-size: 15px;
   margin: 0;
   overflow: hidden;
   height: 100vh;

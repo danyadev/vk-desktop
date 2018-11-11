@@ -24,7 +24,7 @@
 }
 
 .titlebar.maximized .titlebar_drag {
-  padding: 4px 0 0 4px;
+  padding: 4px 0 0 8px;
   margin: 0;
   width: calc(100% - 152px);
   height: 100%;

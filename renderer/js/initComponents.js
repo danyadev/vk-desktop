@@ -17,10 +17,21 @@ require.extensions['.vue'] = (module, filename) => {
    module._compile(code, filename);
 }
 
-fs.readdirSync('./renderer/components/')
+let getFiles = (path, files = [], folders = '') => {
+  fs.readdirSync(`${path}${folders}`, { withFileTypes: true })
+    .forEach((file) => {
+      if(!file.isDirectory()) files.push(`${folders}${file.name}`);
+      else files.concat(getFiles(path, files, `${folders}${file.name}/`));
+    });
+
+  return files;
+}
+
+getFiles('./renderer/components/')
   .map((file) => file.slice(0, -4))
-  .forEach((name) => {
-    let component = require(`./../components/${name}.vue`);
+  .forEach((filename) => {
+    let name = filename.slice(filename.lastIndexOf('/') + 1),
+        component = require(`./../components/${filename}.vue`);
 
     Vue.component(name, component);
 });

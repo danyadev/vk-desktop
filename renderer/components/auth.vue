@@ -40,11 +40,10 @@
             authWindow.close();
             this.loading = true;
 
-            let data = await vkapi('users.get', {
+            let [ user ] = await vkapi('users.get', {
                   access_token: accessToken,
                   fields: 'status,photo_100,screen_name,nickname,verified'
-                }),
-                user = data.response[0];
+                });
 
             users.set(user.id, Object.assign(user, { access_token: accessToken }));
             settings.set('activeID', user.id);

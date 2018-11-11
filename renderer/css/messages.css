@@ -22,22 +22,16 @@
 .conversation:not(:last-child) .conversation_content { border-bottom: 1px solid #e7e8ec }
 
 .conversation_photo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
   width: 50px;
   height: 50px;
   border-radius: 50%;
   margin: 10px;
-  font-size: 25px;
-  text-transform: uppercase;
-  color: white;
-  user-select: none;
-  cursor: default;
 }
 
-.conversation_photo span { line-height: 0 }
+.conversation_photo.no_photo {
+  background-image: url('../images/conversation_no_photo.png');
+  background-size: 50px;
+}
 
 .conversation_content {
   width: calc(100% - 70px);
@@ -52,10 +46,20 @@
   margin: 2px 0 1px 3px;
 }
 
+.conversation_muted {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin: 4px 0 0 4px;
+  background-image: url('../images/muted.svg');
+  background-size: 13px;
+}
+
 .conversation_name {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+  font-weight: 500;
 }
 
 .conversation_name span {
@@ -74,7 +78,7 @@
 
 .conversation_author:not(:empty) {
   display: inline;
-  color: #7f8891;
+  color: #6c6f73;
 }
 
 .conversation_message {
@@ -82,7 +86,12 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #353535;
+  color: #4c4d50;
+}
+
+.conversation_attach {
+  display: inline-block;
+  color: #254f79;
 }
 
 .conversation_message .link:hover {

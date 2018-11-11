@@ -54,6 +54,12 @@
 
       this.user = user;
       users.update(user.id, user);
+
+      // статистика
+      vkapi('stats.trackVisitor');
+
+      // инициализация longpoll
+      require('./../js/longpoll').init();
     }
   }
 </script>

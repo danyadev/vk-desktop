@@ -11,17 +11,17 @@ const Vue = require('./js/lib/Vue');
 const other = require('./js/other');
 const { random, endScroll, escape } = other;
 const contextMenu = require('./js/contextMenu');
-const emoji = require('./js/lib/emoji');
+const emoji = require('./js/emoji');
 const { users, settings } = require('./js/Storage');
 const vkapi = require('./js/vkapi');
+
+// разрешение использования расширения для разработки
+Vue.config.devtools = true;
 
 // Инициализация всех компонентов
 require('./js/initComponents');
 
-// статистика
-vkapi('stats.trackVisitor');
-
-let app = new Vue({
+new Vue({
   el: '.app',
   data: {
     auth: !settings.get('activeID'),

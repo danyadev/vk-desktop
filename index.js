@@ -12,8 +12,8 @@ if(!app.isPackaged) {
 
     let path = filename.replace(/\\/g, '/'),
         ignoredFiles = [
-          '.git', 'core', '.gitignore', 'index.js',
-          'LICENSE', 'package.json', 'README.md'
+          '.git', 'core', 'vue-devtools', '.gitignore',
+          'index.js', 'LICENSE', 'package.json', 'README.md'
         ],
         isIgnored = ignoredFiles.find((ignoredPath) => {
           return ignoredPath == path || path.match(new RegExp(`${ignoredPath}/`));
@@ -28,6 +28,9 @@ if(!app.isPackaged) {
 }
 
 app.on('ready', () => {
+  // Расширение для удобной разработки на Vue
+  try { BrowserWindow.addDevToolsExtension('./vue-devtools') } catch(e) {}
+
   const { screen } = require('electron');
 
   win = new BrowserWindow({
