@@ -24,6 +24,7 @@ require('./js/initComponents');
 new Vue({
   el: '.app',
   data: {
+    profiles: {},
     auth: !settings.get('activeID'),
     blocked: false,
     section: settings.get('section'),

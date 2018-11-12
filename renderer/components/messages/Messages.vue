@@ -9,8 +9,7 @@
       <div class="conversations_wrap" @scroll="onScroll" :class="{ loading: conversations.load }">
         <conversation v-for="data in conversations.list"
                       :conversation="data.conversation"
-                      :last_message="data.last_message"
-                      :profiles="profiles"></conversation>
+                      :last_message="data.last_message"></conversation>
       </div>
     </div>
     <div class="dialogs_container">
@@ -27,7 +26,6 @@
 <script>
   module.exports = {
     data: () => ({
-      profiles: {},
       conversations: {
         list: [],
         load: true,
@@ -49,7 +47,7 @@
           list.push(group);
           return list;
         }, [])).forEach((profile) => {
-          this.profiles[profile.id] = profile;
+          this.$root.profiles[profile.id] = profile;
         });
 
         for(let item of items) {

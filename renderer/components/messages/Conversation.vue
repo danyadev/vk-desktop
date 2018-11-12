@@ -13,12 +13,12 @@
       </div>
       <div class="conversation_message_wrap">
         <div class="conversation_message">
-          <div class="conversation_author">{{ author }}</div>
-          <emoji :push="[1, 0]"
+          <div class="conversation_author">{{ authorName }}</div>
+          <emoji :push="1"
                  :class="{ conversation_attach: attachment }">{{ message }}</emoji>
         </div>
         <div class="conversation_message_unread"
-             :class="{ outread: outread, muted: muted }">{{ unread }}</div>
+             :class="{ outread, muted }">{{ unread }}</div>
       </div>
     </div>
   </div>
@@ -26,165 +26,148 @@
 
 <script>
   module.exports = {
-    props: ['conversation', 'last_message', 'profiles'],
+    props: ['conversation', 'last_message'],
     data() {
+      let peerID = this.conversation.peer.id,
+          isChat = this.conversation.peer.type == 'chat',
+          owner = isChat ? null : this.$root.profiles[peerID];
+
       return {
-        peer_id: this.conversation.peer.id,
-        isChat: this.conversation.peer.type == 'chat',
-        message_author: this.profiles[this.last_message.from_id],
-        verified: this.owner && this.owner.verified ? true : false,
+        isChat: isChat,
+        owner: owner,
+        verified: owner && owner.verified ? true : false,
         muted: this.conversation.push_settings ? true : false,
-        unread: this.conversation.unread_count || '',
+        author: this.$root.profiles[this.last_message.from_id],
+        attachment: false,
         outread: this.conversation.out_read != this.last_message.id && this.last_message.out,
-        attachment: false
+        unread: this.conversation.unread_count || ''
       }
     },
     computed: {
       photo() {
-        let photo, owner = this.profiles[this.peer_id];
+        let photo;
 
         if(this.isChat) {
           let photos = this.conversation.chat_settings.photo;
           if(photos) photo = photos.photo_50;
-        } else photo = owner.photo_50;
+        } else photo = this.owner.photo_50;
 
         return photo;
+      },
+      chatName() {
+        if(this.isChat) return this.conversation.chat_settings.title;
+        else return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
       },
       time() {
         let unixtime = this.last_message.date,
             date = new Date(unixtime * 1000),
-            thisDate = new Date(), time,
+            thisDate = new Date(),
             f = (t) => t < 10 ? `0${t}` : t;
 
         if(date.toLocaleDateString() == thisDate.toLocaleDateString()) {
-          time = `${f(date.getHours())}:${f(date.getMinutes())}`;
+          return `${f(date.getHours())}:${f(date.getMinutes())}`;
         } else if(date.getFullYear() == thisDate.getFullYear()) {
-          time = `${f(date.getDate())}.${f(date.getMonth() + 1)}`;
-        } else time = date.getFullYear();
-
-        return time;
+          return `${f(date.getDate())}.${f(date.getMonth() + 1)}`;
+        } else return date.getFullYear();
       },
-      author() {
-        let author = '', user = this.message_author;
-
-        if(user.id == users.get().id) author = 'Вы:';
-        else if(this.isChat) author = `${user.name || user.first_name}:`;
-
-        return this.last_message.action ? '' : author;
-      },
-      chatName() {
-        let name, owner = this.profiles[this.peer_id];
-
-        if(this.isChat) name = this.conversation.chat_settings.title;
-        else name = owner.name || `${owner.first_name} ${owner.last_name}`;
-
-        return name;
+      authorName() {
+        if(this.last_message.action) return '';
+        else if(this.author.id == users.get().id) return 'Вы:';
+        else if(this.isChat) return `${this.author.name || this.author.first_name}:`;
       },
       message() {
-        let text = this.last_message.text, attach = this.last_message.attachments[0],
-            { message, attachment } = this.getAttachmentPreview(text, attach);
-
-        this.attachment = attachment;
-
         if(this.last_message.action) {
           this.attachment = false;
-          message = this.getServiceMessagePreview(this.last_message.action, this.message_author);
-        }
-
-        if(this.last_message.fwd_messages.length && !message) {
-          this.attachment = true;
-
+          return this.getServiceMessageText(this.last_message.action, this.author);
+        } else if(this.last_message.fwd_messages.length && !this.last_message.text) {
           let count = this.last_message.fwd_messages.length,
               word = other.getWordEnding(count, ['сообщение', 'сообщения', 'сообщений']);
 
-          message = `${count} ${word}`;
-        }
+          this.attachment = true;
+          return `${count} ${word}`;
+        } else {
+          let { msg, attach } = this.getAttachmentText(this.last_message.text, this.last_message.attachments[0]);
 
-        return message;
+          this.attachment = attach;
+          return msg;
+        }
       }
     },
     methods: {
-      getAttachmentPreview(message, attachment) {
+      getAttachmentText(message, attachment) {
         if(!attachment || (message && attachment.type != 'gift')) {
-          return { message, attach: false };
+          return { msg: message, attach: false };
         }
 
-        let attachName = '';
+        let name;
 
         switch(attachment.type) {
-          case 'doc': attachName = 'Документ'; break;
-          case 'link': attachName = 'Ссылка'; break;
-          case 'poll': attachName = 'Опрос'; break;
-          case 'wall': attachName = 'Запись на стене'; break;
-          case 'call': attachName = 'Звонок'; break;
-          case 'gift': attachName = 'Подарок'; break;
-          case 'photo': attachName = 'Фотография'; break;
-          case 'audio': attachName = 'Аудиозапись'; break;
-          case 'video': attachName = 'Видеозапись'; break;
-          case 'point': attachName = 'Местоположение'; break;
-          case 'market': attachName = 'Товар'; break;
-          case 'sticker': attachName = 'Стикер'; break;
-          case 'graffiti': attachName = 'Граффити'; break;
-          case 'audio_message': attachName = 'Голосовое сообщение'; break;
-          case 'money_request': attachName = 'Запрос на денежный перевод'; break;
-          case 'audio_playlist': attachName = 'Плейлист'; break;
-          default: attachName = 'Вложение'; break;
+          case 'doc': name = 'Документ'; break;
+          case 'link': name = 'Ссылка'; break;
+          case 'poll': name = 'Опрос'; break;
+          case 'wall': name = 'Запись на стене'; break;
+          case 'call': name = 'Звонок'; break;
+          case 'gift': name = 'Подарок'; break;
+          case 'photo': name = 'Фотография'; break;
+          case 'audio': name = 'Аудиозапись'; break;
+          case 'video': name = 'Видеозапись'; break;
+          case 'point': name = 'Местоположение'; break;
+          case 'market': name = 'Товар'; break;
+          case 'sticker': name = 'Стикер'; break;
+          case 'graffiti': name = 'Граффити'; break;
+          case 'audio_message': name = 'Голосовое сообщение'; break;
+          case 'money_request': name = 'Запрос на денежный перевод'; break;
+          case 'audio_playlist': name = 'Плейлист'; break;
+          default: name = 'Вложение'; break;
         }
 
-        return { message: attachName, attachment: true };
+        return { msg: name, attach: true };
       },
-      getServiceMessagePreview(action, user) {
-        let actUser = this.profiles[action.member_id],
-            id = users.get().id,
-            us = user.id == id ? 'и' : (user.sex == 1 ? 'a' : ''),
-            as = actUser && (actUser.id == id ? 'и' : (actUser.sex == 1 ? 'a' : ''));
+      getServiceMessageText(action, author) {
+        let actUser = this.$root.profiles[action.member_id],
+            id = users.get().id;
 
-        let getName = (user, ncase) => {
-          let name;
+        let name = (type, ncase) => {
+          let user = type ? actUser : author;
 
-          if(user.id == id) name = 'Вы';
-          else if(user.name) name = user.name;
-          else if(ncase) name = `${user[`first_name_${ncase}`]} ${user[`last_name_${ncase}`]}`;
-          else name = `${user.first_name} ${user.last_name}`;
+          if(user.id == id) return 'Вы';
+          else if(user.name) return user.name;
+          else if(ncase) return `${user[`first_name_${ncase}`]} ${user[`last_name_${ncase}`]}`;
+          else return `${user.first_name} ${user.last_name}`;
+        }
 
-          return name;
+        let w = (type, text) => {
+          let user = type ? actUser : author, endID;
+
+          if(user.id == id) endID = 0;
+          else if(user.sex == 1) endID = 1;
+          else endID = 2;
+
+          return text.split(':')[endID] || '';
         }
 
         switch(action.type) {
           case 'chat_photo_update':
-            return `${getName(user)} обновил${us} фотографию беседы`;
-            break;
+            return `${name(0)} обновил${w(0, 'и:а')} фотографию беседы`;
           case 'chat_photo_remove':
-            return `${getName(user)} удалил${us} фотографию беседы`;
-            break;
+            return `${name(0)} удалил${w(0, 'и:а')} фотографию беседы`;
           case 'chat_create':
-            return `${getName(user)} создал${us} беседу "${action.text}"`;
-            break;
+            return `${name(0)} создал${w(0, 'и:а')} беседу "${action.text}"`;
           case 'chat_title_update':
-            return `${getName(user)} изменил${us} название беседы на "${action.text}"`;
-            break;
+            return `${name(0)} изменил${w(0, 'и:а')} название беседы на "${action.text}"`;
           case 'chat_invite_user':
-            if(actUser.id == id) return `Вас пригласили в беседу`;
-            else return `${getName(actUser, 'acc')} пригласил${us} в беседу`;
-            break;
+            return `${actUser.id == id ? 'Вас' : name(1, 'acc')} пригласили в беседу`;
           case 'chat_kick_user':
-            if(action.member_id == user.id) return `${getName(user)} покинул${us} беседу`;
+            if(action.member_id == author.id) return `${name(0)} покинул${w(0, 'и:а')} беседу`;
             else return `Вас исключили из беседы`;
-            break;
           case 'chat_pin_message':
-            return `${getName(actUser)} закрепил${as} сообщение "${action.message}"`;
-            break;
+            return `${name(1)} закрепил${w(1, 'и:а')} сообщение "${action.message}"`;
           case 'chat_unpin_message':
-            return `${getName(actUser)} открепил${as} сообщение`;
-            break;
+            return `${name(1)} открепил${w(1, 'и:а')} сообщение`;
           case 'chat_invite_user_by_link':
-            let end = (us == 'и' ? 'ись' : (us ? 'ась' : 'ся'));
-
-            return `${getName(user)} присоединил${end} к беседе по ссылке`;
-            break;
+            return `${name(0)} присоединил${w(0, 'ись:ась:ся')} к беседе по ссылке`;
           default:
             return `Неизвестное действие (${action.type})`;
-            break;
         }
       }
     }
