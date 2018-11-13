@@ -10,12 +10,14 @@
 @font-face {
 	font-family: 'Segoe UI';
 	font-weight: 400;
+	font-display: block;
 	src: url('css/SegoeUI.ttf');
 }
 
 @font-face {
 	font-family: 'Segoe UI';
 	font-weight: 500;
+	font-display: block;
 	src: url("css/SegoeUISemiBold.ttf");
 }
 

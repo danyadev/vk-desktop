@@ -28,9 +28,12 @@ let getFiles = (path, files = [], folders = '') => {
 }
 
 getFiles('./renderer/components/')
-  .map((file) => file.slice(0, -4))
-  .forEach((filename) => {
-    let name = filename.slice(filename.lastIndexOf('/') + 1),
+  .forEach((file) => {
+    let fileType = file.slice(file.lastIndexOf('.') + 1);
+    if(fileType == file || fileType != 'vue') return;
+
+    let filename = file.slice(0, -4),
+        name = filename.slice(filename.lastIndexOf('/') + 1),
         component = require(`./../components/${filename}.vue`);
 
     Vue.component(name, component);

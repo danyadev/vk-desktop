@@ -99,29 +99,29 @@
           return { msg: message, attach: false };
         }
 
-        let name;
+        let attachments = {
+          doc: 'Документ',
+          link: 'Ссылка',
+          poll: 'Опрос',
+          wall: 'Запись на стене',
+          call: 'Звонок',
+          gift: 'Подарок',
+          photo: 'Фотография',
+          audio: 'Аудиозапись',
+          video: 'Видеозапись',
+          point: 'Местоположение',
+          market: 'Товар',
+          sticker: 'Стикер',
+          graffiti: 'Граффити',
+          audio_message: 'Голосовое сообщение',
+          money_request: 'Запрос на денежный перевод',
+          audio_playlist: 'Плейлист'
+        };
 
-        switch(attachment.type) {
-          case 'doc': name = 'Документ'; break;
-          case 'link': name = 'Ссылка'; break;
-          case 'poll': name = 'Опрос'; break;
-          case 'wall': name = 'Запись на стене'; break;
-          case 'call': name = 'Звонок'; break;
-          case 'gift': name = 'Подарок'; break;
-          case 'photo': name = 'Фотография'; break;
-          case 'audio': name = 'Аудиозапись'; break;
-          case 'video': name = 'Видеозапись'; break;
-          case 'point': name = 'Местоположение'; break;
-          case 'market': name = 'Товар'; break;
-          case 'sticker': name = 'Стикер'; break;
-          case 'graffiti': name = 'Граффити'; break;
-          case 'audio_message': name = 'Голосовое сообщение'; break;
-          case 'money_request': name = 'Запрос на денежный перевод'; break;
-          case 'audio_playlist': name = 'Плейлист'; break;
-          default: name = 'Вложение'; break;
+        return {
+          msg: attachments[attachment.type] || 'Вложение',
+          attach: true
         }
-
-        return { msg: name, attach: true };
       },
       getServiceMessageText(action, author) {
         let actUser = this.$root.profiles[action.member_id],

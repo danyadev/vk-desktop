@@ -22,7 +22,7 @@ let plainRequest = (url, options) => {
   });
 };
 
-let request = (url, options, newResolve) => {
+let request = (url, options = {}, newResolve) => {
   return new Promise((resolve, reject) => {
     plainRequest(url, options).then((data) => {
       (newResolve || resolve)(JSON.parse(data));

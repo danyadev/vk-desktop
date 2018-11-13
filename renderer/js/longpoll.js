@@ -6,32 +6,8 @@ const EventEmitter = require('events').EventEmitter;
 
 const request = require('./request');
 
-let eventsList = {
-  1: 'change_flags',
-  2: 'set_flags',
-  3: 'remove_flags',
-  4: 'new_message',
-  5: 'edit_message',
-  6: 'read_in_messages', // прочитал чужое сообщение
-  7: 'read_out_messages', // кто-то прочитал твое сообщение
-  8: 'online_user',
-  9: 'offline_user',
-  10: 'remove_peer_flags',
-  11: 'change_peer_flags',
-  12: 'set_peer_flags',
-  13: 'delete_peer',
-  14: 'restore_peer', // эмм, непонятно зачем он если это сделать невозможно
-  51: 'говно',
-  52: 'change_peer_info',
-  61: 'user_typing',
-  62: 'peer_typing',
-  70: 'user_call', //
-  80: 'change_counter', // [messages_count, 0]
-  114: 'change_push_settings', // [{ peer_id, sound: 0|1, disabled_until: 0|-1|timestamp }],
-  115: 'user_call_data' // приходят данные на различных этапах звонка (мы совершили звонок)
-};
-
-let instance = null, onInitCallback = null;
+let eventsList = require('./longpollEvents'),
+    instance = null, onInitCallback = null;
 
 class Longpoll {
   constructor(data) {
@@ -95,15 +71,17 @@ class Longpoll {
 
     for(let update of data.updates || []) {
       let id = update.splice(0, 1)[0],
-          data = updateToData(update);
+          event = eventsList[id];
 
-      if(!eventsList[id]) {
+      if(!event) {
         console.error(`Longpoll: Неизвестное событие: ${id}`, data);
         continue;
       }
 
+      let data = event.data(update);
+
       this.emit('new_event', id, data);
-      this.emit(eventsList[id], data);
+      this.emit(event.name, data);
     }
 
     this.loop();
@@ -111,17 +89,6 @@ class Longpoll {
 }
 
 util.inherits(Longpoll, EventEmitter);
-
-// используемые функции
-
-let updateToData = (update) => {
-  // TODO: перевести в нормальный обьект
-  return update;
-}
-
-let historyToData = (history) => {
-
-}
 
 module.exports = {
   async init () {
