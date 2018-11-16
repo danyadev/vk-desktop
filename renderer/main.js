@@ -21,7 +21,7 @@ Vue.config.devtools = true;
 // Инициализация всех компонентов
 require('./js/initComponents');
 
-new Vue({
+let app = new Vue({
   el: '.app',
   data: {
     profiles: {},

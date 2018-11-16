@@ -18,7 +18,7 @@
                  :class="{ conversation_attach: attachment }">{{ message }}</emoji>
         </div>
         <div class="conversation_message_unread"
-             :class="{ outread, muted }">{{ unread }}</div>
+             :class="{ outread, muted }">{{ peer.unread || '' }}</div>
       </div>
     </div>
   </div>
@@ -26,40 +26,39 @@
 
 <script>
   module.exports = {
-    props: ['conversation', 'last_message'],
+    props: ['peer', 'msg'],
     data() {
-      let peerID = this.conversation.peer.id,
-          isChat = this.conversation.peer.type == 'chat',
-          owner = isChat ? null : this.$root.profiles[peerID];
-
       return {
-        isChat: isChat,
-        owner: owner,
-        verified: owner && owner.verified ? true : false,
-        muted: this.conversation.push_settings ? true : false,
-        author: this.$root.profiles[this.last_message.from_id],
-        attachment: false,
-        outread: this.conversation.out_read != this.last_message.id && this.last_message.out,
-        unread: this.conversation.unread_count || ''
+        isChat: this.peer.type == 'chat',
+        owner: this.$root.profiles[this.peer.owner],
+        attachment: false
       }
     },
     computed: {
+      // TODO сделать нормально
+      verified() {
+        return this.owner && this.owner.verified;
+      },
+      muted() {
+        return !!this.peer.muted;
+      },
+      outread() {
+        return this.msg.out;
+      },
+      author() {
+        return this.$root.profiles[this.msg.from];
+      },
+      // Далее все норм
       photo() {
-        let photo;
-
-        if(this.isChat) {
-          let photos = this.conversation.chat_settings.photo;
-          if(photos) photo = photos.photo_50;
-        } else photo = this.owner.photo_50;
-
-        return photo;
+        if(this.isChat) return this.peer.photo;
+        else return this.owner.photo_50;
       },
       chatName() {
-        if(this.isChat) return this.conversation.chat_settings.title;
+        if(this.isChat) return this.peer.title;
         else return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
       },
       time() {
-        let unixtime = this.last_message.date,
+        let unixtime = this.msg.date,
             date = new Date(unixtime * 1000),
             thisDate = new Date(),
             f = (t) => t < 10 ? `0${t}` : t;
@@ -71,22 +70,22 @@
         } else return date.getFullYear();
       },
       authorName() {
-        if(this.last_message.action) return '';
+        if(this.msg.action || this.peer.channel) return '';
         else if(this.author.id == users.get().id) return 'Вы:';
         else if(this.isChat) return `${this.author.name || this.author.first_name}:`;
       },
       message() {
-        if(this.last_message.action) {
+        if(this.msg.action) {
           this.attachment = false;
-          return this.getServiceMessageText(this.last_message.action, this.author);
-        } else if(this.last_message.fwd_messages.length && !this.last_message.text) {
-          let count = this.last_message.fwd_messages.length,
+          return this.getServiceMessage(this.msg.action, this.author);
+        } else if(this.msg.fwd_count && !this.msg.text) {
+          let count = this.msg.fwd_count,
               word = other.getWordEnding(count, ['сообщение', 'сообщения', 'сообщений']);
 
           this.attachment = true;
           return `${count} ${word}`;
         } else {
-          let { msg, attach } = this.getAttachmentText(this.last_message.text, this.last_message.attachments[0]);
+          let { msg, attach } = this.getAttachment(this.msg.text, this.msg.attachments[0]);
 
           this.attachment = attach;
           return msg;
@@ -94,12 +93,13 @@
       }
     },
     methods: {
-      getAttachmentText(message, attachment) {
+      getAttachment(message, attachment) {
         if(!attachment || (message && attachment.type != 'gift')) {
           return { msg: message, attach: false };
         }
 
         let attachments = {
+          geo: 'Карта',
           doc: 'Документ',
           link: 'Ссылка',
           poll: 'Опрос',
@@ -123,7 +123,7 @@
           attach: true
         }
       },
-      getServiceMessageText(action, author) {
+      getServiceMessage(action, author) {
         let actUser = this.$root.profiles[action.member_id],
             id = users.get().id;
 
@@ -156,10 +156,12 @@
           case 'chat_title_update':
             return `${name(0)} изменил${w(0, 'и:а')} название беседы на "${action.text}"`;
           case 'chat_invite_user':
-            return `${actUser.id == id ? 'Вас' : name(1, 'acc')} пригласили в беседу`;
+            if(actUser.id == id) return 'Вас пригласили в беседу';
+            else return `${name(1, 'acc')} пригласили в беседу`;
           case 'chat_kick_user':
             if(action.member_id == author.id) return `${name(0)} покинул${w(0, 'и:а')} беседу`;
-            else return `Вас исключили из беседы`;
+            else if(actUser.id == id) return 'Вас исключили из беседы';
+            else return `${name(1, 'acc')} исключили из беседы`;
           case 'chat_pin_message':
             return `${name(1)} закрепил${w(1, 'и:а')} сообщение "${action.message}"`;
           case 'chat_unpin_message':

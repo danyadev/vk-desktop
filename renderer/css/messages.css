@@ -78,7 +78,7 @@
 
 .conversation_author:not(:empty) {
   display: inline;
-  color: #6c6f73;
+  color: #777a7d;
 }
 
 .conversation_message {

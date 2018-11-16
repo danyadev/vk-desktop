@@ -7,7 +7,7 @@ const EventEmitter = require('events').EventEmitter;
 const request = require('./request');
 
 let eventsList = require('./longpollEvents'),
-    instance = null, onInitCallback = null;
+    instance = null, onInitResolve = null;
 
 class Longpoll {
   constructor(data) {
@@ -40,12 +40,12 @@ class Longpoll {
     if(data.failed) {
       if([1, 3].includes(data.failed)) {
         let history = await vkapi('messages.getLongPollHistory', {
-              ts: this.ts,
-              pts: this.pts,
-              onlines: 1,
-              lp_version: 3,
-              fields: 'photo_50,verified,sex,first_name_acc,last_name_acc'
-            });
+          ts: this.ts,
+          pts: this.pts,
+          onlines: 1,
+          lp_version: 3,
+          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc'
+        });
 
         if(data.failed == 3) {
           let server = await Longpoll.getServer();
@@ -78,7 +78,7 @@ class Longpoll {
         continue;
       }
 
-      let data = event.data(update);
+      let data = event.data(update, event.name);
 
       this.emit('new_event', id, data);
       this.emit(event.name, data);
@@ -96,13 +96,15 @@ module.exports = {
       let data = await Longpoll.getServer();
 
       instance = new Longpoll(data);
-      if(onInitCallback) onInitCallback(instance);
+      if(onInitResolve) onInitResolve(instance);
     }
 
     return instance;
   },
-  load(callback) {
-    if(!instance) onInitCallback = callback;
-    else callback(instance);
+  load() {
+    return new Promise((resolve) => {
+      if(!instance) onInitResolve = resolve;
+      else resolve(instance);
+    });
   }
 };

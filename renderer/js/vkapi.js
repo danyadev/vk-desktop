@@ -50,4 +50,8 @@ let method = (name, params, _resolve) => {
   });
 }
 
+addToQueue.upload = (url) => {
+  // TODO: добавить загрузку
+}
+
 module.exports = addToQueue;

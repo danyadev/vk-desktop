@@ -42,7 +42,7 @@ app.on('ready', () => {
     titleBarStyle: 'hidden'
   });
 
-  win.webContents.on('dom-ready', async () => {
+  win.webContents.once('dom-ready', async () => {
     let data = await win.webContents.executeJavaScript('localStorage.getItem("settings")'),
         { width, height } = screen.getPrimaryDisplay().workAreaSize;
 

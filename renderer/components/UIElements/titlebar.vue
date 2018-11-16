@@ -15,7 +15,7 @@
   module.exports = {
     data: () => ({
       mac: process.platform == 'darwin',
-      maximized: false,
+      maximized: getCurrentWindow().isMaximized(),
       names: ['minimize', 'maximize', 'restore', 'close']
     }),
     mounted() {
@@ -29,7 +29,6 @@
 
       getCurrentWindow().on('maximize', () => this.maximized = true);
       getCurrentWindow().on('unmaximize', () => this.maximized = false);
-      getCurrentWindow().emit(getCurrentWindow().isMaximized() ? 'maximize' : 'unmaximize');
     }
   }
 </script>
