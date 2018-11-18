@@ -1,3 +1,12 @@
+'use strict';
+
+Object.defineProperty(Array.prototype, 'move', {
+  value: function(from, to) {
+    this.splice(to, 0, this.splice(from, 1)[0]);
+  },
+  enumerable: false
+});
+
 module.exports = {
   random: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
   escape: (t) => String(t).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'),

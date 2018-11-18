@@ -9,7 +9,7 @@ module.exports = new Vuex.Store({
   },
   mutations: {
     addProfile(state, user) {
-      state.profiles[user.id] = user;
+      Vue.set(state.profiles, user.id, user);
     }
   }
 });

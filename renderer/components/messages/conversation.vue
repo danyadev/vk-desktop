@@ -46,11 +46,20 @@
       },
       photo() {
         if(this.isChat) return this.peer.photo;
-        else return this.owner.photo_50;
+        else if(this.owner) return this.owner.photo_50;
+        else {
+          this.getUser(this.peer.owner);
+          return 'images/conversation_no_photo.png';
+        }
       },
       chatName() {
         if(this.isChat) return this.peer.title;
-        else return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
+        else if(this.owner && this.owner.photo_50) {
+          return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
+        } else {
+          this.getUser(this.peer.owner);
+          return '...';
+        }
       },
       time() {
         let unixtime = this.msg.date,
@@ -187,8 +196,6 @@
           });
 
           this.$store.commit('addProfile', user);
-          // жуткий костыль, но по другому не знаю как
-          this.profiles.__ob__.dep.notify();
         }
       }
     }

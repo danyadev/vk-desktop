@@ -7,7 +7,7 @@
         <!-- кнопка поиска и три точки (доп.инструменты) -->
       </div>
       <div class="conversations_wrap" @scroll="onScroll" :class="{ loading: conversations.load }">
-        <conversation v-for="data in conversations.list"
+        <conversation v-for="data in conversations.list" :key="data.peer.id"
                       :peer="data.peer" :msg="data.msg"></conversation>
       </div>
     </div>
@@ -29,10 +29,34 @@
         list: [],
         load: true,
         loaded: false,
-        offset: 0
+        offset: 0,
+        inited: false
       }
     }),
     methods: {
+      parseConversation(conversation) {
+        let isChat = conversation.peer.type == 'chat',
+            isChannel = isChat && conversation.chat_settings.is_group_channel,
+            chatPhoto, chatTitle;
+
+        if(isChat) {
+          let photos = conversation.chat_settings.photo;
+
+          chatPhoto = photos && photos.photo_50;
+          chatTitle = conversation.chat_settings.title;
+        }
+
+        return {
+          id: conversation.peer.id,
+          type: conversation.peer.type,
+          channel: isChannel,
+          owner: isChannel ? conversation.chat_settings.owner_id : conversation.peer.id,
+          muted: !!conversation.push_settings, // TODO обработка disabled_until
+          unread: conversation.unread_count || 0,
+          photo: chatPhoto,
+          title: chatTitle
+        }
+      },
       async loadConversations() {
         let { profiles = [], groups = [], items } = await vkapi('messages.getConversations', {
               extended: true,
@@ -50,31 +74,12 @@
         });
 
         for(let item of items) {
-          let { conversation, last_message } = item,
-              isChat = conversation.peer.type == 'chat',
-              isChannel = isChat && conversation.chat_settings.is_group_channel,
-              chatPhoto, chatTitle;
-
-          if(isChat) {
-            let photos = conversation.chat_settings.photo;
-
-            chatPhoto = photos && photos.photo_50;
-            chatTitle = conversation.chat_settings.title;
-          }
+          let { conversation, last_message } = item;
 
           if(last_message.geo) last_message.attachments.push({ type: 'geo' });
 
           conversations.push({
-            peer: {
-              id: conversation.peer.id,
-              type: conversation.peer.type,
-              channel: isChannel,
-              owner: isChannel ? conversation.chat_settings.owner_id : conversation.peer.id,
-              muted: !!conversation.push_settings, // TODO обработка disabled_until
-              unread: conversation.unread_count || 0,
-              photo: chatPhoto,
-              title: chatTitle
-            },
+            peer: this.parseConversation(conversation),
             msg: {
               id: last_message.id,
               text: last_message.text,
@@ -94,23 +99,45 @@
 
         if(items.length < 20) this.conversations.loaded = true;
 
-        setTimeout(() => {
-          this.onScroll({ target: qs('.conversations_wrap') });
-        }, 100);
+        this.$nextTick();
+        this.inited = true;
+        this.onScroll({ target: qs('.conversations_wrap') });
       },
-      updateConversation(peerID, data) {
+      async updateConversation(peerID, data) {
+        if(!this.inited) return;
+
         let conversation = this.conversations.list.find((item) => item.peer.id == peerID);
 
         if(!conversation) {
-          // TODO сделать это
-          console.error('Нет данных беседы', { peer: peerID, data });
-          return;
+          let { items: [peer], profiles: [user] = [], groups: [group] = [] } = await vkapi('messages.getConversationsById', {
+            peer_ids: peerID,
+            extended: 1,
+            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc'
+          });
+
+          if(user) this.$store.commit('addProfile', user);
+          if(group) this.$store.commit('addProfile', group);
+
+          if(typeof data == 'function') {
+            data = data({
+              peer: this.parseConversation(peer),
+              force: true
+            });
+          }
+
+          this.conversations.list.unshift(data);
+          this.conversations.offset++;
+        } else {
+          if(typeof data == 'function') data = data(conversation);
+
+          Object.assign(conversation.peer, data.peer || {});
+          Object.assign(conversation.msg, data.msg || {});
         }
+      },
+      moveUpConversation(peerID) {
+        let index = this.conversations.list.findIndex((item) => item.peer.id == peerID);
 
-        if(typeof data == 'function') data = data(conversation);
-
-        Object.assign(conversation.peer, data.peer || {});
-        Object.assign(conversation.msg, data.msg || {});
+        if(index != -1) this.conversations.list.move(index, 0);
       },
       onScroll: endScroll((vm) => {
         if(!vm.conversations.load && !vm.conversations.loaded) {
@@ -126,20 +153,17 @@
       this.longpoll.on('new_message', (data) => {
         this.updateConversation(data.peer.id, (peer) => {
           if(data.msg.out) data.peer.unread = 0;
+          else if(peer.force) data.peer.unread = peer.peer.unread;
           else data.peer.unread = peer.peer.unread + 1;
 
-          return {
-            msg: data.msg,
-            peer: data.peer
-          };
+          return data;
         });
+
+        this.moveUpConversation(data.peer.id);
       });
 
       this.longpoll.on('edit_message', (data) => {
-        this.updateConversation(data.peer.id, {
-          msg: data.msg,
-          peer: data.peer
-        });
+        this.updateConversation(data.peer.id, data);
       });
 
       this.longpoll.on('messages_readed', (data) => {

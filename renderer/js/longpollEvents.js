@@ -65,7 +65,7 @@ let getMessage = (data, name) => {
       channel: isChannel,
       id: data[2],
       owner: isChannel ? from_id : data[2],
-      type: data[0] > 2e9 ? 'chat' : 'user'
+      type: data[2] > 2e9 ? 'chat' : 'user'
     },
     msg: {
       action: action,

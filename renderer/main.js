@@ -21,8 +21,9 @@ Vue.config.devtools = true;
 require('./js/initComponents');
 
 Vue.directive('emoji', (el, { modifiers }, vnode) => {
-  let html = vnode.children[0].text.replace(/<br>/g, ' ');
+  let html = vnode.children[0].text;
 
+  if(!modifiers.br) html = html.replace(/<br>/g, ' ');
   if(modifiers.push) html = html.replace(other.regexp.push, '$3');
   html = emoji(html);
 
