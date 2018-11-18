@@ -37,7 +37,7 @@
         let { profiles = [], groups = [], items } = await vkapi('messages.getConversations', {
               extended: true,
               fields: 'photo_50,verified,sex,first_name_acc,last_name_acc',
-              offset: this.conversations.offset, log: 1
+              offset: this.conversations.offset
             }),
             conversations = [];
 
@@ -46,7 +46,7 @@
           list.push(group);
           return list;
         }, [])).forEach((profile) => {
-          this.$root.profiles[profile.id] = profile;
+          this.$store.commit('addProfile', profile);
         });
 
         for(let item of items) {
@@ -109,8 +109,8 @@
 
         if(typeof data == 'function') data = data(conversation);
 
-        Object.assign(conversation.peer, data.peer);
-        Object.assign(conversation.msg, data.msg);
+        Object.assign(conversation.peer, data.peer || {});
+        Object.assign(conversation.msg, data.msg || {});
       },
       onScroll: endScroll((vm) => {
         if(!vm.conversations.load && !vm.conversations.loaded) {
@@ -123,16 +123,10 @@
       this.longpoll = await require('./../../js/longpoll').load();
       this.loadConversations();
 
-      this.longpoll.on('new_event', (id, data) => {
-        if([8, 9].includes(id)) return;
-
-        console.log('\n', id, data);
-      });
-
       this.longpoll.on('new_message', (data) => {
         this.updateConversation(data.peer.id, (peer) => {
-          data.peer.unread = peer.peer.unread + 1;
-          console.log(peer);
+          if(data.msg.out) data.peer.unread = 0;
+          else data.peer.unread = peer.peer.unread + 1;
 
           return {
             msg: data.msg,
@@ -141,9 +135,28 @@
         });
       });
 
-      this.longpoll.on('readed_messages', (data) => {
+      this.longpoll.on('edit_message', (data) => {
+        this.updateConversation(data.peer.id, {
+          msg: data.msg,
+          peer: data.peer
+        });
+      });
+
+      this.longpoll.on('messages_readed', (data) => {
+        this.updateConversation(data.peer_id, {
+          msg: { out: data.count != 0 }
+        });
+      });
+
+      this.longpoll.on('messages_read', (data) => {
         this.updateConversation(data.peer_id, {
           peer: { unread: data.count }
+        });
+      });
+
+      this.longpoll.on('change_push_settings', (data) => {
+        this.updateConversation(data.peer_id, {
+          peer: { muted: data.state == 0 }
         });
       });
     }

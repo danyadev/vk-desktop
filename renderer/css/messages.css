@@ -55,14 +55,14 @@
   background-size: 13px;
 }
 
-.conversation_name {
+.conversation_name_wrap {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
   font-weight: 500;
 }
 
-.conversation_name span {
+.conversation_name {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -88,6 +88,8 @@
   text-overflow: ellipsis;
   color: #4c4d50;
 }
+
+.conversation_text { display: inline }
 
 .conversation_attach {
   display: inline-block;

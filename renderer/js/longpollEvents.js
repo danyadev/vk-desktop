@@ -21,6 +21,7 @@ let getServiceMessage = (data) => {
     if(match) {
       let value = data[key];
       if(Number(data[key]) == value) value = Number(data[key]);
+      if(match[1] == 'act') match[1] = 'type';
 
       source[match[1]] = value;
     }
@@ -59,8 +60,7 @@ let getMessage = (data, name) => {
       from_id = flags.is('outbox') ? users.get().id : Number(data[5].from || data[2]),
       isChannel = data[1] == 0; // пока я только это заметил
 
-  return {
-    $data: { name, data },
+  let res = {
     peer: {
       channel: isChannel,
       id: data[2],
@@ -74,10 +74,12 @@ let getMessage = (data, name) => {
       fwd_count: Number(data[5].fwd_count || 0),
       date: data[3],
       id: data[0],
-      out: flags.is('outbox'),
       text: action ? '' : data[4]
     }
   }
+
+  if(name != 'edit_message') res.msg.out = flags.is('outbox');
+  return res;
 }
 
 /* Когда приходят 2 и 3 события:
@@ -123,19 +125,25 @@ module.exports = {
     }
   },
   6: {
-    name: 'read_messages',
+    name: 'messages_read',
     data: (data) => {
       // приходит при прочтении чужих сообщений до id
-      // [peer_id, id, 0]
-      return data;
+      // [peer_id, id, count]
+
+      return {
+        peer_id: data[0],
+        id: data[1],
+        count: data[2]
+      };
     }
   },
   7: {
-    name: 'readed_messages',
+    name: 'messages_readed',
     data: (data) => {
       // приходит при прочтении твоих сообщений до id
       // count - кол-во оставшихся непрочитанных сообщений
       // [peer_id, id, count]
+
       return {
         peer_id: data[0],
         id: data[1],
@@ -236,12 +244,16 @@ module.exports = {
   },
   114: {
     name: 'change_push_settings',
-    data: (data) => {
+    data: ([data]) => {
       // приходит при изменении настроек пуш уведомлений у диалога
        // [{ peer_id, sound, disabled_until }]
        // sound: работет некорректно, юзайте disabled_until
        // disabled_until: -1 - выключены; 0 - включены; иначе - timestramp когда их включить
-      return data;
+      return {
+        peer_id: data.peer_id,
+        state: data.disabled_until == 0 ? 1 : 0,
+        timestramp: data.disabled_until > 0 ? data.disabled_until : null
+      };
     }
   },
   115: {

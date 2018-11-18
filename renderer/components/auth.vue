@@ -41,9 +41,9 @@
             this.loading = true;
 
             let [ user ] = await vkapi('users.get', {
-                  access_token: accessToken,
-                  fields: 'status,photo_100,screen_name,nickname,verified'
-                });
+              access_token: accessToken,
+              fields: 'status,photo_100,screen_name,nickname,verified'
+            });
 
             users.set(user.id, Object.assign(user, { access_token: accessToken }));
             settings.set('activeID', user.id);

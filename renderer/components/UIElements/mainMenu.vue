@@ -10,7 +10,7 @@
         {{ user.first_name }} {{ user.last_name }}
         <div class="verified" v-if="user.verified"></div>
       </div>
-      <div class="menu_acc_status"><emoji>{{ user.status }}</emoji></div>
+      <div class="menu_acc_status" v-emoji>{{ user.status }}</div>
     </div>
     <div class="menu_items">
       <div class="menu_item"

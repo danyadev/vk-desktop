@@ -8,6 +8,7 @@ const qsa = (selector, target) => (target || document).querySelectorAll(selector
 const fs = require('fs');
 const { getCurrentWindow, Menu, BrowserWindow } = require('electron').remote;
 const Vue = require('./js/lib/Vue');
+const Vuex = require('./js/lib/Vuex');
 const other = require('./js/other');
 const { random, endScroll, escape } = other;
 const contextMenu = require('./js/contextMenu');
@@ -15,16 +16,23 @@ const emoji = require('./js/emoji');
 const { users, settings } = require('./js/Storage');
 const vkapi = require('./js/vkapi');
 
-// разрешение использования расширения для разработки
+// настройка Vue
 Vue.config.devtools = true;
-
-// Инициализация всех компонентов
 require('./js/initComponents');
+
+Vue.directive('emoji', (el, { modifiers }, vnode) => {
+  let html = vnode.children[0].text.replace(/<br>/g, ' ');
+
+  if(modifiers.push) html = html.replace(other.regexp.push, '$3');
+  html = emoji(html);
+
+  el.innerHTML = html;
+});
 
 let app = new Vue({
   el: '.app',
+  store: require('./js/VueStore.js'),
   data: {
-    profiles: {},
     auth: !settings.get('activeID'),
     blocked: false,
     section: settings.get('section'),
