@@ -91,7 +91,7 @@ class Longpoll {
 util.inherits(Longpoll, EventEmitter);
 
 module.exports = {
-  async init () {
+  async init() {
     if(!instance) {
       let data = await Longpoll.getServer();
 

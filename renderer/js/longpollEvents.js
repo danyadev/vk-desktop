@@ -211,27 +211,39 @@ module.exports = {
     }
   },
   61: {
-    name: 'user_typing',
+    name: 'typing',
     data: (data) => {
       // приходит когда юзер пишет вам в лс
       // [user_id, 1]
-      return data;
+      return {
+        type: 'typing',
+        peer_id: data[0],
+        from_id: data[0]
+      };
     }
   },
   62: {
-    name: 'peer_typing',
+    name: 'typing',
     data: (data) => {
       // приходит когда кто-то пишет в беседе
       // [user_id, chat_id]
-      return data;
+      return {
+        type: 'typing',
+        peer_id: 2e9 + data[1],
+        from_id: data[0]
+      };
     }
   },
   64: {
-    name: 'audio_message_typing',
+    name: 'typing',
     data: (data) => {
       // приходит когда кто-то записывает голосовое сообщение
       // [peer_id, [from_id], 1, timestramp]
-      return data;
+      return {
+        type: 'audio',
+        peer_id: data[0],
+        from_id: data[1][0]
+      };
     }
   },
   80: {

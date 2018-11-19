@@ -130,8 +130,8 @@
         } else {
           if(typeof data == 'function') data = data(conversation);
 
-          Object.assign(conversation.peer, data.peer || {});
-          Object.assign(conversation.msg, data.msg || {});
+          Object.assign(conversation.peer, data.peer);
+          Object.assign(conversation.msg, data.msg);
         }
       },
       moveUpConversation(peerID) {
@@ -150,6 +150,17 @@
       this.longpoll = await require('./../../js/longpoll').load();
       this.loadConversations();
 
+      let checkTyping = (data) => {
+        let peer = this.$store.state.typing[data.peer.id];
+
+        if(peer && peer[data.msg.from]) {
+          this.$store.commit('removeTyping', {
+            id: data.msg.from,
+            peer: data.peer.id
+          });
+        }
+      }
+
       this.longpoll.on('new_message', (data) => {
         this.updateConversation(data.peer.id, (peer) => {
           if(data.msg.out) data.peer.unread = 0;
@@ -159,11 +170,13 @@
           return data;
         });
 
+        checkTyping(data);
         this.moveUpConversation(data.peer.id);
       });
 
       this.longpoll.on('edit_message', (data) => {
         this.updateConversation(data.peer.id, data);
+        checkTyping(data);
       });
 
       this.longpoll.on('messages_readed', (data) => {
@@ -181,6 +194,21 @@
       this.longpoll.on('change_push_settings', (data) => {
         this.updateConversation(data.peer_id, {
           peer: { muted: data.state == 0 }
+        });
+      });
+
+      this.longpoll.on('typing', async (data) => {
+        this.$store.commit('addTyping', {
+          id: data.from_id,
+          type: data.type,
+          peer: data.peer_id
+        });
+
+        await other.timer(5000);
+
+        this.$store.commit('removeTyping', {
+          id: data.from_id,
+          peer: data.peer_id
         });
       });
     }

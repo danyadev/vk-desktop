@@ -12,7 +12,15 @@
         <div class="conversation_time">{{ time }}</div>
       </div>
       <div class="conversation_message_wrap">
-        <div class="conversation_message">
+        <div v-show="isTyping" class="conversation_typing">
+          <div class="conversation_typing_text">{{ typingMsg }}</div>
+          <div class="typing">
+            <div class="typing_item"></div>
+            <div class="typing_item"></div>
+            <div class="typing_item"></div>
+          </div>
+        </div>
+        <div v-show="!isTyping" class="conversation_message">
           <div class="conversation_author">{{ authorName }}</div>
           <div :class="{ conversation_attach: attachment }" v-emoji.push
                class="conversation_text">{{ message }}</div>
@@ -26,6 +34,8 @@
 </template>
 
 <script>
+  let loadingProfiles = [];
+
   module.exports = {
     props: ['peer', 'msg'],
     data() {
@@ -35,6 +45,12 @@
       }
     },
     computed: {
+      typing() {
+        return this.$store.state.typing;
+      },
+      isTyping() {
+        return !!Object.keys(this.typing[this.peer.id] || []).length;
+      },
       profiles() {
         return this.$store.state.profiles;
       },
@@ -99,6 +115,54 @@
           this.attachment = attach;
           return msg;
         }
+      },
+      typingMsg() {
+        let text = [], audio = [], msg = '';
+
+        for(let id in this.typing[this.peer.id]) {
+          if(this.typing[this.peer.id][id] == 'audio') audio.push(id);
+          else text.push(id);
+        }
+
+        let name = (id) => {
+          let user = this.profiles[id];
+
+          if(!user) {
+            this.getUser(id);
+            return '...';
+          } else {
+            let last_sym = user.last_name ? user.last_name[0] + '.' : '';
+            return user.name || `${user.first_name} ${last_sym}`;
+          }
+        }
+
+        if(text.length) {
+          for(let i in text) {
+            let id = text[i];
+
+            if(text.length-1 == i && i != 0) msg += ` и ${name(id)}`;
+            else if(i != 0) msg += `, ${name(id)}`;
+            else msg += `${name(id)}`;
+          }
+
+          msg += text.length == 1 ? ' печатает' : ' печатают';
+        }
+
+        if(audio.length) {
+          if(text.length) msg += ' и ';
+
+          for(let i in audio) {
+            let id = audio[i];
+
+            if(audio.length-1 == i && i != 0) msg += ` и ${name(id)}`;
+            else if(i != 0) msg += `, ${name(id)}`;
+            else msg += `${name(id)}`;
+          }
+
+          msg += (audio.length == 1 ? ' записывает' : ' записывают') + ' аудио';
+        }
+
+        return msg;
       }
     },
     methods: {
@@ -123,7 +187,7 @@
           sticker: 'Стикер',
           graffiti: 'Граффити',
           audio_message: 'Голосовое сообщение',
-          money_request: 'Запрос на денежный перевод',
+          money_request: 'Запрос денег',
           audio_playlist: 'Плейлист'
         };
 
@@ -172,11 +236,11 @@
           case 'chat_title_update':
             return `${name(0)} изменил${w(0, 'и:а')} название беседы на "${action.text}"`;
           case 'chat_invite_user':
-            if(actUser.id == id) return 'Вас пригласили в беседу';
+            if(actID == id) return 'Вас пригласили в беседу';
             else return `${name(1, 1)} пригласили в беседу`;
           case 'chat_kick_user':
-            if(actUser.id == author.id) return `${name(0)} покинул${w(0, 'и:а')} беседу`;
-            else if(actUser.id == id) return 'Вас исключили из беседы';
+            if(actID == author.id) return `${name(0)} покинул${w(0, 'и:а')} беседу`;
+            else if(actID == id) return 'Вас исключили из беседы';
             else return `${name(1, 1)} исключили из беседы`;
           case 'chat_pin_message':
             return `${name(1)} закрепил${w(1, 'и:а')} сообщение "${action.message}"`;
@@ -189,6 +253,9 @@
         }
       },
       async getUser(id) {
+        if(loadingProfiles.includes(id)) return;
+        else loadingProfiles.push(id);
+
         if(id > 0) {
           let [ user ] = await vkapi('users.get', {
             user_id: id,
@@ -196,7 +263,19 @@
           });
 
           this.$store.commit('addProfile', user);
+        } else {
+          let [ group ] = await vkapi('groups.getById', {
+            group_ids: Math.abs(id),
+            fields: 'photo_50,verified'
+          });
+
+          group.id = -group.id;
+
+          this.$store.commit('addProfile', group);
         }
+
+        let index = loadingProfiles.findIndex((pid) => pid == id);
+        loadingProfiles.splice(index, 1);
       }
     }
   }
