@@ -29,8 +29,7 @@
         list: [],
         load: true,
         loaded: false,
-        offset: 0,
-        inited: false
+        offset: 0
       }
     }),
     methods: {
@@ -54,13 +53,14 @@
           muted: !!conversation.push_settings, // TODO обработка disabled_until
           unread: conversation.unread_count || 0,
           photo: chatPhoto,
-          title: chatTitle
+          title: chatTitle,
+          online: isChat ? '' : ''
         }
       },
       async loadConversations() {
         let { profiles = [], groups = [], items } = await vkapi('messages.getConversations', {
               extended: true,
-              fields: 'photo_50,verified,sex,first_name_acc,last_name_acc',
+              fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online',
               offset: this.conversations.offset
             }),
             conversations = [];
@@ -100,11 +100,10 @@
         if(items.length < 20) this.conversations.loaded = true;
 
         this.$nextTick();
-        this.inited = true;
         this.onScroll({ target: qs('.conversations_wrap') });
       },
       async updateConversation(peerID, data) {
-        if(!this.inited) return;
+        if(this.conversations.offset == 0) return;
 
         let conversation = this.conversations.list.find((item) => item.peer.id == peerID);
 
@@ -112,7 +111,7 @@
           let { items: [peer], profiles: [user] = [], groups: [group] = [] } = await vkapi('messages.getConversationsById', {
             peer_ids: peerID,
             extended: 1,
-            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc'
+            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
           });
 
           if(user) this.$store.commit('addProfile', user);
@@ -147,7 +146,7 @@
       }, 100)
     },
     async mounted() {
-      this.longpoll = await require('./../../js/longpoll').load();
+      let longpoll = await require('./../../js/longpoll').load();
       this.loadConversations();
 
       let checkTyping = (data) => {
@@ -161,7 +160,7 @@
         }
       }
 
-      this.longpoll.on('new_message', (data) => {
+      longpoll.on('new_message', (data) => {
         this.updateConversation(data.peer.id, (peer) => {
           if(data.msg.out) data.peer.unread = 0;
           else if(peer.force) data.peer.unread = peer.peer.unread;
@@ -174,41 +173,66 @@
         this.moveUpConversation(data.peer.id);
       });
 
-      this.longpoll.on('edit_message', (data) => {
+      longpoll.on('edit_message', (data) => {
         this.updateConversation(data.peer.id, data);
         checkTyping(data);
       });
 
-      this.longpoll.on('messages_readed', (data) => {
+      longpoll.on('messages_readed', (data) => {
         this.updateConversation(data.peer_id, {
           msg: { out: data.count != 0 }
         });
       });
 
-      this.longpoll.on('messages_read', (data) => {
+      longpoll.on('messages_read', (data) => {
         this.updateConversation(data.peer_id, {
           peer: { unread: data.count }
         });
       });
 
-      this.longpoll.on('change_push_settings', (data) => {
+      longpoll.on('change_push_settings', (data) => {
         this.updateConversation(data.peer_id, {
           peer: { muted: data.state == 0 }
         });
       });
 
-      this.longpoll.on('typing', async (data) => {
-        this.$store.commit('addTyping', {
-          id: data.from_id,
-          type: data.type,
-          peer: data.peer_id
-        });
+      let removeTyping = async (data) => {
+        let user = this.$store.state.typing[data.peer_id][data.from_id];
 
-        await other.timer(5000);
+        if(!user) return;
+        else if(user.time) {
+          this.$store.commit('addTyping', {
+            id: data.from_id,
+            peer: data.peer_id,
+            data: { type: data.type, time: user.time - 1 }
+          });
+
+          await other.timer(1000);
+          removeTyping(data);
+          return;
+        }
 
         this.$store.commit('removeTyping', {
           id: data.from_id,
           peer: data.peer_id
+        });
+      }
+
+      longpoll.on('typing', (data) => {
+        this.$store.commit('addTyping', {
+          id: data.from_id,
+          peer: data.peer_id,
+          data: { type: data.type, time: 5 }
+        });
+
+        removeTyping(data);
+      });
+
+      longpoll.on('online_user', (data) => {
+        this.$store.commit('updateProfile', {
+          id: data.id,
+          online: data.type == 'online',
+          online_mobile: !!data.mobile
         });
       });
     }

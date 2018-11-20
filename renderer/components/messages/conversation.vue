@@ -1,7 +1,9 @@
 <template>
   <div class="conversation">
-    <img v-if="photo" :src="photo" class="conversation_photo">
-    <div v-else class="conversation_photo no_photo"></div>
+    <div class="conversation_photo_wrap" :class="online">
+      <img v-if="photo" :src="photo" class="conversation_photo">
+      <div v-else class="conversation_photo no_photo"></div>
+    </div>
     <div class="conversation_content">
       <div class="conversation_title">
         <div class="conversation_name_wrap">
@@ -45,17 +47,26 @@
       }
     },
     computed: {
+      profiles() {
+        return this.$store.state.profiles;
+      },
       typing() {
         return this.$store.state.typing;
       },
       isTyping() {
         return !!Object.keys(this.typing[this.peer.id] || []).length;
       },
-      profiles() {
-        return this.$store.state.profiles;
-      },
       owner() {
         return this.profiles[this.peer.owner];
+      },
+      online() {
+        if(this.peer.owner > 2e9) return '';
+        else if(!this.owner) {
+          this.addProfile(this.peer.owner);
+          return '';
+        } else if(!this.owner.online) return '';
+
+        return this.owner.online_mobile ? 'mobile' : 'desktop';
       },
       author() {
         return this.profiles[this.msg.from] || { id: this.msg.from };
@@ -120,7 +131,7 @@
         let text = [], audio = [], msg = '';
 
         for(let id in this.typing[this.peer.id]) {
-          if(this.typing[this.peer.id][id] == 'audio') audio.push(id);
+          if(this.typing[this.peer.id][id].type == 'audio') audio.push(id);
           else text.push(id);
         }
 
@@ -259,7 +270,7 @@
         if(id > 0) {
           let [ user ] = await vkapi('users.get', {
             user_id: id,
-            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc'
+            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
           });
 
           this.$store.commit('addProfile', user);

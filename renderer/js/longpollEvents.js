@@ -157,16 +157,27 @@ module.exports = {
       // приходит когда юзер становится онлайн
       // [-user_id, platform, timestramp]
       // 1: mobile, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
-      return data;
+
+      return {
+        type: 'online',
+        id: Math.abs(data[0]),
+        mobile: ![6, 7].includes(data[1]),
+        timestramp: data[3]
+      };
     }
   },
   9: {
-    name: 'offline_user',
+    name: 'online_user',
     data: (data) => {
       // приходит когда пользователь становится онлайн
       // [-user_id, flag, timestramp]
       // flag: 0 - вышел с сайта, 1 - по таймауту
-      return data;
+
+      return {
+        type: 'offline',
+        id: Math.abs(data[0]),
+        timestramp: data[3]
+      };
     }
   },
   10: {

@@ -8,6 +8,7 @@ Object.defineProperty(Array.prototype, 'move', {
 });
 
 module.exports = {
+  timer: (t) => new Promise((r) => setTimeout(r, t)),
   random: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
   escape: (t) => String(t).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'),
   isObject: (data) => data instanceof Object && !Array.isArray(data),
