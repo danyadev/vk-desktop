@@ -2,7 +2,7 @@
 
 const util = require('util');
 const querystring = require('querystring');
-const EventEmitter = require('events').EventEmitter;
+const { EventEmitter } = require('events');
 
 const request = require('./request');
 
@@ -38,13 +38,15 @@ class Longpoll {
         }, { force: true });
 
     if(data.failed) {
+      console.error('[longpoll] Error:', data);
+
       if([1, 3].includes(data.failed)) {
         let history = await vkapi('messages.getLongPollHistory', {
           ts: this.ts,
           pts: this.pts,
           onlines: 1,
           lp_version: 3,
-          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc'
+          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
         });
 
         if(data.failed == 3) {
@@ -74,14 +76,16 @@ class Longpoll {
           event = eventsList[id];
 
       if(!event) {
-        console.error(`Longpoll: Неизвестное событие: ${id}`, data);
+        console.error('[longpoll] Неизвестное событие:', id, data);
         continue;
       }
 
-      let data = event.data(update, event.name);
+      let eventData = event(update);
 
-      this.emit('new_event', id, data);
-      this.emit(event.name, data);
+      // Событие не нужно обрабатывать
+      if(!eventData.name) return;
+
+      this.emit(eventData.name, eventData.data);
     }
 
     this.loop();

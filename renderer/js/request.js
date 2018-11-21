@@ -1,12 +1,27 @@
 'use strict';
 
 const https = require('https');
+const url = require('url');
+
+let urlToObject = (url) => {
+  if(other.isObject(url)) return url;
+  let data = url.parse(url);
+
+  return {
+    host: data.host,
+    path: data.path
+  }
+}
 
 let plainRequest = (url, options) => {
   if(!other.isObject(options)) options = {};
 
   return new Promise((resolve, reject) => {
-    let req = https.request(url, (res) => {
+    let data = Object.assign(urlToObject(url), {
+      agent: new https.Agent({ timeout: 5000 })
+    });
+
+    let req = https.request(data, (res) => {
       let buffers = [];
 
       res.on('data', (chunk) => buffers.push(chunk));

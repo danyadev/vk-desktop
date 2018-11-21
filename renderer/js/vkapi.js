@@ -3,7 +3,7 @@
 const querystring = require('querystring');
 const request = require('./request');
 
-const API_VERSION = '5.87';
+const API_VERSION = '5.92';
 
 let methods = [],
     openedCaptcha = false;

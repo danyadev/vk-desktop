@@ -1,15 +1,17 @@
+'use strict';
+
 let getFlags = (mask) => {
   let flags = {
     unread: 1, outbox: 2, replied: 4, important: 8,
-    chat: 16, friends: 32, spam: 64, deleted_trash: 128,
-    fixed: 256, media: 512, hidden: 65536, deleted: 131072
+    chat: 16, friends: 32, spam: 64, deleted: 128,
+    fixed: 256, media: 512, hidden: 65536, deleted_all: 131072
   }, flagsInMask = [];
 
   for(let flag in flags) if(flags[flag] & mask) flagsInMask.push(flag);
 
-  flagsInMask.is = (name) => flagsInMask.includes(name);
-
-  return flagsInMask;
+  return {
+    is: (name) => flagsInMask.includes(name)
+  };
 }
 
 let getServiceMessage = (data) => {
@@ -54,7 +56,7 @@ let getAttachments = (data) => {
   return attachs;
 }
 
-let getMessage = (data, name) => {
+let getMessage = (data, type) => {
   let flags = getFlags(data[1]),
       action = getServiceMessage(data[5]),
       from_id = flags.is('outbox') ? users.get().id : Number(data[5].from || data[2]),
@@ -78,7 +80,7 @@ let getMessage = (data, name) => {
     }
   }
 
-  if(name != 'edit_message') res.msg.out = flags.is('outbox');
+  if(type == 'new') res.msg.out = flags.is('outbox');
   return res;
 }
 
@@ -89,201 +91,181 @@ let getMessage = (data, name) => {
 */
 
 module.exports = {
-  2: {
-    name: 'set_flags',
-    data: (data) => {
-      // когда приходит: написано сверху
-      // [id, flags, peer_id]
-      return data;
-    }
-  },
-  3: {
-    name: 'remove_flags',
-    data: (data) => {
-      // когда приходит: написано сверху
-      // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
-      return data;
-    }
-  },
-  4: {
-    name: 'new_message',
-    data: (data, name) => {
-      // приходит при написании нового сообщения
-      // при пересланных сообщениях выполнять messages.getById с id и extended
-      // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
+  2: (data) => {
+    // когда приходит: написано сверху
+    // [id, flags, peer_id]
 
-      return getMessage(data, name);
-    }
+    return { name: 'set_flags', data }
   },
-  5: {
-    name: 'edit_message',
-    data: (data, name) => {
-      // приходит при редактировании сообщения
-      // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
+  3: (data) => {
+    // когда приходит: написано сверху
+    // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
 
-      return getMessage(data, name);
-    }
+    return { name: 'remove_flags', data }
   },
-  6: {
-    name: 'messages_read',
-    data: (data) => {
-      // приходит при прочтении чужих сообщений до id
-      // [peer_id, id, count]
+  4: (data) => {
+    // приходит при написании нового сообщения
+    // при пересланных сообщениях выполнять messages.getById с id и extended
+    // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
 
-      return {
+    return { name: 'new_message', data: getMessage(data, 'new') }
+  },
+  5: (data) => {
+    // приходит при редактировании сообщения
+    // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
+
+    return { name: 'edit_message', data: getMessage(data, 'edit') }
+  },
+  6: (data) => {
+    // приходит при прочтении чужих сообщений до id
+    // [peer_id, id, count]
+
+    return {
+      name: 'read_messages',
+      data: {
         peer_id: data[0],
         id: data[1],
         count: data[2]
-      };
+      }
     }
   },
-  7: {
-    name: 'messages_readed',
-    data: (data) => {
-      // приходит при прочтении твоих сообщений до id
-      // count - кол-во оставшихся непрочитанных сообщений
-      // [peer_id, id, count]
+  7: (data) => {
+    // приходит при прочтении твоих сообщений до id
+    // count - кол-во оставшихся непрочитанных сообщений
+    // [peer_id, id, count]
 
-      return {
+    return {
+      name: 'readed_messages',
+      data: {
         peer_id: data[0],
         id: data[1],
         count: data[2]
-      };
+      }
     }
   },
-  8: {
-    name: 'online_user',
-    data: (data) => {
-      // приходит когда юзер становится онлайн
-      // [-user_id, platform, timestramp]
-      // 1: mobile, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
+  8: (data) => {
+    // приходит когда юзер становится онлайн
+    // [-user_id, platform, timestramp]
+    // 1: mobile, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
 
-      return {
+    return {
+      name: 'online_user',
+      data: {
         type: 'online',
         id: Math.abs(data[0]),
         mobile: ![6, 7].includes(data[1]),
         timestramp: data[3]
-      };
+      }
     }
   },
-  9: {
-    name: 'online_user',
-    data: (data) => {
-      // приходит когда пользователь становится онлайн
-      // [-user_id, flag, timestramp]
-      // flag: 0 - вышел с сайта, 1 - по таймауту
+  9: (data) => {
+    // приходит когда пользователь становится оффлайн
+    // [-user_id, flag, timestramp]
+    // flag: 0 - вышел с сайта, 1 - по таймауту
 
-      return {
+    return {
+      name: 'online_user',
+      data: {
         type: 'offline',
         id: Math.abs(data[0]),
         timestramp: data[3]
-      };
+      }
     }
   },
-  10: {
-    name: 'remove_peer_flags',
-    data: (data) => {
-      // TODO: диалоги сообществ
-      return data;
+  10: (data) => {
+    // TODO: диалоги сообществ
+
+    return { name: 'remove_peer_flags', data }
+  },
+  11: (data) => {
+    // TODO: диалоги сообществ
+
+    return { name: 'change_peer_flags', data }
+  },
+  12: (data) => {
+    // TODO: диалоги сообществ
+
+    return { name: 'set_peer_flags', data }
+  },
+  13: (data) => {
+    // приходит при удалении диалога (все сообщения до id)
+    // [peer_id, id]
+
+    return {
+      name: 'delete_peer',
+      data: { peer_id: data[0] }
     }
   },
-  11: {
-    name: 'change_peer_flags',
-    data: (data) => {
-      // TODO: диалоги сообществ
-      return data;
-    }
+  51: (data) => ({}), // абсолютно не нужное событие
+  52: (data) => {
+    // приходит при изменении данных чата (см разд. 3.2 доки)
+    // [type_id, peer_id, info]
+
+    return { name: 'change_peer_info', data }
   },
-  12: {
-    name: 'set_peer_flags',
-    data: (data) => {
-      // TODO: диалоги сообществ
-      return data;
-    }
-  },
-  13: {
-    name: 'delete_peer',
-    data: (data) => {
-      // приходит при удалении диалога (все сообщения до id)
-      // [peer_id, id]
-      return data;
-    }
-  },
-  51: {
-    name: null, // нужная информация передается в 52 эвенте
-    data: (data) => data
-  },
-  52: {
-    name: 'change_peer_info',
-    data: (data) => {
-      // приходит при изменении данных чата (см разд. 3.2 доки)
-      // [type_id, peer_id, info]
-      return data;
-    }
-  },
-  61: {
-    name: 'typing',
-    data: (data) => {
-      // приходит когда юзер пишет вам в лс
-      // [user_id, 1]
-      return {
-        type: 'typing',
+  61: (data) => {
+    // приходит когда юзер пишет вам в лс
+    // [user_id, 1]
+
+    return {
+      name: 'typing',
+      data: {
+        type: 'text',
         peer_id: data[0],
         from_id: data[0]
-      };
+      }
     }
   },
-  62: {
-    name: 'typing',
-    data: (data) => {
-      // приходит когда кто-то пишет в беседе
-      // [user_id, chat_id]
-      return {
-        type: 'typing',
+  62: (data) => {
+    // приходит когда кто-то пишет в беседе
+    // [user_id, chat_id]
+
+    return {
+      name: 'typing',
+      data: {
+        type: 'text',
         peer_id: 2e9 + data[1],
         from_id: data[0]
-      };
+      }
     }
   },
-  64: {
-    name: 'typing',
-    data: (data) => {
-      // приходит когда кто-то записывает голосовое сообщение
-      // [peer_id, [from_id], 1, timestramp]
-      return {
+  64: (data) => {
+    // приходит когда кто-то записывает голосовое сообщение
+    // [peer_id, [from_id], 1, timestramp]
+
+    return {
+      name: 'typing',
+      data: {
         type: 'audio',
         peer_id: data[0],
         from_id: data[1][0]
-      };
+      }
     }
   },
-  80: {
-    name: 'change_counter',
-    data: (data) => {
-      // приходит при увеличении кол-ва сообщений
-      // [count, 0]
-      return data;
-    }
+  80: (data) => {
+    // приходит при изменении кол-ва сообщений
+    // [count, 0]
+
+    return { name: 'change_messages_count', data }
   },
-  114: {
-    name: 'change_push_settings',
-    data: ([data]) => {
-      // приходит при изменении настроек пуш уведомлений у диалога
-       // [{ peer_id, sound, disabled_until }]
-       // sound: работет некорректно, юзайте disabled_until
-       // disabled_until: -1 - выключены; 0 - включены; иначе - timestramp когда их включить
-      return {
+  114: ([data]) => {
+     // приходит при изменении настроек пуш уведомлений у диалога
+     // [{ peer_id, sound, disabled_until }]
+     // sound: работет некорректно, юзайте disabled_until
+     // disabled_until: -1 - выключены; 0 - включены; иначе - timestramp когда их включить
+
+    return {
+      name: 'change_push_settings',
+      data: {
         peer_id: data.peer_id,
-        state: data.disabled_until == 0 ? 1 : 0,
+        state: data.disabled_until == 0,
         timestramp: data.disabled_until > 0 ? data.disabled_until : null
-      };
+      }
     }
   },
-  115: {
-    name: 'user_call_data',
-    data: (data) => {
-      // разные данные для активного звонка
-      return data;
-    }
+  115: (data) => {
+    // разные данные для активного звонка
+
+    return { name: 'user_call_data', data }
   }
 }

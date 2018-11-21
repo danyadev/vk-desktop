@@ -24,7 +24,7 @@
         </div>
         <div v-show="!isTyping" class="conversation_message">
           <div class="conversation_author">{{ authorName }}</div>
-          <div :class="{ conversation_attach: attachment }" v-emoji.push
+          <div :class="{ conversation_attach: isAttachment }" v-emoji.push
                class="conversation_text">{{ message }}</div>
         </div>
         <div class="conversation_message_unread"
@@ -40,12 +40,9 @@
 
   module.exports = {
     props: ['peer', 'msg'],
-    data() {
-      return {
-        isChat: this.peer.type == 'chat',
-        attachment: false
-      }
-    },
+    data: (vm) => ({
+        isChat: vm.peer.type == 'chat'
+    }),
     computed: {
       profiles() {
         return this.$store.state.profiles;
@@ -61,10 +58,8 @@
       },
       online() {
         if(this.peer.owner > 2e9) return '';
-        else if(!this.owner) {
-          this.addProfile(this.peer.owner);
-          return '';
-        } else if(!this.owner.online) return '';
+        else if(!this.owner) return this.getUser(this.peer.owner), '';
+        else if(!this.owner.online) return '';
 
         return this.owner.online_mobile ? 'mobile' : 'desktop';
       },
@@ -74,13 +69,10 @@
       photo() {
         if(this.isChat) return this.peer.photo;
         else if(this.owner) return this.owner.photo_50;
-        else {
-          this.getUser(this.peer.owner);
-          return 'images/conversation_no_photo.png';
-        }
+        else this.getUser(this.peer.owner);
       },
       chatName() {
-        if(this.isChat) return this.peer.title;
+        if(this.isChat) return this.peer.title || '...';
         else if(this.owner && this.owner.photo_50) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         } else {
@@ -112,20 +104,16 @@
       },
       message() {
         if(this.msg.action) {
-          this.attachment = false;
           return this.getServiceMessage(this.msg.action, this.author || { id: this.msg.from });
         } else if(this.msg.fwd_count && !this.msg.text) {
           let count = this.msg.fwd_count,
               word = other.getWordEnding(count, ['сообщение', 'сообщения', 'сообщений']);
 
-          this.attachment = true;
           return `${count} ${word}`;
-        } else {
-          let { msg, attach } = this.getAttachment(this.msg.text, this.msg.attachments[0]);
-
-          this.attachment = attach;
-          return msg;
-        }
+        } else return this.getAttachment(this.msg.text, this.msg.attachments[0]);
+      },
+      isAttachment() {
+        return this.msg.fwd_count && !this.msg.text || !this.msg.action && this.msg.attachments[0];
       },
       typingMsg() {
         let text = [], audio = [], msg = '';
@@ -178,9 +166,7 @@
     },
     methods: {
       getAttachment(message, attachment) {
-        if(!attachment || (message && attachment.type != 'gift')) {
-          return { msg: message, attach: false };
-        }
+        if(!attachment) return message;
 
         let attachments = {
           geo: 'Карта',
@@ -202,10 +188,11 @@
           audio_playlist: 'Плейлист'
         };
 
-        return {
-          msg: attachments[attachment.type] || 'Вложение',
-          attach: true
+        if(!attachments[attachment.type]) {
+          console.error('[messages] Неизвестное вложение:', attachment.type);
         }
+
+        return attachments[attachment.type] || 'Вложение';
       },
       getServiceMessage(action, author) {
         let actID = action.member_id || action.mid,
@@ -243,11 +230,11 @@
           case 'chat_photo_remove':
             return `${name(0)} удалил${w(0, 'и:а')} фотографию беседы`;
           case 'chat_create':
-            return `${name(0)} создал${w(0, 'и:а')} беседу "${action.text}"`;
+            return `${name(0)} создал${w(0, 'и:а')} беседу`;
           case 'chat_title_update':
             return `${name(0)} изменил${w(0, 'и:а')} название беседы на "${action.text}"`;
           case 'chat_invite_user':
-            if(actID == id) return 'Вас пригласили в беседу';
+            if(actID == author.id) return `${name(1)} вернул${w(1, 'ись:ась:ся')} в беседу`;
             else return `${name(1, 1)} пригласили в беседу`;
           case 'chat_kick_user':
             if(actID == author.id) return `${name(0)} покинул${w(0, 'и:а')} беседу`;
@@ -260,6 +247,7 @@
           case 'chat_invite_user_by_link':
             return `${name(0)} присоединил${w(0, 'ись:ась:ся')} к беседе по ссылке`;
           default:
+            console.error('[messages] Неизвестное действие:', action.type);
             return `Неизвестное действие (${action.type})`;
         }
       },
@@ -281,7 +269,6 @@
           });
 
           group.id = -group.id;
-
           this.$store.commit('addProfile', group);
         }
 
