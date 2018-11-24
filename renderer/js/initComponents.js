@@ -27,14 +27,13 @@ let getFiles = (path, files = [], folders = '') => {
   return files;
 }
 
-getFiles('./renderer/components/')
-  .forEach((file) => {
-    let fileType = file.slice(file.lastIndexOf('.') + 1);
-    if(fileType == file || fileType != 'vue') return;
+getFiles('./renderer/components/').forEach((file) => {
+  let fileType = file.slice(file.lastIndexOf('.') + 1);
+  if(fileType == file || fileType != 'vue') return;
 
-    let filename = file.slice(0, -4),
-        name = filename.slice(filename.lastIndexOf('/') + 1),
-        component = require(`./../components/${filename}.vue`);
+  let filename = file.slice(0, -4),
+      name = filename.slice(filename.lastIndexOf('/') + 1),
+      component = require(`./../components/${filename}.vue`);
 
-    Vue.component(name, component);
+  Vue.component(name, component);
 });

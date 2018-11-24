@@ -10,15 +10,14 @@ Object.defineProperty(Array.prototype, 'move', {
 module.exports = {
   timer: (t) => new Promise((r) => setTimeout(r, t)),
   random: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
-  escape: (t) => String(t).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'),
   isObject: (data) => data instanceof Object && !Array.isArray(data),
-  endScroll(callback, num = 0) {
+  endScroll(callback, endDistance = 0) {
     return function(event) {
       let wrap = event.target,
           scrolled = wrap.scrollTop,
           all = wrap.scrollHeight - wrap.offsetHeight;
 
-      if(all - scrolled - num <= 0) callback(this, event);
+      if(all - scrolled - endDistance <= 0) callback(this, event);
     }
   },
   getWordEnding(num, variants) {
@@ -32,7 +31,7 @@ module.exports = {
     return variants[2];
   },
   regexp: {
-    url: /(([a-zа-я]+:\/\/)?([\w\.]+\.[a-zа-я]{2,6}\.?)(\S+)?)/gi,
+    url: /([a-zа-я]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\S+)/gi,
     push: /\[(club|id)(\d+)\|(.+?)\]/gi
   }
 }

@@ -62,7 +62,7 @@ class Users extends Storage {
   }
 
   remove(id) {
-    this.data[id] = undefined;
+    delete this.data[id];
     this.save();
   }
 
@@ -71,9 +71,7 @@ class Users extends Storage {
 
     if(key instanceof Object) {
       this.data[id] = Object.assign({}, this.data[id], key);
-    } else {
-      this.data[id][key] = value;
-    }
+    } else this.data[id][key] = value;
 
     this.save();
   }
@@ -83,7 +81,7 @@ class Settings extends Storage {
   constructor() {
     super('settings');
 
-    this.setData(Object.assign({}, this.defaults, this.get()));
+    this.setData(Object.assign({}, this.defaults, this.data));
   }
 
   get defaults() {

@@ -10,10 +10,10 @@
       <titlebar></titlebar>
       <div class="root">
         <auth v-if="auth"></auth>
-        <div v-else class="content" :class="{ active: activeMenu }" @click="closeMenu">
+        <template v-else>
           <main-menu></main-menu>
           <keep-alive><component :is="section"></component></keep-alive>
-        </div>
+        </template>
       </div>
     </div>
   </body>

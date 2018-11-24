@@ -1,17 +1,33 @@
+.menu_wrap {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  background-color: rgba(0, 0, 0, .5);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.menu_wrap { transition: opacity .4s, visibility .4s }
+
+.menu_wrap.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 .menu {
   position: absolute;
-  top: 0;
   left: -260px;
   width: 250px;
   height: 100%;
   z-index: 3;
   overflow: hidden;
   background-color: white;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+  box-shadow: 4px 0 6px rgba(0, 0, 0, 0.2);
   transition: left .4s;
 }
 
-.content.active .menu { left: 0 }
+.menu_wrap.active .menu { left: 0 }
 
 /* панелька профиля */
 
@@ -20,7 +36,7 @@
   overflow: hidden;
   height: 125px;
   padding: 8px 10px 10px 12px;
-  background-color: rgba(38, 37, 37, 0.5);
+  background-color: rgba(38, 37, 37, .5);
 }
 
 .menu_account_bgc {

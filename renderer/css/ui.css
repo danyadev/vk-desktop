@@ -56,7 +56,10 @@
   user-select: all;
 }
 
-._emoji { background: url('../images/im_emoji.png') no-repeat }
+.old_emoji {
+  display: inline-block;
+  background: url('../images/im_emoji.png') no-repeat;
+}
 
 .verified {
   display: inline-block;
@@ -132,29 +135,6 @@
   animation: spinner .7s infinite linear;
   background-image: url('../images/spinner.png');
   background-size: contain;
-}
-
-.content {
-  width: 100vw;
-  height: 100%;
-}
-
-.content::after {
-  content: '';
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  z-index: 2;
-  opacity: 0;
-  visibility: hidden;
-  background-color: rgba(0, 0, 0, 0.5);
-  transition: opacity .2s, visibility .2s;
-}
-
-.content.active::after {
-  opacity: 1;
-  visibility: visible;
 }
 
 /* header */

@@ -86,7 +86,7 @@ let getEmojiHTML = (code, symbol) => {
   if(cssEmoji[code] != undefined) {
     let pos = -cssEmoji[code][0] * 17;
 
-    return `<img src="images/blank.gif" alt="${symbol}" class="emoji _emoji" style="background-position: 0px ${pos}px">`;
+    return `<span alt="${symbol}" class="emoji old_emoji" style="background-position: 0px ${pos}px"></span>`;
   } else {
     return `<img class="emoji" alt="${symbol}" src="https://vk.com/images/emoji/${code}.png">`;
   }

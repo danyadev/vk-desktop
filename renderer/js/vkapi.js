@@ -5,8 +5,7 @@ const request = require('./request');
 
 const API_VERSION = '5.92';
 
-let methods = [],
-    openedCaptcha = false;
+let methods = [], isCaptcha = false;
 
 let addToQueue = (method, params) => {
   return new Promise((resolve) => {
@@ -15,8 +14,8 @@ let addToQueue = (method, params) => {
 }
 
 setInterval(() => {
-  if(methods[0] && !openedCaptcha) {
-    method(methods[0].method, methods[0].params, methods[0].resolve);
+  if(methods[0] && !isCaptcha) {
+    method(...Object.values(methods[0]));
     methods.splice(0, 1);
   }
 }, 1000 / 3);
@@ -43,15 +42,15 @@ let method = (name, params, _resolve) => {
       delete params.log;
       params.$method = name;
 
-      console.log(Object.assign({}, data.response, { $options: params }));
+      console.log('[vkapi]', Object.assign({}, data.response, { $options: params }));
     }
 
-    // TODO: add captcha
+    // TODO: поддержка капчи
   });
 }
 
 addToQueue.upload = (url) => {
-  // TODO: добавить загрузку
+  // TODO: добавить загрузку различных документов
 }
 
 module.exports = addToQueue;

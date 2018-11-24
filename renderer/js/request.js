@@ -31,7 +31,7 @@ let plainRequest = (url, options) => {
 
     req.on('error', reject);
 
-    if(options.data instanceof Object && typeof options.data.pipe == 'function') {
+    if(other.isObject(options.data) && options.data.pipe instanceof Function) {
       options.data.pipe(req);
     } else req.end(options.data || '');
   });

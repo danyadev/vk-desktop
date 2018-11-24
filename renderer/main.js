@@ -10,7 +10,7 @@ const { getCurrentWindow, Menu, BrowserWindow } = require('electron').remote;
 const Vue = require('./js/lib/Vue');
 const Vuex = require('./js/lib/Vuex');
 const other = require('./js/other');
-const { random, endScroll, escape } = other;
+const { random, endScroll } = other;
 const contextMenu = require('./js/contextMenu');
 const emoji = require('./js/emoji');
 const { users, settings } = require('./js/Storage');
@@ -20,6 +20,7 @@ const vkapi = require('./js/vkapi');
 Vue.config.devtools = true;
 require('./js/initComponents');
 
+// превращает emoji символы в картинку как в ВК
 Vue.directive('emoji', (el, { modifiers }, vnode) => {
   let html = vnode.children[0].text;
 
@@ -35,14 +36,7 @@ let app = new Vue({
   store: require('./js/VueStore.js'),
   data: {
     auth: !settings.get('activeID'),
-    blocked: false,
-    section: settings.get('section'),
-    activeMenu: false
-  },
-  methods: {
-    closeMenu(e) {
-      if(!e || e.target == qs('.content')) this.activeMenu = false;
-    }
+    section: settings.get('section')
   }
 });
 
