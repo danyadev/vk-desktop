@@ -56,7 +56,7 @@
 
 .conversation_photo.no_photo {
   display: inline-block;
-  background-image: url('../images/conversation_no_photo.png');
+  background-image: url('../images/im_chat_photo.png');
   background-size: 50px;
   width: 50px;
   height: 50px;
@@ -103,7 +103,10 @@
   font-size: 13px;
 }
 
-.conversation_message_wrap { display: flex }
+.conversation_message_wrap {
+  display: flex;
+  height: 20px;
+}
 
 .conversation_author:not(:empty) {
   display: inline;
@@ -183,9 +186,3 @@
   height: 100%;
   flex-grow: 1;
 }
-
-/* @media screen and (max-width: 500px) {
-  .conversations_wrap {
-    width: 200px;
-  }
-} */

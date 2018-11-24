@@ -29,7 +29,7 @@
         </div>
         <div class="conversation_message_unread"
              :class="{ outread: msg.out, muted: peer.muted }"
-             >{{ peer.unread || '' }}</div>
+             >{{ msg.out ? '' : peer.unread || '' }}</div>
       </div>
     </div>
   </div>
@@ -39,11 +39,18 @@
   let loadingProfiles = [];
 
   module.exports = {
-    props: ['peer', 'msg'],
+    props: ['peer'],
     data: (vm) => ({
         isChat: vm.peer.type == 'chat'
     }),
     computed: {
+      msg() {
+        let state = this.$store.state;
+
+        return state.dialogs[this.peer.id].slice(0).reverse().find((msg) => {
+          return !msg.deleted;
+        });
+      },
       profiles() {
         return this.$store.state.profiles;
       },
@@ -113,7 +120,7 @@
         } else return this.getAttachment(this.msg.text, this.msg.attachments[0]);
       },
       isAttachment() {
-        return this.msg.fwd_count && !this.msg.text || !this.msg.action && this.msg.attachments[0];
+        return !this.msg.text && (this.msg.fwd_count || !this.msg.action && this.msg.attachments[0]);
       },
       typingMsg() {
         let text = [], audio = [], msg = '';
@@ -166,7 +173,7 @@
     },
     methods: {
       getAttachment(message, attachment) {
-        if(!attachment) return message;
+        if(!attachment || message) return message;
 
         let attachments = {
           geo: 'Карта',
@@ -176,6 +183,7 @@
           wall: 'Запись на стене',
           call: 'Звонок',
           gift: 'Подарок',
+          story: 'История',
           photo: 'Фотография',
           audio: 'Аудиозапись',
           video: 'Видеозапись',
@@ -187,6 +195,10 @@
           money_request: 'Запрос денег',
           audio_playlist: 'Плейлист'
         };
+
+        if(attachment.type == 'link') {
+          if(attachment.link.url.match('https://m.vk.com/story')) attachment.type = 'story';
+        }
 
         if(!attachments[attachment.type]) {
           console.error('[messages] Неизвестное вложение:', attachment.type);

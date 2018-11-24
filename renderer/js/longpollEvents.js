@@ -10,7 +10,8 @@ let getFlags = (mask) => {
   for(let flag in flags) if(flags[flag] & mask) flagsInMask.push(flag);
 
   return {
-    is: (name) => flagsInMask.includes(name)
+    is: (name) => flagsInMask.includes(name),
+    list: flagsInMask
   };
 }
 
@@ -84,24 +85,36 @@ let getMessage = (data, type) => {
   return res;
 }
 
-/* Когда приходят 2 и 3 события:
-1. удаление/восстановление сообщения (128)
-2. пометка/отмена пометки сообщения как спам (64/32832)
-3. при удалении сообщения для всех (только 2) (131200)
-*/
-
 module.exports = {
   2: (data) => {
-    // когда приходит: написано сверху
+    // когда приходит:
+    // 1) удаление сообщения (128)
+    // 2) пометка как спам (64)
+    // 3) удаление для всех (131200)
     // [id, flags, peer_id]
 
-    return { name: 'set_flags', data }
+    let flags = getFlags(data[1]);
+
+    return {
+      name: 'delete_message',
+      data: {
+        id: data[0],
+        all: flags.is('deleted_all'),
+        peer_id: data[2]
+      }
+    }
   },
   3: (data) => {
-    // когда приходит: написано сверху
+    // когда приходит:
+    // 1) восстановление удаленного сообщения (128)
+    // 2) отмена пометки сообщения как спам (64)
     // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
 
-    return { name: 'remove_flags', data }
+    let flags = getFlags(data[1]);
+
+    if(flags.is('spam') || flags.is('deleted')) {
+      return { name: 'restore_message', data: getMessage(data, 'restore') }
+    } else return { name: null, data: {} }
   },
   4: (data) => {
     // приходит при написании нового сообщения

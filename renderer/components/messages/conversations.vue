@@ -1,58 +1,44 @@
 <template>
-  <div class="conversations_wrap" @scroll="onScroll" :class="{ loading }">
-    <conversation v-for="data in list" :key="data.peer.id"
-                  :peer="data.peer" :msg="data.msg">
+  <div class="conversations_wrap" :class="{ loading }" @scroll="onScroll">
+    <conversation v-for="peer in peers" :key="peer.id" :peer="peer"></conversation>
   </div>
 </template>
 
 <script>
+  const { parseConversation, parseMessage, concatProfiles } = require('./methods');
+
   module.exports = {
     data: () => ({
-      list: [],
+      peers: [],
       loading: true,
       loaded: false,
       offset: 0
     }),
     methods: {
       async load() {
-        let { profiles = [], groups = [], items } = await vkapi('messages.getConversations', {
-              extended: true,
-              fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online',
-              offset: this.offset
-            }),
-            conversations = [];
+        let { items, profiles = [], groups = [] } = await vkapi('messages.getConversations', {
+          extended: true,
+          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online',
+          offset: this.offset
+        });
 
-        profiles.concat(groups.reduce((list, group) => {
-          group.id = -group.id;
-          list.push(group);
-          return list;
-        }, [])).forEach((profile) => {
+        concatProfiles(profiles, groups).forEach((profile) => {
           this.$store.commit('addProfile', profile);
         });
 
         for(let item of items) {
           let { conversation, last_message } = item;
 
-          if(last_message.geo) last_message.attachments.push({ type: 'geo' });
-
-          conversations.push({
-            peer: this.parseConversation(conversation),
-            msg: {
-              id: last_message.id,
-              text: last_message.text,
-              out: conversation.out_read != last_message.id && last_message.out,
-              from: last_message.from_id,
-              date: last_message.date,
-              action: last_message.action,
-              fwd_count: last_message.fwd_messages.length,
-              attachments: last_message.attachments
-            }
+          this.$store.commit('addMessage', {
+            peer_id: conversation.peer.id,
+            msg: parseMessage(last_message, conversation)
           });
+
+          this.peers.push(parseConversation(conversation));
         }
 
         this.offset += items.length;
         this.loading = false;
-        this.list = this.list.concat(conversations);
 
         if(items.length < 20) this.loaded = true;
 
@@ -65,68 +51,36 @@
           vm.loading = true;
         }
       }, 100),
-      parseConversation(conversation) {
-        let isChat = conversation.peer.type == 'chat',
-            isChannel = isChat && conversation.chat_settings.is_group_channel,
-            chatPhoto, chatTitle;
-
-        if(isChat) {
-          let photos = conversation.chat_settings.photo;
-
-          chatPhoto = photos && photos.photo_50;
-          chatTitle = conversation.chat_settings.title;
-        }
-
-        return {
-          id: conversation.peer.id,
-          type: conversation.peer.type,
-          channel: isChannel,
-          owner: isChannel ? conversation.chat_settings.owner_id : conversation.peer.id,
-          muted: !!conversation.push_settings, // TODO обработка disabled_until
-          unread: conversation.unread_count || 0,
-          photo: chatPhoto,
-          title: chatTitle
-        }
-      },
-      async updateConversation(peerID, data) {
+      async updatePeer(peerID, data, optional) {
         if(this.offset == 0) return;
 
-        let conversation = this.list.find((item) => item.peer.id == peerID);
+        let index = this.peers.findIndex((peer) => peer.id == peerID),
+            peer = this.peers[index];
 
-        if(!conversation) {
-          if(typeof data == 'function') data = data();
+        if(data instanceof Function) data = data(peer);
+        if(data instanceof Promise) data = await data;
+
+        if(!peer && !optional) {
           this.offset++;
-          this.list.unshift(Object.assign(data));
+          this.peers.unshift(data);
 
-          let { items: [peer], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
+          let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
             peer_ids: peerID,
             extended: 1,
             fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
           });
 
-          profiles.concat(groups.reduce((list, group) => {
-            group.id = -group.id;
-            list.push(group);
-            return list;
-          }, [])).forEach((profile) => {
+          concatProfiles(profiles, groups).forEach((profile) => {
             this.$store.commit('addProfile', profile);
           });
 
-          this.updateConversation(peerID, {
-            peer: this.parseConversation(peer),
-            msg: data.msg
-          });
-        } else {
-          if(typeof data == 'function') data = data(conversation);
-
-          Vue.set(conversation, 'peer', Object.assign({}, conversation.peer, data.peer));
-          Vue.set(conversation, 'msg', Object.assign({}, conversation.msg, data.msg));
-        }
+          this.updatePeer(peerID, parseConversation(conv));
+        } else Vue.set(this.peers, index, Object.assign({}, peer, data || {}));
       },
-      moveUpConversation(peerID) {
-        let index = this.list.findIndex((item) => item.peer.id == peerID);
+      async moveUpConversation(peerID) {
+        let index = this.peers.findIndex((peer) => peer.id == peerID);
 
-        if(index != -1) this.list.move(index, 0);
+        if(index != -1) this.peers.move(index, 0);
       }
     },
     async mounted() {
@@ -166,27 +120,41 @@
         });
       }
 
-      longpoll.on('new_message', (data) => {
-        this.updateConversation(data.peer.id, (peer) => {
+      longpoll.on('new_message', async (data) => {
+        this.$store.commit('addMessage', {
+          peer_id: data.peer.id,
+          msg: data.msg
+        });
+
+        this.updatePeer(data.peer.id, (oldPeer) => {
           if(data.msg.out) data.peer.unread = 0;
-          else if(peer) {
-            if(peer.force) data.peer.unread = peer.peer.unread;
-            else data.peer.unread = peer.peer.unread + 1;
-          }
+          else if(oldPeer) data.peer.unread = oldPeer.unread + 1;
 
           if(data.msg.action) {
             if(['chat_create', 'chat_title_update'].includes(data.msg.action.type)) {
               data.peer.title = data.msg.action.text;
-            } else if(data.msg.action.type == 'chat_photo_update') {
+            }
+
+            let inviteUser = data.msg.action.type == 'chat_invite_user',
+                isReturnToChat = inviteUser && data.msg.action.mid == users.get().id;
+
+            if(data.msg.action.type == 'chat_photo_update' || isReturnToChat) {
               vkapi('messages.getConversationsById', {
                 peer_ids: data.peer.id
               }).then(({ items: [peer] }) => {
-                if(peer.chat_settings.photo) {
-                  this.updateConversation(data.peer.id,  {
-                    peer: { photo: peer.chat_settings.photo.photo_50 }
-                  });
-                }
+                let data = { title: peer.chat_settings.title };
+
+                if(peer.chat_settings.photo) data.photo = peer.chat_settings.photo.photo_50;
+                else data.photo = null;
+
+                this.updatePeer(peer.peer.id,  data);
               });
+            }
+
+            if(data.msg.action.type == 'chat_kick_user') {
+              if(data.msg.action.mid == users.get().id) {
+                data.peer.photo = null;
+              }
             }
           }
 
@@ -198,26 +166,31 @@
       });
 
       longpoll.on('edit_message', (data) => {
-        this.updateConversation(data.peer.id, data);
+        this.updatePeer(data.peer.id, data.peer, true);
         checkTyping(data);
+
+        this.$store.commit('editMessage', {
+          peer_id: data.peer.id,
+          msg: data.msg
+        });
       });
 
       longpoll.on('readed_messages', (data) => {
-        this.updateConversation(data.peer_id, {
-          msg: { out: data.count != 0 }
+        this.$store.commit('editMessage', {
+          peer_id: data.peer_id,
+          msg: {
+            id: data.id,
+            out: data.count != 0
+          }
         });
       });
 
       longpoll.on('read_messages', (data) => {
-        this.updateConversation(data.peer_id, {
-          peer: { unread: data.count }
-        });
+        this.updatePeer(data.peer_id, { unread: data.count }, true);
       });
 
       longpoll.on('change_push_settings', (data) => {
-        this.updateConversation(data.peer_id, {
-          peer: { muted: data.state }
-        });
+        this.updatePeer(data.peer_id, { muted: data.state }, true);
       });
 
       longpoll.on('typing', (data) => {
@@ -239,9 +212,8 @@
       });
 
       longpoll.on('delete_peer', (data) => {
-        let index = this.list.findIndex((item) => item.peer.id == data.peer_id);
-
-        if(index != -1) Vue.delete(this.list, index);
+        let index = this.peers.findIndex((peer) => peer.id == data.peer_id);
+        if(index != -1) Vue.delete(this.peers, index);
       });
     }
   }

@@ -2,7 +2,7 @@
   <div class="messages_container">
     <div class="conversations_container">
       <div class="header">
-        <open-menu></open-menu>
+        <menu-button></menu-button>
         <div class="header_name">Сообщения</div>
         <!-- кнопка поиска и три точки (доп.инструменты) -->
       </div>
@@ -18,9 +18,3 @@
     </div>
   </div>
 </template>
-
-<script>
-  module.exports = {
-    data: () => ({})
-  }
-</script>
