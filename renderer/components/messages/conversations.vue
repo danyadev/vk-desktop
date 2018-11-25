@@ -77,10 +77,30 @@
           this.updatePeer(peerID, parseConversation(conv));
         } else Vue.set(this.peers, index, Object.assign({}, peer, data || {}));
       },
-      async moveUpConversation(peerID) {
+      async moveConversations(peerID, isDelete) {
         let index = this.peers.findIndex((peer) => peer.id == peerID);
 
-        if(index != -1) this.peers.move(index, 0);
+        if(index != -1) {
+          if(!isDelete) this.peers.move(index, 0);
+          else {
+            let dates = {};
+
+            for(let peer of this.$store.state.dialogs) {
+              let msg = await this.$store.dispatch('getLastMessage', peer.id);
+              dates[peer.id] = msg.date;
+            }
+
+            this.peers.sort((p1, p2) => {
+              return dates[p1.id] < dates[p2.id] ? 1 : -1;
+            });
+
+            let peerIndex = this.peers.findIndex((peer) => peer.id == peerID);
+            if(peerIndex == this.peers.length - 1) {
+              Vue.delete(this.peers, peerIndex);
+              this.offset--;
+            }
+          }
+        }
       }
     },
     async mounted() {
@@ -158,11 +178,11 @@
             }
           }
 
-          return data;
+          return data.peer;
         });
 
         checkTyping(data);
-        this.moveUpConversation(data.peer.id);
+        this.moveConversations(data.peer.id);
       });
 
       longpoll.on('edit_message', (data) => {
@@ -173,6 +193,30 @@
           peer_id: data.peer.id,
           msg: data.msg
         });
+      });
+
+      longpoll.on('delete_message', async (data) => {
+        let peerIndex = this.$store.state.dialogs.findIndex((peer) => peer.id == data.peer_id);
+        if(peerIndex == -1) return;
+
+        let items = this.$store.state.dialogs[peerIndex].items,
+            msgIndex = items.findIndex((msg) => msg.id == data.id),
+            lastMessage = await this.$store.dispatch('getLastMessage', data.peer_id);
+
+        if(lastMessage.id != data.id) return;
+
+        let { items: [msg] } = await vkapi('messages.getHistory', {
+          count: 1,
+          peer_id: data.peer_id
+        });
+
+        this.$store.commit('removeMessage', {
+          peer_id: data.peer_id,
+          id: data.id
+        });
+
+        items.push(parseMessage(msg));
+        this.moveConversations(data.peer_id, true);
       });
 
       longpoll.on('readed_messages', (data) => {

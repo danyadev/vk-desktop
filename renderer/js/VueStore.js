@@ -7,14 +7,15 @@ module.exports = new Vuex.Store({
   state: {
     profiles: {},
     typing: {},
-    dialogs: {},
+    dialogs: [],
     menuState: false
   },
   actions: {
-    getLastMessage({ state }, peer) {
-      if(!state.dialogs[peer]) return;
+    getLastMessage({ state }, peerID) {
+      let peer = state.dialogs.find((peer) => peer.id == peerID);
+      if(!peer) return;
 
-      return state.dialogs[peer].slice(0).reverse().find((msg) => {
+      return peer.items.slice().reverse().find((msg) => {
         return !msg.deleted;
       });
     }
@@ -44,25 +45,29 @@ module.exports = new Vuex.Store({
     },
     // ** Сообщения **
     addMessage(state, data) {
-      if(!state.dialogs[data.peer_id]) Vue.set(state.dialogs, data.peer_id, []);
+      let peer = state.dialogs.find((peer) => peer.id == data.peer_id);
 
-      state.dialogs[data.peer_id].push(data.msg);
+      if(!peer) state.dialogs.push({ id: data.peer_id, items: [data.msg] });
+      else peer.items.push(data.msg);
     },
     editMessage(state, data) {
-      if(!state.dialogs[data.peer_id]) return;
+      let peer = state.dialogs.find((peer) => peer.id == data.peer_id);
+      if(!peer) return;
 
-      let index = state.dialogs[data.peer_id].findIndex((msg) => msg.id == data.msg.id),
-          old = state.dialogs[data.peer_id][index];
+      let index = peer.items.findIndex((item) => item.id == data.msg.id),
+          oldMsg = peer.items[index];
 
       if(index != -1) {
-        Vue.set(state.dialogs[data.peer_id], index, Object.assign({}, old, data.msg));
+        Vue.set(peer.items, index, Object.assign({}, oldMsg, data.msg));
       }
     },
     removeMessage(state, data) {
-      if(!state.dialogs[data.peer]) return;
+      let peer = state.dialogs.find((peer) => peer.id == data.peer_id);
+      if(!peer) return;
 
-      let index = state.dialogs[data.peer].findIndex((msg) => msg.id == data.id);
-      if(index != -1) Vue.delete(state.dialogs[data.peer], index);
+      let index = peer.items.findIndex((item) => item.id == data.id);
+
+      if(index != -1) Vue.delete(peer.items, index);
     }
   }
 });

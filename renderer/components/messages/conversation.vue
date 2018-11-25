@@ -45,9 +45,10 @@
     }),
     computed: {
       msg() {
-        let state = this.$store.state;
+        let dialogs = this.$store.state.dialogs,
+            peer = dialogs.find((peer) => peer.id == this.peer.id);
 
-        return state.dialogs[this.peer.id].slice(0).reverse().find((msg) => {
+        return peer.items.slice().reverse().find((msg) => {
           return !msg.deleted;
         });
       },
