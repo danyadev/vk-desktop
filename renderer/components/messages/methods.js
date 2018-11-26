@@ -56,5 +56,16 @@ module.exports = {
     }
 
     return msg;
+  },
+  getLastMessage(peerID, force) {
+    let state = app.$store.state,
+        peer = state.dialogs.find((peer) => peer.id == peerID);
+
+    if(!peer) return;
+    if(force) return peer.items[peer.items.length - 1];
+    
+    return peer.items.slice().reverse().find((msg) => {
+      return !msg.deleted;
+    });
   }
 }

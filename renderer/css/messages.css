@@ -65,19 +65,21 @@
   padding: 10px 10px 10px 0;
 }
 
-.conversation_title { display: flex }
-.conversation_title, .conversation_message_wrap { margin-top: 4px }
+.conversation_title {
+  display: flex;
+  margin-top: 5px;
+}
 
 .conversation_title .verified {
   flex: none;
-  margin: 3px 0 1px 3px;
+  margin: 1px 0 1px 3px;
 }
 
 .conversation_muted {
   flex: none;
   width: 13px;
   height: 13px;
-  margin: 4px 0 0 4px;
+  margin: 3px 0 0 4px;
   background-image: url('../images/muted.svg');
   background-size: 13px;
 }
@@ -88,6 +90,8 @@
   overflow: hidden;
   font-weight: 500;
 }
+
+.conversation_name { margin-top: -2px }
 
 .conversation_name, .conversation_typing_text {
   overflow: hidden;
@@ -104,6 +108,7 @@
 .conversation_message_wrap {
   display: flex;
   height: 20px;
+  margin-top: 4px
 }
 
 .conversation_author:not(:empty) {

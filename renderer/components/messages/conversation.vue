@@ -36,6 +36,8 @@
 </template>
 
 <script>
+  const { getLastMessage } = require('./methods');
+
   let loadingProfiles = [];
 
   module.exports = {
@@ -45,12 +47,7 @@
     }),
     computed: {
       msg() {
-        let dialogs = this.$store.state.dialogs,
-            peer = dialogs.find((peer) => peer.id == this.peer.id);
-
-        return peer.items.slice().reverse().find((msg) => {
-          return !msg.deleted;
-        });
+        return getLastMessage(this.peer.id);
       },
       profiles() {
         return this.$store.state.profiles;
@@ -102,7 +99,7 @@
       },
       authorName() {
         if(this.msg.action || this.peer.channel) return '';
-        else if(this.author.id == users.get().id) return 'Вы:';
+        else if(this.msg.out || this.author.id == users.get().id) return 'Вы:';
         else if(this.author.photo_50) {
           if(this.isChat) return `${this.author.name || this.author.first_name}:`;
         } else {
@@ -144,12 +141,14 @@
         }
 
         if(text.length) {
-          for(let i in text) {
-            let id = text[i];
+          if(text.length > 2) msg += `${name(text[0])} и еще ${text.length-1}`;
+          else {
+            for(let i in text) {
+              let id = text[i];
 
-            if(text.length-1 == i && i != 0) msg += ` и ${name(id)}`;
-            else if(i != 0) msg += `, ${name(id)}`;
-            else msg += `${name(id)}`;
+              if(i == 0) msg += `${name(id)}`;
+              else msg += ` и ${name(id)}`;
+            }
           }
 
           msg += text.length == 1 ? ' печатает' : ' печатают';
@@ -158,12 +157,14 @@
         if(audio.length) {
           if(text.length) msg += ' и ';
 
-          for(let i in audio) {
-            let id = audio[i];
+          if(audio.length > 2) msg += `${name(audio[0])} и еще ${audio.length-1}`;
+          else {
+            for(let i in audio) {
+              let id = audio[i];
 
-            if(audio.length-1 == i && i != 0) msg += ` и ${name(id)}`;
-            else if(i != 0) msg += `, ${name(id)}`;
-            else msg += `${name(id)}`;
+              if(i == 0) msg += `${name(id)}`;
+              else msg += ` и ${name(id)}`;
+            }
           }
 
           msg += (audio.length == 1 ? ' записывает' : ' записывают') + ' аудио';
@@ -265,7 +266,7 @@
         }
       },
       async getUser(id) {
-        if(loadingProfiles.includes(id)) return;
+        if(!id || loadingProfiles.includes(id)) return;
         else loadingProfiles.push(id);
 
         if(id > 0) {

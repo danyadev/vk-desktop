@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  const { parseConversation, parseMessage, concatProfiles } = require('./methods');
+  const { parseConversation, parseMessage, concatProfiles, getLastMessage } = require('./methods');
 
   module.exports = {
     data: () => ({
@@ -77,21 +77,14 @@
           this.updatePeer(peerID, parseConversation(conv));
         } else Vue.set(this.peers, index, Object.assign({}, peer, data || {}));
       },
-      async moveConversations(peerID, isDelete) {
+      moveConversations(peerID, isDelete) {
         let index = this.peers.findIndex((peer) => peer.id == peerID);
 
         if(index != -1) {
           if(!isDelete) this.peers.move(index, 0);
           else {
-            let dates = {};
-
-            for(let peer of this.$store.state.dialogs) {
-              let msg = await this.$store.dispatch('getLastMessage', peer.id);
-              dates[peer.id] = msg.date;
-            }
-
             this.peers.sort((p1, p2) => {
-              return dates[p1.id] < dates[p2.id] ? 1 : -1;
+              return getLastMessage(p1.id).date < getLastMessage(p2.id).date ? 1 : -1;
             });
 
             let peerIndex = this.peers.findIndex((peer) => peer.id == peerID);
@@ -196,27 +189,46 @@
       });
 
       longpoll.on('delete_message', async (data) => {
-        let peerIndex = this.$store.state.dialogs.findIndex((peer) => peer.id == data.peer_id);
-        if(peerIndex == -1) return;
+        let peer = this.$store.state.dialogs.find((peer) => peer.id == data.peer_id);
+        if(!peer) return;
 
-        let items = this.$store.state.dialogs[peerIndex].items,
+        let items = peer.items,
             msgIndex = items.findIndex((msg) => msg.id == data.id),
-            lastMessage = await this.$store.dispatch('getLastMessage', data.peer_id);
+            { msg, unread, outread } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id });
 
-        if(lastMessage.id != data.id) return;
-
-        let { items: [msg] } = await vkapi('messages.getHistory', {
-          count: 1,
-          peer_id: data.peer_id
-        });
-
-        this.$store.commit('removeMessage', {
+        if(msg) this.$store.commit('addMessage', {
           peer_id: data.peer_id,
-          id: data.id
+          msg: parseMessage(msg, { out: outread })
         });
 
-        items.push(parseMessage(msg));
+        this.updatePeer(data.peer_id, { unread }, true);
         this.moveConversations(data.peer_id, true);
+
+        if(data.all) {
+          this.$store.commit('removeMessage', {
+            peer_id: data.peer_id,
+            id: data.id
+          });
+        } else {
+          this.$store.commit('editMessage', {
+            peer_id: data.peer_id,
+            msg: {
+              id: data.id,
+              deleted: true
+            }
+          });
+        }
+      });
+
+      longpoll.on('restore_message', (data) => {
+        this.$store.commit('editMessage', {
+          force: true,
+          peer_id: data.peer.id,
+          msg: {
+            ...data.msg,
+            deleted: false
+          }
+        });
       });
 
       longpoll.on('readed_messages', (data) => {
@@ -234,7 +246,7 @@
       });
 
       longpoll.on('change_push_settings', (data) => {
-        this.updatePeer(data.peer_id, { muted: data.state }, true);
+        this.updatePeer(data.peer_id, { muted: !data.state }, true);
       });
 
       longpoll.on('typing', (data) => {
