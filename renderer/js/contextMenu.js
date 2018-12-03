@@ -1,5 +1,7 @@
 'use strict';
 
+const { Menu } = require('electron').remote;
+
 let templates = [];
 
 document.addEventListener('contextmenu', async (event) => {

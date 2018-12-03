@@ -1,11 +1,11 @@
 'use strict';
 
 const https = require('https');
-const url = require('url');
+const URL = require('url');
 
 let urlToObject = (url) => {
   if(other.isObject(url)) return url;
-  let data = url.parse(url);
+  let data = URL.parse(url);
 
   return {
     host: data.host,

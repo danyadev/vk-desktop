@@ -1,5 +1,5 @@
 <template>
-  <div class="conversation">
+  <div class="conversation" :class="{ active: isActiveChat }" @click="openChat">
     <div class="conversation_photo_wrap" :class="online">
       <img v-if="photo" :src="photo" class="conversation_photo">
       <div v-else class="conversation_photo no_photo"></div>
@@ -36,9 +36,7 @@
 </template>
 
 <script>
-  const { getLastMessage } = require('./methods');
-
-  let loadingProfiles = [];
+  const { getLastMessage, loadProfile } = require('./methods');
 
   module.exports = {
     props: ['peer'],
@@ -46,6 +44,9 @@
         isChat: vm.peer.type == 'chat'
     }),
     computed: {
+      isActiveChat() {
+        return this.$store.state.activeChat == this.peer.id;
+      },
       msg() {
         return getLastMessage(this.peer.id);
       },
@@ -63,7 +64,7 @@
       },
       online() {
         if(this.peer.owner > 2e9) return '';
-        else if(!this.owner) return this.getUser(this.peer.owner), '';
+        else if(!this.owner) return loadProfile(this.peer.owner), '';
         else if(!this.owner.online) return '';
 
         return this.owner.online_mobile ? 'mobile' : 'desktop';
@@ -74,16 +75,13 @@
       photo() {
         if(this.isChat) return this.peer.photo;
         else if(this.owner) return this.owner.photo_50;
-        else this.getUser(this.peer.owner);
+        else loadProfile(this.peer.owner);
       },
       chatName() {
         if(this.isChat) return this.peer.title || '...';
         else if(this.owner && this.owner.photo_50) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
-        } else {
-          this.getUser(this.peer.owner);
-          return '...';
-        }
+        } else return loadProfile(this.peer.owner), '...';
       },
       time() {
         let unixtime = this.msg.date,
@@ -102,10 +100,7 @@
         else if(this.msg.out || this.author.id == users.get().id) return 'Вы:';
         else if(this.author.photo_50) {
           if(this.isChat) return `${this.author.name || this.author.first_name}:`;
-        } else {
-          this.getUser(this.author.id);
-          return '...:';
-        }
+        } else return loadProfile(this.author.id), '...:';
       },
       message() {
         if(this.msg.action) {
@@ -131,10 +126,8 @@
         let name = (id) => {
           let user = this.profiles[id];
 
-          if(!user) {
-            this.getUser(id);
-            return '...';
-          } else {
+          if(!user) return loadProfile(id), '...';
+          else {
             let last_sym = user.last_name ? user.last_name[0] + '.' : '';
             return user.name || `${user.first_name} ${last_sym}`;
           }
@@ -174,6 +167,9 @@
       }
     },
     methods: {
+      openChat() {
+        this.$store.commit('setChat', this.peer.id);
+      },
       getAttachment(message, attachment) {
         if(!attachment || message) return message;
 
@@ -198,7 +194,7 @@
           audio_playlist: 'Плейлист'
         };
 
-        if(attachment.type == 'link') {
+        if(attachment.type == 'link' && attachment.link) {
           if(attachment.link.url.match('https://m.vk.com/story')) attachment.type = 'story';
         }
 
@@ -216,7 +212,7 @@
         let name = (type, acc) => {
           let user = type ? actUser : author;
 
-          if(!user.photo_50) this.getUser(user.id);
+          if(!user.photo_50) loadProfile(user.id);
 
           if(user.id == id) return 'Вы';
           else if(user.name) return user.name;
@@ -229,7 +225,7 @@
         let w = (type, text) => {
           let user = type ? actUser : author, endID;
 
-          if(!user.photo_50) this.getUser(user.id);
+          if(!user.photo_50) loadProfile(user.id);
 
           if(user.id == id) endID = 0;
           else if(user.sex == 1) endID = 1;
@@ -264,30 +260,6 @@
             console.error('[messages] Неизвестное действие:', action.type);
             return `Неизвестное действие (${action.type})`;
         }
-      },
-      async getUser(id) {
-        if(!id || loadingProfiles.includes(id)) return;
-        else loadingProfiles.push(id);
-
-        if(id > 0) {
-          let [ user ] = await vkapi('users.get', {
-            user_id: id,
-            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
-          });
-
-          this.$store.commit('addProfile', user);
-        } else {
-          let [ group ] = await vkapi('groups.getById', {
-            group_ids: Math.abs(id),
-            fields: 'photo_50,verified'
-          });
-
-          group.id = -group.id;
-          this.$store.commit('addProfile', group);
-        }
-
-        let index = loadingProfiles.findIndex((pid) => pid == id);
-        loadingProfiles.splice(index, 1);
       }
     }
   }

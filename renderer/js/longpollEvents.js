@@ -47,6 +47,7 @@ let getAttachments = (data) => {
           };
 
       if(data[`attach${id}_kind`] == 'audiomsg') attach.type = 'audio_message';
+      if(data[`attach${id}_kind`] == 'graffiti') attach.type = 'graffiti';
 
       attachs.push(attach);
     }

@@ -160,7 +160,8 @@
   width: 40px;
   height: 40px;
   cursor: pointer;
-  transition: background-color .3s;
+  opacity: .7;
+  transition: opacity .3s;
 }
 
-.open_menu_btn:hover { background-color: #3f638c }
+.open_menu_btn:hover { opacity: 1 }

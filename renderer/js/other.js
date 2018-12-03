@@ -30,6 +30,17 @@ module.exports = {
 
     return variants[2];
   },
+  getTextWithEmoji(nodes) {
+    let text = '';
+
+    for(let node of nodes || []) {
+      if(node.nodeName == 'IMG') text += node.alt;
+      else if(node.nodeName == 'BR') text += '<br>';
+      else text += node.data || node.innerText || '';
+    }
+
+    return text;
+  },
   regexp: {
     url: /([a-zа-я]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\S+)/gi,
     push: /\[(club|id)(\d+)\|(.+?)\]/gi

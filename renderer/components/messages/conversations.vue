@@ -1,6 +1,12 @@
 <template>
-  <div class="conversations_wrap" :class="{ loading }" @scroll="onScroll">
-    <conversation v-for="peer in peers" :key="peer.id" :peer="peer"></conversation>
+  <div class="conversations_container">
+    <div class="header">
+      <menu-button></menu-button>
+      <div class="header_name">Сообщения</div>
+    </div>
+    <div class="conversations_wrap" :class="{ loading }" @scroll="onScroll">
+      <conversation v-for="peer in peers" :key="peer.id" :peer="peer"></conversation>
+    </div>
   </div>
 </template>
 
@@ -9,22 +15,23 @@
 
   module.exports = {
     data: () => ({
-      peers: [],
       loading: true,
-      loaded: false,
-      offset: 0
+      loaded: false
     }),
+    computed: {
+      peers() {
+        return this.$store.state.peers;
+      }
+    },
     methods: {
       async load() {
         let { items, profiles = [], groups = [] } = await vkapi('messages.getConversations', {
           extended: true,
           fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online',
-          offset: this.offset
+          offset: this.peers.length
         });
 
-        concatProfiles(profiles, groups).forEach((profile) => {
-          this.$store.commit('addProfile', profile);
-        });
+        this.$store.commit('addProfiles', concatProfiles(profiles, groups));
 
         for(let item of items) {
           let { conversation, last_message } = item;
@@ -37,7 +44,6 @@
           this.peers.push(parseConversation(conversation));
         }
 
-        this.offset += items.length;
         this.loading = false;
 
         if(items.length < 20) this.loaded = true;
@@ -52,7 +58,7 @@
         }
       }, 100),
       async updatePeer(peerID, data, optional) {
-        if(this.offset == 0) return;
+        if(this.peers.length == 0) return;
 
         let index = this.peers.findIndex((peer) => peer.id == peerID),
             peer = this.peers[index];
@@ -61,7 +67,6 @@
         if(data instanceof Promise) data = await data;
 
         if(!peer && !optional) {
-          this.offset++;
           this.peers.unshift(data);
 
           let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
@@ -70,9 +75,7 @@
             fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
           });
 
-          concatProfiles(profiles, groups).forEach((profile) => {
-            this.$store.commit('addProfile', profile);
-          });
+          this.$store.commit('addProfiles', concatProfiles(profiles, groups));
 
           this.updatePeer(peerID, parseConversation(conv));
         } else Vue.set(this.peers, index, Object.assign({}, peer, data || {}));
@@ -88,10 +91,7 @@
             });
 
             let peerIndex = this.peers.findIndex((peer) => peer.id == peerID);
-            if(peerIndex == this.peers.length - 1) {
-              Vue.delete(this.peers, peerIndex);
-              this.offset--;
-            }
+            if(peerIndex == this.peers.length - 1) Vue.delete(this.peers, peerIndex);
           }
         }
       }
@@ -201,9 +201,6 @@
           msg: parseMessage(msg, { out: outread })
         });
 
-        this.updatePeer(data.peer_id, { unread }, true);
-        this.moveConversations(data.peer_id, true);
-
         if(data.all) {
           this.$store.commit('removeMessage', {
             peer_id: data.peer_id,
@@ -218,6 +215,9 @@
             }
           });
         }
+
+        this.updatePeer(data.peer_id, { unread }, true);
+        this.moveConversations(data.peer_id, true);
       });
 
       longpoll.on('restore_message', (data) => {

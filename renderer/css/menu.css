@@ -3,31 +3,31 @@
   width: 100%;
   height: 100%;
   z-index: 5;
-  background-color: rgba(0, 0, 0, .5);
-  opacity: 0;
+  background-color: rgba(0, 0, 0, 0);
   visibility: hidden;
 }
 
-.menu_wrap { transition: opacity .4s, visibility .4s }
+.menu_wrap { transition: background-color .15s, visibility .15s }
 
 .menu_wrap.active {
-  opacity: 1;
+  background-color: rgba(0, 0, 0, .5);
   visibility: visible;
 }
 
 .menu {
   position: absolute;
-  left: -260px;
+  transform: translate(-100%);
   width: 250px;
   height: 100%;
   z-index: 3;
   overflow: hidden;
   background-color: white;
   box-shadow: 4px 0 6px rgba(0, 0, 0, 0.2);
-  transition: left .4s;
 }
 
-.menu_wrap.active .menu { left: 0 }
+.menu { transition: transform .35s }
+
+.menu_wrap.active .menu { transform: translateZ(0) }
 
 /* панелька профиля */
 
@@ -47,7 +47,7 @@
   right: -5px;
   z-index: -1;
   object-fit: cover;
-  filter: blur(4px);
+  filter: blur(3px);
 }
 
 .menu_multiacc {

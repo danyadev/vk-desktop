@@ -1,5 +1,49 @@
 'use strict';
 
+let loadingProfiles = [],
+    currentLoadUsers = [];
+
+async function getProfiles() {
+  let ids = loadingProfiles.slice().splice(0, 500); // лимит в 500 юзеров за запрос
+  // ну быстрее же чем сравнение обоих массивов...
+  if(String(ids) == String(currentLoadUsers)) return;
+  currentLoadUsers = ids;
+
+  let [groupIDs, userIDs] = ids.reduce((data, id) => {
+    if(id < 0) data[0].push(id);
+    else data[1].push(id);
+
+    return data;
+  }, [[], []]);
+
+  if(userIDs.length) {
+    let users = await vkapi('users.get', {
+      user_ids: userIDs,
+      fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
+    });
+
+    app.$store.commit('addProfiles', users);
+  }
+
+  if(groupIDs.length) {
+    let groups = await vkapi('groups.getById', {
+      group_ids: groupIDs,
+      fields: 'photo_50,verified'
+    });
+
+    groups.map((group) => {
+      group.id = -group.id;
+      return group;
+    });
+
+    app.$store.commit('addProfiles', groups);
+  }
+
+  loadingProfiles.splice(0, 500);
+}
+
+setInterval(getProfiles, 334);
+
 module.exports = {
   concatProfiles(users = [], groups = []) {
     groups = groups.reduce((list, group) => {
@@ -41,7 +85,7 @@ module.exports = {
 
     let msg = {
       id: message.id,
-      text: message.text,
+      text: message.text.replace(/\n/g, '<br>'),
       from: message.from_id,
       date: message.date,
       action: message.action,
@@ -63,9 +107,13 @@ module.exports = {
 
     if(!peer) return;
     if(force) return peer.items[peer.items.length - 1];
-    
+
     return peer.items.slice().reverse().find((msg) => {
       return !msg.deleted;
     });
+  },
+  loadProfile(id) {
+    if(!id || loadingProfiles.includes(id) || id > 2e9) return;
+    else loadingProfiles.push(id);
   }
 }

@@ -28,6 +28,7 @@ img {
 }
 
 ::-webkit-scrollbar { display: none }
+:focus { outline: none }
 
 body {
   font-family: 'Segoe UI';

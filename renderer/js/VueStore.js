@@ -11,16 +11,18 @@ let getNewIndex = (arr, num) => {
     }
   }
 
-  return num >= 0 ? arr.length - 1 : 0;
+  return arr.length - 1;
 }
 
 module.exports = new Vuex.Store({
   strict: true,
   state: {
+    menuState: false,
+    activeChat: null,
     profiles: {},
-    typing: {},
+    peers: [],
     dialogs: [],
-    menuState: false
+    typing: {}
   },
   mutations: {
     // ** Меню **
@@ -28,8 +30,8 @@ module.exports = new Vuex.Store({
       state.menuState = value;
     },
     // ** Профили **
-    addProfile(state, user) {
-      Vue.set(state.profiles, user.id, user);
+    addProfiles(state, users) {
+      for(let user of users) Vue.set(state.profiles, user.id, user);
     },
     updateProfile(state, user) {
       let old = state.profiles[user.id] || {};
@@ -78,6 +80,10 @@ module.exports = new Vuex.Store({
       let index = peer.items.findIndex((item) => item.id == data.id);
 
       if(index != -1) Vue.delete(peer.items, index);
+    },
+    // ** Диалог **
+    setChat(state, id) {
+      state.activeChat = id;
     }
   }
 });
