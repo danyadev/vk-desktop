@@ -1,240 +1,83 @@
 'use strict';
 
-let inArray = (el, arr) => arr.includes(el);
+const emojiRegex = /(?:\uD83C\uDFF4)(?:(?:\uDB40\uDC67)(?:\uDB40\uDC62)(?:(?:\uDB40\uDC65)(?:\uDB40\uDC6E)(?:\uDB40\uDC67)|(?:\uDB40\uDC77)(?:\uDB40\uDC6C)(?:\uDB40\uDC73)|(?:\uDB40\uDC73)(?:\uDB40\uDC63)(?:\uDB40\uDC74))(?:\uDB40\uDC7F)|\u200D\u2620\uFE0F?)|(?:\uD83D\uDC69)\u200D(?:\uD83D\uDC69)\u200D(?:(?:\uD83D\uDC66)\u200D(?:\uD83D\uDC66)|(?:\uD83D\uDC67)\u200D(?:\uD83D[\uDC66\uDC67]))|(?:\uD83D\uDC68)(?:\u200D(?:\u2764\uFE0F?\u200D(?:(?:\uD83D\uDC8B)\u200D)?(?:\uD83D\uDC68)|(?:\uD83D[\uDC68\uDC69])\u200D(?:(?:\uD83D\uDC66)\u200D(?:\uD83D\uDC66)|(?:\uD83D\uDC67)\u200D(?:\uD83D[\uDC66\uDC67]))|(?:\uD83D\uDC66)\u200D(?:\uD83D\uDC66)|(?:\uD83D\uDC67)\u200D(?:\uD83D[\uDC66\uDC67])|(?:\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDB0-\uDDB3]))|(?:\uD83C[\uDFFB-\uDFFF])\u200D(?:\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDB0-\uDDB3]))|(?:\uD83D\uDC69)\u200D(?:\u2764\uFE0F?\u200D(?:(?:\uD83D\uDC8B)\u200D(?:\uD83D[\uDC68\uDC69])|(?:\uD83D[\uDC68\uDC69]))|(?:\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDB0-\uDDB3]))|(?:\uD83D\uDC69)\u200D(?:\uD83D\uDC66)\u200D(?:\uD83D\uDC66)|(?:(?:\uD83D\uDC41)\uFE0F?\u200D(?:\uD83D\uDDE8)|(?:\uD83D\uDC69)(?:\uD83C[\uDFFB-\uDFFF])\u200D[\u2695\u2696\u2708]|(?:\uD83D\uDC68)(?:(?:\uD83C[\uDFFB-\uDFFF])\u200D[\u2695\u2696\u2708]|\u200D[\u2695\u2696\u2708])|(?:(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)\uFE0F?|(?:\uD83D\uDC6F|\uD83E[\uDD3C\uDDDE\uDDDF]))\u200D[\u2640\u2642]|(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)(?:\uD83C[\uDFFB-\uDFFF])\u200D[\u2640\u2642]|(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDD6-\uDDDD])(?:(?:\uD83C[\uDFFB-\uDFFF])\u200D[\u2640\u2642]|\u200D[\u2640\u2642])|(?:\uD83D\uDC69)\u200D[\u2695\u2696\u2708])\uFE0F?|(?:\uD83D\uDC69)\u200D(?:\uD83D\uDC67)\u200D(?:\uD83D[\uDC66\uDC67])|(?:\uD83D\uDC69)\u200D(?:\uD83D\uDC69)\u200D(?:\uD83D[\uDC66\uDC67])|(?:\uD83D\uDC68)(?:\u200D(?:(?:\uD83D[\uDC68\uDC69])\u200D(?:\uD83D[\uDC66\uDC67])|(?:\uD83D[\uDC66\uDC67]))|(?:\uD83C[\uDFFB-\uDFFF]))|(?:\uD83C\uDFF3)\uFE0F?\u200D(?:\uD83C\uDF08)|(?:\uD83D\uDC69)\u200D(?:\uD83D\uDC67)|(?:\uD83D\uDC69)(?:\uD83C[\uDFFB-\uDFFF])\u200D(?:\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDB0-\uDDB3])|(?:\uD83D\uDC69)\u200D(?:\uD83D\uDC66)|(?:\uD83C\uDDF6)(?:\uD83C\uDDE6)|(?:\uD83C\uDDFD)(?:\uD83C\uDDF0)|(?:\uD83C\uDDF4)(?:\uD83C\uDDF2)|(?:\uD83D\uDC69)(?:\uD83C[\uDFFB-\uDFFF])|(?:\uD83C\uDDED)(?:\uD83C[\uDDF0\uDDF2\uDDF3\uDDF7\uDDF9\uDDFA])|(?:\uD83C\uDDEC)(?:\uD83C[\uDDE6\uDDE7\uDDE9-\uDDEE\uDDF1-\uDDF3\uDDF5-\uDDFA\uDDFC\uDDFE])|(?:\uD83C\uDDEA)(?:\uD83C[\uDDE6\uDDE8\uDDEA\uDDEC\uDDED\uDDF7-\uDDFA])|(?:\uD83C\uDDE8)(?:\uD83C[\uDDE6\uDDE8\uDDE9\uDDEB-\uDDEE\uDDF0-\uDDF5\uDDF7\uDDFA-\uDDFF])|(?:\uD83C\uDDF2)(?:\uD83C[\uDDE6\uDDE8-\uDDED\uDDF0-\uDDFF])|(?:\uD83C\uDDF3)(?:\uD83C[\uDDE6\uDDE8\uDDEA-\uDDEC\uDDEE\uDDF1\uDDF4\uDDF5\uDDF7\uDDFA\uDDFF])|(?:\uD83C\uDDFC)(?:\uD83C[\uDDEB\uDDF8])|(?:\uD83C\uDDFA)(?:\uD83C[\uDDE6\uDDEC\uDDF2\uDDF3\uDDF8\uDDFE\uDDFF])|(?:\uD83C\uDDF0)(?:\uD83C[\uDDEA\uDDEC-\uDDEE\uDDF2\uDDF3\uDDF5\uDDF7\uDDFC\uDDFE\uDDFF])|(?:\uD83C\uDDEF)(?:\uD83C[\uDDEA\uDDF2\uDDF4\uDDF5])|(?:\uD83C\uDDF8)(?:\uD83C[\uDDE6-\uDDEA\uDDEC-\uDDF4\uDDF7-\uDDF9\uDDFB\uDDFD-\uDDFF])|(?:\uD83C\uDDEE)(?:\uD83C[\uDDE8-\uDDEA\uDDF1-\uDDF4\uDDF6-\uDDF9])|(?:\uD83C\uDDFF)(?:\uD83C[\uDDE6\uDDF2\uDDFC])|(?:\uD83C\uDDEB)(?:\uD83C[\uDDEE-\uDDF0\uDDF2\uDDF4\uDDF7])|(?:\uD83C\uDDF5)(?:\uD83C[\uDDE6\uDDEA-\uDDED\uDDF0-\uDDF3\uDDF7-\uDDF9\uDDFC\uDDFE])|(?:\uD83C\uDDE9)(?:\uD83C[\uDDEA\uDDEC\uDDEF\uDDF0\uDDF2\uDDF4\uDDFF])|(?:\uD83C\uDDF9)(?:\uD83C[\uDDE6\uDDE8\uDDE9\uDDEB-\uDDED\uDDEF-\uDDF4\uDDF7\uDDF9\uDDFB\uDDFC\uDDFF])|(?:\uD83C\uDDE7)(?:\uD83C[\uDDE6\uDDE7\uDDE9-\uDDEF\uDDF1-\uDDF4\uDDF6-\uDDF9\uDDFB\uDDFC\uDDFE\uDDFF])|[#\*0-9]\uFE0F?\u20E3|(?:\uD83C\uDDF1)(?:\uD83C[\uDDE6-\uDDE8\uDDEE\uDDF0\uDDF7-\uDDFB\uDDFE])|(?:\uD83C\uDDE6)(?:\uD83C[\uDDE8-\uDDEC\uDDEE\uDDF1\uDDF2\uDDF4\uDDF6-\uDDFA\uDDFC\uDDFD\uDDFF])|(?:\uD83C\uDDF7)(?:\uD83C[\uDDEA\uDDF4\uDDF8\uDDFA\uDDFC])|(?:\uD83C\uDDFB)(?:\uD83C[\uDDE6\uDDE8\uDDEA\uDDEC\uDDEE\uDDF3\uDDFA])|(?:\uD83C\uDDFE)(?:\uD83C[\uDDEA\uDDF9])|(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDD6-\uDDDD])(?:\uD83C[\uDFFB-\uDFFF])|(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)(?:\uD83C[\uDFFB-\uDFFF])|(?:[\u261D\u270A-\u270D]|\uD83C[\uDF85\uDFC2\uDFC7]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66\uDC67\uDC70\uDC72\uDC74-\uDC76\uDC78\uDC7C\uDC83\uDC85\uDCAA\uDD74\uDD7A\uDD90\uDD95\uDD96\uDE4C\uDE4F\uDEC0\uDECC]|\uD83E[\uDD18-\uDD1C\uDD1E\uDD1F\uDD30-\uDD36\uDDB5\uDDB6\uDDD1-\uDDD5])(?:\uD83C[\uDFFB-\uDFFF])|(?:[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF93\uDFA0-\uDFCA\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF4\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC3E\uDC40\uDC42-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDD7A\uDD95\uDD96\uDDA4\uDDFB-\uDE4F\uDE80-\uDEC5\uDECC\uDED0-\uDED2\uDEEB\uDEEC\uDEF4-\uDEF9]|\uD83E[\uDD10-\uDD3A\uDD3C-\uDD3E\uDD40-\uDD45\uDD47-\uDD70\uDD73-\uDD76\uDD7A\uDD7C-\uDDA2\uDDB0-\uDDB9\uDDC0-\uDDC2\uDDD0-\uDDFF])|(?:[\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u2714\u2716\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDEE0-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEF9]|\uD83E[\uDD10-\uDD3A\uDD3C-\uDD3E\uDD40-\uDD45\uDD47-\uDD70\uDD73-\uDD76\uDD7A\uDD7C-\uDDA2\uDDB0-\uDDB9\uDDC0-\uDDC2\uDDD0-\uDDFF])\uFE0F?|(?:[\u261D\u26F9\u270A-\u270D]|\uD83C[\uDF85\uDFC2-\uDFC4\uDFC7\uDFCA-\uDFCC]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66-\uDC69\uDC6E\uDC70-\uDC78\uDC7C\uDC81-\uDC83\uDC85-\uDC87\uDCAA\uDD74\uDD75\uDD7A\uDD90\uDD95\uDD96\uDE45-\uDE47\uDE4B-\uDE4F\uDEA3\uDEB4-\uDEB6\uDEC0\uDECC]|\uD83E[\uDD18-\uDD1C\uDD1E\uDD1F\uDD26\uDD30-\uDD39\uDD3D\uDD3E\uDDB5\uDDB6\uDDB8\uDDB9\uDDD1-\uDDDD])/g;
 
-let cssEmoji = {
-      'D83DDE0A': [0,  ':-)'      ], 'D83DDE03': [1,  ':-D'], 'D83DDE09': [2,  ';-)'],
-      '261D'    : [29, ':up:'     ], 'D83DDE1C': [4,  ';-P'], 'D83DDE0B': [5,  ':-p'],
-      'D83DDE0D': [6,  '8-)'      ], 'D83DDE0E': [7,  'B-)'], 'D83DDE12': [8,  ':-('],
-      'D83DDE0F': [9,  ';-]'      ], 'D83DDE14': [10, '3(' ], 'D83DDE1A': [24, ':-*'],
-      'D83DDE2D': [12, ':_('      ], 'D83DDE29': [13, ':(('], 'D83DDE28': [14, ':o' ],
-      'D83DDC4C': [31, ':ok:'     ], 'D83DDE0C': [16, '3-)'], 'D83DDE20': [17, '>(' ],
-      'D83DDE21': [18, '>(('      ], 'D83DDE07': [19, 'O:)'], 'D83DDE10': [15, ':|' ],
-      'D83DDE33': [21, '8|'       ], 'D83DDE32': [22, '8o' ], 'D83DDE37': [23, ':X' ],
-      'D83DDE22': [11, ':\'('     ], 'D83DDE06': [3,  'xD' ], '270C'    : [30, ':v:'],
-      'D83DDC4E': [28, ':dislike:'], 'D83DDE08': [25, '}:)'], '2764'    : [26, '<3' ],
-      'D83DDC4D': [27, ':like:'   ], 'D83DDE30': [20, ';o' ]
-    },
-    emojiJoiners = ['2640', '2642', '200D', '200C'],
-    emojiWithJoiners = [
-      'D83DDC71200D2640FE0F','D83DDC6E200D2640FE0F','D83DDC77200D2640FE0F','D83DDD75200D2640FE0F',
-      'D83DDE47200D2640FE0F','D83DDC81200D2642FE0F','D83DDE45200D2642FE0F','D83DDE46200D2642FE0F',
-      'D83DDE4E200D2642FE0F','D83DDE4D200D2642FE0F','D83DDC86200D2642FE0F','D83DDC87200D2642FE0F',
-      'D83DDEB6200D2640FE0F','D83CDFC3200D2640FE0F','D83CDFCB200D2640FE0F','26F9200D2640FE0F',
-      'D83CDFC4200D2640FE0F','D83CDFCA200D2640FE0F','D83DDEB5200D2640FE0F','D83DDEB4200D2640FE0F',
-      'D83DDC6F200D2642FE0F','D83CDFCC200D2640FE0F','D83DDE4B200D2642FE0F','D83DDC73200D2640FE0F',
-      'D83DDC82200D2640FE0F','D83CDFF3200DD83CDF08FE0F','D83EDD26D83CDFFB200D2642FE0F',
-      'D83EDD37D83CDFFB200D2640FE0F','D83EDD37D83CDFFB200D2642FE0F','D83EDD3DD83CDFFB200D2642FE0F',
-      'D83EDD3DD83CDFFB200D2640FE0F','D83EDD3ED83CDFFB200D2642FE0F','D83EDD3C200D2642FE0F',
-      'D83EDD38D83CDFFB200D2642FE0F','D83EDD37200D2642FE0F','D83EDD37D83CDFFC200D2642FE0F',
-      'D83EDD37D83CDFFD200D2642FE0F','D83EDD37D83CDFFE200D2642FE0F','D83EDD37D83CDFFF200D2642FE0F',
-      'D83EDD26200D2642FE0F','D83EDD26D83CDFFC200D2642FE0F','D83EDD26D83CDFFD200D2642FE0F',
-      'D83EDD26D83CDFFE200D2642FE0F','D83EDD26D83CDFFF200D2642FE0F','D83EDD37200D2640FE0F',
-      'D83EDD37D83CDFFC200D2640FE0F','D83EDD37D83CDFFD200D2640FE0F','D83EDD37D83CDFFE200D2640FE0F',
-      'D83EDD37D83CDFFF200D2640FE0F','D83EDD3D200D2642FE0F','D83EDD3DD83CDFFC200D2642FE0F',
-      'D83EDD3DD83CDFFD200D2642FE0F','D83EDD3DD83CDFFE200D2642FE0F','D83EDD3DD83CDFFF200D2642FE0F',
-      'D83EDD3D200D2640FE0F','D83EDD3DD83CDFFC200D2640FE0F','D83EDD3DD83CDFFD200D2640FE0F',
-      'D83EDD3DD83CDFFE200D2640FE0F','D83EDD3DD83CDFFF200D2640FE0F','D83EDD3E200D2642FE0F',
-      'D83EDD3ED83CDFFC200D2642FE0F','D83EDD3ED83CDFFD200D2642FE0F','D83EDD3ED83CDFFE200D2642FE0F',
-      'D83EDD3ED83CDFFF200D2642FE0F','D83EDD38200D2642FE0F','D83EDD38D83CDFFC200D2642FE0F',
-      'D83EDD38D83CDFFD200D2642FE0F','D83EDD38D83CDFFE200D2642FE0F','D83EDD38D83CDFFF200D2642FE0F',
-      'D83EDD19D83CDFFB','D83EDD19D83CDFFC','D83EDD19D83CDFFD','D83EDD19D83CDFFE','D83EDD19D83CDFFF',
-      'D83EDD1BD83CDFFB','D83EDD1BD83CDFFC','D83EDD1BD83CDFFD','D83EDD1BD83CDFFE','D83EDD1BD83CDFFF',
-      'D83EDD1CD83CDFFB','D83EDD1CD83CDFFC','D83EDD1CD83CDFFD','D83EDD1CD83CDFFE','D83EDD1CD83CDFFF',
-      'D83EDD26200D2640FE0F','D83EDD39200D2642FE0F','D83EDD39200D2640FE0F','D83DDC68200DD83DDE92FE0F',
-      'D83DDC69200DD83DDE92FE0F','D83DDC68200DD83CDFA4FE0F','D83DDC69200DD83CDFA4FE0F','D83DDC68200D2695FE0F',
-      'D83DDC69200D2695FE0F','D83DDC68200DD83CDF93FE0F','D83DDC69200DD83CDF93FE0F','D83DDC68200DD83CDFEBFE0F',
-      'D83DDC69200DD83CDFEBFE0F','D83DDC68200D2696FE0F','D83DDC69200D2696FE0F','D83DDC68200DD83CDF3EFE0F',
-      'D83DDC69200DD83CDF3EFE0F','D83DDC68200DD83CDF73FE0F','D83DDC69200DD83CDF73FE0F','D83DDC68200DD83DDD27FE0F',
-      'D83DDC69200DD83DDD27FE0F','D83DDC68200DD83CDFEDFE0F','D83DDC69200DD83CDFEDFE0F','D83DDC68200DD83DDCBCFE0F',
-      'D83DDC69200DD83DDCBCFE0F','D83DDC68200DD83DDD2CFE0F','D83DDC69200DD83DDD2CFE0F','D83DDC68200DD83DDCBBFE0F',
-      'D83DDC69200DD83DDCBBFE0F','D83DDC68200DD83CDFA8FE0F','D83DDC69200DD83CDFA8FE0F','D83DDC68200D2708FE0F',
-      'D83DDC69200D2708FE0F','D83DDC68200DD83DDE80FE0F','D83DDC69200DD83DDE80FE0F'
-    ];
-
-let isEmoji = (text) => {
-  const expression = /((?:[\u203C\u2049\u2122\u2328\u2601\u260E\u261d\u2626\u262A\u2638\u2639\u263a\u267B\u267F\u2702\u2708]|[\u2600\u26C4\u26BE\u2705\u2764]|[\u2194-\u2199\u21AA\u21A9]|[\u231A-\u231B]|[\u23E9-\u23EF]|[\u23F0-\u23F4]|[\u23F8-\u23FA]|[\u24C2]|[\u25AA-\u25AB]|[\u25B6\u25C0]|[\u25FB-\u25FE]|[\u2602-\u2618]|[\u2648-\u2653]|[\u2660-\u2668]|[\u26A0-\u26FA]|[\u2692-\u269C]|[\u262E-\u262F]|[\u2622-\u2623]|[\u2709-\u2764]|[\u2795-\u2797]|[\u27A1]|[\u27BF]|[\u2934-\u2935]|[\u2B05-\u2B07]|[\u2B1B]|[\u2B50\u2B55]|[\u303D]|[\u3297\u3299]|[\uE000-\uF8FF]|[\uD83D\uD83C\uD83E][\uDC00-\uDFFF]|[0-9]\u20E3|[\u0023-\u0039\u203C-\u21AA\u1F3F3]\uFE0F\u20E3|[\u200C\u200D\u2640\u2642\uFE0F])+)/g;
-
-  return (text.match(expression) || [])[0];
-};
-
-let codeToChr = (code) => {
-  let len = Math.round(code.length / 4),
-      chr = '', i = 0;
-
-  while(len--) {
-    chr += String.fromCharCode(parseInt(code.substr(i, 4), 16));
-    i += 4;
-  }
-
-  return chr;
+const EMOJI_PREFIXED_REPLACES = {
+  e29da4:   /(\s|^)([0OО]:\))([\s\.,]|$)/g,
+  f09f9887: /(\s|^)(;-\)+)([\s\.,]|$)/g,
+  f09f9889: /(\s|^)([XХxх]-?D)([\s\.,]|$)/g,
+  f09f9886: /(\s|^)(B-\))([\s\.,]|$)/g,
+  f09f988e: /(\s|^)(3-\))([\s\.,]|$)/g,
+  f09f988c: /(\s|^)(&gt;\()([\s\.,]|$)/g,
+  f09f98a0: /(\s|^)(;[oоOО])([\s\.,]|$)/g,
+  f09f98b0: /(\s|^)(8\|)([\s\.,]|$)/g,
+  f09f98b3: /(\s|^)(8-?[oоOО])([\s\.,]|$)/g,
+  f09f98b2: /(\s|^)(8-\))([\s\.,]|$)/g,
+  f09f988d: /(\s|^)(:[XХ])([\s\.,]|$)/g,
+  f09f98b7: /(\s|^)(:[oоOО])([\s\.,]|$)/g,
+  f09f98a8: /(\s|^)(&lt;3)([\s\.,]|$)/g
 }
 
-let getEmojiHTML = (code, symbol) => {
-  if(code.match(/2640|2642|200D|200C/)) {
-    code = code.replace('FE0F', '') + 'FE0F';
-
-    if(!inArray(code, emojiWithJoiners)) {
-      let smiles = code.replace('FE0F', '').split('/2640|2642|200D|200C/g'),
-          out = '';
-
-      for(let smile of smiles) out += codeToChr(smile);
-      return out;
-    } else if(symbol) symbol = symbol.replace(/\uFE0F/g, '') + codeToChr('FE0F');
-  }
-
-  if(cssEmoji[code] != undefined) {
-    let pos = -cssEmoji[code][0] * 17;
-
-    return `<span alt="${symbol}" class="emoji old_emoji" style="background-position: 0px ${pos}px"></span>`;
-  } else {
-    return `<img class="emoji" alt="${symbol}" src="https://vk.com/images/emoji/${code}.png">`;
-  }
+const EMOJI_REPLACES = {
+  f09f988a: /(:-\))([\s\.,]|$)/g,
+  f09f9883: /(:-D)([\s\.,]|$)/g,
+  f09f989c: /(;-[PР])([\s\.,]|$)/g,
+  f09f988b: /(:-[pр])([\s\.,]|$)/g,
+  f09f9892: /(:-\()([\s\.,]|$)/g,
+  e298ba:   /(:-?\])([\s\.,]|$)/g,
+  f09f988f: /(;-\])([\s\.,]|$)/g,
+  f09f9894: /(3-?\()([\s\.,]|$)/g,
+  f09f98a2: /(:&#039;\()([\s\.,]|$)/g,
+  f09f98ad: /(:_\()([\s\.,]|$)/g,
+  f09f98a9: /(:\(\()([\s\.,]|$)/g,
+  f09f9890: /(:\|)([\s\.,]|$)/g,
+  f09f98a1: /(&gt;\(\()([\s\.,]|$)/g,
+  f09f989a: /(:-\*)([\s\.,]|$)/g,
+  f09f9888: /(\}:\))([\s\.,]|$)/g,
+  f09f918d: /(:like:)([\s\.,]|$)/g,
+  f09f918e: /(:dislike:)([\s\.,]|$)/g,
+  e2989d:   /(:up:)([\s\.,]|$)/g,
+  e29c8c:   /(:v:)([\s\.,]|$)/g,
+  f09f918c: /(:ok:|:ок:)([\s\.,]|$)/g
 }
 
-let toCharCode = (num) => {
-  let r = '';
+function emojiReplace(e) {
+  let symbol = e.split('')
+                .map((e) => e.charCodeAt(0).toString(16))
+                .filter((e) => 'fe0f' != e.toLowerCase())
+                .map((e) => String.fromCodePoint(parseInt(e, 16)))
+                .join(''),
+      hex = encodeURIComponent(symbol).replace(/%/g, '').toLowerCase();
 
-  for(let i=0; i<num.length; i++) {
-    r += num.charCodeAt(i).toString(16).toUpperCase();
-  }
-
-  return r;
+  return HexToImg(hex, e);
 }
 
-let replace = (symbolstr) => {
-  let i = 0,
-      buffer = '',
-      altBuffer = '',
-      num = '',
-      symbols = [],
-      codes = [],
-      collectCodes = true;
+function HexToImg(hex, sym = '') {
+  if(window.devicePixelRatio >= 2) hex += '_2x';
 
-  if(symbolstr.match(/\uFE0F\u20E3/g)) {
-    symbolstr = symbolstr.replace(/\uFE0F/g, '');
-  }
-
-  do {
-    let num = symbolstr.charCodeAt(i++);
-
-    if(!num) {
-      collectCodes = false;
-      continue;
-    }
-
-    let code = num.toString(16).toUpperCase(),
-        symbol = symbolstr.charAt(i - 1);
-
-    if(num == 8419) {
-      let numPrevPos = i - 2,
-          numPrevChar = symbolstr.charAt(numPrevPos);
-
-      codes.push(`003${numPrevChar}20E3`);
-      symbols.push(numPrevChar);
-
-      buffer = '';
-      altBuffer = '';
-
-      continue;
-    }
-
-    buffer += code;
-    altBuffer += symbol;
-
-    if(!symbol.match(/[0-9\uD83D\uD83C\uD83E]/)) {
-      codes.push(buffer);
-      symbols.push(altBuffer);
-
-      buffer = '';
-      altBuffer = '';
-    }
-  } while(collectCodes);
-
-  if(buffer) {
-    codes.push(buffer);
-    symbols.push(altBuffer);
-  }
-
-  let out = '', joiner = false, isFlag = false;
-
-  buffer = '';
-  altBuffer = '';
-
-  for(let i in codes) {
-    let code = codes[i],
-        symbol = symbols[i];
-
-    if(!code || code == 'FE0F') continue;
-
-    if(symbol.match(/\uD83C[\uDFFB-\uDFFF]/)) { // colors
-      buffer += code;
-      altBuffer += symbol;
-
-      continue;
-    }
-
-    if(joiner) {
-      buffer += code;
-      altBuffer += symbol;
-
-      joiner = false;
-
-      continue;
-    }
-
-    if(inArray(code, emojiJoiners)) { // joiners
-      if(buffer) {
-        joiner = true;
-
-        buffer += code;
-        altBuffer += symbol;
-      } else out += symbol;
-
-      isFlag = false;
-
-      continue;
-    }
-
-    if(symbol.match(/\uD83C[\uDDE6-\uDDFF]/)) { // flags
-      if(isFlag) {
-        buffer += code;
-        altBuffer += symbol;
-
-        isFlag = false;
-
-        continue;
-      }
-
-      isFlag = true;
-    } else if(isFlag) isFlag = false;
-
-    if(buffer) {
-      if(isEmoji(altBuffer)) {
-        let tmab = isEmoji(altBuffer),
-            nmab = altBuffer.replace(tmab, ''),
-            bmab = buffer.replace(toCharCode(nmab), '');
-
-        out += nmab + getEmojiHTML(bmab, tmab);
-      } else out += altBuffer;
-    }
-
-    buffer = code;
-    altBuffer = symbol;
-  }
-
-  if(buffer) {
-    if(isEmoji(altBuffer)) {
-      let emoji = isEmoji(altBuffer),
-          code = toCharCode(emoji);
-
-      out += getEmojiHTML(code, emoji);
-    } else out += altBuffer;
-  }
-
-  return out;
+  return `<img class="emoji" src="https://vk.com/emoji/e/${hex}.png" alt="${sym}">`;
 }
 
-replace.isEmoji = isEmoji;
+function emojiToHTML(e = '') {
+  e = e.replace(/&nbsp;/g, ' ').replace(/<br>/g, '\n');
 
-module.exports = replace;
+  for(let o=0; o<2; o++) {
+    Object.keys(EMOJI_PREFIXED_REPLACES).forEach(function(t) {
+      e = e.replace(EMOJI_PREFIXED_REPLACES[t], function(e, i, o, r) {
+        return (i || '') + HexToImg(t) + (r || '');
+      });
+    });
+  }
+
+  Object.keys(EMOJI_REPLACES).forEach(function(t) {
+    e = e.replace(EMOJI_REPLACES[t], function(e, i, o) {
+      return HexToImg(t) + (o || '');
+    });
+  });
+
+  return e.replace(/\n/g, '<br>').replace(/\uFE0F/g, '').replace(emojiRegex, emojiReplace);
+}
+
+emojiToHTML.isEmoji = (text) => emojiRegex.test(text);
+
+module.exports = emojiToHTML;
