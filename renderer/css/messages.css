@@ -305,7 +305,8 @@
 }
 
 .dialog_messages_list .message:first-child {
-  margin-top: auto !important;
+  margin-top: auto;
+  padding-top: 25px;
 }
 
 /* Сообщение */
@@ -337,6 +338,10 @@
 
 .message.from_me .message_content {
 
+}
+
+.message_text {
+  text-align: right;
 }
 
 /* Поле для написания сообщения */

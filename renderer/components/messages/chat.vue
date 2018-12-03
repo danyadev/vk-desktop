@@ -4,7 +4,7 @@
       <template v-if="peer">
         <img class="dialog_back" src="images/im_back.png" @click="closeChat">
         <div class="dialog_name_wrap">
-          <div class="dialog_name">{{ title }}</div>
+          <div class="dialog_name" v-emoji>{{ title }}</div>
           <div class="dialog_online">{{ online }}</div>
         </div>
         <img src="images/actions_button.svg" class="dialog_actions_btn">
@@ -21,8 +21,13 @@
       <div class="dialog_input_wrap">
         <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
         <div class="dialog_input_container">
-          <div class="dialog_input" role="textbox" contenteditable v-emoji.br
-              @keydown.enter="sendMessage" @paste.prevent="onPaste"></div>
+          <div class="dialog_input"
+               role="textbox"
+               contenteditable
+               v-emoji.br
+              @mousedown="onMousedown"
+              @keydown.enter="sendMessage"
+              @paste.prevent="onPaste"></div>
           <div class="dialog_input_placeholder">Введите сообщение...</div>
         </div>
         <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
@@ -104,6 +109,23 @@
       },
       onPaste(event) {
         document.execCommand('insertHTML', false, emoji(clipboard.readText()));
+      },
+      onMousedown(event) {
+        if(event.target.nodeName != 'IMG') return;
+
+        event.target.focus();
+
+        let toRight = event.offsetX <= event.target.width / 2,
+            selection = window.getSelection(),
+            range = document.createRange();
+
+        range.selectNode(event.target);
+        range.collapse(toRight);
+
+        selection = window.getSelection();
+
+        selection.removeAllRanges();
+        selection.addRange(range);
       }
     }
   }
