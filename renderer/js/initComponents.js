@@ -20,9 +20,7 @@ Vue.directive('emoji', (el, { modifiers }, vnode) => {
       .replace(/\n/g, '<br>');
   }
 
-  html = emoji(html);
-
-  if(el.innerHTML != html) el.innerHTML = html;
+  if(!modifiers.no_emoji) el.innerHTML = emoji(html);
 });
 
 let getTagData = (name, text) => {

@@ -124,6 +124,9 @@
         }
 
         let name = (id) => {
+          // если это лс, то просто писать "печатает"
+          if(this.peer.id < 2e9) return '';
+
           let user = this.profiles[id];
 
           if(!user) return loadProfile(id), '...';

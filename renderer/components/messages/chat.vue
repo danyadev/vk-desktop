@@ -28,7 +28,7 @@
           <div class="dialog_input"
                role="textbox"
                contenteditable
-               v-emoji.br
+               v-emoji.br.no_emoji
               @paste.prevent="pasteText"
               @mousedown="setCursorPositionForEmoji"
               @keydown.enter="sendMessage"></div>
@@ -77,10 +77,22 @@
       },
       messages() {
         let dialog = this.$store.state.dialogs.find((dialog) => {
-          return dialog.id == this.id;
-        });
+              return dialog.id == this.id;
+            }),
+            list = dialog ? dialog.items : [],
+            hist = qs('.dialog_messages_list');
 
-        return dialog ? dialog.items : [];
+        if(hist) {
+          let scrollPos = hist.scrollTop + hist.clientHeight + 20,
+              lastMsg = hist.lastChild,
+              scrollHeight = lastMsg.offsetTop + lastMsg.offsetHeight;
+
+          if(scrollPos == scrollHeight) {
+            this.$nextTick().then(() => qs('.message:last-child').scrollIntoView());
+          }
+        }
+
+        return list;
       }
     },
     methods: {
@@ -102,6 +114,9 @@
             message: text,
             random_id: 0
           });
+
+          // В данном случае скроллит к предыдущему сообщению
+          // this.$nextTick().then(() => qs('.message:last-child').scrollIntoView());
         } catch(e) {
           console.error('[chat] send error:', e);
         }

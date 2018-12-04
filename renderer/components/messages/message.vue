@@ -1,9 +1,9 @@
 <template>
  <div class="message" :class="{ from_me: isOwner }">
-   <img v-if="isFirstUserMsg" class="message_photo" :src="photo">
-   <div v-else class="message_photo"></div>
+   <img v-if="showUserData" class="message_photo" :src="photo">
+   <div v-else-if="isPeerChat" class="message_photo"></div>
    <div class="message_content">
-     <div class="message_name">{{ name }}</div>
+     <div class="message_name" v-if="showUserData">{{ name }}</div>
      <div class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
   </div>
  </div>
@@ -15,10 +15,14 @@
   module.exports = {
     props: ['msg', 'peer_id'],
     computed: {
-      isFirstUserMsg() {
-        let dialog = this.$store.state.dialogs.find((dialog) => {
-          return dialog.id == this.peer_id;
-        });
+      isPeerChat() {
+        return this.peer_id > 2e9;
+      },
+      showUserData() {
+        if(!this.isPeerChat) return false;
+        // let dialog = this.$store.state.dialogs.find((dialog) => {
+        //   return dialog.id == this.peer_id;
+        // });
 
         return true;
       },

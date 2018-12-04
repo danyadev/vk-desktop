@@ -41,6 +41,16 @@ module.exports = {
 
     return text;
   },
+  isEqual(a, b) {
+    let i = a.length;
+    if(i != b.length) return false;
+
+    while(i--) {
+      if(a[i] != b[i]) return false;
+    }
+
+    return true;
+  },
   regexp: {
     url: /(([a-zа-я]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\S+))/gi,
     push: /\[(club|id)(\d+)\|(.+?)\]/gi

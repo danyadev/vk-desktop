@@ -5,12 +5,11 @@ let loadingProfiles = [],
 
 async function getProfiles() {
   let ids = loadingProfiles.slice().splice(0, 500); // лимит в 500 юзеров за запрос
-  // ну быстрее же чем сравнение обоих массивов...
-  if(String(ids) == String(currentLoadUsers)) return;
+  if(other.isEqual(ids, currentLoadUsers)) return;
   currentLoadUsers = ids;
 
   let [groupIDs, userIDs] = ids.reduce((data, id) => {
-    if(id < 0) data[0].push(id);
+    if(id < 0) data[0].push(-id);
     else data[1].push(id);
 
     return data;
@@ -39,10 +38,9 @@ async function getProfiles() {
     app.$store.commit('addProfiles', groups);
   }
 
-  loadingProfiles.splice(0, 500);
+  loadingProfiles.splice(0, ids.length);
+  if(loadingProfiles.length) getProfiles();
 }
-
-setInterval(getProfiles, 334);
 
 module.exports = {
   concatProfiles(users = [], groups = []) {
@@ -115,5 +113,7 @@ module.exports = {
   loadProfile(id) {
     if(!id || loadingProfiles.includes(id) || id > 2e9) return;
     else loadingProfiles.push(id);
+
+    getProfiles();
   }
 }
