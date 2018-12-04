@@ -9,7 +9,7 @@
         <div class="conversation_name_wrap">
           <div class="conversation_name" v-emoji>{{ chatName }}</div>
           <div class="verified" v-if="owner && owner.verified"></div>
-          <div class="conversation_muted" v-if="peer.muted"></div>
+          <div class="messages_muted" v-if="peer.muted"></div>
         </div>
         <div class="conversation_time">{{ time }}</div>
       </div>

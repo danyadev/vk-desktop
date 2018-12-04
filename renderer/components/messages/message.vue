@@ -4,7 +4,7 @@
    <div v-else class="message_photo"></div>
    <div class="message_content">
      <div class="message_name">{{ name }}</div>
-     <div class="message_text" v-emoji.color_push.br>{{ msg.text }}</div>
+     <div class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
   </div>
  </div>
 </template>

@@ -1,5 +1,30 @@
 'use strict';
 
+// превращает emoji символы в картинку как в ВК
+Vue.directive('emoji', (el, { modifiers }, vnode) => {
+  let elem = vnode.children ? vnode.children[0] : el,
+      html = elem.text || other.getTextWithEmoji(elem.childNodes);
+
+  if(!modifiers.br) html = html.replace(/<br>/g, ' ');
+
+  if(modifiers.push || modifiers.color_push) {
+    let to = modifiers.push ? '$3' : '<span style="color: #254f79">$3</span>';
+
+    html = html.replace(other.regexp.push, to);
+  }
+
+  if(modifiers.link) {
+    html = html
+      .replace(/<br>/g, '\n')
+      .replace(other.regexp.url, '<span style="color: #254f79">$1</span>')
+      .replace(/\n/g, '<br>');
+  }
+
+  html = emoji(html);
+
+  if(el.innerHTML != html) el.innerHTML = html;
+});
+
 let getTagData = (name, text) => {
   let regexp = new RegExp(`<${name}>([^]*)</${name}>`, 'i');
 
@@ -27,7 +52,7 @@ let getFiles = (path, files = [], folders = '') => {
   return files;
 }
 
-getFiles('./renderer/components/').forEach((file) => {
+getFiles(ROOT_DIR + '/components/').forEach((file) => {
   let fileType = file.slice(file.lastIndexOf('.') + 1);
   if(fileType == file || fileType != 'vue') return;
 

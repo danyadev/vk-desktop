@@ -56,11 +56,6 @@
   user-select: all;
 }
 
-.old_emoji {
-  display: inline-block;
-  background: url('../images/im_emoji.png') no-repeat;
-}
-
 .verified {
   display: inline-block;
   width: 16px;

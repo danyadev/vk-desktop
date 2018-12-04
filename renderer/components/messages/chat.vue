@@ -2,9 +2,13 @@
   <div class="dialog_container" tabindex="0" @keyup.esc="closeChat">
     <div class="header">
       <template v-if="peer">
-        <img class="dialog_back" src="images/im_back.png" @click="closeChat">
-        <div class="dialog_name_wrap">
-          <div class="dialog_name" v-emoji>{{ title }}</div>
+        <img class="dialog_header_back" src="images/im_back.png" @click="closeChat">
+        <div class="dialog_header_center">
+          <div class="dialog_name_wrap">
+            <div class="dialog_name" v-emoji>{{ title }}</div>
+            <div class="verified" v-if="owner && owner.verified"></div>
+            <div class="messages_muted" v-if="peer.muted"></div>
+          </div>
           <div class="dialog_online">{{ online }}</div>
         </div>
         <img src="images/actions_button.svg" class="dialog_actions_btn">
@@ -25,9 +29,9 @@
                role="textbox"
                contenteditable
                v-emoji.br
-              @mousedown="onMousedown"
-              @keydown.enter="sendMessage"
-              @paste.prevent="onPaste"></div>
+              @paste.prevent="pasteText"
+              @mousedown="setCursorPositionForEmoji"
+              @keydown.enter="sendMessage"></div>
           <div class="dialog_input_placeholder">Введите сообщение...</div>
         </div>
         <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
@@ -40,9 +44,6 @@
   const { clipboard } = require('electron').remote;
 
   module.exports = {
-    data: () => ({
-      text: ''
-    }),
     computed: {
       id() {
         return this.$store.state.activeChat;
@@ -84,16 +85,16 @@
     },
     methods: {
       closeChat() {
-        this.$store.commit('setChat');
+        this.$store.commit('setChat', null);
       },
       async sendMessage(event) {
         if(event.shiftKey) return;
         else if(event.type != 'click') event.preventDefault();
 
         let input = qs('.dialog_input'),
-            text = other.getTextWithEmoji(input.childNodes);
+            text = other.getTextWithEmoji(input.childNodes).trim();
 
-        if(!text.trim()) return;
+        if(!text) return;
 
         try {
           await vkapi('messages.send', {
@@ -107,10 +108,10 @@
 
         input.innerHTML = '';
       },
-      onPaste(event) {
+      pasteText(event) {
         document.execCommand('insertHTML', false, emoji(clipboard.readText()));
       },
-      onMousedown(event) {
+      setCursorPositionForEmoji(event) {
         if(event.target.nodeName != 'IMG') return;
 
         event.target.focus();

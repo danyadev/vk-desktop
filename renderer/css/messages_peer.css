@@ -1,0 +1,190 @@
+/* Шапка */
+
+.dialog_header_back {
+  display: none;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .3s;
+}
+
+.dialog_name_wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.dialog_name_wrap .verified {
+  flex: none;
+  margin: 1px 0 1px 3px;
+}
+
+.dialog_name_wrap .messages_muted {
+  background-image: url('../images/muted_white.svg');
+}
+
+.dialog_name {
+  color: #fff;
+  line-height: 16px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dialog_online {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dialog_actions_btn {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .3s;
+}
+
+.dialog_header_back:hover, .dialog_actions_btn:hover {
+  opacity: 1;
+}
+
+/* Диалог */
+
+.dialog_container { height: 100% }
+
+.dialog_choice_chat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-top: -65px;
+  color: #38383a;
+  font-size: 16px;
+}
+
+.dialog_choice_chat img { margin-bottom: 15px }
+
+.dialog_wrap {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 40px);
+}
+
+.dialog_messages_list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-x: auto;
+}
+
+.dialog_messages_list .message:first-child {
+  margin-top: auto;
+  padding-top: 25px;
+}
+
+/* Сообщение */
+
+.message {
+  display: flex;
+  flex: none;
+  margin: 0 20px 20px;
+}
+
+.message.from_me { justify-content: flex-end }
+
+.message.from_me .message_photo,
+.message.from_me .message_name {
+  display: none;
+}
+
+.message_photo {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.message_content {
+  word-break: break-word;
+  max-width: calc(100% - 65px);
+}
+
+.message_name {
+  color: #254f79;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.message_text {
+  display: inline-block;
+  background-color: #dfe6ea;
+  padding: 8px 10px;
+  border-radius: 18px;
+}
+
+.message.from_me .message_text {
+  background-color: #cce4fe;
+}
+
+/* Поле для написания сообщения */
+
+.dialog_input_wrap {
+  display: flex;
+  align-items: flex-end;
+  flex: none;
+  border-top: 1px solid #e7e8ec;
+  background-color: #fafbfc;
+}
+
+.dialog_input_container {
+  position: relative;
+  width: calc(100% - 108px);
+  margin: 6px 0;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #d3d9de;
+  border-radius: 10px;
+}
+
+.dialog_input {
+  min-height: 18px;
+  max-height: 200px;
+  line-height: 18px;
+  overflow-x: auto;
+}
+
+.dialog_input:not(:empty) + .dialog_input_placeholder {
+  display: none;
+}
+
+.dialog_input_placeholder {
+  position: absolute;
+  top: 10px;
+  color: #828282;
+  line-height: 18px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.dialog_show_attachments_btn, .dialog_send {
+  padding: 14px 15px;
+  opacity: .7;
+  cursor: pointer;
+  transition: opacity .3s;
+}
+
+.dialog_show_attachments_btn:hover, .dialog_send:hover {
+  opacity: 1;
+}

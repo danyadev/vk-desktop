@@ -42,7 +42,7 @@ module.exports = {
     return text;
   },
   regexp: {
-    url: /([a-zа-я]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\S+)/gi,
+    url: /(([a-zа-я]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\S+))/gi,
     push: /\[(club|id)(\d+)\|(.+?)\]/gi
   }
 }
