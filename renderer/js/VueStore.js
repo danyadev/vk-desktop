@@ -2,7 +2,7 @@
 
 Vue.use(Vuex);
 
-const { getLastMessage } = require('./../components/messages/methods');
+const { getLastMessage, loadProfile } = require('./../components/messages/methods');
 
 let getNewIndex = (arr, num) => {
   for(let i=0; i<arr.length; i++) {
@@ -81,9 +81,76 @@ module.exports = new Vuex.Store({
 
       if(index != -1) Vue.delete(peer.items, index);
     },
-    // ** Диалог **
+    // ** Беседы **
     setChat(state, id) {
       state.activeChat = id;
+    },
+    addPeer(state, data) {
+      state.peers.push(data);
+    },
+    removePeer(state, id) {
+      let index = state.peers.findIndex((peer) => peer.id == id);
+
+      if(index != -1) Vue.delete(state.peers, index);
+    },
+    editPeer(state, data) {
+      let peer = state.peers.find((peer) => peer.id == data.id);
+      if(peer) Vue.set(state.peers, data.id, Object.assign({}, peer, data));
+    }
+  },
+  getters: {
+    typingMsg: (state) => (peer_id) => {
+      let text = [], audio = [], msg = '';
+
+      for(let id in state.typing[peer_id]) {
+        if(state.typing[peer_id][id].type == 'audio') audio.push(id);
+        else text.push(id);
+      }
+
+      let name = (id) => {
+        // если это лс, то просто писать "печатает"
+        if(peer_id < 2e9) return '';
+
+        let user = state.profiles[id];
+
+        if(!user) return loadProfile(id), '...';
+        else {
+          let last_sym = user.last_name ? user.last_name[0] + '.' : '';
+          return user.name || `${user.first_name} ${last_sym}`;
+        }
+      }
+
+      if(text.length) {
+        if(text.length > 2) msg += `${name(text[0])} и еще ${text.length-1}`;
+        else {
+          for(let i in text) {
+            let id = text[i];
+
+            if(i == 0) msg += `${name(id)}`;
+            else msg += ` и ${name(id)}`;
+          }
+        }
+
+        msg += text.length == 1 ? ' печатает' : ' печатают';
+      }
+
+      if(audio.length) {
+        if(text.length) msg += ' и ';
+
+        if(audio.length > 2) msg += `${name(audio[0])} и еще ${audio.length-1}`;
+        else {
+          for(let i in audio) {
+            let id = audio[i];
+
+            if(i == 0) msg += `${name(id)}`;
+            else msg += ` и ${name(id)}`;
+          }
+        }
+
+        msg += (audio.length == 1 ? ' записывает' : ' записывают') + ' аудио';
+      }
+
+      return msg;
     }
   }
 });

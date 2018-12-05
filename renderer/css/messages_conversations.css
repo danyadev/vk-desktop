@@ -14,6 +14,11 @@
   background-size: 13px;
 }
 
+.typing_wrap {
+  display: flex;
+  color: #254f79;
+}
+
 .typing { margin: 0 6px }
 
 @keyframes activity_typing {
@@ -82,26 +87,25 @@
   margin: 10px;
 }
 
-.conversation_photo_wrap.mobile::after {
+.conversation_photo_wrap.mobile::after,
+.conversation_photo_wrap.desktop::after {
   content: '';
   position: absolute;
-  width: 11px;
-  height: 15px;
+  box-sizing: content-box;
+  width: 8px;
   bottom: 2px;
   right: -1px;
   border: 2px solid #fff;
+}
+
+.conversation_photo_wrap.mobile::after {
+  height: 11px;
   border-radius: 3px;
   background: url('../images/online_mobile.svg') no-repeat #fff;
 }
 
 .conversation_photo_wrap.desktop::after {
-  content: '';
-  position: absolute;
-  height: 12px;
-  width: 12px;
-  bottom: 2px;
-  right: -1px;
-  border: 2px solid #fff;
+  height: 8px;
   border-radius: 50%;
   background-color: #8ac176;
 }
@@ -138,7 +142,7 @@
 
 .conversation_name { margin-top: -2px }
 
-.conversation_name, .conversation_typing_text {
+.conversation_name, .typing_text {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -161,13 +165,15 @@
   color: #777a7d;
 }
 
-.conversation_message, .conversation_typing {
+.conversation_message, .typing_wrap {
   flex-grow: 1;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: #4c4d50;
 }
+
+.typing_text { color: #254f79 }
 
 .conversation_text { display: inline }
 
@@ -196,16 +202,12 @@
 .conversation_message_unread:not(.outread).muted { background-color: #b2b7c2 }
 
 .conversation_message_unread.outread {
+  flex: none;
   padding: 0;
   margin: 7px 4px 0 4px;
-  min-width: 8px;
+  width: 8px;
   height: 8px;
-  background-color: rgba(147, 173, 200, 1);
-}
-
-.conversation_typing {
-  display: flex;
-  color: #254f79;
+  background-color: #93adc8;
 }
 
 @media screen and (max-width: 650px) {

@@ -14,21 +14,21 @@
         <div class="conversation_time">{{ time }}</div>
       </div>
       <div class="conversation_message_wrap">
-        <div v-show="isTyping" class="conversation_typing">
-          <div class="conversation_typing_text">{{ typingMsg }}</div>
+        <div v-if="isTyping" class="typing_wrap">
+          <div class="typing_text">{{ typingMsg }}</div>
           <div class="typing">
             <div class="typing_item"></div>
             <div class="typing_item"></div>
             <div class="typing_item"></div>
           </div>
         </div>
-        <div v-show="!isTyping" class="conversation_message">
+        <div v-else class="conversation_message">
           <div class="conversation_author">{{ authorName }}</div>
           <div :class="{ conversation_attach: isAttachment }" v-emoji.push
                class="conversation_text">{{ message }}</div>
         </div>
         <div class="conversation_message_unread"
-             :class="{ outread: msg.out, muted: peer.muted }"
+             :class="{ outread: msg.outread, muted: peer.muted }"
              >{{ msg.out ? '' : peer.unread || '' }}</div>
       </div>
     </div>
@@ -41,7 +41,7 @@
   module.exports = {
     props: ['peer'],
     data: (vm) => ({
-        isChat: vm.peer.type == 'chat'
+      isChat: vm.peer.type == 'chat'
     }),
     computed: {
       isActiveChat() {
@@ -116,62 +116,28 @@
         return !this.msg.text && (this.msg.fwd_count || !this.msg.action && this.msg.attachments[0]);
       },
       typingMsg() {
-        let text = [], audio = [], msg = '';
-
-        for(let id in this.typing[this.peer.id]) {
-          if(this.typing[this.peer.id][id].type == 'audio') audio.push(id);
-          else text.push(id);
-        }
-
-        let name = (id) => {
-          // если это лс, то просто писать "печатает"
-          if(this.peer.id < 2e9) return '';
-
-          let user = this.profiles[id];
-
-          if(!user) return loadProfile(id), '...';
-          else {
-            let last_sym = user.last_name ? user.last_name[0] + '.' : '';
-            return user.name || `${user.first_name} ${last_sym}`;
-          }
-        }
-
-        if(text.length) {
-          if(text.length > 2) msg += `${name(text[0])} и еще ${text.length-1}`;
-          else {
-            for(let i in text) {
-              let id = text[i];
-
-              if(i == 0) msg += `${name(id)}`;
-              else msg += ` и ${name(id)}`;
-            }
-          }
-
-          msg += text.length == 1 ? ' печатает' : ' печатают';
-        }
-
-        if(audio.length) {
-          if(text.length) msg += ' и ';
-
-          if(audio.length > 2) msg += `${name(audio[0])} и еще ${audio.length-1}`;
-          else {
-            for(let i in audio) {
-              let id = audio[i];
-
-              if(i == 0) msg += `${name(id)}`;
-              else msg += ` и ${name(id)}`;
-            }
-          }
-
-          msg += (audio.length == 1 ? ' записывает' : ' записывают') + ' аудио';
-        }
-
-        return msg;
+        return this.$store.getters.typingMsg(this.peer.id);
       }
     },
     methods: {
-      openChat() {
+      async openChat() {
+        if(this.peer.id == this.$store.state.activeChat) return;
+
+        if(this.$store.state.activeChat) {
+          let peer = this.$store.state.peers.find((peer) => {
+            return peer.id == this.$store.state.activeChat;
+          });
+
+          if(peer) {
+            peer.scrollTop = qs('.dialog_messages_list').scrollTop;
+            peer.inputText = qs('.dialog_input').innerHTML;
+          }
+        }
+
         this.$store.commit('setChat', this.peer.id);
+        await this.$nextTick();
+        qs('.dialog_messages_list').scrollTop = this.peer.scrollTop || 0;
+        qs('.dialog_input').innerHTML = this.peer.inputText || '';
       },
       getAttachment(message, attachment) {
         if(!attachment || message) return message;
@@ -191,6 +157,7 @@
           point: 'Местоположение',
           market: 'Товар',
           sticker: 'Стикер',
+          podcast: 'Подкаст',
           graffiti: 'Граффити',
           audio_message: 'Голосовое сообщение',
           money_request: 'Запрос денег',
@@ -202,7 +169,7 @@
         }
 
         if(!attachments[attachment.type]) {
-          console.error('[messages] Неизвестное вложение:', attachment.type);
+          console.warn('[messages] Неизвестное вложение:', attachment.type);
         }
 
         return attachments[attachment.type] || 'Вложение';

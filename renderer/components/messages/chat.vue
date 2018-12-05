@@ -22,6 +22,14 @@
       <div class="dialog_messages_list">
         <message v-for="msg of messages" :msg="msg" :peer_id="id"></message>
       </div>
+      <div class="typing_wrap" v-if="typingMsg">
+        <div class="typing">
+          <div class="typing_item"></div>
+          <div class="typing_item"></div>
+          <div class="typing_item"></div>
+        </div>
+        <div class="typing_text">{{ typingMsg }}</div>
+      </div>
       <div class="dialog_input_wrap">
         <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
         <div class="dialog_input_container">
@@ -93,10 +101,16 @@
         }
 
         return list;
+      },
+      typingMsg() {
+        return this.$store.getters.typingMsg(this.id);
       }
     },
     methods: {
       closeChat() {
+        this.peer.scrollTop = qs('.dialog_messages_list').scrollTop;
+        this.peer.inputText = qs('.dialog_input').innerHTML;
+
         this.$store.commit('setChat', null);
       },
       async sendMessage(event) {
@@ -107,6 +121,7 @@
             text = other.getTextWithEmoji(input.childNodes).trim();
 
         if(!text) return;
+        input.innerHTML = '';
 
         try {
           await vkapi('messages.send', {
@@ -120,8 +135,6 @@
         } catch(e) {
           console.error('[chat] send error:', e);
         }
-
-        input.innerHTML = '';
       },
       pasteText(event) {
         document.execCommand('insertHTML', false, emoji(clipboard.readText()));

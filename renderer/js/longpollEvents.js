@@ -82,7 +82,7 @@ let getMessage = (data, type) => {
     }
   }
 
-  if(type == 'new') res.msg.out = flags.is('outbox');
+  if(type == 'new') res.msg.outread = flags.is('outbox');
   return res;
 }
 

@@ -15,8 +15,7 @@
 
   module.exports = {
     data: () => ({
-      loading: true,
-      loaded: false
+      loading: true
     }),
     computed: {
       peers() {
@@ -46,13 +45,13 @@
 
         this.loading = false;
 
-        if(items.length < 20) this.loaded = true;
+        if(items.length < 20) return;
 
         await this.$nextTick();
         this.onScroll({ target: qs('.conversations_wrap') });
       },
       onScroll: endScroll((vm) => {
-        if(!vm.loading && !vm.loaded) {
+        if(!vm.loading) {
           vm.load();
           vm.loading = true;
         }
@@ -140,7 +139,7 @@
         });
 
         this.updatePeer(data.peer.id, (oldPeer) => {
-          if(data.msg.out) data.peer.unread = 0;
+          if(data.msg.outread) data.peer.unread = 0;
           else if(oldPeer) data.peer.unread = oldPeer.unread + 1;
 
           if(data.msg.action) {
@@ -198,7 +197,7 @@
 
         if(msg) this.$store.commit('addMessage', {
           peer_id: data.peer_id,
-          msg: parseMessage(msg, { out: outread })
+          msg: parseMessage(msg, { outread })
         });
 
         if(data.all) {
@@ -236,7 +235,7 @@
           peer_id: data.peer_id,
           msg: {
             id: data.id,
-            out: data.count != 0
+            outread: data.count != 0
           }
         });
       });

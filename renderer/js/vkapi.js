@@ -18,7 +18,7 @@ setInterval(() => {
     method(...Object.values(methods[0]));
     methods.splice(0, 1);
   }
-}, 1000 / 3);
+}, 334);
 
 let method = (name, params, _resolve) => {
   return new Promise(async (resolve, reject) => {
@@ -42,7 +42,7 @@ let method = (name, params, _resolve) => {
       delete params.log;
       params.$method = name;
 
-      console.log('[vkapi]', Object.assign({}, data.response, { $options: params }));
+      console.log('[API]', Object.assign({}, data.response, { $options: params }));
     }
 
     // TODO: поддержка капчи

@@ -91,10 +91,10 @@ module.exports = {
       attachments: message.attachments
     };
 
-    if(conversation && conversation.peer) {
-      msg.out = conversation.out_read != message.id && message.out;
-    } else if(conversation && conversation.out != undefined) {
-      msg.out = conversation.out;
+    if(conversation && conversation.out_read) {
+      msg.outread = conversation.out_read != message.id && message.out;
+    } else if(conversation && conversation.outread != undefined) {
+      msg.outread = conversation.outread;
     }
 
     return msg;

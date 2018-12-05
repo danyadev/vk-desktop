@@ -93,6 +93,16 @@
   padding-top: 25px;
 }
 
+.dialog_wrap .typing_wrap {
+  margin: 0 20px 10px;
+  color: #254f79;
+  flex: none;
+}
+
+.dialog_wrap .typing_text {
+  margin-left: 5px;
+}
+
 /* Сообщение */
 
 .message {
@@ -117,8 +127,20 @@
 }
 
 .message_content {
-  word-break: break-word;
+  position: relative;
   max-width: calc(100% - 65px);
+  word-break: break-word;
+}
+
+.message_content.outread::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  bottom: 12px;
+  left: -20px;
+  border-radius: 50%;
+  background-color: #93adc8;
 }
 
 .message_name {
