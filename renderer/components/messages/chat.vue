@@ -21,14 +21,14 @@
     <div v-else class="dialog_wrap">
       <div class="dialog_messages_list">
         <message v-for="msg of messages" :msg="msg" :peer_id="id"></message>
-      </div>
-      <div class="typing_wrap" v-if="typingMsg">
-        <div class="typing">
-          <div class="typing_item"></div>
-          <div class="typing_item"></div>
-          <div class="typing_item"></div>
+        <div class="typing_wrap">
+          <div class="typing" v-if="typingMsg">
+            <div class="typing_item"></div>
+            <div class="typing_item"></div>
+            <div class="typing_item"></div>
+          </div>
+          <div class="typing_text">{{ typingMsg }}</div>
         </div>
-        <div class="typing_text">{{ typingMsg }}</div>
       </div>
       <div class="dialog_input_wrap">
         <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
@@ -91,12 +91,12 @@
             hist = qs('.dialog_messages_list');
 
         if(hist) {
-          let scrollPos = hist.scrollTop + hist.clientHeight + 20,
+          let scrollPos = hist.scrollTop + hist.clientHeight + 40,
               lastMsg = hist.lastChild,
               scrollHeight = lastMsg.offsetTop + lastMsg.offsetHeight;
 
           if(scrollPos == scrollHeight) {
-            this.$nextTick().then(() => qs('.message:last-child').scrollIntoView());
+            this.$nextTick().then(() => qs('.dialog_messages_list .typing_wrap').scrollIntoView());
           }
         }
 

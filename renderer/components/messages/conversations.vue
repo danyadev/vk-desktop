@@ -231,13 +231,18 @@
       });
 
       longpoll.on('readed_messages', (data) => {
-        this.$store.commit('editMessage', {
-          peer_id: data.peer_id,
-          msg: {
-            id: data.id,
-            outread: data.count != 0
-          }
-        });
+        let peer = this.$store.state.dialogs.find((peer) => peer.id == data.peer_id),
+            msgs = peer.items.filter((msg) => msg.id <= data.id);
+
+        for(let msg of msgs) {
+          this.$store.commit('editMessage', {
+            peer_id: data.peer_id,
+            msg: {
+              id: msg.id,
+              outread: false
+            }
+          });
+        }
       });
 
       longpoll.on('read_messages', (data) => {

@@ -31,7 +31,7 @@
       },
       user() {
         let user = this.$store.state.profiles[this.msg.from];
-        if(!user) loadProfile(this.msg.from);
+        if(!user || !user.photo_50) loadProfile(this.msg.from);
 
         return user || {};
       },

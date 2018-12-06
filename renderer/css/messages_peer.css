@@ -88,13 +88,9 @@
   overflow-x: auto;
 }
 
-.dialog_messages_list .message:first-child {
-  margin-top: auto;
-  padding-top: 25px;
-}
-
 .dialog_wrap .typing_wrap {
-  margin: 0 20px 10px;
+  height: 40px;
+  padding: 10px 20px;
   color: #254f79;
   flex: none;
 }
@@ -108,7 +104,12 @@
 .message {
   display: flex;
   flex: none;
-  margin: 0 20px 20px;
+  margin: 15px 20px 0;
+}
+
+.message:first-child {
+  margin-top: auto;
+  padding-top: 25px;
 }
 
 .message.from_me { justify-content: flex-end }

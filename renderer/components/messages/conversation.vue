@@ -60,28 +60,30 @@
         return !!Object.keys(this.typing[this.peer.id] || []).length;
       },
       owner() {
-        return this.profiles[this.peer.owner];
+        let owner = this.profiles[this.peer.owner];
+        if(!this.isChat && (!owner || !owner.photo_50)) loadProfile(this.peer.owner);
+        return owner;
       },
       online() {
         if(this.peer.owner > 2e9) return '';
-        else if(!this.owner) return loadProfile(this.peer.owner), '';
-        else if(!this.owner.online) return '';
+        else if(!this.owner || !this.owner.online) return '';
 
         return this.owner.online_mobile ? 'mobile' : 'desktop';
       },
       author() {
-        return this.profiles[this.msg.from] || { id: this.msg.from };
+        let author = this.profiles[this.msg.from] || { id: this.msg.from };
+        if(!author.photo_50) loadProfile(this.msg.from);
+        return author;
       },
       photo() {
         if(this.isChat) return this.peer.photo;
         else if(this.owner) return this.owner.photo_50;
-        else loadProfile(this.peer.owner);
       },
       chatName() {
         if(this.isChat) return this.peer.title || '...';
         else if(this.owner && this.owner.photo_50) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
-        } else return loadProfile(this.peer.owner), '...';
+        } else return '...';
       },
       time() {
         let unixtime = this.msg.date,
@@ -100,7 +102,7 @@
         else if(this.msg.out || this.author.id == users.get().id) return 'Вы:';
         else if(this.author.photo_50) {
           if(this.isChat) return `${this.author.name || this.author.first_name}:`;
-        } else return loadProfile(this.author.id), '...:';
+        } else return '...:';
       },
       message() {
         if(this.msg.action) {
@@ -181,7 +183,6 @@
 
         let name = (type, acc) => {
           let user = type ? actUser : author;
-
           if(!user.photo_50) loadProfile(user.id);
 
           if(user.id == id) return 'Вы';
@@ -194,8 +195,6 @@
 
         let w = (type, text) => {
           let user = type ? actUser : author, endID;
-
-          if(!user.photo_50) loadProfile(user.id);
 
           if(user.id == id) endID = 0;
           else if(user.sex == 1) endID = 1;
