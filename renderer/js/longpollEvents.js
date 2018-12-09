@@ -1,5 +1,7 @@
 'use strict';
 
+const longpoll = require('./longpoll').longpoll();
+
 let getFlags = (mask) => {
   let flags = {
     unread: 1, outbox: 2, replied: 4, important: 8,
@@ -122,7 +124,11 @@ module.exports = {
     // при пересланных сообщениях выполнять messages.getById с id и extended
     // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
 
-    return { name: 'new_message', data: getMessage(data, 'new') }
+    let msg = getMessage(data, 'new');
+
+    longpoll.emit('new_message_' + data[0], msg);
+
+    return { name: 'new_message', data: msg }
   },
   5: (data) => {
     // приходит при редактировании сообщения
@@ -162,13 +168,29 @@ module.exports = {
     // [-user_id, platform, timestramp]
     // 1: mobile, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
 
+    let types = ['mobile', 'iphone', 'ipad', 'android', 'wphone', 'windows', 'web'],
+        device;
+
+    if([1, 7].includes(data[1])) {
+      let names = {
+        2: 'iPhone',
+        3: 'iPad',
+        4: 'Android',
+        5: 'Windows Phone',
+        6: 'Windows 10 App'
+      }
+
+      device = names[data[1]];
+    }
+
     return {
       name: 'online_user',
       data: {
         type: 'online',
         id: Math.abs(data[0]),
         mobile: ![6, 7].includes(data[1]),
-        timestramp: data[3]
+        device: device,
+        timestramp: data[2]
       }
     }
   },
@@ -182,7 +204,7 @@ module.exports = {
       data: {
         type: 'offline',
         id: Math.abs(data[0]),
-        timestramp: data[3]
+        timestramp: data[2]
       }
     }
   },

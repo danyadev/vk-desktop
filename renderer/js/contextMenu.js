@@ -6,7 +6,11 @@ let templates = [];
 
 document.addEventListener('contextmenu', async (event) => {
   for(let template of templates) {
-    if(event.path.includes(template.elem)) {
+    let hasItem = event.path.find((el) => {
+      return el.matches && el.matches(template.selector);
+    });
+
+    if(hasItem) {
       let temp = template.callback(event),
           menu = Menu.buildFromTemplate(temp instanceof Promise ? await temp : temp);
 
@@ -16,7 +20,7 @@ document.addEventListener('contextmenu', async (event) => {
 });
 
 module.exports = {
-  set: (elem, callback) => {
-    templates.push({ elem, callback });
+  set: (selector, callback) => {
+    templates.unshift({ selector, callback });
   }
 }

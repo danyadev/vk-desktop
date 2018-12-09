@@ -20,7 +20,7 @@
     </div>
     <div v-else class="dialog_wrap">
       <div class="dialog_messages_list">
-        <message v-for="msg of messages" :msg="msg" :peer_id="id"></message>
+        <message v-for="msg of messages" :msg="msg" :peer="peer"></message>
         <div class="typing_wrap">
           <div class="typing" v-if="typingMsg">
             <div class="typing_item"></div>
@@ -31,18 +31,29 @@
         </div>
       </div>
       <div class="dialog_input_wrap">
-        <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
-        <div class="dialog_input_container">
-          <div class="dialog_input"
-               role="textbox"
-               contenteditable
-               v-emoji.br.no_emoji
-              @paste.prevent="pasteText"
-              @mousedown="setCursorPositionForEmoji"
-              @keydown.enter="sendMessage"></div>
-          <div class="dialog_input_placeholder">Введите сообщение...</div>
+        <template v-if="canSendMessages.state">
+          <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
+          <div class="dialog_input_container">
+            <div class="dialog_input"
+                 role="textbox"
+                 contenteditable
+                 v-emoji.br.no_emoji
+                @paste.prevent="pasteText"
+                @mousedown="setCursorPositionForEmoji"
+                @keydown.enter="sendMessage"></div>
+            <div class="dialog_input_placeholder">Введите сообщение...</div>
+          </div>
+          <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
+        </template>
+        <div v-else class="dialog_input_error">
+          <img src="images/warning.png" v-if="!canSendMessages.channel" class="dialog_input_error_img">
+          <div class="dialog_input_error_text" :class="{ channel: canSendMessages.channel }">
+            <div v-if="canSendMessages.channel"
+                @click="toggleChannelNotifications"
+                 class="dialog_input_channel">{{ canSendMessages.text }}</div>
+            <template v-else>{{ canSendMessages.text }}</template>
+          </div>
         </div>
-        <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
       </div>
     </div>
   </div>
@@ -81,7 +92,45 @@
         }
       },
       online() {
-        return 'Загрузка...';
+        if(this.id < 0) return '';
+
+        if(this.isChat) {
+          if(this.peer.members == undefined) return '';
+
+          let word = 'участник' + other.getWordEnding(this.peer.members, ['', 'а', 'ов']);
+          return `${this.peer.members} ${word}`;
+        }
+
+        if(this.owner.online) {
+          let app = this.owner.online_device;
+
+          if(!app) app = this.owner.online_mobile ? 'с телефона' : '';
+          else app = 'с ' + app;
+
+          return `В сети ${app}`;
+        } else {
+          let date = new Date(this.owner.last_seen.time * 1000),
+              thisDate = new Date(),
+              s = this.owner.sex == 1 ? 'a' : '',
+              text = `Был${s} в сети `,
+              f = (t) => t < 10 ? `0${t}` : t,
+              months = [
+                'янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.',
+                'июл.', 'авг.', 'сен.', 'окт.', 'ноя.', 'дек.'
+              ];
+
+          if(thisDate.toLocaleDateString() == date.toLocaleDateString()) {
+            text += 'сегодня';
+          } else if(thisDate.getFullYear() == date.getFullYear()) {
+            text += `${date.getDate()} ${months[date.getMonth()]}`;
+          } else {
+            text += `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}г`;
+          }
+
+          text += ` в ${date.getHours()}:${f(date.getMinutes())}`;
+
+          return text;
+        }
       },
       messages() {
         let dialog = this.$store.state.dialogs.find((dialog) => {
@@ -104,16 +153,52 @@
       },
       typingMsg() {
         return this.$store.getters.typingMsg(this.id);
+      },
+      canSendMessages() {
+        let text, reason = this.peer.canWrite.reason;
+
+        if(!this.peer.canWrite.allowed) {
+          let reasons = {
+            18: 'Пользователь удален',
+            203: 'Нет доступа к сообществу',
+            900: 'Пользователь добавил вас в черный список',
+            901: 'Пользователь запретил сообщения от сообщества',
+            902: 'Пользователь запретил писать сообщения настройками приватности',
+            915: 'В сообществе отключены сообщения',
+            916: 'В сообществе заблокированы сообщения',
+            917: 'Вы были исключены из этой беседы',
+            918: 'Вы не можете написать сообщение на этот email',
+            925: (this.peer.muted ? 'В' : 'Вы') + 'ключить уведомления' // канал
+          }
+
+          if(!reasons[reason]) text = 'Вы не можете писать сообщения в этот чат';
+          else text = reasons[reason];
+
+          if(!reasons[reason] || [203, 916].includes(reason)) {
+            console.warn('[chat] неизвестная причина:', reason);
+          }
+        }
+
+        return {
+          state: this.peer.canWrite.allowed,
+          channel: this.peer.channel,
+          text: text
+        }
       }
     },
     methods: {
       closeChat() {
         this.peer.scrollTop = qs('.dialog_messages_list').scrollTop;
-        this.peer.inputText = qs('.dialog_input').innerHTML;
+
+        if(qs('.dialog_input')) {
+          this.peer.inputText = qs('.dialog_input').innerHTML;
+        }
 
         this.$store.commit('setChat', null);
       },
       async sendMessage(event) {
+        let longpoll = require('./../../js/longpoll').longpoll();
+
         if(event.shiftKey) return;
         else if(event.type != 'click') event.preventDefault();
 
@@ -124,14 +209,16 @@
         input.innerHTML = '';
 
         try {
-          await vkapi('messages.send', {
+          let id = await vkapi('messages.send', {
             peer_id: this.id,
             message: text,
             random_id: 0
           });
 
-          // В данном случае скроллит к предыдущему сообщению
-          // this.$nextTick().then(() => qs('.message:last-child').scrollIntoView());
+          longpoll.once('new_message_' + id, async (data) => {
+            await this.$nextTick();
+            qs('.dialog_messages_list .typing_wrap').scrollIntoView();
+          });
         } catch(e) {
           console.error('[chat] send error:', e);
         }
@@ -155,6 +242,12 @@
 
         selection.removeAllRanges();
         selection.addRange(range);
+      },
+      toggleChannelNotifications() {
+        vkapi('account.setSilenceMode', {
+          peer_id: this.peer.id,
+          time: this.peer.muted ? 0 : -1
+        });
       }
     }
   }

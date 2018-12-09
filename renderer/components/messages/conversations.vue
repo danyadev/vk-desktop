@@ -15,7 +15,8 @@
 
   module.exports = {
     data: () => ({
-      loading: true
+      loading: true,
+      loaded: false
     }),
     computed: {
       peers() {
@@ -26,11 +27,11 @@
       async load() {
         let { items, profiles = [], groups = [] } = await vkapi('messages.getConversations', {
           extended: true,
-          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online',
+          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen',
           offset: this.peers.length
         });
 
-        this.$store.commit('addProfiles', concatProfiles(profiles, groups));
+        this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
 
         for(let item of items) {
           let { conversation, last_message } = item;
@@ -45,13 +46,16 @@
 
         this.loading = false;
 
-        if(items.length < 20) return;
+        if(items.length < 20) {
+          this.loaded = true;
+          return;
+        }
 
         await this.$nextTick();
         this.onScroll({ target: qs('.conversations_wrap') });
       },
       onScroll: endScroll((vm) => {
-        if(!vm.loading) {
+        if(!vm.loading && !vm.loaded) {
           vm.load();
           vm.loading = true;
         }
@@ -71,10 +75,10 @@
           let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
             peer_ids: peerID,
             extended: 1,
-            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
+            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen'
           });
 
-          this.$store.commit('addProfiles', concatProfiles(profiles, groups));
+          this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
 
           this.updatePeer(peerID, parseConversation(conv));
         } else Vue.set(this.peers, index, Object.assign({}, peer, data || {}));
@@ -263,11 +267,22 @@
         removeTyping(data);
       });
 
-      longpoll.on('online_user', (data) => {
+      longpoll.on('online_user', async (data) => {
+        let device = data.device;
+
+        if(data.type == 'online') {
+          if(!device) {
+            let [user] = await vkapi('execute.getProfiles', { profile_ids: data.id });
+            device = user.online_device;
+          }
+        }
+
         this.$store.commit('updateProfile', {
           id: data.id,
           online: data.type == 'online',
-          online_mobile: !!data.mobile
+          online_mobile: data.mobile,
+          online_device: device,
+          online_time: data.timestramp
         });
       });
 

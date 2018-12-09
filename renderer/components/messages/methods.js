@@ -1,54 +1,52 @@
 'use strict';
 
-let loadingProfiles = [],
-    currentLoadUsers = [];
+let loadingProfiles = [], currentLoadUsers = [];
 
 async function getProfiles() {
-  let ids = loadingProfiles.slice().splice(0, 500); // лимит в 500 юзеров за запрос
+  let ids = loadingProfiles.slice().splice(0, 100);
   if(other.isEqual(ids, currentLoadUsers)) return;
   currentLoadUsers = ids;
 
-  let [groupIDs, userIDs] = ids.reduce((data, id) => {
-    if(id < 0) data[0].push(-id);
-    else data[1].push(id);
+  let profiles = await vkapi('execute.getProfiles', {
+    profile_ids: ids.join(',')
+  });
 
-    return data;
-  }, [[], []]);
-
-  if(userIDs.length) {
-    let users = await vkapi('users.get', {
-      user_ids: userIDs,
-      fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
-    });
-
-    app.$store.commit('addProfiles', users);
-  }
-
-  if(groupIDs.length) {
-    let groups = await vkapi('groups.getById', {
-      group_ids: groupIDs,
-      fields: 'photo_50,verified'
-    });
-
-    groups.map((group) => {
-      group.id = -group.id;
-      return group;
-    });
-
-    app.$store.commit('addProfiles', groups);
-  }
+  app.$store.commit('addProfiles', profiles);
 
   loadingProfiles.splice(0, ids.length);
   if(loadingProfiles.length) getProfiles();
 }
 
+async function getUsersOnline(users) {
+  let appIDs = [];
+
+  for(let user of users) {
+    if(user.online_app) appIDs.push(user.online_app);
+  }
+
+  let { items: apps } = await vkapi('apps.get', {
+    app_ids: appIDs.join(',')
+  });
+
+  for(let user of users) {
+    if(!user.online) continue;
+
+    let app = apps.find((app) => app.id == user.online_app);
+    if(app) user.online_device = app.title;
+  }
+
+  return users;
+}
+
 module.exports = {
-  concatProfiles(users = [], groups = []) {
+  async concatProfiles(users = [], groups = []) {
     groups = groups.reduce((list, group) => {
       group.id = -group.id;
       list.push(group);
       return list;
     }, []);
+
+    users = await getUsersOnline(users);
 
     return users.concat(groups);
   },
@@ -68,11 +66,13 @@ module.exports = {
       id: conversation.peer.id,
       type: conversation.peer.type,
       channel: isChannel,
+      members: isChat ? conversation.chat_settings.members_count : null,
       owner: isChannel ? conversation.chat_settings.owner_id : conversation.peer.id,
       muted: !!conversation.push_settings, // TODO обработка disabled_until
       unread: conversation.unread_count || 0,
       photo: chatPhoto,
-      title: chatTitle
+      title: chatTitle,
+      canWrite: conversation.can_write
     }
   },
   parseMessage(message, conversation) {
@@ -91,7 +91,7 @@ module.exports = {
       attachments: message.attachments
     };
 
-    if(conversation && conversation.out_read) {
+    if(conversation && conversation.out_read != undefined) {
       msg.outread = conversation.out_read != message.id && message.out;
     } else if(conversation && conversation.outread != undefined) {
       msg.outread = conversation.outread;

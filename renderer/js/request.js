@@ -17,11 +17,7 @@ let plainRequest = (url, options) => {
   if(!other.isObject(options)) options = {};
 
   return new Promise((resolve, reject) => {
-    let data = Object.assign(urlToObject(url), {
-      agent: new https.Agent({ timeout: 5000 })
-    });
-
-    let req = https.request(data, (res) => {
+    let req = https.request(urlToObject(url), (res) => {
       let buffers = [];
 
       res.on('data', (chunk) => buffers.push(chunk));
@@ -38,14 +34,17 @@ let plainRequest = (url, options) => {
 };
 
 let request = (url, options = {}, newResolve) => {
-  return new Promise((resolve, reject) => {
-    plainRequest(url, options).then((data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = await plainRequest(url, options);
       (newResolve || resolve)(JSON.parse(data));
-    }).catch((err) => {
+    } catch(err) {
+      console.warn(err);
+      
       if(options.force) {
         setTimeout(() => request(url, options, newResolve || resolve), 1000 * 2);
       } else reject(err);
-    });
+    }
   });
 }
 

@@ -49,8 +49,7 @@
 .link:hover { text-decoration: underline }
 
 .emoji {
-  margin: 0 1px;
-  vertical-align: -3px;
+  margin: 0 1px -3px 1px;
   width: 16px;
   height: 16px;
   user-select: all;

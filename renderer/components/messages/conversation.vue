@@ -29,7 +29,7 @@
         </div>
         <div class="conversation_message_unread"
              :class="{ outread: msg.outread, muted: peer.muted }"
-             >{{ msg.out ? '' : peer.unread || '' }}</div>
+             >{{ peer.unread || '' }}</div>
       </div>
     </div>
   </div>
@@ -86,8 +86,7 @@
         } else return '...';
       },
       time() {
-        let unixtime = this.msg.date,
-            date = new Date(unixtime * 1000),
+        let date = new Date(this.msg.date * 1000),
             thisDate = new Date(),
             f = (t) => t < 10 ? `0${t}` : t;
 
@@ -132,14 +131,20 @@
 
           if(peer) {
             peer.scrollTop = qs('.dialog_messages_list').scrollTop;
-            peer.inputText = qs('.dialog_input').innerHTML;
+
+            if(qs('.dialog_input')) {
+              peer.inputText = qs('.dialog_input').innerHTML;
+            }
           }
         }
 
         this.$store.commit('setChat', this.peer.id);
         await this.$nextTick();
         qs('.dialog_messages_list').scrollTop = this.peer.scrollTop || 0;
-        qs('.dialog_input').innerHTML = this.peer.inputText || '';
+
+        if(qs('.dialog_input')) {
+          qs('.dialog_input').innerHTML = this.peer.inputText || '';
+        }
       },
       getAttachment(message, attachment) {
         if(!attachment || message) return message;

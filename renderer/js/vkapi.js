@@ -35,7 +35,27 @@ let method = (name, params, _resolve) => {
 
     if(data.response !== undefined) {
       (_resolve || resolve)(data.response);
-    } else reject(data);
+    } else {
+      if(data.error.error_code == 5) {
+        let error = data.error.error_msg.slice(27);
+
+        switch(error) {
+          case 'user revoke access for this token.':
+          case 'invalid session.':
+            // Пользователь удалил приложение из списка активных и токен стал неактинвным
+            break;
+          case 'user is deactivated.':
+            // Пользователь удалил свою страницу
+            // При восстановлении токен остается активным
+            break;
+          case 'invalid access_token (2).':
+            // Страница заблокирована
+            break;
+        }
+      } else if(data.error.error_code == 14) {
+        // капча
+      } else reject(data);
+    }
 
     if(params.log) {
       delete params.access_token;
@@ -44,8 +64,6 @@ let method = (name, params, _resolve) => {
 
       console.log('[API]', Object.assign({}, data.response, { $options: params }));
     }
-
-    // TODO: поддержка капчи
   });
 }
 

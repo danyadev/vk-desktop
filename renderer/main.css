@@ -1,5 +1,6 @@
 @import 'css/ui.css';
 @import 'css/titlebar.css';
+@import 'css/modals.css';
 @import 'css/auth.css';
 @import 'css/menu.css';
 @import 'css/messages_conversations.css';
@@ -45,4 +46,14 @@ body {
   position: relative;
 	/* 32px - высота titlebar'a по умолчанию */
   height: calc(100% - 32px);
+}
+
+.root.modal_opened::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 5;
+	background-color: rgba(0, 0, 0, .4);
 }

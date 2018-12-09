@@ -6,9 +6,8 @@ const { EventEmitter } = require('events');
 
 const request = require('./request');
 const { parseConversation, parseMessage, concatProfiles } = require('./../components/messages/methods');
-const eventsList = require('./longpollEvents');
 
-let instance = null, onInitResolve = null;
+let instance, onInitResolve;
 
 class Longpoll {
   constructor(data) {
@@ -49,11 +48,11 @@ class Longpoll {
           pts: this.pts,
           onlines: 1,
           lp_version: 3,
-          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online'
+          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen'
         });
 
-        concatProfiles(history.profiles, history.groups).forEach((profile) => {
-          app.$store.commit('add_profile', profile);
+        await concatProfiles(history.profiles, history.groups).forEach((profile) => {
+          app.$store.commit('addProfiles', profile);
         });
 
         for(let item of history.history) {
@@ -92,6 +91,7 @@ class Longpoll {
     for(let update of data.updates || []) {
       let upd = update.slice(0),
           id = upd.splice(0, 1)[0],
+          eventsList = require('./longpollEvents'),
           event = eventsList[id];
 
       if(!event) {
@@ -130,5 +130,6 @@ module.exports = {
       if(!instance) onInitResolve = resolve;
       else resolve(instance);
     });
-  }
+  },
+  longpoll: () => instance
 };

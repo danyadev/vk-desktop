@@ -1,7 +1,7 @@
 <template>
  <div class="message" :class="{ from_me: isOwner }">
    <img v-if="showUserData" class="message_photo" :src="photo">
-   <div v-else-if="isPeerChat" class="message_photo"></div>
+   <div v-else-if="isChat && !peer.channel" class="message_photo"></div>
    <div class="message_content" :class="{ outread }">
      <div class="message_name" v-if="showUserData">{{ name }}</div>
      <div class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
@@ -13,15 +13,15 @@
   const { loadProfile } = require('./methods');
 
   module.exports = {
-    props: ['msg', 'peer_id'],
+    props: ['msg', 'peer'],
     computed: {
-      isPeerChat() {
-        return this.peer_id > 2e9;
+      isChat() {
+        return this.peer.id > 2e9;
       },
       showUserData() {
-        if(!this.isPeerChat) return false;
+        if(!this.isChat || this.peer.channel) return false;
         // let dialog = this.$store.state.dialogs.find((dialog) => {
-        //   return dialog.id == this.peer_id;
+        //   return dialog.id == this.peer.id;
         // });
 
         return true;

@@ -27,7 +27,7 @@
               height: 600
             });
 
-        authWindow.loadURL('https://oauth.vk.com/authorize?client_id=6717234&display=popup&scope=136297695&response_type=token');
+        authWindow.loadURL('https://oauth.vk.com/authorize?client_id=6717234&display=popup&scope=69632&response_type=token');
 
         authWindow.on('close', () => {
           if(!accessToken) this.disabled = false;
