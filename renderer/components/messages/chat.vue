@@ -112,24 +112,44 @@
           let date = new Date(this.owner.last_seen.time * 1000),
               thisDate = new Date(),
               s = this.owner.sex == 1 ? 'a' : '',
-              text = `Был${s} в сети `,
+              time = '',
               f = (t) => t < 10 ? `0${t}` : t,
               months = [
                 'янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.',
                 'июл.', 'авг.', 'сен.', 'окт.', 'ноя.', 'дек.'
               ];
 
-          if(thisDate.toLocaleDateString() == date.toLocaleDateString()) {
-            text += 'сегодня';
-          } else if(thisDate.getFullYear() == date.getFullYear()) {
-            text += `${date.getDate()} ${months[date.getMonth()]}`;
+          let offlineTime = thisDate.getTime() - date.getTime(),
+              offlineHours = Math.floor(offlineTime / (1000 * 60 * 60)),
+              thisYear = thisDate.getFullYear() == date.getFullYear(),
+              thisMonth = thisYear && thisDate.getMonth() == date.getMonth(),
+              thisDay = thisMonth && thisDate.getDate() == date.getDate(),
+              yesterday = thisMonth && thisDate.getDate() - 1 == date.getDate();
+
+          if(thisDay) {
+            time = 'сегодня';
+          } else if(yesterday) {
+            time = 'вчера';
+          } else if(thisYear) {
+            time = `${date.getDate()} ${months[date.getMonth()]}`;
           } else {
-            text += `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}г`;
+            time = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} г.`;
           }
 
-          text += ` в ${date.getHours()}:${f(date.getMinutes())}`;
+          if(offlineHours <= 3) {
+            if(offlineHours == 0) {
+              let mins = thisDate.getMinutes() - date.getMinutes(),
+                  word = other.getWordEnding(mins, ['минуту', 'минуты', 'минут']);
 
-          return text;
+              time = `${mins} ${word} назад`;
+            } else {
+              let word = other.getWordEnding(offlineHours, ['час', 'часа']);
+
+              time = `${offlineHours} ${word} назад`;
+            }
+          } else time += ` в ${date.getHours()}:${f(date.getMinutes())}`;
+
+          return `Был${s} в сети ${time}`;
         }
       },
       messages() {

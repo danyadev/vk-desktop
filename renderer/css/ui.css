@@ -19,25 +19,24 @@
 .input::-webkit-input-placeholder { color: #a0a0a0 }
 
 .button {
-  width: 250px;
+  display: inline-block;
   height: 35px;
-  outline: none;
-  font-size: 15px;
   line-height: 32px;
+  font-size: 15px;
   padding: 0 9px;
-  background-color: #5181b8;
+  background-color: #598ac1;
   color: white;
-  border-radius: 5px;
   border: none;
+  border-radius: 5px;
   user-select: none;
   text-align: center;
   transition: opacity .3s, background-color .3s;
 }
 
 .button:not(:disabled) { cursor: pointer }
-.button:not(:disabled):hover { background-color: #638bba }
-.button:not(:disabled):active { background-color: #4e7bac }
-.button:disabled { opacity: .5 }
+.button:not(:disabled):hover { background-color: #547fb3 }
+.button:not(:disabled):active { background-color: #4977a9 }
+.button:disabled { opacity: .8 }
 
 .link {
   display: inline-block;

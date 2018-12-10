@@ -231,7 +231,7 @@
           case 'chat_invite_user_by_link':
             return `${name(0)} присоединил${w(0, 'ись:ась:ся')} к беседе по ссылке`;
           default:
-            console.error('[messages] Неизвестное действие:', action.type);
+            console.warn('[messages] Неизвестное действие:', action.type);
             return `Неизвестное действие (${action.type})`;
         }
       }

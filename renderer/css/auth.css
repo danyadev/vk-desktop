@@ -22,3 +22,7 @@
   font-size: 20px;
   margin: 15px 0 30px 0;
 }
+
+.auth_button {
+  width: 250px;
+}
