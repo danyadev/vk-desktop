@@ -47,13 +47,3 @@ body {
 	/* 32px - высота titlebar'a по умолчанию */
   height: calc(100% - 32px);
 }
-
-.root.modal_opened::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 5;
-	background-color: rgba(0, 0, 0, .4);
-}

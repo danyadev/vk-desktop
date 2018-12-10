@@ -1,6 +1,6 @@
 <template>
   <div class="modals_container">
-    <component v-for="modal in modals" :is="modal"></component>
+    <component v-for="modal in modals" :is="modal.name" :data="modal.data"></component>
   </div>
 </template>
 
@@ -12,16 +12,20 @@
       modals: []
     }),
     created() {
-      Bus.on('open', (name) => {
-        this.modals.push(`modal-${name}`);
-        qs('.root').classList.add('modal_opened');
+      Bus.on('open', (name, data = {}) => {
+        this.modals.push({
+          name: `modal-${name}`,
+          data: data
+        });
+
+        qs('.modals_container').classList.add('modal_opened');
       });
 
       Bus.on('close', () => {
         this.modals.pop();
 
         if(!this.modals.length) {
-          qs('.root').classList.remove('modal_opened');
+          qs('.modals_container').classList.remove('modal_opened');
         }
       });
     }

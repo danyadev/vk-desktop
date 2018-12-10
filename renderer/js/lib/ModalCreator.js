@@ -16,24 +16,12 @@ let ModalCreator = {
         this.$on('close', (data) => this.close(data));
       },
       methods: {
-        open(name) {
-          Bus.emit('open', name);
+        open(name, data) {
+          Bus.emit('open', name, data);
         },
         close(data) {
           Bus.emit('close', data);
         }
-      }
-    });
-
-    Vue.mixin({
-      created() {
-        this.$on('modals:open', (name) => {
-          Bus.emit('open', name);
-        });
-
-        this.$on('modals:close', (data) => {
-          Bus.emit('close', data);
-        });
       }
     });
   },

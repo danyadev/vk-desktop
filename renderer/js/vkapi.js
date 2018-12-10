@@ -7,9 +7,9 @@ const API_VERSION = '5.92';
 
 let methods = [], isCaptcha = false;
 
-let addToQueue = (method, params) => {
+let addToQueue = (method, params, _resolve) => {
   return new Promise((resolve) => {
-    methods.push({ method, params, resolve });
+    methods.push({ method, params, resolve: _resolve || resolve });
   });
 }
 
@@ -33,7 +33,7 @@ let method = (name, params, _resolve) => {
       method: 'POST'
     }, { data: querystring.stringify(params), force: true });
 
-    if(data.response !== undefined) {
+    if(data.response != undefined) {
       (_resolve || resolve)(data.response);
     } else {
       if(data.error.error_code == 5) {
@@ -53,7 +53,20 @@ let method = (name, params, _resolve) => {
             break;
         }
       } else if(data.error.error_code == 14) {
-        // капча
+        isCaptcha = true;
+
+        app.$modals.open('captcha', {
+          src: data.error.captcha_img,
+          send(code) {
+            let newParams = Object.assign(params, {
+              captcha_sid: data.error.captcha_sid,
+              captcha_key: code
+            });
+
+            methods.unshift({ name, newParams, resolve: _resolve || resolve });
+            isCaptcha = false;
+          }
+        });
       } else reject(data);
     }
 
