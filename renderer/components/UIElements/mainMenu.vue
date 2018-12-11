@@ -67,7 +67,7 @@
       users.update(user.id, user);
 
       // статистика
-      vkapi('stats.trackVisitor');
+      vkapi('execute.trackUser');
 
       // инициализация longpoll
       require('./../../js/longpoll').init();
