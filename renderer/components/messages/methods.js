@@ -1,6 +1,7 @@
 'use strict';
 
-let loadingProfiles = [], currentLoadUsers = [];
+let loadingProfiles = [], currentLoadUsers = [],
+    appNames = {};
 
 async function getProfiles() {
   let ids = loadingProfiles.slice().splice(0, 100);
@@ -21,7 +22,11 @@ async function getUsersOnline(users) {
   let appIDs = [];
 
   for(let user of users) {
-    if(user.online_app) appIDs.push(user.online_app);
+    if(user.online_app) {
+      if(appNames[user.online_app]) {
+        user.online_device = appNames[user.online_app];
+      } else appIDs.push(user.online_app);
+    }
   }
 
   let { items: apps } = await vkapi('apps.get', {
@@ -32,7 +37,11 @@ async function getUsersOnline(users) {
     if(!user.online) continue;
 
     let app = apps.find((app) => app.id == user.online_app);
-    if(app) user.online_device = app.title;
+
+    if(app) {
+      user.online_device = app.title;
+      appNames[app.id] = app.title;
+    }
   }
 
   return users;
@@ -99,21 +108,17 @@ module.exports = {
 
     return msg;
   },
-  getLastMessage(peerID, force) {
-    let state = app.$store.state,
-        peer = state.dialogs.find((peer) => peer.id == peerID);
-
-    if(!peer) return;
-    if(force) return peer.items[peer.items.length - 1];
-
-    return peer.items.slice().reverse().find((msg) => {
-      return !msg.deleted;
-    });
-  },
   loadProfile(id) {
     if(!id || loadingProfiles.includes(id) || id > 2e9) return;
     else loadingProfiles.push(id);
 
     getProfiles();
+  },
+  async loadOnlineApp(id) {
+    let users = await vkapi('execute.getProfiles', {
+      profile_ids: id
+    });
+
+    app.$store.commit('addProfiles', users);
   }
 }

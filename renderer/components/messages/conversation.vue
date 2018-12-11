@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  const { getLastMessage, loadProfile } = require('./methods');
+  const { loadProfile } = require('./methods');
 
   module.exports = {
     props: ['peer'],
@@ -48,7 +48,7 @@
         return this.$store.state.activeChat == this.peer.id;
       },
       msg() {
-        return getLastMessage(this.peer.id);
+        return this.$store.getters.lastMessage(this.peer.id);
       },
       profiles() {
         return this.$store.state.profiles;

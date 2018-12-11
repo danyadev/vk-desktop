@@ -23,6 +23,10 @@ Vue.directive('emoji', (el, { modifiers }, vnode) => {
   if(!modifiers.no_emoji) el.innerHTML = emoji(html);
 });
 
+Vue.directive('focus', {
+  inserted: (el) => el.focus()
+})
+
 let getTagData = (name, text) => {
   let regexp = new RegExp(`<${name}>([^]*)</${name}>`, 'i');
 

@@ -21,7 +21,10 @@ setInterval(() => {
 }, 334);
 
 let method = (name, params, _resolve) => {
+  if(isCaptcha) console.log('captcha', name, params);
   return new Promise(async (resolve, reject) => {
+    let time = Date.now();
+
     if(!other.isObject(params)) params = {};
 
     params.v = params.v || API_VERSION;
@@ -32,6 +35,8 @@ let method = (name, params, _resolve) => {
       path: `/method/${name}`,
       method: 'POST'
     }, { data: querystring.stringify(params), force: true });
+
+    console.log('[API]', Date.now() - time + 'ms', name, data.response);
 
     if(data.response != undefined) {
       (_resolve || resolve)(data.response);
@@ -53,6 +58,12 @@ let method = (name, params, _resolve) => {
             break;
         }
       } else if(data.error.error_code == 14) {
+        if(isCaptcha) {
+          console.log('captcha #2', name, params);
+          methods.unshift({ name, params, resolve: _resolve || resolve });
+          return;
+        }
+
         isCaptcha = true;
 
         app.$modals.open('captcha', {

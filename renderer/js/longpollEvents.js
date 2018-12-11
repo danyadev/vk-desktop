@@ -63,7 +63,7 @@ let getAttachments = (data) => {
 let getMessage = (data, type) => {
   let flags = getFlags(data[1]),
       action = getServiceMessage(data[5]),
-      from_id = flags.is('outbox') ? users.get().id : Number(data[5].from || data[2]),
+      from_id = (flags.is('outbox') || type == 'restore') ? users.get().id : Number(data[5].from || data[2]),
       isChannel = data[1] == 0; // пока я только это заметил
 
   let res = {
@@ -85,6 +85,7 @@ let getMessage = (data, type) => {
   }
 
   if(type == 'new') res.msg.outread = flags.is('outbox');
+  if(type == 'restore') res.msg.out = true;
   return res;
 }
 
@@ -168,10 +169,9 @@ module.exports = {
     // [-user_id, platform, timestramp]
     // 1: mobile, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
 
-    let types = ['mobile', 'iphone', 'ipad', 'android', 'wphone', 'windows', 'web'],
-        device;
+    let device;
 
-    if([1, 7].includes(data[1])) {
+    if(![1, 7].includes(data[1])) {
       let names = {
         2: 'iPhone',
         3: 'iPad',

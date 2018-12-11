@@ -61,6 +61,7 @@
 
 <script>
   const { clipboard } = require('electron').remote;
+  const { loadOnlineApp } = require('./methods');
 
   module.exports = {
     computed: {
@@ -102,10 +103,12 @@
         }
 
         if(this.owner.online) {
-          let app = this.owner.online_device;
+          let app = this.owner.online_device || '';
 
-          if(!app) app = this.owner.online_mobile ? 'с телефона' : '';
-          else app = 'с ' + app;
+          if(!app) {
+            if(this.owner.online_mobile) app = 'с телефона';
+            else if(!this.owner.online_web) loadOnlineApp(this.owner.id);
+          } else app = 'с ' + app;
 
           return `В сети ${app}`;
         } else {
@@ -121,6 +124,7 @@
 
           let offlineTime = thisDate.getTime() - date.getTime(),
               offlineHours = Math.floor(offlineTime / (1000 * 60 * 60)),
+              offlineMins = Math.floor(offlineTime / (1000 * 60)),
               thisYear = thisDate.getFullYear() == date.getFullYear(),
               thisMonth = thisYear && thisDate.getMonth() == date.getMonth(),
               thisDay = thisMonth && thisDate.getDate() == date.getDate(),
@@ -138,14 +142,15 @@
 
           if(offlineHours <= 3) {
             if(offlineHours == 0) {
-              let mins = thisDate.getMinutes() - date.getMinutes(),
-                  word = other.getWordEnding(mins, ['минуту', 'минуты', 'минут']);
+              let word = other.getWordEnding(offlineMins, ['минуту', 'минуты', 'минут']);
 
-              time = `${mins} ${word} назад`;
+              if(offlineMins == 0) time = 'только что';
+              else time = `${offlineMins} ${word} назад`;
             } else {
               let word = other.getWordEnding(offlineHours, ['час', 'часа']);
 
-              time = `${offlineHours} ${word} назад`;
+              if(offlineHours == 1) time = 'час назад';
+              else time = `${offlineHours} ${word} назад`;
             }
           } else time += ` в ${date.getHours()}:${f(date.getMinutes())}`;
 

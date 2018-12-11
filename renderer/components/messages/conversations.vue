@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  const { parseConversation, parseMessage, concatProfiles, getLastMessage } = require('./methods');
+  const { parseConversation, parseMessage, concatProfiles } = require('./methods');
 
   module.exports = {
     data: () => ({
@@ -89,9 +89,7 @@
         if(index != -1) {
           if(!isDelete) this.peers.move(index, 0);
           else {
-            this.peers.sort((p1, p2) => {
-              return getLastMessage(p1.id).date < getLastMessage(p2.id).date ? 1 : -1;
-            });
+            this.$store.commit('sortPeers');
 
             let peerIndex = this.peers.findIndex((peer) => peer.id == peerID);
             if(peerIndex == this.peers.length - 1) Vue.delete(this.peers, peerIndex);
@@ -204,34 +202,24 @@
           msg: parseMessage(msg, { outread })
         });
 
-        if(data.all) {
-          this.$store.commit('removeMessage', {
-            peer_id: data.peer_id,
-            id: data.id
-          });
-        } else {
-          this.$store.commit('editMessage', {
-            peer_id: data.peer_id,
-            msg: {
-              id: data.id,
-              deleted: true
-            }
-          });
-        }
+        this.$store.commit('removeMessage', {
+          peer_id: data.peer_id,
+          id: data.id
+        });
 
         this.updatePeer(data.peer_id, { unread }, true);
         this.moveConversations(data.peer_id, true);
       });
 
-      longpoll.on('restore_message', (data) => {
-        this.$store.commit('editMessage', {
-          force: true,
+      longpoll.on('restore_message', async (data) => {
+        let { out_read } = await vkapi('execute.getLastMessage', { peer_id: data.peer.id });
+
+        this.$store.commit('addMessage', {
           peer_id: data.peer.id,
-          msg: {
-            ...data.msg,
-            deleted: false
-          }
+          msg: Object.assign({ outread: out_read < data.msg.id }, data.msg)
         });
+
+        this.$store.commit('sortPeers');
       });
 
       longpoll.on('readed_messages', (data) => {
@@ -268,21 +256,12 @@
       });
 
       longpoll.on('online_user', async (data) => {
-        let device = data.device;
-
-        if(data.type == 'online') {
-          if(!device) {
-            let [user] = await vkapi('execute.getProfiles', { profile_ids: data.id });
-            device = user.online_device;
-          }
-        }
-
         this.$store.commit('updateProfile', {
           id: data.id,
           online: data.type == 'online',
           online_mobile: data.mobile,
-          online_device: device,
-          online_time: data.timestramp
+          online_device: data.device,
+          last_seen: { time: data.timestramp }
         });
       });
 

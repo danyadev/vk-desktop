@@ -2,7 +2,7 @@
 
 Vue.use(Vuex);
 
-const { getLastMessage, loadProfile } = require('./../components/messages/methods');
+const { loadProfile } = require('./../components/messages/methods');
 
 let getNewIndex = (arr, num) => {
   for(let i=0; i<arr.length; i++) {
@@ -69,7 +69,7 @@ module.exports = new Vuex.Store({
 
       if(index != -1) Vue.set(peer.items, index, msg);
       else if(data.force) {
-        let lastMsg = getLastMessage(data.peer_id, true);
+        let lastMsg = this.getters.lastMessage(data.peer_id);
         if(!lastMsg || lastMsg.id == data.msg.id) peer.items.push(data.msg);
       }
     },
@@ -85,6 +85,13 @@ module.exports = new Vuex.Store({
     setChat(state, id) {
       state.activeChat = id;
     },
+    sortPeers(state) {
+      let lastMsg = this.getters.lastMessage;
+
+      state.peers.sort((p1, p2) => {
+        return lastMsg(p1.id).date < lastMsg(p2.id).date ? 1 : -1;
+      });
+    },
     addPeer(state, data) {
       state.peers.push(data);
     },
@@ -99,17 +106,17 @@ module.exports = new Vuex.Store({
     }
   },
   getters: {
-    typingMsg: (state) => (peer_id) => {
+    typingMsg: (state) => (peerID) => {
       let text = [], audio = [], msg = '';
 
-      for(let id in state.typing[peer_id]) {
-        if(state.typing[peer_id][id].type == 'audio') audio.push(id);
+      for(let id in state.typing[peerID]) {
+        if(state.typing[peerID][id].type == 'audio') audio.push(id);
         else text.push(id);
       }
 
       let name = (id) => {
         // если это лс, то просто писать "печатает"
-        if(peer_id < 2e9) return '';
+        if(peerID < 2e9) return '';
 
         let user = state.profiles[id];
         if(!user || !user.photo_50) return loadProfile(id), '...';
@@ -149,6 +156,10 @@ module.exports = new Vuex.Store({
       }
 
       return msg;
+    },
+    lastMessage: (state) => (peerID) => {
+      let peer = state.dialogs.find((peer) => peer.id == peerID);
+      if(peer) return peer.items[peer.items.length - 1];
     }
   }
 });

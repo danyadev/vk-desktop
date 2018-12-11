@@ -80,7 +80,6 @@
 
 .captcha {
   width: 300px;
-  height: 145px;
   background-color: #fcfcfc;
 }
 
@@ -99,7 +98,7 @@
 .captcha_key {
   display: flex;
   justify-content: center;
-  margin-top: 15px;
+  padding: 20px 0;
 }
 
 .captcha .modal_bottom input { width: 130px }
