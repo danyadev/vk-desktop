@@ -81,7 +81,8 @@ module.exports = {
       unread: conversation.unread_count || 0,
       photo: chatPhoto,
       title: chatTitle,
-      canWrite: conversation.can_write
+      canWrite: conversation.can_write,
+      in_read: conversation.in_read
     }
   },
   parseMessage(message, conversation) {

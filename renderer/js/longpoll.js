@@ -24,36 +24,33 @@ class Longpoll {
   }
 
   async loop() {
-    let [ host, path ] = this.server.split('/'),
-        data = await request({
-          host,
-          path: `/${path}?` + querystring.stringify({
-            act: 'a_check',
-            key: this.key,
-            ts: this.ts,
-            wait: 15,
-            mode: 106,
-            version: 3
-          })
-        }, { force: true });
+    let [ host, path ] = this.server.split('/');
+
+    let data = await request({
+      host: host,
+      path: `/${path}?` + querystring.stringify({
+        act: 'a_check',
+        key: this.key,
+        ts: this.ts,
+        wait: 10,
+        mode: 106,
+        version: 3
+      })
+    });
 
     if(!data.updates) data.updates = [];
 
     if(data.failed) {
-      console.warn('[longpoll] Error:', data);
-
       if([1, 3].includes(data.failed)) {
         let history = await vkapi('messages.getLongPollHistory', {
           ts: this.ts,
           pts: this.pts,
           onlines: 1,
           lp_version: 3,
-          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen'
+          fields: other.fields
         });
 
-        await concatProfiles(history.profiles, history.groups).forEach((profile) => {
-          app.$store.commit('addProfiles', profile);
-        });
+        app.$store.commit('addProfiles', await concatProfiles(history.profiles, history.groups));
 
         for(let item of history.history) {
           if([4, 5].includes(item[0])) {
@@ -64,7 +61,7 @@ class Longpoll {
             this.emit(type, {
               peer: parseConversation(conversation),
               msg: parseMessage(message, conversation)
-            })
+            });
           } else data.updates.push(item);
         }
 
@@ -88,21 +85,17 @@ class Longpoll {
     this.ts = data.ts || this.ts;
     this.pts = data.pts || this.pts;
 
-    for(let update of data.updates || []) {
-      let upd = update.slice(0),
-          id = upd.splice(0, 1)[0],
+    for(let update of data.updates) {
+      let id = update.splice(0, 1)[0],
           eventsList = require('./longpollEvents'),
           event = eventsList[id];
 
       if(!event) {
-        console.error('[longpoll] Неизвестное событие:', id, update);
+        console.error('[longpoll] Неизвестное событие:', [id, ...update]);
         continue;
       }
 
-      let eventData = event(upd);
-
-      // Событие не нужно обрабатывать, ибо по моему
-      // мнению оно не несет никакого смысла
+      let eventData = event(update);
       if(!eventData.name) continue;
 
       this.emit(eventData.name, eventData.data);

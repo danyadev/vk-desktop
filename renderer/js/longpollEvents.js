@@ -229,7 +229,10 @@ module.exports = {
 
     return {
       name: 'delete_peer',
-      data: { peer_id: data[0] }
+      data: {
+        peer_id: data[0],
+        msg_id: data[1]
+      }
     }
   },
   51: (data) => ({}), // абсолютно не нужное событие

@@ -1,8 +1,3 @@
-/**
- * ModalCreator
- * (c) 2018 danyadev
- * @license Apache-2.0
- */
 const { EventEmitter } = require('events');
 
 let Bus = new EventEmitter();

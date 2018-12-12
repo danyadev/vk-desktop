@@ -34,7 +34,7 @@ let method = (name, params, _resolve) => {
       host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST'
-    }, { data: querystring.stringify(params), force: true });
+    }, { data: querystring.stringify(params)});
 
     console.log('[API]', Date.now() - time + 'ms', name, data.response);
 
@@ -47,14 +47,13 @@ let method = (name, params, _resolve) => {
         switch(error) {
           case 'user revoke access for this token.':
           case 'invalid session.':
-            // Пользователь удалил приложение из списка активных и токен стал неактинвным
+            app.$modals.open('blocked', 0);
             break;
           case 'user is deactivated.':
-            // Пользователь удалил свою страницу
-            // При восстановлении токен остается активным
+            app.$modals.open('blocked', 1);
             break;
           case 'invalid access_token (2).':
-            // Страница заблокирована
+            app.$modals.open('blocked', 2);
             break;
         }
       } else if(data.error.error_code == 14) {

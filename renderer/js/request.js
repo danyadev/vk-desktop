@@ -39,9 +39,10 @@ let request = (url, options = {}, newResolve) => {
       let data = await plainRequest(url, options);
       (newResolve || resolve)(JSON.parse(data));
     } catch(err) {
-      console.warn(err);
-      
-      if(options.force) {
+      let connectErrors = ['getaddrinfo', 'read', 'connect'];
+
+      if(connectErrors.includes(err.syscall)) {
+        console.warn(err);
         setTimeout(() => request(url, options, newResolve || resolve), 1000 * 2);
       } else reject(err);
     }

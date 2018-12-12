@@ -7,7 +7,7 @@
       </div>
       <div class="captcha_key">
         <input class="input" placeholder="Введите код с картинки"
-               v-model="text" @keydown.enter="sendCode" v-focus>
+               v-model="text" @keydown.enter="sendCode">
       </div>
     </div>
     <div class="modal_bottom">

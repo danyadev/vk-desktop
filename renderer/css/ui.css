@@ -20,10 +20,8 @@
 
 .button {
   display: inline-block;
-  height: 35px;
-  line-height: 32px;
   font-size: 15px;
-  padding: 0 9px;
+  padding: 10px 9px;
   background-color: #598ac1;
   color: white;
   border: none;

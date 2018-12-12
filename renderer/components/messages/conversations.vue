@@ -20,15 +20,15 @@
     }),
     computed: {
       peers() {
-        return this.$store.state.peers;
+        return this.$store.getters.peers;
       }
     },
     methods: {
       async load() {
         let { items, profiles = [], groups = [] } = await vkapi('messages.getConversations', {
+          offset: this.peers.length,
           extended: true,
-          fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen',
-          offset: this.peers.length
+          fields: other.fields
         });
 
         this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
@@ -41,7 +41,7 @@
             msg: parseMessage(last_message, conversation)
           });
 
-          this.peers.push(parseConversation(conversation));
+          this.$store.commit('addPeer', parseConversation(conversation));
         }
 
         this.loading = false;
@@ -61,39 +61,34 @@
         }
       }, 100),
       async updatePeer(peerID, data, optional) {
-        if(this.peers.length == 0) return;
+        if(!this.peers.length) return;
+        data.id = peerID;
 
-        let index = this.peers.findIndex((peer) => peer.id == peerID),
-            peer = this.peers[index];
+        let peer = this.$store.state.peers.find(({ id }) => id == data.id);
 
         if(data instanceof Function) data = data(peer);
         if(data instanceof Promise) data = await data;
 
         if(!peer && !optional) {
-          this.peers.unshift(data);
+          this.$store.commit('addPeer', data);
 
           let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
             peer_ids: peerID,
             extended: 1,
-            fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen'
+            fields: other.fields
           });
 
           this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
 
           this.updatePeer(peerID, parseConversation(conv));
-        } else Vue.set(this.peers, index, Object.assign({}, peer, data || {}));
+        } else this.$store.commit('editPeer', data);
       },
       moveConversations(peerID, isDelete) {
-        let index = this.peers.findIndex((peer) => peer.id == peerID);
+        this.$store.commit('sortPeers');
 
-        if(index != -1) {
-          if(!isDelete) this.peers.move(index, 0);
-          else {
-            this.$store.commit('sortPeers');
-
-            let peerIndex = this.peers.findIndex((peer) => peer.id == peerID);
-            if(peerIndex == this.peers.length - 1) Vue.delete(this.peers, peerIndex);
-          }
+        if(isDelete) {
+          let peerIndex = this.peers.findIndex(({ id }) => id == peerID);
+          if(peerIndex == this.peers.length - 1) Vue.delete(this.peers, peerIndex);
         }
       }
     },
@@ -116,8 +111,9 @@
         let user = this.$store.state.typing[data.peer_id][data.from_id];
 
         if(!user) return;
-        else if(user.time) {
-          this.$store.commit('addTyping', {
+
+        if(user.time) {
+          this.$store.commit('setTyping', {
             id: data.from_id,
             peer: data.peer_id,
             data: { type: data.type, time: user.time - 1 }
@@ -161,7 +157,7 @@
                 if(peer.chat_settings.photo) data.photo = peer.chat_settings.photo.photo_50;
                 else data.photo = null;
 
-                this.updatePeer(peer.peer.id,  data);
+                this.updatePeer(peer.peer.id, data, true);
               });
             }
 
@@ -197,7 +193,12 @@
             msgIndex = items.findIndex((msg) => msg.id == data.id),
             { msg, unread, outread } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id });
 
-        if(msg) this.$store.commit('addMessage', {
+        if(!msg) {
+          this.$store.commit('removePeer', data.peer_id);
+          return;
+        }
+
+        this.$store.commit('addMessage', {
           peer_id: data.peer_id,
           msg: parseMessage(msg, { outread })
         });
@@ -223,8 +224,8 @@
       });
 
       longpoll.on('readed_messages', (data) => {
-        let peer = this.$store.state.dialogs.find((peer) => peer.id == data.peer_id),
-            msgs = peer.items.filter((msg) => msg.id <= data.id);
+        let peer = this.$store.state.dialogs.find(({ id }) => id == data.peer_id),
+            msgs = peer.items.filter(({ id }) => id <= data.id);
 
         for(let msg of msgs) {
           this.$store.commit('editMessage', {
@@ -235,6 +236,11 @@
             }
           });
         }
+
+        this.$store.commit('editPeer', {
+          id: data.peer_id,
+          in_read: data.id
+        });
       });
 
       longpoll.on('read_messages', (data) => {
@@ -246,7 +252,7 @@
       });
 
       longpoll.on('typing', (data) => {
-        this.$store.commit('addTyping', {
+        this.$store.commit('setTyping', {
           id: data.from_id,
           peer: data.peer_id,
           data: { type: data.type, time: 5 }
@@ -255,7 +261,7 @@
         removeTyping(data);
       });
 
-      longpoll.on('online_user', async (data) => {
+      longpoll.on('online_user', (data) => {
         this.$store.commit('updateProfile', {
           id: data.id,
           online: data.type == 'online',
@@ -266,8 +272,17 @@
       });
 
       longpoll.on('delete_peer', (data) => {
-        let index = this.peers.findIndex((peer) => peer.id == data.peer_id);
-        if(index != -1) Vue.delete(this.peers, index);
+        this.$store.commit('removePeer', data.peer_id);
+
+        let peer = this.$store.state.dialogs.find(({ id }) => id == data.peer_id),
+            msgs = peer.items.filter(({ id }) => id <= data.msg_id);
+
+        for(let msg of msgs) {
+          this.$store.commit('removeMessage', {
+            peer_id: data.peer_id,
+            id: msg.id
+          });
+        }
       });
     }
   }

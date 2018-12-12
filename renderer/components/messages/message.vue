@@ -1,5 +1,5 @@
 <template>
- <div class="message" :class="{ from_me: isOwner }">
+ <div class="message" :id="'message' + this.msg.id" :class="{ from_me: isOwner }">
    <img v-if="showUserData" class="message_photo" :src="photo">
    <div v-else-if="isChat && !peer.channel" class="message_photo"></div>
    <div class="message_content" :class="{ outread }">
@@ -20,9 +20,6 @@
       },
       showUserData() {
         if(!this.isChat || this.peer.channel) return false;
-        // let dialog = this.$store.state.dialogs.find((dialog) => {
-        //   return dialog.id == this.peer.id;
-        // });
 
         return true;
       },

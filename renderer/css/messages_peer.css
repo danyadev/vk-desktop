@@ -242,3 +242,7 @@
 .dialog_input_channel:hover {
   background-color: #d6dee4;
 }
+
+.dialog_input_channel:active {
+  background-color: #ccd4da;
+}

@@ -22,6 +22,7 @@
 }
 
 .modal {
+  position: absolute;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
 }
 
@@ -60,7 +61,7 @@
 .modal_content { background-color: #fff }
 
 .modal_bottom {
-  height: 50px;
+  height: 56px;
   border-top: 1px solid #e7e8ec;
   background-color: #f7f8fa;
   border-bottom-right-radius: 3px;
@@ -68,9 +69,13 @@
 }
 
 .modal_bottom .button {
-  min-width: 120px;
-  margin: 7px;
+  min-width: 110px;
+  margin: 9px 5px;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+}
+
+.modal_bottom .button.right:first-child {
+  margin-right: 10px;
 }
 
 .modal_bottom .button.right { float: right }
@@ -106,4 +111,11 @@
 .captcha_btn input {
   width: 250px;
   height: 30px;
+}
+
+/* Заблокированный аккаунт */
+
+.blocked_profile {
+  padding: 20px;
+  max-width: 450px;
 }

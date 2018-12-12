@@ -21,6 +21,7 @@ module.exports = new Vuex.Store({
     activeChat: null,
     profiles: {},
     peers: [],
+    peersList: [],
     dialogs: [],
     typing: {}
   },
@@ -39,7 +40,7 @@ module.exports = new Vuex.Store({
       Vue.set(state.profiles, user.id, Object.assign({}, old, user));
     },
     // ** Тайпинг **
-    addTyping(state, data) {
+    setTyping(state, data) {
       if(!state.typing[data.peer]) Vue.set(state.typing, data.peer, {});
 
       Vue.set(state.typing[data.peer], data.id, data.data);
@@ -57,6 +58,13 @@ module.exports = new Vuex.Store({
             index = getNewIndex(ids, data.msg.id);
 
         if(!ids.includes(data.msg.id)) peer.items.splice(index, 0, data.msg);
+      }
+
+      let peerObj = state.peers.find(({ id }) => id == data.peer_id),
+          visible = !!state.peersList.find(({ id }) => id == data.peer_id);
+
+      if(!visible && peerObj) {
+        state.peersList.unshift({ id: peerObj.id });
       }
     },
     editMessage(state, data) {
@@ -88,24 +96,36 @@ module.exports = new Vuex.Store({
     sortPeers(state) {
       let lastMsg = this.getters.lastMessage;
 
-      state.peers.sort((p1, p2) => {
+      state.peersList.sort((p1, p2) => {
         return lastMsg(p1.id).date < lastMsg(p2.id).date ? 1 : -1;
       });
     },
     addPeer(state, data) {
-      state.peers.push(data);
-    },
-    removePeer(state, id) {
-      let index = state.peers.findIndex((peer) => peer.id == id);
+      if(!state.peers.find(({ id }) => id == data.id)) {
+        state.peers.push(data);
+      }
 
-      if(index != -1) Vue.delete(state.peers, index);
+      if(!state.peersList.find(({ id }) => id == data.id)) {
+        state.peersList.push({ id: data.id });
+      }
     },
     editPeer(state, data) {
-      let peer = state.peers.find((peer) => peer.id == data.id);
-      if(peer) Vue.set(state.peers, data.id, Object.assign({}, peer, data));
+      let index = state.peers.findIndex(({ id }) => id == data.id),
+          peer = state.peers[index];
+
+      if(peer) Vue.set(state.peers, index, Object.assign({}, peer, data));
+    },
+    removePeer(state, id) {
+      let index = state.peersList.findIndex((peer) => peer.id == id);
+      if(index != -1) Vue.delete(state.peersList, index);
     }
   },
   getters: {
+    peers(state) {
+      return state.peersList.map(({ id }) => {
+        return state.peers.find((peer) => peer.id == id);
+      });
+    },
     typingMsg: (state) => (peerID) => {
       let text = [], audio = [], msg = '';
 

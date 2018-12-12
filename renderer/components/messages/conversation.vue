@@ -14,7 +14,7 @@
         <div class="conversation_time">{{ time }}</div>
       </div>
       <div class="conversation_message_wrap">
-        <div v-if="isTyping" class="typing_wrap">
+        <div v-if="typingMsg" class="typing_wrap">
           <div class="typing_text">{{ typingMsg }}</div>
           <div class="typing">
             <div class="typing_item"></div>
@@ -52,12 +52,6 @@
       },
       profiles() {
         return this.$store.state.profiles;
-      },
-      typing() {
-        return this.$store.state.typing;
-      },
-      isTyping() {
-        return !!Object.keys(this.typing[this.peer.id] || []).length;
       },
       owner() {
         let owner = this.profiles[this.peer.owner];
@@ -141,6 +135,14 @@
         this.$store.commit('setChat', this.peer.id);
         await this.$nextTick();
         qs('.dialog_messages_list').scrollTop = this.peer.scrollTop || 0;
+
+        let peer = this.$store.state.peers.find((peer) => {
+          return peer.id == this.$store.state.activeChat;
+        });
+
+        if(peer.scrollTop == undefined) {
+          qs(`.message#${peer.in_read}`).scrollIntoView();
+        }
 
         if(qs('.dialog_input')) {
           qs('.dialog_input').innerHTML = this.peer.inputText || '';

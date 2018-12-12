@@ -59,9 +59,7 @@
       }
     },
     async mounted() {
-      let [ user ] = await vkapi('users.get', {
-        fields: 'status,photo_100,screen_name,nickname,verified'
-      });
+      let [ user ] = await vkapi('execute.getProfiles', { fields: 'status,photo_100' });
 
       this.user = user;
       users.update(user.id, user);

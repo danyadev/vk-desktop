@@ -40,7 +40,7 @@
             authWindow.close();
             this.loading = true;
 
-            let [ user ] = await vkapi('execute.getProfiles', { access_token });
+            let [ user ] = await vkapi('users.get', { access_token });
 
             users.set(user.id, Object.assign(user, { access_token }));
             settings.set('activeID', user.id);

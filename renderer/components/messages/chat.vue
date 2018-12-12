@@ -102,6 +102,11 @@
           return `${this.peer.members} ${word}`;
         }
 
+        if(this.owner.deactivated) return '';
+
+        let f = (t) => t < 10 ? `0${t}` : t,
+            date = new Date(this.owner.last_seen.time * 1000);
+
         if(this.owner.online) {
           let app = this.owner.online_device || '';
 
@@ -110,13 +115,11 @@
             else if(!this.owner.online_web) loadOnlineApp(this.owner.id);
           } else app = 'с ' + app;
 
-          return `В сети ${app}`;
+          return `В сети ${app} (${date.getHours()}:${f(date.getMinutes())})`;
         } else {
-          let date = new Date(this.owner.last_seen.time * 1000),
-              thisDate = new Date(),
+          let thisDate = new Date(),
               s = this.owner.sex == 1 ? 'a' : '',
               time = '',
-              f = (t) => t < 10 ? `0${t}` : t,
               months = [
                 'янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.',
                 'июл.', 'авг.', 'сен.', 'окт.', 'ноя.', 'дек.'

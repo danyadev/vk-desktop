@@ -23,7 +23,9 @@
         qs('.titlebar_drag').addEventListener('dblclick', () => {
           if(getCurrentWindow().isFullScreen()) return;
 
-          getCurrentWindow().emit(getCurrentWindow().isMaximized() ? 'unmaximize' : 'maximize');
+          let type = getCurrentWindow().isMaximized() ? 'unmaximize' : 'maximize';
+
+          getCurrentWindow().emit(type);
         });
       }
 
