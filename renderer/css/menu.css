@@ -89,7 +89,7 @@
 /* остальные кнопки меню */
 
 .menu_items {
-  padding-top: 5px;
+  padding: 8px;
   overflow-y: auto;
   height: calc(100% - 125px);
 }
@@ -99,15 +99,32 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  transition: background-color .3s;
+  margin-bottom: 8px;
+  border-radius: 5px;
 }
 
-.menu_item:hover, .menu_item.active:not(.menu_account_item) {
-  background-color: #ebeced;
+.menu_item, .menu_item_icon, .menu_item_name {
+  transition: background-color .3s, color .3s;
 }
 
-.menu_item.active .menu_item_icon, .menu_settings.active {
-  background-color: #5281b9;
+.menu_item:hover {
+  background-color: #eaeff6;
+}
+
+.menu_item.active:not(.menu_account_item) {
+  background-color: #eaeff6;
+}
+
+.menu_item.active .menu_item_icon {
+  background-color: #5181b8;
+}
+
+.menu_item.active .menu_item_name {
+  color: #3e70a9;
+}
+
+.menu_item_name {
+
 }
 
 .menu_item_icon {

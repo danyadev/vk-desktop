@@ -39,7 +39,12 @@
   const { loadProfile } = require('./methods');
 
   module.exports = {
-    props: ['peer'],
+    props: {
+      peer: {
+        type: Object,
+        required: true
+      }
+    },
     data: (vm) => ({
       isChat: vm.peer.type == 'chat'
     }),
@@ -119,9 +124,8 @@
         if(this.peer.id == this.$store.state.activeChat) return;
 
         if(this.$store.state.activeChat) {
-          let peer = this.$store.state.peers.find((peer) => {
-            return peer.id == this.$store.state.activeChat;
-          });
+          let conversation = this.$store.state.conversations[this.$store.state.activeChat],
+              peer = conversation && conversation.peer;
 
           if(peer) {
             peer.scrollTop = qs('.dialog_messages_list').scrollTop;
@@ -136,12 +140,12 @@
         await this.$nextTick();
         qs('.dialog_messages_list').scrollTop = this.peer.scrollTop || 0;
 
-        let peer = this.$store.state.peers.find((peer) => {
-          return peer.id == this.$store.state.activeChat;
-        });
+        let conversation = this.$store.state.conversations[this.$store.state.activeChat],
+            peer = conversation && conversation.peer;
 
         if(peer.scrollTop == undefined) {
-          qs(`.message#${peer.in_read}`).scrollIntoView();
+          let item = qs(`#message${peer.in_read}`);
+          if(item) item.scrollIntoView();
         }
 
         if(qs('.dialog_input')) {

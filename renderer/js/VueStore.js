@@ -18,12 +18,12 @@ module.exports = new Vuex.Store({
   strict: true,
   state: {
     menuState: false,
-    activeChat: null,
     profiles: {},
-    peers: [],
+    conversations: {},
     peersList: [],
-    dialogs: [],
-    typing: {}
+    typing: {},
+    activeChat: null,
+    messages: {}
   },
   mutations: {
     // ** Меню **
@@ -36,8 +36,86 @@ module.exports = new Vuex.Store({
     },
     updateProfile(state, user) {
       let old = state.profiles[user.id] || {};
-
       Vue.set(state.profiles, user.id, Object.assign({}, old, user));
+    },
+    // ** Список бесед **
+    addConversation(state, data) {
+      let conversation = state.conversations[data.peer.id],
+          addMsg = false
+
+      if(!conversation) addMsg = true;
+
+      conversation = conversation || {};
+      conversation.peer = Object.assign({}, conversation.peer, data.peer);
+      conversation.lastMsg = Object.assign({}, conversation.lastMsg, data.lastMsg);
+
+      if(addMsg) {
+        this.commit('addMessage', {
+          peer_id: data.peer.id,
+          msg: conversation.lastMsg
+        });
+      }
+
+      Vue.set(state.conversations, data.peer.id, conversation);
+
+      let hasPeer = state.peersList.find(({ id }) => id == data.peer.id);
+      if(!hasPeer) state.peersList.push({ id: data.peer.id });
+    },
+    editPeer(state, data) {
+      let conversation = state.conversations[data.id] || {};
+
+      conversation.peer = Object.assign({}, conversation.peer, data);
+
+      Vue.set(state.conversations, data.id, conversation);
+    },
+    removePeer(state, id) {
+      let index = state.peersList.findIndex((peer) => peer.id == id);
+      if(index != -1) Vue.delete(state.peersList, index);
+    },
+    updateLastMsg(state, data) {
+      let conversation = state.conversations[data.peer_id] || {};
+
+      conversation.lastMsg = Object.assign({}, conversation.lastMsg, data.msg);
+
+      Vue.set(state.conversations, data.id, conversation);
+    },
+    sortPeers(state) {
+      let lastMsg = this.getters.lastMessage;
+
+      state.peersList.sort((p1, p2) => {
+        return lastMsg(p1.id).date < lastMsg(p2.id).date ? 1 : -1;
+      });
+    },
+    // ** Диалог и сообщения **
+    setChat(state, id) {
+      state.activeChat = id;
+    },
+    addMessage(state, data) {
+      let messages = state.messages[data.peer_id] || [];
+      messages.push(data.msg);
+      Vue.set(state.messages, data.peer_id, messages);
+    },
+    editMessage(state, data) {
+      let messages = state.messages[data.peer_id] || [],
+          msgIndex = messages.findIndex(({ id }) => id == data.msg.id),
+          msg = messages[msgIndex],
+          dialog = state.conversations[data.peer_id],
+          lastMsg = dialog && dialog.lastMsg;
+      
+      if(msg) {
+        messages[msgIndex] = Object.assign({}, msg, data.msg);
+        Vue.set(state.messages, data.peer_id, messages);
+      }
+
+      if(lastMsg && data.msg.id == lastMsg.id) {
+        Vue.set(dialog, 'lastMsg', Object.assign({}, lastMsg, data.msg));
+      }
+    },
+    removeMessage(state, data) {
+      let messages = state.messages[data.peer_id] || [],
+          index = messages.findIndex(({ id }) => id = data.msg_id);
+
+      if(index != -1) Vue.delete(messages, index);
     },
     // ** Тайпинг **
     setTyping(state, data) {
@@ -47,84 +125,17 @@ module.exports = new Vuex.Store({
     },
     removeTyping(state, data) {
       Vue.delete(state.typing[data.peer], data.id);
-    },
-    // ** Сообщения **
-    addMessage(state, data) {
-      let peer = state.dialogs.find((peer) => peer.id == data.peer_id);
-
-      if(!peer) state.dialogs.push({ id: data.peer_id, items: [data.msg] });
-      else {
-        let ids = peer.items.map((msg) => msg.id),
-            index = getNewIndex(ids, data.msg.id);
-
-        if(!ids.includes(data.msg.id)) peer.items.splice(index, 0, data.msg);
-      }
-
-      let peerObj = state.peers.find(({ id }) => id == data.peer_id),
-          visible = !!state.peersList.find(({ id }) => id == data.peer_id);
-
-      if(!visible && peerObj) {
-        state.peersList.unshift({ id: peerObj.id });
-      }
-    },
-    editMessage(state, data) {
-      let peer = state.dialogs.find((peer) => peer.id == data.peer_id);
-      if(!peer) return;
-
-      let index = peer.items.findIndex((item) => item.id == data.msg.id),
-          oldMsg = peer.items[index],
-          msg = Object.assign({}, oldMsg, data.msg);
-
-      if(index != -1) Vue.set(peer.items, index, msg);
-      else if(data.force) {
-        let lastMsg = this.getters.lastMessage(data.peer_id);
-        if(!lastMsg || lastMsg.id == data.msg.id) peer.items.push(data.msg);
-      }
-    },
-    removeMessage(state, data) {
-      let peer = state.dialogs.find((peer) => peer.id == data.peer_id);
-      if(!peer) return;
-
-      let index = peer.items.findIndex((item) => item.id == data.id);
-
-      if(index != -1) Vue.delete(peer.items, index);
-    },
-    // ** Беседы **
-    setChat(state, id) {
-      state.activeChat = id;
-    },
-    sortPeers(state) {
-      let lastMsg = this.getters.lastMessage;
-
-      state.peersList.sort((p1, p2) => {
-        return lastMsg(p1.id).date < lastMsg(p2.id).date ? 1 : -1;
-      });
-    },
-    addPeer(state, data) {
-      if(!state.peers.find(({ id }) => id == data.id)) {
-        state.peers.push(data);
-      }
-
-      if(!state.peersList.find(({ id }) => id == data.id)) {
-        state.peersList.push({ id: data.id });
-      }
-    },
-    editPeer(state, data) {
-      let index = state.peers.findIndex(({ id }) => id == data.id),
-          peer = state.peers[index];
-
-      if(peer) Vue.set(state.peers, index, Object.assign({}, peer, data));
-    },
-    removePeer(state, id) {
-      let index = state.peersList.findIndex((peer) => peer.id == id);
-      if(index != -1) Vue.delete(state.peersList, index);
     }
   },
   getters: {
     peers(state) {
       return state.peersList.map(({ id }) => {
-        return state.peers.find((peer) => peer.id == id);
+        return state.conversations[id].peer;
       });
+    },
+    lastMessage: (state, getters) => (peerID) => {
+      let dialog = state.conversations[peerID];
+      if(dialog) return dialog.lastMsg;
     },
     typingMsg: (state) => (peerID) => {
       let text = [], audio = [], msg = '';
@@ -176,10 +187,6 @@ module.exports = new Vuex.Store({
       }
 
       return msg;
-    },
-    lastMessage: (state) => (peerID) => {
-      let peer = state.dialogs.find((peer) => peer.id == peerID);
-      if(peer) return peer.items[peer.items.length - 1];
     }
   }
 });

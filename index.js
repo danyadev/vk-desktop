@@ -29,7 +29,9 @@ if(!app.isPackaged) {
 
 app.on('ready', () => {
   // Расширение для удобной разработки на Vue
-  try { BrowserWindow.addDevToolsExtension('./vue-devtools') } catch(e) {}
+  if(fs.readdirSync('.').find((file) => file == 'vue-devtools')) {
+    BrowserWindow.addDevToolsExtension('./vue-devtools');
+  }
 
   const { screen } = require('electron');
 

@@ -8,7 +8,10 @@
 <script>
   module.exports = {
     props: {
-      closable: { default: true }
+      closable: {
+        type: Boolean,
+        default: true
+      }
     },
     methods: {
       close() {

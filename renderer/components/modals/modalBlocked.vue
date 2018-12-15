@@ -24,7 +24,12 @@
 
 <script>
   module.exports = {
-    props: ['data'],
+    props: {
+      data: {
+        type: Number,
+        required: true
+      }
+    },
     computed: {
       title() {
         switch(this.data) {

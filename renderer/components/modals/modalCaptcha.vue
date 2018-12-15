@@ -18,7 +18,12 @@
 
 <script>
   module.exports = {
-    props: ['data'],
+    props: {
+      data: {
+        type: Object,
+        required: true
+      }
+    },
     data: () => ({
       text: ''
     }),

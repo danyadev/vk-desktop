@@ -20,7 +20,7 @@
     </div>
     <div v-else class="dialog_wrap">
       <div class="dialog_messages_list">
-        <message v-for="msg of messages" :msg="msg" :peer="peer"></message>
+        <message v-for="msg of messages" :msg="msg" :peer="peer" :key="peer.id"></message>
         <div class="typing_wrap">
           <div class="typing" v-if="typingMsg">
             <div class="typing_item"></div>
@@ -72,9 +72,8 @@
         return this.id > 2e9;
       },
       peer() {
-        return this.$store.state.peers.find((peer) => {
-          return peer.id == this.id;
-        });
+        let dialog = this.$store.state.conversations[this.id];
+        return dialog && dialog.peer;
       },
       profiles() {
         return this.$store.state.profiles;
@@ -161,11 +160,7 @@
         }
       },
       messages() {
-        let dialog = this.$store.state.dialogs.find((dialog) => {
-              return dialog.id == this.id;
-            }),
-            list = dialog ? dialog.items : [],
-            hist = qs('.dialog_messages_list');
+        let hist = qs('.dialog_messages_list');
 
         if(hist) {
           let scrollPos = hist.scrollTop + hist.clientHeight + 40,
@@ -177,7 +172,7 @@
           }
         }
 
-        return list;
+        return this.$store.state.messages[this.id];
       },
       typingMsg() {
         return this.$store.getters.typingMsg(this.id);

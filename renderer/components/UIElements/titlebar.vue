@@ -3,10 +3,9 @@
     <div class="titlebar_drag">VK Desktop</div>
     <div class="titlebar_buttons">
       <div v-for="name in names"
-           :class="name"
            @click="getCurrentWindow()[name]()"
-           class="titlebar_button">
-      </div>
+           class="titlebar_button"
+           :class="name"></div>
     </div>
   </div>
 </template>
@@ -18,6 +17,14 @@
       maximized: getCurrentWindow().isMaximized(),
       names: ['minimize', 'maximize', 'restore', 'close']
     }),
+    methods: {
+      maximize() {
+        this.maximized = true;
+      },
+      unmaximize() {
+        this.maximized = false;
+      }
+    },
     mounted() {
       if(this.mac) {
         qs('.titlebar_drag').addEventListener('dblclick', () => {
@@ -29,8 +36,8 @@
         });
       }
 
-      getCurrentWindow().on('maximize', () => this.maximized = true);
-      getCurrentWindow().on('unmaximize', () => this.maximized = false);
+      getCurrentWindow().on('maximize', this.maximize);
+      getCurrentWindow().on('unmaximize', this.unmaximize);
     }
   }
 </script>

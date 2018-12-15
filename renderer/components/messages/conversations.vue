@@ -5,7 +5,7 @@
       <div class="header_name">Сообщения</div>
     </div>
     <div class="conversations_wrap" :class="{ loading }" @scroll="onScroll">
-      <conversation v-for="peer in peers" :key="peer.id" :peer="peer"></conversation>
+      <conversation v-for="peer in peers" :peer="peer" :key="peer.id"></conversation>
     </div>
   </div>
 </template>
@@ -36,12 +36,10 @@
         for(let item of items) {
           let { conversation, last_message } = item;
 
-          this.$store.commit('addMessage', {
-            peer_id: conversation.peer.id,
-            msg: parseMessage(last_message, conversation)
+          this.$store.commit('addConversation', {
+            peer: parseConversation(conversation),
+            lastMsg: parseMessage(last_message, conversation)
           });
-
-          this.$store.commit('addPeer', parseConversation(conversation));
         }
 
         this.loading = false;
@@ -64,13 +62,14 @@
         if(!this.peers.length) return;
         data.id = peerID;
 
-        let peer = this.$store.state.peers.find(({ id }) => id == data.id);
+        let dialog = this.$store.state.conversations[data.id],
+            peer = dialog && dialog.peer;
 
         if(data instanceof Function) data = data(peer);
         if(data instanceof Promise) data = await data;
 
         if(!peer && !optional) {
-          this.$store.commit('addPeer', data);
+          this.$store.commit('addConversation', { peer: data });
 
           let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
             peer_ids: peerID,
@@ -83,12 +82,18 @@
           this.updatePeer(peerID, parseConversation(conv));
         } else this.$store.commit('editPeer', data);
       },
+      updateLastMsg(peerID, msg) {
+        this.$store.commit('updateLastMsg', {
+          peer_id: peerID,
+          msg
+        })
+      },
       moveConversations(peerID, isDelete) {
         this.$store.commit('sortPeers');
 
         if(isDelete) {
           let peerIndex = this.peers.findIndex(({ id }) => id == peerID);
-          if(peerIndex == this.peers.length - 1) Vue.delete(this.peers, peerIndex);
+          if(peerIndex == this.peers.length - 1) this.$store.commit('removePeer', peerID);
         }
       }
     },
@@ -120,8 +125,7 @@
           });
 
           await other.timer(1000);
-          removeTyping(data);
-          return;
+          return removeTyping(data);
         }
 
         this.$store.commit('removeTyping', {
@@ -135,6 +139,8 @@
           peer_id: data.peer.id,
           msg: data.msg
         });
+
+        this.updateLastMsg(data.peer.id, data.msg);
 
         this.updatePeer(data.peer.id, (oldPeer) => {
           if(data.msg.outread) data.peer.unread = 0;
@@ -186,12 +192,11 @@
       });
 
       longpoll.on('delete_message', async (data) => {
-        let peer = this.$store.state.dialogs.find((peer) => peer.id == data.peer_id);
-        if(!peer) return;
+        // TODO: переписать
+        let dialog = this.$store.state.conversations[data.peer_id];
+        if(!dialog) return;
 
-        let items = peer.items,
-            msgIndex = items.findIndex((msg) => msg.id == data.id),
-            { msg, unread, outread } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id });
+        let { msg, unread, outread } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id });
 
         if(!msg) {
           this.$store.commit('removePeer', data.peer_id);
@@ -205,7 +210,7 @@
 
         this.$store.commit('removeMessage', {
           peer_id: data.peer_id,
-          id: data.id
+          msg_id: data.id
         });
 
         this.updatePeer(data.peer_id, { unread }, true);
@@ -224,8 +229,8 @@
       });
 
       longpoll.on('readed_messages', (data) => {
-        let peer = this.$store.state.dialogs.find(({ id }) => id == data.peer_id),
-            msgs = peer.items.filter(({ id }) => id <= data.id);
+        let messages = this.$store.state.messages[data.peer_id],
+            msgs = messages.filter(({ id, outread }) => (id <= data.msg_id && outread));
 
         for(let msg of msgs) {
           this.$store.commit('editMessage', {
@@ -274,8 +279,8 @@
       longpoll.on('delete_peer', (data) => {
         this.$store.commit('removePeer', data.peer_id);
 
-        let peer = this.$store.state.dialogs.find(({ id }) => id == data.peer_id),
-            msgs = peer.items.filter(({ id }) => id <= data.msg_id);
+        let messages = this.$store.state.messages[data.peer_id],
+            msgs = messages.filter(({ id }) => id <= data.msg_id);
 
         for(let msg of msgs) {
           this.$store.commit('removeMessage', {

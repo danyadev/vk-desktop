@@ -9,6 +9,11 @@
 
 <script>
   module.exports = {
-    props: ['list']
+    props: {
+      list: {
+        type: Array,
+        default: []
+      }
+    }
   }
 </script>

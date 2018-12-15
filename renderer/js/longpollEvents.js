@@ -159,7 +159,7 @@ module.exports = {
       name: 'readed_messages',
       data: {
         peer_id: data[0],
-        id: data[1],
+        msg_id: data[1],
         count: data[2]
       }
     }

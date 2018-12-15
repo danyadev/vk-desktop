@@ -13,7 +13,16 @@
   const { loadProfile } = require('./methods');
 
   module.exports = {
-    props: ['msg', 'peer'],
+    props: {
+      msg: {
+        type: Object,
+        required: true
+      },
+      peer: {
+        type: Object,
+        required: true
+      }
+    },
     computed: {
       isChat() {
         return this.peer.id > 2e9;
@@ -36,7 +45,7 @@
         return this.user.photo_50;
       },
       name() {
-        let userName = this.user.id ? `${this.user.first_name} ${this.user.last_name}` : '...';
+        let userName = this.user.photo_50 ? `${this.user.first_name} ${this.user.last_name}` : '...';
 
         return this.user.name || userName;
       },
