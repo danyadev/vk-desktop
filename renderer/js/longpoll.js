@@ -85,10 +85,17 @@ class Longpoll {
     this.ts = data.ts || this.ts;
     this.pts = data.pts || this.pts;
 
+    let removedMessages = [],
+        eventsList = require('./longpollEvents');
+
     for(let update of data.updates) {
       let id = update.splice(0, 1)[0],
-          eventsList = require('./longpollEvents'),
           event = eventsList[id];
+
+      if(id == 2) {
+        removedMessages.push(update);
+        continue;
+      }
 
       if(!event) {
         console.error('[longpoll] Неизвестное событие:', [id, ...update]);
@@ -99,6 +106,17 @@ class Longpoll {
       if(!eventData.name) continue;
 
       this.emit(eventData.name, eventData.data);
+    }
+
+    let updates = removedMessages.reduce((all, update) => {
+      if(!all[update[2]]) all[update[2]] = [update];
+      else all[update[2]].push(update);
+      return all;
+    }, {});
+
+    for(let update of Object.values(updates)) {
+      let data = eventsList[2](update);
+      this.emit(data.name, data.data);
     }
 
     this.loop();

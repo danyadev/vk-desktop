@@ -30,22 +30,25 @@ let getTagData = (name, text) => {
 }
 
 require.extensions['.vue'] = (module, filename) => {
-  let file = fs.readFileSync(filename, 'utf-8');
+  let file = fs.readFileSync(filename, 'utf-8'),
+      template = JSON.stringify(getTagData('template', file));
 
   let code = `
-    (function(){'use strict';${getTagData('script', file)}})();
-    module.exports.template = ${JSON.stringify(getTagData('template', file))};
+    ${'\n'.repeat(template.split('\\n').length-1)}
+    ${getTagData('script', file)}
+    module.exports.template = ${template};
   `;
 
    module._compile(code, filename);
 }
 
 let getFiles = (path, files = [], folders = '') => {
-  fs.readdirSync(`${path}${folders}`, { withFileTypes: true })
-    .forEach((file) => {
-      if(!file.isDirectory()) files.push(`${folders}${file.name}`);
-      else files.concat(getFiles(path, files, `${folders}${file.name}/`));
-    });
+  let items = fs.readdirSync(`${path}${folders}`, { withFileTypes: true });
+
+  for(let file of items) {
+    if(!file.isDirectory()) files.push(`${folders}${file.name}`);
+    else files.concat(getFiles(path, files, `${folders}${file.name}/`));
+  }
 
   return files;
 }

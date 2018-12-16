@@ -62,7 +62,7 @@
         if(!this.peers.length) return;
         data.id = peerID;
 
-        let dialog = this.$store.state.conversations[data.id],
+        let dialog = this.$store.state.conversations[peerID],
             peer = dialog && dialog.peer;
 
         if(data instanceof Function) data = data(peer);
@@ -191,45 +191,46 @@
         });
       });
 
-      longpoll.on('delete_message', async (data) => {
-        // TODO: переписать
-        let dialog = this.$store.state.conversations[data.peer_id];
-        if(!dialog) return;
-
-        let { msg, unread, outread } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id });
-
-        if(!msg) {
-          this.$store.commit('removePeer', data.peer_id);
-          return;
+      longpoll.on('delete_messages', async (data) => {
+        for(let message of data.messages) {
+          this.$store.commit('removeMessage', {
+            peer_id: data.peer_id,
+            msg_id: message.id
+          });
         }
 
-        this.$store.commit('addMessage', {
-          peer_id: data.peer_id,
-          msg: parseMessage(msg, { outread })
-        });
+        let { msg, unread, outread } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id }),
+            messages = this.$store.state.messages[data.peer_id],
+            lastMsg = msg && parseMessage(msg, { outread });
 
-        this.$store.commit('removeMessage', {
-          peer_id: data.peer_id,
-          msg_id: data.id
-        });
+        if(messages && !messages.length) {
+          if(!msg) {
+            this.$store.commit('removePeer', data.peer_id);
+            return;
+          }
 
+          this.$store.commit('addMessage', {
+            peer_id: data.peer_id,
+            msg: lastMsg
+          });
+        }
+
+        this.updateLastMsg(data.peer_id, lastMsg);
         this.updatePeer(data.peer_id, { unread }, true);
         this.moveConversations(data.peer_id, true);
       });
 
       longpoll.on('restore_message', async (data) => {
-        let { out_read } = await vkapi('execute.getLastMessage', { peer_id: data.peer.id });
+        let { out_read } = await vkapi('execute.getLastMessage', { peer_id: data.peer.id }),
+            msg = Object.assign({ outread: out_read < data.msg.id }, data.msg);
 
-        this.$store.commit('addMessage', {
-          peer_id: data.peer.id,
-          msg: Object.assign({ outread: out_read < data.msg.id }, data.msg)
-        });
-
+        this.$store.commit('addMessage', { peer_id: data.peer.id, msg });
+        this.updateLastMsg(data.peer.id, msg);
         this.$store.commit('sortPeers');
       });
 
       longpoll.on('readed_messages', (data) => {
-        let messages = this.$store.state.messages[data.peer_id],
+        let messages = this.$store.state.messages[data.peer_id] || [],
             msgs = messages.filter(({ id, outread }) => (id <= data.msg_id && outread));
 
         for(let msg of msgs) {
@@ -279,13 +280,13 @@
       longpoll.on('delete_peer', (data) => {
         this.$store.commit('removePeer', data.peer_id);
 
-        let messages = this.$store.state.messages[data.peer_id],
+        let messages = this.$store.state.messages[data.peer_id] || [],
             msgs = messages.filter(({ id }) => id <= data.msg_id);
 
         for(let msg of msgs) {
           this.$store.commit('removeMessage', {
             peer_id: data.peer_id,
-            id: msg.id
+            msg_id: msg.id
           });
         }
       });

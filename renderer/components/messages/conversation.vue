@@ -222,7 +222,7 @@
           case 'chat_create':
             return `${name(0)} создал${w(0, 'и:а')} беседу`;
           case 'chat_title_update':
-            return `${name(0)} изменил${w(0, 'и:а')} название беседы на "${action.text}"`;
+            return `${name(0)} изменил${w(0, 'и:а')} название беседы`;
           case 'chat_invite_user':
             if(actID == author.id) return `${name(1)} вернул${w(1, 'ись:ась:ся')} в беседу`;
             else return `${name(1, 1)} пригласили в беседу`;
@@ -231,7 +231,7 @@
             else if(actID == id) return 'Вас исключили из беседы';
             else return `${name(1, 1)} исключили из беседы`;
           case 'chat_pin_message':
-            return `${name(1)} закрепил${w(1, 'и:а')} сообщение "${action.message}"`;
+            return `${name(1)} закрепил${w(1, 'и:а')} сообщение`;
           case 'chat_unpin_message':
             return `${name(1)} открепил${w(1, 'и:а')} сообщение`;
           case 'chat_invite_user_by_link':

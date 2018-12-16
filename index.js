@@ -10,14 +10,17 @@ if(!app.isPackaged) {
     lastChangeTime = new Date().getTime();
     if(prevChangeTime < lastChangeTime - 250 || !filename) return;
 
-    let path = filename.replace(/\\/g, '/'),
-        ignoredFiles = [
-          '.git', 'core', 'vue-devtools', '.gitignore',
-          'index.js', 'LICENSE', 'package.json', 'README.md'
-        ],
-        isIgnored = ignoredFiles.find((ignoredPath) => {
-          return ignoredPath == path || path.match(new RegExp(`${ignoredPath}/`));
-        });
+    let ignoredFiles = [
+      '.git', 'core', 'vue-devtools', '.gitignore',
+      'index.js', 'LICENSE', 'package.json', 'README.md'
+    ];
+
+	let isIgnored = ignoredFiles.find((ignoredPath) => {
+      let regexp = new RegExp(`${ignoredPath}/`),
+          path = filename.replace(/\\/g, '/');
+
+      return ignoredPath == path || path.match(regexp);
+    });
 
     if(isIgnored) return;
 

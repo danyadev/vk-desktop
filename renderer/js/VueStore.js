@@ -66,7 +66,7 @@ module.exports = new Vuex.Store({
 
       conversation.peer = Object.assign({}, conversation.peer, data);
 
-      Vue.set(state.conversations, data.id, conversation);
+      Vue.set(state.conversations, data.id, Object.assign({}, conversation));
     },
     removePeer(state, id) {
       let index = state.peersList.findIndex((peer) => peer.id == id);
@@ -77,7 +77,7 @@ module.exports = new Vuex.Store({
 
       conversation.lastMsg = Object.assign({}, conversation.lastMsg, data.msg);
 
-      Vue.set(state.conversations, data.id, conversation);
+      Vue.set(state.conversations, data.peer_id, conversation);
     },
     sortPeers(state) {
       let lastMsg = this.getters.lastMessage;
@@ -94,6 +94,14 @@ module.exports = new Vuex.Store({
       let messages = state.messages[data.peer_id] || [];
       messages.push(data.msg);
       Vue.set(state.messages, data.peer_id, messages);
+
+      let conv = state.conversations[data.peer_id],
+          peerObj = conv && conv.peer,
+          visible = state.peersList.find(({ id }) => id == data.peer_id);
+
+      if(!visible && peerObj) {
+        state.peersList.unshift({ id: peerObj.id });
+      }
     },
     editMessage(state, data) {
       let messages = state.messages[data.peer_id] || [],
@@ -101,7 +109,7 @@ module.exports = new Vuex.Store({
           msg = messages[msgIndex],
           dialog = state.conversations[data.peer_id],
           lastMsg = dialog && dialog.lastMsg;
-      
+
       if(msg) {
         messages[msgIndex] = Object.assign({}, msg, data.msg);
         Vue.set(state.messages, data.peer_id, messages);
@@ -113,7 +121,7 @@ module.exports = new Vuex.Store({
     },
     removeMessage(state, data) {
       let messages = state.messages[data.peer_id] || [],
-          index = messages.findIndex(({ id }) => id = data.msg_id);
+          index = messages.findIndex(({ id }) => id == data.msg_id);
 
       if(index != -1) Vue.delete(messages, index);
     },

@@ -63,7 +63,7 @@ let getAttachments = (data) => {
 let getMessage = (data, type) => {
   let flags = getFlags(data[1]),
       action = getServiceMessage(data[5]),
-      from_id = (flags.is('outbox') || type == 'restore') ? users.get().id : Number(data[5].from || data[2]),
+      from_id = (flags.is('outbox')) ? users.get().id : Number(data[5].from || data[2]),
       isChannel = data[1] == 0; // пока я только это заметил
 
   let res = {
@@ -85,26 +85,34 @@ let getMessage = (data, type) => {
   }
 
   if(type == 'new') res.msg.outread = flags.is('outbox');
-  if(type == 'restore') res.msg.out = true;
+
   return res;
 }
 
 module.exports = {
-  2: (data) => {
+  2: (events) => {
     // когда приходит:
     // 1) удаление сообщения (128)
     // 2) пометка как спам (64)
     // 3) удаление для всех (131200)
     // [id, flags, peer_id]
 
-    let flags = getFlags(data[1]);
+    let messages = [];
+
+    for(let data of events) {
+      let flags = getFlags(data[1]);
+
+      messages.push({
+        id: data[0],
+        all: flags.is('deleted_all')
+      });
+    }
 
     return {
-      name: 'delete_message',
+      name: 'delete_messages',
       data: {
-        id: data[0],
-        all: flags.is('deleted_all'),
-        peer_id: data[2]
+        peer_id: events[0][2],
+        messages
       }
     }
   },
@@ -117,8 +125,8 @@ module.exports = {
     let flags = getFlags(data[1]);
 
     if(flags.is('spam') || flags.is('deleted')) {
-      return { name: 'restore_message', data: getMessage(data, 'restore') }
-    } else return { name: null, data: {} }
+      return { name: 'restore_message', data: getMessage(data) }
+    } else return { name: null }
   },
   4: (data) => {
     // приходит при написании нового сообщения

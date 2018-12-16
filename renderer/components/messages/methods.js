@@ -86,10 +86,16 @@ module.exports = {
     }
   },
   parseMessage(message, conversation) {
-    if(message.geo) message.attachments.push({
-      type: 'geo',
-      geo: message.geo
-    });
+    if(message.geo) {
+      message.attachments.push({
+        type: 'geo',
+        geo: message.geo
+      });
+    }
+
+    if(message.reply_message) {
+      message.fwd_messages.push(message.reply_message);
+    }
 
     let msg = {
       id: message.id,
