@@ -11,7 +11,7 @@ let getNewIndex = (arr, num) => {
     }
   }
 
-  return arr.length - 1;
+  return 0;
 }
 
 module.exports = new Vuex.Store({
@@ -91,8 +91,12 @@ module.exports = new Vuex.Store({
       state.activeChat = id;
     },
     addMessage(state, data) {
-      let messages = state.messages[data.peer_id] || [];
-      messages.push(data.msg);
+      let messages = state.messages[data.peer_id] || [],
+          ids = messages.map((msg) => msg.id),
+          index = getNewIndex(ids, data.msg.id);
+
+      if(!ids.includes(data.msg.id)) messages.splice(index, 0, data.msg);
+
       Vue.set(state.messages, data.peer_id, messages);
 
       let conv = state.conversations[data.peer_id],
