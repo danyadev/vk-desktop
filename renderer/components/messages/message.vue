@@ -1,7 +1,7 @@
 <template>
- <div class="message" :id="'message' + this.msg.id" :class="{ from_me: isOwner }">
+ <div class="message" :id="'message' + this.msg.id" :class="{ from_me: isOwner, first_msg_block: isFirstMsg }">
    <img v-if="showUserData" class="message_photo" :src="photo">
-   <div v-else-if="isChat && !peer.channel" class="message_photo"></div>
+   <div v-else-if="isChat && !peer.channel" class="message_empty_photo"></div>
    <div class="message_content" :class="{ outread }">
      <div class="message_name" v-if="showUserData">{{ name }}</div>
      <div class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
@@ -27,10 +27,16 @@
       isChat() {
         return this.peer.id > 2e9;
       },
-      showUserData() {
-        if(!this.isChat || this.peer.channel) return false;
+      isFirstMsg() {
+        let messages = this.$store.state.messages[this.peer.id],
+            msgIndex = messages.findIndex(({ id }) => id == this.msg.id),
+            prevMsg = messages[msgIndex - 1];
 
-        return true;
+        return !prevMsg || prevMsg.from != this.msg.from;
+      },
+      showUserData() {
+        if(!this.isFirstMsg || this.isOwner || !this.isChat || this.peer.channel) return false;
+        else return true;
       },
       isOwner() {
         return this.msg.from == users.get().id;

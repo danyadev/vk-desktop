@@ -89,7 +89,7 @@
         })
       },
       moveConversations(peerID, isDelete) {
-        this.$store.commit('sortPeers');
+        this.$store.commit('movePeer', peerID);
 
         if(isDelete) {
           let peerIndex = this.peers.findIndex(({ id }) => id == peerID);
@@ -224,9 +224,25 @@
         let { out_read } = await vkapi('execute.getLastMessage', { peer_id: data.peer.id }),
             msg = Object.assign({ outread: out_read < data.msg.id }, data.msg);
 
+        let messages = this.$store.state.messages[data.peer.id] || [],
+            ids = messages.map((msg) => msg.id),
+            index = other.getNewIndex(ids, data.msg.id);
+
+        if(index == 0) {
+          let prevMsgId = await vkapi('execute.getPrevMsg', {
+            peer_id: data.peer.id,
+            offset: messages.length - 1
+          });
+
+          if(prevMsgId != data.msg.id) return;
+        }
+
         this.$store.commit('addMessage', { peer_id: data.peer.id, msg });
-        this.updateLastMsg(data.peer.id, msg);
-        this.$store.commit('sortPeers');
+
+        if(messages[messages.length - 1].id == msg.id) {
+          this.updateLastMsg(data.peer.id, msg);
+          this.moveConversations(data.peer_id);
+        }
       });
 
       longpoll.on('readed_messages', (data) => {

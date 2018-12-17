@@ -4,14 +4,12 @@ Vue.use(Vuex);
 
 const { loadProfile } = require('./../components/messages/methods');
 
-let getNewIndex = (arr, num) => {
-  for(let i=0; i<arr.length; i++) {
-    if(arr[i] <= num && (!arr[i+1] || arr[i+1] >= num)) {
-      return i+1;
-    }
+let getMinIndex = (arr, num) => {
+  for(let i = 0; i<arr.length; i++) {
+    if(arr[i] <= num) return i;
   }
 
-  return 0;
+  return arr.length;
 }
 
 module.exports = new Vuex.Store({
@@ -79,12 +77,20 @@ module.exports = new Vuex.Store({
 
       Vue.set(state.conversations, data.peer_id, conversation);
     },
-    sortPeers(state) {
-      let lastMsg = this.getters.lastMessage;
+    movePeer(state, id) {
+      let lastMsg = this.getters.lastMessage(id),
+          date = lastMsg && lastMsg.date;
 
-      state.peersList.sort((p1, p2) => {
-        return lastMsg(p1.id).date < lastMsg(p2.id).date ? 1 : -1;
+      if(!date) return;
+
+      let dates = state.peersList.map((peer) => {
+        return this.getters.lastMessage(peer.id).date;
       });
+
+      let index = getMinIndex(dates, date),
+          oldIndex = state.peersList.findIndex((peer) => peer.id == id);
+
+      if(oldIndex != index) state.peersList.move(oldIndex, index);
     },
     // ** Диалог и сообщения **
     setChat(state, id) {
@@ -93,7 +99,7 @@ module.exports = new Vuex.Store({
     addMessage(state, data) {
       let messages = state.messages[data.peer_id] || [],
           ids = messages.map((msg) => msg.id),
-          index = getNewIndex(ids, data.msg.id);
+          index = other.getNewIndex(ids, data.msg.id);
 
       if(!ids.includes(data.msg.id)) messages.splice(index, 0, data.msg);
 

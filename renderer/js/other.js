@@ -52,6 +52,16 @@ module.exports = {
 
     return true;
   },
+  getNewIndex: (arr, num) => {
+    for(let i=0; i<arr.length; i++) {
+    	if(i == 0 && arr[i] > num) return 0;
+      if(arr[i] <= num && (!arr[i+1] || arr[i+1] >= num)) {
+        return i + 1;
+      }
+    }
+
+    return arr.length;
+  },
   regexp: {
     url: /(([a-zа-я]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\S+))/gi,
     push: /\[(club|id)(\d+)\|(.+?)\]/gi
