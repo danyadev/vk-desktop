@@ -89,6 +89,16 @@
   overflow-x: auto;
 }
 
+.dialog_no_messages {
+  align-items: center;
+  justify-content: center;
+  color: #38383a;
+}
+
+.dialog_no_messages img {
+  height: 128px;
+}
+
 .dialog_wrap .typing_wrap {
   height: 40px;
   padding: 10px 20px;
@@ -98,72 +108,6 @@
 
 .dialog_wrap .typing_text {
   margin-left: 5px;
-}
-
-/* Сообщение */
-
-.message {
-  display: flex;
-  flex: none;
-  margin: 5px 20px 0;
-}
-
-.message.first_msg_block {
-  margin: 15px 20px 0;
-}
-
-.message:first-child {
-  margin-top: auto;
-  padding-top: 25px;
-}
-
-.message.from_me { justify-content: flex-end }
-
-.message_photo {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.message_empty_photo {
-  flex: none;
-  width: 46px;
-}
-
-.message_content {
-  position: relative;
-  max-width: calc(100% - 65px);
-  word-break: break-word;
-}
-
-.message_content.outread::before {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  bottom: 12px;
-  left: -20px;
-  border-radius: 50%;
-  background-color: #93adc8;
-}
-
-.message_name {
-  color: #254f79;
-  font-weight: 500;
-  margin-bottom: 6px;
-}
-
-.message_text {
-  display: inline-block;
-  background-color: #dfe6ea;
-  padding: 7px 10px;
-  border-radius: 18px;
-}
-
-.message.from_me .message_text {
-  background-color: #cce4fe;
 }
 
 /* Поле для написания сообщения */
@@ -249,4 +193,94 @@
 
 .dialog_input_channel:active {
   background-color: #ccd4da;
+}
+
+/* Сообщение */
+
+.message {
+  display: flex;
+  flex: none;
+  margin: 5px 20px 0;
+}
+
+.message.first_msg_block {
+  margin: 15px 20px 0;
+}
+
+.message:first-child {
+  margin-top: auto;
+  padding-top: 25px;
+}
+
+.message.from_me { justify-content: flex-end }
+
+.message_photo {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.message_empty_photo {
+  flex: none;
+  width: 46px;
+}
+
+.message_content {
+  position: relative;
+  max-width: calc(100% - 65px);
+}
+
+.message_content.outread::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  bottom: 12px;
+  left: -20px;
+  border-radius: 50%;
+  background-color: #93adc8;
+}
+
+.message_name {
+  color: #254f79;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.message_text_wrap {
+  display: inline-block;
+  background-color: #dfe6ea;
+  padding: 7px 10px;
+  border-radius: 18px;
+}
+
+.message.from_me .message_text_wrap {
+  background-color: #cce4fe;
+}
+
+.message_text { display: inline }
+
+.message_time_wrap {
+  display: flex;
+  float: right;
+  color: #696969;
+  font-weight: 500;
+  font-size: 11px;
+  margin: 6px 0 0 8px;
+}
+
+.message_text_wrap .dot {
+  width: 2px;
+  height: 2px;
+  margin: 7px 3px 0 3px;
+  border-radius: 50%;
+  background-color: #696969;
+}
+
+.message_edited { margin-top: -1px }
+
+.message_attachment {
+
 }

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  const { parseConversation, parseMessage, concatProfiles } = require('./methods');
+  const { parseConversation, parseMessage, concatProfiles, loadConversation } = require('./methods');
 
   module.exports = {
     data: () => ({
@@ -71,15 +71,9 @@
         if(!peer && !optional) {
           this.$store.commit('addConversation', { peer: data });
 
-          let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
-            peer_ids: peerID,
-            extended: 1,
-            fields: other.fields
-          });
+          let conversation = await loadConversation(peerID);
 
-          this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
-
-          this.updatePeer(peerID, parseConversation(conv));
+          this.updatePeer(peerID, conversation);
         } else this.$store.commit('editPeer', data);
       },
       updateLastMsg(peerID, msg) {
@@ -140,6 +134,8 @@
           msg: data.msg
         });
 
+        if(data.msg.hidden) return;
+
         this.updateLastMsg(data.peer.id, data.msg);
 
         this.updatePeer(data.peer.id, (oldPeer) => {
@@ -187,7 +183,7 @@
 
         this.$store.commit('editMessage', {
           peer_id: data.peer.id,
-          msg: data.msg
+          msg: Object.assign(data.msg, { edited: true })
         });
       });
 

@@ -19,8 +19,14 @@
       Выберите диалог, чтобы начать переписку
     </div>
     <div v-else class="dialog_wrap">
-      <div class="dialog_messages_list">
-        <message v-for="msg of messages" :msg="msg" :peer="peer" :key="peer.id"></message>
+      <div class="dialog_messages_list" :class="{ dialog_no_messages: !hasMessages, loading }">
+        <template v-if="hasMessages">
+          <message v-for="msg of messages" :msg="msg" :peer="peer" :key="peer.id"></message>
+        </template>
+        <template v-else-if="!loading">
+          <img src="images/im_empty_dialog.png">
+          Напиши сообщение или попроси котика сделать это за тебя
+        </template>
         <div class="typing_wrap">
           <div class="typing" v-if="typingMsg">
             <div class="typing_item"></div>
@@ -34,13 +40,11 @@
         <template v-if="canSendMessages.state">
           <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
           <div class="dialog_input_container">
-            <div class="dialog_input"
-                 role="textbox"
-                 contenteditable
-                 v-emoji.br.no_emoji
-                @paste.prevent="pasteText"
-                @mousedown="setCursorPositionForEmoji"
-                @keydown.enter="sendMessage"></div>
+            <div class="dialog_input" role="textbox"
+                 contenteditable v-emoji.br.no_emoji
+                 @paste.prevent="pasteText"
+                 @mousedown="setCursorPositionForEmoji"
+                 @keydown.enter="sendMessage"></div>
             <div class="dialog_input_placeholder">Введите сообщение...</div>
           </div>
           <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
@@ -61,7 +65,7 @@
 
 <script>
   const { clipboard } = require('electron').remote;
-  const { loadOnlineApp } = require('./methods');
+  const { loadOnlineApp, loadConversation } = require('./methods');
 
   module.exports = {
     computed: {
@@ -72,7 +76,15 @@
         return this.id > 2e9;
       },
       peer() {
-        let dialog = this.$store.state.conversations[this.id];
+        let dialog = this.$store.state.conversations[this.id],
+            peer = dialog && dialog.peer;
+
+        if(!peer && this.id) {
+          loadConversation(this.id).then((conversation) => {
+            this.$store.commit('editPeer', conversation);
+          });
+        }
+
         return dialog && dialog.peer;
       },
       profiles() {
@@ -80,6 +92,12 @@
       },
       owner() {
         return this.profiles[this.peer.owner];
+      },
+      hasMessages() {
+        return this.messages && this.messages.length;
+      },
+      loading() {
+        return this.peer.loading;
       },
       title() {
         if(this.isChat) return this.peer.title || '...';
@@ -95,7 +113,14 @@
         if(this.id < 0) return '';
 
         if(this.isChat) {
-          if(this.peer.members == undefined) return '';
+          if(this.peer.members == undefined) {
+            if(this.peer.left) return 'Вы вышли из этой беседы';
+            else if(this.peer.canWrite.reason == 917) {
+              return 'Вы исключены из этой беседы';
+            }
+
+            return '';
+          }
 
           let word = 'участник' + other.getWordEnding(this.peer.members, ['', 'а', 'ов']);
           return `${this.peer.members} ${word}`;
@@ -178,6 +203,10 @@
         return this.$store.getters.typingMsg(this.id);
       },
       canSendMessages() {
+        if(!this.peer || !this.peer.canWrite) {
+          return { state: true, channel: false }
+        }
+
         let text, reason = this.peer.canWrite.reason;
 
         if(!this.peer.canWrite.allowed) {

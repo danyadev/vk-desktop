@@ -4,7 +4,16 @@
    <div v-else-if="isChat && !peer.channel" class="message_empty_photo"></div>
    <div class="message_content" :class="{ outread }">
      <div class="message_name" v-if="showUserData">{{ name }}</div>
-     <div class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
+     <div class="message_text_wrap">
+       <div class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
+       <div class="message_time_wrap">
+         <template v-if="msg.edited">
+           <div class="message_edited">ред</div>
+           <div class="dot"></div>
+         </template>
+         <div class="message_time">{{ time }}</div>
+       </div>
+     </div>
   </div>
  </div>
 </template>
@@ -57,6 +66,12 @@
       },
       outread() {
         return this.msg.outread;
+      },
+      time() {
+        let date = new Date(this.msg.date * 1000),
+            f = (t) => t < 10 ? `0${t}` : t;
+
+        return `${date.getHours()}:${f(date.getMinutes())}`;
       }
     }
   }

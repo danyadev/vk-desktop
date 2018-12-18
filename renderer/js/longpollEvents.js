@@ -18,6 +18,8 @@ let getFlags = (mask) => {
 }
 
 let getServiceMessage = (data) => {
+  if(!data) return null;
+
   let source = {};
 
   Object.keys(data).forEach((key) => {
@@ -78,6 +80,7 @@ let getMessage = (data, type) => {
       attachments: getAttachments(data[6]),
       from: from_id,
       fwd_count: Number(data[5].fwd_count || 0),
+      hidden: flags.is('hidden'),
       date: data[3],
       id: data[0],
       text: action ? '' : data[4]

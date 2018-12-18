@@ -90,7 +90,9 @@ module.exports = new Vuex.Store({
       let index = getMinIndex(dates, date),
           oldIndex = state.peersList.findIndex((peer) => peer.id == id);
 
-      if(oldIndex != index) state.peersList.move(oldIndex, index);
+      if(oldIndex != index && state.peersList[oldIndex]) {
+        state.peersList.move(oldIndex, index);
+      }
     },
     // ** Диалог и сообщения **
     setChat(state, id) {

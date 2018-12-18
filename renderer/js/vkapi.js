@@ -38,7 +38,7 @@ let method = (name, params, _resolve) => {
 
     console.log('[API]', Date.now() - time + 'ms', name, data.response);
 
-    if(data.response != undefined) {
+    if(data.response !== undefined) {
       (_resolve || resolve)(data.response);
     } else {
       if(data.error.error_code == 5) {
