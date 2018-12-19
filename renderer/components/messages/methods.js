@@ -83,7 +83,8 @@ function parseConversation(conversation) {
     photo: chatPhoto,
     title: chatTitle,
     canWrite: conversation.can_write,
-    in_read: conversation.in_read
+    in_read: conversation.in_read,
+    out_read: conversation.out_read
   }
 }
 
@@ -111,10 +112,10 @@ module.exports = {
       action: message.action,
       fwd_count: message.fwd_messages.length,
       attachments: message.attachments
-    };
+    }
 
     if(conversation && conversation.out_read != undefined) {
-      msg.outread = conversation.out_read != message.id && message.out;
+      msg.outread = conversation.out_read < message.id && message.out;
     } else if(conversation && conversation.outread != undefined) {
       msg.outread = conversation.outread;
     }

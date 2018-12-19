@@ -89,15 +89,15 @@
   overflow-x: auto;
 }
 
+.dialog_empty_block { flex-grow: 1 }
+
 .dialog_no_messages {
   align-items: center;
   justify-content: center;
   color: #38383a;
 }
 
-.dialog_no_messages img {
-  height: 128px;
-}
+.dialog_no_messages img { height: 128px }
 
 .dialog_wrap .typing_wrap {
   height: 40px;
@@ -106,9 +106,7 @@
   flex: none;
 }
 
-.dialog_wrap .typing_text {
-  margin-left: 5px;
-}
+.dialog_wrap .typing_text { margin-left: 5px }
 
 /* Поле для написания сообщения */
 
@@ -174,9 +172,7 @@
   margin: 0 20px;
 }
 
-.dialog_input_error_text.channel {
-  margin: 0 auto;
-}
+.dialog_input_error_text.channel { margin: 0 auto }
 
 .dialog_input_channel {
   color: #254f79;
@@ -187,13 +183,8 @@
   transition: background-color .3s;
 }
 
-.dialog_input_channel:hover {
-  background-color: #d6dee4;
-}
-
-.dialog_input_channel:active {
-  background-color: #ccd4da;
-}
+.dialog_input_channel:hover { background-color: #d6dee4 }
+.dialog_input_channel:active { background-color: #ccd4da }
 
 /* Сообщение */
 
@@ -203,9 +194,7 @@
   margin: 5px 20px 0;
 }
 
-.message.first_msg_block {
-  margin: 15px 20px 0;
-}
+.message.first_msg_block { margin: 15px 20px 0 }
 
 .message:first-child {
   margin-top: auto;
@@ -280,7 +269,3 @@
 }
 
 .message_edited { margin-top: -1px }
-
-.message_attachment {
-
-}

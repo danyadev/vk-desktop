@@ -19,9 +19,11 @@
       Выберите диалог, чтобы начать переписку
     </div>
     <div v-else class="dialog_wrap">
-      <div class="dialog_messages_list" :class="{ dialog_no_messages: !hasMessages, loading }">
+      <div class="dialog_messages_list" :class="{ dialog_no_messages: !hasMessages }" @scroll="onScroll">
         <template v-if="hasMessages">
-          <message v-for="msg of messages" :msg="msg" :peer="peer" :key="peer.id"></message>
+          <div class="dialog_empty_block"></div>
+          <div v-if="loading" class="loading"></div>
+          <message v-for="msg of messages" :msg="msg" :peer="peer" :key="msg.id"></message>
         </template>
         <template v-else-if="!loading">
           <img src="images/im_empty_dialog.png">
@@ -65,12 +67,19 @@
 
 <script>
   const { clipboard } = require('electron').remote;
-  const { loadOnlineApp, loadConversation } = require('./methods');
+  const { loadOnlineApp, loadConversation, concatProfiles, parseMessage } = require('./methods');
 
   module.exports = {
     computed: {
       id() {
-        return this.$store.state.activeChat;
+        let id = this.$store.state.activeChat;
+
+        this.$nextTick().then(() => {
+          let el = qs('.dialog_messages_list');
+          if(id && el) this.onScroll({ target: el });
+        });
+
+        return id;
       },
       isChat() {
         return this.id > 2e9;
@@ -97,7 +106,7 @@
         return this.messages && this.messages.length;
       },
       loading() {
-        return this.peer.loading;
+        return !this.peer.loaded && this.peer.loading;
       },
       title() {
         if(this.isChat) return this.peer.title || '...';
@@ -157,11 +166,9 @@
               thisDay = thisMonth && thisDate.getDate() == date.getDate(),
               yesterday = thisMonth && thisDate.getDate() - 1 == date.getDate();
 
-          if(thisDay) {
-            time = 'сегодня';
-          } else if(yesterday) {
-            time = 'вчера';
-          } else if(thisYear) {
+          if(thisDay) time = 'сегодня';
+          else if(yesterday) time = 'вчера';
+          else if(thisYear) {
             time = `${date.getDate()} ${months[date.getMonth()]}`;
           } else {
             time = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} г.`;
@@ -300,6 +307,40 @@
           peer_id: this.peer.id,
           time: this.peer.muted ? 0 : -1
         });
+      },
+      onScroll(event) {
+        if(event.target.scrollTop > 200) return;
+
+        if(!this.peer.loading && !this.peer.loaded) {
+          Vue.set(this.peer, 'loading', true);
+          this.loadNewMessages();
+        }
+      },
+      async loadNewMessages() {
+        let { items, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
+          peer_id: this.id,
+          offset: this.messages.length,
+          extended: 1,
+          fields: other.fields
+        });
+
+        this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
+
+        for(let msg of items) {
+          this.$store.commit('addMessage', {
+            peer_id: this.id,
+            msg: parseMessage(msg, this.peer)
+          });
+        }
+
+        if(items.length < 20) Vue.set(this.peer, 'loaded', true);
+        else this.peer.loading = false;
+
+        let { scrollTop, scrollHeight } = qs('.dialog_messages_list');
+        await this.$nextTick();
+
+        let thisHeight = qs('.dialog_messages_list').scrollHeight;
+        qs('.dialog_messages_list').scrollTop = scrollTop + thisHeight - scrollHeight;
       }
     }
   }
