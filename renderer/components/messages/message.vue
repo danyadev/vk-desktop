@@ -5,7 +5,16 @@
    <div class="message_content" :class="{ outread }">
      <div class="message_name" v-if="showUserData">{{ name }}</div>
      <div class="message_text_wrap">
-       <div class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
+       <div class="message_text" v-emoji.color_push.br.link>{{ text.msg }}</div>
+       <div class="message_attachments" :class="{ hasText: !!text.msg }">
+         <div class="message_attach" v-for="attach in text.attachments">
+           <img class="message_attach_img" src="images/im_attachment.png">
+           <div class="message_attach_content">
+             <div class="message_attach_title">Вложение</div>
+             <div class="message_attach_desc">{{ attach.type }}</div>
+          </div>
+         </div>
+       </div>
        <div class="message_time_wrap">
          <template v-if="msg.edited">
            <div class="message_edited">ред</div>
@@ -48,7 +57,7 @@
         else return true;
       },
       isOwner() {
-        return this.msg.from == users.get().id;
+        return this.msg.from == this.$root.user.id;
       },
       user() {
         let user = this.$store.state.profiles[this.msg.from];
@@ -63,6 +72,18 @@
         let userName = this.user.photo_50 ? `${this.user.first_name} ${this.user.last_name}` : '...';
 
         return this.user.name || userName;
+      },
+      supportedAttachments() {
+        return [];
+      },
+      text() {
+        let arr = new Array(this.msg.fwd_count).fill(1),
+            fwdMessages = arr.map(() => ({ type: 'Пересланное сообщение' }));
+
+        return {
+          msg: this.msg.text,
+          attachments: this.msg.attachments.concat(fwdMessages)
+        }
       },
       outread() {
         return this.msg.outread;

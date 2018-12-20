@@ -44,18 +44,6 @@ class Users extends Storage {
     super('users');
   }
 
-  get(id) {
-    if(id) return this.data[id];
-    else {
-      let uid = Object.keys(this.data).find((id) => id == settings.get('activeID'));
-      return this.data[uid];
-    }
-  }
-
-  getAll() {
-    return this.data;
-  }
-
   add(user) {
     this.data[user.id] = user;
     this.save();
@@ -66,13 +54,9 @@ class Users extends Storage {
     this.save();
   }
 
-  update(id, key, value) {
+  update(id, data) {
     if(!this.data[id]) return;
-
-    if(key instanceof Object) {
-      this.data[id] = Object.assign({}, this.data[id], key);
-    } else this.data[id][key] = value;
-
+    this.data[id] = Object.assign({}, this.data[id], data);
     this.save();
   }
 }

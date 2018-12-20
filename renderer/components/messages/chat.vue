@@ -23,7 +23,9 @@
         <template v-if="hasMessages">
           <div class="dialog_empty_block"></div>
           <div v-if="loading" class="loading"></div>
-          <message v-for="msg of messages" :msg="msg" :peer="peer" :key="msg.id"></message>
+          <div class="dialog_messages_wrap">
+            <message v-for="msg of messages" :msg="msg" :peer="peer" :key="msg.id"></message>
+          </div>
         </template>
         <template v-else-if="!loading">
           <img src="images/im_empty_dialog.png">
@@ -42,8 +44,7 @@
         <template v-if="canSendMessages.state">
           <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
           <div class="dialog_input_container">
-            <div class="dialog_input" role="textbox"
-                 contenteditable v-emoji.br.no_emoji
+            <div class="dialog_input" role="textbox" contenteditable
                  @paste.prevent="pasteText"
                  @mousedown="setCursorPositionForEmoji"
                  @keydown.enter="sendMessage"></div>
@@ -67,7 +68,7 @@
 
 <script>
   const { clipboard } = require('electron').remote;
-  const { loadOnlineApp, loadConversation, concatProfiles, parseMessage } = require('./methods');
+  const { loadOnlineApp, loadConversation, concatProfiles, parseMessage, parseConversation } = require('./methods');
 
   module.exports = {
     computed: {
@@ -76,7 +77,7 @@
 
         this.$nextTick().then(() => {
           let el = qs('.dialog_messages_list');
-          if(id && el) this.onScroll({ target: el });
+          if(id && el) this.onScroll({ target: el }, true);
         });
 
         return id;
@@ -195,12 +196,14 @@
         let hist = qs('.dialog_messages_list');
 
         if(hist) {
-          let scrollPos = hist.scrollTop + hist.clientHeight + 40,
-              lastMsg = hist.lastChild,
+          let scrollPos = hist.scrollTop + hist.clientHeight,
+              lastMsg = qs('.dialog_messages_wrap').lastChild,
               scrollHeight = lastMsg.offsetTop + lastMsg.offsetHeight;
 
           if(scrollPos == scrollHeight) {
-            this.$nextTick().then(() => qs('.dialog_messages_list .typing_wrap').scrollIntoView());
+            this.$nextTick().then(() => {
+              qs('.dialog_messages_list .typing_wrap').scrollIntoView()
+            });
           }
         }
 
@@ -246,12 +249,24 @@
       }
     },
     methods: {
+      updatePeer(data) {
+        data.id = this.id;
+        this.$store.commit('editPeer', data);
+      },
       closeChat() {
-        this.peer.scrollTop = qs('.dialog_messages_list').scrollTop;
-
         if(qs('.dialog_input')) {
           this.peer.inputText = qs('.dialog_input').innerHTML;
         }
+
+        let hist = qs('.dialog_messages_list'),
+            scrollPos = hist.scrollTop + hist.clientHeight + 40,
+            lastMsg = qs('.dialog_messages_wrap').lastChild,
+            scrollHeight = lastMsg.offsetTop + lastMsg.offsetHeight;
+
+        this.updatePeer({
+          scrollTop: hist.scrollTop,
+          closedInBottom: scrollPos == scrollHeight
+        });
 
         this.$store.commit('setChat', null);
       },
@@ -308,8 +323,8 @@
           time: this.peer.muted ? 0 : -1
         });
       },
-      onScroll(event) {
-        if(event.target.scrollTop > 200) return;
+      onScroll(event, fake) {
+        if(fake && this.peer.inited || event.target.scrollTop > 200) return;
 
         if(!this.peer.loading && !this.peer.loaded) {
           Vue.set(this.peer, 'loading', true);
@@ -317,7 +332,7 @@
         }
       },
       async loadNewMessages() {
-        let { items, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
+        let { items, conversations, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
           peer_id: this.id,
           offset: this.messages.length,
           extended: 1,
@@ -326,10 +341,12 @@
 
         this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
 
+        let peer = parseConversation(conversations[0]);
+
         for(let msg of items) {
           this.$store.commit('addMessage', {
-            peer_id: this.id,
-            msg: parseMessage(msg, this.peer)
+            peer_id: peer.id,
+            msg: parseMessage(msg, peer)
           });
         }
 
@@ -341,6 +358,7 @@
 
         let thisHeight = qs('.dialog_messages_list').scrollHeight;
         qs('.dialog_messages_list').scrollTop = scrollTop + thisHeight - scrollHeight;
+        this.peer.inited = true;
       }
     }
   }

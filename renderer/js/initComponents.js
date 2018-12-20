@@ -1,5 +1,10 @@
 'use strict';
 
+const ModalCreator = require('./lib/ModalCreator');
+const { resolve } = require('path');
+
+Vue.use(ModalCreator);
+
 // превращает emoji символы в картинку как в ВК
 Vue.directive('emoji', (el, { modifiers }, vnode) => {
   let elem = vnode.children ? vnode.children[0] : el,
@@ -20,13 +25,14 @@ Vue.directive('emoji', (el, { modifiers }, vnode) => {
       .replace(/\n/g, '<br>');
   }
 
-  if(!modifiers.no_emoji) el.innerHTML = emoji(html);
+  el.innerHTML = emoji(html);
 });
 
 let getTagData = (name, text) => {
-  let regexp = new RegExp(`<${name}>([^]*)</${name}>`, 'i');
+  let regexp = new RegExp(`<${name}>([^]*)</${name}>`, 'i'),
+      match = text.match(regexp);
 
-  return (text.match(regexp) || [])[1] || '';
+  return match ? match[1] : '';
 }
 
 require.extensions['.vue'] = (module, filename) => {
@@ -34,32 +40,34 @@ require.extensions['.vue'] = (module, filename) => {
       template = JSON.stringify(getTagData('template', file));
 
   let code = `
+    'use strict';
     ${'\n'.repeat(template.split('\\n').length-1)}
     ${getTagData('script', file)}
     module.exports.template = ${template};
-  `;
+  `.trim();
 
    module._compile(code, filename);
 }
 
 let getFiles = (path, files = [], folders = '') => {
-  let items = fs.readdirSync(`${path}${folders}`, { withFileTypes: true });
+  let items = fs.readdirSync(path + folders, { withFileTypes: true });
 
   for(let file of items) {
-    if(!file.isDirectory()) files.push(`${folders}${file.name}`);
+    if(!file.isDirectory()) files.push(folders + file.name);
     else files.concat(getFiles(path, files, `${folders}${file.name}/`));
   }
 
   return files;
 }
 
-getFiles(ROOT_DIR + '/components/').forEach((file) => {
+let componentsPath = resolve(__dirname, '..', 'components') + '/';
+
+getFiles(componentsPath).forEach((file) => {
   let fileType = file.slice(file.lastIndexOf('.') + 1);
   if(fileType == file || fileType != 'vue') return;
 
-  let filename = file.slice(0, -4),
-      name = filename.slice(filename.lastIndexOf('/') + 1),
-      component = require(`./../components/${filename}.vue`);
+  let name = file.slice(file.lastIndexOf('/') + 1).slice(0, -4),
+      component = require(`./../components/${file}`);
 
   Vue.component(name, component);
 });

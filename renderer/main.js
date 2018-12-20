@@ -6,11 +6,9 @@ const qs = (selector, target) => (target || document).querySelector(selector);
 const qsa = (selector, target) => (target || document).querySelectorAll(selector);
 
 const fs = require('fs');
-const ROOT_DIR = __dirname;
 const { getCurrentWindow, BrowserWindow } = require('electron').remote;
 const Vue = require('./js/lib/Vue');
 const Vuex = require('./js/lib/Vuex');
-const ModalCreator = require('./js/lib/ModalCreator');
 const other = require('./js/other');
 const { random, endScroll } = other;
 const contextMenu = require('./js/contextMenu');
@@ -21,22 +19,21 @@ const vkapi = require('./js/vkapi');
 // настройка Vue
 Vue.config.devtools = true;
 require('./js/initComponents');
-Vue.use(ModalCreator);
 
 let app = new Vue({
   el: '.app',
   store: require('./js/VueStore.js'),
   data: {
-    auth: !settings.get('activeID'),
     section: settings.get('section')
+  },
+  computed: {
+    auth() {
+      return !this.$store.state.activeUser;
+    },
+    user() {
+      return this.$store.state.users[this.$store.state.activeUser];
+    }
   }
-});
-
-contextMenu.set('body', (e) => {
-  return [{
-    label: 'Открыть в DevTools',
-    click: (temp, win) => win.inspectElement(e.x, e.y)
-  }];
 });
 
 window.addEventListener('beforeunload', () => {

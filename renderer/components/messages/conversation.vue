@@ -97,7 +97,7 @@
       },
       authorName() {
         if(this.msg.action || this.peer.channel) return '';
-        else if(this.msg.out || this.author.id == users.get().id) return 'Вы:';
+        else if(this.msg.out || this.author.id == this.$root.user.id) return 'Вы:';
         else if(this.author.photo_50) {
           if(this.isChat) return `${this.author.name || this.author.first_name}:`;
         } else return '...:';
@@ -123,12 +123,24 @@
       async openChat() {
         if(this.peer.id == this.$store.state.activeChat) return;
 
+        let scrollToLastReadedMsg = false,
+            fromOtherChat = false;
+
         if(this.$store.state.activeChat) {
           let conversation = this.$store.state.conversations[this.$store.state.activeChat],
-              peer = conversation && conversation.peer;
+              peer = conversation && conversation.peer,
+              hist = qs('.dialog_messages_list'),
+              scrollPos = hist.scrollTop + hist.clientHeight,
+              lastMsg = qs('.dialog_messages_wrap').lastChild,
+              scrollHeight = lastMsg.offsetTop + lastMsg.offsetHeight;
+
+          console.log(scrollPos, scrollHeight);
+
+          if(scrollPos == scrollHeight) scrollToLastReadedMsg = true;
+          fromOtherChat = true;
 
           if(peer) {
-            peer.scrollTop = qs('.dialog_messages_list').scrollTop;
+            peer.scrollTop = hist.scrollTop;
 
             if(qs('.dialog_input')) {
               peer.inputText = qs('.dialog_input').innerHTML;
@@ -143,8 +155,9 @@
         let conversation = this.$store.state.conversations[this.$store.state.activeChat],
             peer = conversation && conversation.peer;
 
-        if(peer.scrollTop == undefined) {
+        if(fromOtherChat ? scrollToLastReadedMsg : peer.closedInBottom) {
           let item = qs(`#message${peer.in_read}`);
+          console.log(item);
           if(item) item.scrollIntoView();
         }
 
@@ -190,7 +203,7 @@
       getServiceMessage(action, author) {
         let actID = action.member_id || action.mid,
             actUser = this.profiles[actID] || { id: actID },
-            id = users.get().id;
+            id = this.$root.user.id;
 
         let name = (type, acc) => {
           let user = type ? actUser : author;

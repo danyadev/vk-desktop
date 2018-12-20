@@ -65,9 +65,6 @@
         let dialog = this.$store.state.conversations[peerID],
             peer = dialog && dialog.peer;
 
-        if(data instanceof Function) data = data(peer);
-        if(data instanceof Promise) data = await data;
-
         if(!peer && !optional) {
           this.$store.commit('addConversation', { peer: data });
 
@@ -138,40 +135,41 @@
 
         this.updateLastMsg(data.peer.id, data.msg);
 
-        this.updatePeer(data.peer.id, (oldPeer) => {
-          if(data.msg.outread) data.peer.unread = 0;
-          else if(oldPeer) data.peer.unread = oldPeer.unread + 1;
+        console.log(data);
+        this.$store.commit('incrementUnreadCount', {
+          peer_id: data.peer.id,
+          state: !data.msg.outread
+        });
 
-          if(data.msg.action) {
-            if(['chat_create', 'chat_title_update'].includes(data.msg.action.type)) {
-              data.peer.title = data.msg.action.text;
-            }
-
-            let inviteUser = data.msg.action.type == 'chat_invite_user',
-                isReturnToChat = inviteUser && data.msg.action.mid == users.get().id;
-
-            if(data.msg.action.type == 'chat_photo_update' || isReturnToChat) {
-              vkapi('messages.getConversationsById', {
-                peer_ids: data.peer.id
-              }).then(({ items: [peer] }) => {
-                let data = { title: peer.chat_settings.title };
-
-                if(peer.chat_settings.photo) data.photo = peer.chat_settings.photo.photo_50;
-                else data.photo = null;
-
-                this.updatePeer(peer.peer.id, data, true);
-              });
-            }
-
-            if(data.msg.action.type == 'chat_kick_user') {
-              if(data.msg.action.mid == users.get().id) {
-                data.peer.photo = null;
-              }
-            }
+        if(data.msg.action) {
+          if(['chat_create', 'chat_title_update'].includes(data.msg.action.type)) {
+            data.peer.title = data.msg.action.text;
           }
 
-          return data.peer;
-        });
+          let inviteUser = data.msg.action.type == 'chat_invite_user',
+              isReturnToChat = inviteUser && data.msg.action.mid == this.$root.user.id;
+
+          if(data.msg.action.type == 'chat_photo_update' || isReturnToChat) {
+            vkapi('messages.getConversationsById', {
+              peer_ids: data.peer.id
+            }).then(({ items: [peer] }) => {
+              let data = { title: peer.chat_settings.title };
+
+              if(peer.chat_settings.photo) data.photo = peer.chat_settings.photo.photo_50;
+              else data.photo = null;
+
+              this.updatePeer(peer.peer.id, data, true);
+            });
+          }
+
+          if(data.msg.action.type == 'chat_kick_user') {
+            if(data.msg.action.mid == this.$root.user.id) {
+              data.peer.photo = null;
+            }
+          }
+        }
+
+        this.updatePeer(data.peer.id, data.peer);
 
         checkTyping(data);
         this.moveConversations(data.peer.id);

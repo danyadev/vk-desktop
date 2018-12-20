@@ -65,7 +65,7 @@ let getAttachments = (data) => {
 let getMessage = (data, type) => {
   let flags = getFlags(data[1]),
       action = getServiceMessage(data[5]),
-      from_id = (flags.is('outbox')) ? users.get().id : Number(data[5].from || data[2]),
+      from_id = (flags.is('outbox')) ? app.user.id : Number(data[5].from || data[2]),
       isChannel = data[1] == 0; // пока я только это заметил
 
   let res = {

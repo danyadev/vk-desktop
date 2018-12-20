@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  let Bus = ModalCreator.Bus;
+  const { Bus } = require('./../js/lib/ModalCreator.js');
 
   module.exports = {
     data: () => ({

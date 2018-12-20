@@ -39,10 +39,12 @@
         { name: 'Фотографии',   type: 'photos',        disabled: true  },
         { name: 'Видеозаписи',  type: 'videos',        disabled: true  },
         { name: 'Настройки',    type: 'settings',      disabled: true  }
-      ],
-      user: users.get()
+      ]
     }),
     computed: {
+      user() {
+        return this.$root.user || {};
+      },
       active() {
         return this.$store.state.menuState;
       },
@@ -62,14 +64,9 @@
     async mounted() {
       let [ user ] = await vkapi('execute.getProfiles', { fields: 'status,photo_100' });
 
-      this.user = user;
-      users.update(user.id, user);
-
-      // инициализация longpoll
+      this.$store.commit('updateUser', user);
+      vkapi('stats.trackVisitor');
       require('./../../js/longpoll').init();
-
-      // статистика
-      let count = vkapi('execute.trackUser');
     }
   }
 </script>

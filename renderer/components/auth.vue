@@ -42,9 +42,8 @@
 
             let [ user ] = await vkapi('users.get', { access_token });
 
-            users.set(user.id, Object.assign(user, { access_token }));
-            settings.set('activeID', user.id);
-            this.$root.auth = false;
+            this.$store.commit('updateUser', Object.assign(user, { access_token }));
+            this.$store.commit('setActiveUser', user.id);
           }
         });
       }

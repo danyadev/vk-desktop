@@ -13,6 +13,7 @@
         <template v-else>
           <main-menu></main-menu>
           <keep-alive><component :is="section"></component></keep-alive>
+          <!-- v-for component of <список компонентов, которые будут висеть поверх активного> -->
         </template>
         <modal-wrapper></modal-wrapper>
       </div>

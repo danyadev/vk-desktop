@@ -7,7 +7,35 @@ Object.defineProperty(Array.prototype, 'move', {
   enumerable: false
 });
 
+// Функция вызывается когда delay больше прошедшего времени
+function throttle(fn, delay) {
+  let lastCall = 0;
+
+  return (...args) => {
+    let now = new Date().getTime();
+    if(now - lastCall < delay) return;
+    lastCall = now;
+    return fn(...args);
+  }
+}
+
+// При вызове нескольких функций подряд в промежутке delay
+// будет вызван fn только в самом конце
+function debounce(fn, delay) {
+  let timerId;
+
+  return (...args) => {
+    if(timerId) clearTimeout(timerId);
+
+    timerId = setTimeout(() => {
+      fn(...args);
+      timerId = null;
+    }, delay);
+  }
+}
+
 module.exports = {
+  throttle, debounce,
   fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen',
   timer: (t) => new Promise((r) => setTimeout(r, t)),
   random: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,

@@ -249,7 +249,10 @@
   background-color: #cce4fe;
 }
 
-.message_text { display: inline }
+.message_text {
+  display: inline;
+  word-break: break-word;
+}
 
 .message_time_wrap {
   display: flex;
@@ -269,3 +272,38 @@
 }
 
 .message_edited { margin-top: -1px }
+
+.message_attachments {
+  display: inline;
+}
+
+.message_attachments.hasText .message_attach:first-child {
+  margin-top: 5px;
+}
+
+.message_attach {
+  display: flex;
+}
+
+.message_attachments .message_attach:not(:first-child) {
+  margin-top: 10px;
+}
+
+.message_attach_img {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.message_attach_content {
+
+}
+
+.message_attach_title {
+  font-weight: 500;
+}
+
+.message_attach_desc {
+
+}

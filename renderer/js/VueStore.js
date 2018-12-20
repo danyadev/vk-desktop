@@ -15,6 +15,8 @@ let getMinIndex = (arr, num) => {
 module.exports = new Vuex.Store({
   strict: true,
   state: {
+    users: users.get(),
+    activeUser: settings.get('activeUser'),
     menuState: false,
     profiles: {},
     conversations: {},
@@ -24,6 +26,18 @@ module.exports = new Vuex.Store({
     messages: {}
   },
   mutations: {
+    // ** Пользователи для мультиаккаунта **
+    updateUser(state, data) {
+      let user = state.users[data.id],
+          newData = Object.assign({}, user, data);
+
+      users.update(data.id, newData);
+      Vue.set(state.users, data.id, newData);
+    },
+    setActiveUser(state, id) {
+      state.activeUser = id;
+      settings.set('activeUser', id);
+    },
     // ** Меню **
     setMenuState(state, value) {
       state.menuState = value;
@@ -74,6 +88,18 @@ module.exports = new Vuex.Store({
       let conversation = state.conversations[data.peer_id] || {};
 
       conversation.lastMsg = Object.assign({}, conversation.lastMsg, data.msg);
+
+      Vue.set(state.conversations, data.peer_id, conversation);
+    },
+    incrementUnreadCount(state, data) {
+      let conversation = state.conversations[data.peer_id] || {},
+          peer = conversation.peer;
+
+      if(!peer) return;
+
+      conversation.peer = Object.assign({}, peer, {
+        unread: data.state ? peer.unread + 1 : 0
+      });
 
       Vue.set(state.conversations, data.peer_id, conversation);
     },
