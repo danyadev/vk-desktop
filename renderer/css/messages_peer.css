@@ -239,6 +239,7 @@
 }
 
 .message_text_wrap {
+  position: relative;
   display: inline-block;
   background-color: #dfe6ea;
   padding: 7px 10px;
@@ -261,9 +262,21 @@
   font-weight: 500;
   font-size: 11px;
   margin: 6px 0 0 8px;
+  user-select: none;
+  pointer-events: none;
 }
 
-.message_text_wrap .dot {
+.message_time_wrap.fly {
+  position: absolute;
+  bottom: 5px;
+  right: 7px;
+  background-color: #0000007d;
+  color: #f5f5f5;
+  border-radius: 10px;
+  padding: 2px 5px;
+}
+
+.message_time_wrap .dot {
   width: 2px;
   height: 2px;
   margin: 7px 3px 0 3px;
@@ -271,11 +284,9 @@
   background-color: #696969;
 }
 
+.message_time_wrap.fly .dot { background-color: #f5f5f5 }
 .message_edited { margin-top: -1px }
-
-.message_attachments {
-  display: inline;
-}
+.message_attachments { display: inline }
 
 .message_attachments.hasText .message_attach:first-child {
   margin-top: 5px;
@@ -283,6 +294,7 @@
 
 .message_attach {
   display: flex;
+  margin-right: 40px;
 }
 
 .message_attachments .message_attach:not(:first-child) {

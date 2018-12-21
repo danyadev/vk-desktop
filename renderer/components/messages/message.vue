@@ -15,7 +15,7 @@
           </div>
          </div>
        </div>
-       <div class="message_time_wrap">
+       <div class="message_time_wrap" :class="{ fly: flyMsgTime }">
          <template v-if="msg.edited">
            <div class="message_edited">ред</div>
            <div class="dot"></div>
@@ -76,13 +76,19 @@
       supportedAttachments() {
         return [];
       },
+      flyMsgTime() {
+        return !!this.msg.fwd_count || !!this.msg.attachments.length;
+      },
       text() {
-        let arr = new Array(this.msg.fwd_count).fill(1),
-            fwdMessages = arr.map(() => ({ type: 'Пересланное сообщение' }));
+        let count = this.msg.fwd_count,
+            texts = ['пересланное сообщение', 'пересланных сообщения', 'пересланных сообщений'],
+            fwdMessage = count ? {
+              type: count + ' ' + other.getWordEnding(count, texts)
+            } : [];
 
         return {
           msg: this.msg.text,
-          attachments: this.msg.attachments.concat(fwdMessages)
+          attachments: this.msg.attachments.concat(fwdMessage)
         }
       },
       outread() {
