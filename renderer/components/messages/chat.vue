@@ -5,7 +5,7 @@
         <img class="dialog_header_back" src="images/im_back.png" @click="closeChat">
         <div class="dialog_header_center">
           <div class="dialog_name_wrap">
-            <div class="dialog_name" v-emoji>{{ title }}</div>
+            <div class="dialog_name" v-emoji>{{ title | e }}</div>
             <div class="verified" v-if="owner && owner.verified"></div>
             <div class="messages_muted" v-if="peer.muted"></div>
           </div>

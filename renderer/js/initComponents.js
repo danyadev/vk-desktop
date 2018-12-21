@@ -28,6 +28,10 @@ Vue.directive('emoji', (el, { modifiers }, vnode) => {
   el.innerHTML = emoji(html);
 });
 
+Vue.filter('e', (value) => {
+  return other.escape(value);
+});
+
 let getTagData = (name, text) => {
   let regexp = new RegExp(`<${name}>([^]*)</${name}>`, 'i'),
       match = text.match(regexp);

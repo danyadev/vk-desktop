@@ -44,7 +44,10 @@ app.on('ready', () => {
     show: false,
     frame: false,
     // Необходимо для нормального отображения кнопок управления окном на MacOS
-    titleBarStyle: 'hidden'
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   win.webContents.once('dom-ready', async () => {

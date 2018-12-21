@@ -1,11 +1,13 @@
 <template>
- <div class="message" :id="'message' + this.msg.id" :class="{ from_me: isOwner, first_msg_block: isFirstMsg }">
+ <div :class="{ from_me: isOwner, first_msg_block: isFirstMsg, service: serviceMessage }"
+      class="message" :id="'message' + this.msg.id">
    <img v-if="showUserData" class="message_photo" :src="photo">
-   <div v-else-if="isChat && !peer.channel" class="message_empty_photo"></div>
+   <div v-else-if="isChat && !peer.channel && !serviceMessage" class="message_empty_photo"></div>
    <div class="message_content" :class="{ outread }">
      <div class="message_name" v-if="showUserData">{{ name }}</div>
      <div class="message_text_wrap">
-       <div class="message_text" v-emoji.color_push.br.link>{{ text.msg }}</div>
+       <div v-if="serviceMessage" class="message_text" v-html="serviceMessage"></div>
+       <div v-else class="message_text" v-emoji.color_push.br.link>{{ text.msg }}</div>
        <div class="message_attachments" :class="{ hasText: !!text.msg }">
          <div class="message_attach" v-for="attach in text.attachments">
            <img class="message_attach_img" src="images/im_attachment.png">
@@ -29,6 +31,7 @@
 
 <script>
   const { loadProfile } = require('./methods');
+  const { getServiceMessage } = require('./messages');
 
   module.exports = {
     props: {
@@ -63,7 +66,7 @@
         let user = this.$store.state.profiles[this.msg.from];
         if(!user || !user.photo_50) loadProfile(this.msg.from);
 
-        return user || {};
+        return user || { id: this.msg.from };
       },
       photo() {
         return this.user.photo_50;
@@ -77,7 +80,12 @@
         return [];
       },
       flyMsgTime() {
-        return !!this.msg.fwd_count || !!this.msg.attachments.length;
+        return this.msg.fwd_count || this.msg.attachments.length;
+      },
+      serviceMessage() {
+        if(!this.msg.action) return;
+
+        return getServiceMessage.bind(this)(this.msg.action, this.user, true);
       },
       text() {
         let count = this.msg.fwd_count,

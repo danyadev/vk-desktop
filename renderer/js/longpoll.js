@@ -70,9 +70,8 @@ class Longpoll {
 
           this.key = server.key;
           this.ts = server.ts;
-        }
+        } else if(data.ts) this.ts = data.ts;
 
-        this.ts = data.ts || this.ts;
         this.pts = history.new_pts;
       } else if(data.failed == 2) {
         let server = await Longpoll.getServer();

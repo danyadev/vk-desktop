@@ -134,8 +134,7 @@
         if(data.msg.hidden) return;
 
         this.updateLastMsg(data.peer.id, data.msg);
-
-        console.log(data);
+        
         this.$store.commit('incrementUnreadCount', {
           peer_id: data.peer.id,
           state: !data.msg.outread
