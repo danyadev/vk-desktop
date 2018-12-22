@@ -51,6 +51,7 @@
             <div class="dialog_input" role="textbox" contenteditable
                  @paste.prevent="pasteText"
                  @mousedown="setCursorPositionForEmoji"
+                 @input="onInput(peer)"
                  @keydown.enter="sendMessage"></div>
             <div class="dialog_input_placeholder">Введите сообщение...</div>
           </div>
@@ -318,12 +319,10 @@
         });
       },
       onScroll(event, fake) {
-        if(!fake) {
-          let el = event.target,
-              hide = el.scrollTop + el.offsetHeight == el.scrollHeight;
+        let el = event.target,
+            hide = el.scrollTop + el.offsetHeight == el.scrollHeight;
 
-          Vue.set(this.peer, 'showEndBtn', !hide);
-        }
+        Vue.set(this.peer, 'showEndBtn', !hide);
 
         if(fake && this.peer.inited || event.target.scrollTop > 200) return;
 
@@ -332,6 +331,12 @@
           this.loadNewMessages();
         }
       },
+      onInput: other.throttle((peer) => {
+        vkapi('messages.setActivity', {
+          peer_id: peer.id,
+          type: 'typing'
+        });
+      }, 5000),
       async loadNewMessages() {
         let { items, conversations, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
           peer_id: this.id,

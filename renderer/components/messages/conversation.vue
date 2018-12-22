@@ -37,7 +37,7 @@
 
 <script>
   const { loadProfile } = require('./methods');
-  const { getServiceMessage } = require('./messages');
+  const { getServiceMessage, getDate } = require('./messages');
 
   module.exports = {
     props: {
@@ -86,15 +86,7 @@
         } else return '...';
       },
       time() {
-        let date = new Date(this.msg.date * 1000),
-            thisDate = new Date(),
-            f = (t) => t < 10 ? `0${t}` : t;
-
-        if(date.toLocaleDateString() == thisDate.toLocaleDateString()) {
-          return `${f(date.getHours())}:${f(date.getMinutes())}`;
-        } else if(date.getFullYear() == thisDate.getFullYear()) {
-          return `${f(date.getDate())}.${f(date.getMonth() + 1)}`;
-        } else return date.getFullYear();
+        return getDate(this.msg.date, true, true);
       },
       authorName() {
         if(this.msg.action || this.peer.channel) return '';

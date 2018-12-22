@@ -70,9 +70,10 @@ function getServiceMessage(action, author, full) {
   }
 }
 
-function getDate(timestamp, shortMonth) {
+function getDate(timestamp, shortMonth, withTime) {
   let thisDate = new Date(),
       date = new Date(timestamp * 1000),
+      f = (t) => t < 10 ? `0${t}` : t,
       months = [
         'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
         'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
@@ -82,11 +83,12 @@ function getDate(timestamp, shortMonth) {
       thisMonth = thisYear && thisDate.getMonth() == date.getMonth(),
       thisDay = thisMonth && thisDate.getDate() == date.getDate(),
       yesterday = thisMonth && thisDate.getDate() - 1 == date.getDate(),
+      time = `${f(date.getHours())}:${f(date.getMinutes())}`,
       month = months[date.getMonth()];
 
   if(shortMonth && month.length > 3) month = month.slice(0, 3) + '.';
 
-  if(thisDay) return 'сегодня';
+  if(thisDay) return withTime ? time : 'сегодня';
   else if(yesterday) return 'вчера';
   else if(thisYear) return `${date.getDate()} ${month}`;
   else return `${date.getDate()} ${month} ${date.getFullYear()} г.`;
