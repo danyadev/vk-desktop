@@ -8,14 +8,14 @@ const EMOJI_PREFIXED_REPLACES = {
   f09f9889: /(\s|^)([XХxх]-?D)([\s\.,]|$)/g,
   f09f9886: /(\s|^)(B-\))([\s\.,]|$)/g,
   f09f988e: /(\s|^)(3-\))([\s\.,]|$)/g,
-  f09f988c: /(\s|^)(&gt;\()([\s\.,]|$)/g,
+  f09f988c: /(\s|^)(>\()([\s\.,]|$)/g,
   f09f98a0: /(\s|^)(;[oоOО])([\s\.,]|$)/g,
   f09f98b0: /(\s|^)(8\|)([\s\.,]|$)/g,
   f09f98b3: /(\s|^)(8-?[oоOО])([\s\.,]|$)/g,
   f09f98b2: /(\s|^)(8-\))([\s\.,]|$)/g,
   f09f988d: /(\s|^)(:[XХ])([\s\.,]|$)/g,
   f09f98b7: /(\s|^)(:[oоOО])([\s\.,]|$)/g,
-  f09f98a8: /(\s|^)(&lt;3)([\s\.,]|$)/g
+  f09f98a8: /(\s|^)(<3)([\s\.,]|$)/g
 }
 
 const EMOJI_REPLACES = {
@@ -27,11 +27,11 @@ const EMOJI_REPLACES = {
   e298ba:   /(:-?\])([\s\.,]|$)/g,
   f09f988f: /(;-\])([\s\.,]|$)/g,
   f09f9894: /(3-?\()([\s\.,]|$)/g,
-  f09f98a2: /(:&#039;\()([\s\.,]|$)/g,
+  f09f98a2: /(:'\()([\s\.,]|$)/g,
   f09f98ad: /(:_\()([\s\.,]|$)/g,
   f09f98a9: /(:\(\()([\s\.,]|$)/g,
   f09f9890: /(:\|)([\s\.,]|$)/g,
-  f09f98a1: /(&gt;\(\()([\s\.,]|$)/g,
+  f09f98a1: /(>\(\()([\s\.,]|$)/g,
   f09f989a: /(:-\*)([\s\.,]|$)/g,
   f09f9888: /(\}:\))([\s\.,]|$)/g,
   f09f918d: /(:like:)([\s\.,]|$)/g,
@@ -42,11 +42,12 @@ const EMOJI_REPLACES = {
 }
 
 function emojiReplace(e) {
-  let symbol = e.split('')
-                .map((e) => e.charCodeAt(0).toString(16))
-                .filter((e) => 'fe0f' != e.toLowerCase())
-                .map((e) => String.fromCodePoint(parseInt(e, 16)))
-                .join(''),
+  let symbol = e
+        .split('')
+        .map((e) => e.charCodeAt(0).toString(16))
+        .filter((e) => 'fe0f' != e.toLowerCase())
+        .map((e) => String.fromCodePoint(parseInt(e, 16)))
+        .join(''),
       hex = encodeURIComponent(symbol).replace(/%/g, '').toLowerCase();
 
   return HexToImg(hex, e);
@@ -62,22 +63,19 @@ function emojiToHTML(e = '') {
   e = e.replace(/&nbsp;/g, ' ').replace(/<br>/g, '\n');
 
   for(let o=0; o<2; o++) {
-    Object.keys(EMOJI_PREFIXED_REPLACES).forEach(function(t) {
-      e = e.replace(EMOJI_PREFIXED_REPLACES[t], function(e, i, o, r) {
-        return (i || '') + HexToImg(t) + (r || '');
-      });
+    Object.keys(EMOJI_PREFIXED_REPLACES).forEach((t) => {
+      e = e.replace(EMOJI_PREFIXED_REPLACES[t], (e, i = '', o, r = '') => i + HexToImg(t) + r);
     });
   }
 
-  Object.keys(EMOJI_REPLACES).forEach(function(t) {
-    e = e.replace(EMOJI_REPLACES[t], function(e, i, o) {
-      return HexToImg(t) + (o || '');
-    });
+  Object.keys(EMOJI_REPLACES).forEach((t) => {
+    e = e.replace(EMOJI_REPLACES[t], (e, i, o = '') => HexToImg(t) + o);
   });
 
-  return e.replace(/\n/g, '<br>').replace(/\uFE0F/g, '').replace(emojiRegex, emojiReplace);
+  return e.replace(/\n/g, '<br>')
+          .replace(/\uFE0F/g, '')
+          .replace(emojiRegex, emojiReplace);
 }
 
-emojiToHTML.isEmoji = (text) => emojiRegex.test(text);
-
 module.exports = emojiToHTML;
+module.exports.isEmoji = (text) => emojiRegex.test(text);

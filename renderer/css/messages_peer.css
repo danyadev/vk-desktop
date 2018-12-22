@@ -194,7 +194,7 @@
   margin: 5px 20px 0;
 }
 
-.message:first-child {
+.message_wrap:first-child {
   margin-top: auto;
   padding-top: 25px;
 }
@@ -262,9 +262,10 @@
   word-break: break-word;
 }
 
-.message.service .message_text {
+.message.service .message_text, .message_top_date {
   text-align: center;
   color: #4e4f50;
+  word-break: break-word;
 }
 
 .message_time_wrap {
@@ -323,3 +324,4 @@
 }
 
 .message_attach_title { font-weight: 500 }
+.message_top_date { margin: 15px 0 }

@@ -1,37 +1,40 @@
 <template>
- <div :class="{ from_me: isOwner, first_msg_block: isFirstMsg, service: serviceMessage }"
-      class="message" :id="'message' + this.msg.id">
-   <img v-if="showUserData" class="message_photo" :src="photo">
-   <div v-else-if="isChat && !peer.channel && !serviceMessage" class="message_empty_photo"></div>
-   <div class="message_content" :class="{ outread }">
-     <div class="message_name" v-if="showUserData">{{ name }}</div>
-     <div class="message_text_wrap">
-       <div v-if="serviceMessage" class="message_text" v-html="serviceMessage"></div>
-       <div v-else class="message_text" v-emoji.color_push.br.link>{{ text.msg }}</div>
-       <div class="message_attachments" :class="{ hasText: !!text.msg }">
-         <div class="message_attach" v-for="attach in text.attachments">
-           <img class="message_attach_img" src="images/im_attachment.png">
-           <div class="message_attach_content">
-             <div class="message_attach_title">Вложение</div>
-             <div class="message_attach_desc">{{ attach.type }}</div>
+  <div class="message_wrap">
+    <div class="message_top_date" v-if="historyDate">{{ historyDate }}</div>
+    <div :class="{ from_me: isOwner, first_msg_block: isFirstMsg, service: serviceMessage }"
+          class="message" :id="'message' + this.msg.id">
+      <img v-if="showUserData" class="message_photo" :src="photo">
+      <div v-else-if="isChat && !peer.channel && !serviceMessage" class="message_empty_photo"></div>
+      <div class="message_content" :class="{ outread }">
+        <div class="message_name" v-if="showUserData">{{ name }}</div>
+        <div class="message_text_wrap">
+          <div v-if="serviceMessage" class="message_text" v-html="serviceMessage"></div>
+          <div v-else class="message_text" v-emoji.color_push.br.link>{{ text.msg }}</div>
+          <div class="message_attachments" :class="{ hasText: !!text.msg }">
+            <div class="message_attach" v-for="attach in text.attachments">
+              <img class="message_attach_img" src="images/im_attachment.png">
+              <div class="message_attach_content">
+                <div class="message_attach_title">Вложение</div>
+                <div class="message_attach_desc">{{ attach.type }}</div>
+              </div>
+            </div>
           </div>
-         </div>
-       </div>
-       <div class="message_time_wrap" :class="{ fly: flyMsgTime }">
-         <template v-if="msg.edited">
-           <div class="message_edited">ред</div>
-           <div class="dot"></div>
-         </template>
-         <div class="message_time">{{ time }}</div>
-       </div>
-     </div>
+          <div class="message_time_wrap" :class="{ fly: flyMsgTime }">
+            <template v-if="msg.edited">
+              <div class="message_edited">ред</div>
+              <div class="dot"></div>
+            </template>
+            <div class="message_time">{{ time }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
- </div>
 </template>
 
 <script>
   const { loadProfile } = require('./methods');
-  const { getServiceMessage } = require('./messages');
+  const { getServiceMessage, getDate } = require('./messages');
 
   module.exports = {
     props: {
@@ -48,15 +51,26 @@
       isChat() {
         return this.peer.id > 2e9;
       },
-      isFirstMsg() {
+      prevMsg() {
         let messages = this.$store.state.messages[this.peer.id],
-            msgIndex = messages.findIndex(({ id }) => id == this.msg.id),
-            prevMsg = messages[msgIndex - 1];
+            msgIndex = messages.findIndex(({ id }) => id == this.msg.id);
 
-        return !prevMsg || prevMsg.from != this.msg.from;
+        return messages[msgIndex - 1];
+      },
+      isFirstMsg() {
+        return this.historyDate || !this.prevMsg || this.prevMsg.from != this.msg.from;
+      },
+      historyDate() {
+        let date = new Date(this.msg.date * 1000),
+            time = getDate(this.msg.date);
+
+        if(this.prevMsg) {
+          let prevDate = new Date(this.prevMsg.date * 1000);
+          if(prevDate.getDate() != date.getDate()) return time;
+        } else return time;
       },
       showUserData() {
-        if(!this.isFirstMsg || this.isOwner || !this.isChat || this.peer.channel) return false;
+        if(!this.isFirstMsg || this.isOwner || !this.isChat || this.peer.channel || this.serviceMessage) return false;
         else return true;
       },
       isOwner() {

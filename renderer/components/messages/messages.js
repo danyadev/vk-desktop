@@ -4,7 +4,7 @@ const { loadProfile } = require('./methods');
 
 function getServiceMessage(action, author, full) {
   function boldText(text) {
-    return `<b>${other.escape(text)}</b>`;
+    return `<b>${emoji(other.escape(text))}</b>`;
   }
 
   function name(type, acc) {
@@ -42,23 +42,28 @@ function getServiceMessage(action, author, full) {
     case 'chat_photo_remove':
       return `${name(0)} удалил${w(0, 'и:а')} фотографию беседы`;
     case 'chat_create':
-      let title = full ? `«${boldText(emoji(action.text))}»` : '';
+      let title = full ? `«${boldText(action.text)}»` : '';
       return `${name(0)} создал${w(0, 'и:а')} беседу ${title}`;
     case 'chat_title_update':
-      let text = full ? `на «${boldText(emoji(action.text))}»` : '';
+      let text = full ? `на «${boldText(action.text)}»` : '';
 
       return `${name(0)} изменил${w(0, 'и:а')} название беседы ${text}`;
     case 'chat_invite_user':
       if(actID == author.id) return `${name(1)} вернул${w(1, 'ись:ась:ся')} в беседу`;
+      else if(full) return `${name(0)} пригласил${w(0, 'и:а')} ${name(1, 1)} в беседу`;
       else return `${name(1, 1)} пригласили в беседу`;
     case 'chat_kick_user':
       if(actID == author.id) return `${name(0)} покинул${w(0, 'и:а')} беседу`;
-      else if(actID == id) return 'Вас исключили из беседы';
-      else return `${name(1, 1)} исключили из беседы`;
+      else if(actID == id) {
+        if(full) return `${name(0)} исключил${w(0, 'и:а')} Вас из беседы`;
+        else return 'Вас исключили из беседы';
+      } else return `${name(1, 1)} исключили из беседы`;
     case 'chat_pin_message':
-      return `${name(1)} закрепил${w(1, 'и:а')} сообщение`;
+      let pin_msg = full ? `«${boldText(action.message)}»` : '';
+      return `${name(1)} закрепил${w(1, 'и:а')} сообщение ${pin_msg}`;
     case 'chat_unpin_message':
-      return `${name(1)} открепил${w(1, 'и:а')} сообщение`;
+      let msg = full ? '<b>сообщение</b>' : 'сообщение';
+      return `${name(1)} открепил${w(1, 'и:а')} ${msg}`;
     case 'chat_invite_user_by_link':
       return `${name(0)} присоединил${w(0, 'ись:ась:ся')} к беседе по ссылке`;
     default:
@@ -67,6 +72,29 @@ function getServiceMessage(action, author, full) {
   }
 }
 
+function getDate(timestamp, shortMonth) {
+  let thisDate = new Date(),
+      date = new Date(timestamp * 1000),
+      months = [
+        'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+      ];
+
+  let thisYear = thisDate.getFullYear() == date.getFullYear(),
+      thisMonth = thisYear && thisDate.getMonth() == date.getMonth(),
+      thisDay = thisMonth && thisDate.getDate() == date.getDate(),
+      yesterday = thisMonth && thisDate.getDate() - 1 == date.getDate(),
+      month = months[date.getMonth()];
+
+  if(shortMonth && month.length > 3) month = month.slice(0, 3) + '.';
+
+  if(thisDay) return 'сегодня';
+  else if(yesterday) return 'вчера';
+  else if(thisYear) return `${date.getDate()} ${month}`;
+  else return `${date.getDate()} ${month} ${date.getFullYear()} г.`;
+}
+
 module.exports = {
-  getServiceMessage
+  getServiceMessage,
+  getDate
 }

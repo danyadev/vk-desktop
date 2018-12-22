@@ -69,6 +69,7 @@
 <script>
   const { clipboard } = require('electron').remote;
   const { loadOnlineApp, loadConversation, concatProfiles, parseMessage, parseConversation } = require('./methods');
+  const { getDate } = require('./messages');
 
   module.exports = {
     computed: {
@@ -147,33 +148,16 @@
           if(!app) {
             if(this.owner.online_mobile) app = 'с телефона';
             else if(!this.owner.online_web) loadOnlineApp(this.owner.id);
-          } else app = 'с ' + app;
+          } else app = `с ${app}`;
 
           return `В сети ${app} (${date.getHours()}:${f(date.getMinutes())})`;
         } else {
           let thisDate = new Date(),
               s = this.owner.sex == 1 ? 'a' : '',
-              time = '',
-              months = [
-                'янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.',
-                'июл.', 'авг.', 'сен.', 'окт.', 'ноя.', 'дек.'
-              ];
-
-          let offlineTime = thisDate.getTime() - date.getTime(),
+              offlineTime = thisDate.getTime() - date.getTime(),
               offlineHours = Math.floor(offlineTime / (1000 * 60 * 60)),
               offlineMins = Math.floor(offlineTime / (1000 * 60)),
-              thisYear = thisDate.getFullYear() == date.getFullYear(),
-              thisMonth = thisYear && thisDate.getMonth() == date.getMonth(),
-              thisDay = thisMonth && thisDate.getDate() == date.getDate(),
-              yesterday = thisMonth && thisDate.getDate() - 1 == date.getDate();
-
-          if(thisDay) time = 'сегодня';
-          else if(yesterday) time = 'вчера';
-          else if(thisYear) {
-            time = `${date.getDate()} ${months[date.getMonth()]}`;
-          } else {
-            time = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} г.`;
-          }
+              time = getDate(this.owner.last_seen.time);
 
           if(offlineHours <= 3) {
             if(offlineHours == 0) {
