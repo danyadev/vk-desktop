@@ -41,6 +41,10 @@
         </div>
       </div>
       <div class="dialog_input_wrap">
+        <div class="dialog_to_end" :class="{ hidden: !showEndBtn }" @click="scrollToEnd">
+          <div class="dialog_to_end_count">{{ this.peer.unread || '' }}</div>
+          <img class="dialog_to_end_icon" src="images/im_to_end.png">
+        </div>
         <template v-if="canSendMessages.state">
           <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
           <div class="dialog_input_container">
@@ -109,6 +113,9 @@
       },
       loading() {
         return !this.peer.loaded && this.peer.loading;
+      },
+      showEndBtn() {
+        return this.peer.showEndBtn;
       },
       title() {
         if(this.isChat) return this.peer.title || '...';
@@ -281,6 +288,9 @@
           console.error('[chat] send error:', e);
         }
       },
+      scrollToEnd() {
+        qs('.dialog_messages_list .typing_wrap').scrollIntoView();
+      },
       pasteText(event) {
         document.execCommand('insertHTML', false, emoji(clipboard.readText()));
       },
@@ -308,6 +318,13 @@
         });
       },
       onScroll(event, fake) {
+        if(!fake) {
+          let el = event.target,
+              hide = el.scrollTop + el.offsetHeight == el.scrollHeight;
+
+          Vue.set(this.peer, 'showEndBtn', !hide);
+        }
+
         if(fake && this.peer.inited || event.target.scrollTop > 200) return;
 
         if(!this.peer.loading && !this.peer.loaded) {

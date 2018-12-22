@@ -70,8 +70,9 @@
         } else return time;
       },
       showUserData() {
-        if(!this.isFirstMsg || this.isOwner || !this.isChat || this.peer.channel || this.serviceMessage) return false;
-        else return true;
+        if(this.serviceMessage || this.isOwner || !this.isChat || this.peer.channel) return false;
+        if(!(this.prevMsg && this.prevMsg.action) && !this.isFirstMsg) return false;
+        return true;
       },
       isOwner() {
         return this.msg.from == this.$root.user.id;

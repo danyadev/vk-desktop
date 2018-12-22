@@ -111,11 +111,53 @@
 /* Поле для написания сообщения */
 
 .dialog_input_wrap {
+  position: relative;
   display: flex;
   align-items: flex-end;
   flex: none;
   border-top: 1px solid #e7e8ec;
   background-color: #fafbfc;
+}
+
+.dialog_to_end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 20px;
+  top: -70px;
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  border: solid 1px #cfd9e1;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
+  opacity: 1;
+  cursor: pointer;
+  transition: background-color .3s, transform .3s, opacity .3s;
+}
+
+.dialog_to_end:hover { background-color: #f6f8fb }
+
+.dialog_to_end.hidden {
+  transform: translateY(70px);
+  opacity: 0;
+}
+
+.dialog_to_end_count:not(:empty) {
+  position: absolute;
+  top: -5px;
+  right: -4px;
+  background-color: #5281b9;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 10px;
+  padding: 1px 5px;
+}
+
+.dialog_to_end_icon {
+  width: 25px;
+  height: 25px;
 }
 
 .dialog_input_container {

@@ -7,11 +7,11 @@ function getServiceMessage(action, author, full) {
     return `<b>${emoji(other.escape(text))}</b>`;
   }
 
-  function name(type, acc) {
+  function name(type, acc, flag) {
     let user = type ? actUser : author, name;
     if(!user.photo_50) loadProfile(user.id);
 
-    if(user.id == id) name = 'Вы';
+    if(user.id == id) name = flag ? 'Вас' : 'Вы';
     else if(user.name) name = user.name;
     else if(user.photo_50) {
       if(acc) name = `${user.first_name_acc} ${user.last_name_acc}`;
@@ -50,14 +50,12 @@ function getServiceMessage(action, author, full) {
       return `${name(0)} изменил${w(0, 'и:а')} название беседы ${text}`;
     case 'chat_invite_user':
       if(actID == author.id) return `${name(1)} вернул${w(1, 'ись:ась:ся')} в беседу`;
-      else if(full) return `${name(0)} пригласил${w(0, 'и:а')} ${name(1, 1)} в беседу`;
-      else return `${name(1, 1)} пригласили в беседу`;
+      else if(full) return `${name(0)} пригласил${w(0, 'и:а')} ${name(1, 1, 1)} в беседу`;
+      else return `${name(1, 1, 1)} пригласили в беседу`;
     case 'chat_kick_user':
       if(actID == author.id) return `${name(0)} покинул${w(0, 'и:а')} беседу`;
-      else if(actID == id) {
-        if(full) return `${name(0)} исключил${w(0, 'и:а')} Вас из беседы`;
-        else return 'Вас исключили из беседы';
-      } else return `${name(1, 1)} исключили из беседы`;
+      else if(full) return `${name(0)} исключил${w(0, 'и:а')} ${name(1, 1, 1)} из беседы`;
+      else return `${name(1, 1, 1)} исключили из беседы`;
     case 'chat_pin_message':
       let pin_msg = full ? `«${boldText(action.message)}»` : '';
       return `${name(1)} закрепил${w(1, 'и:а')} сообщение ${pin_msg}`;
