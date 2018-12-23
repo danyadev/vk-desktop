@@ -74,7 +74,7 @@
 <script>
   const { clipboard } = require('electron').remote;
   const { loadOnlineApp, loadConversation, concatProfiles, parseMessage, parseConversation } = require('./methods');
-  const { getDate } = require('./messages');
+  const { getDate, toggleChat } = require('./messages');
 
   module.exports = {
     computed: {
@@ -246,21 +246,7 @@
         this.$store.commit('editPeer', data);
       },
       closeChat() {
-        if(qs('.dialog_input')) {
-          this.peer.inputText = qs('.dialog_input').innerHTML;
-        }
-
-        let hist = qs('.dialog_messages_list'),
-            scrollPos = hist.scrollTop + hist.clientHeight + 40,
-            lastMsg = qs('.dialog_messages_wrap').lastChild,
-            scrollHeight = lastMsg.offsetTop + lastMsg.offsetHeight;
-
-        this.updatePeer({
-          scrollTop: hist.scrollTop,
-          closedInBottom: scrollPos == scrollHeight
-        });
-
-        this.$store.commit('setChat', null);
+        toggleChat.bind(this)(null);
       },
       async sendMessage(event) {
         let longpoll = require('./../../js/longpoll').longpoll();
@@ -338,8 +324,10 @@
         });
       }, 5000),
       async loadNewMessages() {
+        const PEER_ID = this.id;
+
         let { items, conversations, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
-          peer_id: this.id,
+          peer_id: PEER_ID,
           offset: this.messages.length,
           extended: 1,
           fields: other.fields
@@ -351,20 +339,30 @@
 
         for(let msg of items) {
           this.$store.commit('addMessage', {
-            peer_id: peer.id,
+            peer_id: PEER_ID,
             msg: parseMessage(msg, peer)
           });
         }
 
-        if(items.length < 20) Vue.set(this.peer, 'loaded', true);
-        else this.peer.loading = false;
+        function editPeer(key, value) {
+          app.$store.commit('editPeer', {
+            id: PEER_ID,
+            [key]: value
+          });
+        }
 
-        let { scrollTop, scrollHeight } = qs('.dialog_messages_list');
+        if(items.length < 20) editPeer('loaded', true);
+        else editPeer('loading', false);
+
+        let { scrollTop, scrollHeight } = qs('.dialog_messages_list') || {};
         await this.$nextTick();
 
-        let thisHeight = qs('.dialog_messages_list').scrollHeight;
-        qs('.dialog_messages_list').scrollTop = scrollTop + thisHeight - scrollHeight;
-        this.peer.inited = true;
+        if(this.id == PEER_ID) {
+          let thisHeight = qs('.dialog_messages_list').scrollHeight;
+          qs('.dialog_messages_list').scrollTop = scrollTop + thisHeight - scrollHeight;
+        }
+
+        editPeer('inited', true);
       }
     }
   }

@@ -46,7 +46,6 @@ function getServiceMessage(action, author, full) {
       return `${name(0)} создал${w(0, 'и:а')} беседу ${title}`;
     case 'chat_title_update':
       let text = full ? `на «${boldText(action.text)}»` : '';
-
       return `${name(0)} изменил${w(0, 'и:а')} название беседы ${text}`;
     case 'chat_invite_user':
       if(actID == author.id) return `${name(1)} вернул${w(1, 'ись:ась:ся')} в беседу`;
@@ -94,7 +93,48 @@ function getDate(timestamp, shortMonth, withTime) {
   else return `${date.getDate()} ${month} ${date.getFullYear()} г.`;
 }
 
+async function toggleChat(chatID) {
+  let oldChatID = this.$store.state.activeChat,
+      conversation = this.$store.state.conversations[oldChatID],
+      peer = conversation && conversation.peer,
+      messagesList = qs('.dialog_messages_list'),
+      dialogInput = qs('.dialog_input');
+
+  // закрытие диалога
+  if((!chatID && peer) || (chatID && oldChatID)) {
+    peer.scrollTop = messagesList.scrollTop;
+    if(dialogInput) peer.inputText = dialogInput.innerHTML;
+
+    // если чел находится внизу диалога
+    if(messagesList.scrollTop + messagesList.clientHeight == messagesList.scrollHeight) {
+      peer.scrolToUnread = true;
+    } else peer.scrolToUnread = false;
+  }
+
+  this.$store.commit('setChat', chatID);
+
+  // открытие диалога
+  if(chatID) {
+    await this.$nextTick();
+
+    let newConv = this.$store.state.conversations[chatID],
+        newPeer = newConv && newConv.peer;
+
+    if(newPeer) {
+      if(dialogInput) dialogInput.innerHTML = newPeer.inputText || '';
+
+      if(newPeer.scrolToUnread) {
+        let item = qs(`#message${newPeer.in_read}`);
+        if(item) item.scrollIntoView();
+      } else if(newPeer.scrollTop != undefined) {
+        qs('.dialog_messages_list').scrollTop = newPeer.scrollTop;
+      }
+    }
+  }
+}
+
 module.exports = {
   getServiceMessage,
-  getDate
+  getDate,
+  toggleChat
 }

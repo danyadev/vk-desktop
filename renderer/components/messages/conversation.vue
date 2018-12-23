@@ -37,7 +37,7 @@
 
 <script>
   const { loadProfile } = require('./methods');
-  const { getServiceMessage, getDate } = require('./messages');
+  const { getServiceMessage, getDate, toggleChat } = require('./messages');
 
   module.exports = {
     props: {
@@ -114,46 +114,7 @@
     },
     methods: {
       async openChat() {
-        if(this.peer.id == this.$store.state.activeChat) return;
-
-        let scrollToLastReadedMsg = false,
-            fromOtherChat = false;
-
-        if(this.$store.state.activeChat) {
-          let conversation = this.$store.state.conversations[this.$store.state.activeChat],
-              peer = conversation && conversation.peer,
-              hist = qs('.dialog_messages_list'),
-              scrollPos = hist.scrollTop + hist.clientHeight,
-              lastMsg = qs('.dialog_messages_wrap').lastChild,
-              scrollHeight = lastMsg.offsetTop + lastMsg.offsetHeight;
-
-          if(scrollPos == scrollHeight) scrollToLastReadedMsg = true;
-          fromOtherChat = true;
-
-          if(peer) {
-            peer.scrollTop = hist.scrollTop;
-
-            if(qs('.dialog_input')) {
-              peer.inputText = qs('.dialog_input').innerHTML;
-            }
-          }
-        }
-
-        this.$store.commit('setChat', this.peer.id);
-        await this.$nextTick();
-        qs('.dialog_messages_list').scrollTop = this.peer.scrollTop || 0;
-
-        let conversation = this.$store.state.conversations[this.$store.state.activeChat],
-            peer = conversation && conversation.peer;
-
-        if(fromOtherChat ? scrollToLastReadedMsg : peer.closedInBottom) {
-          let item = qs(`#message${peer.in_read}`);
-          if(item) item.scrollIntoView();
-        }
-
-        if(qs('.dialog_input')) {
-          qs('.dialog_input').innerHTML = this.peer.inputText || '';
-        }
+        toggleChat.bind(this)(this.peer.id);
       },
       getAttachment(message, attachment) {
         if(!attachment || message) return message;

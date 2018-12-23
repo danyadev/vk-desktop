@@ -3,21 +3,6 @@
 let loadingProfiles = [], currentLoadUsers = [],
     appNames = {}, loadindPeers = {};
 
-async function getProfiles() {
-  let ids = loadingProfiles.slice().splice(0, 100);
-  if(other.isEqual(ids, currentLoadUsers)) return;
-  currentLoadUsers = ids;
-
-  let profiles = await vkapi('execute.getProfiles', {
-    profile_ids: ids.join(',')
-  });
-
-  app.$store.commit('addProfiles', profiles);
-
-  loadingProfiles.splice(0, ids.length);
-  if(loadingProfiles.length) getProfiles();
-}
-
 async function getUsersOnline(users) {
   let appIDs = [];
 
@@ -59,6 +44,53 @@ async function concatProfiles(users = [], groups = []) {
   return users.concat(groups);
 }
 
+async function getProfiles() {
+  let ids = loadingProfiles.slice().splice(0, 100);
+  if(other.isEqual(ids, currentLoadUsers)) return;
+  currentLoadUsers = ids;
+
+  let profiles = await vkapi('execute.getProfiles', {
+    profile_ids: ids.join(',')
+  });
+
+  app.$store.commit('addProfiles', profiles);
+
+  loadingProfiles.splice(0, ids.length);
+  if(loadingProfiles.length) getProfiles();
+}
+
+function loadProfile(id) {
+  if(!id || loadingProfiles.includes(id) || id > 2e9) return;
+  else loadingProfiles.push(id);
+
+  getProfiles();
+}
+
+async function loadOnlineApp(id) {
+  let users = await vkapi('execute.getProfiles', {
+    profile_ids: id
+  });
+
+  app.$store.commit('addProfiles', users);
+}
+
+function loadConversation(id) {
+  return new Promise(async (resolve, reject) => {
+    if(id in loadindPeers) return;
+    else loadindPeers[id] = true;
+
+    let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
+      peer_ids: id,
+      extended: 1,
+      fields: other.fields
+    });
+
+    app.$store.commit('addProfiles', await concatProfiles(profiles, groups));
+    delete loadindPeers[id];
+    resolve(parseConversation(conv));
+  });
+}
+
 function parseConversation(conversation) {
   let isChat = conversation.peer.type == 'chat',
       isChannel = isChat && conversation.chat_settings.is_group_channel,
@@ -88,67 +120,37 @@ function parseConversation(conversation) {
   }
 }
 
-module.exports = {
-  concatProfiles,
-  parseConversation,
-  parseMessage(message, conversation) {
-    if(message.geo) {
-      message.attachments.push({
-        type: 'geo',
-        geo: message.geo
-      });
-    }
-
-    if(message.reply_message) {
-      message.fwd_messages.push(message.reply_message);
-    }
-
-    let msg = {
-      id: message.id,
-      text: message.text.replace(/\n/g, '<br>'),
-      from: message.from_id,
-      date: message.date,
-      edited: !!message.update_time,
-      action: message.action,
-      fwd_count: message.fwd_messages.length,
-      attachments: message.attachments
-    }
-
-    if(conversation && conversation.out_read != undefined) {
-      msg.outread = conversation.out_read < message.id && message.out;
-    } else if(conversation && conversation.outread != undefined) {
-      msg.outread = conversation.outread;
-    }
-
-    return msg;
-  },
-  loadProfile(id) {
-    if(!id || loadingProfiles.includes(id) || id > 2e9) return;
-    else loadingProfiles.push(id);
-
-    getProfiles();
-  },
-  async loadOnlineApp(id) {
-    let users = await vkapi('execute.getProfiles', {
-      profile_ids: id
-    });
-
-    app.$store.commit('addProfiles', users);
-  },
-  loadConversation(id) {
-    return new Promise(async (resolve, reject) => {
-      if(id in loadindPeers) return;
-      else loadindPeers[id] = true;
-
-      let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
-        peer_ids: id,
-        extended: 1,
-        fields: other.fields
-      });
-
-      app.$store.commit('addProfiles', await concatProfiles(profiles, groups));
-      delete loadindPeers[id];
-      resolve(parseConversation(conv));
+function parseMessage(message, conversation) {
+  if(message.geo) {
+    message.attachments.push({
+      type: 'geo',
+      geo: message.geo
     });
   }
+
+  if(message.reply_message) {
+    message.fwd_messages.push(message.reply_message);
+  }
+
+  return {
+    id: message.id,
+    text: message.text.replace(/\n/g, '<br>'),
+    from: message.from_id,
+    date: message.date,
+    edited: !!message.update_time,
+    unread: conversation.in_read < message.id,
+    outread: conversation.out_read < message.id && message.out,
+    action: message.action,
+    fwd_count: message.fwd_messages.length,
+    attachments: message.attachments
+  }
+}
+
+module.exports = {
+  concatProfiles,
+  loadProfile,
+  loadOnlineApp,
+  loadConversation,
+  parseConversation,
+  parseMessage
 }

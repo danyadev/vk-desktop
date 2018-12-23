@@ -149,6 +149,7 @@
 }
 
 .conversation_time {
+  flex: none;
   margin-left: 5px;
   color: #848a96;
   font-size: 13px;

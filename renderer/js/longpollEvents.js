@@ -81,6 +81,7 @@ let getMessage = (data, type) => {
       from: from_id,
       fwd_count: Number(data[5].fwd_count || 0),
       hidden: flags.is('hidden'),
+      unread: !flags.is('outbox') && flags.is('unread'),
       date: data[3],
       id: data[0],
       text: action ? '' : data[4]
@@ -156,7 +157,7 @@ module.exports = {
       name: 'read_messages',
       data: {
         peer_id: data[0],
-        id: data[1],
+        msg_id: data[1],
         count: data[2]
       }
     }

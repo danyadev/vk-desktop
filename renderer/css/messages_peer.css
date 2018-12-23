@@ -262,19 +262,7 @@
 }
 
 .message_content {
-  position: relative;
   max-width: calc(100% - 65px);
-}
-
-.message:not(.service) .message_content.outread::before {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  bottom: 12px;
-  left: -20px;
-  border-radius: 50%;
-  background-color: #93adc8;
 }
 
 .message_name {
@@ -297,6 +285,30 @@
 
 .message.service .message_text_wrap {
   background-color: inherit;
+}
+
+.message_text_wrap.outread::before,
+.message_text_wrap.outread::after {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  bottom: 12px;
+  border-radius: 50%;
+  background-color: #93adc8;
+}
+
+.message:not(.service).from_me .message_text_wrap.outread::before {
+  content: '';
+  left: -20px;
+}
+
+.message:not(.service):not(.from_me) .message_text_wrap.outread::after {
+  content: '';
+  right: -20px;
+}
+
+.message_text_wrap.outread::after {
+
 }
 
 .message:not(.service) .message_text {
@@ -367,3 +379,29 @@
 
 .message_attach_title { font-weight: 500 }
 .message_top_date { margin: 15px 0 }
+
+.message_unreaded_messages {
+  position: relative;
+  text-align: center;
+  font-size: 13px;
+  color: #636363;
+}
+
+.message_unreaded_messages span {
+  display: inline-block;
+  position: relative;
+  background: #fff;
+  padding: 10px;
+}
+
+.message_unreaded_messages::before,
+.message_unreaded_messages::after {
+  content: '';
+  position: absolute;
+  height: 1px;
+  width: 50%;
+  background: #d4d6da;
+  top: 50%;
+}
+
+.message_unreaded_messages::before { left: 0 }

@@ -1,13 +1,14 @@
 <template>
   <div class="message_wrap">
     <div class="message_top_date" v-if="historyDate">{{ historyDate }}</div>
+    <div class="message_unreaded_messages" v-if="unreadMsg"><span>Непрочитанные сообщения</span></div>
     <div :class="{ from_me: isOwner, first_msg_block: isFirstMsg, service: serviceMessage }"
           class="message" :id="'message' + this.msg.id">
       <img v-if="showUserData" class="message_photo" :src="photo">
       <div v-else-if="isChat && !peer.channel && !serviceMessage" class="message_empty_photo"></div>
-      <div class="message_content" :class="{ outread }">
+      <div class="message_content">
         <div class="message_name" v-if="showUserData">{{ name }}</div>
-        <div class="message_text_wrap">
+        <div class="message_text_wrap" :class="{ outread }">
           <div v-if="serviceMessage" class="message_text" v-html="serviceMessage"></div>
           <div v-else class="message_text" v-emoji.color_push.br.link>{{ text.msg }}</div>
           <div class="message_attachments" :class="{ hasText: !!text.msg }">
@@ -71,8 +72,13 @@
       },
       showUserData() {
         if(this.serviceMessage || this.isOwner || !this.isChat || this.peer.channel) return false;
-        if(!(this.prevMsg && this.prevMsg.action) && !this.isFirstMsg) return false;
+        if(!(this.prevMsg && this.prevMsg.action || this.unreadMsg) && !this.isFirstMsg) return false;
         return true;
+      },
+      unreadMsg() {
+        if(this.msg.outread) return;
+        let hasPrevUnread = this.prevMsg && this.prevMsg.unread;
+        if(this.msg.unread && !hasPrevUnread) return true;
       },
       isOwner() {
         return this.msg.from == this.$root.user.id;
@@ -115,7 +121,7 @@
         }
       },
       outread() {
-        return this.msg.outread;
+        return this.msg.outread || this.msg.unread;
       },
       time() {
         let date = new Date(this.msg.date * 1000),

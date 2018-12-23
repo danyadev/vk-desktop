@@ -134,7 +134,7 @@
         if(data.msg.hidden) return;
 
         this.updateLastMsg(data.peer.id, data.msg);
-        
+
         this.$store.commit('incrementUnreadCount', {
           peer_id: data.peer.id,
           state: !data.msg.outread
@@ -192,9 +192,9 @@
           });
         }
 
-        let { msg, unread, outread } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id }),
+        let { msg, unread, out_read, in_read } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id }),
             messages = this.$store.state.messages[data.peer_id],
-            lastMsg = msg && parseMessage(msg, { outread });
+            lastMsg = msg && parseMessage(msg, { out_read, in_read });
 
         if(messages && !messages.length) {
           if(!msg) {
@@ -259,6 +259,19 @@
       });
 
       longpoll.on('read_messages', (data) => {
+        let messages = this.$store.state.messages[data.peer_id] || [],
+            msgs = messages.filter(({ id, unread }) => (id <= data.msg_id && unread));
+
+        for(let msg of msgs) {
+          this.$store.commit('editMessage', {
+            peer_id: data.peer_id,
+            msg: {
+              id: msg.id,
+              unread: false
+            }
+          });
+        }
+
         this.updatePeer(data.peer_id, { unread: data.count }, true);
       });
 
