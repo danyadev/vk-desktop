@@ -1,17 +1,17 @@
 <template>
   <div class="modal">
-    <modal-header :closable="false">Введите капчу</modal-header>
+    <modal-header :closable="false">{{ l('write_captcha') }}</modal-header>
     <div class="modal_content captcha">
       <div class="captcha_img">
         <img :src="data.src" @click="updateIMG">
       </div>
       <div class="captcha_key">
-        <input class="input" placeholder="Введите код с картинки"
+        <input class="input" :placeholder="l('write_code_from_img')"
                v-model="text" @keydown.enter="sendCode">
       </div>
     </div>
     <div class="modal_bottom">
-      <button class="button right" :disabled="disabled" @click="sendCode">Отправить</button>
+      <button class="button right" :disabled="disabled" @click="sendCode">{{ l('send') }}</button>
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@
       sendCode() {
         if(this.disabled) return;
 
-        this.data.send(this.text);
+        this.data.send(this.text.trim());
         this.$modals.close();
       }
     }

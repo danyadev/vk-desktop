@@ -3,7 +3,7 @@
     <div class="auth_wrap">
       <img src="images/logo.png" class="auth_logo">
       <div class="auth_name">VK Desktop</div>
-      <button class="button auth_button" @click="enterAuth" :disabled="disabled">Войти</button>
+      <button class="button auth_button" @click="enterAuth" :disabled="disabled">{{ l('login') }}</button>
       <div class="loading" v-if="loading"></div>
     </div>
   </div>

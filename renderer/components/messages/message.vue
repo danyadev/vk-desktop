@@ -1,7 +1,9 @@
 <template>
   <div class="message_wrap">
     <div class="message_top_date" v-if="historyDate">{{ historyDate }}</div>
-    <div class="message_unreaded_messages" v-if="unreadMsg"><span>Непрочитанные сообщения</span></div>
+    <div class="message_unreaded_messages" v-if="unreadMsg">
+      <span>{{ l('im_unread_messages') }}</span>
+    </div>
     <div :class="{ from_me: isOwner, first_msg_block: isFirstMsg, service: serviceMessage }"
           class="message" :id="'message' + this.msg.id">
       <img v-if="showUserData" class="message_photo" :src="photo">
@@ -15,14 +17,14 @@
             <div class="message_attach" v-for="attach in text.attachments">
               <img class="message_attach_img" src="images/im_attachment.png">
               <div class="message_attach_content">
-                <div class="message_attach_title">Вложение</div>
+                <div class="message_attach_title">{{ l('attach') }}</div>
                 <div class="message_attach_desc">{{ attach.type }}</div>
               </div>
             </div>
           </div>
           <div class="message_time_wrap" :class="{ fly: flyMsgTime }">
             <template v-if="msg.edited">
-              <div class="message_edited">ред</div>
+              <div class="message_edited">{{ l('im_edited_msg') }}</div>
               <div class="dot"></div>
             </template>
             <div class="message_time">{{ time }}</div>
@@ -110,14 +112,12 @@
       },
       text() {
         let count = this.msg.fwd_count,
-            texts = ['пересланное сообщение', 'пересланных сообщения', 'пересланных сообщений'],
-            fwdMessage = count ? {
-              type: count + ' ' + other.getWordEnding(count, texts)
-            } : [];
+            type = other.getWordEnding(count),
+            fwdMessages = count ? { type: this.l('reply_msg', type, [count]) } : [];
 
         return {
           msg: this.msg.text,
-          attachments: this.msg.attachments.concat(fwdMessage)
+          attachments: this.msg.attachments.concat(fwdMessages)
         }
       },
       outread() {

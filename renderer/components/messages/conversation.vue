@@ -90,7 +90,7 @@
       },
       authorName() {
         if(this.msg.action || this.peer.channel) return '';
-        else if(this.msg.out || this.author.id == this.$root.user.id) return 'Вы:';
+        else if(this.msg.out || this.author.id == this.$root.user.id) return `${this.l('you')}:`;
         else if(this.author.photo_50) {
           if(this.isChat) return `${this.author.name || this.author.first_name}:`;
         } else return '...:';
@@ -99,10 +99,8 @@
         if(this.msg.action) {
           return getServiceMessage.bind(this)(this.msg.action, this.author || { id: this.msg.from });
         } else if(this.msg.fwd_count && !this.msg.text) {
-          let count = this.msg.fwd_count,
-              word = other.getWordEnding(count, ['сообщение', 'сообщения', 'сообщений']);
-
-          return `${count} ${word}`;
+          let wordID = other.getWordEnding(this.msg.fwd_count);
+          return this.l('reply_msg', wordID, [this.msg.fwd_count]);
         } else return this.getAttachment(this.msg.text, this.msg.attachments[0]);
       },
       isAttachment() {
@@ -119,37 +117,17 @@
       getAttachment(message, attachment) {
         if(!attachment || message) return message;
 
-        let attachments = {
-          geo: 'Карта',
-          doc: 'Документ',
-          link: 'Ссылка',
-          poll: 'Опрос',
-          wall: 'Запись на стене',
-          call: 'Звонок',
-          gift: 'Подарок',
-          story: 'История',
-          photo: 'Фотография',
-          audio: 'Аудиозапись',
-          video: 'Видеозапись',
-          point: 'Местоположение',
-          market: 'Товар',
-          sticker: 'Стикер',
-          podcast: 'Подкаст',
-          graffiti: 'Граффити',
-          audio_message: 'Голосовое сообщение',
-          money_request: 'Запрос денег',
-          audio_playlist: 'Плейлист'
-        };
-
         if(attachment.type == 'link' && attachment.link) {
           if(attachment.link.url.match('https://m.vk.com/story')) attachment.type = 'story';
         }
 
-        if(!attachments[attachment.type]) {
+        let attachName = this.l('attachments', attachment.type);
+
+        if(!attachName) {
           console.warn('[messages] Неизвестное вложение:', attachment.type);
         }
 
-        return attachments[attachment.type] || 'Вложение';
+        return attachName || this.l('attach');
       }
     }
   }

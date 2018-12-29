@@ -4,7 +4,7 @@ Vue.use(Vuex);
 
 const { loadProfile } = require('./../components/messages/methods');
 
-let getMinIndex = (arr, num) => {
+function getMinIndex (arr, num) {
   for(let i = 0; i<arr.length; i++) {
     if(arr[i] <= num) return i;
   }
@@ -12,18 +12,25 @@ let getMinIndex = (arr, num) => {
   return arr.length;
 }
 
+function getLangFile(name) {
+  return require(`./../lang/${name}.js`);
+}
+
 module.exports = new Vuex.Store({
   strict: true,
   state: {
     users: users.get(),
     activeUser: settings.get('activeUser'),
+    settings: settings.get(),
     menuState: false,
     profiles: {},
     conversations: {},
     peersList: [],
     typing: {},
     activeChat: null,
-    messages: {}
+    messages: {},
+    langName: settings.get('lang'),
+    lang: getLangFile(settings.get('lang'))
   },
   mutations: {
     // ** Пользователи для мультиаккаунта **
@@ -37,6 +44,12 @@ module.exports = new Vuex.Store({
     setActiveUser(state, id) {
       state.activeUser = id;
       settings.set('activeUser', id);
+    },
+    // ** Язык приложения **
+    setLang(state, name) {
+      settings.set('lang', name);
+      state.langName = name;
+      state.lang = getLangFile(name);
     },
     // ** Меню **
     setMenuState(state, value) {
@@ -203,33 +216,33 @@ module.exports = new Vuex.Store({
       }
 
       if(text.length) {
-        if(text.length > 2) msg += `${name(text[0])} и еще ${text.length-1}`;
-        else {
-          for(let i in text) {
-            let id = text[i];
-
-            if(i == 0) msg += `${name(id)}`;
-            else msg += ` и ${name(id)}`;
-          }
+        switch(text.length) {
+          case 1:
+            msg = app.l('im_typing_text', 0, [name(text[0])]);
+            break;
+          case 2:
+            msg = app.l('im_typing_text', 1, [name(text[0]), name(text[1])]);
+            break;
+          default:
+            msg = app.l('im_typing_text', 2, [name(text[0]), text.length-1]);
+            break;
         }
-
-        msg += text.length == 1 ? ' печатает' : ' печатают';
       }
 
       if(audio.length) {
-        if(text.length) msg += ' и ';
+        if(text.length) msg += ` ${app.l('and')} `;
 
-        if(audio.length > 2) msg += `${name(audio[0])} и еще ${audio.length-1}`;
-        else {
-          for(let i in audio) {
-            let id = audio[i];
-
-            if(i == 0) msg += `${name(id)}`;
-            else msg += ` и ${name(id)}`;
-          }
+        switch(audio.length) {
+          case 1:
+            msg += app.l('im_typing_audio', 0, [name(audio[0])]);
+            break;
+          case 2:
+            msg += app.l('im_typing_audio', 1, [name(audio[0]), name(audio[1])]);
+            break;
+          default:
+            msg += app.l('im_typing_audio', 2, [name(audio[0]), audio.length-1]);
+            break;
         }
-
-        msg += (audio.length == 1 ? ' записывает' : ' записывают') + ' аудио';
       }
 
       return msg;

@@ -212,6 +212,7 @@
 .dialog_input_error_img,
 .dialog_input_error_text {
   margin: 0 20px;
+  text-align: center;
 }
 
 .dialog_input_error_text.channel { margin: 0 auto }
@@ -339,7 +340,7 @@
   position: absolute;
   bottom: 5px;
   right: 7px;
-  background-color: #0000007d;
+  background-color: #0000006e;
   color: #f5f5f5;
   border-radius: 10px;
   padding: 2px 5px;

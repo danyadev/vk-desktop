@@ -15,7 +15,7 @@
       </div>
       <div class="menu_items">
         <div class="menu_item"
-             v-for="item of items"
+             v-for="item of list"
              @click="openPage(item.type)"
              :class="{ active: $root.section == item.type }">
           <div class="menu_item_icon" :class="item.type"></div>
@@ -28,28 +28,27 @@
 
 <script>
   module.exports = {
-    data: () => ({
-      list: [
-        { name: 'Новости',      type: 'news',          disabled: true  },
-        { name: 'Уведомления',  type: 'notifications', disabled: true  },
-        { name: 'Сообщения',    type: 'messages',      disabled: false },
-        { name: 'Аудиозаписи',  type: 'audios',        disabled: true  },
-        { name: 'Друзья',       type: 'friends',       disabled: true  },
-        { name: 'Группы',       type: 'groups',        disabled: true  },
-        { name: 'Фотографии',   type: 'photos',        disabled: true  },
-        { name: 'Видеозаписи',  type: 'videos',        disabled: true  },
-        { name: 'Настройки',    type: 'settings',      disabled: true  }
-      ]
-    }),
+    data() {
+      return {
+        list: [
+          // { name: 'Новости',      type: 'news'          },
+          // { name: 'Уведомления',  type: 'notifications' },
+          { name: this.l('menu', 0), type: 'messages' },
+          // { name: 'Аудиозаписи',  type: 'audios'        },
+          // { name: 'Друзья',       type: 'friends'       },
+          // { name: 'Группы',       type: 'groups'        },
+          // { name: 'Фотографии',   type: 'photos'        },
+          // { name: 'Видеозаписи',  type: 'videos'        },
+          // { name: 'Настройки',    type: 'settings'      }
+        ]
+      }
+    },
     computed: {
       user() {
         return this.$root.user || {};
       },
       active() {
         return this.$store.state.menuState;
-      },
-      items() {
-        return this.list.filter((item) => !item.disabled);
       }
     },
     methods: {

@@ -70,13 +70,13 @@ class Settings extends Storage {
 
   get defaults() {
     return {
-      section: 'messages'
+      section: 'messages',
+      lang: 'ru'
     }
   }
 }
 
 module.exports = {
-  Storage,
   users: new Users(),
   settings: new Settings()
 }

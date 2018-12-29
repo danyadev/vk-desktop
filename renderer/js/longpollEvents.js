@@ -2,7 +2,7 @@
 
 const longpoll = require('./longpoll').longpoll();
 
-let getFlags = (mask) => {
+function getFlags(mask) {
   let flags = {
     unread: 1, outbox: 2, replied: 4, important: 8,
     chat: 16, friends: 32, spam: 64, deleted: 128,
@@ -14,12 +14,11 @@ let getFlags = (mask) => {
   return {
     is: (name) => flagsInMask.includes(name),
     list: flagsInMask
-  };
+  }
 }
 
-let getServiceMessage = (data) => {
+function getServiceMessage(data) {
   if(!data) return null;
-
   let source = {};
 
   Object.keys(data).forEach((key) => {
@@ -37,7 +36,7 @@ let getServiceMessage = (data) => {
   return Object.keys(source).length ? source : null;
 }
 
-let getAttachments = (data) => {
+function getAttachments(data) {
   let attachs = [];
 
   Object.keys(data).forEach((key) => {
@@ -65,7 +64,7 @@ let getAttachments = (data) => {
 let getMessage = (data, type) => {
   let flags = getFlags(data[1]),
       action = getServiceMessage(data[5]),
-      from_id = (flags.is('outbox')) ? app.user.id : Number(data[5].from || data[2]),
+      from_id = flags.is('outbox') ? app.user.id : Number(data[5].from || data[2]),
       isChannel = data[1] == 0; // пока я только это заметил
 
   let res = {
@@ -124,28 +123,29 @@ module.exports = {
     // когда приходит:
     // 1) восстановление удаленного сообщения (128)
     // 2) отмена пометки сообщения как спам (64)
-    // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
+    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}]
 
     let flags = getFlags(data[1]);
 
     if(flags.is('spam') || flags.is('deleted')) {
       return { name: 'restore_message', data: getMessage(data) }
-    } else return { name: null }
+    } else {
+      console.warn('неизвестные данные в 3 событии:', data, flags);
+      return { name: null }
+    }
   },
   4: (data) => {
     // приходит при написании нового сообщения
-    // при пересланных сообщениях выполнять messages.getById с id и extended
-    // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
+    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}]
 
     let msg = getMessage(data, 'new');
-
     longpoll.emit('new_message_' + data[0], msg);
 
     return { name: 'new_message', data: msg }
   },
   5: (data) => {
     // приходит при редактировании сообщения
-    // [id, flags, peer_id, timestramp, "text", {from, actions}, {attachs}]
+    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}]
 
     return { name: 'edit_message', data: getMessage(data, 'edit') }
   },
@@ -178,7 +178,7 @@ module.exports = {
   },
   8: (data) => {
     // приходит когда юзер становится онлайн
-    // [-user_id, platform, timestramp]
+    // [-user_id, platform, timestamp]
     // 1: mobile, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
 
     let device;
@@ -202,13 +202,13 @@ module.exports = {
         id: Math.abs(data[0]),
         mobile: ![6, 7].includes(data[1]),
         device: device,
-        timestramp: data[2]
+        timestamp: data[2]
       }
     }
   },
   9: (data) => {
     // приходит когда пользователь становится оффлайн
-    // [-user_id, flag, timestramp]
+    // [-user_id, flag, timestamp]
     // flag: 0 - вышел с сайта, 1 - по таймауту
 
     return {
@@ -216,7 +216,7 @@ module.exports = {
       data: {
         type: 'offline',
         id: Math.abs(data[0]),
-        timestramp: data[2]
+        timestamp: data[2]
       }
     }
   },
@@ -282,7 +282,7 @@ module.exports = {
   },
   64: (data) => {
     // приходит когда кто-то записывает голосовое сообщение
-    // [peer_id, [from_id], 1, timestramp]
+    // [peer_id, [from_id], 1, timestamp]
 
     return {
       name: 'typing',
@@ -297,20 +297,22 @@ module.exports = {
     // приходит при изменении кол-ва сообщений
     // [count, 0]
 
-    return { name: 'change_messages_count', data }
+    return {
+      name: 'update_messages_count',
+      data: data[0]
+    }
   },
   114: ([data]) => {
      // приходит при изменении настроек пуш уведомлений у диалога
      // [{ peer_id, sound, disabled_until }]
-     // sound: работет некорректно, юзайте disabled_until
-     // disabled_until: -1 - выключены; 0 - включены; иначе - timestramp когда их включить
+     // disabled_until: -1 - выключены; 0 - включены; иначе - timestamp когда их включить
 
     return {
       name: 'change_push_settings',
       data: {
         peer_id: data.peer_id,
         state: data.disabled_until == 0,
-        timestramp: data.disabled_until > 0 ? data.disabled_until : null
+        timestamp: data.disabled_until > 0 ? data.disabled_until : null
       }
     }
   },

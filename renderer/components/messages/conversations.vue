@@ -2,7 +2,7 @@
   <div class="conversations_container">
     <div class="header">
       <menu-button></menu-button>
-      <div class="header_name">Сообщения</div>
+      <div class="header_name">{{ l('im_header_title') }}</div>
     </div>
     <div class="conversations_wrap" :class="{ loading }" @scroll="onScroll">
       <conversation v-for="peer in peers" :peer="peer" :key="peer.id"></conversation>
@@ -69,7 +69,6 @@
           this.$store.commit('addConversation', { peer: data });
 
           let conversation = await loadConversation(peerID);
-
           this.updatePeer(peerID, conversation);
         } else this.$store.commit('editPeer', data);
       },
@@ -254,7 +253,7 @@
 
         this.$store.commit('editPeer', {
           id: data.peer_id,
-          in_read: data.id
+          in_read: data.msg_id
         });
       });
 
@@ -283,7 +282,7 @@
         this.$store.commit('setTyping', {
           id: data.from_id,
           peer: data.peer_id,
-          data: { type: data.type, time: 5 }
+          data: { type: data.type, time: 6 }
         });
 
         removeTyping(data);
@@ -295,7 +294,7 @@
           online: data.type == 'online',
           online_mobile: data.mobile,
           online_device: data.device,
-          last_seen: { time: data.timestramp }
+          last_seen: { time: data.timestamp }
         });
       });
 

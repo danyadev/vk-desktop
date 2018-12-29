@@ -16,7 +16,7 @@
     </div>
     <div v-if="!id" class="dialog_choice_chat">
       <img src="images/im_choice_chat.png">
-      Выберите диалог, чтобы начать переписку
+      {{ l('im_choose_chat') }}
     </div>
     <div v-else class="dialog_wrap">
       <div class="dialog_messages_list" :class="{ dialog_no_messages: !hasMessages }" @scroll="onScroll">
@@ -29,7 +29,7 @@
         </template>
         <template v-else-if="!loading">
           <img src="images/im_empty_dialog.png">
-          Напиши сообщение или попроси котика сделать это за тебя
+          {{ l('im_empty_dialog') }}
         </template>
         <div class="typing_wrap">
           <div class="typing" v-if="typingMsg">
@@ -42,7 +42,7 @@
       </div>
       <div class="dialog_input_wrap">
         <div class="dialog_to_end" :class="{ hidden: !showEndBtn }" @click="scrollToEnd">
-          <div class="dialog_to_end_count">{{ this.peer.unread || '' }}</div>
+          <div class="dialog_to_end_count">{{ peer && peer.unread || '' }}</div>
           <img class="dialog_to_end_icon" src="images/im_to_end.png">
         </div>
         <template v-if="canSendMessages.state">
@@ -53,7 +53,7 @@
                  @mousedown="setCursorPositionForEmoji"
                  @input="onInput(peer)"
                  @keydown.enter="sendMessage"></div>
-            <div class="dialog_input_placeholder">Введите сообщение...</div>
+            <div class="dialog_input_placeholder">{{ l('im_enter_msg') }}</div>
           </div>
           <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
         </template>
@@ -113,36 +113,32 @@
         return this.messages && this.messages.length;
       },
       loading() {
-        return !this.peer.loaded && this.peer.loading;
+        return this.peer && !this.peer.loaded && this.peer.loading;
       },
       showEndBtn() {
-        return this.peer.showEndBtn;
+        return this.peer && this.peer.showEndBtn;
       },
       title() {
         if(this.isChat) return this.peer.title || '...';
         else if(this.owner) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
-        } else {
-          console.warn('[chat] undefined owner:', this.peer.owner);
-          // this.getUser(this.peer.owner);
-          return '...';
-        }
+        } else return '...';
       },
       online() {
         if(this.id < 0) return '';
 
         if(this.isChat) {
           if(this.peer.members == undefined) {
-            if(this.peer.left) return 'Вы вышли из этой беседы';
+            if(this.peer.left) return this.l('im_left_chat');
             else if(this.peer.canWrite.reason == 917) {
-              return 'Вы исключены из этой беседы';
+              return this.l('im_cant_write_reasons', 917);
             }
 
             return '';
           }
 
-          let word = 'участник' + other.getWordEnding(this.peer.members, ['', 'а', 'ов']);
-          return `${this.peer.members} ${word}`;
+          let type = other.getWordEnding(this.peer.members);
+          return this.l('members', type, [this.peer.members]);
         }
 
         if(this.owner.deactivated) return '';
@@ -154,11 +150,11 @@
           let app = this.owner.online_device || '';
 
           if(!app) {
-            if(this.owner.online_mobile) app = 'с телефона';
+            if(this.owner.online_mobile) app = this.l('with_phone');
             else if(!this.owner.online_web) loadOnlineApp(this.owner.id);
-          } else app = `с ${app}`;
+          } else app = this.l('with_app', null, [app]);
 
-          return `В сети ${app} (${date.getHours()}:${f(date.getMinutes())})`;
+          return `online ${app} (${date.getHours()}:${f(date.getMinutes())})`;
         } else {
           let thisDate = new Date(),
               s = this.owner.sex == 1 ? 'a' : '',
@@ -169,32 +165,28 @@
 
           if(offlineHours <= 3) {
             if(offlineHours == 0) {
-              let word = other.getWordEnding(offlineMins, ['минуту', 'минуты', 'минут']);
+              let type = other.getWordEnding(offlineMins);
 
-              if(offlineMins == 0) time = 'только что';
-              else time = `${offlineMins} ${word} назад`;
+              if(offlineMins == 0) time = this.l('just_now');
+              else time = this.l('time_ago', null, [this.l('minutes', type, [offlineMins])]);
             } else {
-              let word = other.getWordEnding(offlineHours, ['час', 'часа']);
-
-              if(offlineHours == 1) time = 'час назад';
-              else time = `${offlineHours} ${word} назад`;
+              let type = other.getWordEnding(offlineHours);
+              time = this.l('hours', type, [offlineHours == 1 ? '' : offlineHours]);
             }
-          } else time += ` в ${date.getHours()}:${f(date.getMinutes())}`;
+          } else time += this.l('at_n', null, [`${date.getHours()}:${f(date.getMinutes())}`]);
 
-          return `Был${s} в сети ${time}`;
+          return this.l('was_online', Number(this.owner.sex == 1), [time]);
         }
       },
       messages() {
-        let hist = qs('.dialog_messages_list');
+        let messagesList = qs('.dialog_messages_list');
 
-        if(hist) {
-          let scrollPos = hist.scrollTop + hist.clientHeight,
-              lastMsg = qs('.dialog_messages_wrap').lastChild,
-              scrollHeight = lastMsg.offsetTop + lastMsg.offsetHeight;
+        if(messagesList) {
+          let isBottomPos = messagesList.scrollTop + messagesList.clientHeight == messagesList.scrollHeight;
 
-          if(scrollPos == scrollHeight) {
+          if(isBottomPos) {
             this.$nextTick().then(() => {
-              qs('.dialog_messages_list .typing_wrap').scrollIntoView()
+              qs('.dialog_messages_list .typing_wrap').scrollIntoView();
             });
           }
         }
@@ -212,23 +204,10 @@
         let text, reason = this.peer.canWrite.reason;
 
         if(!this.peer.canWrite.allowed) {
-          let reasons = {
-            18: 'Пользователь удален',
-            203: 'Нет доступа к сообществу',
-            900: 'Пользователь добавил вас в черный список',
-            901: 'Пользователь запретил сообщения от сообщества',
-            902: 'Пользователь запретил писать сообщения настройками приватности',
-            915: 'В сообществе отключены сообщения',
-            916: 'В сообществе заблокированы сообщения',
-            917: 'Вы были исключены из этой беседы',
-            918: 'Вы не можете написать сообщение на этот email',
-            925: (this.peer.muted ? 'В' : 'Вы') + 'ключить уведомления' // канал
-          }
+          if(reason == 925) text = this.l('im_channel_notifications', this.peer.muted);
+          else text = this.l('im_cant_write_reasons', reason);
 
-          if(!reasons[reason]) text = 'Вы не можете писать сообщения в этот чат';
-          else text = reasons[reason];
-
-          if(!reasons[reason] || [203, 916].includes(reason)) {
+          if(!text) {
             console.warn('[chat] неизвестная причина:', reason);
           }
         }
@@ -305,6 +284,8 @@
         });
       },
       onScroll(event, fake) {
+        if(!this.peer) return;
+
         let el = event.target,
             hide = el.scrollTop + el.offsetHeight == el.scrollHeight;
 
@@ -322,13 +303,13 @@
           peer_id: peer.id,
           type: 'typing'
         });
-      }, 5000),
+      }, 4500),
       async loadNewMessages() {
         const PEER_ID = this.id;
 
         let { items, conversations, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
           peer_id: PEER_ID,
-          offset: this.messages.length,
+          offset: this.messages ? this.messages.length : 0,
           extended: 1,
           fields: other.fields
         });

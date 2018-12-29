@@ -9,7 +9,7 @@ let templates = [{
 
 function devTools(e) {
   return {
-    label: 'Открыть в DevTools',
+    label: app.l('open_devtools'),
     click: (temp, win) => win.inspectElement(e.x, e.y)
   }
 }

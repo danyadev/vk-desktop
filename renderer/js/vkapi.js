@@ -28,6 +28,7 @@ let method = (name, params, _resolve) => {
     if(!other.isObject(params)) params = {};
 
     params.v = params.v || API_VERSION;
+    params.lang = app.$store.state.langName;
     params.access_token = params.access_token || (app.user || {}).access_token;
 
     let data = await request({
