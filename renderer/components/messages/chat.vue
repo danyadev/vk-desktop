@@ -300,10 +300,12 @@
       onScroll(event, fake) {
         if(!this.peer) return;
 
-        app.$store.commit('editPeer', {
-          id: this.peer.id,
-          showTopTime: true
-        });
+        if(!this.showTopTime) {
+          app.$store.commit('editPeer', {
+            id: this.peer.id,
+            showTopTime: true
+          });
+        }
 
         this.hideTopDate(this.peer.id);
 
