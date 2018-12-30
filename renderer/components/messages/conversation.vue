@@ -101,10 +101,12 @@
         } else if(this.msg.fwd_count && !this.msg.text) {
           let wordID = other.getWordEnding(this.msg.fwd_count);
           return this.l('fwd_msg', wordID, [this.msg.fwd_count]);
-        } else return this.getAttachment(this.msg.text, this.msg.attachments[0]);
+        } else if(this.msg.isReplyMsg) return this.l('reply_msg');
+        else return this.getAttachment(this.msg.text, this.msg.attachments[0]);
       },
       isAttachment() {
-        return !this.msg.text && (this.msg.fwd_count || !this.msg.action && this.msg.attachments[0]);
+        let isFwd = this.msg.fwd_count || this.msg.isReplyMsg;
+        return !this.msg.text && (isFwd || !this.msg.action && this.msg.attachments[0]);
       },
       typingMsg() {
         return this.$store.getters.typingMsg(this.peer.id);

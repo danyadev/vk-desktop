@@ -103,7 +103,7 @@
         return [];
       },
       flyMsgTime() {
-        return this.msg.fwd_count || this.msg.attachments.length;
+        return this.msg.fwd_count || this.msg.attachments.length || this.msg.isReplyMsg;
       },
       serviceMessage() {
         if(!this.msg.action) return;

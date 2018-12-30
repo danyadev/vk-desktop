@@ -12,6 +12,9 @@
           <div class="dialog_online">{{ online }}</div>
         </div>
         <img src="images/actions_button.svg" class="dialog_actions_btn">
+        <div class="dialog_messages_time_wrap" :class="{ active: topTime && showTopTime }">
+          <div class="dialog_messages_time">{{ topTime }}</div>
+        </div>
       </template>
     </div>
     <div v-if="!id" class="dialog_choice_chat">
@@ -117,6 +120,12 @@
       },
       showEndBtn() {
         return this.peer && this.peer.showEndBtn;
+      },
+      topTime() {
+        return this.peer && this.peer.topTime;
+      },
+      showTopTime() {
+        return this.peer && this.peer.showTopTime;
       },
       title() {
         if(this.isChat) return this.peer.title || '...';
@@ -282,11 +291,37 @@
           time: this.peer.muted ? 0 : -1
         });
       },
+      hideTopDate: other.debounce((peer_id) => {
+        app.$store.commit('editPeer', {
+          id: peer_id,
+          showTopTime: false
+        });
+      }, 2000),
       onScroll(event, fake) {
         if(!this.peer) return;
 
+        app.$store.commit('editPeer', {
+          id: this.peer.id,
+          showTopTime: true
+        });
+
+        this.hideTopDate(this.peer.id);
+
         let el = event.target,
             hide = el.scrollTop + el.offsetHeight == el.scrollHeight;
+
+        let arr = [].slice.call(qsa('.message_top_date'));
+
+        for(let item of arr.reverse()) {
+          if(el.scrollTop + el.offsetTop >= item.offsetTop) {
+            app.$store.commit('editPeer', {
+              id: this.peer.id,
+              topTime: item.innerText
+            });
+
+            break;
+          }
+        }
 
         Vue.set(this.peer, 'showEndBtn', !hide);
 

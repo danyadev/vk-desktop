@@ -1,5 +1,10 @@
 /* Шапка */
 
+.dialog_container .header {
+  position: relative;
+  z-index: 1;
+}
+
 .dialog_header_back {
   display: none;
   flex: none;
@@ -57,6 +62,29 @@
 
 .dialog_header_back:hover, .dialog_actions_btn:hover {
   opacity: 1;
+}
+
+.dialog_messages_time_wrap {
+  position: absolute;
+  width: 100%;
+  top: 60px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.dialog_messages_time_wrap.active {
+  opacity: 1;
+}
+
+.dialog_messages_time {
+  display: inline-block;
+  background-color: #fff;
+  border: solid 1px #cfd9e1;
+  border-radius: 15px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
+  padding: 2px 15px 4px 15px;
+  color: #828282;
 }
 
 /* Диалог */
