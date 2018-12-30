@@ -128,10 +128,6 @@ function parseMessage(message, conversation) {
     });
   }
 
-  if(message.reply_message) {
-    message.fwd_messages.push(message.reply_message);
-  }
-
   return {
     id: message.id,
     text: message.text.replace(/\n/g, '<br>'),
@@ -142,6 +138,9 @@ function parseMessage(message, conversation) {
     outread: conversation.out_read < message.id && message.out,
     action: message.action,
     fwd_count: message.fwd_messages.length,
+    isReplyMsg: !!message.reply_message,
+    fwd_messages: message.fwd_messages,
+    reply_msg: message.reply_message,
     attachments: message.attachments
   }
 }

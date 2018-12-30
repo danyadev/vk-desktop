@@ -6,7 +6,8 @@ function getFlags(mask) {
   let flags = {
     unread: 1, outbox: 2, replied: 4, important: 8,
     chat: 16, friends: 32, spam: 64, deleted: 128,
-    fixed: 256, media: 512, hidden: 65536, deleted_all: 131072
+    fixed: 256, media: 512, hidden: 65536, deleted_all: 131072,
+    reply_msg: 2097152
   }, flagsInMask = [];
 
   for(let flag in flags) if(flags[flag] & mask) flagsInMask.push(flag);
@@ -61,11 +62,30 @@ function getAttachments(data) {
   return attachs;
 }
 
-let getMessage = (data, type) => {
+function chatIsChannel(id) {
+  if(id < 2e9) return false;
+  let conversation = app.$store.state.conversations[id];
+  if(!conversation) return -1;
+  return conversation.peer.channel;
+}
+
+function getMessage(data, type) {
   let flags = getFlags(data[1]),
       action = getServiceMessage(data[5]),
       from_id = flags.is('outbox') ? app.user.id : Number(data[5].from || data[2]),
-      isChannel = data[1] == 0; // пока я только это заметил
+      isChannel = chatIsChannel(from_id) > 0;
+
+  if(chatIsChannel(from_id) == -1) {
+    vkapi('execute.isChannel', {
+      peer_id: from_id
+    }).then((channel) => {
+      app.$store.commit('editPeer', {
+        id: data[2],
+        channel,
+        owner: from_id
+      });
+    });
+  }
 
   let res = {
     peer: {
@@ -83,7 +103,10 @@ let getMessage = (data, type) => {
       unread: !flags.is('outbox') && flags.is('unread'),
       date: data[3],
       id: data[0],
-      text: action ? '' : data[4]
+      text: action ? '' : data[4],
+      conversation_msg_id: data[7],
+      edit_time: data[8],
+      isReplyMsg: flags.is('reply_msg')
     }
   }
 
@@ -123,20 +146,21 @@ module.exports = {
     // когда приходит:
     // 1) восстановление удаленного сообщения (128)
     // 2) отмена пометки сообщения как спам (64)
-    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}]
+    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}, conv_msg_id, edit_time]
+    // 3) отмена пометки непрочитанного сообщения (1)
+    // [msg_id, flags, peer_id]
 
     let flags = getFlags(data[1]);
 
     if(flags.is('spam') || flags.is('deleted')) {
       return { name: 'restore_message', data: getMessage(data) }
-    } else {
+    } else if(!flags.is('unread')) {
       console.warn('неизвестные данные в 3 событии:', data, flags);
-      return { name: null }
     }
   },
   4: (data) => {
     // приходит при написании нового сообщения
-    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}]
+    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}, conv_msg_id, edit_time]
 
     let msg = getMessage(data, 'new');
     longpoll.emit('new_message_' + data[0], msg);
@@ -145,9 +169,14 @@ module.exports = {
   },
   5: (data) => {
     // приходит при редактировании сообщения
-    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}]
+    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}, conv_msg_id, edit_time]
 
-    return { name: 'edit_message', data: getMessage(data, 'edit') }
+    if(data[8]) {
+      return {
+        name: 'edit_message',
+        data: getMessage(data, 'edit')
+      }
+    }
   },
   6: (data) => {
     // приходит при прочтении чужих сообщений до id
@@ -247,7 +276,7 @@ module.exports = {
       }
     }
   },
-  51: (data) => ({}), // абсолютно не нужное событие
+  51: () => {}, // абсолютно не нужное событие
   52: (data) => {
     // приходит при изменении данных чата (см разд. 3.2 доки)
     // [type_id, peer_id, info]

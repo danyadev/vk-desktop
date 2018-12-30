@@ -113,7 +113,9 @@
       text() {
         let count = this.msg.fwd_count,
             type = other.getWordEnding(count),
-            fwdMessages = count ? { type: this.l('reply_msg', type, [count]) } : [];
+            fwdMessages = count ? { type: this.l('fwd_msg', type, [count]) } : [];
+
+        if(this.msg.isReplyMsg) fwdMessages = { type: this.l('reply_msg') };
 
         return {
           msg: this.msg.text,

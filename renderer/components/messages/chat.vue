@@ -157,11 +157,10 @@
           return `online ${app} (${date.getHours()}:${f(date.getMinutes())})`;
         } else {
           let thisDate = new Date(),
-              s = this.owner.sex == 1 ? 'a' : '',
               offlineTime = thisDate.getTime() - date.getTime(),
               offlineHours = Math.floor(offlineTime / (1000 * 60 * 60)),
               offlineMins = Math.floor(offlineTime / (1000 * 60)),
-              time = getDate(this.owner.last_seen.time);
+              time = getDate(this.owner.last_seen.time) + ' ';
 
           if(offlineHours <= 3) {
             if(offlineHours == 0) {
@@ -306,22 +305,32 @@
       }, 4500),
       async loadNewMessages() {
         const PEER_ID = this.id;
+        let offset = this.messages ? this.messages.length : 0;
 
         let { items, conversations, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
           peer_id: PEER_ID,
-          offset: this.messages ? this.messages.length : 0,
+          offset: offset,
           extended: 1,
           fields: other.fields
         });
 
         this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
 
-        let peer = parseConversation(conversations[0]);
+        let peer = parseConversation(conversations[0]),
+            lastMsg = parseMessage(items[items.length-1], peer);
+
+        if(!offset) {
+          this.$store.commit('updateLastMsg', {
+            peer_id: PEER_ID,
+            msg: lastMsg
+          });
+        }
 
         for(let msg of items) {
           this.$store.commit('addMessage', {
             peer_id: PEER_ID,
-            msg: parseMessage(msg, peer)
+            msg: parseMessage(msg, peer),
+            notNewMsg: true
           });
         }
 

@@ -150,7 +150,7 @@ module.exports = new Vuex.Store({
           peerObj = conv && conv.peer,
           visible = state.peersList.find(({ id }) => id == data.peer_id);
 
-      if(!visible && peerObj) {
+      if(!visible && peerObj && !data.notNewMsg) {
         state.peersList.unshift({ id: peerObj.id });
       }
     },

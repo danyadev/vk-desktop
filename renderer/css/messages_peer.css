@@ -94,6 +94,7 @@
 .dialog_no_messages {
   align-items: center;
   justify-content: center;
+  text-align: center;
   color: #38383a;
 }
 
@@ -270,6 +271,9 @@
   color: #254f79;
   font-weight: 500;
   margin-bottom: 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .message_text_wrap {

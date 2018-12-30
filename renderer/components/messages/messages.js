@@ -23,7 +23,7 @@ function getServiceMessage(action, author, full) {
     let user = type ? actUser : author, name;
     if(!user.photo_50) loadProfile(user.id);
 
-    if(user.id == id) name = acc ? this.l('you2') : this.l('you');
+    if(user.id == id) name = acc ? app.l('you2') : app.l('you');
     else if(user.name) name = user.name;
     else if(user.photo_50) {
       if(acc) name = `${user.first_name_acc} ${user.last_name_acc}`;
@@ -35,34 +35,34 @@ function getServiceMessage(action, author, full) {
 
   switch(action.type) {
     case 'chat_photo_update':
-      return this.l('im_chat_photo_update', g(0), [name(0)]);
+      return app.l('im_chat_photo_update', g(0), [name(0)]);
     case 'chat_photo_remove':
-      return this.l('im_chat_photo_remove', g(0), [name(0)]);
+      return app.l('im_chat_photo_remove', g(0), [name(0)]);
     case 'chat_create':
-      return this.l('im_chat_create', g(0), [name(0), e(action.text)]);
+      return app.l('im_chat_create', g(0), [name(0), e(action.text)]);
     case 'chat_title_update':
-      return this.l('im_chat_title_update', g(0), [name(0), e(action.text)]);
+      return app.l('im_chat_title_update', g(0), [name(0), e(action.text)]);
     case 'chat_pin_message':
-      return this.l('im_chat_pin_message', g(1), [name(1), e(action.message)]);
+      return app.l('im_chat_pin_message', g(1), [name(1), e(action.message)]);
     case 'chat_unpin_message':
-      return this.l('im_chat_unpin_message', g(1), [name(1)]);
+      return app.l('im_chat_unpin_message', g(1), [name(1)]);
     case 'chat_invite_user_by_link':
-      return this.l('im_chat_invite_user_by_link', g(0), [name(0)]);
+      return app.l('im_chat_invite_user_by_link', g(0), [name(0)]);
     case 'chat_invite_user':
       if(actID == author.id) {
-        return this.l('im_chat_returned_user', g(0), [name(0)]);
+        return app.l('im_chat_returned_user', g(0), [name(0)]);
       } else if(full) {
-        return this.l('im_chat_invite_user', g(0), [name(0), name(1, 1)]);
+        return app.l('im_chat_invite_user', g(0), [name(0), name(1, 1)]);
       } else {
-        return this.l('im_chat_invite_user_short', g(0), [name(1, 1)]);
+        return app.l('im_chat_invite_user_short', g(0), [name(1, 1)]);
       }
     case 'chat_kick_user':
       if(actID == author.id) {
-        return this.l('im_chat_left_user', g(0), [name(0)]);
+        return app.l('im_chat_left_user', g(0), [name(0)]);
       } else if(full) {
-        return this.l('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
+        return app.l('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
       } else {
-        return this.l('im_chat_kick_user_short', g(0), [name(1, 1)]);
+        return app.l('im_chat_kick_user_short', g(0), [name(1, 1)]);
       }
     default:
       console.warn('[messages] Неизвестное действие:', action.type);

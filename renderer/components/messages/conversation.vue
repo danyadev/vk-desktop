@@ -100,7 +100,7 @@
           return getServiceMessage.bind(this)(this.msg.action, this.author || { id: this.msg.from });
         } else if(this.msg.fwd_count && !this.msg.text) {
           let wordID = other.getWordEnding(this.msg.fwd_count);
-          return this.l('reply_msg', wordID, [this.msg.fwd_count]);
+          return this.l('fwd_msg', wordID, [this.msg.fwd_count]);
         } else return this.getAttachment(this.msg.text, this.msg.attachments[0]);
       },
       isAttachment() {

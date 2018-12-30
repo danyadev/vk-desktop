@@ -20,7 +20,7 @@ class Longpoll {
   }
 
   static async getServer() {
-    return await vkapi('messages.getLongPollServer', { lp_version: 3, need_pts: 1 });
+    return await vkapi('messages.getLongPollServer', { lp_version: 4, need_pts: 1 });
   }
 
   async loop() {
@@ -34,7 +34,7 @@ class Longpoll {
         ts: this.ts,
         wait: 10,
         mode: 106,
-        version: 3
+        version: 4
       })
     });
 
@@ -46,7 +46,7 @@ class Longpoll {
           ts: this.ts,
           pts: this.pts,
           onlines: 1,
-          lp_version: 3,
+          lp_version: 4,
           fields: other.fields
         });
 
@@ -102,7 +102,7 @@ class Longpoll {
       }
 
       let eventData = event(update);
-      if(!eventData.name) continue;
+      if(!eventData) continue;
 
       this.emit(eventData.name, eventData.data);
     }
