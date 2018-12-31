@@ -316,18 +316,16 @@
 
         for(let item of arr.reverse()) {
           if(el.scrollTop + el.offsetTop >= item.offsetTop) {
-            app.$store.commit('editPeer', {
-              id: this.peer.id,
-              topTime: item.innerText
-            });
-
+            Vue.set(this.peer, 'topTime', item.innerText);
             break;
           }
         }
 
-        Vue.set(this.peer, 'showEndBtn', !hide);
+        if(this.peer.showEndBtn != !hide) {
+          Vue.set(this.peer, 'showEndBtn', !hide);
+        }
 
-        if(fake && this.peer.inited || event.target.scrollTop > 200) return;
+        if(fake && this.peer.inited || el.scrollTop > 200) return;
 
         if(!this.peer.loading && !this.peer.loaded) {
           Vue.set(this.peer, 'loading', true);
