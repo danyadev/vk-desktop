@@ -195,7 +195,7 @@
             messages = this.$store.state.messages[data.peer_id],
             lastMsg = msg && parseMessage(msg, { out_read, in_read });
 
-        if(messages && !messages.length) {
+        if(!messages || !messages.length) {
           if(!msg) {
             this.$store.commit('removePeer', data.peer_id);
             return;

@@ -85,6 +85,8 @@
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
   padding: 2px 15px 4px 15px;
   color: #828282;
+  user-select: none;
+  pointer-events: none;
 }
 
 /* Диалог */

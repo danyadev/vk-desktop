@@ -17,7 +17,6 @@ function getLangFile(name) {
 }
 
 module.exports = new Vuex.Store({
-  strict: true,
   state: {
     users: users.get(),
     activeUser: settings.get('activeUser'),
@@ -60,7 +59,7 @@ module.exports = new Vuex.Store({
       for(let user of users) Vue.set(state.profiles, user.id, user);
     },
     updateProfile(state, user) {
-      let old = state.profiles[user.id] || {};
+      let old = state.profiles[user.id];
       Vue.set(state.profiles, user.id, Object.assign({}, old, user));
     },
     // ** Список бесед **
@@ -95,7 +94,7 @@ module.exports = new Vuex.Store({
     },
     removePeer(state, id) {
       let index = state.peersList.findIndex((peer) => peer.id == id);
-      if(index != -1) Vue.delete(state.peersList, index);
+      if(index != -1) state.peersList.splice(index, 1);
     },
     updateLastMsg(state, data) {
       let conversation = state.conversations[data.peer_id] || {};
@@ -174,7 +173,7 @@ module.exports = new Vuex.Store({
       let messages = state.messages[data.peer_id] || [],
           index = messages.findIndex(({ id }) => id == data.msg_id);
 
-      if(index != -1) Vue.delete(messages, index);
+      if(index != -1) messages.splice(index, 1);
     },
     // ** Тайпинг **
     setTyping(state, data) {

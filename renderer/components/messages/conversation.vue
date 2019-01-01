@@ -98,11 +98,14 @@
       message() {
         if(this.msg.action) {
           return getServiceMessage.bind(this)(this.msg.action, this.author || { id: this.msg.from });
+        } else if(this.msg.isReplyMsg && !this.msg.text) {
+          return this.l('reply_msg');
         } else if(this.msg.fwd_count && !this.msg.text) {
           let wordID = other.getWordEnding(this.msg.fwd_count);
           return this.l('fwd_msg', wordID, [this.msg.fwd_count]);
-        } else if(this.msg.isReplyMsg) return this.l('reply_msg');
-        else return this.getAttachment(this.msg.text, this.msg.attachments[0]);
+        } else {
+          return this.getAttachment(this.msg.text, this.msg.attachments[0]);
+        }
       },
       isAttachment() {
         let isFwd = this.msg.fwd_count || this.msg.isReplyMsg;

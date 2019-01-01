@@ -1,2 +1,8 @@
 core
 vue-devtools
+
+# игнорим все языки кроме ru, en и uk (основные)
+renderer/lang/*.js
+!renderer/lang/ru.js
+!renderer/lang/en.js
+!renderer/lang/uk.js

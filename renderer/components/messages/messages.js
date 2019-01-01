@@ -49,21 +49,13 @@ function getServiceMessage(action, author, full) {
     case 'chat_invite_user_by_link':
       return app.l('im_chat_invite_user_by_link', g(0), [name(0)]);
     case 'chat_invite_user':
-      if(actID == author.id) {
-        return app.l('im_chat_returned_user', g(0), [name(0)]);
-      } else if(full) {
-        return app.l('im_chat_invite_user', g(0), [name(0), name(1, 1)]);
-      } else {
-        return app.l('im_chat_invite_user_short', g(0), [name(1, 1)]);
-      }
+      if(actID == author.id) return app.l('im_chat_returned_user', g(0), [name(0)]);
+      else if(full) return app.l('im_chat_invite_user', g(0), [name(0), name(1, 1)]);
+      else return app.l('im_chat_invite_user_short', g(0), [name(1, 1)]);
     case 'chat_kick_user':
-      if(actID == author.id) {
-        return app.l('im_chat_left_user', g(0), [name(0)]);
-      } else if(full) {
-        return app.l('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
-      } else {
-        return app.l('im_chat_kick_user_short', g(0), [name(1, 1)]);
-      }
+      if(actID == author.id) return app.l('im_chat_left_user', g(0), [name(0)]);
+      else if(full) return app.l('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
+      else return app.l('im_chat_kick_user_short', g(0), [name(1, 1)]);
     default:
       console.warn('[messages] Неизвестное действие:', action.type);
       return action.type;

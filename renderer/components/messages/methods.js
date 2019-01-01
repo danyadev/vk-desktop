@@ -121,6 +121,8 @@ function parseConversation(conversation) {
 }
 
 function parseMessage(message, conversation) {
+  if(!message) return;
+  
   if(message.geo) {
     message.attachments.push({
       type: 'geo',

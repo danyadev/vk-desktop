@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <modal-header :closable="false">{{ l('write_captcha') }}</modal-header>
+    <modal-header :closable="false">{{ l('captcha_header') }}</modal-header>
     <div class="modal_content captcha">
       <div class="captcha_img">
         <img :src="data.src" @click="updateIMG">
@@ -34,7 +34,7 @@
     },
     methods: {
       updateIMG(event) {
-        event.target.src += '1';
+        event.target.src += this.data.src.indexOf('&s=1') != -1 ? '1' : '&s=1';
       },
       sendCode() {
         if(this.disabled) return;

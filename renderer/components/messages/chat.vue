@@ -95,16 +95,7 @@
         return this.id > 2e9;
       },
       peer() {
-        let dialog = this.$store.state.conversations[this.id],
-            peer = dialog && dialog.peer;
-
-        if(!peer && this.id) {
-          loadConversation(this.id).then((conversation) => {
-            this.$store.commit('editPeer', conversation);
-          });
-        }
-
-        return dialog && dialog.peer;
+        return this.getPeer(this.id);
       },
       profiles() {
         return this.$store.state.profiles;
@@ -228,6 +219,18 @@
       }
     },
     methods: {
+      getPeer(peer_id) {
+        let dialog = this.$store.state.conversations[peer_id],
+            peer = dialog && dialog.peer;
+
+        if(!peer && peer_id) {
+          loadConversation(peer_id).then((conversation) => {
+            this.$store.commit('editPeer', conversation);
+          });
+        }
+
+        return dialog && dialog.peer;
+      },
       updatePeer(data) {
         data.id = this.id;
         this.$store.commit('editPeer', data);
@@ -247,19 +250,21 @@
         if(!text) return;
         input.innerHTML = '';
 
-        try {
+        let text_blocks = text.match(/.{1,4096}/g) || [];
+
+        for(let block of text_blocks) {
           let id = await vkapi('messages.send', {
             peer_id: this.id,
-            message: text,
+            message: block,
             random_id: 0
           });
 
           longpoll.once('new_message_' + id, async (data) => {
             await this.$nextTick();
-            qs('.dialog_messages_list .typing_wrap').scrollIntoView();
+
+            let el = qs('.typing_wrap');
+            if(el) el.scrollIntoView();
           });
-        } catch(e) {
-          console.error('[chat] send error:', e);
         }
       },
       scrollToEnd() {
@@ -273,15 +278,11 @@
 
         event.target.focus();
 
-        let toRight = event.offsetX <= event.target.width / 2,
-            selection = window.getSelection(),
+        let selection = window.getSelection(),
             range = document.createRange();
 
         range.selectNode(event.target);
-        range.collapse(toRight);
-
-        selection = window.getSelection();
-
+        range.collapse(event.offsetX <= event.target.width / 2);
         selection.removeAllRanges();
         selection.addRange(range);
       },
@@ -291,32 +292,28 @@
           time: this.peer.muted ? 0 : -1
         });
       },
-      hideTopDate: other.debounce((peer_id) => {
-        app.$store.commit('editPeer', {
-          id: peer_id,
-          showTopTime: false
-        });
+      hideTopDate: other.debounce((peer) => {
+        Vue.set(peer, 'showTopTime', false);
       }, 2000),
       onScroll(event, fake) {
         if(!this.peer) return;
 
         if(!this.showTopTime) {
-          app.$store.commit('editPeer', {
-            id: this.peer.id,
-            showTopTime: true
-          });
+          Vue.set(this.peer, 'showTopTime', true);
         }
 
-        this.hideTopDate(this.peer.id);
+        this.hideTopDate(this.peer);
 
         let el = event.target,
-            hide = el.scrollTop + el.offsetHeight == el.scrollHeight;
+            hide = el.scrollTop + el.offsetHeight == el.scrollHeight,
+            days = [].slice.call(qsa('.message_top_date')).reverse();
 
-        let arr = [].slice.call(qsa('.message_top_date'));
-
-        for(let item of arr.reverse()) {
+        for(let item of days) {
           if(el.scrollTop + el.offsetTop >= item.offsetTop) {
-            Vue.set(this.peer, 'topTime', item.innerText);
+            if(this.peer.topTime != item.innerText) {
+              Vue.set(this.peer, 'topTime', item.innerText);
+            }
+
             break;
           }
         }
@@ -339,11 +336,11 @@
         });
       }, 4500),
       async loadNewMessages() {
-        const PEER_ID = this.id;
-        let offset = this.messages ? this.messages.length : 0;
+        let peer = this.getPeer(this.id),
+            offset = this.messages ? this.messages.length : 0;
 
         let { items, conversations, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
-          peer_id: PEER_ID,
+          peer_id: peer.id,
           offset: offset,
           extended: 1,
           fields: other.fields
@@ -351,43 +348,36 @@
 
         this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
 
-        let peer = parseConversation(conversations[0]),
+        let conv = parseConversation(conversations[0]),
             lastMsg = parseMessage(items[items.length-1], peer);
 
-        if(!offset) {
+        if(lastMsg && !offset) {
           this.$store.commit('updateLastMsg', {
-            peer_id: PEER_ID,
+            peer_id: peer.id,
             msg: lastMsg
           });
         }
 
         for(let msg of items) {
           this.$store.commit('addMessage', {
-            peer_id: PEER_ID,
-            msg: parseMessage(msg, peer),
+            peer_id: peer.id,
+            msg: parseMessage(msg, conv),
             notNewMsg: true
           });
         }
 
-        function editPeer(key, value) {
-          app.$store.commit('editPeer', {
-            id: PEER_ID,
-            [key]: value
-          });
-        }
-
-        if(items.length < 20) editPeer('loaded', true);
-        else editPeer('loading', false);
+        if(items.length < 20) Vue.set(peer, 'loaded', true);
+        else Vue.set(peer, 'loading', false);
 
         let { scrollTop, scrollHeight } = qs('.dialog_messages_list') || {};
         await this.$nextTick();
 
-        if(this.id == PEER_ID) {
+        if(this.id == peer.id) {
           let thisHeight = qs('.dialog_messages_list').scrollHeight;
           qs('.dialog_messages_list').scrollTop = scrollTop + thisHeight - scrollHeight;
         }
 
-        editPeer('inited', true);
+        Vue.set(peer, 'inited', true);
       }
     }
   }
