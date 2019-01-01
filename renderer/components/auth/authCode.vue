@@ -12,7 +12,7 @@
 </template>
 
 <script>
-  const { getFirstToken, getLastToken } = require('./auth');
+  const { getFirstToken } = require('./auth');
 
   module.exports = {
     props: {
@@ -41,19 +41,12 @@
         if(data.type == 'invalid_code') {
           this.load = false;
           this.error = true;
-          return;
+        } else {
+          this.$emit('auth', {
+            type: 'auth_completed',
+            other_token: data.token
+          });
         }
-
-        let lastToken = await getLastToken(data.token),
-            [ user ] = await vkapi('users.get', { access_token: lastToken });
-
-        this.$store.commit('updateUser', Object.assign(user, {
-          access_token: lastToken,
-          android_token: data.token
-        }));
-
-        this.load = false;
-        this.$store.commit('setActiveUser', user.id);
       }
     },
     mounted() {

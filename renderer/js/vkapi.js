@@ -36,12 +36,23 @@ let method = (name, params, promise) => {
 
     params.v = params.v || API_VERSION;
     params.lang = app.$store.state.langName;
-    params.access_token = params.access_token || (app.user || {}).access_token;
+
+    const offToken = params.offToken;
+    delete params.offToken;
+
+    if(app.user) {
+      if(offToken) {
+        params.access_token = app.user.other_token
+      } else if(!params.access_token) {
+        params.access_token = app.user.access_token;
+      }
+    }
 
     let data = await request({
       host: 'api.vk.com',
       path: `/method/${name}`,
-      method: 'POST'
+      method: 'POST',
+      headers: { 'User-Agent': offToken ? 'VKAndroidApp/5.11.1-2316' : 'VKDesktop/0.0.2' }
     }, { data: querystring.stringify(params)});
 
     if(data.response !== undefined) resolve(data.response);
@@ -91,9 +102,9 @@ let method = (name, params, promise) => {
       delete params.log;
       params.$method = name;
 
-      let time = Date.now() - time + 'ms';
+      let date = Date.now() - time + 'ms';
 
-      console.log('[API]', time, Object.assign({}, data.response, { $options: params }));
+      console.log('[API]', date, Object.assign({}, data.response, { $options: params }));
     }
   });
 }

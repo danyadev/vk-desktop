@@ -47,10 +47,13 @@ function getFirstToken(login, password, params = {}) {
         resolve({ type: 'invalid_code' });
       }
     } else {
-      resolve({
-        token: data.access_token,
-        user_id: data.user_id
+      let { token } = await vkapi('auth.refreshToken', {
+        offToken: true,
+        access_token: data.access_token,
+        receipt: 'JSv5FBbXbY:APA91bF2K9B0eh61f2WaTZvm62GOHon3-vElmVq54ZOL5PHpFkIc85WQUxUH_wae8YEUKkEzLCcUC5V4bTWNNPbjTxgZRvQ-PLONDMZWo_6hwiqhlMM7gIZHM2K2KhvX-9oCcyD1ERw4'
       });
+
+      resolve({ token });
     }
   });
 }

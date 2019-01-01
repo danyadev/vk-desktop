@@ -39,6 +39,11 @@
             login: this.login,
             password: this.password
           });
+        } else {
+          this.$emit('auth', {
+            type: 'auth_completed',
+            other_token: data.token
+          });
         }
       }
     }
