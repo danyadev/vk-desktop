@@ -21,7 +21,12 @@ let plainRequest = (url, options) => {
       let buffers = [];
 
       res.on('data', (chunk) => buffers.push(chunk));
-      res.on('end', () => resolve(String(Buffer.concat(buffers))));
+      res.on('end', () => {
+        resolve({
+          text: String(Buffer.concat(buffers)),
+          location: res.headers.location
+        });
+      });
       res.on('error', reject);
     });
 
@@ -33,22 +38,34 @@ let plainRequest = (url, options) => {
   });
 };
 
-let request = (url, options = {}, newResolve) => {
+let request = (url, options = {}, promise) => {
   return new Promise(async (resolve, reject) => {
+    if(promise) {
+      resolve = promise.resolve;
+      reject = promise.reject;
+    }
+
     try {
       let data = await plainRequest(url, options);
-      (newResolve || resolve)(JSON.parse(data));
+
+      try {
+        data.text = JSON.parse(data.text);
+      } catch(e) {}
+
+      if(options.location) {
+        resolve({
+          text: data.text,
+          location: data.location
+        });
+      } else resolve(data.text);
     } catch(err) {
       let connectErrors = ['getaddrinfo', 'read', 'connect'];
 
       if(connectErrors.includes(err.syscall)) {
-        console.warn(err);
-        setTimeout(() => request(url, options, newResolve || resolve), 1000 * 2);
+        setTimeout(() => request(url, options, { resolve, reject }), 2500);
       } else reject(err);
     }
   });
 }
-
-request.plain = plainRequest;
 
 module.exports = request;

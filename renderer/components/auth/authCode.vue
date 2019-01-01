@@ -1,0 +1,63 @@
+<template>
+  <div class="auth_wrap auth_code_section" @keydown.enter="auth">
+    <div class="auth_code_header">{{ l('auth_security_check') }}</div>
+    <div class="auth_code_descr">{{ l('auth_code_sent_to_number', null, [data.mask]) }}</div>
+    <input class="input" type="text" ref="input" :placeholder="l('enter_code')" v-model="code">
+    <div class="auth_error" v-if="error">{{ l('invalid_code') }}</div>
+    <div>
+      <button class="light_button" @click="cancel" :disabled="load">{{ l('cancel') }}</button>
+      <button class="button" @click="auth" :disabled="load || !code.trim()">{{ l('login') }}</button>
+    </div>
+  </div>
+</template>
+
+<script>
+  const { getFirstToken, getLastToken } = require('./auth');
+
+  module.exports = {
+    props: {
+      data: {
+        type: Object,
+        required: true
+      }
+    },
+    data: () => ({
+      code: '',
+      load: false,
+      error: false
+    }),
+    methods: {
+      cancel() {
+        this.$emit('auth', {
+          type: 'cancel_enter_code'
+        });
+      },
+      async auth() {
+        this.load = true;
+        this.error = false;
+
+        let data = await getFirstToken(this.data.login, this.data.password, { code: this.code });
+
+        if(data.type == 'invalid_code') {
+          this.load = false;
+          this.error = true;
+          return;
+        }
+
+        let lastToken = await getLastToken(data.token),
+            [ user ] = await vkapi('users.get', { access_token: lastToken });
+
+        this.$store.commit('updateUser', Object.assign(user, {
+          access_token: lastToken,
+          android_token: data.token
+        }));
+
+        this.load = false;
+        this.$store.commit('setActiveUser', user.id);
+      }
+    },
+    mounted() {
+      this.$refs.input.focus();
+    }
+  }
+</script>
