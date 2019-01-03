@@ -167,7 +167,7 @@
               let type = other.getWordEnding(offlineMins);
 
               if(offlineMins == 0) time = this.l('just_now');
-              else time = this.l('time_ago', null, [this.l('minutes', type, [offlineMins])]);
+              else time = this.l('minutes', type, [offlineMins]);
             } else {
               let type = other.getWordEnding(offlineHours);
               time = this.l('hours', type, [offlineHours == 1 ? '' : offlineHours]);
@@ -203,7 +203,8 @@
         let text, reason = this.peer.canWrite.reason;
 
         if(!this.peer.canWrite.allowed) {
-          if(reason == 925) text = this.l('im_channel_notifications', this.peer.muted);
+          console.log(this.peer.muted);
+          if(reason == 925) text = this.l('im_channel_notifications', Number(!this.peer.muted));
           else text = this.l('im_cant_write_reasons', reason);
 
           if(!text) {

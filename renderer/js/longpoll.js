@@ -15,15 +15,33 @@ class Longpoll {
     this.key = data.key;
     this.pts = data.pts;
     this.ts = data.ts;
+    this.userID = app.$store.state.activeUser;
 
     this.loop();
   }
 
   static async getServer() {
-    return await vkapi('messages.getLongPollServer', { lp_version: 4, need_pts: 1 });
+    return await vkapi('messages.getLongPollServer', { lp_version: 5, need_pts: 1 });
   }
 
   async loop() {
+    let activeUser = app.$store.state.activeUser;
+    if(!activeUser) return;
+
+    if(this.userID != activeUser) {
+      let { server, key, pts, ts } = await Longpoll.getServer();
+
+      this.server = server;
+      this.key = key;
+      this.pts = pts;
+      this.ts = ts;
+      this.userID = activeUser;
+
+      this.removeAllListeners();
+
+      return this.loop();
+    }
+
     let [ host, path ] = this.server.split('/');
 
     let data = await request({
@@ -33,8 +51,8 @@ class Longpoll {
         key: this.key,
         ts: this.ts,
         wait: 10,
-        mode: 106,
-        version: 4
+        mode: 362,
+        version: 5
       })
     });
 
@@ -46,7 +64,7 @@ class Longpoll {
           ts: this.ts,
           pts: this.pts,
           onlines: 1,
-          lp_version: 4,
+          lp_version: 5,
           fields: other.fields
         });
 

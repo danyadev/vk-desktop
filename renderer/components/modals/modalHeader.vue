@@ -1,7 +1,7 @@
 <template>
   <div class="modal_header">
     <div class="modal_header_title"><slot></slot></div>
-    <div v-if="closable" @click="close" class="modal_header_close"></div>
+    <div v-if="closable" @click.stop="close" class="modal_header_close"></div>
   </div>
 </template>
 
@@ -15,7 +15,7 @@
     },
     methods: {
       close() {
-        this.$modals.close();
+        this.$modals.close(this.$parent.$attrs.name);
       }
     }
   }

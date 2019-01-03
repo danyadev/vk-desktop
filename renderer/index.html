@@ -10,11 +10,10 @@
       <titlebar></titlebar>
       <div class="root">
         <auth v-if="auth"></auth>
-        <template v-else>
+        <div v-else class="content" :key="user.id">
           <main-menu></main-menu>
-          <keep-alive><component :is="section"></component></keep-alive>
-          <!-- v-for component of <список компонентов, которые будут висеть поверх активного> -->
-        </template>
+          <component :is="section"></component>
+        </div>
         <modal-wrapper></modal-wrapper>
       </div>
     </div>

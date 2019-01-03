@@ -86,7 +86,10 @@
         } else return '...';
       },
       time() {
-        return getDate(this.msg.date, true, true);
+        return getDate(this.msg.date, {
+          addTime: true,
+          shortMonth: true
+        });
       },
       authorName() {
         if(this.msg.action || this.peer.channel) return '';

@@ -47,3 +47,7 @@ body {
 	/* 32px - высота titlebar'a по умолчанию */
   height: calc(100% - 32px);
 }
+
+.content {
+	height: 100%;
+}

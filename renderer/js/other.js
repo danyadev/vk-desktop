@@ -7,7 +7,6 @@ Object.defineProperty(Array.prototype, 'move', {
   enumerable: false
 });
 
-// Простите, но мне так удобно, может быть позже сделаю получше
 Object.defineProperty(Vue.prototype, 'l', {
   value(name, key, replaces) {
     let data = this.$store.state.lang[name];
@@ -15,8 +14,7 @@ Object.defineProperty(Vue.prototype, 'l', {
 
     if(Array.isArray(replaces)) {
       for(let i in replaces) {
-        let index = Number(i) + 1,
-            regexp = new RegExp(`\\{${index}\\}`, 'g');
+        let regexp = new RegExp(`\\{${i}\\}`, 'g');
 
         data = String(data).replace(regexp, replaces[i]);
       }

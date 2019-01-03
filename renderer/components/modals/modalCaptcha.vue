@@ -40,7 +40,7 @@
         if(this.disabled) return;
 
         this.data.send(this.text.trim());
-        this.$modals.close();
+        this.$modals.close(this.$parent.$attrs.name);
       }
     }
   }

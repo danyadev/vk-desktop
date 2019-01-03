@@ -183,6 +183,15 @@
         });
       });
 
+      longpoll.on('add_message_snippet', (data) => {
+        this.updatePeer(data.peer.id, data.peer, true);
+
+        this.$store.commit('editMessage', {
+          peer_id: data.peer.id,
+          msg: Object.assign(data.msg)
+        });
+      });
+
       longpoll.on('delete_messages', async (data) => {
         for(let message of data.messages) {
           this.$store.commit('removeMessage', {

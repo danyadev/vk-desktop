@@ -6,24 +6,32 @@
   z-index: 6;
   width: 100%;
   height: 100%;
+  visibility: hidden;
+  transition: visibility .3s;
+}
+
+.modals_container:not(:empty) { visibility: visible }
+
+.modal_wrap {
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
-
+  width: 100%;
+  height: 100%;
   opacity: 0;
-  visibility: hidden;
   background-color: rgba(0, 0, 0, .4);
-  transition: opacity .3s, visibility .3s;
+  transition: opacity .3s;
 }
 
-.modals_container.modal_opened {
+.modal_wrap.active {
   opacity: 1;
-  visibility: visible;
 }
 
 .modal {
   position: absolute;
   border-radius: 5px;
+  background-color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
 }
 
@@ -59,8 +67,6 @@
 
 .modal_header_close:hover { opacity: 1 }
 
-.modal_content { background-color: #fff }
-
 .modal_bottom {
   height: 56px;
   border-top: 1px solid #e7e8ec;
@@ -69,10 +75,10 @@
   border-bottom-left-radius: 3px;
 }
 
-.modal_bottom .button {
+.modal_bottom .button,
+.modal_bottom .light_button {
   min-width: 110px;
   margin: 9px 5px;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
 }
 
 .modal_bottom .button.right:first-child {
@@ -127,3 +133,51 @@
   padding: 20px;
   max-width: 450px;
 }
+
+/* Мультиаккаунт */
+
+.multiaccount { min-width: 300px }
+
+.multiaccount_item {
+  display: flex;
+  cursor: pointer;
+  user-select: none;
+  margin: 0 20px;
+}
+
+.multiaccount_item_photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 15px 10px 0 0;
+}
+
+.multiaccount_item_data {
+  flex-grow: 1;
+  padding: 15px 0;
+  max-width: 200px;
+}
+
+.multiaccount_item:not(:last-child) .multiaccount_item_data {
+  border-bottom: 1px solid #e7e8ec;
+}
+
+.multiaccount_item_name_wrap { display: flex }
+.multiaccount_item_name { flex-grow: 1 }
+
+.multiaccount_item_descr {
+  color: #3e70a9;
+  margin-top: 4px;
+}
+
+.multiaccount_item_close {
+  margin: 3px;
+  width: 14px;
+  height: 14px;
+  opacity: .5;
+  transition: opacity .3s;
+}
+
+.multiaccount_item_close:hover { opacity: .6 }
+
+.auth_modal { padding: 25px }

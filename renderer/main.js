@@ -22,7 +22,7 @@ require('./js/initComponents');
 
 let app = new Vue({
   el: '.app',
-  store: require('./js/VueStore.js'),
+  store: require('./js/store/'),
   data: {
     section: settings.get('section')
   },

@@ -62,7 +62,7 @@ function getServiceMessage(action, author, full) {
   }
 }
 
-function getDate(timestamp, shortMonth, withTime) {
+function getDate(timestamp, { addTime, shortMonth, fullText } = {}) {
   let thisDate = new Date(),
       date = new Date(timestamp * 1000),
       f = (t) => t < 10 ? `0${t}` : t,
@@ -77,10 +77,12 @@ function getDate(timestamp, shortMonth, withTime) {
 
   if(shortMonth && month.length > 3) month = month.slice(0, 3) + '.';
 
-  if(thisDay) return withTime ? time : app.l('today');
-  else if(yesterday) return app.l('yesterday');
+  if(thisDay) {
+    if(fullText) return app.l('today') + ' ' + app.l('at_n', null, [time]);
+    else return addTime ? time : app.l('today');
+  } else if(yesterday) return app.l('yesterday');
   else if(thisYear) return `${date.getDate()} ${month}`;
-  else return `${date.getDate()} ${month} ${date.getFullYear()} г.`;
+  else return `${date.getDate()} ${month} ${date.getFullYear()}`;
 }
 
 async function toggleChat(chatID) {

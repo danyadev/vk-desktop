@@ -1,6 +1,8 @@
 <template>
   <div class="modals_container">
-    <component v-for="modal in modals" :is="modal.name" :data="modal.data"></component>
+    <div class="modal_wrap" v-for="modal in modals" :class="{ active: modal.active }" @click="closeModal">
+      <component :is="`modal-${modal.name}`" :data="modal.data" :name="modal.name"></component>
+    </div>
   </div>
 </template>
 
@@ -11,22 +13,32 @@
     data: () => ({
       modals: []
     }),
+    methods: {
+      closeModal(event) {
+        let hasClose = !event.path.find((el) => el.classList && el.classList.contains('modal'));
+        if(hasClose) Bus.emit('close', this.modals[this.modals.length - 1]);
+      },
+      updateModal(name, data) {
+        let modal = this.modals.find((modal) => modal.name == name);
+        Vue.set(this.modals, this.modals.length - 1, Object.assign({}, modal, data));
+      }
+    },
     created() {
-      Bus.on('open', (name, data = {}) => {
-        this.modals.push({
-          name: `modal-${name}`,
-          data: data
-        });
-
-        qs('.modals_container').classList.add('modal_opened');
+      Bus.on('open', async (name, data = {}) => {
+        this.modals.push({ name, data });
+        setTimeout(() => this.updateModal(name, { active: true }), 200);
       });
 
-      Bus.on('close', () => {
-        this.modals.pop();
+      Bus.on('close', (name) => {
+        this.updateModal(name, { active: false });
 
-        if(!this.modals.length) {
-          qs('.modals_container').classList.remove('modal_opened');
-        }
+        setTimeout(() => {
+          let modals = this.modals.reverse(),
+              index = modals.findIndex((modal) => modal.name == name);
+
+          modals.splice(index, 1);
+          this.modals = modals;
+        }, 200);
       });
     }
   }

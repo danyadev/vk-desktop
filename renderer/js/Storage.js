@@ -21,8 +21,6 @@ class Storage {
   set(key, value) {
     this.data[key] = value;
     this.save();
-
-    return this.data;
   }
 
   get(key) {
@@ -55,7 +53,6 @@ class Users extends Storage {
   }
 
   update(id, data) {
-    if(!this.data[id]) return;
     this.data[id] = Object.assign({}, this.data[id], data);
     this.save();
   }

@@ -19,8 +19,7 @@ function getFirstToken(login, password, params = {}) {
         lang: 'ru',
         v: '5.92',
         ...params
-      }),
-      headers: { 'user-agent': 'VKAndroidApp/5.23-2982' }
+      })
     });
 
     if(data.error) {

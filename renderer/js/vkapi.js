@@ -23,11 +23,30 @@ setInterval(() => {
   }
 }, 380);
 
-let method = (name, params, promise) => {
+function getToken(params) {
+  if(app.user && !params.access_token) {
+    if(params.offToken) {
+      params.access_token = app.user.other_token
+    } else if(!params.access_token) {
+      params.access_token = app.user.access_token;
+    }
+  }
+
+  return params.access_token;
+}
+
+function tryResolve(params, data, resolve, reject) {
+  if(params.access_token == getToken(params, params.offToken)) {
+    delete params.offToken;
+    if(resolve) resolve(data);
+    else reject(data);
+  }
+}
+
+let method = (name, params = {}, promise) => {
   if(isCaptcha) console.log('captcha', name, params);
   return new Promise(async (resolve, reject) => {
     let time = Date.now();
-    if(!other.isObject(params)) params = {};
 
     if(promise) {
       resolve = promise.resolve;
@@ -37,25 +56,16 @@ let method = (name, params, promise) => {
     params.v = params.v || API_VERSION;
     params.lang = app.$store.state.langName;
 
-    const offToken = params.offToken;
-    delete params.offToken;
-
-    if(app.user) {
-      if(offToken) {
-        params.access_token = app.user.other_token
-      } else if(!params.access_token) {
-        params.access_token = app.user.access_token;
-      }
-    }
+    params.access_token = getToken(params);
 
     let data = await request({
       host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST',
-      headers: { 'User-Agent': offToken ? 'VKAndroidApp/5.11.1-2316' : 'VKDesktop/0.0.2' }
-    }, { data: querystring.stringify(params)});
+      headers: { 'User-Agent': params.offToken ? 'VKAndroidApp/5.11.1-2316' : 'VKDesktop/0.0.2' }
+    }, { data: querystring.stringify(params) });
 
-    if(data.response !== undefined) resolve(data.response);
+    if(data.response !== undefined) tryResolve(params, data.response, resolve);
     else {
       if(data.error.error_code == 5) {
         let error = data.error.error_msg.slice(27);
@@ -94,7 +104,7 @@ let method = (name, params, promise) => {
             isCaptcha = false;
           }
         });
-      } else reject(data);
+      } else tryResolve(params, data, reject);
     }
 
     if(params.log) {

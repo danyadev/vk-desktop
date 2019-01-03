@@ -28,10 +28,10 @@
       async auth() {
         this.inProgress = true;
         let data = await getFirstToken(this.login, this.password);
-        this.inProgress = false;
 
         if(data.type == 'invalid_client') {
           this.error = true;
+          this.inProgress = false;
         } else if(data.type == 'need_validation') {
           this.$emit('auth', {
             type: data.type,

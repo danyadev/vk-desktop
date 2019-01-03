@@ -113,13 +113,20 @@
       text() {
         let count = this.msg.fwd_count,
             type = other.getWordEnding(count),
-            fwdMessages = count ? { type: this.l('fwd_msg', type, [count]) } : [];
+            fwdMessages = count ? { type: this.l('fwd_msg', type, [count]) } : [],
+            attachments = [];
 
         if(this.msg.isReplyMsg) fwdMessages = { type: this.l('reply_msg') };
 
+        for(let attach of this.msg.attachments) {
+          attachments.push({
+            type: this.l('attachments', attach.type)
+          });
+        }
+
         return {
           msg: this.msg.text,
-          attachments: this.msg.attachments.concat(fwdMessages)
+          attachments: attachments.concat(fwdMessages)
         }
       },
       outread() {

@@ -121,7 +121,7 @@ module.exports = {
     // 1) удаление сообщения (128)
     // 2) пометка как спам (64)
     // 3) удаление для всех (131200)
-    // [id, flags, peer_id]
+    // [msg_id, flags, peer_id]
 
     let messages = [];
 
@@ -146,7 +146,7 @@ module.exports = {
     // когда приходит:
     // 1) восстановление удаленного сообщения (128)
     // 2) отмена пометки сообщения как спам (64)
-    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}, conv_msg_id, edit_time]
+    // [id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
     // 3) отмена пометки непрочитанного сообщения (1)
     // [msg_id, flags, peer_id]
 
@@ -160,7 +160,7 @@ module.exports = {
   },
   4: (data) => {
     // приходит при написании нового сообщения
-    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}, conv_msg_id, edit_time]
+    // [id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
 
     let msg = getMessage(data, 'new');
     longpoll.emit('new_message_' + data[0], msg);
@@ -169,18 +169,16 @@ module.exports = {
   },
   5: (data) => {
     // приходит при редактировании сообщения
-    // [id, flags, peer_id, timestamp, "text", {from, actions}, {attachs}, conv_msg_id, edit_time]
+    // [id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
 
-    if(data[8]) {
-      return {
-        name: 'edit_message',
-        data: getMessage(data, 'edit')
-      }
+    return {
+      name: 'edit_message',
+      data: getMessage(data)
     }
   },
   6: (data) => {
     // приходит при прочтении чужих сообщений до id
-    // [peer_id, id, count]
+    // [peer_id, msg_id, count]
 
     return {
       name: 'read_messages',
@@ -193,8 +191,7 @@ module.exports = {
   },
   7: (data) => {
     // приходит при прочтении твоих сообщений до id
-    // count - кол-во оставшихся непрочитанных сообщений
-    // [peer_id, id, count]
+    // [peer_id, msg_id, count]
 
     return {
       name: 'readed_messages',
@@ -276,6 +273,16 @@ module.exports = {
       }
     }
   },
+  18: (data) => {
+    // приходит при добавлении сниппета к сообщению
+    // (например когда написал ссылку)
+    // [id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
+
+    return {
+      name: 'add_message_snippet',
+      data: getMessage(data)
+    }
+  },
   51: () => {}, // абсолютно не нужное событие
   52: (data) => {
     // приходит при изменении данных чата (см разд. 3.2 доки)
@@ -296,16 +303,16 @@ module.exports = {
       }
     }
   },
-  62: (data) => {
-    // приходит когда кто-то пишет в беседе
-    // [user_id, chat_id]
+  63: (data) => {
+    // приходит когда кто-то пишет сообщение
+    // [peer_id, [from_id], 1, timestamp]
 
     return {
       name: 'typing',
       data: {
         type: 'text',
-        peer_id: 2e9 + data[1],
-        from_id: data[0]
+        peer_id: data[0],
+        from_id: data[1][0]
       }
     }
   },
@@ -324,7 +331,8 @@ module.exports = {
   },
   80: (data) => {
     // приходит при изменении кол-ва сообщений
-    // [count, 0]
+    // [count, count_with_notifications, 0]
+    // count_with_notifications - кол-во непрочитанных диалогов, в которых включены уведомления
 
     return {
       name: 'update_messages_count',

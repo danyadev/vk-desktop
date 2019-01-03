@@ -16,8 +16,8 @@ let ModalCreator = {
         open(name, data) {
           Bus.emit('open', name, data);
         },
-        close(data) {
-          Bus.emit('close', data);
+        close(name) {
+          Bus.emit('close', name);
         }
       }
     });

@@ -3,7 +3,7 @@
     <div class="menu">
       <div class="menu_account_item">
         <img class="menu_account_bgc" :src="user.photo_100">
-        <div class="menu_multiacc"></div>
+        <div class="menu_multiacc" @click.stop="openMultiacc"></div>
         <img class="acc_icon"
              :src="user.photo_100"
              @click="/*openPage('profile')*/">
@@ -15,11 +15,11 @@
       </div>
       <div class="menu_items">
         <div class="menu_item"
-             v-for="item of list"
-             @click="openPage(item.type)"
-             :class="{ active: $root.section == item.type }">
-          <div class="menu_item_icon" :class="item.type"></div>
-          <div class="menu_item_name">{{ item.name }}</div>
+             v-for="type of list"
+             @click="openPage(type)"
+             :class="{ active: $root.section == type }">
+          <div class="menu_item_icon" :class="type"></div>
+          <div class="menu_item_name">{{ l('menu', type) }}</div>
         </div>
       </div>
     </div>
@@ -31,15 +31,15 @@
     data() {
       return {
         list: [
-          // { name: 'Новости',      type: 'news'          },
-          // { name: 'Уведомления',  type: 'notifications' },
-          { name: this.l('menu', 0), type: 'messages' },
-          // { name: 'Аудиозаписи',  type: 'audios'        },
-          // { name: 'Друзья',       type: 'friends'       },
-          // { name: 'Группы',       type: 'groups'        },
-          // { name: 'Фотографии',   type: 'photos'        },
-          // { name: 'Видеозаписи',  type: 'videos'        },
-          // { name: 'Настройки',    type: 'settings'      }
+          // 'news',
+          // 'notifications',
+          'messages'
+          // 'audios',
+          // 'friends',
+          // 'groups',
+          // 'photos',
+          // 'videos',
+          // 'settings'
         ]
       }
     },
@@ -52,18 +52,30 @@
       }
     },
     methods: {
+      openMultiacc() {
+        this.toggleMenu(false);
+        this.$modals.open('multiaccount');
+      },
       openPage(type) {
-        this.$root.section = type;
+        this.toggleMenu(false);
+        if(this.$root.section != type) this.$root.section = type;
       },
       toggleMenu(event) {
-        let state = !this.active || event.target != qs('.menu_wrap');
+        let state;
+
+        if(typeof event == 'boolean') state = event;
+        else state = qs('.menu_wrap') != event.target;
+
         this.$store.commit('setMenuState', state);
       }
     },
     async mounted() {
       let [ user ] = await vkapi('execute.getProfiles', { fields: 'status,photo_100' });
 
-      this.$store.commit('updateUser', user);
+      this.$store.commit('updateUser', Object.assign(user, {
+        activeTime: Date.now() / 1000
+      }));
+
       vkapi('stats.trackVisitor');
       require('./../../js/longpoll').init();
     }

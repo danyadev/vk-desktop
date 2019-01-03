@@ -25,7 +25,7 @@
       },
       exit() {
         this.$store.commit('setActiveUser', null);
-        this.$modals.close();
+        this.$modals.close(this.$parent.$attrs.name);
       }
     }
   }
