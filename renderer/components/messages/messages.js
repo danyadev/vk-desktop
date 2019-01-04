@@ -101,8 +101,8 @@ async function toggleChat(chatID) {
 
     // если чел находится внизу диалога
     if(messagesList.scrollTop + messagesList.clientHeight == messagesList.scrollHeight) {
-      peer.scrollToUnread = true;
-    } else peer.scrollToUnread = false;
+      peer.scrolledToEnd = true;
+    } else peer.scrolledToEnd = false;
   }
 
   this.$store.commit('setChat', chatID);
@@ -118,9 +118,8 @@ async function toggleChat(chatID) {
     if(newPeer) {
       if(dialogInput) dialogInput.innerHTML = newPeer.inputText || '';
 
-      if(newPeer.scrollToUnread || !hasScrollTop) {
-        let item = qs(`#message${newPeer.in_read}`);
-        if(item) item.scrollIntoView();
+      if(newPeer.scrolledToEnd || !hasScrollTop) {
+        qs('.typing_wrap').scrollIntoView();
       } else if(hasScrollTop) {
         qs('.dialog_messages_list').scrollTop = newPeer.scrollTop;
       }

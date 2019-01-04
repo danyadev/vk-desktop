@@ -1,7 +1,6 @@
 'use strict';
 
 const querystring = require('querystring');
-const request = require('./../../js/request');
 
 function getFirstToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
@@ -16,14 +15,21 @@ function getFirstToken(login, password, params = {}) {
         '2fa_supported': 1,
         grant_type: 'password',
         force_sms: 1,
-        lang: 'ru',
-        v: '5.92',
+        lang: app.$store.state.langName,
+        v: vkapi.version,
         ...params
       })
     });
 
     if(data.error) {
-      if(data.error == 'need_captcha') {
+      if(data.error == 'invalid_client') resolve({ type: 'invalid_client' });
+      else if(data.error == 'invalid_request') resolve({ type: 'invalid_code' });
+      else if(data.error == 'need_validation') {
+        resolve({
+          type: 'need_validation',
+          phone_mask: data.phone_mask
+        });
+      } else if(data.error == 'need_captcha') {
         app.$modals.open('captcha', {
           src: data.captcha_img,
           async send(code) {
@@ -35,15 +41,6 @@ function getFirstToken(login, password, params = {}) {
             resolve(res);
           }
         });
-      } else if(data.error == 'invalid_client') {
-        resolve({ type: 'invalid_client' });
-      } else if(data.error == 'need_validation') {
-        resolve({
-          type: 'need_validation',
-          phone_mask: data.phone_mask
-        });
-      } else if(data.error == 'invalid_request') {
-        resolve({ type: 'invalid_code' });
       }
     } else {
       let { token } = await vkapi('auth.refreshToken', {
@@ -65,7 +62,7 @@ function getLastToken(firstToken) {
       response_type: 'token',
       access_token: firstToken,
       revoke: 1,
-      lang: 'ru',
+      lang: app.$store.state.langName,
       scope: 136297695,
       client_id: 6717234,
       sdk_package: 'com.danyadev.vkdesktop',

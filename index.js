@@ -1,34 +1,11 @@
+'use strict';
+
 const { app, BrowserWindow, Menu } = require('electron');
 const fs = require('fs');
 
-let win, lastChangeTime;
+let win;
 
-// Упрощенная версия electron-reload, только без десятков зависимостей :)
-if(!app.isPackaged) {
-  fs.watch('.', { recursive: true }, (event, filename) => {
-    let prevChangeTime = lastChangeTime;
-    lastChangeTime = new Date().getTime();
-    if(prevChangeTime < lastChangeTime - 250 || !filename) return;
-
-    let ignoredFiles = [
-      '.git', 'core', 'vue-devtools', '.gitignore',
-      'index.js', 'LICENSE', 'package.json', 'README.md'
-    ];
-
-	let isIgnored = ignoredFiles.find((ignoredPath) => {
-      let regexp = new RegExp(`${ignoredPath}/`),
-          path = filename.replace(/\\/g, '/');
-
-      return ignoredPath == path || path.match(regexp);
-    });
-
-    if(isIgnored) return;
-
-    BrowserWindow.getAllWindows().forEach((win) => {
-      win.webContents.reloadIgnoringCache();
-    });
-  });
-}
+if(!app.isPackaged) require('./autoReload');
 
 app.on('ready', () => {
   // Расширение для удобной разработки на Vue

@@ -52,12 +52,17 @@
       },
       setAccount(id) {
         if(this.$store.state.activeUser != id) {
-          this.$store.commit('updateUser', {
-            id: id,
-            activeTime: Date.now() / 1000
-          });
+          this.$modals.open('confirm-set-account', {
+            confirm: () => {
+              this.$store.commit('updateUser', {
+                id: id,
+                activeTime: Date.now() / 1000
+              });
 
-          this.$store.commit('setActiveUser', id);
+              this.$store.commit('setActiveUser', id);
+              getCurrentWindow().reload();
+            }
+          });
         }
       },
       openAuth() {

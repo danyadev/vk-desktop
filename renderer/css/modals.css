@@ -179,5 +179,8 @@
 }
 
 .multiaccount_item_close:hover { opacity: .6 }
+.multiaccount_confirm { padding: 20px }
+
+/* Авторизация */
 
 .auth_modal { padding: 25px }

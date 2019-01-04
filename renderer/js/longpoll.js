@@ -3,8 +3,6 @@
 const util = require('util');
 const querystring = require('querystring');
 const { EventEmitter } = require('events');
-
-const request = require('./request');
 const { parseConversation, parseMessage, concatProfiles } = require('./../components/messages/methods');
 
 let instance, onInitResolve;
@@ -15,7 +13,6 @@ class Longpoll {
     this.key = data.key;
     this.pts = data.pts;
     this.ts = data.ts;
-    this.userID = app.$store.state.activeUser;
 
     this.loop();
   }
@@ -25,23 +22,6 @@ class Longpoll {
   }
 
   async loop() {
-    let activeUser = app.$store.state.activeUser;
-    if(!activeUser) return;
-
-    if(this.userID != activeUser) {
-      let { server, key, pts, ts } = await Longpoll.getServer();
-
-      this.server = server;
-      this.key = key;
-      this.pts = pts;
-      this.ts = ts;
-      this.userID = activeUser;
-
-      this.removeAllListeners();
-
-      return this.loop();
-    }
-
     let [ host, path ] = this.server.split('/');
 
     let data = await request({

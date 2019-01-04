@@ -28,9 +28,7 @@
     }),
     methods: {
       cancel() {
-        this.$emit('auth', {
-          type: 'cancel_enter_code'
-        });
+        this.$emit('auth', { type: 'cancel_enter_code' });
       },
       async auth() {
         this.load = true;

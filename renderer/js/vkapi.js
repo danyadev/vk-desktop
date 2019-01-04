@@ -1,8 +1,6 @@
 'use strict';
 
 const querystring = require('querystring');
-const request = require('./request');
-
 const API_VERSION = '5.92';
 
 let methods = [], isCaptcha = false;
@@ -124,3 +122,4 @@ addToQueue.upload = (url) => {
 }
 
 module.exports = addToQueue;
+module.exports.version = API_VERSION;

@@ -177,5 +177,6 @@ module.exports = {
   multiaccount_header: 'Выберите аккаунт',
   add_account: 'Добавить аккаунт',
   active_account: 'Активный аккаунт',
-  was_active: 'Был активен {0}'
+  was_active: 'Был активен {0}',
+  multiaccount_confirm_set_acc: `Для изменения аккаунта необходимо перезагрузить страницу.<br>Продолжить?`
 }

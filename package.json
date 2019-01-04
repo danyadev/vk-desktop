@@ -1,7 +1,7 @@
 {
   "main": "index.js",
   "name": "vk-desktop",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "danyadev",
   "license": "Apache-2.0"
 }

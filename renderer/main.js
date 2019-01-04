@@ -15,6 +15,7 @@ const contextMenu = require('./js/contextMenu');
 const emoji = require('./js/emoji');
 const { users, settings } = require('./js/Storage');
 const vkapi = require('./js/vkapi');
+const request = require('./js/request');
 
 // настройка Vue
 Vue.config.devtools = true;
@@ -22,7 +23,7 @@ require('./js/initComponents');
 
 let app = new Vue({
   el: '.app',
-  store: require('./js/store/'),
+  store: require('./js/VueStore'),
   data: {
     section: settings.get('section')
   },
