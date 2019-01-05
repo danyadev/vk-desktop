@@ -12,7 +12,7 @@ fs.watch('.', { recursive: true }, (event, filename) => {
 
   let ignoredFiles = [
     '.git', 'core', 'vue-devtools', '.gitignore',
-    'index.js', 'LICENSE', 'package.json', 'README.md', 'renderer/css'
+    'index.js', 'LICENSE', 'package.json', 'README.md'
   ];
 
 let isIgnored = ignoredFiles.find((ignoredPath) => {

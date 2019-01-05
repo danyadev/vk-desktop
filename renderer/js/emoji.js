@@ -59,6 +59,20 @@ function HexToImg(hex, sym = '') {
   return `<img class="emoji" src="https://vk.com/emoji/e/${hex}.png" alt="${sym}">`;
 }
 
+function HexToEmoji(hex) {
+  var t = hex.length % 2 == 1,
+      o = t ? hex.slice(0, 1) : '',
+      r = t ? hex.slice(1) : hex,
+      i = r;
+
+  let a = i.split('').reduce((e, i, t) => {
+    let o = (t + 1) % 2 == 0;
+    return e + i + (o ? ' ' : '');
+  }, '').trim().split(/\s+/);
+
+  return o + decodeURIComponent('%' + a.join('%'));
+}
+
 function emojiToHTML(e = '') {
   e = e.replace(/&nbsp;/g, ' ').replace(/<br>/g, '\n');
 
@@ -79,3 +93,4 @@ function emojiToHTML(e = '') {
 
 module.exports = emojiToHTML;
 module.exports.isEmoji = (text) => emojiRegex.test(text);
+module.exports.HexToEmoji = HexToEmoji;

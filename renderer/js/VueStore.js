@@ -61,7 +61,10 @@ module.exports = new Vuex.Store({
     },
     updateProfile(state, user) {
       let old = state.profiles[user.id];
-      Vue.set(state.profiles, user.id, Object.assign({}, old, user));
+
+      if(old) {
+        Vue.set(state.profiles, user.id, Object.assign({}, old, user));
+      }
     },
     // ** Список бесед **
     addConversation(state, data) {

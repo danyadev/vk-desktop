@@ -48,15 +48,19 @@
           <div class="dialog_to_end_count">{{ peer && peer.unread || '' }}</div>
           <img class="dialog_to_end_icon" src="images/im_to_end.png">
         </div>
+        <emoji-block :key="id" :class="{ active: openedEmojiBlock }"
+                     @onChooseEmoji="onChooseEmoji"
+                     @close="closeEmojiBlock"></emoji-block>
         <template v-if="canSendMessages.state">
           <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
           <div class="dialog_input_container">
             <div class="dialog_input" role="textbox" contenteditable
+                 :placeholder="l('im_enter_msg')"
                  @paste.prevent="pasteText"
                  @mousedown="setCursorPositionForEmoji"
                  @input="onInput(peer)"
                  @keydown.enter="sendMessage"></div>
-            <div class="dialog_input_placeholder">{{ l('im_enter_msg') }}</div>
+            <div class="dialog_input_emoji_btn" @mousemove="openEmojiBlock"></div>
           </div>
           <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
         </template>
@@ -64,7 +68,7 @@
           <img src="images/warning.png" v-if="!canSendMessages.channel" class="dialog_input_error_img">
           <div class="dialog_input_error_text" :class="{ channel: canSendMessages.channel }">
             <div v-if="canSendMessages.channel"
-                @click="toggleChannelNotifications"
+                 @click="toggleChannelNotifications"
                  class="dialog_input_channel">{{ canSendMessages.text }}</div>
             <template v-else>{{ canSendMessages.text }}</template>
           </div>
@@ -117,6 +121,9 @@
       },
       showTopTime() {
         return this.peer && this.peer.showTopTime;
+      },
+      openedEmojiBlock() {
+        return this.peer && this.peer.openedEmojiBlock;
       },
       title() {
         if(this.isChat) return this.peer.title || '...';
@@ -203,7 +210,6 @@
         let text, reason = this.peer.canWrite.reason;
 
         if(!this.peer.canWrite.allowed) {
-          console.log(this.peer.muted);
           if(reason == 925) text = this.l('im_channel_notifications', Number(!this.peer.muted));
           else text = this.l('im_cant_write_reasons', reason);
 
@@ -220,6 +226,19 @@
       }
     },
     methods: {
+      openEmojiBlock() {
+        if(!this.peer.openedEmojiBlock) {
+          Vue.set(this.peer, 'openedEmojiBlock', true);
+        }
+      },
+      closeEmojiBlock() {
+        if(this.peer.openedEmojiBlock) {
+          Vue.set(this.peer, 'openedEmojiBlock', false);
+        }
+      },
+      onChooseEmoji(code) {
+        qs('.dialog_input').innerHTML += emoji(emoji.HexToEmoji(code));
+      },
       getPeer(peer_id) {
         let dialog = this.$store.state.conversations[peer_id],
             peer = dialog && dialog.peer;

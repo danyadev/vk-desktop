@@ -67,6 +67,17 @@ module.exports = {
     money_request: 'Запрос денег',
     audio_playlist: 'Плейлист'
   },
+  emojies: {
+    emotions: 'Эмоции',
+    gestures_and_people: 'Жесты и люди',
+    symbols: 'Символы',
+    animals_and_plants: 'Животные и растения',
+    food_and_drinks: 'Еда и напитки',
+    sport: 'Спорт',
+    transport: 'Транспорт',
+    items: 'Предметы',
+    flags: 'Флаги'
+  },
   // ** Сообщения **
   im_header_title: 'Сообщения',
   im_typing_text: ['{0} печатает', '{0} и {1} печатают', '{0} и еще {1} печатают'],

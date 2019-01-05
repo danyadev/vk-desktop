@@ -204,22 +204,82 @@
   min-height: 18px;
   max-height: 180px;
   line-height: 18px;
-  padding: 10px;
+  padding: 10px 35px 10px 10px;
   overflow-x: auto;
 }
 
-.dialog_input:not(:empty) + .dialog_input_placeholder {
-  display: none;
+.dialog_input:empty::before {
+  content: attr(placeholder);
+  color: #828282;
+  cursor: text;
 }
 
-.dialog_input_placeholder {
+.dialog_input_emoji_btn {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  color: #828282;
-  line-height: 18px;
-  user-select: none;
-  pointer-events: none;
+  bottom: 7px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background-image: url('../images/emoji.svg');
+  opacity: .7;
+  cursor: pointer;
+  transition: opacity .3s;
+}
+
+.dialog_input_emoji_btn:hover { opacity: 1 }
+
+.emoji_block {
+  position: fixed;
+  bottom: 50px;
+  right: 20px;
+  width: 305px;
+  height: 282px;
+  padding: 8px;
+  opacity: 0;
+  visibility: hidden;
+  overflow-y: auto;
+  background-color: #fff;
+  transform: translate(0, 15px);
+  z-index: 1;
+  box-shadow: rgba(0, 0, 0, .2) 0px 1px 5px 0px;
+  border: 1px solid #d6dae0;
+  border-radius: 5px;
+  transition: visibility .3s, opacity .3s, transform .3s;
+}
+
+.emoji_block.active {
+  visibility: visible;
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.emoji_block_item { margin-bottom: 5px }
+
+.emoji_block_name {
+  color: rgb(135, 137, 140);
+  font-size: 14px;
+  padding-bottom: 4px;
+}
+
+.emoji_block_image_wrap {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  padding: 3px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color .2s;
+}
+
+.emoji_block_image_wrap:hover {
+  background-color: #dae0e4;
+}
+
+.emoji_block_image {
+  position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
 }
 
 .dialog_show_attachments_btn, .dialog_send {
