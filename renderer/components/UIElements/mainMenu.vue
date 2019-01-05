@@ -21,6 +21,9 @@
           <div class="menu_item_icon" :class="type"></div>
           <div class="menu_item_name">{{ l('menu', type) }}</div>
         </div>
+        <div class="menu_item logout" @click.stop="logout">
+          <div class="menu_item_name">{{ l('logout') }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -67,6 +70,10 @@
         else state = qs('.menu_wrap') != event.target;
 
         this.$store.commit('setMenuState', state);
+      },
+      logout() {
+        this.toggleMenu(false);
+        setTimeout(() => this.$modals.open('logout'), 150);
       }
     },
     async mounted() {

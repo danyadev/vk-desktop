@@ -4,7 +4,7 @@ const { EventEmitter } = require('events');
 
 let Bus = new EventEmitter();
 
-let ModalCreator = {
+module.exports = {
   install(Vue) {
     Vue.prototype.$modals = new Vue({
       name: '$modals',
@@ -24,5 +24,3 @@ let ModalCreator = {
   },
   Bus
 }
-
-module.exports = ModalCreator;

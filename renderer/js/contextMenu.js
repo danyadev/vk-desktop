@@ -15,13 +15,13 @@ function devTools(e) {
 }
 
 document.addEventListener('contextmenu', async (event) => {
-  for(let template of templates) {
+  for(let { selector, callback } of templates) {
     let hasItem = event.path.find((el) => {
-      return el.matches && el.matches(template.selector);
+      return el.matches && el.matches(selector);
     });
 
     if(hasItem) {
-      let temp = [...template.callback(event), devTools(event)],
+      let temp = [...callback(event), devTools(event)],
           menu = Menu.buildFromTemplate(temp instanceof Promise ? await temp : temp);
 
       menu.popup(menu);
@@ -30,7 +30,5 @@ document.addEventListener('contextmenu', async (event) => {
 });
 
 module.exports = {
-  set: (selector, callback) => {
-    templates.push({ selector, callback });
-  }
+  set: (selector, callback) => templates.push({ selector, callback })
 }

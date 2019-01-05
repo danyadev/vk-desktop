@@ -81,16 +81,17 @@
   margin: 9px 5px;
 }
 
-.modal_bottom .button.right:first-child {
+.modal_bottom .button.right:first-child,
+.modal_bottom .light_button.right:first-child {
   margin-right: 10px;
 }
 
-.modal_bottom .button.right { float: right }
-.modal_bottom .button.left { float: left }
+.modal_bottom .button.right,
+.modal_bottom .light_button.right { float: right }
 
 /* Капча */
 
-.captcha {
+.modal_content.captcha {
   width: 300px;
   background-color: #fcfcfc;
 }
@@ -122,7 +123,7 @@
 
 /* Заблокированный аккаунт */
 
-.blocked_profile {
+.modal_content.blocked_profile {
   padding: 20px;
   max-width: 450px;
 }
@@ -136,7 +137,7 @@
 
 /* Мультиаккаунт */
 
-.multiaccount { min-width: 300px }
+.modal_content.multiaccount { min-width: 300px }
 
 .multiaccount_item {
   display: flex;
@@ -183,4 +184,8 @@
 
 /* Авторизация */
 
-.auth_modal { padding: 25px }
+.modal_content.auth_modal { padding: 25px }
+
+/* Выход из аккаунта */
+
+.modal_content.logout { padding: 25px }

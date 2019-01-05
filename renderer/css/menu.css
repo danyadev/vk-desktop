@@ -8,13 +8,12 @@
 }
 
 .menu_wrap { transition: background-color .15s, visibility .15s }
+.menu_wrap.active .menu { transform: translateZ(0) }
 
 .menu_wrap.active {
   background-color: rgba(0, 0, 0, .5);
   visibility: visible;
 }
-
-.menu_wrap.active .menu { transform: translateZ(0) }
 
 .menu {
   position: absolute;
@@ -24,7 +23,7 @@
   z-index: 3;
   overflow: hidden;
   background-color: white;
-  box-shadow: 4px 0 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
 }
 
 .menu { transition: transform .35s }
@@ -107,25 +106,10 @@
   transition: background-color .3s, color .3s;
 }
 
-.menu_item:hover {
-  background-color: #eaeff6;
-}
-
-.menu_item.active:not(.menu_account_item) {
-  background-color: #eaeff6;
-}
-
-.menu_item.active .menu_item_icon {
-  background-color: #5181b8;
-}
-
-.menu_item.active .menu_item_name {
-  color: #3e70a9;
-}
-
-.menu_item_name {
-
-}
+.menu_item:hover { background-color: #eaeff6 }
+.menu_item.active:not(.menu_account_item) { background-color: #eaeff6 }
+.menu_item.active .menu_item_icon { background-color: #5181b8 }
+.menu_item.active .menu_item_name { color: #3e70a9 }
 
 .menu_item_icon {
   width: 24px;
@@ -145,3 +129,25 @@
 .menu_item_icon.photos { -webkit-mask-image: url('../images/menu_photos.png') }
 .menu_item_icon.videos { -webkit-mask-image: url('../images/menu_videos.png') }
 .menu_item_icon.settings { -webkit-mask-image: url('../images/menu_settings.png') }
+
+/* Кнопка выхода из аккаунта */
+
+.menu_item.logout {
+  position: relative;
+  margin-top: 20px;
+}
+
+.menu_item.logout::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  width: 100%;
+  border-top: 1px solid #e4e4e4;
+  pointer-events: none;
+}
+
+.menu_item.logout .menu_item_name {
+  margin-left: 15px;
+  font-size: 16px;
+  color: #de3f3f;
+}

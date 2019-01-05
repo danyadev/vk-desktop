@@ -34,9 +34,11 @@ module.exports = new Vuex.Store({
   mutations: {
     // ** Пользователи для мультиаккаунта **
     updateUser(state, data) {
-      let user = state.users[data.id];
+      let user = state.users[data.id],
+          newUser = Object.assign({}, user, data);
 
-      users.update(data.id, Object.assign({}, user, data));
+      users.update(data.id, newUser);
+      Vue.set(state.users, data.id, newUser);
     },
     removeUser(state, id) {
       users.remove(id);
@@ -44,6 +46,7 @@ module.exports = new Vuex.Store({
     },
     setActiveUser(state, id) {
       settings.set('activeUser', id);
+      state.activeUser = id;
     },
     // ** Язык приложения **
     setLang(state, name) {

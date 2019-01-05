@@ -1,6 +1,7 @@
 'use strict';
 
 window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+process.package = require('./../package');
 
 const qs = (selector, target) => (target || document).querySelector(selector);
 const qsa = (selector, target) => (target || document).querySelectorAll(selector);

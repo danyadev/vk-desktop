@@ -62,10 +62,9 @@ function HexToImg(hex, sym = '') {
 function HexToEmoji(hex) {
   var t = hex.length % 2 == 1,
       o = t ? hex.slice(0, 1) : '',
-      r = t ? hex.slice(1) : hex,
-      i = r;
+      r = t ? hex.slice(1) : hex;
 
-  let a = i.split('').reduce((e, i, t) => {
+  let a = r.split('').reduce((e, i, t) => {
     let o = (t + 1) % 2 == 0;
     return e + i + (o ? ' ' : '');
   }, '').trim().split(/\s+/);
@@ -92,5 +91,4 @@ function emojiToHTML(e = '') {
 }
 
 module.exports = emojiToHTML;
-module.exports.isEmoji = (text) => emojiRegex.test(text);
 module.exports.HexToEmoji = HexToEmoji;

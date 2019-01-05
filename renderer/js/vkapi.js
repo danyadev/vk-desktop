@@ -42,7 +42,6 @@ function tryResolve(params, data, resolve, reject) {
 }
 
 let method = (name, params = {}, promise) => {
-  if(isCaptcha) console.log('captcha', name, params);
   return new Promise(async (resolve, reject) => {
     let time = Date.now();
 
@@ -53,14 +52,15 @@ let method = (name, params = {}, promise) => {
 
     params.v = params.v || API_VERSION;
     params.lang = app.$store.state.langName;
-
     params.access_token = getToken(params);
 
     let data = await request({
       host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST',
-      headers: { 'User-Agent': params.offToken ? 'VKAndroidApp/5.11.1-2316' : 'VKDesktop/0.0.2' }
+      headers: {
+        'User-Agent': params.offToken ? 'VKAndroidApp/5.11.1-2316' : 'VKDesktop/' + process.package.version
+      }
     }, { data: querystring.stringify(params) });
 
     if(data.response !== undefined) tryResolve(params, data.response, resolve);
@@ -81,12 +81,6 @@ let method = (name, params = {}, promise) => {
             break;
         }
       } else if(data.error.error_code == 14) {
-        if(isCaptcha) {
-          console.log('captcha #2', name, params);
-          methods.unshift([name, params, promise || { resolve, reject }]);
-          return;
-        }
-
         isCaptcha = true;
 
         app.$modals.open('captcha', {
@@ -98,11 +92,10 @@ let method = (name, params = {}, promise) => {
             });
 
             methods.unshift([name, newParams, promise || { resolve, reject }]);
-
             isCaptcha = false;
           }
         });
-      } else tryResolve(params, data, reject);
+      } else tryResolve(params, data, null, reject);
     }
 
     if(params.log) {
@@ -111,7 +104,6 @@ let method = (name, params = {}, promise) => {
       params.$method = name;
 
       let date = Date.now() - time + 'ms';
-
       console.log('[API]', date, Object.assign({}, data.response, { $options: params }));
     }
   });
