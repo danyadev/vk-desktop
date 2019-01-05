@@ -68,7 +68,10 @@ class Settings extends Storage {
   get defaults() {
     return {
       section: 'messages',
-      lang: 'ru'
+      lang: 'ru',
+      counters: {
+        messages: 0
+      }
     }
   }
 }

@@ -15,11 +15,14 @@
       </div>
       <div class="menu_items">
         <div class="menu_item"
-             v-for="type of list"
+             v-for="item of list"
              @click="openPage(type)"
-             :class="{ active: $root.section == type }">
-          <div class="menu_item_icon" :class="type"></div>
-          <div class="menu_item_name">{{ l('menu', type) }}</div>
+             :class="{ active: $root.section == item.type }">
+          <div class="menu_item_icon" :class="item.type"></div>
+          <div class="menu_item_name">{{ l('menu', item.type) }}</div>
+          <div class="menu_item_counter" v-if="item.counter">
+            {{ $store.state.counters[item.type] }}
+          </div>
         </div>
         <div class="menu_item logout" @click.stop="logout">
           <div class="menu_item_name">{{ l('logout') }}</div>
@@ -36,7 +39,7 @@
         list: [
           // 'news',
           // 'notifications',
-          'messages'
+          { type: 'messages', counter: true }
           // 'audios',
           // 'friends',
           // 'groups',

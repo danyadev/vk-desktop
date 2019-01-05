@@ -183,6 +183,13 @@
         });
       });
 
+      longpoll.on('change_messages_counter', (data) => {
+        this.$store.commit('updateCounter', {
+          type: 'messages',
+          count: data
+        });
+      });
+
       longpoll.on('add_message_snippet', (data) => {
         this.updatePeer(data.peer.id, data.peer, true);
 

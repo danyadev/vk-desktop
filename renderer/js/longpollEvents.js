@@ -335,7 +335,7 @@ module.exports = {
     // count_with_notifications - кол-во непрочитанных диалогов, в которых включены уведомления
 
     return {
-      name: 'update_messages_count',
+      name: 'change_messages_counter',
       data: data[0]
     }
   },

@@ -27,12 +27,17 @@
 }
 
 .auth_error {
-  color: #ff3347;
-  margin: 5px 0 12px 0;
+  width: 250px;
+  padding: 8px 0;
+  margin-bottom: 6px;
+  text-align: center;
+  border: 1px solid #f2ab99;
+  border-radius: 5px;
+  background-color: #ffefe9;
 }
 
 .auth_code_section .auth_error {
-  margin: 5px 0 -3px 0;
+  margin: 5px 0 -8px 0;
 }
 
 .auth_button {

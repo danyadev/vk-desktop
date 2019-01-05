@@ -20,8 +20,8 @@ module.exports = new Vuex.Store({
   state: {
     users: Object.assign({}, users.get()),
     activeUser: settings.get('activeUser'),
-    settings: settings.get(),
     menuState: false,
+    counters: settings.get('counters'),
     profiles: {},
     conversations: {},
     peersList: [],
@@ -57,6 +57,10 @@ module.exports = new Vuex.Store({
     // ** Меню **
     setMenuState(state, value) {
       state.menuState = value;
+    },
+    updateCounter(state, data) {
+      Vue.set(state.counters, data.type, data.count);
+      settings.set('counters', state.counters);
     },
     // ** Профили **
     addProfiles(state, users) {

@@ -111,6 +111,17 @@
 .menu_item.active .menu_item_icon { background-color: #5181b8 }
 .menu_item.active .menu_item_name { color: #3e70a9 }
 
+.menu_item_name { flex-grow: 1 }
+
+.menu_item_counter {
+  color: #4d5f75;
+  background-color: #cad9e6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-size: 14px;
+}
+
 .menu_item_icon {
   width: 24px;
   height: 22px;
@@ -150,4 +161,5 @@
   margin-left: 15px;
   font-size: 16px;
   color: #de3f3f;
+  margin-top: -2px;
 }
