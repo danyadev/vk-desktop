@@ -48,8 +48,8 @@
           <div class="dialog_to_end_count">{{ peer && peer.unread || '' }}</div>
           <img class="dialog_to_end_icon" src="images/im_to_end.png">
         </div>
-        <emoji-block :key="id" :class="{ active: openedEmojiBlock }"
-                     @onChooseEmoji="onChooseEmoji"
+        <emoji-block :key="id" :active="openedEmojiBlock"
+                     @chooseEmoji="onChooseEmoji"
                      @close="closeEmojiBlock"></emoji-block>
         <template v-if="canSendMessages.state">
           <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
@@ -60,7 +60,7 @@
                  @mousedown="setCursorPositionForEmoji"
                  @input="onInput(peer)"
                  @keydown.enter="sendMessage"></div>
-            <div class="dialog_input_emoji_btn" @mousemove="openEmojiBlock"></div>
+            <div class="dialog_input_emoji_btn" @click="openEmojiBlock"></div>
           </div>
           <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
         </template>
@@ -227,9 +227,7 @@
     },
     methods: {
       openEmojiBlock() {
-        if(!this.peer.openedEmojiBlock) {
-          Vue.set(this.peer, 'openedEmojiBlock', true);
-        }
+        Vue.set(this.peer, 'openedEmojiBlock', !this.peer.openedEmojiBlock);
       },
       closeEmojiBlock() {
         if(this.peer.openedEmojiBlock) {
