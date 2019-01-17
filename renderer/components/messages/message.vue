@@ -36,8 +36,7 @@
 </template>
 
 <script>
-  const { loadProfile } = require('./methods');
-  const { getServiceMessage, getDate } = require('./messages');
+  const { loadProfile, getServiceMessage, getDate } = require('./methods');
 
   module.exports = {
     props: {
@@ -69,7 +68,7 @@
 
         if(this.prevMsg) {
           let prevDate = new Date(this.prevMsg.date * 1000);
-          if(prevDate.getDate() != date.getDate()) return time;
+          if(prevDate.toLocaleDateString() != date.toLocaleDateString()) return time;
         } else return time;
       },
       showUserData() {

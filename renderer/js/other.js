@@ -9,6 +9,11 @@ Object.defineProperty(Array.prototype, 'move', {
 
 Object.defineProperty(Vue.prototype, 'l', {
   value(name, key, replaces) {
+    if(!replaces && Array.isArray(key)) {
+      replaces = key;
+      key = null;
+    }
+
     let data = this.$store.state.lang[name];
     if(![null, undefined].includes(key)) data = data[key];
 
@@ -73,18 +78,6 @@ function getWordEnding(num, variants = [0, 1, 2]) {
   return variants[2];
 }
 
-function getTextWithEmoji(nodes) {
-  let text = '';
-
-  for(let node of nodes || []) {
-    if(node.nodeName == 'IMG') text += node.alt;
-    else if(node.nodeName == 'BR') text += '<br>';
-    else text += node.data || node.innerText || '';
-  }
-
-  return text;
-}
-
 function isEqual(a, b) {
   let i = a.length;
   if(i != b.length) return false;
@@ -108,8 +101,12 @@ function getNewIndex(arr, num) {
 }
 
 module.exports = {
-  throttle, debounce, endScroll, getWordEnding,
-  getTextWithEmoji, isEqual, getNewIndex,
+  throttle,
+  debounce,
+  endScroll,
+  getWordEnding,
+  isEqual,
+  getNewIndex,
   fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen',
   timer: (t) => new Promise((r) => setTimeout(r, t)),
   escape: (t) => t.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'),

@@ -71,11 +71,10 @@
   text-align: center;
   opacity: 0;
   transition: opacity .3s;
+  pointer-events: none;
 }
 
-.dialog_messages_time_wrap.active {
-  opacity: 1;
-}
+.dialog_messages_time_wrap.active { opacity: 1 }
 
 .dialog_messages_time {
   display: inline-block;
@@ -86,7 +85,6 @@
   padding: 2px 15px 4px 15px;
   color: #828282;
   user-select: none;
-  pointer-events: none;
 }
 
 /* Диалог */
@@ -233,14 +231,13 @@
   position: fixed;
   bottom: 50px;
   right: 20px;
-  width: 300px;
+  width: 308px;
   height: 282px;
   opacity: 0;
   visibility: hidden;
-  overflow-y: auto;
+  z-index: 1;
   background-color: #fff;
   transform: translate(0, 15px);
-  z-index: 1;
   box-shadow: rgba(0, 0, 0, .2) 0px 0px 3px 0px;
   border: 1px solid #d6dae0;
   border-radius: 5px;
@@ -254,12 +251,8 @@
 }
 
 .emoji_bottom {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
   height: 35px;
   border-top: 1px solid #d6dae0;
-  background-color: #fff;
   box-shadow: rgba(0, 0, 0, .1) 0px -2px 3px -1px;
 }
 
@@ -276,14 +269,19 @@
 }
 
 .emoji_list {
-  padding: 5px 5px 30px 5px;
+  height: calc(100% - 40px);
+  margin: 5px 2px 0 0;
+  padding: 5px;
   overflow: auto;
-  height: inherit;
 }
 
 .emoji_block_item { margin-bottom: 8px }
 
 .emoji_block_name {
+  position: sticky;
+  top: -5px;
+  z-index: 1;
+  background-color: #fff;
   color: #87898c;
   font-size: 14px;
   padding: 0 0 4px 4px;
@@ -297,12 +295,9 @@
   transition: background-color .2s;
 }
 
-.emoji_block_image_wrap:hover {
-  background-color: #dae0e4;
-}
+.emoji_block_image_wrap:hover { background-color: #dae0e4 }
 
 .emoji_block_image {
-  position: relative;
   display: inline-block;
   width: 16px;
   height: 16px;
@@ -379,9 +374,7 @@
   width: 46px;
 }
 
-.message_content {
-  max-width: calc(100% - 65px);
-}
+.message_content { max-width: calc(100% - 65px) }
 
 .message_name {
   color: #254f79;
@@ -426,10 +419,6 @@
 .message:not(.service):not(.from_me) .message_text_wrap.outread::after {
   content: '';
   right: -20px;
-}
-
-.message_text_wrap.outread::after {
-
 }
 
 .message:not(.service) .message_text {

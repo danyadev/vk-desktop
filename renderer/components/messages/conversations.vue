@@ -11,7 +11,13 @@
 </template>
 
 <script>
-  const { parseConversation, parseMessage, concatProfiles, loadConversation } = require('./methods');
+  const {
+    parseConversation,
+    parseMessage,
+    concatProfiles,
+    loadConversation,
+    loadAttachments
+  } = require('./methods');
 
   module.exports = {
     data: () => ({
@@ -52,7 +58,7 @@
         await this.$nextTick();
         this.onScroll({ target: qs('.conversations_wrap') });
       },
-      onScroll: endScroll((vm) => {
+      onScroll: other.endScroll((vm) => {
         if(!vm.loading && !vm.loaded) {
           vm.load();
           vm.loading = true;

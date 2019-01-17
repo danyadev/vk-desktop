@@ -1,10 +1,10 @@
 <template>
   <div class="emoji_block" :class="{ active }">
-    <div class="emoji_list">
+    <div class="emoji_list scrollbar">
       <div v-for="(codes, name) of list" class="emoji_block_item">
         <div class="emoji_block_name">{{ l('emojies', name) }}</div>
-        <div v-for="code of codes" class="emoji_block_image_wrap" @click="$emit('chooseEmoji', code)">
-          <div :class="'@'+code" class="emoji_block_image"></div>
+        <div v-for="code of codes" class="emoji_block_image_wrap" @click="chooseEmoji(code)">
+          <div :class="'@' + code" class="emoji_block_image"></div>
         </div>
       </div>
     </div>
@@ -18,11 +18,27 @@
   module.exports = {
     props: ['active'],
     data: () => ({
-      list: require('./../../js/emojiList'),
       entered: false,
       timeout: null
     }),
+    computed: {
+      list() {
+        let emojies = {},
+            recentEmojies = this.$store.state.recentEmojies;
+
+        if(Object.keys(recentEmojies).length) {
+          emojies.recent = Object.keys(recentEmojies).sort((a, b) => {
+            return recentEmojies[a] > recentEmojies[b] ? -1 : 1;
+          });
+        }
+
+        return Object.assign(emojies, require('./../../js/emojiList'));
+      }
+    },
     methods: {
+      chooseEmoji(code) {
+        this.$emit('chooseEmoji', code);
+      },
       leave() {
         this.entered = false;
         clearTimeout(this.timeout);

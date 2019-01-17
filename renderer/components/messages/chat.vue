@@ -80,8 +80,18 @@
 
 <script>
   const { clipboard } = require('electron').remote;
-  const { loadOnlineApp, loadConversation, concatProfiles, parseMessage, parseConversation } = require('./methods');
-  const { getDate, toggleChat } = require('./messages');
+
+  const {
+    loadOnlineApp,
+    loadConversation,
+    concatProfiles,
+    parseMessage,
+    parseConversation,
+    loadAttachments,
+    getDate,
+    toggleChat,
+    getTextWithEmoji
+  } = require('./methods');
 
   module.exports = {
     computed: {
@@ -263,14 +273,14 @@
         else if(event.type != 'click') event.preventDefault();
 
         let input = qs('.dialog_input'),
-            text = other.getTextWithEmoji(input.childNodes).trim();
+            { text, emojies } = getTextWithEmoji(input.childNodes);
 
         if(!text) return;
         input.innerHTML = '';
 
-        let text_blocks = text.match(/.{1,4096}/g) || [];
+        this.$store.commit('updateRecentEmoji', emojies);
 
-        for(let block of text_blocks) {
+        for(let block of text.match(/.{1,4096}/g)) {
           let id = await vkapi('messages.send', {
             peer_id: this.id,
             message: block,

@@ -36,8 +36,7 @@
 </template>
 
 <script>
-  const { loadProfile } = require('./methods');
-  const { getServiceMessage, getDate, toggleChat } = require('./messages');
+  const { loadProfile, getServiceMessage, getDate, toggleChat } = require('./methods');
 
   module.exports = {
     props: {

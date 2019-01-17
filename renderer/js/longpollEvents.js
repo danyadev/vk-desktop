@@ -27,7 +27,8 @@ function getServiceMessage(data) {
 
     if(match) {
       let value = data[key];
-      if(Number(data[key]) == value) value = Number(data[key]);
+      
+      if(Number(value) == value) value = Number(value);
       if(match[1] == 'act') match[1] = 'type';
 
       source[match[1]] = value;
@@ -45,10 +46,7 @@ function getAttachments(data) {
 
     if(match) {
       let id = match[1],
-          attach = {
-            id: data[`attach${id}`],
-            type: data[`attach${id}_type`]
-          };
+          attach = { type: data[`attach${id}_type`] };
 
       if(data[`attach${id}_kind`] == 'audiomsg') attach.type = 'audio_message';
       if(data[`attach${id}_kind`] == 'graffiti') attach.type = 'graffiti';
@@ -89,24 +87,25 @@ function getMessage(data, type) {
 
   let res = {
     peer: {
-      channel: isChannel,
       id: data[2],
-      owner: isChannel ? from_id : data[2],
-      type: data[2] > 2e9 ? 'chat' : 'user'
+      type: data[2] > 2e9 ? 'chat' : 'user',
+      channel: isChannel,
+      owner: isChannel ? from_id : data[2]
     },
     msg: {
-      action: action,
-      attachments: getAttachments(data[6]),
-      from: from_id,
-      fwd_count: Number(data[5].fwd_count || 0),
-      hidden: flags.is('hidden'),
-      unread: !flags.is('outbox') && flags.is('unread'),
-      date: data[3],
       id: data[0],
       text: action ? '' : data[4],
-      conversation_msg_id: data[7],
-      edit_time: data[8],
-      isReplyMsg: flags.is('reply_msg')
+      from: from_id,
+      date: data[3],
+      edited: !!data[8],
+      editTime: data[8],
+      unread: !flags.is('outbox') && flags.is('unread'),
+      action: action,
+      fwdCount: Number(data[5].fwd_count || 0),
+      isReplyMsg: flags.is('reply_msg'),
+      attachments: getAttachments(data[6]),
+      hidden: flags.is('hidden'),
+      conversationMsgId: data[7]
     }
   }
 

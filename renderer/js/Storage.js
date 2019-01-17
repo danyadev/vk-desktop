@@ -71,7 +71,8 @@ class Settings extends Storage {
       lang: 'ru',
       counters: {
         messages: 0
-      }
+      },
+      recentEmojies: {}
     }
   }
 }

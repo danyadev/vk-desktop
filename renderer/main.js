@@ -6,17 +6,15 @@ process.package = require('./../package');
 const qs = (selector, target) => (target || document).querySelector(selector);
 const qsa = (selector, target) => (target || document).querySelectorAll(selector);
 
-const fs = require('fs');
 const { getCurrentWindow, BrowserWindow } = require('electron').remote;
 const Vue = require('./js/lib/Vue');
 const Vuex = require('./js/lib/Vuex');
 const other = require('./js/other');
-const { random, endScroll } = other;
 const contextMenu = require('./js/contextMenu');
 const emoji = require('./js/emoji');
 const { users, settings } = require('./js/Storage');
-const vkapi = require('./js/vkapi');
 const request = require('./js/request');
+const vkapi = require('./js/vkapi');
 
 // настройка Vue
 Vue.config.devtools = true;

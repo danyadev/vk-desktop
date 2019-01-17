@@ -41,14 +41,10 @@ body {
   height: 100vh;
 }
 
-.app { height: 100% }
+.app, .content { height: 100% }
 
 .root {
   position: relative;
 	/* 32px - высота titlebar'a по умолчанию */
   height: calc(100% - 32px);
-}
-
-.content {
-	height: 100%;
 }

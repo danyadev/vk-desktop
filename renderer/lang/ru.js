@@ -64,6 +64,7 @@ module.exports = {
     point: 'Местоположение',
     market: 'Товар',
     sticker: 'Стикер',
+    article: 'Статья',
     podcast: 'Подкаст',
     graffiti: 'Граффити',
     audio_message: 'Голосовое сообщение',
@@ -71,6 +72,7 @@ module.exports = {
     audio_playlist: 'Плейлист'
   },
   emojies: {
+    recent: 'Недавно использованные',
     emotions: 'Эмоции',
     gestures_and_people: 'Жесты и люди',
     symbols: 'Символы',

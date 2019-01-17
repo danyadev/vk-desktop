@@ -29,9 +29,20 @@ module.exports = new Vuex.Store({
     activeChat: null,
     messages: {},
     langName: settings.get('lang'),
-    lang: getLangFile(settings.get('lang'))
+    lang: getLangFile(settings.get('lang')),
+    recentEmojies: settings.get('recentEmojies')
   },
   mutations: {
+    updateRecentEmoji(state, emojies) {
+      let recentEmojies = Object.assign({}, state.recentEmojies);
+
+      for(let code in emojies) {
+        recentEmojies[code] = (recentEmojies[code] || 0) + emojies[code];
+      }
+
+      Vue.set(state, 'recentEmojies', recentEmojies);
+      settings.set('recentEmojies', recentEmojies);
+    },
     // ** Пользователи для мультиаккаунта **
     updateUser(state, data) {
       let user = state.users[data.id],
@@ -166,7 +177,7 @@ module.exports = new Vuex.Store({
     },
     editMessage(state, data) {
       let messages = state.messages[data.peer_id] || [],
-          msgIndex = messages.findIndex(({ id }) => id == data.msg.id),
+          msgIndex = messages.findIndex(({ id }) => data.msg && id == data.msg.id),
           msg = messages[msgIndex],
           dialog = state.conversations[data.peer_id],
           lastMsg = dialog && dialog.lastMsg;
@@ -176,7 +187,7 @@ module.exports = new Vuex.Store({
         Vue.set(state.messages, data.peer_id, messages);
       }
 
-      if(lastMsg && data.msg.id == lastMsg.id) {
+      if(lastMsg && data.msg && data.msg.id == lastMsg.id) {
         Vue.set(dialog, 'lastMsg', Object.assign({}, lastMsg, data.msg));
       }
     },

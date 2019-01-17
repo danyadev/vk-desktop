@@ -1,14 +1,15 @@
 'use strict';
 
-const ModalCreator = require('./lib/ModalCreator');
+const fs = require('fs');
 const { resolve } = require('path');
+const { getTextWithEmoji } = require('./../components/messages/methods');
 
-Vue.use(ModalCreator);
+Vue.use(require('./lib/ModalCreator'));
 
 // превращает emoji символы в картинку как в ВК
 Vue.directive('emoji', (el, { modifiers }, vnode) => {
   let elem = vnode.children ? vnode.children[0] : el,
-      html = elem.text || other.getTextWithEmoji(elem.childNodes);
+      html = elem.text || getTextWithEmoji(elem.childNodes).text;
 
   if(!modifiers.br) html = html.replace(/<br>/g, ' ');
 
@@ -46,7 +47,7 @@ require.extensions['.vue'] = (module, filename) => {
   let code = `
     'use strict';
     ${'\n'.repeat(template.split('\\n').length-1)}
-    ${getTagData('script', file)}
+    ${getTagData('script', file) || 'module.exports = {};'}
     module.exports.template = ${template};
   `.trim();
 
