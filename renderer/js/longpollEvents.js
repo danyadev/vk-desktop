@@ -27,7 +27,7 @@ function getServiceMessage(data) {
 
     if(match) {
       let value = data[key];
-      
+
       if(Number(value) == value) value = Number(value);
       if(match[1] == 'act') match[1] = 'type';
 
@@ -94,7 +94,7 @@ function getMessage(data, type) {
     },
     msg: {
       id: data[0],
-      text: action ? '' : data[4],
+      text: action ? '' : other.escape(data[4]),
       from: from_id,
       date: data[3],
       edited: !!data[8],

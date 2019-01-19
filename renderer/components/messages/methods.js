@@ -100,7 +100,7 @@ function parseConversation(conversation) {
     let photos = conversation.chat_settings.photo;
 
     chatPhoto = photos && photos.photo_50;
-    chatTitle = conversation.chat_settings.title;
+    chatTitle = other.escape(conversation.chat_settings.title);
   }
 
   return {
@@ -132,7 +132,7 @@ function parseMessage(message, conversation) {
 
   let msg = {
     id: message.id,
-    text: message.text.replace(/\n/g, '<br>'),
+    text: other.escape(message.text.replace(/\n/g, '<br>')),
     from: message.from_id,
     date: message.date,
     edited: !!message.update_time,
