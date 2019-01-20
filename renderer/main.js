@@ -22,16 +22,16 @@ require('./js/initComponents');
 
 let app = new Vue({
   el: '.app',
-  store: require('./js/VueStore'),
+  store: require('./js/store/'),
   data: {
     section: settings.get('section')
   },
   computed: {
     auth() {
-      return !this.$store.state.activeUser;
+      return !this.$store.state.settings.activeUser;
     },
     user() {
-      return this.$store.state.users[this.$store.state.activeUser];
+      return this.$store.state.settings.users[this.$store.state.settings.activeUser];
     }
   }
 });

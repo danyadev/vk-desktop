@@ -8,7 +8,7 @@
           <div class="multiaccount_item_name_wrap">
             <div class="multiaccount_item_name">{{ user.first_name }} {{ user.last_name }}</div>
             <img class="multiaccount_item_close"
-                 v-show="$store.state.activeUser != user.id"
+                 v-show="$store.state.settings.activeUser != user.id"
                  src="images/close.svg"
                  @click.stop="deleteUser(user.id)">
           </div>
@@ -28,35 +28,35 @@
   module.exports = {
     computed: {
       users() {
-        return this.$store.state.users;
+        return this.$store.state.settings.users;
       }
     },
     methods: {
       active(id) {
-        if(this.$store.state.activeUser == id) {
+        if(this.$store.state.settings.activeUser == id) {
           return this.l('active_account');
         } else {
-          let user = this.$store.state.users[id];
+          let user = this.$store.state.settings.users[id];
 
           if(!user || !user.activeTime) {
-            return this.l('was_active', null, [this.l('never')]);
+            return this.l('was_active', [this.l('never')]);
           }
 
-          let date = getDate(user.activeTime, {
+          let date = getDate(user.activeTime / 1000, {
             addTime: true,
             fullText: true
           });
 
-          return this.l('was_active', null, [date]);
+          return this.l('was_active', [date]);
         }
       },
       setAccount(id) {
-        if(this.$store.state.activeUser != id) {
+        if(this.$store.state.settings.activeUser != id) {
           this.$modals.open('confirm-set-account', {
             confirm: () => {
               this.$store.commit('updateUser', {
                 id: id,
-                activeTime: Date.now() / 1000
+                activeTime: Date.now()
               });
 
               this.$store.commit('setActiveUser', id);

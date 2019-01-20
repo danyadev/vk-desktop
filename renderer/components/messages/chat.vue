@@ -278,7 +278,7 @@
         if(!text) return;
         input.innerHTML = '';
 
-        this.$store.commit('updateRecentEmoji', emojies);
+        this.$store.commit('settings/updateRecentEmojies', emojies);
 
         for(let block of text.match(/.{1,4096}/g)) {
           let id = await vkapi('messages.send', {

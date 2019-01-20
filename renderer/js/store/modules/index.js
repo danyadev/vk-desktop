@@ -1,11 +1,10 @@
 'use strict';
 
-const { loadProfile } = require('./../components/messages/methods');
+const { loadProfile } = require('./../../../components/messages/methods');
 
-Vue.use(Vuex);
 
 function getLangFile(name) {
-  return require(`./../lang/${name}.js`);
+  return require(`./../../../lang/${name}.js`);
 }
 
 function getMinIndex(arr, num) {
@@ -16,10 +15,8 @@ function getMinIndex(arr, num) {
   return arr.length;
 }
 
-module.exports = new Vuex.Store({
+module.exports = {
   state: {
-    users: Object.assign({}, users.get()),
-    activeUser: settings.get('activeUser'),
     menuState: false,
     counters: settings.get('counters'),
     profiles: {},
@@ -29,35 +26,24 @@ module.exports = new Vuex.Store({
     activeChat: null,
     messages: {},
     langName: settings.get('lang'),
-    lang: getLangFile(settings.get('lang')),
-    recentEmojies: settings.get('recentEmojies')
+    lang: getLangFile(settings.get('lang'))
   },
   mutations: {
-    updateRecentEmoji(state, emojies) {
-      let recentEmojies = Object.assign({}, state.recentEmojies);
-
-      for(let code in emojies) {
-        recentEmojies[code] = (recentEmojies[code] || 0) + emojies[code];
-      }
-
-      Vue.set(state, 'recentEmojies', recentEmojies);
-      settings.set('recentEmojies', recentEmojies);
-    },
     // ** Пользователи для мультиаккаунта **
-    updateUser(state, data) {
-      let user = state.users[data.id],
+    updateUser({ settings }, data) {
+      let user = settings.users[data.id],
           newUser = Object.assign({}, user, data);
 
       users.update(data.id, newUser);
-      Vue.set(state.users, data.id, newUser);
+      Vue.set(settings.users, data.id, newUser);
     },
-    removeUser(state, id) {
+    removeUser({ settings }, id) {
       users.remove(id);
-      Vue.delete(state.users, id);
+      Vue.delete(settings.users, id);
     },
     setActiveUser(state, id) {
       settings.set('activeUser', id);
-      state.activeUser = id;
+      state.settings.activeUser = id;
     },
     // ** Язык приложения **
     setLang(state, name) {
@@ -269,4 +255,4 @@ module.exports = new Vuex.Store({
       return msg;
     }
   }
-});
+}
