@@ -2,9 +2,11 @@
   <div class="titlebar" :class="{ maximized, mac }">
     <div class="titlebar_drag">VK Desktop</div>
     <div class="titlebar_buttons">
-      <div v-for="name in names"
-           class="titlebar_button" :class="name"
-           @click="getCurrentWindow()[name]()"></div>
+      <div v-for="button of buttons"
+           class="titlebar_button" :class="button"
+           @click="getCurrentWindow()[button]()">
+        <img :src="`images/window_${button}.svg`">
+      </div>
     </div>
   </div>
 </template>
@@ -14,7 +16,7 @@
     data: () => ({
       mac: process.platform == 'darwin',
       maximized: getCurrentWindow().isMaximized(),
-      names: ['minimize', 'maximize', 'restore', 'close']
+      buttons: ['minimize', 'maximize', 'restore', 'close']
     }),
     mounted() {
       if(this.mac) {
@@ -26,13 +28,8 @@
         });
       }
 
-      getCurrentWindow().on('maximize', () => {
-        this.maximized = true;
-      });
-
-      getCurrentWindow().on('unmaximize', () => {
-        this.maximized = false;
-      });
+      getCurrentWindow().on('maximize', () => this.maximized = true);
+      getCurrentWindow().on('unmaximize', () => this.maximized = false);
     }
   }
 </script>

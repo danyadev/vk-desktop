@@ -1,0 +1,81 @@
+.message_attachments { display: inline }
+
+.message_text_wrap.hasText .message_attach:first-child {
+  margin-top: 5px;
+}
+
+.message_attachments .message_attach:not(:first-child) {
+  margin-top: 10px;
+}
+
+/* Default */
+
+.attach_default {
+  display: flex;
+  margin-right: 20px;
+}
+
+.attach_default .message_attach_img {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.attach_default .message_attach_title { font-weight: 500 }
+
+/* Photo */
+
+.attach_photo {
+  text-align: center;
+}
+
+.message.service .attach_photo {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.message.service .attach_photo img {
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
+  background-color: #000;
+  object-fit: contain;
+}
+
+.attach_photo img {
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 75px;
+  max-height: 450px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.message_text_wrap.onlyPhotos:not(.hasText):not(.morePhotos) {
+  padding: 0;
+  background-color: inherit !important;
+}
+
+.message_text_wrap.onlyPhotos.hasText,
+.message_text_wrap.onlyPhotos.morePhotos {
+  padding: 7px 6px 2px 6px;
+}
+
+.message_text_wrap.onlyPhotos.hasText .message_text {
+  padding-left: 5px;
+}
+
+.message_text_wrap.onlyPhotos.hasText .message_time_wrap,
+.message_text_wrap.onlyPhotos.morePhotos .message_time_wrap {
+  bottom: 12px;
+  right: 12px;
+}
+
+.message_text_wrap.morePhotos .attach_photo {
+
+}
+
+.message_text_wrap.morePhotos .attach_photo img {
+
+}

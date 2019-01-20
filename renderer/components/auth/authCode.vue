@@ -1,7 +1,7 @@
 <template>
   <div class="auth_wrap auth_code_section" @keydown.enter="auth">
     <div class="auth_code_header">{{ l('auth_security_check') }}</div>
-    <div class="auth_code_descr">{{ l('auth_code_sent_to_number', null, [data.mask]) }}</div>
+    <div class="auth_code_descr">{{ l('auth_code_sent_to_number', [data.mask]) }}</div>
     <input class="input" type="text" ref="input" :placeholder="l('enter_code')" v-model="code">
     <div class="auth_error" v-if="error">{{ l('invalid_code') }}</div>
     <div>

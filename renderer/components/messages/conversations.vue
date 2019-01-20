@@ -94,7 +94,7 @@
       }
     },
     async mounted() {
-      let longpoll = await require('./../../js/longpoll').load();
+      let longpoll = require('./../../js/longpoll');
       this.load();
 
       let checkTyping = (data) => {
@@ -150,19 +150,14 @@
             data.peer.title = data.msg.action.text;
           }
 
-          let inviteUser = data.msg.action.type == 'chat_invite_user',
-              isReturnToChat = inviteUser && data.msg.action.mid == this.$root.user.id;
+          let hasInviteUser = data.msg.action.type == 'chat_invite_user',
+              isReturnToChat = hasInviteUser && data.msg.action.mid == this.$root.user.id;
 
           if(data.msg.action.type == 'chat_photo_update' || isReturnToChat) {
             vkapi('messages.getConversationsById', {
               peer_ids: data.peer.id
             }).then(({ items: [peer] }) => {
-              let data = { title: peer.chat_settings.title };
-
-              if(peer.chat_settings.photo) data.photo = peer.chat_settings.photo.photo_50;
-              else data.photo = null;
-
-              this.updatePeer(peer.peer.id, data, true);
+              this.updatePeer(peer.peer.id, parseConversation(peer), true);
             });
           }
 
@@ -174,13 +169,14 @@
         }
 
         this.updatePeer(data.peer.id, data.peer);
-
         checkTyping(data);
+        loadAttachments(data.msg, data.peer.id);
         this.moveConversations(data.peer.id);
       });
 
       longpoll.on('edit_message', (data) => {
         this.updatePeer(data.peer.id, data.peer, true);
+        loadAttachments(data.msg, data.peer.id);
         checkTyping(data);
 
         this.$store.commit('editMessage', {
@@ -198,6 +194,7 @@
 
       longpoll.on('add_message_snippet', (data) => {
         this.updatePeer(data.peer.id, data.peer, true);
+        loadAttachments(data.msg, data.peer.id);
 
         this.$store.commit('editMessage', {
           peer_id: data.peer.id,
@@ -252,6 +249,7 @@
         }
 
         this.$store.commit('addMessage', { peer_id: data.peer.id, msg });
+        loadAttachments(msg, data.peer.id);
 
         if(messages[messages.length - 1].id == msg.id) {
           this.updateLastMsg(data.peer.id, msg);
@@ -332,6 +330,10 @@
             msg_id: msg.id
           });
         }
+      });
+
+      longpoll.on('change_peer_info', (data) => {
+        console.log(data);
       });
     }
   }

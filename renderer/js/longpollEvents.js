@@ -1,6 +1,6 @@
 'use strict';
 
-const longpoll = require('./longpoll').longpoll();
+const longpoll = require('./longpoll');
 
 function getFlags(mask) {
   let flags = {
@@ -94,7 +94,7 @@ function getMessage(data, type) {
     },
     msg: {
       id: data[0],
-      text: action ? '' : other.escape(data[4]),
+      text: action ? '' : data[4],
       from: from_id,
       date: data[3],
       edited: !!data[8],

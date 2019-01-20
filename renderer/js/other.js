@@ -113,7 +113,7 @@ module.exports = {
   random: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
   isObject: (data) => data instanceof Object && !Array.isArray(data),
   regexp: {
-    url: /(([a-z]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\/\S+)?)/gi,
+    url: /(([a-z]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\/\S*)?)(?=\s|\n|$)/gi,
     push: /\[(club|id)(\d+)\|(.+?)\]/gi
   }
 }

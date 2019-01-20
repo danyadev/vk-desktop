@@ -27,21 +27,16 @@
   height: 100%;
 }
 
-.titlebar_buttons { flex: none }
+.titlebar_buttons { display: flex }
 
 .titlebar_button {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   transition: .2s background-color;
-}
-
-.titlebar_button::before {
-  content: '';
-  display: block;
   width: 48px;
   height: 32px;
-  -webkit-mask: center no-repeat;
-  background-color: #fff;
 }
 
 .titlebar_button:hover { background-color: rgba(0, 0, 0, .2) }
@@ -49,11 +44,6 @@
 
 .titlebar_button.close:hover { background-color: #eb0716 }
 .titlebar_button.close:active { background-color: #de000f }
-
-.titlebar_button.minimize::before { -webkit-mask-image: url('../images/window_minimize.svg') }
-.titlebar_button.maximize::before { -webkit-mask-image: url('../images/window_maximize.svg') }
-.titlebar_button.restore::before { -webkit-mask-image: url('../images/window_restore.svg') }
-.titlebar_button.close::before { -webkit-mask-image: url('../images/window_close.svg') }
 
 .titlebar.maximized .titlebar_button.maximize { display: none }
 .titlebar:not(.maximized) .titlebar_button.restore { display: none }

@@ -5,10 +5,14 @@ const querystring = require('querystring');
 const { EventEmitter } = require('events');
 const { parseConversation, parseMessage, concatProfiles } = require('./../components/messages/methods');
 
-let instance, onInitResolve;
-
 class Longpoll {
-  constructor(data) {
+  constructor() {
+    this.init();
+  }
+
+  async init() {
+    let data = await Longpoll.getServer();
+
     this.server = data.server;
     this.key = data.key;
     this.pts = data.pts;
@@ -122,22 +126,4 @@ class Longpoll {
 
 util.inherits(Longpoll, EventEmitter);
 
-module.exports = {
-  async init() {
-    if(!instance) {
-      let data = await Longpoll.getServer();
-
-      instance = new Longpoll(data);
-      if(onInitResolve) onInitResolve(instance);
-    }
-
-    return instance;
-  },
-  load() {
-    return new Promise((resolve) => {
-      if(!instance) onInitResolve = resolve;
-      else resolve(instance);
-    });
-  },
-  longpoll: () => instance
-};
+module.exports = new Longpoll();

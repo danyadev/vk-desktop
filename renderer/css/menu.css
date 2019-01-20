@@ -113,7 +113,7 @@
 
 .menu_item_name { flex-grow: 1 }
 
-.menu_item_counter {
+.menu_item_counter:not(:empty) {
   color: #4d5f75;
   background-color: #cad9e6;
   padding: 2px 6px;

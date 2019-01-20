@@ -10,17 +10,13 @@
       <div v-else-if="isChat && !peer.channel && !serviceMessage" class="message_empty_photo"></div>
       <div class="message_content">
         <div class="message_name" v-if="showUserData">{{ name }}</div>
-        <div class="message_text_wrap" :class="{ outread }">
+        <div class="message_text_wrap" :class="{ outread, hasText: !!msg.text, morePhotos, onlyPhotos }">
           <div v-if="serviceMessage" class="message_text" v-html="serviceMessage"></div>
-          <div v-else class="message_text" v-emoji.color_push.br.link>{{ text.msg }}</div>
-          <div class="message_attachments" :class="{ hasText: !!text.msg }">
-            <div class="message_attach" v-for="attach in text.attachments">
-              <img class="message_attach_img" src="images/im_attachment.png">
-              <div class="message_attach_content">
-                <div class="message_attach_title">{{ l('attach') }}</div>
-                <div class="message_attach_desc">{{ attach.type }}</div>
-              </div>
-            </div>
+          <div v-else class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
+          <div class="message_attachments">
+            <component v-for="attach of attachments"
+                       :is="'attachment-' + attach.type"
+                       :data="attach.data"></component>
           </div>
           <div class="message_time_wrap" :class="{ fly: flyMsgTime }">
             <template v-if="msg.edited">
@@ -98,35 +94,69 @@
 
         return this.user.name || userName;
       },
-      supportedAttachments() {
-        return [];
-      },
       flyMsgTime() {
-        return this.msg.fwd_count || this.msg.attachments.length || this.msg.isReplyMsg;
+        if(!this.attachments.length) return false;
+        return this.attachments[this.attachments.length - 1].type == 'photo';
       },
       serviceMessage() {
         if(!this.msg.action) return;
 
         return getServiceMessage.bind(this)(this.msg.action, this.user, true);
       },
-      text() {
-        let count = this.msg.fwd_count,
-            type = other.getWordEnding(count),
-            fwdMessages = count ? { type: this.l('fwd_msg', type, [count]) } : [],
-            attachments = [];
+      morePhotos() {
+        return this.attachments.filter(({ type }) => type == 'photo').length > 1;
+      },
+      onlyPhotos() {
+        if(!this.attachments.length) return false;
+        
+        return this.attachments.every(({ type }) => type == 'photo');
+      },
+      supportedAttachments() {
+        return ['photo'];
+      },
+      attachments() {
+        if(!this.msg.loaded) return [];
+        let attachments = [];
 
-        if(this.msg.isReplyMsg) fwdMessages = { type: this.l('reply_msg') };
-
-        for(let attach of this.msg.attachments) {
+        if(this.msg.isReplyMsg) {
           attachments.push({
-            type: this.l('attachments', attach.type)
+            type: 'reply-msg',
+            data: this.msg.replyMsg
           });
         }
 
-        return {
-          msg: this.msg.text,
-          attachments: attachments.concat(fwdMessages)
+        if(this.msg.fwdCount) {
+          attachments.push({
+            type: 'forwarded-messages',
+            data: this.msg.fwdMessages
+          });
         }
+
+        for(let attachment of this.msg.attachments) {
+          let attach = {};
+
+          if(!this.supportedAttachments.includes(attachment.type)) {
+            attach = {
+              type: 'default',
+              data: this.l('attachments', attachment.type)
+            }
+          } else {
+            let type = attachment.type;
+
+            if(type == 'photo' && this.serviceMessage) {
+              attachment[type].isServiceMsg = true;
+            }
+
+            attach = {
+              type: type.replace(/_/g, '-'),
+              data: attachment[type]
+            }
+          }
+
+          attachments.push(attach);
+        }
+
+        return attachments;
       },
       outread() {
         return this.msg.outread || this.msg.unread;

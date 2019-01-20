@@ -28,6 +28,7 @@
 }
 
 .dialog_name_wrap .messages_muted {
+  opacity: 0.7;
   background-image: url('../images/muted_white.svg');
 }
 
@@ -393,6 +394,13 @@
   border-radius: 18px;
 }
 
+.message_text_wrap.no_padding { padding: 0 }
+
+.message_text_wrap.no_padding .message_text {
+  display: block;
+  padding: 7px 10px;
+}
+
 .message.from_me .message_text_wrap {
   background-color: #cce4fe;
 }
@@ -447,12 +455,12 @@
 
 .message_time_wrap.fly {
   position: absolute;
-  bottom: 5px;
-  right: 7px;
-  background-color: #0000006e;
+  bottom: 9px;
+  right: 6px;
+  background-color: #00000091;
   color: #f5f5f5;
-  border-radius: 10px;
-  padding: 2px 5px;
+  border-radius: 9px;
+  padding: 2px 6px;
 }
 
 .message_time_wrap .dot {
@@ -465,29 +473,6 @@
 
 .message_time_wrap.fly .dot { background-color: #f5f5f5 }
 .message_edited { margin-top: -1px }
-.message_attachments { display: inline }
-
-.message_attachments.hasText .message_attach:first-child {
-  margin-top: 5px;
-}
-
-.message_attach {
-  display: flex;
-  margin-right: 40px;
-}
-
-.message_attachments .message_attach:not(:first-child) {
-  margin-top: 10px;
-}
-
-.message_attach_img {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-}
-
-.message_attach_title { font-weight: 500 }
 .message_top_date { margin: 15px 0 }
 
 .message_unreaded_messages {

@@ -48,7 +48,7 @@
           <div class="dialog_to_end_count">{{ peer && peer.unread || '' }}</div>
           <img class="dialog_to_end_icon" src="images/im_to_end.png">
         </div>
-        <emoji-block :key="id" :active="openedEmojiBlock"
+        <emoji-block :active="openedEmojiBlock"
                      @chooseEmoji="onChooseEmoji"
                      @close="closeEmojiBlock"></emoji-block>
         <template v-if="canSendMessages.state">
@@ -169,7 +169,7 @@
           if(!app) {
             if(this.owner.online_mobile) app = this.l('with_phone');
             else if(!this.owner.online_web) loadOnlineApp(this.owner.id);
-          } else app = this.l('with_app', null, [app]);
+          } else app = this.l('with_app', [app]);
 
           return `online ${app} (${date.getHours()}:${f(date.getMinutes())})`;
         } else {
@@ -189,7 +189,7 @@
               let type = other.getWordEnding(offlineHours);
               time = this.l('hours', type, [offlineHours == 1 ? '' : offlineHours]);
             }
-          } else time += this.l('at_n', null, [`${date.getHours()}:${f(date.getMinutes())}`]);
+          } else time += this.l('at_n', [`${date.getHours()}:${f(date.getMinutes())}`]);
 
           return this.l('was_online', Number(this.owner.sex == 1), [time]);
         }
@@ -267,7 +267,7 @@
         toggleChat.bind(this)(null);
       },
       async sendMessage(event) {
-        let longpoll = require('./../../js/longpoll').longpoll();
+        let longpoll = require('./../../js/longpoll');
 
         if(event.shiftKey) return;
         else if(event.type != 'click') event.preventDefault();
@@ -387,11 +387,15 @@
         }
 
         for(let msg of items) {
+          let parsedMsg = parseMessage(msg, conv);
+
           this.$store.commit('addMessage', {
             peer_id: peer.id,
-            msg: parseMessage(msg, conv),
+            msg: parsedMsg,
             notNewMsg: true
           });
+
+          loadAttachments(parsedMsg, peer.id);
         }
 
         if(items.length < 20) Vue.set(peer, 'loaded', true);

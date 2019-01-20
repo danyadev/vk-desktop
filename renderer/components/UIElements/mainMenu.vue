@@ -15,13 +15,13 @@
       </div>
       <div class="menu_items">
         <div class="menu_item"
-             v-for="item of list"
-             @click="openPage(type)"
-             :class="{ active: $root.section == item.type }">
-          <div class="menu_item_icon" :class="item.type"></div>
-          <div class="menu_item_name">{{ l('menu', item.type) }}</div>
-          <div class="menu_item_counter" v-if="item.counter">
-            {{ $store.state.counters[item.type] }}
+             v-for="page of list"
+             @click="openPage(page)"
+             :class="{ active: $root.section == page }">
+          <div class="menu_item_icon" :class="page"></div>
+          <div class="menu_item_name">{{ l('menu', page) }}</div>
+          <div class="menu_item_counter" v-if="counters.includes(page)">
+            {{ $store.state.counters[page] || '' }}
           </div>
         </div>
         <div class="menu_item logout" @click.stop="logout">
@@ -34,24 +34,13 @@
 
 <script>
   module.exports = {
-    data() {
-      return {
-        list: [
-          // 'news',
-          // 'notifications',
-          { type: 'messages', counter: true }
-          // 'audios',
-          // 'friends',
-          // 'groups',
-          // 'photos',
-          // 'videos',
-          // 'settings'
-        ]
-      }
-    },
+    data: () => ({
+      list: ['messages'],
+      counters: ['messages']
+    }),
     computed: {
       user() {
-        return this.$root.user || {};
+        return this.$root.user;
       },
       active() {
         return this.$store.state.menuState;
@@ -62,14 +51,14 @@
         this.toggleMenu(false);
         this.$modals.open('multiaccount');
       },
-      openPage(type) {
+      openPage(page) {
         this.toggleMenu(false);
-        if(this.$root.section != type) this.$root.section = type;
+        if(this.$root.section != page) this.$root.section = page;
       },
       toggleMenu(event) {
         let state;
 
-        if(typeof event == 'boolean') state = event;
+        if(event instanceof Boolean) state = event;
         else state = qs('.menu_wrap') != event.target;
 
         this.$store.commit('setMenuState', state);
@@ -81,13 +70,10 @@
     },
     async mounted() {
       let [ user ] = await vkapi('execute.getProfiles', { fields: 'status,photo_100' });
-
-      this.$store.commit('updateUser', Object.assign(user, {
-        activeTime: Date.now() / 1000
-      }));
+      this.$store.commit('updateUser', Object.assign(user, { activeTime: Date.now() }));
 
       vkapi('stats.trackVisitor');
-      require('./../../js/longpoll').init();
+      require('./../../js/longpoll');
     }
   }
 </script>

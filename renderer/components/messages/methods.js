@@ -100,7 +100,7 @@ function parseConversation(conversation) {
     let photos = conversation.chat_settings.photo;
 
     chatPhoto = photos && photos.photo_50;
-    chatTitle = other.escape(conversation.chat_settings.title);
+    chatTitle = other.escape(conversation.chat_settings.title).replace(/\n/g, ' ');
   }
 
   return {
@@ -132,7 +132,7 @@ function parseMessage(message, conversation) {
 
   let msg = {
     id: message.id,
-    text: other.escape(message.text.replace(/\n/g, '<br>')),
+    text: other.escape(message.text).replace(/\n/g, '<br>'),
     from: message.from_id,
     date: message.date,
     edited: !!message.update_time,
@@ -221,11 +221,11 @@ function getServiceMessage(action, author, full) {
     case 'chat_invite_user':
       if(actID == author.id) return app.l('im_chat_returned_user', g(0), [name(0)]);
       else if(full) return app.l('im_chat_invite_user', g(0), [name(0), name(1, 1)]);
-      else return app.l('im_chat_invite_user_short', g(0), [name(1, 1)]);
+      else return app.l('im_chat_invite_user_short', g(1), [name(1, 1)]);
     case 'chat_kick_user':
       if(actID == author.id) return app.l('im_chat_left_user', g(0), [name(0)]);
       else if(full) return app.l('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
-      else return app.l('im_chat_kick_user_short', g(0), [name(1, 1)]);
+      else return app.l('im_chat_kick_user_short', g(1), [name(1, 1)]);
     default:
       console.warn('[messages] Неизвестное действие:', action.type);
       return action.type;
