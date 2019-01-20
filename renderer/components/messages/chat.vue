@@ -6,16 +6,17 @@
         <img class="dialog_header_photo" :src="photo">
         <div class="dialog_header_center">
           <div class="dialog_name_wrap">
-            <div class="dialog_name" v-emoji>{{ title | e }}</div>
+            <div class="dialog_name" v-emoji>{{ title }}</div>
             <div class="verified" v-if="owner && owner.verified"></div>
             <div class="messages_muted" v-if="peer.muted"></div>
           </div>
           <div class="dialog_online">{{ online }}</div>
         </div>
-        <img src="images/actions_button.svg" class="dialog_actions_btn">
+        <img src="images/actions_button.svg" class="dialog_actions_btn" @click="openDialogSettingsBox">
         <div class="dialog_messages_time_wrap" :class="{ active: topTime && showTopTime }">
           <div class="dialog_messages_time">{{ topTime }}</div>
         </div>
+        <dialog-settings-box :peer="peer" :active="openedDialogSettingsBox" @close="closeDialogSettingsBox"/>
       </template>
     </div>
     <div v-if="!id" class="dialog_choice_chat">
@@ -133,13 +134,16 @@
         return this.peer && this.peer.showEndBtn;
       },
       topTime() {
-        return this.peer && this.peer.topTime;
+        return this.peer.topTime;
       },
       showTopTime() {
-        return this.peer && this.peer.showTopTime;
+        return this.peer.showTopTime;
       },
       openedEmojiBlock() {
         return this.peer && this.peer.openedEmojiBlock;
+      },
+      openedDialogSettingsBox() {
+        return this.peer.openedDialogSettingsBox;
       },
       title() {
         if(this.isChat) return this.peer.title || '...';
@@ -226,7 +230,7 @@
         let text, reason = this.peer.canWrite.reason;
 
         if(!this.peer.canWrite.allowed) {
-          if(reason == 925) text = this.l('im_channel_notifications', Number(!this.peer.muted));
+          if(reason == 925) text = this.l('toggle_notifications', Number(!this.peer.muted));
           else text = this.l('im_cant_write_reasons', reason);
 
           if(!text) {
@@ -248,6 +252,14 @@
       closeEmojiBlock() {
         if(this.peer.openedEmojiBlock) {
           Vue.set(this.peer, 'openedEmojiBlock', false);
+        }
+      },
+      openDialogSettingsBox() {
+        Vue.set(this.peer, 'openedDialogSettingsBox', !this.peer.openedDialogSettingsBox);
+      },
+      closeDialogSettingsBox() {
+        if(this.peer.openedDialogSettingsBox) {
+          Vue.set(this.peer, 'openedDialogSettingsBox', false);
         }
       },
       onChooseEmoji(code) {

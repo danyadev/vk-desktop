@@ -171,7 +171,8 @@ module.exports = {
   ],
   im_unread_messages: 'Непрочитанные сообщения',
   im_edited_msg: 'ред',
-  im_channel_notifications: ['Включить уведомления', 'Выключить уведомления'],
+  content_deleted: 'контент удален',
+  toggle_notifications: ['Включить уведомления', 'Выключить уведомления'],
   // ** Модалка заблокированного профиля **
   blocked_profile_title: [
     'Сессия недействительна',
@@ -194,5 +195,8 @@ module.exports = {
   add_account: 'Добавить аккаунт',
   active_account: 'Активный аккаунт',
   was_active: 'Был активен {0}',
-  multiaccount_confirm_set_acc: `Для изменения аккаунта необходимо перезагрузить страницу.<br>Продолжить?`
+  multiaccount_confirm_set_acc: `Для изменения аккаунта необходимо перезагрузить страницу.<br>Продолжить?`,
+  dialog_settings_box: [
+    'Перейти в профиль'
+  ]
 }

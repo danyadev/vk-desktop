@@ -7,7 +7,7 @@
     <div class="conversation_content">
       <div class="conversation_title">
         <div class="conversation_name_wrap">
-          <div class="conversation_name" v-emoji>{{ chatName | e }}</div>
+          <div class="conversation_name" v-emoji>{{ chatName }}</div>
           <div v-if="owner && owner.verified" class="verified"></div>
           <div v-if="peer.muted" class="messages_muted"></div>
         </div>
@@ -24,11 +24,13 @@
         </div>
         <div v-else class="conversation_message">
           <div class="conversation_author">{{ authorName }}</div>
-          <div class="conversation_text" v-emoji.push
-              :class="{ conversation_attach: isAttachment }">{{ message }}</div>
+          <div v-if="deletedContent"
+               class="conversation_text message_content_deleted">({{ l('content_deleted') }})</div>
+          <div v-else class="conversation_text" v-emoji.push
+               :class="{ conversation_attach: isAttachment }">{{ message }}</div>
         </div>
         <div class="conversation_message_unread"
-            :class="{ outread: msg.outread, muted: peer.muted }"
+             :class="{ outread: msg.outread, muted: peer.muted }"
              >{{ peer.unread || '' }}</div>
       </div>
     </div>
@@ -108,6 +110,10 @@
         } else {
           return this.getAttachment(this.msg.text, this.msg.attachments[0]);
         }
+      },
+      deletedContent() {
+        let attachs = this.msg.attachments.length || this.msg.action;
+        return this.msg.text == '' && !attachs && !this.msg.fwdCount && !this.msg.isReplyMsg;
       },
       isAttachment() {
         let isFwd = this.msg.fwdCount || this.msg.isReplyMsg;

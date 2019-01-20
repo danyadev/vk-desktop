@@ -73,10 +73,6 @@
   padding: 7px 6px 2px 6px;
 }
 
-.message_text_wrap.onlyPhotos.hasText .message_text {
-  padding-left: 5px;
-}
-
 .message_text_wrap.onlyPhotos.hasText .message_time_wrap,
 .message_text_wrap.onlyPhotos.morePhotos .message_time_wrap {
   bottom: 12px;
@@ -86,7 +82,3 @@
 /* Sticker */
 
 .attach_sticker { height: 160px }
-
-.message_text_wrap.onlySticker .message_time_wrap {
-  background-color: #00000085;
-}
