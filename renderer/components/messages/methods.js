@@ -289,7 +289,7 @@ async function toggleChat(chatID) {
       if(dialogInput) dialogInput.innerHTML = newPeer.inputText || '';
 
       if(newPeer.scrolledToEnd || !hasScrollTop) {
-        qs('.typing_wrap').scrollIntoView();
+        if(qs('.typing_wrap')) qs('.typing_wrap').scrollIntoView();
       } else if(hasScrollTop) {
         qs('.dialog_messages_list').scrollTop = newPeer.scrollTop;
       }

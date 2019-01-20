@@ -16,6 +16,12 @@
   transition: opacity .3s;
 }
 
+.dialog_header_photo {
+  width: 35px;
+  border-radius: 50%;
+  margin-left: 5px;
+}
+
 .dialog_name_wrap {
   display: flex;
   justify-content: center;
@@ -108,7 +114,7 @@
 .dialog_wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 40px);
+  height: calc(100% - 45px);
 }
 
 .dialog_messages_list {

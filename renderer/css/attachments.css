@@ -1,5 +1,14 @@
 .message_attachments { display: inline }
 
+.message_attach_loading {
+  margin: 30px 50px 20px 50px;
+}
+
+.message_attach_loading .typing_item {
+  width: 7px;
+  height: 7px;
+}
+
 .message_text_wrap.hasText .message_attach:first-child {
   margin-top: 5px;
 }
@@ -38,6 +47,7 @@
 .message.service .attach_photo img {
   border-radius: 50%;
   height: 100px;
+  min-width: initial;
   width: 100px;
   background-color: #000;
   object-fit: contain;
@@ -52,7 +62,8 @@
   object-fit: cover;
 }
 
-.message_text_wrap.onlyPhotos:not(.hasText):not(.morePhotos) {
+.message_text_wrap.onlyPhotos:not(.hasText):not(.morePhotos),
+.message_text_wrap.onlySticker {
   padding: 0;
   background-color: inherit !important;
 }
@@ -72,10 +83,10 @@
   right: 12px;
 }
 
-.message_text_wrap.morePhotos .attach_photo {
+/* Sticker */
 
-}
+.attach_sticker { height: 160px }
 
-.message_text_wrap.morePhotos .attach_photo img {
-
+.message_text_wrap.onlySticker .message_time_wrap {
+  background-color: #00000085;
 }

@@ -10,10 +10,17 @@
       <div v-else-if="isChat && !peer.channel && !serviceMessage" class="message_empty_photo"></div>
       <div class="message_content">
         <div class="message_name" v-if="showUserData">{{ name }}</div>
-        <div class="message_text_wrap" :class="{ outread, hasText: !!msg.text, morePhotos, onlyPhotos }">
+        <div class="message_text_wrap" :class="{ outread, hasText: !!msg.text, morePhotos, onlyPhotos, onlySticker }">
           <div v-if="serviceMessage" class="message_text" v-html="serviceMessage"></div>
           <div v-else class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
           <div class="message_attachments">
+            <div v-if="hasAttachments && !msg.loaded" class="message_attach_loading">
+              <div class="typing">
+                <div class="typing_item"></div>
+                <div class="typing_item"></div>
+                <div class="typing_item"></div>
+              </div>
+            </div>
             <component v-for="attach of attachments"
                        :is="'attachment-' + attach.type"
                        :data="attach.data"></component>
@@ -96,7 +103,9 @@
       },
       flyMsgTime() {
         if(!this.attachments.length) return false;
-        return this.attachments[this.attachments.length - 1].type == 'photo';
+        let type = this.attachments[this.attachments.length - 1].type;
+
+        return ['photo', 'sticker'].includes(type);
       },
       serviceMessage() {
         if(!this.msg.action) return;
@@ -108,11 +117,19 @@
       },
       onlyPhotos() {
         if(!this.attachments.length) return false;
-        
+
         return this.attachments.every(({ type }) => type == 'photo');
       },
+      onlySticker() {
+        if(!this.attachments.length) return false;
+        
+        return this.attachments.every(({ type }) => type == 'sticker');
+      },
       supportedAttachments() {
-        return ['photo'];
+        return ['photo', 'sticker'];
+      },
+      hasAttachments() {
+        return this.msg.attachments.length || this.msg.isReplyMsg || this.msg.fwdCount;
       },
       attachments() {
         if(!this.msg.loaded) return [];

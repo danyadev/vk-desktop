@@ -49,7 +49,7 @@
 
 .conversations_wrap {
   width: 100%;
-  height: calc(100% - 40px);
+  height: calc(100% - 45px);
   border-right: 1px solid #e7e8ec;
   overflow-x: auto;
 }

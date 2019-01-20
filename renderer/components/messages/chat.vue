@@ -3,6 +3,7 @@
     <div class="header">
       <template v-if="peer">
         <img class="dialog_header_back" src="images/im_back.png" @click="closeChat">
+        <img class="dialog_header_photo" :src="photo">
         <div class="dialog_header_center">
           <div class="dialog_name_wrap">
             <div class="dialog_name" v-emoji>{{ title | e }}</div>
@@ -116,6 +117,11 @@
       },
       owner() {
         return this.profiles[this.peer.owner];
+      },
+      photo() {
+        if(this.isChat) return this.peer.photo;
+        else if(this.owner) return this.owner.photo_50;
+        else return 'images/im_chat_photo.png';
       },
       hasMessages() {
         return this.messages && this.messages.length;
