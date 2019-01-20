@@ -58,7 +58,7 @@
       toggleMenu(event) {
         let state;
 
-        if(event instanceof Boolean) state = event;
+        if(typeof event == 'boolean') state = event;
         else state = qs('.menu_wrap') != event.target;
 
         this.$store.commit('setMenuState', state);
