@@ -189,3 +189,21 @@
 /* Выход из аккаунта */
 
 .modal_content.logout { padding: 25px }
+
+/* Просмотрщик фотографий */
+
+.photo_viewer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo_viewer, .photo_viewer img {
+  max-width: 95%;
+  max-height: calc(100vh - 32px);
+  border-radius: 10px;
+}
+
+.photo_viewer img {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
+}

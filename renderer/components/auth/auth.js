@@ -78,7 +78,30 @@ function getLastToken(firstToken) {
   });
 }
 
+function getSupportToken(VKToken = app.user && app.user.other_token) {
+  return new Promise(async (resolve) => {
+    let authLink = 'https://oauth.vk.com/authorize?' + querystring.stringify({
+      redirect_uri: "https://oauth.vk.com/blank.html",
+      display: 'page',
+      response_type: 'token',
+      access_token: VKToken,
+      source_url: 'https://static.vk.com/support/#/support',
+      revoke: 1,
+      lang: app.$store.state.langName,
+      scope: 'support,offline',
+      client_id: 6126832
+    });
+
+    let { location: link } = await request(authLink, { location: true }),
+        { location } = await request('https://oauth.vk.com' + link, { location: true }),
+        lastToken = location.match(/#access_token=([A-z0-9]{85})/)[1];
+
+    resolve(lastToken);
+  });
+}
+
 module.exports = {
   getFirstToken,
-  getLastToken
+  getLastToken,
+  getSupportToken
 }

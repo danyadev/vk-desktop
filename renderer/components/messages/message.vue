@@ -17,8 +17,8 @@
             <div v-if="deletedContent" class="message_content_deleted">({{ l('content_deleted') }})</div>
             <div v-else class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
           </template>
-          <div class="message_attachments">
-            <div v-if="hasAttachments && !msg.loaded" class="message_attach_loading">
+          <div v-if="hasAttachments" class="message_attachments">
+            <div v-if="!msg.loaded" class="message_attach_loading">
               <div class="typing">
                 <div class="typing_item"></div>
                 <div class="typing_item"></div>

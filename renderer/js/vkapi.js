@@ -51,7 +51,7 @@ let method = (name, params = {}, promise) => {
     }
 
     params.v = params.v || API_VERSION;
-    params.lang = app.$store.state.langName;
+    params.lang = params.lang || app.$store.state.langName;
     params.access_token = getToken(params);
 
     let data = await request({
