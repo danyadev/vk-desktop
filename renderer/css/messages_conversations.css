@@ -5,6 +5,18 @@
   height: 100%;
 }
 
+.messages_container.active_chat.hideDialogs .conversations_container {
+  display: none;
+}
+
+.messages_container.active_chat.hideDialogs .dialog_container {
+  width: 100%;
+}
+
+.messages_container.active_chat.hideDialogs .dialog_header_back {
+  display: inline-block;
+}
+
 .messages_muted {
   flex: none;
   width: 13px;

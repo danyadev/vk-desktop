@@ -120,8 +120,8 @@
         return this.profiles[this.peer.owner];
       },
       photo() {
-        if(this.isChat) return this.peer.photo;
-        else if(this.owner) return this.owner.photo_50;
+        if(this.isChat && this.peer.photo) return this.peer.photo;
+        else if(this.owner && this.owner.photo_50) return this.owner.photo_50;
         else return 'images/im_chat_photo.png';
       },
       hasMessages() {
@@ -339,8 +339,11 @@
         });
       },
       hideTopDate: other.debounce((peer) => {
-        Vue.set(peer, 'showTopTime', false);
+        if(peer.showTopTime) Vue.set(peer, 'showTopTime', false);
       }, 2000),
+      hideEndBtn: other.debounce((peer) => {
+        if(peer.showEndBtn) Vue.set(peer, 'showEndBtn', false);
+      }, 3000),
       onScroll(event, fake) {
         if(!this.peer) return;
 
@@ -348,6 +351,7 @@
           Vue.set(this.peer, 'showTopTime', true);
         }
 
+        this.hideEndBtn(this.peer);
         this.hideTopDate(this.peer);
 
         let el = event.target,

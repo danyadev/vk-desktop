@@ -11,7 +11,8 @@ module.exports = {
     counters: settings.get('counters'),
     langName: settings.get('lang'),
     lang: getLangFile(settings.get('lang')),
-    recentEmojies: settings.get('recentEmojies')
+    recentEmojies: settings.get('recentEmojies'),
+    hiddenDialogs: settings.get('hiddenDialogs')
   },
   mutations: {
     updateRecentEmojies(state, emojies) {
@@ -23,6 +24,10 @@ module.exports = {
 
       state.recentEmojies = recentEmojies;
       settings.set('recentEmojies', recentEmojies);
+    },
+    setHiddenDialogs(state, data) {
+      state.hiddenDialogs = data;
+      settings.set('hiddenDialogs', data);
     }
   }
 }

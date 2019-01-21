@@ -1,18 +1,23 @@
 <template>
   <div class="messages_settings_box" :class="{ active }">
-    <div v-if="peer.type == 'user'" class="messages_settings_box_item" @click="openInBrowser">
-      <img src="images/placeholder_user.png" class="messages_settings_box_item_icon">
+    <div v-if="peer.id < 2e9" class="messages_settings_box_item" @click="openInBrowser">
+      <img src="images/user.svg" class="messages_settings_box_item_icon">
       {{ l('dialog_settings_box', 0) }}
     </div>
     <div class="messages_settings_box_item" @click="changePushSettings">
-      <img src="images/muted_gray.svg" class="messages_settings_box_item_icon mute">
+      <img :src="`images/mute_${peer.muted ? 'on' : 'off'}.svg`" class="messages_settings_box_item_icon">
       {{ l('toggle_notifications', Number(!peer.muted)) }}
+    </div>
+    <div class="messages_settings_box_item" @click="setHiddenDialogs(!hiddenDialogs)">
+      <img :src="`images/fullscreen${hiddenDialogs ? '_exit' : ''}.svg`" class="messages_settings_box_item_icon">
+      {{ l('toggle_hidden_dialogs', Number(hiddenDialogs)) }}
     </div>
   </div>
 </template>
 
 <script>
   const { shell } = require('electron');
+  const { mapState, mapMutations } = Vuex;
 
   module.exports = {
     props: ['peer', 'active'],
@@ -20,7 +25,11 @@
       entered: false,
       timeout: null
     }),
+    computed: {
+      ...mapState('settings', ['hiddenDialogs'])
+    },
     methods: {
+      ...mapMutations('settings', ['setHiddenDialogs']),
       openInBrowser() {
         shell.openExternal('https://vk.com/id' + this.peer.id);
       },

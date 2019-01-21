@@ -133,12 +133,7 @@
 .messages_settings_box_item_icon {
   height: 24px;
   vertical-align: middle;
-  margin: -4px 3px 0 0;
-}
-
-.messages_settings_box_item_icon.mute {
-  height: 20px;
-  margin-left: 4px;
+  margin: -4px 6px 0 2px;
 }
 
 /* Диалог */
@@ -207,8 +202,8 @@
   align-items: center;
   justify-content: center;
   position: absolute;
-  right: 20px;
-  top: -70px;
+  right: 15px;
+  top: -50px;
   width: 40px;
   height: 40px;
   background-color: #fff;
@@ -217,13 +212,13 @@
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
   opacity: 1;
   cursor: pointer;
-  transition: background-color .3s, transform .3s, opacity .3s;
+  transition: background-color .3s, transform .2s, opacity .2s;
 }
 
 .dialog_to_end:hover { background-color: #f6f8fb }
 
 .dialog_to_end.hidden {
-  transform: translateY(70px);
+  transform: translateY(20px);
   opacity: 0;
 }
 

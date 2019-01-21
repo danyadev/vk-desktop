@@ -198,5 +198,6 @@ module.exports = {
   multiaccount_confirm_set_acc: `Для изменения аккаунта необходимо перезагрузить страницу.<br>Продолжить?`,
   dialog_settings_box: [
     'Перейти в профиль'
-  ]
+  ],
+  toggle_hidden_dialogs: ['Скрыть список бесед', 'Показать список бесед']
 }

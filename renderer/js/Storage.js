@@ -72,7 +72,8 @@ class Settings extends Storage {
       counters: {
         messages: 0
       },
-      recentEmojies: {}
+      recentEmojies: {},
+      hiddenDialogs: false
     }
   }
 }
