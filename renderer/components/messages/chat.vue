@@ -155,14 +155,13 @@
         if(this.id < 0) return '';
 
         if(this.isChat) {
-          if(this.peer.members == undefined) {
-            if(this.peer.left) return this.l('im_left_chat');
-            else if(this.peer.canWrite.reason == 917) {
-              return this.l('im_cant_write_reasons', 917);
-            }
+          if(this.peer.left) return this.l('im_left_chat');
 
-            return '';
+          if(this.peer.canWrite.reason == 917) {
+            return this.l('im_cant_write_reasons', 917);
           }
+
+          if(this.peer.members == undefined) return '';
 
           let type = other.getWordEnding(this.peer.members);
           return this.l('members', type, [this.peer.members]);

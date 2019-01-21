@@ -9,8 +9,12 @@
       {{ l('toggle_notifications', Number(!peer.muted)) }}
     </div>
     <div class="messages_settings_box_item" @click="setHiddenDialogs(!hiddenDialogs)">
-      <img :src="`images/fullscreen${hiddenDialogs ? '_exit' : ''}.svg`" class="messages_settings_box_item_icon">
+      <img :src="`images/${hiddenDialogs ? 'show' : 'hide'}.svg`" class="messages_settings_box_item_icon">
       {{ l('toggle_hidden_dialogs', Number(hiddenDialogs)) }}
+    </div>
+    <div v-if="peer.id > 2e9" class="messages_settings_box_item" @click="exitFromChat">
+      <img :src="`images/${peer.left ? 'return_to_chat' : 'cancel'}.svg`" class="messages_settings_box_item_icon">
+      {{ l('exit_from_chat', Number(peer.left)) }}
     </div>
   </div>
 </template>
@@ -38,6 +42,19 @@
           peer_id: this.peer.id,
           time: this.peer.muted ? 0 : -1
         });
+      },
+      exitFromChat() {
+        if(!this.peer.left) {
+          vkapi('messages.removeChatUser', {
+            chat_id: this.peer.id - 2e9,
+            member_id: app.user.id
+          });
+        } else {
+          vkapi('messages.addChatUser', {
+            chat_id: this.peer.id - 2e9,
+            user_id: app.user.id
+          });
+        }
       },
       leave() {
         this.entered = false;

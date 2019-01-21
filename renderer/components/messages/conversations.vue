@@ -334,6 +334,12 @@
 
       longpoll.on('change_peer_info', (data) => {
         console.log(data);
+
+        if(data[0] == 7 && data[2] == app.user.id) {
+          this.updatePeer(data[1], { left: true }, true);
+        } else if(data[0] == 6 && data[2] == app.user.id) {
+          this.updatePeer(data[1], { left: false }, true);
+        }
       });
     }
   }
