@@ -50,13 +50,13 @@
 }
 
 .menu_multiacc {
-  width: 24px;
-  height: 22px;
+  width: 26px;
+  height: 21px;
   position: absolute;
   right: 10px;
   background-color: white;
   -webkit-mask-size: cover;
-  -webkit-mask-image: url('../images/menu_groups.png');
+  -webkit-mask-image: url('../images/menu_groups.svg');
   cursor: pointer;
 }
 
@@ -123,23 +123,16 @@
 }
 
 .menu_item_icon {
-  width: 24px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   margin: 0 10px;
   background-color: #a6a6a6;
   -webkit-mask-size: cover;
   transition: background-color .3s;
 }
 
-.menu_item_icon.news { -webkit-mask-image: url('../images/menu_news.png') }
-.menu_item_icon.notifications { -webkit-mask-image: url('../images/menu_notifications.png') }
-.menu_item_icon.messages { -webkit-mask-image: url('../images/menu_messages.png') }
-.menu_item_icon.audios { -webkit-mask-image: url('../images/menu_audios.png') }
-.menu_item_icon.friends { -webkit-mask-image: url('../images/menu_friends.png') }
-.menu_item_icon.groups { -webkit-mask-image: url('../images/menu_groups.png') }
-.menu_item_icon.photos { -webkit-mask-image: url('../images/menu_photos.png') }
-.menu_item_icon.videos { -webkit-mask-image: url('../images/menu_videos.png') }
-.menu_item_icon.settings { -webkit-mask-image: url('../images/menu_settings.png') }
+.menu_item_icon.messages { -webkit-mask-image: url('../images/menu_messages.svg') }
+.menu_item_icon.groups { -webkit-mask-image: url('../images/menu_groups.svg') }
 
 /* Кнопка выхода из аккаунта */
 
