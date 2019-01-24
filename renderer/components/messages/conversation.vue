@@ -1,7 +1,7 @@
 <template>
   <div class="conversation" :class="{ active: isActive }" @click="openChat">
     <div class="conversation_photo_wrap" :class="online">
-      <img v-if="photo" :src="photo" class="conversation_photo">
+      <img v-if="photo" :src="photo" class="conversation_photo"/>
       <div v-else class="conversation_photo no_photo"></div>
     </div>
     <div class="conversation_content">
@@ -29,16 +29,15 @@
           <div v-else class="conversation_text" v-emoji.push
                :class="{ conversation_attach: isAttachment }">{{ message }}</div>
         </div>
-        <div class="conversation_message_unread"
-             :class="{ outread: msg.outread, muted: peer.muted }"
-             >{{ peer.unread || '' }}</div>
+        <div :class="{ outread: msg.outread, muted: peer.muted }"
+             class="conversation_message_unread">{{ peer.unread || '' }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  const { loadProfile, getServiceMessage, getDate, toggleChat } = require('./methods');
+  const { loadProfile, getServiceMessage, getDate, toggleChat, getMessagePreview } = require('./methods');
 
   module.exports = {
     props: {
@@ -100,16 +99,7 @@
         } else return '...:';
       },
       message() {
-        if(this.msg.action) {
-          return getServiceMessage.bind(this)(this.msg.action, this.author || { id: this.msg.from });
-        } else if(this.msg.isReplyMsg && !this.msg.text) {
-          return this.l('reply_msg');
-        } else if(this.msg.fwdCount && !this.msg.text) {
-          let wordID = other.getWordEnding(this.msg.fwdCount);
-          return this.l('fwd_msg', wordID, [this.msg.fwdCount]);
-        } else {
-          return this.getAttachment(this.msg.text, this.msg.attachments[0]);
-        }
+        return getMessagePreview(this.msg, this.author);
       },
       deletedContent() {
         let attachs = this.msg.attachments.length || this.msg.action;
@@ -125,22 +115,7 @@
     },
     methods: {
       async openChat() {
-        toggleChat.bind(this)(this.peer.id);
-      },
-      getAttachment(message, attachment) {
-        if(!attachment || message) return message;
-
-        if(attachment.type == 'link' && attachment.link) {
-          if(attachment.link.url.match('https://m.vk.com/story')) attachment.type = 'story';
-        }
-
-        let attachName = this.l('attachments', attachment.type);
-
-        if(!attachName) {
-          console.warn('[messages] Неизвестное вложение:', attachment.type);
-        }
-
-        return attachName || this.l('attach');
+        toggleChat(this.peer.id);
       }
     }
   }

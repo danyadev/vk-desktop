@@ -437,6 +437,7 @@
 .message_text_wrap {
   position: relative;
   display: inline-block;
+  max-width: 100%;
   background-color: #dfe6ea;
   padding: 7px 10px;
   border-radius: 18px;

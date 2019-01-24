@@ -83,3 +83,61 @@
 /* Sticker */
 
 .attach_sticker { height: 160px }
+
+/* Replied msg */
+
+.attach_reply_msg {
+  display: flex;
+  position: relative;
+  height: 40px;
+  cursor: pointer;
+}
+
+.attach_reply_msg::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  border-radius: 1px;
+  background-color: #a3bbd6;
+  transition: background-color .2s;
+}
+
+.attach_reply_msg:hover::before {
+  background-color: #88a3c1;
+}
+
+.attach_reply_msg_photo {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  margin: 4px -4px 0 7px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.attach_reply_msg_content,
+.attach_reply_msg_name,
+.attach_reply_msg_text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.attach_reply_msg_content {
+  margin-left: 10px;
+}
+
+.attach_reply_msg_name {
+  color: #254f79;
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.attach_reply_msg_text { margin-top: -1px }
+
+.attach_reply_msg_text.isAttach {
+  color: #254f79;
+}

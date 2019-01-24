@@ -174,8 +174,8 @@ async function loadAttachments(message, peer_id) {
 
 function getServiceMessage(action, author, full) {
   let actID = action.member_id || action.mid,
-      actUser = this.$store.state.profiles[actID] || { id: actID },
-      id = this.$root.user.id;
+      actUser = app.$store.state.profiles[actID] || { id: actID },
+      id = app.user.id;
 
   function g(type) {
     let user = type ? actUser : author;
@@ -256,8 +256,8 @@ function getDate(timestamp, { addTime, shortMonth, fullText } = {}) {
 }
 
 async function toggleChat(chatID) {
-  let oldChatID = this.$store.state.activeChat,
-      conversation = this.$store.state.conversations[oldChatID],
+  let oldChatID = app.$store.state.activeChat,
+      conversation = app.$store.state.conversations[oldChatID],
       peer = conversation && conversation.peer,
       messagesList = qs('.dialog_messages_list'),
       dialogInput = qs('.dialog_input');
@@ -275,13 +275,13 @@ async function toggleChat(chatID) {
     } else peer.scrolledToEnd = false;
   }
 
-  this.$store.commit('setChat', chatID);
+  app.$store.commit('setChat', chatID);
 
   // открытие диалога
   if(chatID) {
-    await this.$nextTick();
+    await Vue.nextTick();
 
-    let newConv = this.$store.state.conversations[chatID],
+    let newConv = app.$store.state.conversations[chatID],
         newPeer = newConv && newConv.peer,
         hasScrollTop = newPeer.scrollTop != undefined;
 
@@ -316,6 +316,35 @@ function getTextWithEmoji(nodes) {
   }
 }
 
+function getMessagePreview(msg, author) {
+  function getAttachment(message, attachment) {
+    if(!attachment || message) return message;
+
+    if(attachment.type == 'link' && attachment.link) {
+      if(attachment.link.url.match('https://m.vk.com/story')) attachment.type = 'story';
+    }
+
+    let attachName = app.l('attachments', attachment.type);
+
+    if(!attachName) {
+      console.warn('[messages] Неизвестное вложение:', attachment.type);
+    }
+
+    return attachName || app.l('attach');
+  }
+
+  if(msg.action) {
+    return getServiceMessage(msg.action, author || { id: msg.from });
+  } else if(msg.isReplyMsg && !msg.text) {
+    return app.l('reply_msg');
+  } else if(msg.fwdCount && !msg.text) {
+    let wordID = other.getWordEnding(msg.fwdCount);
+    return app.l('fwd_msg', wordID, [msg.fwdCount]);
+  } else {
+    return getAttachment(msg.text, msg.attachments[0]);
+  }
+}
+
 module.exports = {
   concatProfiles,
   loadProfile,
@@ -327,5 +356,6 @@ module.exports = {
   getServiceMessage,
   getDate,
   toggleChat,
-  getTextWithEmoji
+  getTextWithEmoji,
+  getMessagePreview
 }

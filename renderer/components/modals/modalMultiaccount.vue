@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  const { getDate } = require('./../messages/messages');
+  const { getDate } = require('./../messages/methods');
 
   module.exports = {
     computed: {
