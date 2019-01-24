@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-const { resolve } = require('path');
+const path = require('path');
 const { getTextWithEmoji } = require('./../components/messages/methods');
 
 Vue.use(require('./lib/ModalCreator'));
@@ -29,7 +29,7 @@ Vue.directive('emoji', (el, { modifiers }, vnode) => {
   el.innerHTML = emoji(html);
 });
 
-let getTagData = (name, text) => {
+function getTagData(name, text)  {
   let regexp = new RegExp(`<${name}>([^]*)</${name}>`, 'i'),
       match = text.match(regexp);
 
@@ -40,8 +40,7 @@ require.extensions['.vue'] = (module, filename) => {
   let file = fs.readFileSync(filename, 'utf-8'),
       template = JSON.stringify(getTagData('template', file));
 
-  let code = `
-    'use strict';
+  let code = `'use strict';
     ${'\n'.repeat(template.split('\\n').length-1)}
     ${getTagData('script', file) || 'module.exports = {};'}
     module.exports.template = ${template};
@@ -50,20 +49,27 @@ require.extensions['.vue'] = (module, filename) => {
    module._compile(code, filename);
 }
 
-let getFiles = (path, files = [], folders = '') => {
-  let items = fs.readdirSync(path + folders, { withFileTypes: true });
+function getFiles(dir, fileList = [], origDir = dir) {
+  let files = fs.readdirSync(dir);
 
-  for(let file of items) {
-    if(!file.isDirectory()) files.push(folders + file.name);
-    else files.concat(getFiles(path, files, `${folders}${file.name}/`));
-  }
+  files.forEach((file) => {
+    if(!fs.statSync(path.join(dir, file)).isDirectory()) {
+      let filePath = path.join(dir, file).replace(origDir, '').slice(1);
 
-  return files;
+      fileList.push(filePath);
+    } else {
+      fileList = getFiles(path.join(dir, file), fileList, origDir);
+    }
+  });
+
+  return fileList;
 }
 
-let componentsPath = resolve(__dirname, '..', 'components') + '/';
+let componentsPath = path.resolve(__dirname, '..', 'components');
 
 getFiles(componentsPath).forEach((file) => {
+  file = file.replace(/\\/g, '/');
+
   let fileType = file.slice(file.lastIndexOf('.') + 1);
   if(fileType == file || fileType != 'vue') return;
 
