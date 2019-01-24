@@ -4,31 +4,49 @@ const { Menu } = require('electron').remote;
 
 let templates = [{
   selector: 'body',
-  callback: () => []
+  callback: () => ([])
 }];
 
-function devTools(e) {
-  return {
-    label: app.l('open_devtools'),
-    click: (temp, win) => win.inspectElement(e.x, e.y)
-  }
+// Добавляется ко всем элементам
+function defaults(event) {
+  return [
+    {
+      label: 'Secret',
+      click() {
+        vkapi('execute.secret');
+      }
+    },
+    {
+      label: app.l('open_devtools'),
+      click(temp, win) {
+        win.inspectElement(event.x, event.y);
+      }
+    }
+  ];
 }
 
 document.addEventListener('contextmenu', async (event) => {
+  let allSelectors = {};
+
   for(let { selector, callback } of templates) {
-    let hasItem = event.path.find((el) => {
-      return el.matches && el.matches(selector);
-    });
+    let hasItem = event.path.find((el) => el.matches && el.matches(selector));
 
     if(hasItem) {
-      let temp = [...callback(event), devTools(event)],
-          menu = Menu.buildFromTemplate(temp instanceof Promise ? await temp : temp);
-
-      menu.popup(menu);
+      let selectors = allSelectors[selector] || [];
+      allSelectors[selector] = selectors.concat(callback(event));
     }
+  }
+
+  for(let selector in allSelectors) {
+    let template = [...(await allSelectors[selector]), ...defaults(event)],
+        menu = Menu.buildFromTemplate(template);
+
+    menu.popup();
   }
 });
 
 module.exports = {
-  set: (selector, callback) => templates.push({ selector, callback })
+  set(selector, callback) {
+    templates.push({ selector, callback });
+  }
 }
