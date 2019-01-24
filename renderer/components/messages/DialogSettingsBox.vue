@@ -16,6 +16,10 @@
       <img :src="`images/${peer.left ? 'return_to_chat' : 'cancel'}.svg`" class="messages_settings_box_item_icon">
       {{ l('exit_from_chat', Number(peer.left)) }}
     </div>
+    <div v-if="!peer.channel" class="messages_settings_box_item" @click="clearHistory">
+      <img :src="`images/trash.svg`" class="messages_settings_box_item_icon">
+      {{ l('dialog_settings_box', 1) }}
+    </div>
   </div>
 </template>
 
@@ -55,6 +59,15 @@
             user_id: app.user.id
           });
         }
+      },
+      clearHistory() {
+        this.$modals.open('clearHistory', {
+          confirm: () => {
+            vkapi('messages.deleteConversation', {
+              peer_id: this.peer.id
+            });
+          }
+        });
       },
       leave() {
         this.entered = false;

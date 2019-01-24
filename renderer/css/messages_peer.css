@@ -94,13 +94,13 @@
   user-select: none;
 }
 
-/*  */
+/* Блок с настройками беседы (через 3 точки) */
 
 .messages_settings_box {
   position: absolute;
   top: 30px;
   right: 5px;
-  width: 240px;
+  width: 270px;
   background-color: #fff;
   opacity: 0;
   visibility: hidden;

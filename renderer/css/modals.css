@@ -207,3 +207,9 @@
 .photo_viewer img {
   box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
 }
+
+/* Удаление всех сообщений */
+
+.modal[name="clearHistory"] {
+  width: 500px;
+}
