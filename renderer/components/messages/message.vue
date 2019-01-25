@@ -43,7 +43,7 @@
 </template>
 
 <script>
-  const { loadProfile, getServiceMessage, getDate } = require('./methods');
+  const { loadProfile, getServiceMessage, getDate, isDeletedContent } = require('./methods');
 
   module.exports = {
     props: {
@@ -106,8 +106,7 @@
         return this.user.name || userName;
       },
       deletedContent() {
-        let attachs = this.msg.attachments.length || this.msg.action;
-        return this.msg.text == '' && !attachs && !this.msg.fwdCount && !this.msg.isReplyMsg;
+        return isDeletedContent(this.msg);
       },
       flyMsgTime() {
         if(!this.attachments.length) return false;

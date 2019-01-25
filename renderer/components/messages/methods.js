@@ -345,6 +345,10 @@ function getMessagePreview(msg, author) {
   }
 }
 
+function isDeletedContent(msg) {
+  return !(msg.text || msg.attachments.length || msg.action || msg.fwdCount || !msg.isReplyMsg);
+}
+
 module.exports = {
   concatProfiles,
   loadProfile,
@@ -357,5 +361,6 @@ module.exports = {
   getDate,
   toggleChat,
   getTextWithEmoji,
-  getMessagePreview
+  getMessagePreview,
+  isDeletedContent
 }

@@ -37,7 +37,14 @@
 </template>
 
 <script>
-  const { loadProfile, getServiceMessage, getDate, toggleChat, getMessagePreview } = require('./methods');
+  const {
+    loadProfile,
+    getServiceMessage,
+    getDate,
+    toggleChat,
+    getMessagePreview,
+    isDeletedContent
+  } = require('./methods');
 
   module.exports = {
     props: {
@@ -102,8 +109,7 @@
         return getMessagePreview(this.msg, this.author);
       },
       deletedContent() {
-        let attachs = this.msg.attachments.length || this.msg.action;
-        return this.msg.text == '' && !attachs && !this.msg.fwdCount && !this.msg.isReplyMsg;
+        return isDeletedContent(this.msg);
       },
       isAttachment() {
         let isFwd = this.msg.fwdCount || this.msg.isReplyMsg;
