@@ -1,5 +1,5 @@
 <template>
-  <div class="modal_header">
+  <div class="modal_header" :data-closable="closable">
     <div class="modal_header_title"><slot></slot></div>
     <div v-if="closable" @click.stop="close" class="modal_header_close"></div>
   </div>
@@ -8,14 +8,11 @@
 <script>
   module.exports = {
     props: {
-      closable: {
-        type: Boolean,
-        default: true
-      }
+      closable: { default: true }
     },
     methods: {
       close() {
-        this.$modals.close(this.$parent.$attrs.name);
+        this.$modals.close(this.$parent.$attrs['data-key']);
       }
     }
   }

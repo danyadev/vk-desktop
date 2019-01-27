@@ -13,19 +13,14 @@
   const { app } = require('electron').remote;
 
   module.exports = {
-    props: {
-      data: {
-        type: Number,
-        required: true
-      }
-    },
+    props: ['data'],
     methods: {
       close() {
         app.exit();
       },
       exit() {
         this.$store.commit('setActiveUser', null);
-        this.$modals.close(this.$parent.$attrs.name);
+        this.$modals.close(this.$attrs['data-key']);
       }
     }
   }

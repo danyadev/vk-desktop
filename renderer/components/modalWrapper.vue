@@ -1,7 +1,11 @@
 <template>
   <div class="modals_container">
-    <div class="modal_wrap" v-for="modal in modals" :class="{ active: modal.active }" @click="closeModal">
-      <component :is="`modal-${modal.name}`" :data="modal.data" :name="modal.name"></component>
+    <div class="modal_wrap" :class="{ active: modal.active }"
+         v-for="(modal, id) in modals" @click.stop="closeModal">
+      <component :is="`modal-${modal.name}`"
+                 :data="modal.data"
+                 :key="id" :data-key="id"
+                 :name="modal.name"></component>
     </div>
   </div>
 </template>
@@ -11,35 +15,41 @@
 
   module.exports = {
     data: () => ({
-      modals: []
+      modals: {},
+      id: 0
     }),
     methods: {
       closeModal(event) {
-        let hasClose = !event.path.find((el) => el.classList && el.classList.contains('modal'));
-        if(hasClose) Bus.emit('close', this.modals[this.modals.length - 1].name);
-      },
-      updateModal(name, data) {
-        let index = this.modals.findIndex((modal) => modal.name == name);
+        let hasClose = !event.path.find((el) => el.classList && el.classList.contains('modal')),
+            key = event.target.children[0] && event.target.children[0].dataset.key;
 
-        if(index >= 0) {
-          Vue.set(this.modals, index, Object.assign({}, this.modals[index], data));
+        if(key == undefined) return;
+
+        if(hasClose) {
+          let modal = this.modals[key],
+              header = qs(`.modal[data-key="${key}"] .modal_header`),
+              closable = modal.closable || !header || header.dataset.closable;
+
+          if(closable) Bus.emit('close', key);
         }
+      },
+      updateModal(key, data) {
+        let modal = this.modals[key];
+
+        if(modal) Vue.set(this.modals, key, Object.assign({}, modal, data));
       }
     },
     created() {
-      Bus.on('open', async (name, data = {}) => {
-        this.modals.push({ name, data });
-        setTimeout(() => this.updateModal(name, { active: true }), 200);
+      Bus.on('open', (name, data = {}) => {
+        Vue.set(this.modals, this.id++, { name, data });
+
+        setTimeout(() => this.updateModal(this.id-1, { active: true }), 200);
       });
 
-      Bus.on('close', (name) => {
-        this.updateModal(name, { active: false });
+      Bus.on('close', (key) => {
+        this.updateModal(key, { active: false });
 
-        setTimeout(() => {
-          let index = this.modals.findIndex((modal) => modal.name == name);
-
-          if(index >= 0) this.modals.splice(index, 1);
-        }, 200);
+        setTimeout(() => Vue.delete(this.modals, key), 200);
       });
     }
   }

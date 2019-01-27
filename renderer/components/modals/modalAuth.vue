@@ -9,11 +9,6 @@
 
 <script>
   module.exports = {
-    props: {
-      data: {
-        type: Object,
-        required: true
-      }
-    }
+    props: ['data']
   }
 </script>

@@ -10,16 +10,11 @@
 
 <script>
   module.exports = {
-    props: {
-      data: {
-        type: Object,
-        required: true
-      }
-    },
+    props: ['data'],
     methods: {
       confirm() {
         this.data.confirm();
-        this.$modals.close(this.$attrs.name);
+        this.$modals.close(this.$attrs['data-key']);
       }
     }
   }

@@ -9,12 +9,7 @@
   const { getLastToken } = require('./auth');
 
   module.exports = {
-    props: {
-      isModal: {
-        type: Boolean,
-        default: false
-      }
-    },
+    props: ['isModal'],
     data: () => ({
       needValidation: null
     }),

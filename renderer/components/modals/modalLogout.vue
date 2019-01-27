@@ -21,7 +21,7 @@
         getCurrentWindow().reload();
       },
       closeModal() {
-        this.$modals.close('logout');
+        this.$modals.close(this.$attrs['data-key']);
       }
     }
   }

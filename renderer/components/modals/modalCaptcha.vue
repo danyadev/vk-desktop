@@ -18,12 +18,7 @@
 
 <script>
   module.exports = {
-    props: {
-      data: {
-        type: Object,
-        required: true
-      }
-    },
+    props: ['data'],
     data: () => ({
       text: ''
     }),
@@ -40,7 +35,7 @@
         if(this.disabled) return;
 
         this.data.send(this.text.trim());
-        this.$modals.close(this.$parent.$attrs.name);
+        this.$modals.close(this.$attrs['data-key']);
       }
     }
   }

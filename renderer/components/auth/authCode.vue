@@ -15,12 +15,7 @@
   const { getFirstToken } = require('./auth');
 
   module.exports = {
-    props: {
-      data: {
-        type: Object,
-        required: true
-      }
-    },
+    props: ['data'],
     data: () => ({
       code: '',
       load: false,
