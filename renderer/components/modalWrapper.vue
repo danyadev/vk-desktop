@@ -16,11 +16,14 @@
     methods: {
       closeModal(event) {
         let hasClose = !event.path.find((el) => el.classList && el.classList.contains('modal'));
-        if(hasClose) Bus.emit('close', this.modals[this.modals.length - 1]);
+        if(hasClose) Bus.emit('close', this.modals[this.modals.length - 1].name);
       },
       updateModal(name, data) {
-        let modal = this.modals.find((modal) => modal.name == name);
-        Vue.set(this.modals, this.modals.length - 1, Object.assign({}, modal, data));
+        let index = this.modals.findIndex((modal) => modal.name == name);
+
+        if(index >= 0) {
+          Vue.set(this.modals, index, Object.assign({}, this.modals[index], data));
+        }
       }
     },
     created() {
@@ -33,11 +36,9 @@
         this.updateModal(name, { active: false });
 
         setTimeout(() => {
-          let modals = this.modals.reverse(),
-              index = modals.findIndex((modal) => modal.name == name);
+          let index = this.modals.findIndex((modal) => modal.name == name);
 
-          modals.splice(index, 1);
-          this.modals = modals;
+          if(index >= 0) this.modals.splice(index, 1);
         }, 200);
       });
     }
