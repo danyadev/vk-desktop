@@ -27,8 +27,7 @@ class Longpoll {
 
   async loop() {
     let [ host, path ] = this.server.split('/');
-
-    let data = await request({
+    let { data } = await request({
       host: host,
       path: `/${path}?` + querystring.stringify({
         act: 'a_check',

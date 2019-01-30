@@ -54,14 +54,14 @@ let method = (name, params = {}, promise) => {
     params.lang = params.lang || app.$store.state.langName;
     params.access_token = getToken(params);
 
-    let data = await request({
+    let { data } = await request({
       host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST',
       headers: {
         'User-Agent': params.offToken ? 'VKAndroidApp/5.11.1-2316' : 'VKDesktop/' + process.package.version
       }
-    }, { data: querystring.stringify(params) });
+    }, querystring.stringify(params));
 
     if(data.response !== undefined) tryResolve(params, data.response, resolve);
     else {

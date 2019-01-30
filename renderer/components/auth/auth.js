@@ -4,7 +4,7 @@ const querystring = require('querystring');
 
 function getFirstToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
-    let data = await request({
+    let { data } = await request({
       host: 'oauth.vk.com',
       path: '/token?' + querystring.stringify({
         scope: 'all',
@@ -69,9 +69,9 @@ function getLastToken(firstToken) {
       sdk_fingerprint: 'A6SF876A8SF7A78G58ADHG89AGAG9'
     });
 
-    let site = await request(authLink),
+    let { data: site } = await request(authLink),
         link = 'https://oauth.vk.com' + site.match(/\/auth_by_token?.+=\w+/)[0],
-        { location } = await request(link, { location: true }),
+        { headers: { location } } = await request(link),
         lastToken = location.match(/#access_token=([A-z0-9]{85})/)[1];
 
     resolve(lastToken);
@@ -92,8 +92,8 @@ function getSupportToken(VKToken = app.user && app.user.other_token) {
       client_id: 6126832
     });
 
-    let { location: link } = await request(authLink, { location: true }),
-        { location } = await request('https://oauth.vk.com' + link, { location: true }),
+    let { headers: { location: link } } = await request(authLink),
+        { headers: { location } } = await request('https://oauth.vk.com' + link),
         lastToken = location.match(/#access_token=([A-z0-9]{85})/)[1];
 
     resolve(lastToken);

@@ -2,69 +2,70 @@
 
 const https = require('https');
 const URL = require('url');
+const dns = require('dns');
+const { EventEmitter } = require('events');
 
-let urlToObject = (url) => {
-  if(other.isObject(url)) return url;
-  let data = URL.parse(url);
+class ConnectChecker extends EventEmitter {
+  constructor() {
+    super();
 
-  return {
-    host: data.host,
-    path: data.path
+    this.isConnected = true;
+    this.check();
+  }
+
+  check() {
+    return new Promise((resolve) => {
+      dns.lookup('google.com', (err) => {
+        if(err && this.isConnected) {
+          this.interval = setInterval(() => this.check(), 2000);
+        } else if(!err && !this.isConnected) {
+          clearInterval(this.interval);
+          this.emit('restored');
+        }
+
+        this.isConnected = !err;
+        resolve(this.isConnected);
+      });
+    });
   }
 }
 
-let plainRequest = (url, options) => {
-  if(!other.isObject(options)) options = {};
+let connectChecker = new ConnectChecker(),
+    requests = [];
 
+connectChecker.on('restored', () => {
+  for(let req of requests) request(...req);
+  requests = [];
+});
+
+function request(url, postData = '', promise) {
   return new Promise((resolve, reject) => {
-    let req = https.request(urlToObject(url), (res) => {
-      let buffers = [];
-
-      res.on('data', (chunk) => buffers.push(chunk));
-      res.on('end', () => {
-        resolve({
-          text: String(Buffer.concat(buffers)),
-          location: res.headers.location
-        });
-      });
-      res.on('error', reject);
-    });
-
-    req.on('error', reject);
-
-    if(other.isObject(options.data) && options.data.pipe instanceof Function) {
-      options.data.pipe(req);
-    } else req.end(options.data || '');
-  });
-};
-
-let request = (url, options = {}, promise) => {
-  return new Promise(async (resolve, reject) => {
     if(promise) {
       resolve = promise.resolve;
       reject = promise.reject;
     }
 
-    try {
-      let data = await plainRequest(url, options);
+    let req = https.request(url, (res) => {
+      let chunks = [];
 
-      try {
-        data.text = JSON.parse(data.text);
-      } catch(e) {}
+      res.on('data', (chunk) => chunks.push(chunk));
+      res.on('end', () => {
+        let data = String(Buffer.concat(chunks));
 
-      if(options.location) {
-        resolve({
-          text: data.text,
-          location: data.location
-        });
-      } else resolve(data.text);
-    } catch(err) {
-      let connectErrors = ['getaddrinfo', 'read', 'connect'];
+        try {
+          data = JSON.parse(data);
+        } catch(e) {}
 
-      if(connectErrors.includes(err.syscall)) {
-        setTimeout(() => request(url, options, { resolve, reject }), 2500);
-      } else reject(err);
-    }
+        resolve({ data, headers: res.headers });
+      });
+    });
+
+    req.on('error', () => {
+      connectChecker.check();
+      requests.push([url, postData, { resolve, reject }]);
+    });
+
+    req.end(postData);
   });
 }
 
