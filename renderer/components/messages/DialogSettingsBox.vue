@@ -2,7 +2,7 @@
   <div class="messages_settings_box" :class="{ active }">
     <div v-if="peer.id < 2e9" class="messages_settings_box_item" @click="openInBrowser">
       <img src="images/user.svg" class="messages_settings_box_item_icon">
-      {{ l('dialog_settings_box', 0) }}
+      {{ l('dialog_settings_box', peer.id > 0 ? 0 : 1) }}
     </div>
     <div class="messages_settings_box_item" @click="changePushSettings">
       <img :src="`images/mute_${peer.muted ? 'on' : 'off'}.svg`" class="messages_settings_box_item_icon">
@@ -18,7 +18,7 @@
     </div>
     <div v-if="!peer.channel" class="messages_settings_box_item" @click="clearHistory">
       <img :src="`images/trash.svg`" class="messages_settings_box_item_icon">
-      {{ l('dialog_settings_box', 1) }}
+      {{ l('dialog_settings_box', 2) }}
     </div>
   </div>
 </template>
@@ -39,7 +39,10 @@
     methods: {
       ...mapMutations('settings', ['setHiddenDialogs']),
       openInBrowser() {
-        shell.openExternal('https://vk.com/id' + this.peer.id);
+        let id = this.peer.id,
+            nick = id > 0 ? `id${id}` : `club${-id}`;
+
+        shell.openExternal(`https://vk.com/${nick}`);
       },
       changePushSettings() {
         vkapi('account.setSilenceMode', {
