@@ -4,7 +4,7 @@
     <div class="titlebar_buttons">
       <div v-for="button of buttons"
            class="titlebar_button" :class="button"
-           @click="getCurrentWindow()[button]()">
+           @click="click(button)">
         <img :src="`images/window_${button}.svg`">
       </div>
     </div>
@@ -18,6 +18,11 @@
       maximized: getCurrentWindow().isMaximized(),
       buttons: ['minimize', 'maximize', 'restore', 'close']
     }),
+    methods: {
+      click(button) {
+        getCurrentWindow()[button]();
+      }
+    },
     mounted() {
       if(this.mac) {
         qs('.titlebar_drag').addEventListener('dblclick', () => {

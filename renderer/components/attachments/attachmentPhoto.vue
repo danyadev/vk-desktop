@@ -13,8 +13,7 @@
           max, i = 0;
 
       while(!max && sizes[i]) {
-        max = this.getSize(sizes[i]);
-        i++;
+        max = this.getSize(sizes[i++]);
       }
 
       return {

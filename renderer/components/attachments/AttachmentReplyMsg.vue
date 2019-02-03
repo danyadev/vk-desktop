@@ -5,8 +5,8 @@
       <div class="attach_reply_msg_name">{{ name }}</div>
       <div class="attach_reply_msg_text message_content_deleted"
            v-if="isDeletedContent">({{ l('content_deleted') }})</div>
-      <div v-else class="attach_reply_msg_text" v-emoji.push
-           :class="{ isAttach }">{{ text }}</div>
+      <div v-else class="attach_reply_msg_text" v-emoji.push="text"
+           :class="{ isAttach }"></div>
     </div>
   </div>
 </template>
@@ -31,6 +31,7 @@
         }
       },
       name() {
+        if(!this.author) return '...';
         return this.author.name || `${this.author.first_name} ${this.author.last_name}`;
       },
       text() {

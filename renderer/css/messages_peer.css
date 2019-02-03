@@ -18,8 +18,16 @@
 
 .dialog_header_photo {
   width: 35px;
+  height: 35px;
   border-radius: 50%;
-  margin-left: 5px;
+  margin: 0 5px 0 5px;
+}
+
+.dialog_header_center {
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .dialog_name_wrap {
@@ -30,7 +38,7 @@
 
 .dialog_name_wrap .verified {
   flex: none;
-  margin: 1px 0 1px 3px;
+  margin-left: 3px;
 }
 
 .dialog_name_wrap .messages_muted {
@@ -40,7 +48,7 @@
 
 .dialog_name {
   color: #fff;
-  line-height: 12px;
+  line-height: 14px;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   overflow: hidden;
   white-space: nowrap;
@@ -168,14 +176,16 @@
 
 .dialog_empty_block { flex-grow: 1 }
 
-.dialog_no_messages {
+.dialog_messages_list.empty {
   align-items: center;
   justify-content: center;
   text-align: center;
   color: #38383a;
 }
 
-.dialog_no_messages img { height: 128px }
+.dialog_messages_list.empty img { height: 128px }
+
+.dialog_messages_list.empty .typing_wrap { display: none }
 
 .dialog_wrap .typing_wrap {
   height: 40px;
@@ -368,12 +378,22 @@
   height: 50px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
-.dialog_input_error_img,
+.dialog_input_error_img {
+  width: 36px;
+  height: 36px;
+  background-color: #f3690b;
+  -webkit-mask-size: 36px;
+  -webkit-mask-image: url('../images/im_chat_error.png');
+}
+
 .dialog_input_error_text {
-  margin: 0 20px;
+  margin: -4px 0 0 10px;
   text-align: center;
+  font-size: 16px;
+  color: #3e3f40;
 }
 
 .dialog_input_error_text.channel { margin: 0 auto }
@@ -416,6 +436,7 @@
   height: 36px;
   border-radius: 50%;
   margin-right: 10px;
+  margin-top: 25px;
 }
 
 .message_empty_photo {
@@ -432,6 +453,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  margin-left: 6px;
 }
 
 .message_text_wrap {
@@ -500,7 +522,7 @@
   color: #696969;
   font-weight: 500;
   font-size: 11px;
-  margin: 6px 0 0 8px;
+  margin: 6px 0 0 6px;
   user-select: none;
   pointer-events: none;
 }

@@ -1,9 +1,5 @@
 .message_attachments { display: inline }
 
-.message_attach_loading {
-  margin: 30px 50px 20px 50px;
-}
-
 .message_attach_loading .typing_item {
   width: 7px;
   height: 7px;
@@ -82,7 +78,10 @@
 
 /* Sticker */
 
-.attach_sticker { height: 160px }
+.attach_sticker {
+  height: 128px;
+  min-width: 64px;
+}
 
 /* Replied msg */
 

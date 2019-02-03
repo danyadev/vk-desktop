@@ -7,7 +7,7 @@
     <div class="conversation_content">
       <div class="conversation_title">
         <div class="conversation_name_wrap">
-          <div class="conversation_name" v-emoji>{{ chatName }}</div>
+          <div class="conversation_name" v-emoji="chatName"></div>
           <div v-if="owner && owner.verified" class="verified"></div>
           <div v-if="peer.muted" class="messages_muted"></div>
         </div>
@@ -26,8 +26,8 @@
           <div class="conversation_author">{{ authorName }}</div>
           <div v-if="deletedContent"
                class="conversation_text message_content_deleted">({{ l('content_deleted') }})</div>
-          <div v-else class="conversation_text" v-emoji.push
-               :class="{ conversation_attach: isAttachment }">{{ message }}</div>
+          <div v-else class="conversation_text" v-emoji.push="message"
+               :class="{ conversation_attach: isAttachment }"></div>
         </div>
         <div :class="{ outread: msg.outread, muted: peer.muted }"
              class="conversation_message_unread">{{ peer.unread || '' }}</div>
@@ -39,7 +39,6 @@
 <script>
   const {
     loadProfile,
-    getServiceMessage,
     getDate,
     toggleChat,
     getMessagePreview,
@@ -47,12 +46,7 @@
   } = require('./methods');
 
   module.exports = {
-    props: {
-      peer: {
-        type: Object,
-        required: true
-      }
-    },
+    props: ['peer'],
     data: (vm) => ({
       isChat: vm.peer.type == 'chat'
     }),
@@ -120,7 +114,7 @@
       }
     },
     methods: {
-      async openChat() {
+      openChat() {
         toggleChat(this.peer.id);
       }
     }

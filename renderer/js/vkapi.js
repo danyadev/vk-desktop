@@ -115,3 +115,4 @@ addToQueue.upload = (url) => {
 
 module.exports = addToQueue;
 module.exports.version = API_VERSION;
+module.exports.methods = methods;

@@ -230,19 +230,13 @@
   .messages_container:not(.active_chat) .dialog_container { display: none }
   .messages_container.active_chat .dialog_container { width: 100% }
 
-  .dialog_header_center { width: calc(100% - 80px) }
-
   .messages_container.active_chat .conversations_container { display: none }
-  .messages_container.active_chat .dialog_header_back { display: inline-block }
+  .messages_container.active_chat .dialog_header_back { display: block }
 }
 
 @media screen and (min-width: 650px) and (max-width: 900px) {
   .conversations_container { width: 43% }
   .dialog_container { width: 57% }
-}
-
-@media screen and (min-width: 650px) {
-  .dialog_header_center { width: calc(100% - 40px) }
 }
 
 @media screen and (min-width: 900px) {

@@ -15,15 +15,13 @@
           <div v-if="serviceMessage" class="message_text" v-html="serviceMessage"></div>
           <template v-else>
             <div v-if="deletedContent" class="message_content_deleted">({{ l('content_deleted') }})</div>
-            <div v-else class="message_text" v-emoji.color_push.br.link>{{ msg.text }}</div>
+            <div v-else class="message_text" v-emoji.color_push.br.link="text"></div>
           </template>
           <div v-if="hasAttachments" class="message_attachments">
-            <div v-if="!msg.loaded" class="message_attach_loading">
-              <div class="typing">
-                <div class="typing_item"></div>
-                <div class="typing_item"></div>
-                <div class="typing_item"></div>
-              </div>
+            <div class="typing" v-if="!msg.loaded">
+              <div class="typing_item"></div>
+              <div class="typing_item"></div>
+              <div class="typing_item"></div>
             </div>
             <component v-for="attach of attachments"
                        :is="'attachment-' + attach.type"
@@ -46,19 +44,22 @@
   const { loadProfile, getServiceMessage, getDate, isDeletedContent } = require('./methods');
 
   module.exports = {
-    props: {
-      msg: {
-        type: Object,
-        required: true
-      },
-      peer: {
-        type: Object,
-        required: true
+    props: ['msg', 'peer'],
+    data() {
+      let date = new Date(this.msg.date * 1000),
+          f = (t) => t < 10 ? `0${t}` : t,
+          time = `${date.getHours()}:${f(date.getMinutes())}`;
+
+      return {
+        isOwner: this.msg.from == this.$root.user.id,
+        supportedAttachments: ['photo', 'sticker'/*, 'link', 'story'*/],
+        time: time,
+        isChat: this.peer.id > 2e9
       }
     },
     computed: {
-      isChat() {
-        return this.peer.id > 2e9;
+      text() {
+        return this.msg.text;
       },
       prevMsg() {
         let messages = this.$store.state.messages[this.peer.id],
@@ -71,12 +72,12 @@
       },
       historyDate() {
         let date = new Date(this.msg.date * 1000),
-            time = getDate(this.msg.date);
+            time = getDate(this.msg.date),
+            prevDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
 
-        if(this.prevMsg) {
-          let prevDate = new Date(this.prevMsg.date * 1000);
-          if(prevDate.toLocaleDateString() != date.toLocaleDateString()) return time;
-        } else return time;
+        if(!prevDate || prevDate.toLocaleDateString() != date.toLocaleDateString()) {
+          return time;
+        }
       },
       showUserData() {
         if(this.serviceMessage || this.isOwner || !this.isChat || this.peer.channel) return false;
@@ -88,9 +89,6 @@
         let hasPrevUnread = this.prevMsg && this.prevMsg.unread;
         if(this.msg.unread && !hasPrevUnread) return true;
       },
-      isOwner() {
-        return this.msg.from == this.$root.user.id;
-      },
       user() {
         let user = this.$store.state.profiles[this.msg.from];
         if(!user || !user.photo_50) loadProfile(this.msg.from);
@@ -98,7 +96,7 @@
         return user || { id: this.msg.from };
       },
       photo() {
-        return this.user.photo_50;
+        return this.user.photo_50 || 'images/im_chat_photo.png';
       },
       name() {
         let userName = this.user.photo_50 ? `${this.user.first_name} ${this.user.last_name}` : '...';
@@ -115,9 +113,7 @@
         return ['photo', 'sticker'].includes(type);
       },
       serviceMessage() {
-        if(!this.msg.action) return;
-
-        return getServiceMessage.bind(this)(this.msg.action, this.user, true);
+        return this.msg.action && getServiceMessage(this.msg.action, this.user, true);
       },
       morePhotos() {
         return this.attachments.filter(({ type }) => type == 'photo').length > 1;
@@ -131,9 +127,6 @@
         if(!this.attachments.length) return false;
 
         return this.attachments.every(({ type }) => type == 'sticker');
-      },
-      supportedAttachments() {
-        return ['photo', 'sticker'];
       },
       hasAttachments() {
         return this.msg.attachments.length || this.msg.isReplyMsg || this.msg.fwdCount;
@@ -169,7 +162,7 @@
 
             if(type == 'photo' && this.serviceMessage) {
               attachment[type].isServiceMsg = true;
-            }
+            } else if(type == 'story') type = 'link';
 
             attach = {
               type: type.replace(/_/g, '-'),
@@ -184,12 +177,6 @@
       },
       outread() {
         return this.msg.outread || this.msg.unread;
-      },
-      time() {
-        let date = new Date(this.msg.date * 1000),
-            f = (t) => t < 10 ? `0${t}` : t;
-
-        return `${date.getHours()}:${f(date.getMinutes())}`;
       }
     }
   }

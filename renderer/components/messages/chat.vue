@@ -1,41 +1,36 @@
 <template>
   <div class="dialog_container" tabindex="0" @keyup.esc="closeChat">
     <div class="header">
-      <template v-if="peer">
-        <img class="dialog_header_back" src="images/im_back.png" @click="closeChat">
-        <img class="dialog_header_photo" :src="photo">
-        <div class="dialog_header_center">
-          <div class="dialog_name_wrap">
-            <div class="dialog_name" v-emoji>{{ title }}</div>
-            <div class="verified" v-if="owner && owner.verified"></div>
-            <div class="messages_muted" v-if="peer.muted"></div>
-          </div>
-          <div class="dialog_online">{{ online }}</div>
+      <img class="dialog_header_back" src="images/im_back.png" @click="closeChat"/>
+      <img class="dialog_header_photo" :src="photo"/>
+      <div class="dialog_header_center">
+        <div class="dialog_name_wrap">
+          <div class="dialog_name" v-emoji="title"></div>
+          <div class="verified" v-if="owner && owner.verified"></div>
+          <div class="messages_muted" v-if="peer && peer.muted"></div>
         </div>
-        <img src="images/actions_button.svg" class="dialog_actions_btn" @click="openDialogSettingsBox">
-        <div class="dialog_messages_time_wrap" :class="{ active: topTime && showTopTime }">
-          <div class="dialog_messages_time">{{ topTime }}</div>
-        </div>
-        <dialog-settings-box :peer="peer" :active="openedDialogSettingsBox" @close="closeDialogSettingsBox"/>
-      </template>
+        <div class="dialog_online">{{ online }}</div>
+      </div>
+      <img src="images/actions_button.svg" class="dialog_actions_btn" @click="openDialogSettingsBox"/>
+      <div class="dialog_messages_time_wrap" :class="{ active: topTime && showTopTime }">
+        <div class="dialog_messages_time">{{ topTime }}</div>
+      </div>
+      <dialog-settings-box v-if="peer" :peer="peer" :active="openedDialogSettingsBox" @close="closeDialogSettingsBox"/>
     </div>
-    <div v-if="!id" class="dialog_choice_chat">
-      <img src="images/im_choice_chat.png">
-      {{ l('im_choose_chat') }}
-    </div>
-    <div v-else class="dialog_wrap">
-      <div class="dialog_messages_list" :class="{ dialog_no_messages: !hasMessages }" @scroll="onScroll">
-        <template v-if="hasMessages">
+    <div class="dialog_wrap">
+      <div class="dialog_messages_list" :class="{ empty: !hasMessages }" @scroll="onScroll">
+        <template v-if="peer && hasMessages">
           <div class="dialog_empty_block"></div>
           <div v-if="loading" class="loading"></div>
           <div class="dialog_messages_wrap">
-            <message v-for="msg of messages" :msg="msg" :peer="peer" :key="msg.id"></message>
+            <message v-for="msg of messages" :msg="msg" :peer="peer" :key="msg.id"/>
           </div>
         </template>
         <template v-else-if="!loading">
-          <img src="images/im_empty_dialog.png">
+          <img src="images/im_empty_dialog.png"/>
           {{ l('im_empty_dialog') }}
         </template>
+        <div v-else class="loading"></div>
         <div class="typing_wrap">
           <div class="typing" v-if="typingMsg">
             <div class="typing_item"></div>
@@ -48,13 +43,11 @@
       <div class="dialog_input_wrap">
         <div class="dialog_to_end" :class="{ hidden: !showEndBtn }" @click="scrollToEnd">
           <div class="dialog_to_end_count">{{ peer && peer.unread || '' }}</div>
-          <img class="dialog_to_end_icon" src="images/im_to_end.png">
+          <img class="dialog_to_end_icon" src="images/im_to_end.png"/>
         </div>
-        <emoji-block :active="openedEmojiBlock"
-                     @chooseEmoji="onChooseEmoji"
-                     @close="closeEmojiBlock"></emoji-block>
+        <emoji-block :active="openedEmojiBlock" @chooseEmoji="writeEmoji" @close="closeEmojiBlock"/>
         <template v-if="canSendMessages.state">
-          <img class="dialog_show_attachments_btn" src="images/more_attachments.svg">
+          <img class="dialog_show_attachments_btn" src="images/more_attachments.svg"/>
           <div class="dialog_input_container">
             <div class="dialog_input" role="textbox" contenteditable
                  :placeholder="l('im_enter_msg')"
@@ -67,7 +60,7 @@
           <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
         </template>
         <div v-else class="dialog_input_error">
-          <img src="images/warning.png" v-if="!canSendMessages.channel" class="dialog_input_error_img">
+          <div v-if="!canSendMessages.channel" class="dialog_input_error_img"></div>
           <div class="dialog_input_error_text" :class="{ channel: canSendMessages.channel }">
             <div v-if="canSendMessages.channel"
                  @click="toggleChannelNotifications"
@@ -89,77 +82,68 @@
     concatProfiles,
     parseMessage,
     parseConversation,
-    loadAttachments,
     getDate,
     toggleChat,
     getTextWithEmoji
   } = require('./methods');
 
   module.exports = {
+    data() {
+      let peer_id = this.$store.state.activeChat;
+
+      return {
+        id: peer_id,
+        isChat: peer_id > 2e9,
+        loadedMessages: false,
+        loading: false,
+        loaded: false,
+        topTime: null,
+        showTopTime: false,
+        showEndBtn: false,
+        openedDialogSettingsBox: false,
+        openedEmojiBlock: false
+      }
+    },
     computed: {
-      id() {
-        let id = this.$store.state.activeChat;
-
-        this.$nextTick().then(() => {
-          let el = qs('.dialog_messages_list');
-          if(id && el) this.onScroll({ target: el }, true);
-        });
-
-        return id;
-      },
-      isChat() {
-        return this.id > 2e9;
-      },
       peer() {
-        return this.getPeer(this.id);
+        let dialog = this.$store.state.conversations[this.id],
+            peer = dialog && dialog.peer;
+
+        if(!peer) {
+          loadConversation(this.id).then((conversation) => {
+            this.$store.commit('editPeer', conversation);
+          });
+        }
+
+        return peer;
       },
       profiles() {
         return this.$store.state.profiles;
       },
       owner() {
-        return this.profiles[this.peer.owner];
+        return this.peer && this.profiles[this.peer.owner];
       },
       photo() {
-        if(this.isChat && this.peer.photo) return this.peer.photo;
+        if(this.isChat && this.peer && this.peer.photo) return this.peer.photo;
         else if(this.owner && this.owner.photo_50) return this.owner.photo_50;
         else return 'images/im_chat_photo.png';
       },
       hasMessages() {
         return this.messages && this.messages.length;
       },
-      loading() {
-        return this.peer && !this.peer.loaded && this.peer.loading;
-      },
-      showEndBtn() {
-        return this.peer && this.peer.showEndBtn;
-      },
-      topTime() {
-        return this.peer.topTime;
-      },
-      showTopTime() {
-        return this.peer.showTopTime;
-      },
-      openedEmojiBlock() {
-        return this.peer && this.peer.openedEmojiBlock;
-      },
-      openedDialogSettingsBox() {
-        return this.peer.openedDialogSettingsBox;
-      },
       title() {
-        if(this.isChat) return this.peer.title || '...';
+        if(this.isChat) return this.peer && this.peer.title || '...';
         else if(this.owner) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         } else return '...';
       },
       online() {
-        if(this.id < 0) return '';
+        if(!this.peer) return this.l('loading');
+        if(this.id < 0) return this.l('community');
 
         if(this.isChat) {
+          if(this.peer.canWrite.reason == 917)  this.l('im_kicked_from_chat');
           if(this.peer.left) return this.l('im_left_chat');
-
-          if(this.peer.canWrite.reason == 917) {
-            return this.l('im_cant_write_reasons', 917);
-          }
 
           if(this.peer.members == undefined) return '';
 
@@ -222,19 +206,14 @@
         return this.$store.getters.typingMsg(this.id);
       },
       canSendMessages() {
-        if(!this.peer || !this.peer.canWrite) {
-          return { state: true, channel: false }
-        }
+        if(!this.peer) return { state: true, channel: false };
 
         let text, reason = this.peer.canWrite.reason;
 
         if(!this.peer.canWrite.allowed) {
           if(reason == 925) text = this.l('toggle_notifications', Number(!this.peer.muted));
-          else text = this.l('im_cant_write_reasons', reason);
-
-          if(!text) {
-            console.warn('[chat] неизвестная причина:', reason);
-          }
+          else if(reason == 18) text = this.l('im_user_deleted');
+          else text = this.l('im_cant_write');
         }
 
         return {
@@ -246,46 +225,24 @@
     },
     methods: {
       openEmojiBlock() {
-        Vue.set(this.peer, 'openedEmojiBlock', !this.peer.openedEmojiBlock);
+        this.openedEmojiBlock = !this.openedEmojiBlock;
       },
       closeEmojiBlock() {
-        if(this.peer.openedEmojiBlock) {
-          Vue.set(this.peer, 'openedEmojiBlock', false);
-        }
+        if(this.openedEmojiBlock) this.openedEmojiBlock = false;
       },
       openDialogSettingsBox() {
-        Vue.set(this.peer, 'openedDialogSettingsBox', !this.peer.openedDialogSettingsBox);
+        this.openedDialogSettingsBox = !this.openedDialogSettingsBox;
       },
       closeDialogSettingsBox() {
-        if(this.peer.openedDialogSettingsBox) {
-          Vue.set(this.peer, 'openedDialogSettingsBox', false);
-        }
+        if(this.openedDialogSettingsBox) this.openedDialogSettingsBox = false;
       },
-      onChooseEmoji(code) {
+      writeEmoji(code) {
         qs('.dialog_input').innerHTML += emoji(emoji.HexToEmoji(code));
       },
-      getPeer(peer_id) {
-        let dialog = this.$store.state.conversations[peer_id],
-            peer = dialog && dialog.peer;
-
-        if(!peer && peer_id) {
-          loadConversation(peer_id).then((conversation) => {
-            this.$store.commit('editPeer', conversation);
-          });
-        }
-
-        return dialog && dialog.peer;
-      },
-      updatePeer(data) {
-        data.id = this.id;
-        this.$store.commit('editPeer', data);
-      },
       closeChat() {
-        toggleChat.bind(this)(null);
+        toggleChat();
       },
       async sendMessage(event) {
-        let longpoll = require('./../../js/longpoll');
-
         if(event.shiftKey) return;
         else if(event.type != 'click') event.preventDefault();
 
@@ -298,13 +255,15 @@
         this.$store.commit('settings/updateRecentEmojies', emojies);
 
         for(let block of text.match(/.{1,4096}/g)) {
-          let id = await vkapi('messages.send', {
+          let random_id = other.random(0, 9e8);
+
+          await vkapi('messages.send', {
             peer_id: this.id,
             message: block,
-            random_id: 0
+            random_id
           });
 
-          longpoll.once('new_message_' + id, async (data) => {
+          longpoll.once('new_message_' + random_id, async (data) => {
             await this.$nextTick();
 
             let el = qs('.typing_wrap');
@@ -337,21 +296,17 @@
           time: this.peer.muted ? 0 : -1
         });
       },
-      hideTopDate: other.debounce((peer) => {
-        if(peer.showTopTime) Vue.set(peer, 'showTopTime', false);
+      hideTopDate: other.debounce((vm) => {
+        if(vm.showTopTime) vm.showTopTime = false;
       }, 2000),
-      hideEndBtn: other.debounce((peer) => {
-        if(peer.showEndBtn) Vue.set(peer, 'showEndBtn', false);
+      hideEndBtn: other.debounce((vm) => {
+        if(vm.showEndBtn) vm.showEndBtn = false;
       }, 3000),
-      onScroll(event, fake) {
-        if(!this.peer) return;
+      onScroll(event) {
+        if(!this.showTopTime) this.showTopTime = true;
 
-        if(!this.showTopTime) {
-          Vue.set(this.peer, 'showTopTime', true);
-        }
-
-        this.hideEndBtn(this.peer);
-        this.hideTopDate(this.peer);
+        this.hideEndBtn(this);
+        this.hideTopDate(this);
 
         let el = event.target,
             hide = el.scrollTop + el.offsetHeight == el.scrollHeight,
@@ -359,22 +314,15 @@
 
         for(let item of days) {
           if(el.scrollTop + el.offsetTop >= item.offsetTop) {
-            if(this.peer.topTime != item.innerText) {
-              Vue.set(this.peer, 'topTime', item.innerText);
-            }
-
+            if(this.topTime != item.innerText) this.topTime = item.innerText;
             break;
           }
         }
 
-        if(this.peer.showEndBtn != !hide) {
-          Vue.set(this.peer, 'showEndBtn', !hide);
-        }
+        if(this.showEndBtn != !hide) this.showEndBtn = !hide;
 
-        if(fake && this.peer.inited || el.scrollTop > 200) return;
-
-        if(!this.peer.loading && !this.peer.loaded) {
-          Vue.set(this.peer, 'loading', true);
+        if(!this.loading && !this.loaded && el.scrollTop <= 200) {
+          this.loading = true;
           this.loadNewMessages();
         }
       },
@@ -385,24 +333,23 @@
         });
       }, 4500),
       async loadNewMessages() {
-        let peer = this.getPeer(this.id),
-            offset = this.messages ? this.messages.length : 0;
+        let offset = this.messages ? this.messages.length : 0;
 
         let { items, conversations, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
-          peer_id: peer.id,
+          peer_id: this.id,
           offset: offset,
           extended: 1,
           fields: other.fields
         });
 
-        this.$store.commit('addProfiles', await concatProfiles(profiles, groups));
+        this.$store.commit('addProfiles', concatProfiles(profiles, groups));
 
         let conv = parseConversation(conversations[0]),
-            lastMsg = parseMessage(items[items.length-1], peer);
+            lastMsg = parseMessage(items[items.length-1], this.peer);
 
         if(lastMsg && !offset) {
           this.$store.commit('updateLastMsg', {
-            peer_id: peer.id,
+            peer_id: this.id,
             msg: lastMsg
           });
         }
@@ -411,27 +358,29 @@
           let parsedMsg = parseMessage(msg, conv);
 
           this.$store.commit('addMessage', {
-            peer_id: peer.id,
+            peer_id: this.id,
             msg: parsedMsg,
             notNewMsg: true
           });
-
-          loadAttachments(parsedMsg, peer.id);
         }
 
-        if(items.length < 20) Vue.set(peer, 'loaded', true);
-        else Vue.set(peer, 'loading', false);
+        if(items.length < 20) this.loaded = true;
+        this.loading = false;
 
         let { scrollTop, scrollHeight } = qs('.dialog_messages_list') || {};
         await this.$nextTick();
 
-        if(this.id == peer.id) {
+        if(this.$store.state.activeChat == this.id) {
           let thisHeight = qs('.dialog_messages_list').scrollHeight;
           qs('.dialog_messages_list').scrollTop = scrollTop + thisHeight - scrollHeight;
         }
 
-        Vue.set(peer, 'inited', true);
+        this.loadedMessages = true;
       }
+    },
+    mounted() {
+      this.loading = true;
+      this.loadNewMessages();
     }
   }
 </script>

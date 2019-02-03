@@ -79,7 +79,7 @@ class Longpoll extends EventEmitter {
 
     let longpollEvents = require('./longpollEvents'),
         packs = { 2: {}, 3: {}, 4: {} },
-        debugEvents = {};
+        debugEvents = { packs: Object.assign({}, packs) };
 
     for(let item of history) {
       let id = item.splice(0, 1)[0],
@@ -114,14 +114,14 @@ class Longpoll extends EventEmitter {
 
       for(let peer_id in packs[id]) {
         let { name, data } = parseItem(packs[id][peer_id]);
+
+        if(this.debug) debugEvents.packs[id][peer_id] = data;
+
         this.emit(name, data);
       }
     }
 
-    if(this.debug) {
-      debugEvents.packs = packs;
-      console.log('[longpoll] Debug\n', debugEvents);
-    }
+    if(this.debug) console.log('[longpoll] Debug\n', debugEvents);
   }
 
   async catchErrors(data) {

@@ -6,10 +6,8 @@ const { getTextWithEmoji } = require('./../components/messages/methods');
 
 Vue.use(require('./lib/ModalCreator'));
 
-// превращает emoji символы в картинку как в ВК
-Vue.directive('emoji', (el, { modifiers }, vnode) => {
-  let elem = vnode.children ? vnode.children[0] : el,
-      html = elem.text || getTextWithEmoji(elem.childNodes).text;
+Vue.directive('emoji', (el, { value = '', modifiers }) => {
+  let html = value;
 
   if(!modifiers.br) html = html.replace(/<br>/g, ' ');
 
@@ -26,7 +24,7 @@ Vue.directive('emoji', (el, { modifiers }, vnode) => {
       .replace(/\n/g, '<br>');
   }
 
-  el.innerHTML = emoji(html);
+  if(el.innerHTML != html) el.innerHTML = emoji(html);
 });
 
 function getTagData(name, text)  {

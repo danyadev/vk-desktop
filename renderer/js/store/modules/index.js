@@ -90,8 +90,8 @@ module.exports = {
 
       Vue.set(state.conversations, data.peer.id, conversation);
 
-      let hasPeer = state.peersList.find(({ id }) => id == data.peer.id);
-      if(!hasPeer) state.peersList.push({ id: data.peer.id });
+      let hasPeer = state.peersList.find((id) => id == data.peer.id);
+      if(!hasPeer) state.peersList.push(data.peer.id);
     },
     editPeer(state, data) {
       let conversation = state.conversations[data.id] || {};
@@ -101,7 +101,7 @@ module.exports = {
       Vue.set(state.conversations, data.id, Object.assign({}, conversation));
     },
     removePeer(state, id) {
-      let index = state.peersList.findIndex((peer) => peer.id == id);
+      let index = state.peersList.findIndex((_id) => _id == id);
       if(index != -1) state.peersList.splice(index, 1);
     },
     updateLastMsg(state, data) {
@@ -129,12 +129,12 @@ module.exports = {
 
       if(!date) return;
 
-      let dates = state.peersList.map((peer) => {
-        return this.getters.lastMessage(peer.id).date;
+      let dates = state.peersList.map((id) => {
+        return this.getters.lastMessage(id).date;
       });
 
       let index = getMinIndex(dates, date),
-          oldIndex = state.peersList.findIndex((peer) => peer.id == id);
+          oldIndex = state.peersList.findIndex((_id) => _id == id);
 
       if(oldIndex != index && state.peersList[oldIndex]) {
         state.peersList.move(oldIndex, index);
@@ -155,10 +155,10 @@ module.exports = {
 
       let conv = state.conversations[data.peer_id],
           peerObj = conv && conv.peer,
-          visible = state.peersList.find(({ id }) => id == data.peer_id);
+          visible = state.peersList.find((id) => id == data.peer_id);
 
-      if(!visible && peerObj && !data.notNewMsg) {
-        state.peersList.unshift({ id: peerObj.id });
+      if(!visible && peerObj && !data.notNewMsg && !data.msg.hidden) {
+        state.peersList.unshift(peerObj.id);
       }
     },
     editMessage(state, data) {
@@ -195,7 +195,7 @@ module.exports = {
   },
   getters: {
     peers(state) {
-      return state.peersList.map(({ id }) => {
+      return state.peersList.map((id) => {
         return state.conversations[id].peer;
       });
     },

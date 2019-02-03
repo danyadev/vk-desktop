@@ -136,6 +136,7 @@ function parseMessage(message, conversation) {
     from: message.from_id,
     date: message.date,
     editTime: message.update_time || 0,
+    hidden: message.is_hidden,
     action: message.action,
     fwdCount: message.fwd_messages ? message.fwd_messages.length : 0,
     isReplyMsg: !!message.reply_message,
@@ -283,7 +284,8 @@ async function toggleChat(chatID) {
 
     let newConv = app.$store.state.conversations[chatID],
         newPeer = newConv && newConv.peer,
-        hasScrollTop = newPeer.scrollTop != undefined;
+        hasScrollTop = newPeer.scrollTop != undefined,
+        input = qs('.dialog_input');
 
     if(newPeer) {
       if(dialogInput) dialogInput.innerHTML = newPeer.inputText || '';
@@ -294,6 +296,8 @@ async function toggleChat(chatID) {
         qs('.dialog_messages_list').scrollTop = newPeer.scrollTop;
       }
     }
+
+    if(input) input.focus();
   }
 }
 
