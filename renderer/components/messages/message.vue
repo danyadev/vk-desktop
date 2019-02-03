@@ -30,7 +30,7 @@
                        :data="attach.data"></component>
           </div>
           <div class="message_time_wrap" :class="{ fly: flyMsgTime }">
-            <template v-if="msg.edited">
+            <template v-if="msg.editTime">
               <div class="message_edited">{{ l('im_edited_msg') }}</div>
               <div class="dot"></div>
             </template>

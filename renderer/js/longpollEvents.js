@@ -1,7 +1,5 @@
 'use strict';
 
-const longpoll = require('./longpoll');
-
 function getFlags(mask) {
   let flags = {
     unread: 1, outbox: 2, replied: 4, important: 8,
@@ -61,29 +59,19 @@ function getAttachments(data) {
 }
 
 function chatIsChannel(id) {
-  if(id < 2e9) return false;
   let conversation = app.$store.state.conversations[id];
-  if(!conversation) return -1;
+  if(id < 2e9 || !conversation) return false;
   return conversation.peer.channel;
 }
 
 function getMessage(data, type) {
+  // Если сообщение было получено с помощью longpoll.getHistory
+  if(other.isObject(data)) return data;
+
   let flags = getFlags(data[1]),
       action = getServiceMessage(data[5]),
       from_id = flags.is('outbox') ? app.user.id : Number(data[5].from || data[2]),
-      isChannel = chatIsChannel(from_id) > 0;
-
-  if(chatIsChannel(from_id) == -1) {
-    vkapi('execute.isChannel', {
-      peer_id: from_id
-    }).then((channel) => {
-      app.$store.commit('editPeer', {
-        id: data[2],
-        channel,
-        owner: from_id
-      });
-    });
-  }
+      isChannel = chatIsChannel(from_id);
 
   let res = {
     peer: {
@@ -97,15 +85,15 @@ function getMessage(data, type) {
       text: action ? '' : data[4],
       from: from_id,
       date: data[3],
-      edited: !!data[8],
-      editTime: data[8],
+      editTime: data[9],
       unread: !flags.is('outbox') && flags.is('unread'),
       action: action,
       fwdCount: Number(data[5].fwd_count || 0),
       isReplyMsg: flags.is('reply_msg'),
       attachments: getAttachments(data[6]),
       hidden: flags.is('hidden'),
-      conversationMsgId: data[7]
+      conversationMsgId: data[8],
+      random_id: data[7]
     }
   }
 
@@ -116,10 +104,9 @@ function getMessage(data, type) {
 
 module.exports = {
   2: (events) => {
-    // когда приходит:
-    // 1) удаление сообщения (128)
-    // 2) пометка как спам (64)
-    // 3) удаление для всех (131200)
+    // 1) Удаление сообщения (128)
+    // 2) Пометка как спам (64)
+    // 3) Удаление для всех (131200)
     // [msg_id, flags, peer_id]
 
     let messages = [];
@@ -141,34 +128,54 @@ module.exports = {
       }
     }
   },
-  3: (data) => {
-    // когда приходит:
-    // 1) восстановление удаленного сообщения (128)
-    // 2) отмена пометки сообщения как спам (64)
-    // [id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
-    // 3) отмена пометки непрочитанного сообщения (1)
-    // [msg_id, flags, peer_id]
+  3: (events) => {
+    // 1) Восстановление удаленного сообщения (128)
+    // 2) Отмена пометки сообщения как спам (64)
+    // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
 
-    let flags = getFlags(data[1]);
+    let messages = [];
 
-    if(flags.is('spam') || flags.is('deleted')) {
-      return { name: 'restore_message', data: getMessage(data) }
-    } else if(!flags.is('unread')) {
-      console.warn('неизвестные данные в 3 событии:', data, flags);
+    for(let data of events) {
+      let flags = getFlags(data[1]);
+
+      if(flags.is('spam') || flags.is('deleted')) {
+        messages.push(getMessage(data));
+      } else if(!flags.is('unread')) {
+        console.warn('Неизвестные данные в 3 событии:', data, flags);
+      }
+    }
+
+    return {
+      name: 'restore_messages',
+      data: {
+        peer_id: events[0][2],
+        messages
+      }
     }
   },
-  4: (data) => {
-    // приходит при написании нового сообщения
-    // [id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
+  4: (events) => {
+    // 1) Новое сообщение
+    // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
 
-    let msg = getMessage(data, 'new');
-    longpoll.emit('new_message_' + data[0], msg);
+    let messages = [];
 
-    return { name: 'new_message', data: msg }
+    for(let data of events) {
+      let msg = getMessage(data, 'new');
+      messages.push(msg);
+      longpoll.emit(`new_message_${msg.id}`, msg);
+    }
+
+    return {
+      name: 'new_messages',
+      data: {
+        peer_id: events[0][2],
+        messages
+      }
+    }
   },
   5: (data) => {
-    // приходит при редактировании сообщения
-    // [id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
+    // 1) Редактирование сообщения
+    // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
 
     return {
       name: 'edit_message',
@@ -176,7 +183,7 @@ module.exports = {
     }
   },
   6: (data) => {
-    // приходит при прочтении чужих сообщений до id
+    // 1) Ты прочитал сообщения до msg_id
     // [peer_id, msg_id, count]
 
     return {
@@ -189,7 +196,7 @@ module.exports = {
     }
   },
   7: (data) => {
-    // приходит при прочтении твоих сообщений до id
+    // 1) Кто-то прочитал сообщение до msg_id
     // [peer_id, msg_id, count]
 
     return {
@@ -202,7 +209,7 @@ module.exports = {
     }
   },
   8: (data) => {
-    // приходит когда юзер становится онлайн
+    // 1) Кто-то стал онлайн
     // [-user_id, platform, timestamp]
     // 1: mobile, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
 
@@ -232,7 +239,7 @@ module.exports = {
     }
   },
   9: (data) => {
-    // приходит когда пользователь становится оффлайн
+    // 1) Кто-то стал оффлайн
     // [-user_id, flag, timestamp]
     // flag: 0 - вышел с сайта, 1 - по таймауту
 
@@ -275,7 +282,7 @@ module.exports = {
   18: (data) => {
     // приходит при добавлении сниппета к сообщению
     // (например когда написал ссылку)
-    // [id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
+    // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
 
     return {
       name: 'add_message_snippet',
@@ -334,7 +341,7 @@ module.exports = {
     // count_with_notifications - кол-во непрочитанных диалогов, в которых включены уведомления
 
     return {
-      name: 'change_messages_counter',
+      name: 'update_messages_counter',
       data: data[0]
     }
   },
@@ -352,9 +359,8 @@ module.exports = {
       }
     }
   },
-  115: (data) => {
+  115: ({ data }) => {
     // разные данные для активного звонка
-
     return { name: 'user_call_data', data }
   }
 }

@@ -15,6 +15,7 @@ const emoji = require('./js/emoji');
 const { users, settings } = require('./js/Storage');
 const request = require('./js/request');
 const vkapi = require('./js/vkapi');
+const longpoll = require('./js/longpoll');
 
 // настройка Vue
 Vue.config.devtools = true;

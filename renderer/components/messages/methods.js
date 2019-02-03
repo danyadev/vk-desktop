@@ -14,32 +14,32 @@ async function getUsersOnline(users) {
     }
   }
 
-  let { items: apps } = await vkapi('apps.get', {
-    app_ids: appIDs.join(',')
-  });
+  if(appIDs.length) {
+    let { items: apps } = await vkapi('apps.get', {
+      app_ids: appIDs.join(',')
+    });
 
-  for(let user of users) {
-    if(!user.online) continue;
+    for(let user of users) {
+      if(!user.online) continue;
 
-    let app = apps.find((app) => app.id == user.online_app);
+      let app = apps.find((app) => app.id == user.online_app);
 
-    if(app) {
-      user.online_device = app.title;
-      appNames[app.id] = app.title;
+      if(app) {
+        user.online_device = app.title;
+        appNames[app.id] = app.title;
+      }
     }
   }
 
   return users;
 }
 
-async function concatProfiles(users = [], groups = []) {
+function concatProfiles(users = [], groups = []) {
   groups = groups.reduce((list, group) => {
     group.id = -group.id;
     list.push(group);
     return list;
   }, []);
-
-  users = await getUsersOnline(users);
 
   return users.concat(groups);
 }
@@ -85,7 +85,7 @@ function loadConversation(id) {
       fields: other.fields
     });
 
-    app.$store.commit('addProfiles', await concatProfiles(profiles, groups));
+    app.$store.commit('addProfiles', concatProfiles(profiles, groups));
     delete loadindPeers[id];
     resolve(parseConversation(conv));
   });
@@ -135,7 +135,6 @@ function parseMessage(message, conversation) {
     text: other.escape(message.text).replace(/\n/g, '<br>'),
     from: message.from_id,
     date: message.date,
-    edited: !!message.update_time,
     editTime: message.update_time || 0,
     action: message.action,
     fwdCount: message.fwd_messages ? message.fwd_messages.length : 0,
@@ -144,6 +143,7 @@ function parseMessage(message, conversation) {
     replyMsg: message.reply_message,
     attachments: message.attachments,
     conversationMsgId: message.conversation_message_id,
+    random_id: message.random_id,
     loaded: true
   }
 
@@ -186,7 +186,7 @@ function getServiceMessage(action, author, full) {
   }
 
   function e(text) {
-    return emoji(other.escape(text));
+    return emoji(other.escape(text)).replace(/<br>/g, ' ');
   }
 
   function name(type, acc) {
@@ -346,7 +346,7 @@ function getMessagePreview(msg, author) {
 }
 
 function isDeletedContent(msg) {
-  return !(msg.text || msg.attachments.length || msg.action || msg.fwdCount || !msg.isReplyMsg);
+  return !(msg.text || msg.attachments.length || msg.action || msg.fwdCount || msg.isReplyMsg);
 }
 
 module.exports = {

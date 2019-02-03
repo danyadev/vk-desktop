@@ -185,12 +185,12 @@ module.exports = {
     },
     // ** Тайпинг **
     setTyping(state, data) {
-      if(!state.typing[data.peer]) Vue.set(state.typing, data.peer, {});
+      if(!state.typing[data.peer_id]) Vue.set(state.typing, data.peer_id, {});
 
-      Vue.set(state.typing[data.peer], data.id, data.data);
+      Vue.set(state.typing[data.peer_id], data.from_id, data.data);
     },
     removeTyping(state, data) {
-      Vue.delete(state.typing[data.peer], data.id);
+      Vue.delete(state.typing[data.peer_id], data.from_id);
     }
   },
   getters: {

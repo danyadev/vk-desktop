@@ -1,128 +1,191 @@
 'use strict';
 
-const util = require('util');
 const querystring = require('querystring');
 const { EventEmitter } = require('events');
 const { parseConversation, parseMessage, concatProfiles } = require('./../components/messages/methods');
 
-class Longpoll {
-  constructor() {
-    this.init();
-  }
+function getLastMsgId() {
+  let peer = app.$store.getters.peers[0];
 
-  async init() {
-    let data = await Longpoll.getServer();
-
-    this.server = data.server;
-    this.key = data.key;
-    this.pts = data.pts;
-    this.ts = data.ts;
-
-    this.loop();
-  }
-
-  static async getServer() {
-    return await vkapi('messages.getLongPollServer', { lp_version: 5, need_pts: 1 });
-  }
-
-  async loop() {
-    let [ host, path ] = this.server.split('/');
-    let { data } = await request({
-      host: host,
-      path: `/${path}?` + querystring.stringify({
-        act: 'a_check',
-        key: this.key,
-        ts: this.ts,
-        wait: 10,
-        mode: 362,
-        version: 5
-      })
-    });
-
-    if(!data.updates) data.updates = [];
-
-    if(data.failed) {
-      if([1, 3].includes(data.failed)) {
-        let history = await vkapi('messages.getLongPollHistory', {
-          ts: this.ts,
-          pts: this.pts,
-          onlines: 1,
-          lp_version: 5,
-          fields: other.fields
-        });
-
-        app.$store.commit('addProfiles', await concatProfiles(history.profiles, history.groups));
-
-        for(let item of history.history) {
-          if([4, 5].includes(item[0])) {
-            let type = item[0] == 4 ? 'new_message' : 'edit_message',
-                conversation = history.conversations.find((conv) => conv.peer.id == item[3]),
-                message = history.messages.items.find((msg) => msg.id == item[1]);
-
-            this.emit(type, {
-              peer: parseConversation(conversation),
-              msg: parseMessage(message, conversation)
-            });
-          } else data.updates.push(item);
-        }
-
-        if(data.failed == 3) {
-          let server = await Longpoll.getServer();
-
-          this.key = server.key;
-          this.ts = server.ts;
-        } else if(data.ts) this.ts = data.ts;
-
-        this.pts = history.new_pts;
-      } else if(data.failed == 2) {
-        let server = await Longpoll.getServer();
-
-        this.key = server.key;
-        this.pts = server.pts;
-      }
-    }
-
-    this.ts = data.ts || this.ts;
-    this.pts = data.pts || this.pts;
-
-    let removedMessages = [],
-        eventsList = require('./longpollEvents');
-
-    for(let update of data.updates) {
-      let id = update.splice(0, 1)[0],
-          event = eventsList[id];
-
-      if(id == 2) {
-        removedMessages.push(update);
-        continue;
-      }
-
-      if(!event) {
-        console.error('[longpoll] Неизвестное событие:', [id, ...update]);
-        continue;
-      }
-
-      let eventData = event(update);
-      if(!eventData) continue;
-
-      this.emit(eventData.name, eventData.data);
-    }
-
-    let updates = removedMessages.reduce((all, update) => {
-      if(!all[update[2]]) all[update[2]] = [update];
-      else all[update[2]].push(update);
-      return all;
-    }, {});
-
-    for(let update of Object.values(updates)) {
-      let data = eventsList[2](update);
-      this.emit(data.name, data.data);
-    }
-
-    this.loop();
+  if(peer) {
+    let msg = app.$store.getters.lastMessage(peer.id);
+    return msg && msg.id;
   }
 }
 
-util.inherits(Longpoll, EventEmitter);
+class Longpoll extends EventEmitter {
+  constructor() {
+    super();
+
+    this.loopStopped = true;
+    this.started = false;
+    this.debug = false;
+    this.version = 6;
+  }
+
+  async start() {
+    if(!this.server) {
+      let data = await this.getServer();
+
+      this.server = data.server;
+      this.key = data.key;
+      this.pts = data.pts;
+      this.ts = data.ts;
+    }
+
+    this.started = true;
+    this.emit('started');
+
+    if(this.loopStopped) {
+      this.loopStopped = false;
+      this.loop();
+    }
+  }
+
+  stop() {
+    this.started = false;
+    this.emit('stopped');
+  }
+
+  async getServer() {
+    return await vkapi('messages.getLongPollServer', {
+      lp_version: this.version,
+      need_pts: 1
+    });
+  }
+
+  async loop() {
+    let { data } = await request(`https://${this.server}?` + querystring.stringify({
+      act: 'a_check',
+      key: this.key,
+      ts: this.ts,
+      wait: 10,
+      mode: 490,
+      version: this.version
+    }));
+
+    if(!this.started) return this.loopStopped = true;
+    if(data.failed) await this.catchErrors(data);
+
+    if(data.ts) this.ts = data.ts;
+    if(data.pts) this.pts = data.pts;
+
+    this.emitHistory(data.updates);
+    this.loop();
+  }
+
+  emitHistory(history = []) {
+    if(!history.length) return;
+
+    let longpollEvents = require('./longpollEvents'),
+        packs = { 2: {}, 3: {}, 4: {} },
+        debugEvents = {};
+
+    for(let item of history) {
+      let id = item.splice(0, 1)[0],
+          parseItem = longpollEvents[id];
+
+      if(!parseItem) {
+        console.warn('[longpoll] Неизвестное событие:', [id, ...update]);
+        continue;
+      }
+
+      if(packs[id]) {
+        let peer_id = item[2] || item[0].peer.id;
+
+        if(packs[id][peer_id]) packs[id][peer_id].push(item);
+        else packs[id][peer_id] = [item];
+      } else {
+        let { name, data } = parseItem(item) || {};
+
+        if(name) {
+          this.emit(name, data);
+
+          if(this.debug) {
+            if(debugEvents[name]) debugEvents[name].push(data);
+            else debugEvents[name] = [data];
+          }
+        }
+      }
+    }
+
+    for(let id in packs) {
+      let parseItem = longpollEvents[id];
+
+      for(let peer_id in packs[id]) {
+        let { name, data } = parseItem(packs[id][peer_id]);
+        this.emit(name, data);
+      }
+    }
+
+    if(this.debug) {
+      debugEvents.packs = packs;
+      console.log('[longpoll] Debug\n', debugEvents);
+    }
+  }
+
+  async catchErrors(data) {
+    console.warn('[longpoll] Error:', data);
+
+    switch(data.failed) {
+      case 1:
+        await this.getHistory();
+        this.ts = data.ts;
+        break;
+      case 2:
+        let { key } = await this.getServer();
+        this.key = key;
+        break;
+      case 3:
+        await this.getHistory();
+
+        let server = await this.getServer();
+        this.key = server.key;
+        this.ts = server.ts;
+        break;
+    }
+  }
+
+  async getHistory() {
+    let history = await vkapi('messages.getLongPollHistory', {
+      ts: this.ts,
+      pts: this.pts,
+      events_limit: 1000,
+      msgs_limit: 500,
+      max_msg_id: getLastMsgId(),
+      lp_version: this.version,
+      fields: other.fields
+    });
+
+    this.pts = history.new_pts;
+
+    app.$store.commit('addProfiles', concatProfiles(history.profiles, history.groups));
+
+    let peers = history.conversations.reduce((peers, peer) => {
+      peers[peer.peer.id] = parseConversation(peer);
+      return peers;
+    }, {});
+
+    let messages = history.messages.items.reduce((msgs, msg) => {
+      msgs[msg.id] = parseMessage(msg, peers[msg.peer_id]);
+      return msgs;
+    }, {});
+
+    let events = [];
+
+    for(let item of history.history) {
+      if([3, 4, 5, 18].includes(item[0])) {
+        events.push([item[0], {
+          peer: peers[item[3]],
+          msg: messages[item[1]]
+        }]);
+      } else events.push(item);
+    }
+
+    this.emitHistory(events);
+
+    if(history.more) await this.getHistory();
+  }
+}
 
 module.exports = new Longpoll();
