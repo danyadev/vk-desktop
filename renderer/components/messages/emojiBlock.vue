@@ -45,7 +45,6 @@
 
         this.timeout = setTimeout(() => {
           if(!this.entered) {
-            this.active = false;
             this.$emit('close');
             document.body.removeEventListener('mousemove', this.mousemove);
           } else this.entered = false;

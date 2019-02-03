@@ -73,7 +73,7 @@
       this.$store.commit('updateUser', Object.assign(user, { activeTime: Date.now() }));
 
       vkapi('stats.trackVisitor');
-      require('./../../js/longpoll');
+      longpoll.start();
     }
   }
 </script>
