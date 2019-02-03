@@ -3,5 +3,19 @@
   "name": "vk-desktop",
   "version": "0.0.3",
   "author": "danyadev",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "description": "Кроссплатформенный клиент ВКонтакте",
+  "build": {
+    "appId": "ru.danyadev.vkdesktop",
+    "electronVersion": "4.0.0",
+    "files": [
+      "**/*",
+      "!**/core",
+      "!**/vue-devtools"
+    ]
+  },
+  "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  }
 }
