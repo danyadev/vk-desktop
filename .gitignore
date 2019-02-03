@@ -1,7 +1,7 @@
 core
 vue-devtools
 dist
-
+node_modules
 # игнорим все языки кроме ru, en и uk (основные)
 renderer/lang/*.js
 !renderer/lang/ru.js
