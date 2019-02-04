@@ -1,9 +1,5 @@
+.DS_Store
 core
-vue-devtools
 dist
 node_modules
-# игнорим все языки кроме ru, en и uk (основные)
-renderer/lang/*.js
-!renderer/lang/ru.js
-!renderer/lang/en.js
-!renderer/lang/uk.js
+vue-devtools

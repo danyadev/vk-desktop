@@ -17,19 +17,7 @@ function throttle(fn, delay) {
 let onChange = throttle(reloadApp, 200);
 
 function reloadApp(filename) {
-  let ignoredFiles = [
-    '.git', 'core', 'vue-devtools', '.gitignore', 'autoReload.js',
-    'index.js', 'LICENSE', 'package.json', 'README.md'
-  ];
-
-  let isIgnored = ignoredFiles.find((ignoredPath) => {
-    let regexp = new RegExp(`${ignoredPath}/`),
-        path = filename.replace(/\\/g, '/');
-
-    return ignoredPath == path || path.match(regexp);
-  });
-
-  if(isIgnored) return;
+  if(!/^renderer/.test(filename)) return;
 
   BrowserWindow.getAllWindows().forEach((win) => {
     win.webContents.reloadIgnoringCache();

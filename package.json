@@ -1,22 +1,45 @@
 {
   "main": "index.js",
   "name": "vk-desktop",
-  "version": "0.0.3",
-  "author": "danyadev",
+  "version": "0.0.4",
+  "author": {
+    "name": "danyadev",
+    "email": "danyadev@mail.ru"
+  },
   "license": "Apache-2.0",
   "description": "Кроссплатформенный клиент ВКонтакте",
+  "repository": "https://github.com/danyadev/vk-desktop",
   "build": {
     "appId": "ru.danyadev.vkdesktop",
     "electronVersion": "4.0.0",
+    "productName": "VK Desktop",
     "files": [
       "**/*",
+      "!**/build",
       "!**/core",
+      "!**/node_modules",
       "!**/vue-devtools"
-    ]
+    ],
+    "mac": {
+      "category": "public.app-category.social-networking",
+      "target": "dmg",
+      "type": "development"
+    },
+    "nsis": {
+      "oneClick": "false",
+      "perMachine": "true",
+      "allowToChangeInstallationDirectory": "true",
+      "uninstallDisplayName": "VK Desktop"
+    },
+    "linux": {
+      "synopsis": "Клиент ВКонтакте",
+      "category": "Network"
+    },
+    "npmRebuild": "false"
   },
   "scripts": {
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "pack": "electron-builder --dir --ia32 --x64",
+    "dist": "electron-builder --ia32 --x64"
   },
   "devDependencies": {
     "electron-builder": "^20.38.5"
