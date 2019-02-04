@@ -38,7 +38,6 @@
     "npmRebuild": "false"
   },
   "scripts": {
-    "pack": "electron-builder --dir --ia32 --x64",
     "dist": "electron-builder --ia32 --x64"
   },
   "devDependencies": {
