@@ -99,7 +99,10 @@ function parseConversation(conversation) {
   if(isChat) {
     let photos = conversation.chat_settings.photo;
 
-    chatPhoto = photos && photos.photo_50;
+    if(photos) {
+      chatPhoto = devicePixelRatio >= 2 ? photos.photo_100 : photos.photo_50;
+    }
+    
     chatTitle = other.escape(conversation.chat_settings.title).replace(/\n/g, ' ');
   }
 
@@ -192,11 +195,11 @@ function getServiceMessage(action, author, full) {
 
   function name(type, acc) {
     let user = type ? actUser : author, name;
-    if(!user.photo_50) loadProfile(user.id);
+    if(!user) loadProfile(user.id);
 
     if(user.id == id) name = acc ? app.l('you2') : app.l('you');
     else if(user.name) name = user.name;
-    else if(user.photo_50) {
+    else if(user) {
       if(acc) name = `${user.first_name_acc} ${user.last_name_acc}`;
       else name = `${user.first_name} ${user.last_name}`;
     } else name = '...';
@@ -308,7 +311,7 @@ function getTextWithEmoji(nodes) {
     if(node.nodeName == 'IMG') {
       text += node.alt;
 
-      let code = node.src.match(/\w+\.png/)[0].slice(0, -4);
+      let code = emoji.emojiToHex(node.alt);
       emojies[code] = (emojies[code] || 0) + 1;
     } else if(node.nodeName == 'BR') text += '<br>';
     else text += node.data || node.innerText || '';

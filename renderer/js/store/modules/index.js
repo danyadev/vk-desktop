@@ -216,7 +216,7 @@ module.exports = {
         if(peerID < 2e9) return '';
 
         let user = state.profiles[id];
-        if(!user || !user.photo_50) return loadProfile(id), '...';
+        if(!user) return loadProfile(id), '...';
 
         let last_sym = user.last_name ? user.last_name[0] + '.' : '';
         return user.name || `${user.first_name} ${last_sym}`;

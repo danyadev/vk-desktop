@@ -91,15 +91,16 @@
       },
       user() {
         let user = this.$store.state.profiles[this.msg.from];
-        if(!user || !user.photo_50) loadProfile(this.msg.from);
+        if(!user) loadProfile(this.msg.from);
 
         return user || { id: this.msg.from };
       },
       photo() {
-        return this.user.photo_50 || 'images/im_chat_photo.png';
+        if(!this.user) return 'images/im_chat_photo.png';
+        return devicePixelRatio >= 2 ? this.user.photo_100 : this.user.photo_50;
       },
       name() {
-        let userName = this.user.photo_50 ? `${this.user.first_name} ${this.user.last_name}` : '...';
+        let userName = this.user ? `${this.user.first_name} ${this.user.last_name}` : '...';
 
         return this.user.name || userName;
       },

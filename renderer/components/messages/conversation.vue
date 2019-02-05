@@ -62,7 +62,7 @@
       },
       owner() {
         let owner = this.profiles[this.peer.owner];
-        if(!this.isChat && (!owner || !owner.photo_50)) loadProfile(this.peer.owner);
+        if(!this.isChat && !owner) loadProfile(this.peer.owner);
         return owner;
       },
       online() {
@@ -72,17 +72,17 @@
         return this.owner.online_mobile ? 'mobile' : 'desktop';
       },
       author() {
-        let author = this.profiles[this.msg.from] || { id: this.msg.from };
-        if(!author.photo_50) loadProfile(this.msg.from);
+        let author = this.profiles[this.msg.from];
+        if(!author) loadProfile(this.msg.from);
         return author;
       },
       photo() {
         if(this.isChat) return this.peer.photo;
-        else if(this.owner) return this.owner.photo_50;
+        else if(this.owner) return devicePixelRatio >= 2 ? this.owner.photo_100 : this.owner.photo_50;
       },
       chatName() {
         if(this.isChat) return this.peer.title || '...';
-        else if(this.owner && this.owner.photo_50) {
+        else if(this.owner) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         } else return '...';
       },
@@ -94,8 +94,8 @@
       },
       authorName() {
         if(this.msg.action || this.peer.channel) return '';
-        else if(this.msg.out || this.author.id == this.$root.user.id) return `${this.l('you')}:`;
-        else if(this.author.photo_50) {
+        else if(this.msg.out || this.msg.from == this.$root.user.id) return `${this.l('you')}:`;
+        else if(this.author) {
           if(this.isChat) return `${this.author.name || this.author.first_name}:`;
         } else return '...:';
       },

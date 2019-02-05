@@ -3,7 +3,7 @@
     <modal-header>{{ l('multiaccount_header') }}</modal-header>
     <div class="modal_content multiaccount">
       <div class="multiaccount_item" v-for="user in users" @click="setAccount(user.id)" :key="user.id">
-        <img class="multiaccount_item_photo" :src="user.photo_50">
+        <img class="multiaccount_item_photo" :src="user.photo_100">
         <div class="multiaccount_item_data">
           <div class="multiaccount_item_name_wrap">
             <div class="multiaccount_item_name">{{ user.first_name }} {{ user.last_name }}</div>

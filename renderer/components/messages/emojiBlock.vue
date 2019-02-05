@@ -32,7 +32,7 @@
           });
         }
 
-        return Object.assign(emojies, require('./../../js/emojiList'));
+        return Object.assign(emojies, require('./../../json/emojiBox'));
       }
     },
     methods: {

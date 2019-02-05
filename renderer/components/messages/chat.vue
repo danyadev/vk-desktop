@@ -125,7 +125,7 @@
       },
       photo() {
         if(this.isChat && this.peer && this.peer.photo) return this.peer.photo;
-        else if(this.owner && this.owner.photo_50) return this.owner.photo_50;
+        else if(this.owner) return devicePixelRatio >= 2 ? this.owner.photo_100 : this.owner.photo_50;
         else return 'images/im_chat_photo.png';
       },
       hasMessages() {

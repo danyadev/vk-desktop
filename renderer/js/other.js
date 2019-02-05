@@ -107,13 +107,13 @@ module.exports = {
   getWordEnding,
   isEqual,
   getNewIndex,
-  fields: 'photo_50,verified,sex,first_name_acc,last_name_acc,online,last_seen',
+  fields: 'photo_50,photo_100,verified,sex,first_name_acc,last_name_acc,online,last_seen',
   timer: (t) => new Promise((r) => setTimeout(r, t)),
   escape: (t) => String(t || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'),
   random: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
   isObject: (data) => data instanceof Object && !Array.isArray(data),
   regexp: {
-    url: /(([a-z]+:\/\/)?([a-zа-я\.]+\.[a-zа-я]{2,6}\.?)(\/\S*)?)(?=\s|\n|$)/gi,
+    url: /(([a-z]+:\/\/)?([a-zа-я\.\-0-9]+\.[a-zа-я]{2,6}\.?)(\/\S*)?)(?=\s|\n|$)/gi,
     push: /\[(club|id)(\d+)\|(.+?)\]/gi
   }
 }
