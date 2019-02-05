@@ -162,7 +162,7 @@ module.exports = {
     for(let data of events) {
       let msg = getMessage(data, 'new');
       messages.push(msg);
-      longpoll.emit(`new_message_${msg.id}`, msg);
+      longpoll.emit(`new_message_${msg.msg.random_id}`, msg);
     }
 
     return {

@@ -66,6 +66,7 @@
   border-radius: 50%;
   background-size: 100%;
   cursor: pointer;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
 }
 
 .menu_acc_name, .menu_acc_status {

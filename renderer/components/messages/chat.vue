@@ -27,7 +27,7 @@
           </div>
         </template>
         <template v-else-if="!loading">
-          <img src="images/im_empty_dialog.png"/>
+          <img src="images/empty_messages_placeholder.png"/>
           {{ l('im_empty_dialog') }}
         </template>
         <div v-else class="loading"></div>
@@ -54,7 +54,7 @@
                  @paste.prevent="pasteText"
                  @mousedown="setCursorPositionForEmoji"
                  @input="onInput(peer)"
-                 @keydown.enter="sendMessage"></div>
+                 @keydown.enter.exact.prevent="sendMessage"></div>
             <div class="dialog_input_emoji_btn" @click="openEmojiBlock"></div>
           </div>
           <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
@@ -243,9 +243,6 @@
         toggleChat();
       },
       async sendMessage(event) {
-        if(event.shiftKey) return;
-        else if(event.type != 'click') event.preventDefault();
-
         let input = qs('.dialog_input'),
             { text, emojies } = getTextWithEmoji(input.childNodes);
 
@@ -263,16 +260,14 @@
             random_id
           });
 
-          longpoll.once('new_message_' + random_id, async (data) => {
-            await this.$nextTick();
-
-            let el = qs('.typing_wrap');
-            if(el) el.scrollIntoView();
+          longpoll.once(`new_message_${random_id}`, () => {
+            this.$nextTick(this.scrollToEnd);
           });
         }
       },
       scrollToEnd() {
-        qs('.dialog_messages_list .typing_wrap').scrollIntoView();
+        let el = qs('.dialog_messages_list .typing_wrap');
+        if(el) el.scrollIntoView();
       },
       pasteText(event) {
         document.execCommand('insertHTML', false, emoji(clipboard.readText()));
@@ -280,13 +275,11 @@
       setCursorPositionForEmoji(event) {
         if(event.target.nodeName != 'IMG') return;
 
-        event.target.focus();
-
         let selection = window.getSelection(),
             range = document.createRange();
 
         range.selectNode(event.target);
-        range.collapse(event.offsetX <= event.target.width / 2);
+        range.collapse(event.offsetX <= 8);
         selection.removeAllRanges();
         selection.addRange(range);
       },

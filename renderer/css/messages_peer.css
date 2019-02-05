@@ -159,7 +159,11 @@
   font-size: 16px;
 }
 
-.dialog_choice_chat img { margin-bottom: 15px }
+.dialog_choice_chat img {
+  margin-bottom: 15px;
+  width: 128px;
+  height: 128px;
+}
 
 .dialog_wrap {
   display: flex;
@@ -181,10 +185,10 @@
   justify-content: center;
   text-align: center;
   color: #38383a;
+  font-size: 16px;
 }
 
-.dialog_messages_list.empty img { height: 128px }
-
+.dialog_messages_list.empty img { height: 160px }
 .dialog_messages_list.empty .typing_wrap { display: none }
 
 .dialog_wrap .typing_wrap {
