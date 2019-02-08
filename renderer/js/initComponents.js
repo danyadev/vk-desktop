@@ -2,9 +2,17 @@
 
 const fs = require('fs');
 const path = require('path');
-const { getTextWithEmoji } = require('./../components/messages/methods');
 
 Vue.use(require('./lib/ModalCreator'));
+Vue.config.devtools = true;
+
+Vue.config.errorHandler = function(stack, vm, type) {
+  app.$modals.open('error-handler', {
+    stack: stack.stack,
+    type,
+    tag: vm.$vnode.tag.split('-')[3]
+  });
+}
 
 Vue.directive('emoji', (el, { value = '', modifiers }) => {
   let html = value;

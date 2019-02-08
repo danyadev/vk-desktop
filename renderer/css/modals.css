@@ -211,5 +211,26 @@
 /* Удаление всех сообщений */
 
 .modal[name="clearHistory"] {
-  width: 500px;
+  width: 450px;
+}
+
+/* Обработка сообщений */
+
+.modal[name="error-handler"] {
+  width: 450px;
+}
+
+.modal[name="error-handler"] .modal_content {
+  display: flex;
+  padding: 20px;
+}
+
+.modal[name="error-handler"] .modal_content .error {
+  -webkit-mask-image: url('../images/im_chat_error.png');
+  -webkit-mask-size: contain;
+  background-color: #f3690b;
+  width: 56px;
+  height: 56px;
+  margin-right: 10px;
+  flex: none;
 }

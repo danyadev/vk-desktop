@@ -18,7 +18,6 @@ const vkapi = require('./js/vkapi');
 const longpoll = require('./js/longpoll');
 
 // настройка Vue
-Vue.config.devtools = true;
 require('./js/initComponents');
 
 let app = new Vue({
