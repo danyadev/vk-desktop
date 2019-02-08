@@ -64,13 +64,7 @@
         }
       },
       clearHistory() {
-        this.$modals.open('clearHistory', {
-          confirm: () => {
-            vkapi('messages.deleteConversation', {
-              peer_id: this.peer.id
-            });
-          }
-        });
+        this.$modals.open('clearHistory', this.peer.id);
       },
       leave() {
         this.entered = false;
