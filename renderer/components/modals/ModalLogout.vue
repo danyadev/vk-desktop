@@ -17,6 +17,7 @@
 
         this.$store.commit('setActiveUser', null);
         this.$store.commit('removeUser', id);
+        settings.setData(settings.defaults);
 
         getCurrentWindow().reload();
       },

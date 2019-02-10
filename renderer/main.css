@@ -26,7 +26,7 @@
 			 url('css/SegoeUISemiBold.ttf');
 }
 
-img {
+img:not(.emoji) {
   -webkit-user-drag: none;
   user-select: none;
 }

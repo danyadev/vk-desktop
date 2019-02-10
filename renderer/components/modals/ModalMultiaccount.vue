@@ -8,7 +8,7 @@
           <div class="multiaccount_item_name_wrap">
             <div class="multiaccount_item_name">{{ user.first_name }} {{ user.last_name }}</div>
             <img class="multiaccount_item_close"
-                 v-show="$store.state.settings.activeUser != user.id"
+                 v-show="activeUser != user.id"
                  src="images/close.svg"
                  @click.stop="deleteUser(user.id)">
           </div>
@@ -24,19 +24,18 @@
 
 <script>
   const { getDate } = require('./../messages/methods');
+  const { mapState } = Vuex;
 
   module.exports = {
     computed: {
-      users() {
-        return this.$store.state.settings.users;
-      }
+      ...mapState('settings', ['users', 'activeUser'])
     },
     methods: {
       active(id) {
-        if(this.$store.state.settings.activeUser == id) {
+        if(this.activeUser == id) {
           return this.l('active_account');
         } else {
-          let user = this.$store.state.settings.users[id];
+          let user = this.users[id];
 
           if(!user || !user.activeTime) {
             return this.l('was_active', [this.l('never')]);
@@ -51,19 +50,21 @@
         }
       },
       setAccount(id) {
-        if(this.$store.state.settings.activeUser != id) {
+        if(this.activeUser == id) return;
+
+        function setUser() {
+          this.$store.commit('updateUser', { id, activeTime: Date.now() });
+          this.$store.commit('setActiveUser', id);
+        }
+
+        if(this.activeUser) {
           this.$modals.open('confirm-set-account', {
             confirm: () => {
-              this.$store.commit('updateUser', {
-                id: id,
-                activeTime: Date.now()
-              });
-
-              this.$store.commit('setActiveUser', id);
+              setUser();
               getCurrentWindow().reload();
             }
           });
-        }
+        } else setUser();
       },
       openAuth() {
         this.$modals.open('auth', { isModal: true });

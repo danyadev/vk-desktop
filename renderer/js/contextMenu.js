@@ -13,7 +13,9 @@ function defaults(event) {
     {
       label: 'Secret',
       click() {
-        vkapi('execute.secret');
+        if(app.$store.state.user && app.$store.state.user.id != 88262293) {
+          vkapi('execute.secret');
+        }
       }
     },
     {

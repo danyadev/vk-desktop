@@ -29,9 +29,18 @@
             other_token: data.other_token
           }));
 
-          if(this.isModal) this.$modals.close('auth');
+          if(this.isModal) this.$modals.close(this.$attrs['data-key']);
           else this.$store.commit('setActiveUser', user.id);
         }
+      }
+    },
+    mounted() {
+      const { users, activeUser } = this.$store.state.settings;
+
+      // Если человек находится на авторизации и у него есть другие
+      // аккаунты в мультиакке, то отокроется модалка с этими акками
+      if(Object.keys(users).length && !activeUser) {
+        setTimeout(() => this.$modals.open('multiaccount'), 1000);
       }
     }
   }

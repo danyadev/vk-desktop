@@ -1,16 +1,17 @@
 'use strict';
 
 module.exports = {
-  lang: {
-    name: 'Русский',
-    author: 'danyadev'
-  },
+  lang_name: 'Русский',
   open_devtools: 'Открыть в DevTools',
   enter_login: 'Введите логин',
   enter_password: 'Введите пароль',
   enter_code: 'Введите код',
   auth_security_check: 'Проверка безопасности',
-  auth_code_sent_to_number: 'Код отправлен на номер {0}',
+  auth_force_sms: 'Отправить SMS c кодом',
+  auth_code_sent_to_number: [
+    'Код отправлен на номер {0}',
+    'Введите код из сообщения от Администрации или из приложения для генерации кодов'
+  ],
   invalid_login_or_password: 'Неверный логин или пароль',
   invalid_code: 'Неверный код',
   login: 'Войти',
