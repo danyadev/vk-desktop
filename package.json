@@ -33,7 +33,11 @@
     },
     "linux": {
       "synopsis": "Клиент ВКонтакте",
-      "category": "Network"
+      "category": "Network",
+      "target": "AppImage"
+    },
+    "snap": {
+      "useTemplateApp": false
     },
     "npmRebuild": "false"
   },
