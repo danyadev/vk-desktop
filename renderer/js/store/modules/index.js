@@ -18,12 +18,10 @@ function getMinIndex(arr, num) {
 module.exports = {
   state: {
     menuState: false,
-    counters: settings.get('counters'),
     profiles: {},
     conversations: {},
     peersList: [],
     typing: {},
-    activeChat: null,
     messages: {},
     langName: settings.get('lang'),
     lang: getLangFile(settings.get('lang'))
@@ -55,18 +53,18 @@ module.exports = {
     setMenuState(state, value) {
       state.menuState = value;
     },
-    updateCounter(state, data) {
-      Vue.set(state.counters, data.type, data.count);
-      settings.set('counters', state.counters);
-    },
     // ** Профили **
     addProfiles(state, users) {
-      for(let user of users) Vue.set(state.profiles, user.id, user);
+      for(let user of users) {
+        user.photo = devicePixelRatio >= 2 ? user.photo_100 : user.photo_50;
+        Vue.set(state.profiles, user.id, user);
+      }
     },
     updateProfile(state, user) {
       let old = state.profiles[user.id];
 
       if(old) {
+        user.photo = (devicePixelRatio >= 2 ? user.photo_100 : user.photo_50) || user.photo || old.photo;
         Vue.set(state.profiles, user.id, Object.assign({}, old, user));
       }
     },
@@ -141,9 +139,6 @@ module.exports = {
       }
     },
     // ** Диалог и сообщения **
-    setChat(state, id) {
-      state.activeChat = id;
-    },
     addMessage(state, data) {
       let messages = state.messages[data.peer_id] || [],
           ids = messages.map((msg) => msg.id),

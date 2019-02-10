@@ -69,9 +69,7 @@ class Settings extends Storage {
     return {
       section: 'messages',
       lang: 'ru',
-      counters: {
-        messages: 0
-      },
+      counters: {},
       recentEmojies: {},
       hiddenDialogs: false
     }

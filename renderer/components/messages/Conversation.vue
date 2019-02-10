@@ -1,8 +1,7 @@
 <template>
   <div class="conversation" :class="{ active: isActive }" @click="openChat">
     <div class="conversation_photo_wrap" :class="online">
-      <img v-if="photo" :src="photo" class="conversation_photo"/>
-      <div v-else class="conversation_photo no_photo"></div>
+      <img :src="photo" class="conversation_photo"/>
     </div>
     <div class="conversation_content">
       <div class="conversation_title">
@@ -40,19 +39,20 @@
   const {
     loadProfile,
     getDate,
-    toggleChat,
     getMessagePreview,
     isDeletedContent
   } = require('./methods');
 
   module.exports = {
     props: ['peer'],
-    data: (vm) => ({
-      isChat: vm.peer.type == 'chat'
-    }),
+    data() {
+      return {
+        isChat: this.peer.type == 'chat'
+      }
+    },
     computed: {
       isActive() {
-        return this.$store.state.activeChat == this.peer.id;
+        return this.$store.state.messages.chat == this.peer.id;
       },
       msg() {
         return this.$store.getters.lastMessage(this.peer.id);
@@ -77,8 +77,8 @@
         return author;
       },
       photo() {
-        if(this.isChat) return this.peer.photo;
-        else if(this.owner) return devicePixelRatio >= 2 ? this.owner.photo_100 : this.owner.photo_50;
+        if(this.isChat) return this.peer.photo || 'images/im_chat_photo.png';
+        else if(this.owner) return this.owner.photo;
       },
       chatName() {
         if(this.isChat) return this.peer.title || '...';
@@ -115,7 +115,7 @@
     },
     methods: {
       openChat() {
-        toggleChat(this.peer.id);
+        this.$store.commit('messages/setChat', this.peer.id);
       }
     }
   }

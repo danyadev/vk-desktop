@@ -15,6 +15,10 @@ module.exports = {
     hiddenDialogs: settings.get('hiddenDialogs')
   },
   mutations: {
+    updateCounter(state, data) {
+      Vue.set(state.counters, data.type, data.count);
+      settings.set('counters', state.counters);
+    },
     updateRecentEmojies(state, emojies) {
       let recentEmojies = Object.assign({}, state.recentEmojies);
 

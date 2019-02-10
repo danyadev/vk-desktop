@@ -97,7 +97,7 @@
       },
       photo() {
         if(!this.user) return 'images/im_chat_photo.png';
-        return devicePixelRatio >= 2 ? this.user.photo_100 : this.user.photo_50;
+        return this.user.photo;
       },
       name() {
         let userName = this.user ? `${this.user.first_name} ${this.user.last_name}` : '...';

@@ -70,7 +70,7 @@
 
 .link {
   display: inline-block;
-  color: #2a5885;
+  color: #254f79;
   cursor: pointer;
   transition: color .3s;
 }
@@ -81,7 +81,6 @@
   margin: 0 1px -3px 1px;
   width: 16px;
   height: 16px;
-  user-select: all;
 }
 
 .verified {
@@ -152,8 +151,8 @@
 .loading::after {
   content: '';
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   margin: 10px auto;
   animation: spinner .7s infinite linear;
   background-image: url('../images/spinner.png');

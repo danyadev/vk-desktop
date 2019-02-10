@@ -102,7 +102,7 @@ function parseConversation(conversation) {
     if(photos) {
       chatPhoto = devicePixelRatio >= 2 ? photos.photo_100 : photos.photo_50;
     }
-    
+
     chatTitle = other.escape(conversation.chat_settings.title).replace(/\n/g, ' ');
   }
 
@@ -195,14 +195,16 @@ function getServiceMessage(action, author, full) {
 
   function name(type, acc) {
     let user = type ? actUser : author, name;
-    if(!user) loadProfile(user.id);
 
     if(user.id == id) name = acc ? app.l('you2') : app.l('you');
     else if(user.name) name = user.name;
-    else if(user) {
+    else if(user.first_name) {
       if(acc) name = `${user.first_name_acc} ${user.last_name_acc}`;
       else name = `${user.first_name} ${user.last_name}`;
-    } else name = '...';
+    } else {
+      loadProfile(user.id);
+      name = '...';
+    }
 
     return e(name);
   }
@@ -257,51 +259,6 @@ function getDate(timestamp, { addTime, shortMonth, fullText } = {}) {
   } else if(yesterday) return app.l('yesterday');
   else if(thisYear) return `${date.getDate()} ${month}`;
   else return `${date.getDate()} ${month} ${date.getFullYear()}`;
-}
-
-async function toggleChat(chatID) {
-  let oldChatID = app.$store.state.activeChat,
-      conversation = app.$store.state.conversations[oldChatID],
-      peer = conversation && conversation.peer,
-      messagesList = qs('.dialog_messages_list'),
-      dialogInput = qs('.dialog_input');
-
-  if(oldChatID == chatID) return;
-
-  // закрытие диалога
-  if((!chatID && peer) || (chatID && oldChatID)) {
-    peer.scrollTop = messagesList.scrollTop;
-    if(dialogInput) peer.inputText = dialogInput.innerHTML;
-
-    // если чел находится внизу диалога
-    if(messagesList.scrollTop + messagesList.clientHeight == messagesList.scrollHeight) {
-      peer.scrolledToEnd = true;
-    } else peer.scrolledToEnd = false;
-  }
-
-  app.$store.commit('setChat', chatID);
-
-  // открытие диалога
-  if(chatID) {
-    await Vue.nextTick();
-
-    let newConv = app.$store.state.conversations[chatID],
-        newPeer = newConv && newConv.peer,
-        hasScrollTop = newPeer.scrollTop != undefined,
-        input = qs('.dialog_input');
-
-    if(newPeer) {
-      if(dialogInput) dialogInput.innerHTML = newPeer.inputText || '';
-
-      if(newPeer.scrolledToEnd || !hasScrollTop) {
-        if(qs('.typing_wrap')) qs('.typing_wrap').scrollIntoView();
-      } else if(hasScrollTop) {
-        qs('.dialog_messages_list').scrollTop = newPeer.scrollTop;
-      }
-    }
-
-    if(input) input.focus();
-  }
 }
 
 function getTextWithEmoji(nodes) {
@@ -366,7 +323,6 @@ module.exports = {
   loadAttachments,
   getServiceMessage,
   getDate,
-  toggleChat,
   getTextWithEmoji,
   getMessagePreview,
   isDeletedContent

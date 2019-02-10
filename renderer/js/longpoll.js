@@ -23,9 +23,9 @@ class Longpoll extends EventEmitter {
     this.version = 6;
   }
 
-  async start() {
+  async start(data) {
     if(!this.server) {
-      let data = await this.getServer();
+      if(!data) data = await this.getServer();
 
       this.server = data.server;
       this.key = data.key;

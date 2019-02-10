@@ -115,7 +115,7 @@ longpoll.on('edit_message', ({ peer, msg }) => {
 });
 
 longpoll.on('update_messages_counter', (count) => {
-  app.$store.commit('updateCounter', { type: 'messages', count });
+  app.$store.commit('settings/updateCounter', { type: 'messages', count });
 });
 
 longpoll.on('add_message_snippet', ({ peer, msg }) => {

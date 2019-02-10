@@ -20,7 +20,7 @@ Vue.directive('emoji', (el, { value = '', modifiers }) => {
   if(!modifiers.br) html = html.replace(/<br>/g, ' ');
 
   if(modifiers.push || modifiers.color_push) {
-    let to = modifiers.push ? '$3' : '<span style="color: #254f79">$3</span>';
+    let to = modifiers.push ? '$3' : '<span class="link">$3</span>';
 
     html = html.replace(other.regexp.push, to);
   }
@@ -28,7 +28,7 @@ Vue.directive('emoji', (el, { value = '', modifiers }) => {
   if(modifiers.link) {
     html = html
       .replace(/<br>/g, '\n')
-      .replace(other.regexp.url, '<span style="color: #254f79">$1</span>')
+      .replace(other.regexp.url, '<span class="link">$1</span>')
       .replace(/\n/g, '<br>');
   }
 

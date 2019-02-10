@@ -12,7 +12,7 @@
   module.exports = {
     computed: {
       id() {
-        return this.$store.state.activeChat;
+        return this.$store.state.messages.chat;
       }
     }
   }

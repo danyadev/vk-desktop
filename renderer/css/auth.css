@@ -12,21 +12,24 @@
 }
 
 .auth_wrap input { margin-bottom: 6px }
-.auth_password_wrap { position: relative }
-.auth_password_switch:hover { opacity: 1 }
+
+.auth_password_wrap {
+  position: relative;
+  margin-left: 5px;
+}
 
 .auth_password_switch {
-  content: '';
   position: absolute;
   top: -5px;
   right: 5px;
   opacity: .8;
   width: 32px;
-  height: 34px;
+  height: 32px;
   background: url('../images/show.svg') 50% no-repeat;
   transition: opacity .3s;
 }
 
+.auth_password_switch:hover { opacity: 1 }
 .auth_password_switch.hidden {
   background-image: url('../images/hide.svg');
 }

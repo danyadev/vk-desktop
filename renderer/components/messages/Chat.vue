@@ -53,7 +53,7 @@
                  :placeholder="l('im_enter_msg')"
                  @paste.prevent="pasteText"
                  @mousedown="setCursorPositionForEmoji"
-                 @input="onInput(peer)"
+                 @input="onInput" @drop="onDrop"
                  @keydown.enter.exact.prevent="sendMessage"></div>
             <div class="dialog_input_emoji_btn" @click="openEmojiBlock"></div>
           </div>
@@ -83,16 +83,16 @@
     parseMessage,
     parseConversation,
     getDate,
-    toggleChat,
     getTextWithEmoji
   } = require('./methods');
 
   module.exports = {
     data() {
-      let peer_id = this.$store.state.activeChat;
+      let peer_id = this.$store.state.messages.chat;
 
       return {
-        id: peer_id,
+        // Если id = 0, то отображать текущего пользователя
+        id: peer_id || app.user.id,
         isChat: peer_id > 2e9,
         loadedMessages: false,
         loading: false,
@@ -101,7 +101,9 @@
         showTopTime: false,
         showEndBtn: false,
         openedDialogSettingsBox: false,
-        openedEmojiBlock: false
+        openedEmojiBlock: false,
+        scrollTop: null,
+        scrolledToEnd: false
       }
     },
     computed: {
@@ -124,8 +126,8 @@
         return this.peer && this.profiles[this.peer.owner];
       },
       photo() {
-        if(this.isChat && this.peer && this.peer.photo) return this.peer.photo;
-        else if(this.owner) return devicePixelRatio >= 2 ? this.owner.photo_100 : this.owner.photo_50;
+        if(this.owner) return this.owner.photo;
+        else if(this.peer && this.peer.photo) return this.peer.photo;
         else return 'images/im_chat_photo.png';
       },
       hasMessages() {
@@ -142,7 +144,7 @@
         if(this.id < 0) return this.l('community');
 
         if(this.isChat) {
-          if(this.peer.canWrite.reason == 917)  this.l('im_kicked_from_chat');
+          if(this.peer.canWrite.reason == 917) this.l('im_kicked_from_chat');
           if(this.peer.left) return this.l('im_left_chat');
 
           if(this.peer.members == undefined) return '';
@@ -161,7 +163,6 @@
 
           if(!app) {
             if(this.owner.online_mobile) app = this.l('with_phone');
-            else if(!this.owner.online_web) loadOnlineApp(this.owner.id);
           } else app = this.l('with_app', [app]);
 
           return `online ${app} (${date.getHours()}:${f(date.getMinutes())})`;
@@ -193,11 +194,7 @@
         if(messagesList) {
           let isBottomPos = messagesList.scrollTop + messagesList.clientHeight == messagesList.scrollHeight;
 
-          if(isBottomPos) {
-            this.$nextTick().then(() => {
-              qs('.dialog_messages_list .typing_wrap').scrollIntoView();
-            });
-          }
+          if(isBottomPos) this.$nextTick().then(this.scrollToEnd);
         }
 
         return this.$store.state.messages[this.id];
@@ -206,7 +203,13 @@
         return this.$store.getters.typingMsg(this.id);
       },
       canSendMessages() {
-        if(!this.peer) return { state: true, channel: false };
+        if(!this.peer) {
+          return {
+            state: false,
+            channel: false,
+            text: this.l('im_cant_write')
+          }
+        }
 
         let text, reason = this.peer.canWrite.reason;
 
@@ -237,33 +240,30 @@
         if(this.openedDialogSettingsBox) this.openedDialogSettingsBox = false;
       },
       writeEmoji(code) {
-        qs('.dialog_input').innerHTML += emoji(emoji.HexToEmoji(code));
+        qs('.dialog_input').innerHTML += emoji(emoji.hexToEmoji(code));
       },
       closeChat() {
-        toggleChat();
+        this.$store.commit('messages/setChat', null);
       },
       async sendMessage(event) {
         let input = qs('.dialog_input'),
-            { text, emojies } = getTextWithEmoji(input.childNodes);
+            { text, emojies } = getTextWithEmoji(input.childNodes),
+            random_id = other.random(0, 9e8);
 
         if(!text) return;
         input.innerHTML = '';
 
         this.$store.commit('settings/updateRecentEmojies', emojies);
 
-        for(let block of text.match(/.{1,4096}/g)) {
-          let random_id = other.random(0, 9e8);
+        await vkapi('messages.send', {
+          peer_id: this.id,
+          message: text,
+          random_id
+        });
 
-          await vkapi('messages.send', {
-            peer_id: this.id,
-            message: block,
-            random_id
-          });
-
-          longpoll.once(`new_message_${random_id}`, () => {
-            this.$nextTick(this.scrollToEnd);
-          });
-        }
+        longpoll.once(`new_message_${random_id}`, () => {
+          this.$nextTick(this.scrollToEnd);
+        });
       },
       scrollToEnd() {
         let el = qs('.dialog_messages_list .typing_wrap');
@@ -296,14 +296,24 @@
         if(vm.showEndBtn) vm.showEndBtn = false;
       }, 3000),
       onScroll(event) {
-        if(!this.showTopTime) this.showTopTime = true;
-
-        this.hideEndBtn(this);
-        this.hideTopDate(this);
-
         let el = event.target,
             hide = el.scrollTop + el.offsetHeight == el.scrollHeight,
-            days = [].slice.call(qsa('.message_top_date')).reverse();
+            days = [].slice.call(qsa('.message_top_date')).reverse(),
+            messagesList = qs('.dialog_messages_list');
+
+        if(!messagesList) return;
+
+        // TODO: move to beforeDeactivated hook
+        // https://github.com/vuejs/vue/issues/9454
+        this.scrollTop = messagesList.scrollTop;
+
+        if(messagesList.scrollTop + messagesList.clientHeight == messagesList.scrollHeight) {
+          this.scrolledToEnd = true;
+        } else this.scrolledToEnd = false;
+
+        if(!this.showTopTime) this.showTopTime = true;
+        this.hideEndBtn(this);
+        this.hideTopDate(this);
 
         for(let item of days) {
           if(el.scrollTop + el.offsetTop >= item.offsetTop) {
@@ -319,12 +329,18 @@
           this.loadNewMessages();
         }
       },
-      onInput: other.throttle((peer) => {
+      setTypingActivity: other.throttle((peer) => {
         vkapi('messages.setActivity', {
           peer_id: peer.id,
           type: 'typing'
         });
       }, 4500),
+      onDrop(event) {
+        event.preventDefault();
+      },
+      onInput(event) {
+        if(event.data != null) this.setTypingActivity(this.peer);
+      },
       async loadNewMessages() {
         let offset = this.messages ? this.messages.length : 0;
 
@@ -363,7 +379,7 @@
         let { scrollTop, scrollHeight } = qs('.dialog_messages_list') || {};
         await this.$nextTick();
 
-        if(this.$store.state.activeChat == this.id) {
+        if(this.$store.state.messages.chat == this.id) {
           let thisHeight = qs('.dialog_messages_list').scrollHeight;
           qs('.dialog_messages_list').scrollTop = scrollTop + thisHeight - scrollHeight;
         }
@@ -374,6 +390,18 @@
     mounted() {
       this.loading = true;
       this.loadNewMessages();
+    },
+    activated() {
+      if(this.scrollTop != null) {
+        let messagesList = qs('.dialog_messages_list');
+
+        if(this.scrolledToEnd) this.scrollToEnd();
+
+        messagesList.scrollTop = this.scrollTop;
+      } else this.scrollToEnd();
+
+      // Чек онлайна при каждом открытии чата
+      if(!this.isChat && this.id > 0) loadOnlineApp(this.id);
     }
   }
 </script>

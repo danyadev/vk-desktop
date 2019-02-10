@@ -5,12 +5,9 @@ const API_VERSION = '5.92';
 
 let methods = [], isCaptcha = false;
 
-let addToQueue = (method, params, promise = {}) => {
+function addToQueue(method, params, promise) {
   return new Promise((resolve, reject) => {
-    promise.resolve = promise.resolve || resolve;
-    promise.reject = promise.reject || reject;
-
-    methods.push([method, params, promise]);
+    methods.push([method, params, promise || { resolve, reject }]);
   });
 }
 
@@ -33,22 +30,17 @@ function getToken(params) {
   return params.access_token;
 }
 
-function tryResolve(params, data, resolve, reject) {
+function tryResolve(params, data, callback) {
   if(params.access_token == getToken(params, params.offToken)) {
     delete params.offToken;
-    if(resolve) resolve(data);
-    else reject(data);
+    callback(data);
   }
 }
 
-let method = (name, params = {}, promise) => {
+let method = (name, params = {}, promise = {}) => {
   return new Promise(async (resolve, reject) => {
-    let time = Date.now();
-
-    if(promise) {
-      resolve = promise.resolve;
-      reject = promise.reject;
-    }
+    resolve = promise.resolve || resolve;
+    reject = promise.reject || reject;
 
     params.v = params.v || API_VERSION;
     params.lang = params.lang || app.$store.state.langName;
@@ -95,7 +87,7 @@ let method = (name, params = {}, promise) => {
             isCaptcha = false;
           }
         });
-      } else tryResolve(params, data, null, reject);
+      } else tryResolve(params, data, reject);
     }
 
     if(params.log) {
@@ -103,8 +95,7 @@ let method = (name, params = {}, promise) => {
       delete params.log;
       params.$method = name;
 
-      let date = Date.now() - time + 'ms';
-      console.log('[API]', date, Object.assign({}, data.response, { $options: params }));
+      console.log('[API]', Object.assign({}, data.response, { $options: params }));
     }
   });
 }

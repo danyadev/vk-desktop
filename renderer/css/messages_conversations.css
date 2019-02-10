@@ -128,10 +128,6 @@
   border-radius: 50%;
 }
 
-.conversation_photo.no_photo {
-  background-image: url('../images/im_chat_photo.png');
-}
-
 .conversation_content {
   width: calc(100% - 70px);
   padding: 10px 10px 10px 0;

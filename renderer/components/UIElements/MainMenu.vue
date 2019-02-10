@@ -20,9 +20,7 @@
              :class="{ active: $root.section == page }">
           <div class="menu_item_icon" :class="page"></div>
           <div class="menu_item_name">{{ l('menu', page) }}</div>
-          <div class="menu_item_counter" v-if="counters.includes(page)">
-            {{ $store.state.counters[page] || '' }}
-          </div>
+          <div class="menu_item_counter">{{ counters[page] || '' }}</div>
         </div>
         <div class="menu_item logout" @click.stop="logout">
           <div class="menu_item_name">{{ l('logout') }}</div>
@@ -33,12 +31,14 @@
 </template>
 
 <script>
+  const { mapState } = Vuex;
+
   module.exports = {
     data: () => ({
-      list: ['messages'],
-      counters: ['messages']
+      list: ['messages']
     }),
     computed: {
+      ...mapState('settings', ['counters']),
       user() {
         return this.$root.user;
       },
@@ -69,11 +69,20 @@
       }
     },
     async mounted() {
-      let [ user ] = await vkapi('execute.getProfiles', { fields: 'status,photo_100' });
-      this.$store.commit('updateUser', Object.assign(user, { activeTime: Date.now() }));
+      let { lp, user, counters } = await vkapi('execute.init', {
+        lp_version: longpoll.version,
+        fields: `${other.fields},status`
+      });
 
-      vkapi('stats.trackVisitor');
-      longpoll.start();
+      for(let counter in counters) {
+        this.$store.commit('settings/updateCounter', {
+          type: counter,
+          count: counters[counter]
+        });
+      }
+
+      this.$store.commit('updateUser', Object.assign(user, { activeTime: Date.now() }));
+      longpoll.start(lp);
     }
   }
 </script>
