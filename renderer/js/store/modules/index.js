@@ -47,7 +47,7 @@ module.exports = {
     setLang(state, name) {
       settings.set('lang', name);
       state.langName = name;
-      state.lang = getLangFile(name);
+      state.lang = Object.assign(getLangFile('ru'), getLangFile(name));
     },
     // ** Меню **
     setMenuState(state, value) {

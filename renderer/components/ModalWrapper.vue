@@ -43,13 +43,13 @@
       Bus.on('open', (name, data = {}) => {
         Vue.set(this.modals, this.id++, { name, data });
 
-        setTimeout(() => this.updateModal(this.id-1, { active: true }), 200);
+        setTimeout(() => this.updateModal(this.id-1, { active: true }), 0);
       });
 
       Bus.on('close', (key) => {
         this.updateModal(key, { active: false });
 
-        setTimeout(() => Vue.delete(this.modals, key), 200);
+        setTimeout(() => Vue.delete(this.modals, key), 100);
       });
     }
   }

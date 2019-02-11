@@ -69,12 +69,12 @@
 .conversation {
   display: flex;
   position: relative;
-  transition: background-color .3s;
+  cursor: pointer;
+  transition: background-color .1s;
 }
 
 .conversation:hover {
   background: #f5f7fa;
-  cursor: pointer;
 }
 
 .conversation::before {
@@ -84,7 +84,7 @@
   position: absolute;
   background-color: #5281b9;
   opacity: 0;
-  transition: opacity .3s;
+  transition: opacity .1s;
 }
 
 .conversation:not(.active):hover::before { opacity: .5 }
@@ -130,12 +130,15 @@
 
 .conversation_content {
   width: calc(100% - 70px);
-  padding: 10px 10px 10px 0;
+  padding: 12px 10px 8px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 .conversation_title {
   display: flex;
-  margin-top: 5px;
+  /* margin-top: 5px; */
 }
 
 .conversation_title .verified {
@@ -168,7 +171,7 @@
 .conversation_message_wrap {
   display: flex;
   height: 20px;
-  margin-top: 4px
+  /* margin-top: 4px */
 }
 
 .conversation_author:not(:empty) {
@@ -182,6 +185,11 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   color: #4c4d50;
+}
+
+.conversation_message b {
+  font-weight: 600;
+  opacity: 0.8;
 }
 
 .typing_text { color: #254f79 }

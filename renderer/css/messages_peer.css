@@ -49,7 +49,6 @@
 .dialog_name {
   color: #fff;
   line-height: 14px;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -58,7 +57,6 @@
 .dialog_online {
   color: rgba(255, 255, 255, 0.75);
   font-size: 13px;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   text-align: center;
   overflow: hidden;
   white-space: nowrap;
@@ -155,12 +153,12 @@
   align-items: center;
   height: 100%;
   margin-top: -65px;
-  color: #38383a;
+  color: rgba(0,0,0,.6);
   font-size: 16px;
 }
 
 .dialog_choice_chat img {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   width: 128px;
   height: 128px;
 }
@@ -258,14 +256,14 @@
   margin: 6px 0;
   background-color: #fff;
   border: 1px solid #d3d9de;
-  border-radius: 10px;
+  border-radius: 20px;
 }
 
 .dialog_input {
   min-height: 18px;
   max-height: 180px;
   line-height: 18px;
-  padding: 10px 35px 10px 10px;
+  padding: 10px 35px 10px 15px;
   overflow-x: auto;
 }
 
@@ -567,6 +565,7 @@
   position: relative;
   background: #fff;
   padding: 10px;
+  z-index: 2;
 }
 
 .message_unreaded_messages::before,
@@ -575,8 +574,9 @@
   position: absolute;
   height: 1px;
   width: 50%;
-  background: #d4d6da;
+  background: #eee;
   top: 50%;
+  left: 50%;
 }
 
 .message_unreaded_messages::before { left: 0 }

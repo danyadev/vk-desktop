@@ -22,6 +22,10 @@
           <div class="menu_item_name">{{ l('menu', page) }}</div>
           <div class="menu_item_counter">{{ counters[page] || '' }}</div>
         </div>
+        <div class="menu_divider"></div>
+        <div class="menu_item" @click.stop="changeLang">
+          <div class="menu_item_name">{{ l('change_lang') }}</div>
+        </div>
         <div class="menu_item logout" @click.stop="logout">
           <div class="menu_item_name">{{ l('logout') }}</div>
         </div>
@@ -63,9 +67,13 @@
 
         this.$store.commit('setMenuState', state);
       },
+      changeLang() {
+        this.toggleMenu(false);
+        this.$modals.open('changeLanguage');
+      },
       logout() {
         this.toggleMenu(false);
-        setTimeout(() => this.$modals.open('logout'), 150);
+        this.$modals.open('logout');
       }
     },
     async mounted() {

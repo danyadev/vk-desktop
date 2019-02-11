@@ -4,7 +4,8 @@
   position: relative;
   height: 32px;
   z-index: 6;
-  background-color: #5281b9;
+  /* background-color: #5281b9; */
+  background-color: hsla(213, 44%, 48%, 1);
 }
 
 .titlebar_drag {
@@ -14,7 +15,6 @@
   margin: 4px 0 0 4px;
   padding-left: 4px;
   color: #fff;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   line-height: 24px;
   overflow: hidden;
   white-space: nowrap;
@@ -34,13 +34,18 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: .2s background-color;
+  transition: .1s background-color cubic-bezier(0.77, 0, 0.175, 1);
   width: 48px;
   height: 32px;
 }
 
-.titlebar_button:hover { background-color: rgba(0, 0, 0, .2) }
-.titlebar_button:active { background-color: rgba(0, 0, 0, .3) }
+.titlebar_button:hover {
+  background-color: rgba(255, 255, 255, .1);
+  transition-duration: .05s;
+}
+.titlebar_button:active {
+  background-color: rgba(255, 255, 255, .05);
+}
 
 .titlebar_button.close:hover { background-color: #eb0716 }
 .titlebar_button.close:active { background-color: #de000f }
@@ -48,12 +53,20 @@
 .titlebar.maximized .titlebar_button.maximize { display: none }
 .titlebar:not(.maximized) .titlebar_button.restore { display: none }
 
-.titlebar.mac { height: 22px }
-.titlebar.mac:not(.maximized) .titlebar_drag { margin-right: 4px }
+.titlebar.mac {
+  height: 22px;
+  /* background-color: hsla(213, 44%, 48%, 1); */
+}
+.titlebar.mac.maximized {
+  display: none;
+}
+.titlebar.mac .titlebar_drag { margin-right: 4px }
 .titlebar.mac .titlebar_buttons { display: none }
 .titlebar.mac + .root { height: calc(100% - 22px) }
 
 .titlebar.mac .titlebar_drag {
+  font-size: 13px;
   text-align: center;
   line-height: 14px;
+  opacity: 0.7;
 }

@@ -7,7 +7,7 @@
   width: 100%;
   height: 100%;
   visibility: hidden;
-  transition: visibility .3s;
+  pointer-events: none;
 }
 
 .modals_container:not(:empty) { visibility: visible }
@@ -21,11 +21,18 @@
   height: 100%;
   opacity: 0;
   background-color: rgba(0, 0, 0, .4);
-  transition: opacity .3s;
+  pointer-events: none;
+  transform: scale(.2);
+  border-radius: 100px;
+  transition: all .1s;
 }
 
 .modal_wrap.active {
   opacity: 1;
+  pointer-events: visible;
+  transform: scale(1);
+  border-radius: 0;
+  transition: all .2s;
 }
 
 .modal {
@@ -233,4 +240,32 @@
   height: 56px;
   margin-right: 10px;
   flex: none;
+}
+
+/* Изменение языка */
+
+.modal[name="changeLanguage"] {
+  min-width: 300px;
+}
+.modal[name="changeLanguage"] .menu_item {
+  font-weight: 500;
+}
+.modal[name="changeLanguage"] .menu_item .menu_item_icon {
+  background: none;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-right: 5px;
+}
+.modal[name="changeLanguage"] .menu_item[data-key="en"] .menu_item_icon {
+  
+  background-image: url('../images/flag_en.png');
+  
+}
+.modal[name="changeLanguage"] .menu_item[data-key="ru"] .menu_item_icon {
+  background: none;
+  background-image: url('../images/flag_ru.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }

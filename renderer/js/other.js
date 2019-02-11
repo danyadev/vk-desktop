@@ -15,7 +15,8 @@ Object.defineProperty(Vue.prototype, 'l', {
     }
 
     let data = this.$store.state.lang[name];
-    if(![null, undefined].includes(key)) data = data[key];
+    if (!data) return name;
+    if (![null, undefined].includes(key)) data = data[key];
 
     if(Array.isArray(replaces)) {
       for(let i in replaces) {

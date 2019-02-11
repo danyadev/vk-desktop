@@ -24,17 +24,19 @@
       }
     },
     mounted() {
-      if(this.mac) {
+      if (this.mac) {
         qs('.titlebar_drag').addEventListener('dblclick', () => {
-          if(getCurrentWindow().isFullScreen()) return;
+          if (getCurrentWindow().isFullScreen()) return;
 
           let type = getCurrentWindow().isMaximized() ? 'unmaximize' : 'maximize';
-          getCurrentWindow().emit(type);
+          getCurrentWindow()[type]();
         });
+        getCurrentWindow().on('enter-full-screen', () => this.maximized = true);
+        getCurrentWindow().on('leave-full-screen', () => this.maximized = false);
+      } else {
+        getCurrentWindow().on('maximize', () => this.maximized = true);
+        getCurrentWindow().on('unmaximize', () => this.maximized = false);
       }
-
-      getCurrentWindow().on('maximize', () => this.maximized = true);
-      getCurrentWindow().on('unmaximize', () => this.maximized = false);
     }
   }
 </script>
