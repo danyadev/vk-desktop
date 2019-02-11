@@ -103,74 +103,43 @@ function getMessage(data, type) {
 }
 
 module.exports = {
-  2: (events) => {
+  2: (data) => {
     // 1) Удаление сообщения (128)
     // 2) Пометка как спам (64)
     // 3) Удаление для всех (131200)
     // [msg_id, flags, peer_id]
 
-    let messages = [];
-
-    for(let data of events) {
-      let flags = getFlags(data[1]);
-
-      messages.push({
-        id: data[0],
-        all: flags.is('deleted_all')
-      });
-    }
+    let flags = getFlags(data[1]);
 
     return {
-      name: 'delete_messages',
+      name: 'delete_message',
       data: {
-        peer_id: events[0][2],
-        messages
+        all: flags.is('deleted_all'),
+        msg_id: data[0],
+        peer_id: data[2]
       }
     }
   },
-  3: (events) => {
+  3: (data) => {
     // 1) Восстановление удаленного сообщения (128)
     // 2) Отмена пометки сообщения как спам (64)
     // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
 
-    let messages = [];
-
-    for(let data of events) {
-      let flags = getFlags(data[1]);
-
-      if(flags.is('spam') || flags.is('deleted')) {
-        messages.push(getMessage(data));
-      } else if(!flags.is('unread')) {
-        console.warn('Неизвестные данные в 3 событии:', data, flags);
-      }
-    }
-
     return {
-      name: 'restore_messages',
-      data: {
-        peer_id: events[0][2],
-        messages
-      }
+      name: 'restore_message',
+      data: getMessage(data)
     }
   },
-  4: (events) => {
+  4: (data) => {
     // 1) Новое сообщение
     // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
 
-    let messages = [];
-
-    for(let data of events) {
-      let msg = getMessage(data, 'new');
-      messages.push(msg);
-      longpoll.emit(`new_message_${msg.msg.random_id}`, msg);
-    }
+    let msg = getMessage(data, 'new');
+    longpoll.emit(`new_message_${msg.msg.random_id}`, msg);
 
     return {
-      name: 'new_messages',
-      data: {
-        peer_id: events[0][2],
-        messages
-      }
+      name: 'new_message',
+      data: msg
     }
   },
   5: (data) => {
@@ -295,19 +264,6 @@ module.exports = {
     // [type_id, peer_id, info]
 
     return { name: 'change_peer_info', data }
-  },
-  61: (data) => {
-    // приходит когда юзер пишет вам в лс
-    // [user_id, 1]
-
-    return {
-      name: 'typing',
-      data: {
-        type: 'text',
-        peer_id: data[0],
-        from_id: data[0]
-      }
-    }
   },
   63: (data) => {
     // приходит когда кто-то пишет сообщение

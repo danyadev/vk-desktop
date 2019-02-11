@@ -17,7 +17,6 @@ class Longpoll extends EventEmitter {
   constructor() {
     super();
 
-    this.loopStopped = true;
     this.started = false;
     this.debug = false;
     this.version = 6;
@@ -35,11 +34,7 @@ class Longpoll extends EventEmitter {
 
     this.started = true;
     this.emit('started');
-
-    if(this.loopStopped) {
-      this.loopStopped = false;
-      this.loop();
-    }
+    this.loop();
   }
 
   stop() {
@@ -64,7 +59,7 @@ class Longpoll extends EventEmitter {
       version: this.version
     }));
 
-    if(!this.started) return this.loopStopped = true;
+    if(!this.started) return;
     if(data.failed) await this.catchErrors(data);
 
     if(data.ts) this.ts = data.ts;
@@ -78,8 +73,7 @@ class Longpoll extends EventEmitter {
     if(!history.length) return;
 
     let longpollEvents = require('./longpollEvents'),
-        packs = { 2: {}, 3: {}, 4: {} },
-        debugEvents = { packs: Object.assign({}, packs) };
+        debugEvents = {};
 
     for(let item of history) {
       let id = item.splice(0, 1)[0],
@@ -90,34 +84,15 @@ class Longpoll extends EventEmitter {
         continue;
       }
 
-      if(packs[id]) {
-        let peer_id = item[2] || item[0].peer.id;
+      let { name, data } = parseItem(item) || {};
 
-        if(packs[id][peer_id]) packs[id][peer_id].push(item);
-        else packs[id][peer_id] = [item];
-      } else {
-        let { name, data } = parseItem(item) || {};
-
-        if(name) {
-          this.emit(name, data);
-
-          if(this.debug) {
-            if(debugEvents[name]) debugEvents[name].push(data);
-            else debugEvents[name] = [data];
-          }
-        }
-      }
-    }
-
-    for(let id in packs) {
-      let parseItem = longpollEvents[id];
-
-      for(let peer_id in packs[id]) {
-        let { name, data } = parseItem(packs[id][peer_id]);
-
-        if(this.debug) debugEvents.packs[id][peer_id] = data;
-
+      if(name) {
         this.emit(name, data);
+
+        if(this.debug) {
+          if(debugEvents[name]) debugEvents[name].push(data);
+          else debugEvents[name] = [data];
+        }
       }
     }
 

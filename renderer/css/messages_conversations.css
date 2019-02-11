@@ -221,7 +221,7 @@
   background-color: #93adc8;
 }
 
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 649px) {
   .conversations_container { width: 100% }
   .conversations_wrap { border-right: none }
 
@@ -232,7 +232,7 @@
   .messages_container.active_chat .dialog_header_back { display: block }
 }
 
-@media screen and (min-width: 650px) and (max-width: 900px) {
+@media screen and (min-width: 650px) and (max-width: 899px) {
   .conversations_container { width: 43% }
   .dialog_container { width: 57% }
 }

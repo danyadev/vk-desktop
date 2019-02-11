@@ -91,8 +91,7 @@
       let peer_id = this.$store.state.messages.chat;
 
       return {
-        // Если id = 0, то отображать текущего пользователя
-        id: peer_id || app.user.id,
+        id: peer_id,
         isChat: peer_id > 2e9,
         loadedMessages: false,
         loading: false,

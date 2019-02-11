@@ -76,34 +76,32 @@ longpoll.on('typing', ({ type, peer_id, from_id }) => {
   removeTyping({ type, peer_id, from_id });
 });
 
-longpoll.on('new_messages', ({ peer_id, messages }) => {
-  for(let { msg, peer } of messages) {
-    app.$store.commit('addMessage', { peer_id, msg });
+longpoll.on('new_message', ({ msg, peer }) => {
+  app.$store.commit('addMessage', { peer_id: peer.id, msg });
 
-    if(msg.hidden) return;
+  if(msg.hidden) return;
 
-    updateLastMsg(peer_id, msg);
-    loadAttachments(msg, peer_id);
+  updateLastMsg(peer.id, msg);
+  loadAttachments(msg, peer.id);
 
-    app.$store.commit('incrementUnreadCount', {
-      peer_id,
-      state: !msg.outread
-    });
+  app.$store.commit('incrementUnreadCount', {
+    peer_id: peer.id,
+    state: !msg.outread
+  });
 
-    if(msg.action) {
-      if(['chat_create', 'chat_title_update'].includes(msg.action.type)) {
-        peer.title = msg.action.text;
-      }
+  if(msg.action) {
+    if(['chat_create', 'chat_title_update'].includes(msg.action.type)) {
+      peer.title = msg.action.text;
+    }
 
-      if(msg.action.type == 'chat_kick_user') {
-        if(msg.action.mid == app.user.id) peer.photo = null;
-      }
+    if(msg.action.type == 'chat_kick_user') {
+      if(msg.action.mid == app.user.id) peer.photo = null;
     }
   }
 
-  updatePeer(peer_id, messages[0].peer);
-  checkTyping(peer_id, messages[0].from);
-  moveConversations(peer_id);
+  updatePeer(peer.id, peer);
+  checkTyping(peer.id, msg.from);
+  moveConversations(peer.id);
 });
 
 longpoll.on('edit_message', ({ peer, msg }) => {
@@ -124,60 +122,50 @@ longpoll.on('add_message_snippet', ({ peer, msg }) => {
   app.$store.commit('editMessage', { peer_id: peer.id, msg });
 });
 
-longpoll.on('delete_messages', async (data) => {
-  for(let message of data.messages) {
-    app.$store.commit('removeMessage', {
-      peer_id: data.peer_id,
-      msg_id: message.id
-    });
-  }
+longpoll.on('delete_message', async ({ peer_id, msg_id, all }) => {
+  app.$store.commit('removeMessage', { peer_id, msg_id });
 
-  let { msg, unread, out_read, in_read } = await vkapi('execute.getLastMessage', { peer_id: data.peer_id }),
-      messages = app.$store.state.messages[data.peer_id],
+  let { msg, unread, out_read, in_read } = await vkapi('execute.getLastMessage', { peer_id }),
+      messages = app.$store.state.messages[peer_id],
       lastMsg = msg && parseMessage(msg, { out_read, in_read });
 
   if(!messages || !messages.length) {
     if(!msg) {
-      app.$store.commit('removePeer', data.peer_id);
+      app.$store.commit('removePeer', peer_id);
       return;
     }
 
-    app.$store.commit('addMessage', {
-      peer_id: data.peer_id,
-      msg: lastMsg
-    });
+    app.$store.commit('addMessage', { peer_id, msg: lastMsg });
   }
 
-  updateLastMsg(data.peer_id, lastMsg);
-  updatePeer(data.peer_id, { unread }, true);
-  moveConversations(data.peer_id, true);
+  updateLastMsg(peer_id, lastMsg);
+  updatePeer(peer_id, { unread }, true);
+  moveConversations(peer_id, true);
 });
 
-longpoll.on('restore_messages', async ({ peer_id, messages }) => {
-  for(let data of messages) {
-    let { out_read } = await vkapi('execute.getLastMessage', { peer_id }),
-        msg = Object.assign({ outread: out_read < data.msg.id }, data.msg);
+longpoll.on('restore_message', async ({ peer, msg }) => {
+  let { out_read } = await vkapi('execute.getLastMessage', { peer_id: peer.id });
+  msg.outread = out_read < msg.id;
 
-    let messages = app.$store.state.messages[peer_id] || [],
-        ids = messages.map((msg) => msg.id),
-        index = other.getNewIndex(ids, data.msg.id);
+  let messages = app.$store.state.messages[peer.id] || [],
+      ids = messages.map((msg) => msg.id),
+      index = other.getNewIndex(ids, msg.id);
 
-    if(index == 0) {
-      let prevMsgId = await vkapi('execute.getPrevMsg', {
-        peer_id,
-        offset: messages.length - 1
-      });
+  if(index == 0) {
+    let prevMsgId = await vkapi('execute.getPrevMsg', {
+      peer_id: peer.id,
+      offset: messages.length - 1
+    });
 
-      if(prevMsgId != data.msg.id) return;
-    }
+    if(prevMsgId != msg.id) return;
+  }
 
-    app.$store.commit('addMessage', { peer_id, msg });
-    loadAttachments(msg, peer_id);
+  app.$store.commit('addMessage', { peer_id: peer.id, msg });
+  loadAttachments(msg, peer.id);
 
-    if(messages[messages.length - 1].id == msg.id) {
-      updateLastMsg(peer_id, msg);
-      moveConversations(peer_id);
-    }
+  if(messages[messages.length - 1].id == msg.id) {
+    updateLastMsg(peer.id, msg);
+    moveConversations(peer.id);
   }
 });
 
