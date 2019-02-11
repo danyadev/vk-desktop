@@ -53,13 +53,13 @@
         if(this.activeUser == id) return;
 
         function setUser() {
-          this.$store.commit('updateUser', { id, activeTime: Date.now() });
-          this.$store.commit('setActiveUser', id);
+          app.$store.commit('updateUser', { id, activeTime: Date.now() });
+          app.$store.commit('setActiveUser', id);
         }
 
         if(this.activeUser) {
           this.$modals.open('confirm-set-account', {
-            confirm: () => {
+            confirm() {
               setUser();
               getCurrentWindow().reload();
             }

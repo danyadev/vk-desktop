@@ -29,7 +29,7 @@
             other_token: data.other_token
           }));
 
-          if(this.isModal) this.$modals.close(this.$attrs['data-key']);
+          if(this.isModal) this.$modals.close(this.$parent.$attrs['data-key']);
           else this.$store.commit('setActiveUser', user.id);
         }
       }

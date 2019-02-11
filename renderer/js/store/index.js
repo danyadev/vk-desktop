@@ -9,7 +9,7 @@ let rootModule = require('./modules/index'),
 
 fs.readdirSync(__dirname + '/modules').forEach((file) => {
   let name = file.slice(0, -3);
-  
+
   if(name != 'index') {
     modules[name] = Object.assign(require(`./modules/${name}`), {
       namespaced: true
