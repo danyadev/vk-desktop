@@ -72,8 +72,7 @@ class Longpoll extends EventEmitter {
   emitHistory(history = []) {
     if(!history.length) return;
 
-    let longpollEvents = require('./longpollEvents'),
-        debugEvents = {};
+    let longpollEvents = require('./longpollEvents');
 
     for(let item of history) {
       let id = item.splice(0, 1)[0],
@@ -82,18 +81,10 @@ class Longpoll extends EventEmitter {
       if(!parseItem) {
         console.warn('[longpoll] Неизвестное событие:', [id, ...item]);
         continue;
-      } else if(this.debug) console.log('[longpoll] Debug\n', [id, ...item]);
+      } else if(this.debug) console.log('[longpoll] Debug:', [id, ...item]);
 
       let { name, data } = parseItem(item) || {};
-
-      if(name) {
-        this.emit(name, data);
-
-        if(this.debug) {
-          if(debugEvents[name]) debugEvents[name].push(data);
-          else debugEvents[name] = [data];
-        }
-      }
+      if(name) this.emit(name, data);
     }
   }
 
