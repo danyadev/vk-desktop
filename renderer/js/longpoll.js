@@ -80,9 +80,9 @@ class Longpoll extends EventEmitter {
           parseItem = longpollEvents[id];
 
       if(!parseItem) {
-        console.warn('[longpoll] Неизвестное событие:', [id, ...update]);
+        console.warn('[longpoll] Неизвестное событие:', [id, ...item]);
         continue;
-      }
+      } else if(this.debug) console.log('[longpoll] Debug\n', [id, ...item]);
 
       let { name, data } = parseItem(item) || {};
 
@@ -95,8 +95,6 @@ class Longpoll extends EventEmitter {
         }
       }
     }
-
-    if(this.debug) console.log('[longpoll] Debug\n', debugEvents);
   }
 
   async catchErrors(data) {

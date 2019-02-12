@@ -123,7 +123,11 @@ module.exports = {
   3: (data) => {
     // 1) Восстановление удаленного сообщения (128)
     // 2) Отмена пометки сообщения как спам (64)
+    // 3) Прочитано сообщение (1) [msg_id, flags, peer_id]
     // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, conv_msg_id, edit_time]
+
+    // Если прочитано сообщение, то не обрабатываем это событие
+    if(getFlags(data[1]).is('unread')) return;
 
     return {
       name: 'restore_message',
