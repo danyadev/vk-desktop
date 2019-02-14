@@ -31,7 +31,7 @@
           {{ l('im_empty_dialog') }}
         </template>
         <div v-else class="loading"></div>
-        <div class="typing_wrap">
+        <div class="typing_wrap" ref="typing">
           <div class="typing" v-if="typingMsg">
             <div class="typing_item"></div>
             <div class="typing_item"></div>
@@ -50,7 +50,7 @@
           <img class="dialog_show_attachments_btn" src="images/more_attachments.svg"/>
           <div class="dialog_input_container">
             <div class="dialog_input" role="textbox" contenteditable
-                 :placeholder="l('im_enter_msg')"
+                 ref="input" :placeholder="l('im_enter_msg')"
                  @paste.prevent="pasteText"
                  @mousedown="setCursorPositionForEmoji"
                  @input="onInput" @drop="onDrop"
@@ -239,18 +239,17 @@
         if(this.openedDialogSettingsBox) this.openedDialogSettingsBox = false;
       },
       writeEmoji(code) {
-        qs('.dialog_input').innerHTML += emoji(emoji.hexToEmoji(code));
+        this.$refs.input.innerHTML += emoji(emoji.hexToEmoji(code));
       },
       closeChat() {
         this.$store.commit('messages/setChat', null);
       },
       async sendMessage(event) {
-        let input = qs('.dialog_input'),
-            { text, emojies } = getTextWithEmoji(input.childNodes),
+        let { text, emojies } = getTextWithEmoji(this.$refs.input.childNodes),
             random_id = other.random(0, 9e8);
 
         if(!text) return;
-        input.innerHTML = '';
+        this.$refs.input.innerHTML = '';
 
         this.$store.commit('settings/updateRecentEmojies', emojies);
 
@@ -265,8 +264,7 @@
         });
       },
       scrollToEnd() {
-        let el = qs('.dialog_messages_list .typing_wrap');
-        if(el) el.scrollIntoView();
+        this.$refs.typing.scrollIntoView();
       },
       pasteText(event) {
         document.execCommand('insertHTML', false, emoji(clipboard.readText()));
@@ -391,6 +389,8 @@
       this.loadNewMessages();
     },
     activated() {
+      if(this.canSendMessages.state) this.$refs.input.focus();
+
       if(this.scrollTop != null) {
         let messagesList = qs('.dialog_messages_list');
 
