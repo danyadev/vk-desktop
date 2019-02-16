@@ -79,9 +79,14 @@ class Longpoll extends EventEmitter {
           parseItem = longpollEvents[id];
 
       if(!parseItem) {
-        console.warn('[longpoll] Неизвестное событие:', [id, ...item]);
+        app.$modals.open('error-handler', {
+          tag: 'LongpollEmitter',
+          type: 'longpoll error',
+          stack: 'Неизвестное событие: ' + JSON.stringify([id, ...item])
+        });
+
         continue;
-      } else if(this.debug) console.log('[longpoll] Debug:', [id, ...item]);
+      } else if(this.debug && ![8, 9].includes(id)) console.log('[longpoll]', [id, ...item]);
 
       let { name, data } = parseItem(item) || {};
       if(name) this.emit(name, data);
@@ -118,7 +123,7 @@ class Longpoll extends EventEmitter {
       msgs_limit: 500,
       max_msg_id: getLastMsgId(),
       lp_version: this.version,
-      fields: other.fields
+      fields: utils.fields
     });
 
     this.pts = history.new_pts;

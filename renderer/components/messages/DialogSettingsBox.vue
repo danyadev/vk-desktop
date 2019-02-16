@@ -2,19 +2,19 @@
   <div class="messages_settings_box" :class="{ active }">
     <div v-if="peer.id < 2e9" class="messages_settings_box_item" @click="openInBrowser">
       <img src="images/user.svg" class="messages_settings_box_item_icon">
-      {{ l('dialog_settings_box', peer.id > 0 ? 0 : 1) }}
+      {{ l('dialog_settings_box', peer.id > 0) }}
     </div>
     <div class="messages_settings_box_item" @click="changePushSettings">
       <img :src="`images/mute_${peer.muted ? 'on' : 'off'}.svg`" class="messages_settings_box_item_icon">
-      {{ l('toggle_notifications', Number(!peer.muted)) }}
+      {{ l('toggle_notifications', !peer.muted) }}
     </div>
     <div class="messages_settings_box_item" @click="setHiddenDialogs(!hiddenDialogs)">
       <img :src="`images/${hiddenDialogs ? 'show' : 'hide'}.svg`" class="messages_settings_box_item_icon">
-      {{ l('toggle_hidden_dialogs', Number(hiddenDialogs)) }}
+      {{ l('toggle_hidden_dialogs', hiddenDialogs) }}
     </div>
     <div v-if="peer.id > 2e9" class="messages_settings_box_item" @click="exitFromChat">
       <img :src="`images/${peer.left ? 'return_to_chat' : 'cancel'}.svg`" class="messages_settings_box_item_icon">
-      {{ l('exit_from_chat', Number(peer.left)) }}
+      {{ l('exit_from_chat', peer.left) }}
     </div>
     <div v-if="!peer.channel" class="messages_settings_box_item" @click="clearHistory">
       <img :src="`images/trash.svg`" class="messages_settings_box_item_icon">

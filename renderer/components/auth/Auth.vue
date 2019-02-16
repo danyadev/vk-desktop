@@ -6,7 +6,7 @@
 </template>
 
 <script>
-  const { getLastToken } = require('./auth');
+  const { getDesktopToken } = require('./auth');
 
   module.exports = {
     props: ['isModal'],
@@ -18,19 +18,19 @@
         if(data.type == 'need_validation') this.needValidation = data;
         else if(data.type == 'cancel_enter_code') this.needValidation = null;
         else if(data.type == 'auth_completed') {
-          let lastToken = await getLastToken(data.other_token);
+          let lastToken = await getDesktopToken(data.other_token);
           let [ user ] = await vkapi('users.get', {
             access_token: lastToken,
-            fields: other.fields
+            fields: utils.fields
           });
 
-          this.$store.commit('updateUser', Object.assign(user, {
+          this.$store.commit('settings/updateUser', Object.assign(user, {
             access_token: lastToken,
             other_token: data.other_token
           }));
 
           if(this.isModal) this.$modals.close(this.$parent.$attrs['data-key']);
-          else this.$store.commit('setActiveUser', user.id);
+          else this.$store.commit('settings/setActiveUser', user.id);
         }
       }
     },

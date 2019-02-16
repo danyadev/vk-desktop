@@ -46,7 +46,7 @@ function concatProfiles(users = [], groups = []) {
 
 async function getProfiles() {
   let ids = loadingProfiles.slice().splice(0, 100);
-  if(other.isEqual(ids, currentLoadUsers)) return;
+  if(utils.isEqual(ids, currentLoadUsers)) return;
   currentLoadUsers = ids;
 
   let profiles = await vkapi('execute.getProfiles', {
@@ -82,7 +82,7 @@ function loadConversation(id) {
     let { items: [conv], profiles = [], groups = [] } = await vkapi('messages.getConversationsById', {
       peer_ids: id,
       extended: 1,
-      fields: other.fields
+      fields: utils.fields
     });
 
     app.$store.commit('addProfiles', concatProfiles(profiles, groups));
@@ -103,7 +103,7 @@ function parseConversation(conversation) {
       chatPhoto = devicePixelRatio >= 2 ? photos.photo_100 : photos.photo_50;
     }
 
-    chatTitle = other.escape(conversation.chat_settings.title).replace(/\n/g, ' ');
+    chatTitle = utils.escape(conversation.chat_settings.title).replace(/\n/g, ' ');
   }
 
   return {
@@ -135,7 +135,7 @@ function parseMessage(message, conversation) {
 
   let msg = {
     id: message.id,
-    text: other.escape(message.text).replace(/\n/g, '<br>'),
+    text: utils.escape(message.text).replace(/\n/g, '<br>'),
     from: message.from_id,
     date: message.date,
     editTime: message.update_time || 0,
@@ -190,7 +190,7 @@ function getServiceMessage(action, author, full) {
   }
 
   function e(text) {
-    return emoji(other.escape(text)).replace(/<br>/g, ' ');
+    return emoji(utils.escape(text)).replace(/<br>/g, ' ');
   }
 
   function name(type, acc) {
@@ -302,8 +302,7 @@ function getMessagePreview(msg, author) {
   } else if(msg.isReplyMsg && !msg.text) {
     return app.l('reply_msg');
   } else if(msg.fwdCount && !msg.text) {
-    let wordID = other.getWordEnding(msg.fwdCount);
-    return app.l('fwd_msg', wordID, [msg.fwdCount]);
+    return app.l('fwd_msg', [msg.fwdCount], msg.fwdCount);
   } else {
     return getAttachment(msg.text, msg.attachments[0]);
   }

@@ -71,7 +71,7 @@
     async mounted() {
       let { lp, user, counters } = await vkapi('execute.init', {
         lp_version: longpoll.version,
-        fields: `${other.fields},status`
+        fields: `${utils.fields},status`
       });
 
       for(let counter in counters) {
@@ -81,8 +81,21 @@
         });
       }
 
-      this.$store.commit('updateUser', Object.assign(user, { activeTime: Date.now() }));
+      this.$store.commit('settings/updateUser', Object.assign(user, { activeTime: Date.now() }));
       longpoll.start(lp);
+
+      // Загрузка стикеров. Разделен вызов этих методов с методами выше по причине того,
+      // Что эти методы выполняюься 20+ секунд, и это недопустимо большое время для загрузки.
+      let favoriteStickers = await vkapi('store.getFavoriteStickers', { offToken: true }),
+          { stickers, recent } = await vkapi('execute.getStickers', {
+            type: 'stickers',
+            extended: 1,
+            filters: 'purchased,active,promoted'
+          });
+
+
     }
   }
+
+
 </script>

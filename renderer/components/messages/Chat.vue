@@ -46,7 +46,7 @@
           <img class="dialog_to_end_icon" src="images/im_to_end.png"/>
         </div>
         <emoji-block :active="openedEmojiBlock" @chooseEmoji="writeEmoji" @close="closeEmojiBlock"/>
-        <template v-if="canSendMessages.state">
+        <template v-if="canSendMessages.allowed">
           <img class="dialog_show_attachments_btn" src="images/more_attachments.svg"/>
           <div class="dialog_input_container">
             <div class="dialog_input" role="textbox" contenteditable
@@ -60,9 +60,9 @@
           <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
         </template>
         <div v-else class="dialog_input_error">
-          <div v-if="!canSendMessages.channel" class="dialog_input_error_img"></div>
-          <div class="dialog_input_error_text" :class="{ channel: canSendMessages.channel }">
-            <div v-if="canSendMessages.channel"
+          <div v-if="!peer.channel" class="dialog_input_error_img"></div>
+          <div class="dialog_input_error_text" :class="{ channel: peer.channel }">
+            <div v-if="peer.channel"
                  @click="toggleChannelNotifications"
                  class="dialog_input_channel">{{ canSendMessages.text }}</div>
             <template v-else>{{ canSendMessages.text }}</template>
@@ -145,14 +145,10 @@
         if(this.isChat) {
           if(this.peer.canWrite.reason == 917) this.l('im_kicked_from_chat');
           if(this.peer.left) return this.l('im_left_chat');
-
           if(this.peer.members == undefined) return '';
 
-          let type = other.getWordEnding(this.peer.members);
-          return this.l('members', type, [this.peer.members]);
-        }
-
-        if(this.owner.deactivated) return '';
+          return this.l('members', [this.peer.members], this.peer.members);
+        } else if(this.owner.deactivated) return '';
 
         let f = (t) => t < 10 ? `0${t}` : t,
             date = new Date(this.owner.last_seen.time * 1000);
@@ -174,17 +170,14 @@
 
           if(offlineHours <= 3) {
             if(offlineHours == 0) {
-              let type = other.getWordEnding(offlineMins);
-
               if(offlineMins == 0) time = this.l('just_now');
-              else time = this.l('minutes', type, [offlineMins]);
+              else time = this.l('minutes', [offlineMins], offlineMins);
             } else {
-              let type = other.getWordEnding(offlineHours);
-              time = this.l('hours', type, [offlineHours == 1 ? '' : offlineHours]);
+              time = this.l('hours', [offlineHours == 1 ? '' : offlineHours], offlineHours);
             }
           } else time += this.l('at_n', [`${date.getHours()}:${f(date.getMinutes())}`]);
 
-          return this.l('was_online', Number(this.owner.sex == 1), [time]);
+          return this.l('was_online', this.owner.sex == 1, [time]);
         }
       },
       messages() {
@@ -204,8 +197,7 @@
       canSendMessages() {
         if(!this.peer) {
           return {
-            state: false,
-            channel: false,
+            allowed: false,
             text: this.l('im_cant_write')
           }
         }
@@ -213,14 +205,13 @@
         let text, reason = this.peer.canWrite.reason;
 
         if(!this.peer.canWrite.allowed) {
-          if(reason == 925) text = this.l('toggle_notifications', Number(!this.peer.muted));
+          if(reason == 925) text = this.l('toggle_notifications', this.peer.muted ? 0 : 1);
           else if(reason == 18) text = this.l('im_user_deleted');
           else text = this.l('im_cant_write');
         }
 
         return {
-          state: this.peer.canWrite.allowed,
-          channel: this.peer.channel,
+          allowed: this.peer.canWrite.allowed,
           text: text
         }
       }
@@ -246,7 +237,7 @@
       },
       async sendMessage(event) {
         let { text, emojies } = getTextWithEmoji(this.$refs.input.childNodes),
-            random_id = other.random(0, 9e8);
+            random_id = utils.random(0, 9e8);
 
         if(!text) return;
         this.$refs.input.innerHTML = '';
@@ -286,10 +277,10 @@
           time: this.peer.muted ? 0 : -1
         });
       },
-      hideTopDate: other.debounce((vm) => {
+      hideTopDate: utils.debounce((vm) => {
         if(vm.showTopTime) vm.showTopTime = false;
       }, 2000),
-      hideEndBtn: other.debounce((vm) => {
+      hideEndBtn: utils.debounce((vm) => {
         if(vm.showEndBtn) vm.showEndBtn = false;
       }, 3000),
       onScroll(event) {
@@ -326,7 +317,7 @@
           this.loadNewMessages();
         }
       },
-      setTypingActivity: other.throttle((peer) => {
+      setTypingActivity: utils.throttle((peer) => {
         vkapi('messages.setActivity', {
           peer_id: peer.id,
           type: 'typing'
@@ -345,7 +336,7 @@
           peer_id: this.id,
           offset: offset,
           extended: 1,
-          fields: other.fields
+          fields: utils.fields
         });
 
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
@@ -389,7 +380,7 @@
       this.loadNewMessages();
     },
     activated() {
-      if(this.canSendMessages.state) this.$refs.input.focus();
+      if(this.canSendMessages.allowed) this.$refs.input.focus();
 
       if(this.scrollTop != null) {
         let messagesList = qs('.dialog_messages_list');

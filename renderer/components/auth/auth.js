@@ -2,17 +2,16 @@
 
 const querystring = require('querystring');
 
-async function refreshToken(access_token) {
+async function refreshToken() {
   let { token } = await vkapi('auth.refreshToken', {
     offToken: true,
-    access_token: access_token,
     receipt: 'JSv5FBbXbY:APA91bF2K9B0eh61f2WaTZvm62GOHon3-vElmVq54ZOL5PHpFkIc85WQUxUH_wae8YEUKkEzLCcUC5V4bTWNNPbjTxgZRvQ-PLONDMZWo_6hwiqhlMM7gIZHM2K2KhvX-9oCcyD1ERw4'
   });
 
   return token;
 }
 
-function getFirstToken(login, password, params = {}) {
+function getAndroidToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
     let { data } = await request({
       host: 'oauth.vk.com',
@@ -43,7 +42,7 @@ function getFirstToken(login, password, params = {}) {
         app.$modals.open('captcha', {
           src: data.captcha_img,
           async send(code) {
-            let res = await getFirstToken(login, password, Object.assign(params, {
+            let res = await getAndroidToken(login, password, Object.assign(params, {
               captcha_sid: data.captcha_sid,
               captcha_key: code
             }));
@@ -56,12 +55,12 @@ function getFirstToken(login, password, params = {}) {
   });
 }
 
-async function getLastToken(firstToken) {
+async function getDesktopToken(androidToken) {
   let authLink = 'https://oauth.vk.com/authorize?' + querystring.stringify({
     redirect_uri: "https://oauth.vk.com/blank.html",
     display: 'page',
     response_type: 'token',
-    access_token: firstToken,
+    access_token: androidToken,
     revoke: 1,
     lang: app.$store.state.langName,
     scope: 136297695,
@@ -73,17 +72,17 @@ async function getLastToken(firstToken) {
   let { data: site } = await request(authLink),
       link = 'https://oauth.vk.com' + site.match(/\/auth_by_token?.+=\w+/)[0],
       { headers: { location } } = await request(link),
-      lastToken = location.match(/#access_token=([A-z0-9]{85})/)[1];
+      desktopToken = location.match(/#access_token=([A-z0-9]{85})/)[1];
 
-  return lastToken;
+  return desktopToken;
 }
 
-async function getSupportToken(VKToken) {
+async function getSupportToken(androidToken) {
   let authLink = 'https://oauth.vk.com/authorize?' + querystring.stringify({
     redirect_uri: "https://oauth.vk.com/blank.html",
     display: 'page',
     response_type: 'token',
-    access_token: VKToken,
+    access_token: androidToken,
     source_url: 'https://static.vk.com/support/#/support',
     revoke: 1,
     lang: app.$store.state.langName,
@@ -100,7 +99,7 @@ async function getSupportToken(VKToken) {
 
 module.exports = {
   refreshToken,
-  getFirstToken,
-  getLastToken,
+  getAndroidToken,
+  getDesktopToken,
   getSupportToken
 }

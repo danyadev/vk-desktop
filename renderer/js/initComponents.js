@@ -22,18 +22,53 @@ Vue.directive('emoji', (el, { value = '', modifiers }) => {
   if(modifiers.push || modifiers.color_push) {
     let to = modifiers.push ? '$3' : '<span class="link">$3</span>';
 
-    html = html.replace(other.regexp.push, to);
+    html = html.replace(utils.regexp.push, to);
   }
 
   if(modifiers.link) {
     html = html
       .replace(/<br>/g, '\n')
-      .replace(other.regexp.url, '<span class="link">$1</span>')
+      .replace(utils.regexp.url, '<span class="link">$1</span>')
       .replace(/\n/g, '<br>');
   }
 
   if(el.innerHTML != html) el.innerHTML = emoji(html);
 });
+
+function getWordEnding(num) {
+  let num1 = Math.abs(num) % 100,
+      num2 = num1 % 10;
+
+  if(num1 > 10 && num1 < 20) return 2;
+  if(num2 > 1 && num2 < 5) return 1;
+  if(num2 == 1) return 0;
+
+  return 2;
+}
+
+Vue.prototype.l = function(name, key, replaces, number) {
+  if(Array.isArray(key)) {
+    number = replaces;
+    replaces = key;
+    key = null;
+  }
+
+  if(typeof key == 'boolean') key = key ? 1 : 0;
+  if(number != undefined) key = getWordEnding(number);
+
+  let data = this.$store.getters['settings/lang'][name];
+  if(![null, undefined].includes(key)) data = data[key];
+
+  if(Array.isArray(replaces)) {
+    for(let i in replaces) {
+      let regexp = new RegExp(`\\{${i}\\}`, 'g');
+
+      data = String(data).replace(regexp, replaces[i]);
+    }
+  }
+
+  return data;
+}
 
 function getTagData(name, text)  {
   let regexp = new RegExp(`<${name}>([^]*)</${name}>`, 'i'),

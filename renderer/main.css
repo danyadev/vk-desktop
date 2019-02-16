@@ -35,7 +35,7 @@ img:not(.emoji) {
 :focus { outline: none }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI';
+  font-family: BlinkMacSystemFont, 'Segoe UI';
   font-size: 15px;
   margin: 0;
   overflow: hidden;
@@ -46,6 +46,5 @@ body {
 
 .root {
   position: relative;
-	/* 32px - высота titlebar'a по умолчанию */
   height: calc(100% - 32px);
 }

@@ -9,10 +9,9 @@ const qsa = (selector, target) => (target || document).querySelectorAll(selector
 const { getCurrentWindow, BrowserWindow } = require('electron').remote;
 const Vue = require('./js/lib/Vue');
 const Vuex = require('./js/lib/Vuex');
-const other = require('./js/other');
+const utils = require('./js/utils');
 const contextMenu = require('./js/contextMenu');
 const emoji = require('./js/emoji');
-const { users, settings } = require('./js/Storage');
 const request = require('./js/request');
 const vkapi = require('./js/vkapi');
 const longpoll = require('./js/longpoll');
@@ -23,15 +22,16 @@ require('./js/initComponents');
 let app = new Vue({
   el: '.app',
   store: require('./js/store/'),
-  data: {
-    section: settings.get('section')
-  },
   computed: {
-    auth() {
-      return !this.$store.state.settings.activeUser;
+    section() {
+      return this.$store.state.settings.section;
     },
     user() {
-      return this.$store.state.settings.users[this.$store.state.settings.activeUser];
+      let { users, activeUser } = this.$store.state.settings;
+      return users[activeUser];
+    },
+    auth() {
+      return !this.user;
     }
   }
 });
@@ -39,9 +39,9 @@ let app = new Vue({
 window.addEventListener('beforeunload', () => {
   getCurrentWindow().removeAllListeners();
 
+  app.$store.commit('settings/setWindowBounds', getCurrentWindow().getBounds());
+
   BrowserWindow.getAllWindows().forEach((win) => {
     if(win != getCurrentWindow()) win.destroy();
   });
-
-  settings.set('window', getCurrentWindow().getBounds());
 });

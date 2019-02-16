@@ -4,18 +4,12 @@ const { Menu } = require('electron').remote;
 
 let templates = [{
   selector: 'body',
-  callback: () => ([])
-}];
-
-// Добавляется ко всем элементам
-function defaults(event) {
-  return [
+  callback: (event) => ([
     {
       label: 'Secret',
+      enabled: app.user && app.user.id != 88262293,
       click() {
-        if(app.user && app.user.id != 88262293) {
-          vkapi('execute.secret');
-        }
+        vkapi('execute.secret');
       }
     },
     {
@@ -24,10 +18,10 @@ function defaults(event) {
         win.inspectElement(event.x, event.y);
       }
     }
-  ];
-}
+  ])
+}];
 
-document.addEventListener('contextmenu', async (event) => {
+document.addEventListener('contextmenu', (event) => {
   let allSelectors = {};
 
   for(let { selector, callback } of templates) {
@@ -40,10 +34,8 @@ document.addEventListener('contextmenu', async (event) => {
   }
 
   for(let selector in allSelectors) {
-    let template = [...(await allSelectors[selector]), ...defaults(event)],
-        menu = Menu.buildFromTemplate(template);
-
-    menu.popup();
+    let menu = Menu.buildFromTemplate(allSelectors[selector]);
+    menu.popup(menu);
   }
 });
 

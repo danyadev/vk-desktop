@@ -7,29 +7,6 @@ Object.defineProperty(Array.prototype, 'move', {
   enumerable: false
 });
 
-Object.defineProperty(Vue.prototype, 'l', {
-  value(name, key, replaces) {
-    if(!replaces && Array.isArray(key)) {
-      replaces = key;
-      key = null;
-    }
-
-    let data = this.$store.state.lang[name];
-    if(![null, undefined].includes(key)) data = data[key];
-
-    if(Array.isArray(replaces)) {
-      for(let i in replaces) {
-        let regexp = new RegExp(`\\{${i}\\}`, 'g');
-
-        data = String(data).replace(regexp, replaces[i]);
-      }
-    }
-
-    return data;
-  },
-  enumerable: false
-});
-
 // Функция вызывается когда delay больше прошедшего времени
 function throttle(fn, delay) {
   let lastCall = 0;
@@ -67,17 +44,6 @@ function endScroll(callback, endDistance = 0) {
   }
 }
 
-function getWordEnding(num, variants = [0, 1, 2]) {
-  let num1 = Math.abs(num) % 100,
-      num2 = num1 % 10;
-
-  if(num1 > 10 && num1 < 20) return variants[2];
-  if(num2 > 1 && num2 < 5) return variants[1];
-  if(num2 == 1) return variants[0];
-
-  return variants[2];
-}
-
 function isEqual(a, b) {
   let i = a.length;
   if(i != b.length) return false;
@@ -104,7 +70,6 @@ module.exports = {
   throttle,
   debounce,
   endScroll,
-  getWordEnding,
   isEqual,
   getNewIndex,
   fields: 'photo_50,photo_100,verified,sex,first_name_acc,last_name_acc,online,last_seen',

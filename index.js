@@ -2,13 +2,39 @@
 
 const { app, BrowserWindow, Menu } = require('electron');
 const fs = require('fs');
-
 let win;
 
-if(!app.isPackaged) require('./autoReload');
+if(!app.isPackaged) {
+  function throttle(fn, delay) {
+    let lastCall = 0;
+
+    return (...args) => {
+      let now = new Date().getTime();
+      if(now - lastCall < delay) return;
+      lastCall = now;
+      return fn(...args);
+    }
+  }
+
+  function reloadApp(filename) {
+    if(!/^renderer/.test(filename)) return;
+
+    BrowserWindow.getAllWindows().forEach((win) => {
+      win.webContents.reloadIgnoringCache();
+    });
+  }
+
+  let onChange = throttle(reloadApp, 200);
+
+  fs.watch('.', { recursive: true }, (event, filename) => {
+    if(!filename) return;
+
+    if(process.platform == 'darwin') reloadApp(filename);
+    else onChange(filename);
+  });
+}
 
 app.on('ready', () => {
-  // Расширение для удобной разработки на Vue
   if(fs.readdirSync('.').find((file) => file == 'vue-devtools')) {
     BrowserWindow.addDevToolsExtension('./vue-devtools');
   }
@@ -20,11 +46,7 @@ app.on('ready', () => {
     minHeight: 480,
     show: false,
     frame: false,
-    // Необходимо для нормального отображения кнопок управления окном на MacOS
-    titleBarStyle: 'hidden',
-    webPreferences: {
-      nodeIntegration: true
-    }
+    titleBarStyle: 'hidden'
   });
 
   win.webContents.once('dom-ready', async () => {
@@ -32,30 +54,27 @@ app.on('ready', () => {
         { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
     if(data) {
-      let settings = JSON.parse(data);
+      let { window } = JSON.parse(data),
+          maximized = window.width >= width && window.height >= height;
 
-      if(settings.window) {
-        let maximized = settings.window.width >= width && settings.window.height >= height;
+      win.setBounds({
+        x: window.x,
+        y: window.y,
+        width: maximized ? width : window.width,
+        height: maximized ? height : window.height
+      });
 
-        win.setBounds({
-          x: settings.window.x,
-          y: settings.window.y,
-          width: maximized ? width : settings.window.width,
-          height: maximized ? height : settings.window.height
-        });
-
-        if(maximized) win.maximize();
-      }
+      if(maximized) win.maximize();
     }
 
-    // событие ready-to-show вызывается до окончания выполнения
-    // executeJavaScript и окно показывается до смены координат.
-    // И чтобы не видеть перемещение окна после его открытия,
-    // мы просто показываем окно после смены этих координат.
+    // Вместо того, чтобы открывать окно при событии ready-to-show,
+    // можно открывать его после вызова JavaScript из renderer процесса,
+    // ведь в этот момент renderer процесс уже загружен и мы уже установили
+    // окно на нужное положение, и оно не будет "улетать" после открытия.
     win.show();
   });
 
-  // фикс невозможности вставки текста из буфера обмена в инпуты на MacOS
+  // Fix: Не работала вставка текста в инпуты на macOS
   if(process.platform == 'darwin') {
     let menuTemplate = [{
       label: 'Edit',

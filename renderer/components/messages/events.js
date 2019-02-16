@@ -51,7 +51,7 @@ async function removeTyping({ type, peer_id, from_id }) {
       data: { type, time: user.time - 1 }
     });
 
-    await other.timer(1000);
+    await utils.timer(1000);
     return removeTyping({ type, peer_id, from_id });
   }
 
@@ -149,7 +149,7 @@ longpoll.on('restore_message', async ({ peer, msg }) => {
 
   let messages = app.$store.state.messages[peer.id] || [],
       ids = messages.map((msg) => msg.id),
-      index = other.getNewIndex(ids, msg.id);
+      index = utils.getNewIndex(ids, msg.id);
 
   if(index == 0) {
     let prevMsgId = await vkapi('execute.getPrevMsg', {

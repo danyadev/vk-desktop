@@ -1,23 +1,43 @@
 'use strict';
 
+const settings = require('./../Storage');
+
 function getLangFile(name) {
-  return require(`./../../../lang/${name}.js`);
+  let lang = require(`./../../../lang/${name}.js`);
+
+  if(name != 'ru') return Object.assign(getLangFile('ru'), lang);
+  else return lang;
 }
 
 module.exports = {
-  state: {
-    users: Object.assign({}, users.get()),
-    activeUser: settings.get('activeUser'),
-    counters: settings.get('counters'),
-    langName: settings.get('lang'),
-    lang: getLangFile(settings.get('lang')),
-    recentEmojies: settings.get('recentEmojies'),
-    hiddenDialogs: settings.get('hiddenDialogs')
+  state: settings.data,
+  actions: {
+    clear({ state }) {
+      settings.update(settings.defaults);
+      state = Object.assign({}, settings.data);
+    }
   },
   mutations: {
+    setWindowBounds(state, bounds) {
+      state.window = bounds;
+    },
+    setLang(state, name) {
+      state.lang = name;
+    },
+    updateUser(state, data) {
+      let user = state.users[data.id],
+          newUser = Object.assign({}, user, data);
+
+      Vue.set(state.users, data.id, newUser);
+    },
+    removeUser(state, id) {
+      Vue.delete(state.users, id);
+    },
+    setActiveUser(state, id) {
+      state.activeUser = id;
+    },
     updateCounter(state, data) {
       Vue.set(state.counters, data.type, data.count);
-      settings.set('counters', state.counters);
     },
     updateRecentEmojies(state, emojies) {
       let recentEmojies = Object.assign({}, state.recentEmojies);
@@ -27,11 +47,14 @@ module.exports = {
       }
 
       state.recentEmojies = recentEmojies;
-      settings.set('recentEmojies', recentEmojies);
     },
     setHiddenDialogs(state, data) {
       state.hiddenDialogs = data;
-      settings.set('hiddenDialogs', data);
+    }
+  },
+  getters: {
+    lang({ langName }) {
+      return getLangFile(langName);
     }
   }
 }

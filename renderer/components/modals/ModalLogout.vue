@@ -13,11 +13,11 @@
   module.exports = {
     methods: {
       logout() {
-        let id = this.$store.state.settings.activeUser;
+        let { activeUser } = this.$store.state.settings;
 
-        this.$store.commit('setActiveUser', null);
-        this.$store.commit('removeUser', id);
-        settings.setData(settings.defaults);
+        this.$store.commit('settings/setActiveUser', null);
+        this.$store.commit('settings/removeUser', activeUser);
+        this.$store.dispatch('settings/clear');
 
         getCurrentWindow().reload();
       },

@@ -66,7 +66,7 @@ function chatIsChannel(id) {
 
 function getMessage(data, type) {
   // Если сообщение было получено с помощью longpoll.getHistory
-  if(other.isObject(data)) return data;
+  if(utils.isObject(data)) return data;
 
   let flags = getFlags(data[1]),
       action = getServiceMessage(data[5]),

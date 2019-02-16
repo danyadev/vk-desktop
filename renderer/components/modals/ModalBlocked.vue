@@ -19,8 +19,8 @@
         app.exit();
       },
       exit() {
-        this.$store.commit('setActiveUser', null);
-        this.$modals.close(this.$attrs['data-key']);
+        this.$store.commit('settings/removeUser', app.user.id);
+        getCurrentWindow().reload();
       }
     }
   }

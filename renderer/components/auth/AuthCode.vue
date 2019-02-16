@@ -1,7 +1,7 @@
 <template>
   <div class="auth_wrap auth_code_section" @keydown.enter="auth">
     <div class="auth_code_header">{{ l('auth_security_check') }}</div>
-    <div class="auth_code_descr">{{ l('auth_code_sent_to_number', isAppCode, [data.mask]) }}</div>
+    <div class="auth_code_descr">{{ l('auth_code_sent_to_number', isAppCode, [data.phone_mask]) }}</div>
     <input class="input" type="text" ref="input" :placeholder="l('enter_code')" v-model="code">
     <div class="auth_error" v-if="error">{{ l('invalid_code') }}</div>
     <div class="auth_code_buttons">
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-  const { getFirstToken } = require('./auth');
+  const { getAndroidToken } = require('./auth');
 
   module.exports = {
     props: ['data'],
@@ -23,7 +23,7 @@
     }),
     computed: {
       isAppCode() {
-        return Number(this.data.validation_type == '2fa_app');
+        return this.data.validation_type == '2fa_app';
       }
     },
     methods: {
@@ -34,7 +34,7 @@
         this.load = true;
         this.error = false;
 
-        let data = await getFirstToken(this.data.login, this.data.password, { code: this.code });
+        let data = await getAndroidToken(this.data.login, this.data.password, { code: this.code });
 
         if(data.type == 'invalid_code') {
           this.load = false;

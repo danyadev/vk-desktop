@@ -16,7 +16,7 @@
 </template>
 
 <script>
-  const { getFirstToken } = require('./auth');
+  const { getAndroidToken } = require('./auth');
 
   module.exports = {
     data: () => ({
@@ -37,18 +37,16 @@
     methods: {
       async auth() {
         this.inProgress = true;
-        let data = await getFirstToken(this.login, this.password);
+        let data = await getAndroidToken(this.login, this.password);
 
         if(data.type == 'invalid_client') {
           this.error = true;
           this.inProgress = false;
         } else if(data.type == 'need_validation') {
           this.$emit('auth', {
-            type: data.type,
-            mask: data.phone_mask,
-            validation_type: data.validation_type,
             login: this.login,
-            password: this.password
+            password: this.password,
+            ...data
           });
         } else {
           this.$emit('auth', {

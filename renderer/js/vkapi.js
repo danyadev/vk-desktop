@@ -37,7 +37,7 @@ function tryResolve(params, data, callback) {
   }
 }
 
-let method = (name, params = {}, promise = {}) => {
+function method(name, params = {}, promise = {}) {
   return new Promise(async (resolve, reject) => {
     resolve = promise.resolve || resolve;
     reject = promise.reject || reject;
@@ -100,10 +100,5 @@ let method = (name, params = {}, promise = {}) => {
   });
 }
 
-addToQueue.upload = (url) => {
-  // TODO: добавить загрузку различных документов
-}
-
 module.exports = addToQueue;
 module.exports.version = API_VERSION;
-module.exports.methods = methods;

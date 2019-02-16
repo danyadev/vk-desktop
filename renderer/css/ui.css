@@ -24,7 +24,7 @@
   color: #3c3c3c;
   background-color: #fff;
   line-height: 32px;
-  padding: 0 9px;
+  padding: 0 30px 0 9px;
   transition: border-color .3s, color .3s, background-color .3s;
 }
 

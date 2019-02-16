@@ -2,11 +2,6 @@
 
 const { loadProfile } = require('./../../../components/messages/methods');
 
-
-function getLangFile(name) {
-  return require(`./../../../lang/${name}.js`);
-}
-
 function getMinIndex(arr, num) {
   for(let i = 0; i<arr.length; i++) {
     if(arr[i] <= num) return i;
@@ -22,33 +17,9 @@ module.exports = {
     conversations: {},
     peersList: [],
     typing: {},
-    messages: {},
-    langName: settings.get('lang'),
-    lang: getLangFile(settings.get('lang'))
+    messages: {}
   },
   mutations: {
-    // ** Пользователи для мультиаккаунта **
-    updateUser({ settings }, data) {
-      let user = settings.users[data.id],
-          newUser = Object.assign({}, user, data);
-
-      users.update(data.id, newUser);
-      Vue.set(settings.users, data.id, newUser);
-    },
-    removeUser({ settings }, id) {
-      users.remove(id);
-      Vue.delete(settings.users, id);
-    },
-    setActiveUser(state, id) {
-      settings.set('activeUser', id);
-      state.settings.activeUser = id;
-    },
-    // ** Язык приложения **
-    setLang(state, name) {
-      settings.set('lang', name);
-      state.langName = name;
-      state.lang = getLangFile(name);
-    },
     // ** Меню **
     setMenuState(state, value) {
       state.menuState = value;
@@ -142,7 +113,7 @@ module.exports = {
     addMessage(state, data) {
       let messages = state.messages[data.peer_id] || [],
           ids = messages.map((msg) => msg.id),
-          index = other.getNewIndex(ids, data.msg.id);
+          index = utils.getNewIndex(ids, data.msg.id);
 
       if(!ids.includes(data.msg.id)) messages.splice(index, 0, data.msg);
 

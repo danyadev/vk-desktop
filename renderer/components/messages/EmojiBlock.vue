@@ -24,7 +24,7 @@
     computed: {
       list() {
         let emojies = {},
-            recentEmojies = this.$store.state.settings.recentEmojies;
+            { recentEmojies } = this.$store.state.settings;
 
         if(Object.keys(recentEmojies).length) {
           emojies.recent = Object.keys(recentEmojies).sort((a, b) => {

@@ -11,7 +11,7 @@
   "repository": "https://github.com/danyadev/vk-desktop",
   "build": {
     "appId": "ru.danyadev.vkdesktop",
-    "electronVersion": "4.0.0",
+    "electronVersion": "3.1.4",
     "productName": "VK Desktop",
     "files": [
       "**/*",

@@ -28,7 +28,7 @@
         let { items, profiles = [], groups = [] } = await vkapi('messages.getConversations', {
           offset: this.peers.length,
           extended: true,
-          fields: other.fields
+          fields: utils.fields
         });
 
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
@@ -52,7 +52,7 @@
         await this.$nextTick();
         this.onScroll({ target: qs('.conversations_wrap') });
       },
-      onScroll: other.endScroll((vm) => {
+      onScroll: utils.endScroll((vm) => {
         if(!vm.loading && !vm.loaded) {
           vm.load();
           vm.loading = true;

@@ -8,7 +8,6 @@
           <div class="multiaccount_item_name_wrap">
             <div class="multiaccount_item_name">{{ user.first_name }} {{ user.last_name }}</div>
             <img class="multiaccount_item_close"
-                 v-show="activeUser != user.id"
                  src="images/close.svg"
                  @click.stop="deleteUser(user.id)">
           </div>
@@ -53,8 +52,8 @@
         if(this.activeUser == id) return;
 
         function setUser() {
-          app.$store.commit('updateUser', { id, activeTime: Date.now() });
-          app.$store.commit('setActiveUser', id);
+          app.$store.commit('settings/updateUser', { id, activeTime: Date.now() });
+          app.$store.commit('settings/setActiveUser', id);
         }
 
         if(this.activeUser) {
@@ -70,7 +69,7 @@
         this.$modals.open('auth', { isModal: true });
       },
       deleteUser(id) {
-        this.$store.commit('removeUser', id);
+        this.$store.commit('settings/removeUser', id);
       }
     }
   }
