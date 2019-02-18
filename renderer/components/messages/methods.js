@@ -254,7 +254,7 @@ function getDate(timestamp, { addTime, shortMonth, fullText } = {}) {
   if(shortMonth && month.length > 3) month = month.slice(0, 3) + '.';
 
   if(thisDay) {
-    if(fullText) return app.l('today') + ' ' + app.l('at_n', [time]);
+    if(fullText) return app.l('today_f', [time]);
     else return addTime ? time : app.l('today');
   } else if(yesterday) return app.l('yesterday');
   else if(thisYear) return `${date.getDate()} ${month}`;

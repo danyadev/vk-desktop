@@ -3,13 +3,13 @@
     <img src="images/logo.png" class="auth_logo"/>
     <div class="auth_name">VK Desktop</div>
     <input class="input" type="text" :placeholder="l('enter_login')" v-model="login"/>
-    <span class="auth_password_wrap">
+    <div class="auth_password_wrap">
       <input class="input" :type="inputType" :placeholder="l('enter_password')" v-model="password"/>
       <div class="auth_password_switch"
            :class="{ hidden: hidePassword }"
            @click="hidePassword = !hidePassword"
       ></div>
-    </span>
+    </div>
     <div class="auth_error" v-if="error">{{ l('invalid_login_or_password') }}</div>
     <button class="button auth_button" @click="auth" :disabled="disableBtn">{{ l('login') }}</button>
   </div>
@@ -37,23 +37,19 @@
     methods: {
       async auth() {
         this.inProgress = true;
-        let data = await getAndroidToken(this.login, this.password);
 
-        if(data.type == 'invalid_client') {
+        const data = await getAndroidToken(this.login, this.password);
+
+        if(data.error == 'invalid_client') {
           this.error = true;
           this.inProgress = false;
-        } else if(data.type == 'need_validation') {
+        } else if(data.error == 'need_validation') {
           this.$emit('auth', {
             login: this.login,
             password: this.password,
             ...data
           });
-        } else {
-          this.$emit('auth', {
-            type: 'auth_completed',
-            other_token: data.token
-          });
-        }
+        } else this.$emit('auth', { android_token: data.token });
       }
     }
   }

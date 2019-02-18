@@ -22,10 +22,9 @@
   border-radius: 5px;
   font-size: 15px;
   color: #3c3c3c;
-  background-color: #fff;
   line-height: 32px;
   padding: 0 30px 0 9px;
-  transition: border-color .3s, color .3s, background-color .3s;
+  transition: border-color .3s;
 }
 
 .input:disabled { color: #999 }

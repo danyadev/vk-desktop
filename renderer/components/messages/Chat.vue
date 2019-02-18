@@ -143,39 +143,32 @@
         if(this.id < 0) return this.l('community');
 
         if(this.isChat) {
-          if(this.peer.canWrite.reason == 917) this.l('im_kicked_from_chat');
+          if(this.peer.canWrite.reason == 917) return this.l('im_kicked_from_chat');
           if(this.peer.left) return this.l('im_left_chat');
-          if(this.peer.members == undefined) return '';
-
           return this.l('members', [this.peer.members], this.peer.members);
         } else if(this.owner.deactivated) return '';
 
         let f = (t) => t < 10 ? `0${t}` : t,
-            date = new Date(this.owner.last_seen.time * 1000);
+            date = new Date(this.owner.last_seen.time * 1000),
+            hm = `${date.getHours()}:${f(date.getMinutes())}`;
 
         if(this.owner.online) {
-          let app = this.owner.online_device || '';
+          let app = this.owner.online_device || '',
+              type = app ? 2 : (this.owner.online_mobile ? 1 : 0);
 
-          if(!app) {
-            if(this.owner.online_mobile) app = this.l('with_phone');
-          } else app = this.l('with_app', [app]);
-
-          return `online ${app} (${date.getHours()}:${f(date.getMinutes())})`;
+          return this.l('im_online', type, [app, hm]);
         } else {
-          let thisDate = new Date(),
+          let thisDate = new Date(), time,
               offlineTime = thisDate.getTime() - date.getTime(),
               offlineHours = Math.floor(offlineTime / (1000 * 60 * 60)),
-              offlineMins = Math.floor(offlineTime / (1000 * 60)),
-              time = getDate(this.owner.last_seen.time) + ' ';
+              offlineMins = Math.floor(offlineTime / (1000 * 60));
 
           if(offlineHours <= 3) {
             if(offlineHours == 0) {
               if(offlineMins == 0) time = this.l('just_now');
               else time = this.l('minutes', [offlineMins], offlineMins);
-            } else {
-              time = this.l('hours', [offlineHours == 1 ? '' : offlineHours], offlineHours);
-            }
-          } else time += this.l('at_n', [`${date.getHours()}:${f(date.getMinutes())}`]);
+            } else time = this.l('hours', [offlineHours == 1 ? '' : offlineHours], offlineHours);
+          } else time = this.l('idi_naxyi', [getDate(this.owner.last_seen.time), hm]);
 
           return this.l('was_online', this.owner.sex == 1, [time]);
         }
@@ -244,15 +237,19 @@
 
         this.$store.commit('settings/updateRecentEmojies', emojies);
 
-        await vkapi('messages.send', {
-          peer_id: this.id,
-          message: text,
-          random_id
-        });
+        try {
+          await vkapi('messages.send', {
+            peer_id: this.id,
+            message: text,
+            random_id
+          });
 
-        longpoll.once(`new_message_${random_id}`, () => {
-          this.$nextTick(this.scrollToEnd);
-        });
+          longpoll.once(`new_message_${random_id}`, () => {
+            this.$nextTick(this.scrollToEnd);
+          });
+        } catch({ error }) {
+          this.$toast(`Error #${error.error_code}: ${error.error_msg}`);
+        }
       },
       scrollToEnd() {
         this.$refs.typing.scrollIntoView();

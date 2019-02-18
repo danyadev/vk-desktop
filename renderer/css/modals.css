@@ -1,5 +1,15 @@
 /* Oснова */
 
+.toast-enter-active, .toast-leave-active,
+.modal-enter-active, .modal-leave-active {
+  transition: opacity .3s;
+}
+
+.toast-enter, .toast-leave-to,
+.modal-enter, .modal-leave-to {
+  opacity: 0;
+}
+
 .modals_container {
   position: absolute;
   top: 0;
@@ -10,7 +20,7 @@
   transition: visibility .3s;
 }
 
-.modals_container:not(:empty) { visibility: visible }
+.modals_container.active { visibility: visible }
 
 .modal_wrap {
   position: absolute;
@@ -19,13 +29,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  opacity: 0;
   background-color: rgba(0, 0, 0, .4);
-  transition: opacity .3s;
-}
-
-.modal_wrap.active {
-  opacity: 1;
 }
 
 .modal {
@@ -43,8 +47,7 @@
   text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   height: 50px;
   padding: 0 25px;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
+  border-radius: 5px 5px 0 0;
 }
 
 .modal_header_title {
@@ -71,8 +74,7 @@
   height: 56px;
   border-top: 1px solid #e7e8ec;
   background-color: #f7f8fa;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
+  border-radius: 0 0 5px 5px;
 }
 
 .modal_bottom .button,
@@ -90,13 +92,6 @@
 .modal_bottom .light_button.right { float: right }
 
 /* Toasts */
-
-.toast-enter-active, .toast-leave-active {
-  transition: opacity .3s;
-}
-.toast-enter, .toast-leave-to /* .fade-leave-active до версии 2.1.8 */ {
-  opacity: 0;
-}
 
 .toast_wrap {
   display: flex;
@@ -250,15 +245,35 @@
 
 .modal[name="error-handler"] .modal_content {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
 }
 
+.modal[name="error-handler"] .modal_content span {
+  display: flex;
+  align-items: center;
+}
+
+.modal[name="error-handler"] .modal_content .button {
+  width: 200px;
+  margin-top: 20px;
+}
+
+.modal[name="error-handler"] .modal_content pre {
+  margin-top: 20px;
+  font-family: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .modal[name="error-handler"] .modal_content .error {
+  display: inline-block;
   -webkit-mask-image: url('../images/im_chat_error.png');
   -webkit-mask-size: contain;
   background-color: #f3690b;
   width: 56px;
-  height: 60px;
+  height: 56px;
   margin-right: 10px;
   flex: none;
 }

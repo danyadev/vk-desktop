@@ -3,11 +3,11 @@
     <modal-header :closable="false">{{ l('captcha_header') }}</modal-header>
     <div class="modal_content captcha">
       <div class="captcha_img">
-        <img :src="data.src" @click="updateIMG">
+        <img :src="data.src" @click="updateIMG"/>
       </div>
       <div class="captcha_key">
-        <input class="input" :placeholder="l('write_code_from_img')"
-               v-model="text" @keydown.enter="sendCode">
+        <input class="input" :placeholder="l('captcha_write')"
+               v-model="text" @keydown.enter="sendCode"/>
       </div>
     </div>
     <div class="modal_bottom">
@@ -29,7 +29,7 @@
     },
     methods: {
       updateIMG(event) {
-        event.target.src += this.data.src.indexOf('&s=1') != -1 ? '1' : '&s=1';
+        this.data.src += this.data.src.indexOf('&s=1') != -1 ? '1' : '&s=1';
       },
       sendCode() {
         if(this.disabled) return;

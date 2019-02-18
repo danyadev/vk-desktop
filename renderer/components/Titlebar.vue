@@ -1,11 +1,11 @@
 <template>
   <div class="titlebar" :class="{ maximized, mac }">
-    <div class="titlebar_drag">VK Desktop</div>
+    <div class="titlebar_drag" ref="drag">VK Desktop</div>
     <div class="titlebar_buttons">
       <div v-for="button of buttons"
            class="titlebar_button" :class="button"
            @click="click(button)">
-        <img :src="`images/window_${button}.svg`">
+        <img :src="`images/window_${button}.svg`"/>
       </div>
     </div>
   </div>
@@ -24,17 +24,18 @@
       }
     },
     mounted() {
-      if(this.mac) {
-        qs('.titlebar_drag').addEventListener('dblclick', () => {
-          if(getCurrentWindow().isFullScreen()) return;
+      const win = getCurrentWindow();
 
-          let type = getCurrentWindow().isMaximized() ? 'unmaximize' : 'maximize';
-          getCurrentWindow().emit(type);
+      if(this.mac) {
+        this.$refs.drag.addEventListener('dblclick', () => {
+          if(win.isFullScreen()) return;
+          if(win.isMaximized()) win.emit('unmaximize');
+          else win.emit('maximize');
         });
       }
 
-      getCurrentWindow().on('maximize', () => this.maximized = true);
-      getCurrentWindow().on('unmaximize', () => this.maximized = false);
+      win.on('maximize', () => this.maximized = true);
+      win.on('unmaximize', () => this.maximized = false);
     }
   }
 </script>

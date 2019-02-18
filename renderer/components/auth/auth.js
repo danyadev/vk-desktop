@@ -29,28 +29,17 @@ function getAndroidToken(login, password, params = {}) {
       })
     });
 
-    if(data.error) {
-      if(data.error == 'invalid_client') resolve({ type: 'invalid_client' });
-      else if(data.error == 'invalid_request') resolve({ type: 'invalid_code' });
-      else if(data.error == 'need_validation') {
-        resolve({
-          type: 'need_validation',
-          phone_mask: data.phone_mask,
-          validation_type: data.validation_type
-        });
-      } else if(data.error == 'need_captcha') {
-        app.$modals.open('captcha', {
-          src: data.captcha_img,
-          async send(code) {
-            let res = await getAndroidToken(login, password, Object.assign(params, {
-              captcha_sid: data.captcha_sid,
-              captcha_key: code
-            }));
-
-            resolve(res);
-          }
-        });
-      }
+    if(['invalid_client', 'invalid_request', 'need_validation'].includes(data.error)) resolve(data);
+    else if(data.error == 'need_captcha') {
+      app.$modals.open('captcha', {
+        src: data.captcha_img,
+        send(code) {
+          getAndroidToken(login, password, Object.assign(params, {
+            captcha_sid: data.captcha_sid,
+            captcha_key: code
+          })).then(resolve);
+        }
+      });
     } else resolve({ token: data.access_token });
   });
 }

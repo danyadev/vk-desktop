@@ -465,7 +465,7 @@
   display: inline-block;
   max-width: 100%;
   background-color: #dfe6ea;
-  padding: 7px 10px;
+  padding: 8px;
   border-radius: 18px;
 }
 
@@ -569,14 +569,12 @@
   padding: 10px;
 }
 
-.message_unreaded_messages::before,
-.message_unreaded_messages::after {
+.message_unreaded_messages::before {
   content: '';
   position: absolute;
-  height: 1px;
-  width: 50%;
-  background: #d4d6da;
   top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  background: #d4d6da;
 }
-
-.message_unreaded_messages::before { left: 0 }

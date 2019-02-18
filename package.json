@@ -20,28 +20,25 @@
       "!**/node_modules",
       "!**/vue-devtools"
     ],
-    "mac": {
-      "category": "public.app-category.social-networking",
-      "target": "dmg",
-      "type": "development"
-    },
     "nsis": {
       "oneClick": "false",
       "perMachine": "true",
       "allowToChangeInstallationDirectory": "true",
       "uninstallDisplayName": "VK Desktop"
     },
+    "mac": {
+      "category": "public.app-category.social-networking",
+      "target": "dmg"
+    },
     "linux": {
       "synopsis": "Клиент ВКонтакте",
       "category": "Network",
       "target": "AppImage"
     },
-    "snap": {
-      "useTemplateApp": false
-    },
     "npmRebuild": "false"
   },
   "scripts": {
+    "pack": "electron-builder --dir --ia32 --x64",
     "dist": "electron-builder --ia32 --x64"
   },
   "devDependencies": {

@@ -21,7 +21,7 @@ setInterval(() => {
 function getToken(params) {
   if(app.user && !params.access_token) {
     if(params.offToken) {
-      params.access_token = app.user.other_token
+      params.access_token = app.user.android_token
     } else if(!params.access_token) {
       params.access_token = app.user.access_token;
     }

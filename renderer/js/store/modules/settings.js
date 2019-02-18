@@ -24,6 +24,9 @@ module.exports = {
     setLang(state, name) {
       state.lang = name;
     },
+    setSection(state, section) {
+      this.section = section;
+    },
     updateUser(state, data) {
       let user = state.users[data.id],
           newUser = Object.assign({}, user, data);
@@ -36,8 +39,8 @@ module.exports = {
     setActiveUser(state, id) {
       state.activeUser = id;
     },
-    updateCounter(state, data) {
-      Vue.set(state.counters, data.type, data.count);
+    updateCounters(state, counters) {
+      Object.assign(state.counters, counters);
     },
     updateRecentEmojies(state, emojies) {
       let recentEmojies = Object.assign({}, state.recentEmojies);

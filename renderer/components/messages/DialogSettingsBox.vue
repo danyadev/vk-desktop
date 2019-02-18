@@ -2,7 +2,7 @@
   <div class="messages_settings_box" :class="{ active }">
     <div v-if="peer.id < 2e9" class="messages_settings_box_item" @click="openInBrowser">
       <img src="images/user.svg" class="messages_settings_box_item_icon">
-      {{ l('dialog_settings_box', peer.id > 0) }}
+      {{ l('dialog_settings_box', peer.id < 0) }}
     </div>
     <div class="messages_settings_box_item" @click="changePushSettings">
       <img :src="`images/mute_${peer.muted ? 'on' : 'off'}.svg`" class="messages_settings_box_item_icon">

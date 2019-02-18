@@ -1,8 +1,8 @@
 <template>
   <div class="auth_wrap auth_code_section" @keydown.enter="auth">
     <div class="auth_code_header">{{ l('auth_security_check') }}</div>
-    <div class="auth_code_descr">{{ l('auth_code_sent_to_number', isAppCode, [data.phone_mask]) }}</div>
-    <input class="input" type="text" ref="input" :placeholder="l('enter_code')" v-model="code">
+    <div class="auth_code_descr">{{ l('auth_code_sent', isAppCode, [data.phone_mask]) }}</div>
+    <input class="input" type="text" ref="input" :placeholder="l('enter_code')" v-model="code"/>
     <div class="auth_error" v-if="error">{{ l('invalid_code') }}</div>
     <div class="auth_code_buttons">
       <button class="light_button" @click="cancel" :disabled="load">{{ l('cancel') }}</button>
@@ -28,23 +28,18 @@
     },
     methods: {
       cancel() {
-        this.$emit('auth', { type: 'cancel_enter_code' });
+        this.$emit('auth', { error: 'cancel_enter_code' });
       },
       async auth() {
         this.load = true;
         this.error = false;
 
-        let data = await getAndroidToken(this.data.login, this.data.password, { code: this.code });
+        const data = await getAndroidToken(this.data.login, this.data.password, { code: this.code });
 
-        if(data.type == 'invalid_code') {
+        if(data.error == 'invalid_code') {
           this.load = false;
           this.error = true;
-        } else {
-          this.$emit('auth', {
-            type: 'auth_completed',
-            other_token: data.token
-          });
-        }
+        } else this.$emit('auth', { android_token: data.token });
       }
     },
     mounted() {

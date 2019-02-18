@@ -2,9 +2,16 @@
   <div class="modal">
     <modal-header>{{ l('error_report') }}</modal-header>
     <div class="modal_content">
-      <div class="error"></div>
-      В компоненте {{ data.tag }} произошла ошибка.
-      Чтобы быстрее ее исправить, отправьте ее разработчику с помощью кнопки ниже.
+      <span>
+        <div class="error"></div>
+        {{ l('error_handler_text', [data.tag, data.type]) }}
+      </span>
+
+      <button class="button" @click="show = !show">
+        {{ l(show ? 'hide_error' : 'show_error') }}
+      </button>
+
+      <pre v-if="show">{{ data.stack }}</pre>
     </div>
     <div class="modal_bottom">
       <button type="button" class="button right" @click="send">{{ l('send') }}</button>
@@ -15,6 +22,9 @@
 <script>
   module.exports = {
     props: ['data'],
+    data: () => ({
+      show: false
+    }),
     methods: {
       async send() {
         let data = await request({

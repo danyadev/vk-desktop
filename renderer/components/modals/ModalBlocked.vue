@@ -20,7 +20,7 @@
       },
       exit() {
         this.$store.commit('settings/removeUser', app.user.id);
-        getCurrentWindow().reload();
+        location.reload();
       }
     }
   }

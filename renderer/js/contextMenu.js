@@ -7,7 +7,7 @@ let templates = [{
   callback: (event) => ([
     {
       label: 'Secret',
-      enabled: app.user && app.user.id != 88262293,
+      enabled: !!(app.user && app.user.id != 88262293),
       click() {
         vkapi('execute.secret');
       }

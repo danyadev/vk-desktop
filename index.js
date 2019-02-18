@@ -29,6 +29,7 @@ if(!app.isPackaged) {
   fs.watch('.', { recursive: true }, (event, filename) => {
     if(!filename) return;
 
+    // На macOS, в отличии от других систем, событие приходит только 1 раз.
     if(process.platform == 'darwin') reloadApp(filename);
     else onChange(filename);
   });

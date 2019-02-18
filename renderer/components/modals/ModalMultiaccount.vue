@@ -3,13 +3,13 @@
     <modal-header>{{ l('multiaccount_header') }}</modal-header>
     <div class="modal_content multiaccount">
       <div class="multiaccount_item" v-for="user in users" @click="setAccount(user.id)" :key="user.id">
-        <img class="multiaccount_item_photo" :src="user.photo_100">
+        <img class="multiaccount_item_photo" :src="user.photo_100"/>
         <div class="multiaccount_item_data">
           <div class="multiaccount_item_name_wrap">
             <div class="multiaccount_item_name">{{ user.first_name }} {{ user.last_name }}</div>
-            <img class="multiaccount_item_close"
-                 src="images/close.svg"
-                 @click.stop="deleteUser(user.id)">
+            <img class="multiaccount_item_close" src="images/close.svg"
+                 v-if="user.id != activeUser"
+                 @click.stop="deleteUser(user.id)"/>
           </div>
           <div class="multiaccount_item_descr">{{ active(user.id) }}</div>
         </div>

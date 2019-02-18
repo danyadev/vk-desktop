@@ -23,9 +23,7 @@ let app = new Vue({
   el: '.app',
   store: require('./js/store/'),
   computed: {
-    section() {
-      return this.$store.state.settings.section;
-    },
+    ...Vuex.mapState('settings', ['section']),
     user() {
       let { users, activeUser } = this.$store.state.settings;
       return users[activeUser];

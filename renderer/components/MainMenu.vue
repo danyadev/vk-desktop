@@ -1,12 +1,12 @@
 <template>
-  <div class="menu_wrap" :class="{ active }" @click="toggleMenu">
+  <div class="menu_wrap" :class="{ active: menuState }" @click="toggleMenu">
     <div class="menu">
       <div class="menu_account_item">
-        <img class="menu_account_bgc" :src="user.photo_100">
+        <img class="menu_account_bgc" :src="user.photo_100"/>
         <div class="menu_multiacc" @click.stop="openMultiacc"></div>
         <img class="acc_icon"
              :src="user.photo_100"
-             @click="/*openPage('profile')*/">
+             @click="/*openPage('profile')*/"/>
         <div class="menu_acc_name">
           {{ user.first_name }} {{ user.last_name }}
           <div class="verified" v-if="user.verified"></div>
@@ -16,7 +16,7 @@
       <div class="menu_items">
         <div class="menu_item"
              v-for="page of list"
-             @click="openPage(page)"
+             @click.stop="openPage(page)"
              :class="{ active: $root.section == page }">
           <div class="menu_item_icon" :class="page"></div>
           <div class="menu_item_name">{{ l('menu', page) }}</div>
@@ -39,11 +39,9 @@
     }),
     computed: {
       ...mapState('settings', ['counters']),
+      ...mapState(['menuState']),
       user() {
         return this.$root.user;
-      },
-      active() {
-        return this.$store.state.menuState;
       }
     },
     methods: {
@@ -53,7 +51,7 @@
       },
       openPage(page) {
         this.toggleMenu(false);
-        if(this.$root.section != page) this.$root.section = page;
+        this.$store.commit('settings/setSection', page);
       },
       toggleMenu(event) {
         let state;
@@ -65,37 +63,23 @@
       },
       logout() {
         this.toggleMenu(false);
-        setTimeout(() => this.$modals.open('logout'), 150);
+        this.$modals.open('logout');
       }
     },
     async mounted() {
-      let { lp, user, counters } = await vkapi('execute.init', {
+      const { lp, user, counters } = await vkapi('execute.init', {
         lp_version: longpoll.version,
         fields: `${utils.fields},status`
       });
 
-      for(let counter in counters) {
-        this.$store.commit('settings/updateCounter', {
-          type: counter,
-          count: counters[counter]
-        });
-      }
-
-      this.$store.commit('settings/updateUser', Object.assign(user, { activeTime: Date.now() }));
+      this.$store.commit('settings/updateCounters', counters);
+      this.$store.commit('settings/updateUser', Object.assign({}, user, { activeTime: Date.now() }));
       longpoll.start(lp);
 
       // Загрузка стикеров. Разделен вызов этих методов с методами выше по причине того,
-      // Что эти методы выполняюься 20+ секунд, и это недопустимо большое время для загрузки.
+      // что эти методы выполняются 20+ секунд, и это недопустимо большое время для загрузки.
       let favoriteStickers = await vkapi('store.getFavoriteStickers', { offToken: true }),
-          { stickers, recent } = await vkapi('execute.getStickers', {
-            type: 'stickers',
-            extended: 1,
-            filters: 'purchased,active,promoted'
-          });
-
-
+          { stickers, recent } = await vkapi('execute.getStickers');
     }
   }
-
-
 </script>
