@@ -89,6 +89,34 @@
 .modal_bottom .button.right,
 .modal_bottom .light_button.right { float: right }
 
+/* Toasts */
+
+.toast-enter-active, .toast-leave-active {
+  transition: opacity .3s;
+}
+.toast-enter, .toast-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+}
+
+.toast_wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.toast {
+  position: absolute;
+  bottom: 0;
+  color: #fff;
+  background-color: #000000a6;
+  margin: 20px 0;
+  padding: 13px 20px;
+  border-radius: 25px;
+  text-align: center;
+  pointer-events: none;
+  min-width: 60%;
+  z-index: 100;
+}
+
 /* Капча */
 
 .modal_content.captcha {

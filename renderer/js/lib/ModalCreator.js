@@ -14,6 +14,10 @@ module.exports = {
         Bus.emit('close', name);
       }
     }
+
+    Vue.prototype.$toast = function(text) {
+      Bus.emit('toast', text);
+    }
   },
   Bus
 }
