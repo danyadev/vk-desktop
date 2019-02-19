@@ -24,7 +24,7 @@
         this.toasts.shift();
         this.toast = null;
 
-        setTimeout(this.openToast, 500);
+        if(this.toasts.length) setTimeout(this.openToast, 500);
       }
     },
     mounted() {

@@ -7,14 +7,14 @@
         {{ l('error_handler_text', [data.tag, data.type]) }}
       </span>
 
-      <button class="button" @click="show = !show">
+      <button class="light_button" @click="show = !show">
         {{ l(show ? 'hide_error' : 'show_error') }}
       </button>
-
       <pre v-if="show">{{ data.stack }}</pre>
+      <textarea v-model="text" placeholder="Расскажите, какие шаги нужны для того, чтобы повторить ошибку."></textarea>
     </div>
     <div class="modal_bottom">
-      <button type="button" class="button right" @click="send">{{ l('send') }}</button>
+      <button class="button right" @click="send">{{ l('send') }}</button>
     </div>
   </div>
 </template>
@@ -23,7 +23,8 @@
   module.exports = {
     props: ['data'],
     data: () => ({
-      show: false
+      show: false,
+      text: ''
     }),
     methods: {
       async send() {
@@ -39,6 +40,7 @@
           vkd: process.package.version,
           vue: Vue.version,
           id: app.user.id,
+          text: this.text,
           ...this.data
         }));
 

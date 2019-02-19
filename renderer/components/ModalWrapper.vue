@@ -23,7 +23,7 @@
         let hasClose = !path.find((el) => el.classList && el.classList.contains('modal')),
             key = target.children[0] && target.children[0].dataset.key;
 
-        if(hasClose) {
+        if(hasClose && key != null) {
           let modal = this.modals[key],
               header = qs(`.modal[data-key="${key}"] .modal_header`),
               closable = modal.closable || !header || header.dataset.closable;

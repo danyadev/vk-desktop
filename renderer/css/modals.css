@@ -34,6 +34,7 @@
 
 .modal {
   position: absolute;
+  max-width: 100%;
   border-radius: 7px;
   background-color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
@@ -240,13 +241,12 @@
 /* Обработка сообщений */
 
 .modal[name="error-handler"] {
-  width: 450px;
+  width: 500px;
 }
 
 .modal[name="error-handler"] .modal_content {
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 20px;
 }
 
@@ -255,16 +255,33 @@
   align-items: center;
 }
 
-.modal[name="error-handler"] .modal_content .button {
+.modal[name="error-handler"] .modal_content .light_button {
   width: 200px;
   margin-top: 20px;
 }
 
 .modal[name="error-handler"] .modal_content pre {
-  margin-top: 20px;
+  margin: 20px 0 0 0;
   font-family: inherit;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.modal[name="error-handler"] .modal_content textarea {
+  margin-top: 20px;
+  padding: 5px 7px;
+  font-family: inherit;
+  resize: none;
+  height: 120px;
+  width: 300px;
+  font-size: 15px;
+  border: 1px solid #d3d9de;
+  border-radius: 5px;
+}
+
+.modal[name="error-handler"] .modal_content textarea::-webkit-input-placeholder {
+  color: #a0a0a0;
+  font-size: 15px;
 }
 
 .modal[name="error-handler"] .modal_content .error {
