@@ -235,7 +235,7 @@ longpoll.on('delete_peer', (data) => {
 });
 
 longpoll.on('change_peer_info', ([type, peer_id, data]) => {
-  // TODO https://vk.com/dev/using_longpoll_2?f=3.2. Дополнительные поля чатов
+  let { peer } = app.$store.state.conversations[peer_id] || {};
 
   switch(type) {
     case 1: // Изменилось название беседы
@@ -245,42 +245,31 @@ longpoll.on('change_peer_info', ([type, peer_id, data]) => {
       updateChat(peer_id);
       break;
     case 3: // Назначен новый администратор
-      console.log(3, ['set peer admin', peer_id, data]);
+      // TODO
       break;
     case 5: // Закреплено сообщение
-      console.log(5, ['pin msg', peer_id, data]);
+      // TODO
       break;
     case 6: // Пользователь присоединился к беседе
-      updatePeer(peer_id, {
-        left: false,
-        can_write: { allowed: true }
-      }, true);
-
+      if(!peer) return;
+      if(peer.members != null) peer.members++;
       if(data == app.user.id) updateChat(peer_id);
 
       break;
     case 7: // Пользователь покинул беседу
-      updatePeer(peer_id, {
-        left: data == app.user.id
-      }, true);
+      if(!peer) return;
+      if(peer.members != null) peer.members--;
+      if(data == app.user.id) peer.left = true;
 
       break;
     case 8: // Пользователя исключили из беседы
-      let peer = {
-        left: data == app.user.id
-      }
+      if(!peer) return;
+      if(peer.members != null) peer.members--;
+      if(data == app.user.id) peer.canWrite = { allowed: false, reason: 917 };
 
-      if(data == app.user.id) {
-        peer.can_write = {
-          allowed: false,
-          reason: 917
-        }
-      }
-
-      updatePeer(peer_id, peer, true);
       break;
     case 9: // С пользователя сняты права администратора
-      console.log(9, data);
+      // TODO
       break;
   }
 });
