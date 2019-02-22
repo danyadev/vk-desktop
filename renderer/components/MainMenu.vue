@@ -3,7 +3,7 @@
     <div class="menu">
       <div class="menu_account_item">
         <img class="menu_account_bgc" :src="user.photo_100"/>
-        <div class="menu_multiacc" @click.stop="openMultiacc"></div>
+        <div class="menu_multiacc" @click.stop="openModal('multiaccount')"></div>
         <img class="acc_icon"
              :src="user.photo_100"
              @click="/*openPage('profile')*/"/>
@@ -22,7 +22,7 @@
           <div class="menu_item_name">{{ l('menu', page) }}</div>
           <div class="menu_item_counter">{{ counters[page] || '' }}</div>
         </div>
-        <div class="menu_item logout" @click.stop="logout">
+        <div class="menu_item logout" @click.stop="openModal('logout')">
           <div class="menu_item_name">{{ l('logout') }}</div>
         </div>
       </div>
@@ -45,14 +45,6 @@
       }
     },
     methods: {
-      openMultiacc() {
-        this.toggleMenu(false);
-        this.$modals.open('multiaccount');
-      },
-      openPage(page) {
-        this.toggleMenu(false);
-        this.$store.commit('settings/setSection', page);
-      },
       toggleMenu(event) {
         let state;
 
@@ -61,9 +53,15 @@
 
         this.$store.commit('setMenuState', state);
       },
-      logout() {
+      openPage(page) {
         this.toggleMenu(false);
-        this.$modals.open('logout');
+        this.$store.commit('settings/setSection', page);
+      },
+      openModal(name) {
+        this.toggleMenu(false);
+
+        // Задержка нужна для того, чтобы меню успело закрыться
+        setTimeout(() => this.$modals.open(name), 100);
       }
     },
     async mounted() {
