@@ -101,15 +101,16 @@
 
 .toast {
   position: absolute;
-  bottom: 0;
+  bottom: 15px;
   color: #fff;
   background-color: #000000a6;
-  margin: 20px 0;
-  padding: 13px 20px;
+  padding: 10px 15px;
   border-radius: 25px;
   text-align: center;
   pointer-events: none;
   min-width: 60%;
+  max-width: 95%;
+  word-wrap: break-word;
   z-index: 100;
 }
 
@@ -293,4 +294,50 @@
   height: 56px;
   margin-right: 10px;
   flex: none;
+}
+
+/* Превьюха для вступления в чат по ссылке */
+
+.modal_chat_preview {
+  width: 400px;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.modal_chat_preview .loading { margin: auto }
+
+.modal_chat_preview .error {
+  padding: 7px 10px;
+  margin: auto;
+  color: #de3f3f;
+  border: 1px solid #de3f3f;
+  border-radius: 5px;
+}
+
+.modal_chat_preview .chat_photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-top: 30px;
+}
+
+.modal_chat_preview .chat_name {
+  margin: 15px 0 30px 0;
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.modal_chat_preview .user_photos img {
+  background-color: #fff;
+  border: solid 3px #fff;
+  border-radius: 50%;
+  margin-left: -15px;
+}
+
+.modal_chat_preview .user_names {
+  margin: 10px 0 20px 0;
+  text-align: center;
+  color: #4c4c4c;
 }

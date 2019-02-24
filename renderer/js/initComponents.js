@@ -19,17 +19,28 @@ Vue.directive('emoji', (el, { value = '', modifiers }) => {
 
   if(!modifiers.br) html = html.replace(/<br>/g, ' ');
 
-  if(modifiers.push || modifiers.color_push) {
-    let to = modifiers.push ? '$3' : '<span class="link">$3</span>';
-
-    html = html.replace(utils.regexp.push, to);
-  }
-
   if(modifiers.link) {
     html = html
       .replace(/<br>/g, '\n')
-      .replace(utils.regexp.url, '<span class="link">$1</span>')
-      .replace(/\n/g, '<br>');
+      .replace(utils.regexp.url, (url) => {
+        let link = utils.escape(decodeURIComponent(url)),
+            text = link;
+
+        if(text.length > 53) text = text.slice(0, 53) + '...';
+
+        return `<span class="link" title="${link}" onclick="utils.openLink(this.title)">${text}</span>`;
+      }).replace(/\n/g, '<br>');
+  }
+
+  if(modifiers.push || modifiers.color_push) {
+    html = html.replace(utils.regexp.push, (text, type, id, name) => {
+      if(modifiers.push) return name;
+
+      // TODO: при наведении открывать окошко с данными
+      let link = `https://vk.com/${type}${id}`;
+
+      return `<span class="link" title="${link}" onclick="utils.openLink('${link}')">${name}</span>`;
+    });
   }
 
   if(el.innerHTML != html) el.innerHTML = emoji(html);

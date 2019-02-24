@@ -43,7 +43,7 @@ function method(name, params = {}, promise = {}) {
     reject = promise.reject || reject;
 
     params.v = params.v || API_VERSION;
-    params.lang = params.lang || app.$store.state.langName;
+    params.lang = params.lang || app.$store.state.settings.langName;
     params.access_token = getToken(params);
 
     let { data } = await request({
