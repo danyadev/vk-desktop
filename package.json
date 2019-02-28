@@ -7,11 +7,11 @@
     "email": "danyadev@mail.ru"
   },
   "license": "Apache-2.0",
-  "description": "Кроссплатформенный клиент ВКонтакте",
+  "description": "Клиент ВКонтакте",
   "repository": "https://github.com/danyadev/vk-desktop",
   "build": {
     "appId": "ru.danyadev.vkdesktop",
-    "electronVersion": "3.1.4",
+    "electronVersion": "4.0.6",
     "productName": "VK Desktop",
     "files": [
       "**/*",
