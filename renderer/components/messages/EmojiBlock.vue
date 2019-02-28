@@ -4,7 +4,7 @@
       <div v-for="(codes, name) of list" class="emoji_block_item">
         <div class="emoji_block_name">{{ l('emojies', name) }}</div>
         <div v-for="code of codes" class="emoji_block_image_wrap" @click="chooseEmoji(code)">
-          <div :class="'@' + code" class="emoji_block_image"></div>
+          <div :style="getStyle(code)" class="emoji_block_image"></div>
         </div>
       </div>
     </div>
@@ -19,7 +19,8 @@
     props: ['active'],
     data: () => ({
       entered: false,
-      timeout: null
+      timeout: null,
+      cachedEmoji: require('./../../json/cachedEmoji')
     }),
     computed: {
       list() {
@@ -36,6 +37,13 @@
       }
     },
     methods: {
+      getStyle(code) {
+        let [id, x, y] = this.cachedEmoji[code];
+
+        return {
+          background: `url('images/emoji_sprite_${id}.png') ${x} ${y}`
+        };
+      },
       chooseEmoji(code) {
         this.$emit('chooseEmoji', code);
       },
