@@ -3,3 +3,4 @@ core
 dist
 node_modules
 vue-devtools
+package-lock.json
