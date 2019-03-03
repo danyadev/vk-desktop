@@ -19,7 +19,7 @@
         app.exit();
       },
       exit() {
-        this.$store.commit('settings/removeUser', app.user.id);
+        this.$store.commit('settings/removeUser', this.$root.user.id);
         location.reload();
       }
     }
