@@ -19,11 +19,16 @@ function hexToImg(hex, symbol) {
   if(cachedEmoji[hex]) {
     let [id, x, y] = cachedEmoji[hex];
     if(devicePixelRatio >= 2) id += '_2x';
-    let style = `background: url('images/emoji_sprite_${id}.png') ${x} ${y}`;
+    let style = `background: url('images/emoji_sprite_${id}.png') ${x} ${y};`;
+
+    if(devicePixelRatio >= 2) {
+      let [, sx, sy] = cachedEmoji[`${hex}_2x`];
+      style += `background-size: ${sx} ${sy};`
+    }
+
     return `<img class="emoji" src="images/blank.gif" style="${style}" alt="${symbol}">`;
   }
 
-  if(devicePixelRatio >= 2) hex += '_2x';
   return `<img class="emoji" src="https://vk.com/emoji/e/${hex}.png" alt="${symbol}">`;
 }
 
