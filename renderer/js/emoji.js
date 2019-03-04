@@ -15,21 +15,26 @@ function emojiToHex(emoji) {
   return encodeURIComponent(symbol).replace(/%/g, '').toLowerCase();
 }
 
-function hexToImg(hex, symbol) {
-  if(cachedEmoji[hex]) {
-    let [id, x, y] = cachedEmoji[hex];
-    if(devicePixelRatio >= 2) id += '_2x';
-    let style = `background: url('images/emoji_sprite_${id}.png') ${x} ${y};`;
+function getEmojiStyle(hex) {
+  let [id, x, y] = cachedEmoji[hex];
+  if(devicePixelRatio >= 2) id += '_2x';
+  let style = `background: url('images/emoji_sprite_${id}.png') ${x} ${y}`;
 
-    if(devicePixelRatio >= 2) {
-      let [, sx, sy] = cachedEmoji[`${hex}_2x`];
-      style += `background-size: ${sx} ${sy};`
-    }
-
-    return `<img class="emoji" src="images/blank.gif" style="${style}" alt="${symbol}">`;
+  if(devicePixelRatio >= 2) {
+    let [, sx, sy] = cachedEmoji[`${hex}_2x`];
+    style += ` / ${sx} ${sy};`;
   }
 
-  return `<img class="emoji" src="https://vk.com/emoji/e/${hex}.png" alt="${symbol}">`;
+  return style;
+}
+
+function hexToImg(hex, symbol) {
+  if(cachedEmoji[hex]) {
+    return `<img class="emoji" src="images/blank.gif" style="${getEmojiStyle(hex)}" alt="${symbol}">`;
+  } else {
+    if(devicePixelRatio >= 2) hex += '_2x';
+    return `<img class="emoji" src="https://vk.com/emoji/e/${hex}.png" alt="${symbol}">`;
+  }
 }
 
 function emojiReplace(emoji) {
@@ -55,7 +60,4 @@ function emojiToHTML(e = '') {
           .replace(emojiRegex, emojiReplace);
 }
 
-module.exports = emojiToHTML;
-module.exports.hexToEmoji = hexToEmoji;
-module.exports.hexToImg = hexToImg;
-module.exports.emojiToHex = emojiToHex;
+module.exports = Object.assign(emojiToHTML, { hexToEmoji, hexToImg, emojiToHex, getEmojiStyle });

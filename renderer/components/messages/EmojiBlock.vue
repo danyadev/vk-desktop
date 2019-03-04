@@ -37,9 +37,7 @@
       }
     },
     methods: {
-      getEmojiStyle: (code) => ({
-        background: emoji.hexToImg(code)
-      }),
+      getEmojiStyle: emoji.getEmojiStyle,
       chooseEmoji(code) {
         this.$emit('chooseEmoji', code);
       },
