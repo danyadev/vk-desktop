@@ -63,7 +63,10 @@
               getCurrentWindow().reload();
             }
           });
-        } else setUser();
+        } else {
+          setUser();
+          this.$modals.close(this.$attrs['data-key']);
+        }
       },
       openAuth() {
         this.$modals.open('auth', { isModal: true });
