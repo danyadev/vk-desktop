@@ -1,18 +1,18 @@
 {
-  "main": "index.js",
   "name": "vk-desktop",
   "version": "0.0.6",
+  "description": "Клиент ВКонтакте",
+  "main": "index.js",
+  "scripts": {
+    "pack": "electron-builder --config build/config.json --dir --ia32 --x64",
+    "dist": "electron-builder --config build/config.json --ia32 --x64"
+  },
+  "repository": "https://github.com/danyadev/vk-desktop",
   "author": {
     "name": "danyadev",
     "email": "danyadev@mail.ru"
   },
   "license": "Apache-2.0",
-  "description": "Клиент ВКонтакте",
-  "repository": "https://github.com/danyadev/vk-desktop",
-  "scripts": {
-    "pack": "electron-builder --config build/config.json --dir --ia32 --x64",
-    "dist": "electron-builder --config build/config.json --ia32 --x64"
-  },
   "devDependencies": {
     "electron-builder": "^20.38.5"
   }

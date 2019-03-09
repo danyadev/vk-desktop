@@ -4,37 +4,6 @@ const { app, BrowserWindow, Menu } = require('electron');
 const fs = require('fs');
 let win;
 
-if(!app.isPackaged) {
-  function throttle(fn, delay) {
-    let lastCall = 0;
-
-    return (...args) => {
-      let now = new Date().getTime();
-      if(now - lastCall < delay) return;
-      lastCall = now;
-      return fn(...args);
-    }
-  }
-
-  function reloadApp(filename) {
-    if(!/^renderer/.test(filename)) return;
-
-    BrowserWindow.getAllWindows().forEach((win) => {
-      win.webContents.reloadIgnoringCache();
-    });
-  }
-
-  let onChange = throttle(reloadApp, 200);
-
-  fs.watch('.', { recursive: true }, (event, filename) => {
-    if(!filename) return;
-
-    // На macOS, в отличии от других систем, событие приходит только 1 раз.
-    if(process.platform == 'darwin') reloadApp(filename);
-    else onChange(filename);
-  });
-}
-
 app.on('ready', () => {
   if(fs.readdirSync('.').find((file) => file == 'vue-devtools')) {
     BrowserWindow.addDevToolsExtension('./vue-devtools');
