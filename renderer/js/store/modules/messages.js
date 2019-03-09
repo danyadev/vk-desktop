@@ -2,7 +2,8 @@
 
 module.exports = {
   state: {
-    chat: null
+    chat: null,
+    list: []
   },
   mutations: {
     setChat(state, id) {

@@ -12,6 +12,7 @@
 
 <script>
   const { parseConversation, parseMessage, concatProfiles } = require('./methods');
+  const { mapGetters } = Vuex;
 
   module.exports = {
     data: () => ({
@@ -19,9 +20,7 @@
       loaded: false
     }),
     computed: {
-      peers() {
-        return this.$store.getters.peers;
-      }
+      ...mapGetters(['peers'])
     },
     methods: {
       async load() {

@@ -11,7 +11,7 @@
       <div class="message_content">
         <div class="message_name" v-if="showUserData">{{ name }}</div>
         <div class="message_text_wrap"
-             :class="{ outread, hasText: !!msg.text, morePhotos, onlyPhotos, onlySticker }">
+             :class="{ outread, hasText: !!msg.text, morePhotos, onlyPhotos, onlySticker, flyMsgTime }">
           <div v-if="serviceMessage" class="message_text" v-html="serviceMessage"></div>
           <template v-else>
             <div v-if="deletedContent" class="message_content_deleted">({{ l('content_deleted') }})</div>
@@ -52,7 +52,7 @@
 
       return {
         isOwner: this.msg.from == this.$root.user.id,
-        supportedAttachments: ['photo', 'sticker'/*, 'link', 'story'*/],
+        supportedAttachments: ['photo', 'sticker', 'link', 'story', 'gift'],
         time: time,
         isChat: this.peer.id > 2e9
       }

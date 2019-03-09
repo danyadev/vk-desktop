@@ -1,19 +1,20 @@
 <template>
-  <div class="messages_container" :class="{ active_chat: id, hideDialogs: $store.state.settings.hiddenDialogs }">
+  <div class="messages_container" :class="{ hasChat: !!chat, hiddenDialogs }">
     <conversations></conversations>
     <keep-alive>
-      <chat v-if="id" :key="id"></chat>
+      <chat v-if="chat" :key="chat"></chat>
       <chat-empty v-else></chat-empty>
     </keep-alive>
   </div>
 </template>
 
 <script>
+  const { mapState } = Vuex;
+
   module.exports = {
     computed: {
-      id() {
-        return this.$store.state.messages.chat;
-      }
+      ...mapState('messages', ['chat']),
+      ...mapState('settings', ['hiddenDialogs'])
     }
   }
 </script>

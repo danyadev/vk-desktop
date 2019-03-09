@@ -60,9 +60,9 @@
           <img class="dialog_send" src="images/send_message.svg" @click="sendMessage">
         </template>
         <div v-else class="dialog_input_error">
-          <div v-if="!peer.channel" class="dialog_input_error_img"></div>
-          <div class="dialog_input_error_text" :class="{ channel: peer.channel }">
-            <div v-if="peer.channel"
+          <div v-if="!channel" class="dialog_input_error_img"></div>
+          <div class="dialog_input_error_text" :class="{ channel }">
+            <div v-if="channel"
                  @click="toggleChannelNotifications"
                  class="dialog_input_channel">{{ canSendMessages.text }}</div>
             <template v-else>{{ canSendMessages.text }}</template>
@@ -121,6 +121,9 @@
       profiles() {
         return this.$store.state.profiles;
       },
+      channel() {
+        return this.peer && this.peer.channel;
+      },
       owner() {
         return this.peer && this.profiles[this.peer.owner];
       },
@@ -143,6 +146,7 @@
         if(this.id < 0) return this.l('community');
 
         if(this.isChat) {
+          // TODO где-то создается peer, в котором нет большинства данных
           if(this.peer.canWrite.reason == 917) return this.l('im_kicked_from_chat');
           if(this.peer.left) return this.l('im_left_chat');
           return this.l('members', [this.peer.members], this.peer.members);
@@ -327,7 +331,7 @@
         if(event.data != null) this.setTypingActivity(this.peer);
       },
       async loadNewMessages() {
-        let offset = this.messages ? this.messages.length : 0;
+        const offset = this.messages ? this.messages.length : 0;
 
         let { items, conversations, profiles = [], groups = [] } = await vkapi('messages.getHistory', {
           peer_id: this.id,

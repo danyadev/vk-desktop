@@ -236,6 +236,7 @@ longpoll.on('delete_peer', (data) => {
 
 longpoll.on('change_peer_info', ([type, peer_id, data]) => {
   let { peer } = app.$store.state.conversations[peer_id] || {};
+  if(!peer) return;
 
   switch(type) {
     case 1: // Изменилось название беседы
@@ -251,19 +252,16 @@ longpoll.on('change_peer_info', ([type, peer_id, data]) => {
       // TODO
       break;
     case 6: // Пользователь присоединился к беседе
-      if(!peer) return;
       if(peer.members != null) peer.members++;
       if(data == app.user.id) updateChat(peer_id);
 
       break;
     case 7: // Пользователь покинул беседу
-      if(!peer) return;
       if(peer.members != null) peer.members--;
       if(data == app.user.id) peer.left = true;
 
       break;
     case 8: // Пользователя исключили из беседы
-      if(!peer) return;
       if(peer.members != null) peer.members--;
       if(data == app.user.id) peer.canWrite = { allowed: false, reason: 917 };
 

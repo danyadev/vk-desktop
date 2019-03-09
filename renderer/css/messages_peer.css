@@ -509,6 +509,11 @@
   word-break: break-word;
 }
 
+.message_text_wrap.hasText.flyMsgTime .message_text {
+  display: inline-block;
+  padding: 0 5px;
+}
+
 .message.service .message_text, .message_top_date {
   text-align: center;
   color: #4e4f50;

@@ -1,7 +1,7 @@
 <template>
   <div class="conversation" :class="{ active: isActive }" @click="openChat">
     <div class="conversation_photo_wrap" :class="online">
-      <img :src="photo" class="conversation_photo"/>
+      <img :src="photo" class="conversation_photo">
     </div>
     <div class="conversation_content">
       <div class="conversation_title">

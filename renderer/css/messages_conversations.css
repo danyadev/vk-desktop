@@ -5,15 +5,15 @@
   height: 100%;
 }
 
-.messages_container.active_chat.hideDialogs .conversations_container {
+.messages_container.hasChat.hiddenDialogs .conversations_container {
   display: none;
 }
 
-.messages_container.active_chat.hideDialogs .dialog_container {
+.messages_container.hasChat.hiddenDialogs .dialog_container {
   width: 100%;
 }
 
-.messages_container.active_chat.hideDialogs .dialog_header_back {
+.messages_container.hasChat.hiddenDialogs .dialog_header_back {
   display: inline-block;
 }
 
@@ -225,11 +225,11 @@
   .conversations_container { width: 100% }
   .conversations_wrap { border-right: none }
 
-  .messages_container:not(.active_chat) .dialog_container { display: none }
-  .messages_container.active_chat .dialog_container { width: 100% }
+  .messages_container:not(.hasChat) .dialog_container { display: none }
+  .messages_container.hasChat .dialog_container { width: 100% }
 
-  .messages_container.active_chat .conversations_container { display: none }
-  .messages_container.active_chat .dialog_header_back { display: block }
+  .messages_container.hasChat .conversations_container { display: none }
+  .messages_container.hasChat .dialog_header_back { display: block }
 }
 
 @media screen and (min-width: 650px) and (max-width: 899px) {

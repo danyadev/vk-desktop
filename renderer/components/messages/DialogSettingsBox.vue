@@ -12,7 +12,7 @@
       <img :src="`images/${hiddenDialogs ? 'show' : 'hide'}.svg`" class="messages_settings_box_item_icon">
       {{ l('toggle_hidden_dialogs', hiddenDialogs) }}
     </div>
-    <div v-if="peer.id > 2e9" class="messages_settings_box_item" @click="exitFromChat">
+    <div v-if="peer.id > 2e9 && this.peer.canWrite.allowed" class="messages_settings_box_item" @click="exitFromChat">
       <img :src="`images/${peer.left ? 'return_to_chat' : 'cancel'}.svg`" class="messages_settings_box_item_icon">
       {{ l('exit_from_chat', peer.left) }}
     </div>

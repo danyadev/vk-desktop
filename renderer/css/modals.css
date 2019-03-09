@@ -34,7 +34,8 @@
 
 .modal {
   position: absolute;
-  max-width: 100%;
+  max-width: 95%;
+  max-height: 95%;
   border-radius: 7px;
   background-color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
@@ -300,7 +301,7 @@
 
 .modal_chat_preview {
   width: 400px;
-  height: 400px;
+  padding: 25px;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -320,13 +321,13 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  margin-top: 30px;
 }
 
 .modal_chat_preview .chat_name {
   margin: 15px 0 30px 0;
   font-size: 19px;
   font-weight: 500;
+  text-align: center;
 }
 
 .modal_chat_preview .user_photos img {
