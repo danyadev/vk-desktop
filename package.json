@@ -4,8 +4,9 @@
   "description": "Клиент ВКонтакте",
   "main": "index.js",
   "scripts": {
-    "pack": "electron-builder --config build/config.json --dir --ia32 --x64",
-    "dist": "electron-builder --config build/config.json --ia32 --x64"
+    "dev": "webpack-dev-server --config ./webpack.config.js --mode development --hot --progress --inline",
+    "build": "webpack --mode production && npm run pack",
+    "pack": "electron-builder --config build/config.json --ia32 --x64"
   },
   "repository": "https://github.com/danyadev/vk-desktop",
   "author": {
