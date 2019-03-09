@@ -50,12 +50,12 @@
             text = '';
 
         if(length == 1) return this.l('chat_preview_names', 0, [names[0]]);
-        else if(length <= 5) {
+        else if(length < 5) {
           let list = names.slice(0, length - 1).join(', ');
           return this.l('chat_preview_names', 1, [list, names[length-1]]);
         } else {
-          let list = names.slice(0, 5).join(', '),
-              count = length - 5;
+          let list = names.slice(0, 4).join(', '),
+              count = length - 4;
 
           return this.l('chat_preview_names_more', [list, count], count);
         }
