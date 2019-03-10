@@ -64,7 +64,12 @@ app.on('ready', () => {
     Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
   } else win.setMenu(null);
 
-  win.loadFile('renderer/index.html');
+  win.loadURL(
+    process.argv.indexOf('dev-mode') != -1
+        ? 'http://localhost:8080/'
+        : `file://${__dirname}/index.html`
+  );
+
   win.on('closed', () => win = null);
 });
 

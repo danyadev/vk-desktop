@@ -6,11 +6,9 @@
     "output": "out"
   },
   "files": [
-    "**/*",
-    "!**/build",
-    "!**/core",
-    "!**/node_modules",
-    "!**/vue-devtools"
+    "dist/**",
+    "index.js",
+    "index.html"
   ],
   "nsis": {
     "oneClick": "false",

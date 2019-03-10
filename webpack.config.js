@@ -1,14 +1,17 @@
 const electron = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, { mode }) => {
   let dev = mode == 'development';
 
   return {
     mode,
+    target: 'electron-renderer',
     entry: {
       main: './src/main.js'
     },
@@ -30,21 +33,24 @@ module.exports = (env, { mode }) => {
       rules: [
         {
           test: /\.css$/,
-          use: ExtractTextPlugin.extract({ use: 'css-loader' })
+          use: [
+            dev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+            'css-loader'
+          ]
         },
         {
           test: /\.vue$/,
           loader: 'vue-loader'
-        },
-        {
-          test: /\.(png|svg|jpg|gif)$/,
-          loader: 'file-loader',
-          options: { publicPath: './dist' }
         }
       ]
     },
     plugins: [
-      new ExtractTextPlugin('styles.css'),
+      new CopyPlugin([
+        { from: 'src/assets', to: 'assets' }
+      ]),
+      new MiniCssExtractPlugin({
+        filename: '[name].css'
+      }),
       new VueLoaderPlugin()
     ]
   };
