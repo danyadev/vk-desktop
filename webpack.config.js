@@ -22,6 +22,7 @@ module.exports = (env, { mode }) => {
     },
     devServer: {
       overlay: true,
+      clientLogLevel: 'none',
       before(app, { middleware }) {
         middleware.waitUntilValid(() => {
           spawn(electron, [path.join(__dirname, './index.js'), 'dev-mode']);
@@ -52,6 +53,12 @@ module.exports = (env, { mode }) => {
         filename: '[name].css'
       }),
       new VueLoaderPlugin()
-    ]
+    ],
+    resolve: {
+      alias: {
+        js: path.resolve(__dirname, 'src/js/'),
+        'package-json': path.resolve(__dirname, 'package.json')
+      }
+    }
   };
 }
