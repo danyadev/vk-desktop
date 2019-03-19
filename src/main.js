@@ -1,9 +1,25 @@
-window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+import { remote as electron } from 'electron';
+import { debounce } from 'js/utils';
+import app from 'js/app';
 
-import Vue from 'vue';
-import App from './components/App.vue';
+const win = electron.getCurrentWindow();
+const { Menu } = electron;
 
-new Vue({
-  el: '#app',
-  render: (h) => h(App)
+document.addEventListener('contextmenu', (event) => {
+  Menu.buildFromTemplate([
+    {
+      label: app.l('open_console'),
+      click: win.openDevTools
+    },
+    {
+      label: app.l('open_in_devtools'),
+      click(temp, win) {
+        win.inspectElement(event.x, event.y);
+      }
+    }
+  ]).popup();
 });
+
+window.addEventListener('resize', debounce(() => {
+  app.$store.commit('settings/setWindowBounds', win.getBounds());
+}, 2000));

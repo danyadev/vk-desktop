@@ -1,15 +1,34 @@
 <template>
-  <div class="app">
+  <div class="root">
     <Titlebar/>
+    <div class="app">
+      <router-view/>
+    </div>
   </div>
 </template>
 
 <script>
+  import { mapState } from 'vuex';
   import Titlebar from './Titlebar.vue';
 
   export default {
     name: 'App',
-    components: { Titlebar }
+    components: { Titlebar },
+    computed: {
+      ...mapState('users', ['activeUser'])
+    },
+    watch: {
+      activeUser(state) {
+        this.$router.replace(state ? '/content' : '/auth');
+      }
+    },
+    mounted() {
+      if(!this.activeUser) {
+        this.$router.replace('/auth');
+      } else {
+        this.$router.replace('/content');
+      }
+    }
   }
 </script>
 
@@ -23,7 +42,7 @@
   	font-weight: 400;
   	font-display: block;
   	src: local('Segoe UI'),
-  			 url('/dist/assets/SegoeUI.ttf');
+         url('/dist/assets/SegoeUI.ttf');
   }
 
   @font-face {
@@ -31,7 +50,7 @@
   	font-weight: 500;
   	font-display: block;
   	src: local('Segoe UI Semibold'),
-  			 url('/dist/assets/SegoeUISemiBold.ttf');
+         url('/dist/assets/SegoeUISemiBold.ttf');
   }
 
   body {
@@ -41,4 +60,63 @@
     overflow: hidden;
     height: 100vh;
   }
+
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  .app { height: calc(100vh - 32px) }
+
+  .input {
+    width: 250px;
+    outline: none;
+    border: 1px solid #d2d8de;
+    border-radius: 5px;
+    font-size: 15px;
+    color: #3c3c3c;
+    line-height: 32px;
+    padding: 0 30px 0 9px;
+    transition: border-color .3s;
+  }
+
+  .input:disabled { color: #999 }
+  .input:hover { border: 1px solid #a2a5a8 }
+  .input:focus { border: 1px solid #7e7f7f }
+  .input::-webkit-input-placeholder { color: #a0a0a0 }
+
+  .button, .light_button {
+    display: inline-block;
+    font-size: 15px;
+    padding: 9px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    user-select: none;
+    text-align: center;
+    transition: opacity .3s, background-color .3s;
+  }
+
+  .button:not(:disabled), .light_button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  .button:disabled, .light_button:disabled {
+    opacity: .8;
+  }
+
+  .button {
+    background-color: #598ac1;
+    color: white;
+  }
+
+  .light_button {
+    background-color: #e4eaf0;
+    color: #55677d;
+  }
+
+  .button:not(:disabled):hover { background-color: #547fb3 }
+  .button:not(:disabled):active { background-color: #4977a9 }
+  .light_button:not(:disabled):hover { background-color: #dbe3eb }
+  .light_button:not(:disabled):active { background-color: #d3dce6 }
 </style>

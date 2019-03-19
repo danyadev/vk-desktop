@@ -12,8 +12,8 @@
 </template>
 
 <script>
-  const { getCurrentWindow } = require('electron').remote;
-  const win = getCurrentWindow();
+  import { remote as electron } from 'electron';
+  const win = electron.getCurrentWindow();
 
   export default {
     data: () => ({
@@ -93,7 +93,7 @@
   .titlebar.mac { height: 22px }
   .titlebar.mac:not(.maximized) .titlebar_drag { margin-right: 4px }
   .titlebar.mac .titlebar_buttons { display: none }
-  .titlebar.mac + .root { height: calc(100% - 22px) }
+  .titlebar.mac + .app { height: calc(100% - 22px) }
 
   .titlebar.mac .titlebar_drag {
     text-align: center;

@@ -1,5 +1,7 @@
 'use strict';
 
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+
 const { app, BrowserWindow, Menu } = require('electron');
 const fs = require('fs');
 let win;

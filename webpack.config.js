@@ -59,6 +59,9 @@ module.exports = (env, { mode }) => {
         js: path.resolve(__dirname, 'src/js/'),
         'package-json': path.resolve(__dirname, 'package.json')
       }
+    },
+    node: {
+      __dirname: true
     }
   };
 }
