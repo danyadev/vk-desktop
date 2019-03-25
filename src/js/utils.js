@@ -1,8 +1,12 @@
-// Минимальный fields при получении юзеров в приложении
+// Минимальный fields для получения профилей в приложении
 export const fields = 'photo_50,photo_100,verified,sex,first_name_acc,last_name_acc,online,last_seen,screen_name';
 
-// Вызов функции после прохождения интервала delay
-// после последнего вызова обертки
+// Список нужных регулярных выражений
+export const regexp = {
+  push: /\[(club|id)(\d+)\|(.+?)\]/gi
+}
+
+// Вызывает переданную функцию после прохождения delay мс после последнего вызова экземпляра
 export function debounce(fn, delay) {
   let timerId;
 
@@ -14,4 +18,22 @@ export function debounce(fn, delay) {
       timerId = null;
     }, delay);
   }
+}
+
+// Собирает массивы профилей и групп в единый массив, где у групп отрицательный id
+export function concatProfiles(profiles = [], groups = []) {
+  groups = groups.reduce((list, group) => {
+    group.id = -group.id;
+    list.push(group);
+    return list;
+  }, []);
+
+  return profiles.concat(groups);
+}
+
+// Возвращает одну из фотографий:
+// p1 - фото для обычных дисплеев
+// p2 - фото для Retina дисплеев, в 2 раза больше p1
+export function getPhoto(p1, p2) {
+  return devicePixelRatio >= 2 ? p2 : p1;
 }

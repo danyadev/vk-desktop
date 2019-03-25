@@ -1,9 +1,21 @@
 import { remote as electron } from 'electron';
 import { debounce } from 'js/utils';
-import app from 'js/app';
+import router from 'js/router';
+import store from 'js/store/';
+import Vue from 'vue';
+import 'js/settingVue.js';
+
+import App from './components/App.vue';
 
 const win = electron.getCurrentWindow();
 const { Menu } = electron;
+
+let app = new Vue({
+  el: '#app',
+  store,
+  router,
+  render: (h) => h(App)
+});
 
 document.addEventListener('contextmenu', (event) => {
   Menu.buildFromTemplate([

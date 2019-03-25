@@ -1,6 +1,6 @@
 {
   "appId": "ru.danyadev.vkdesktop",
-  "electronVersion": "4.1.0",
+  "electronVersion": "4.1.1",
   "productName": "VK Desktop",
   "directories": {
     "output": "out"

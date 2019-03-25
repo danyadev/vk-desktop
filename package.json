@@ -16,10 +16,11 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "copy-webpack-plugin": "^5.0.1",
+    "copy-webpack-plugin": "^5.0.2",
     "css-loader": "^2.1.1",
     "electron": "^4.1.1",
     "electron-builder": "^20.39.0",
+    "emoji-regex": "^8.0.0",
     "mini-css-extract-plugin": "^0.5.0",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.0",

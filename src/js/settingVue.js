@@ -1,10 +1,14 @@
 import Vue from 'vue';
-import router from './router';
-import store from './store/';
-
-import App from './../components/App.vue';
+import emoji from './emoji';
+import { regexp } from './utils';
 
 Vue.config.productionTip = false;
+
+Vue.directive('emoji', (el, { value = '', modifiers }) => {
+  if(!modifiers.br) value = value.replace(/<br>/g, ' ');
+  if(modifiers.push) value = value.replace(regexp.push, '$3');
+  if(el.innerHTML != value) el.innerHTML = emoji(value);
+});
 
 Vue.prototype.l = function(name, key, replaces, number) {
   if(Array.isArray(key)) {
@@ -29,10 +33,3 @@ Vue.prototype.l = function(name, key, replaces, number) {
 
   return data;
 }
-
-export default new Vue({
-  el: '#app',
-  store,
-  router,
-  render: (h) => h(App)
-});
