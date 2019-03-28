@@ -39,7 +39,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .titlebar {
     display: flex;
     justify-content: space-between;

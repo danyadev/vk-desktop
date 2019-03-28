@@ -1,0 +1,226 @@
+<template>
+  <div class="peer">
+    <div class="photo_wrap" :class="online"><img :src="photo"></div>
+    <div class="content">
+      <div class="title">
+        <div class="name_wrap">
+          <div class="name" v-emoji="chatName"></div>
+          <div v-if="owner && owner.verified" class="verified"></div>
+          <div v-if="peer.muted" class="muted"></div>
+        </div>
+        <div class="time">{{ time }}</div>
+      </div>
+      <div class="message_wrap">
+        <div class="message">
+          <div class="author">{{ authorName }}</div>
+          <div v-if="isDeletedContent" class="text content_deleted">({{ l('content_deleted') }})</div>
+          <div v-else class="text" v-emoji.push="message" :class="{ isAttachment }"></div>
+        </div>
+        <div class="unread" :class="{ outread: msg.outread, muted: peer.muted }">{{ peer.unread || '' }}</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapState } from 'vuex';
+
+  export default {
+    props: ['peer'],
+    data() {
+      return {
+        isChat: this.peer.type == 'chat'
+      }
+    },
+    computed: {
+      ...mapState(['profiles']),
+      msg() {
+        return this.$store.getters['messages/lastMessage'](this.peer.id);
+      },
+      owner() {
+        return this.profiles[this.peer.owner];
+      },
+      author() {
+        return this.profiles[this.msg.from];
+      },
+      online() {
+        if(this.peer.owner > 2e9 || !this.owner || !this.owner.online) return '';
+        else return this.owner.online_mobile ? 'mobile' : 'desktop';
+      },
+      photo() {
+        if(this.isChat) return this.peer.photo || './dist/assets/im_chat_photo.png';
+        else if(this.owner) return this.owner.photo;
+      },
+      chatName() {
+        if(this.isChat) return this.peer.title || '...';
+        else if(this.owner) {
+          return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
+        } else return '...';
+      },
+      time() {
+        return 'time';
+      },
+      authorName() {
+        if(this.msg.action || this.peer.channel) return '';
+        else if(this.msg.out || this.msg.from == this.$store.getters['users/user'].id) return `${this.l('you')}:`;
+        else if(this.author) {
+          if(this.isChat) return `${this.author.name || this.author.first_name}:`;
+        } else return '...:';
+      },
+      message() {
+        return this.msg.text;
+      },
+      isDeletedContent() {
+        return false;
+      },
+      isAttachment() {
+        return false;
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  .peer {
+    display: flex;
+    position: relative;
+    transition: background-color .3s;
+  }
+
+  .peer:hover {
+    background-color: #f5f7fa;
+    cursor: pointer;
+  }
+
+  .photo_wrap {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+  }
+
+  .photo_wrap.mobile::after,
+  .photo_wrap.desktop::after {
+    content: '';
+    position: absolute;
+    box-sizing: content-box;
+    width: 8px;
+    bottom: 2px;
+    right: -1px;
+    border: 2px solid #fff;
+  }
+
+  .photo_wrap.mobile::after {
+    height: 11px;
+    border-radius: 3px;
+    background: url('/dist/assets/online_mobile.svg') no-repeat #fff;
+  }
+
+  .photo_wrap.desktop::after {
+    height: 8px;
+    border-radius: 50%;
+    background-color: #8ac176;
+  }
+
+  .photo_wrap img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  .content {
+    width: calc(100% - 70px);
+    padding: 10px 10px 10px 0;
+  }
+
+  .peer:not(:last-child) .content { border-bottom: 1px solid #e7e8ec }
+
+  .title {
+    display: flex;
+    margin-top: 5px;
+  }
+
+  .name_wrap {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+    font-weight: 500;
+  }
+
+  .name {
+    margin-top: -2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .verified {
+    flex: none;
+    margin: 1px 0 1px 3px;
+  }
+
+  .name_wrap .muted {
+    flex: none;
+    width: 13px;
+    height: 13px;
+    margin: 3px 0 0 4px;
+    background-image: url('/dist/assets/muted.svg');
+    background-size: 13px;
+  }
+
+  .time {
+    flex: none;
+    margin-left: 5px;
+    color: #848a96;
+    font-size: 13px;
+  }
+
+  .message_wrap {
+    display: flex;
+    height: 20px;
+    margin-top: 4px
+  }
+
+  .message {
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #4c4d50;
+  }
+
+  .author:not(:empty) {
+    display: inline;
+    color: #777a7d;
+  }
+
+  .text { display: inline }
+
+  .text.content_deleted {
+    display: inline;
+    color: #4a4a4a;
+  }
+
+  .unread {
+    padding: 0 6px;
+    margin: 2px 0 0 3px;
+    border-radius: 10px;
+    background-color: #5181b8;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 18px;
+  }
+
+  .unread:not(.outread):empty { display: none }
+  .unread:not(.outread).muted { background-color: #b2b7c2 }
+
+  .unread.outread {
+    flex: none;
+    padding: 0;
+    margin: 7px 4px 0 4px;
+    width: 8px;
+    height: 8px;
+    background-color: #93adc8;
+  }
+</style>

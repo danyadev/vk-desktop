@@ -19,15 +19,11 @@
     },
     watch: {
       activeUser(state) {
-        this.$router.replace(state ? '/content' : '/auth');
+        this.$router.replace(state ? '/messages' : '/auth');
       }
     },
     mounted() {
-      if(!this.activeUser) {
-        this.$router.replace('/auth');
-      } else {
-        this.$router.replace('/content');
-      }
+      this.$router.replace(this.activeUser ? '/messages' : '/auth');
     }
   }
 </script>
@@ -119,4 +115,24 @@
   .button:not(:disabled):active { background-color: #4977a9 }
   .light_button:not(:disabled):hover { background-color: #dbe3eb }
   .light_button:not(:disabled):active { background-color: #d3dce6 }
+
+  .emoji {
+    margin: 0 1px -3px 1px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    background-color: #5281b9;
+    width: 100%;
+    height: 45px;
+  }
+
+  .header_name {
+    color: white;
+    padding: 0 0 1px 10px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+  }
 </style>

@@ -11,7 +11,9 @@ export const modifiers = {
   dark: '🏿',
   // Пол
   female: '♀️',
-  male: '♂️'
+  male: '♂️',
+  // Символ, который нужен для "склеивания" эмодзи
+  separator: '🧟‍♀'[2]
 }
 
 // Преобразует эмодзи символ в hex-код
@@ -39,9 +41,9 @@ export function generateEmojiImage(emoji) {
 
   if(local) {
     let [id, x, y, posX, posY] = local.split('|'),
-        style = `background: url('/dist/assets/emoji_sprites/sprite_${id}.png') ${x} ${y}`;
+        style = `background: url('/dist/assets/emoji_sprites/sprite_${id}.png') ${x}px ${y}px`;
 
-    if(devicePixelRatio >= 2) style += ` / ${posX} ${posY};`;
+    if(devicePixelRatio >= 2) style += ` / ${posX}px ${posY}px;`;
 
     props = `src="/dist/assets/blank.gif" style="${style}"`;
   } else props = `src="https://vk.com/emoji/e/${code}.png"`;

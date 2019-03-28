@@ -13,5 +13,10 @@ export default {
 
       Vue.set(state.users, data.id, newUser);
     }
+  },
+  getters: {
+    user(state) {
+      return state.users[state.activeUser];
+    }
   }
 }

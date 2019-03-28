@@ -1,24 +1,29 @@
 import { DesktopUserAgent } from './user-agent';
 import querystring from 'querystring';
 import request from './request';
+import store from './store/';
 
 export const version = '5.92';
 
 function vkapi(name, params = {}) {
   return new Promise(async (resolve, reject) => {
-    console.log('[VKAPI] execute:', name, params);
+    const startTime = Date.now();
+    const user = store.getters['users/user'];
 
-    params.lang = 'ru';
-    params.v = params.v || version;
+    params = Object.assign({
+      access_token: user ? user.access_token : null,
+      lang: 'ru',
+      v: version
+    }, params);
 
     let { data } = await request({
       host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST',
-      headers: {
-        'User-Agent': DesktopUserAgent
-      }
+      headers: { 'User-Agent': DesktopUserAgent }
     }, querystring.stringify(params));
+
+    console.log(`[API] ${name} ${Date.now() - startTime}ms`);
 
     if(data.response !== undefined) resolve(data.response);
     else reject(data);
@@ -36,6 +41,7 @@ async function executeMethod() {
     resolve(await vkapi(...data));
   } catch(err) {
     console.warn('[VKAPI] error', err);
+    reject(err);
   }
 
   methods.shift();
