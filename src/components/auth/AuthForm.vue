@@ -1,6 +1,6 @@
 <template>
   <div class="auth_wrap" @keydown.enter="auth">
-    <img src="/dist/assets/logo.png" class="auth_logo">
+    <img src="~assets/logo.png" class="auth_logo">
     <div class="auth_name">VK Desktop</div>
     <input class="input" type="text" :placeholder="l('enter_login')" v-model="login">
     <div class="auth_password_wrap">
@@ -68,13 +68,13 @@
     opacity: .8;
     width: 34px;
     height: 34px;
-    background: url('/dist/assets/show.svg') 50% no-repeat;
+    background: url('~assets/show.svg') 50% no-repeat;
     transition: opacity .3s;
   }
 
   .auth_password_switch:hover { opacity: 1 }
   .auth_password_switch.hidden {
-    background-image: url('/dist/assets/hide.svg');
+    background-image: url('~assets/hide.svg');
   }
 
   .auth_logo {

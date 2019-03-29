@@ -68,8 +68,8 @@ app.on('ready', () => {
 
   win.loadURL(
     process.argv.indexOf('dev-mode') != -1
-        ? 'http://localhost:8080/'
-        : `file://${__dirname}/index.html`
+        ? 'http://localhost:8080/dist/'
+        : `file://${__dirname}/dist/index.html`
   );
 
   win.on('closed', () => win = null);

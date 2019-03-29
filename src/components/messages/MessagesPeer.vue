@@ -48,7 +48,7 @@
         else return this.owner.online_mobile ? 'mobile' : 'desktop';
       },
       photo() {
-        if(this.isChat) return this.peer.photo || './dist/assets/im_chat_photo.png';
+        if(this.isChat) return this.peer.photo || '~assets/im_chat_photo.png';
         else if(this.owner) return this.owner.photo;
       },
       chatName() {
@@ -113,7 +113,7 @@
   .photo_wrap.mobile::after {
     height: 11px;
     border-radius: 3px;
-    background: url('/dist/assets/online_mobile.svg') no-repeat #fff;
+    background: url('~assets/online_mobile.svg') no-repeat #fff;
   }
 
   .photo_wrap.desktop::after {
@@ -164,7 +164,7 @@
     width: 13px;
     height: 13px;
     margin: 3px 0 0 4px;
-    background-image: url('/dist/assets/muted.svg');
+    background-image: url('~assets/muted.svg');
     background-size: 13px;
   }
 

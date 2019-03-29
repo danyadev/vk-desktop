@@ -38,7 +38,7 @@
   	font-weight: 400;
   	font-display: block;
   	src: local('Segoe UI'),
-         url('/dist/assets/SegoeUI.ttf');
+         url('~assets/SegoeUI.ttf');
   }
 
   @font-face {
@@ -46,7 +46,7 @@
   	font-weight: 500;
   	font-display: block;
   	src: local('Segoe UI Semibold'),
-         url('/dist/assets/SegoeUISemiBold.ttf');
+         url('~assets/SegoeUISemiBold.ttf');
   }
 
   body {

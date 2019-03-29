@@ -3,9 +3,11 @@
     <div class="titlebar_drag" ref="drag">VK Desktop</div>
     <div class="titlebar_buttons">
       <div v-for="button of buttons"
-           class="titlebar_button" :class="button"
-           @click="click(button)">
-        <img :src="`./dist/assets/window_${button}.svg`">
+           class="titlebar_button"
+           :class="button"
+           @click="click(button)"
+      >
+        <img :src="`assets/window_${button}.svg`">
       </div>
     </div>
   </div>

@@ -7,8 +7,7 @@
   },
   "files": [
     "dist/**",
-    "index.js",
-    "index.html"
+    "index.js"
   ],
   "nsis": {
     "oneClick": "false",

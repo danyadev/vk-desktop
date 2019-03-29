@@ -4,60 +4,69 @@ const path = require('path');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, { mode }) => {
-  let dev = mode == 'development';
+  const isDev = mode == 'development';
 
   return {
     mode,
     target: 'electron-renderer',
-    entry: {
-      main: './src/main.js'
-    },
+    stats: { children: false },
+    entry: './src/main.js',
     output: {
-      path: path.resolve(__dirname, './dist'),
-      publicPath: dev ? 'http://localhost:8080/dist/' : '/dist/',
-      filename: '[name].js'
+      publicPath: 'dist/',
+      filename: 'bundle.js'
     },
     devServer: {
-      overlay: true,
       clientLogLevel: 'none',
+      compress: true,
+      overlay: true,
       before(app, { middleware }) {
         middleware.waitUntilValid(() => {
           spawn(electron, [path.join(__dirname, './index.js'), 'dev-mode']);
         });
       }
     },
-    devtool: dev ? 'eval-sourcemap' : false,
+    devtool: isDev ? 'eval-sourcemap' : false,
     module: {
       rules: [
         {
           test: /\.css$/,
           use: [
-            dev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+            isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
             'css-loader'
           ]
         },
         {
           test: /\.vue$/,
           loader: 'vue-loader'
+        },
+        {
+          test: /\.(png|svg|gif|ttf)$/,
+          loader: 'file-loader',
+          options: {
+            publicPath: 'assets/',
+            outputPath: 'assets/',
+            name: '[name].[ext]',
+            emitFile: false
+          }
         }
       ]
     },
     plugins: [
-      new CopyPlugin([
+      new VueLoaderPlugin(),
+      new MiniCssExtractPlugin({ filename: 'bundle.css' }),
+      new CopyWebpackPlugin([
+        { from: 'index.html', to: 'index.html' },
         { from: 'src/assets', to: 'assets' }
-      ]),
-      new MiniCssExtractPlugin({
-        filename: '[name].css'
-      }),
-      new VueLoaderPlugin()
+      ])
     ],
     resolve: {
       alias: {
+        'package-json': path.resolve(__dirname, 'package.json'),
         js: path.resolve(__dirname, 'src/js/'),
-        'package-json': path.resolve(__dirname, 'package.json')
+        assets: path.resolve(__dirname, 'src/assets/')
       }
     },
     node: {

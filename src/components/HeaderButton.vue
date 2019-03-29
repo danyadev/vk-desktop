@@ -1,7 +1,7 @@
 <template>
   <div class="open_menu" @click="openMenu">
     <!-- TODO: иконка назад -->
-    <img src="/dist/assets/menu.png">
+    <img src="~assets/menu.png">
   </div>
 </template>
 
