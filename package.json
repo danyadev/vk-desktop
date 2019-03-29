@@ -18,9 +18,8 @@
   "devDependencies": {
     "copy-webpack-plugin": "^5.0.2",
     "css-loader": "^2.1.1",
-    "electron": "^4.1.1",
+    "electron": "^4.1.2",
     "electron-builder": "^20.39.0",
-    "emoji-regex": "^8.0.0",
     "file-loader": "^3.0.1",
     "mini-css-extract-plugin": "^0.5.0",
     "vue": "^2.6.10",
