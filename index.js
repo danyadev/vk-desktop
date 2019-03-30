@@ -40,36 +40,19 @@ app.on('ready', () => {
     }
 
     // Вместо того, чтобы открывать окно при событии ready-to-show,
-    // можно открывать его после вызова JavaScript из renderer процесса,
+    // я открываю его после вызова JavaScript из renderer процесса,
     // ведь в этот момент renderer процесс уже загружен и мы уже установили
-    // окно на нужное положение, и оно не будет "улетать" после открытия.
+    // окно на нужное положение, и мы не увидим его смещение после открытия.
     win.show();
   });
 
-  // Fix: Не работала вставка текста в инпуты на macOS
-  if(process.platform == 'darwin') {
-    let menuTemplate = [{
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'pasteandmatchstyle' },
-        { role: 'delete' },
-        { role: 'selectall' }
-      ]
-    }];
-
-    Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
-  } else win.setMenu(null);
+  if(process.platform == 'darwin') require('./menu')(win);
+  else win.setMenu(null);
 
   win.loadURL(
     process.argv.indexOf('dev-mode') != -1
-        ? 'http://localhost:8080/dist/'
-        : `file://${__dirname}/dist/index.html`
+      ? 'http://localhost:8080/dist/'
+      : `file://${__dirname}/dist/index.html`
   );
 
   win.on('closed', () => win = null);
