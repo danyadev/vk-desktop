@@ -65,7 +65,7 @@
   .scrolly-bar {
     box-sizing: content-box;
     width: 7px !important;
-    right: 3px !important;
+    right: 4px !important;
     border-right: 0 solid transparent;
     transition: opacity .3s ease;
   }

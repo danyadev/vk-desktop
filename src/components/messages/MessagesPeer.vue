@@ -96,7 +96,7 @@
     position: relative;
     width: 50px;
     height: 50px;
-    margin: 10px 10px 10px 14px;
+    margin: 10px 10px 10px 16px;
   }
 
   .photo_wrap.mobile::after,
@@ -129,8 +129,8 @@
   }
 
   .content {
-    width: calc(100% - 74px);
-    padding: 14px 14px 14px 0;
+    width: calc(100% - 76px);
+    padding: 10px 16px 10px 0;
   }
 
   .peer:not(:last-child) .content { border-bottom: 1px solid #e7e8ec }
