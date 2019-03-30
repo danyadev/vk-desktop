@@ -57,9 +57,21 @@
     height: 100vh;
   }
 
-  img {
+  img, .is-scrolling {
     -webkit-user-drag: none;
     user-select: none;
+  }
+
+  .scrolly-bar {
+    box-sizing: content-box;
+    width: 7px !important;
+    right: 3px !important;
+    border-right: 0 solid transparent;
+    transition: opacity .3s ease;
+  }
+
+  .scrolly-bar:hover:before {
+    background: rgba(0, 0, 0, .4);
   }
 
   .app { height: calc(100vh - 32px) }

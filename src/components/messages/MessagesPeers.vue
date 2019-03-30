@@ -4,9 +4,12 @@
       <HeaderButton/>
       <div class="header_name">{{ l('im_header_title') }}</div>
     </div>
-    <div class="peers_wrap">
-      <MessagesPeer v-for="peer of peersList" :key="peer.id" :peer="peer"/>
-    </div>
+    <Scrolly class="peers_wrap" :passiveScroll="true">
+      <ScrollyViewport>
+        <MessagesPeer v-for="peer of peersList" :key="peer.id" :peer="peer"/>
+      </ScrollyViewport>
+      <ScrollyBar/>
+    </Scrolly>
   </div>
 </template>
 
@@ -15,12 +18,16 @@
   import { mapGetters } from 'vuex';
   import { fields, concatProfiles } from 'js/utils';
   import { parseConversation, parseMessage } from 'js/messages';
+  import { Scrolly, ScrollyViewport, ScrollyBar } from 'vue-scrolly';
 
   import MessagesPeer from './MessagesPeer.vue';
   import HeaderButton from './../HeaderButton.vue';
 
   export default {
-    components: { HeaderButton, MessagesPeer },
+    components: {
+      Scrolly, ScrollyViewport, ScrollyBar,
+      HeaderButton, MessagesPeer
+    },
     data: () => ({
       loading: true,
       loaded: false
@@ -60,6 +67,5 @@
     /* 45px - постоянная высота у .header */
     height: calc(100% - 45px);
     border-right: 1px solid #e7e8ec;
-    overflow-x: auto;
   }
 </style>
