@@ -2,6 +2,7 @@
   <div class="root">
     <Titlebar/>
     <div class="app">
+      <MainMenu/>
       <router-view/>
     </div>
   </div>
@@ -10,10 +11,11 @@
 <script>
   import { mapState } from 'vuex';
   import Titlebar from './Titlebar.vue';
+  import MainMenu from './MainMenu.vue';
 
   export default {
     name: 'App',
-    components: { Titlebar },
+    components: { Titlebar, MainMenu },
     computed: {
       ...mapState('users', ['activeUser'])
     },

@@ -9,7 +9,7 @@
   export default {
     methods: {
       openMenu() {
-        // this.$store.commit('setMenuState', true);
+        this.$store.commit('setMenuState', true);
       }
     }
   }

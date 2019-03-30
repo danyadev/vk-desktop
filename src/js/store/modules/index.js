@@ -3,9 +3,13 @@ import { getPhoto } from 'js/utils';
 
 export default {
   state: {
+    menuState: false,
     profiles: {}
   },
   mutations: {
+    setMenuState(state, value) {
+      state.menuState = value;
+    },
     addProfiles(state, profiles) {
       for(let profile of profiles) {
         profile.photo = getPhoto(profile.photo_50, profile.photo_100);
