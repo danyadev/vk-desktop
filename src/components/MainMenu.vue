@@ -21,6 +21,7 @@
           <div class="menu_item_name">{{ l('menu', route) }}</div>
           <!-- <div class="menu_item_counter">{{ counters[page] || '' }}</div> -->
         </div>
+        <div class="menu_separator"></div>
         <div class="menu_item logout" @click.stop="openModal('logout')">
           <div class="menu_item_name">{{ l('logout') }}</div>
         </div>
@@ -52,11 +53,9 @@
       openPage(page) {
         this.toggleMenu(false);
 
-        if(event.shiftKey) {
-          // Пушнуть новый раздел в историю
-        } else {
-          // Обновить активный раздел
-        }
+        // Если открыть раздел, удерживая Shift, то можно будет вернуться обратно.
+        if(event.shiftKey) this.$router.push(page);
+        else this.$router.replace(page);
       },
       openModal(name) {
         this.toggleMenu(false);
@@ -160,30 +159,31 @@
   /* остальные кнопки меню */
 
   .menu_items {
-    padding: 8px;
+    padding: 8px 0;
     overflow-y: auto;
     height: calc(100% - 125px);
   }
 
   .menu_item {
-    height: 40px;
+    height: 44px;
     display: flex;
     align-items: center;
     cursor: pointer;
-    margin-bottom: 8px;
-    border-radius: 5px;
   }
 
   .menu_item, .menu_item_icon, .menu_item_name {
     transition: background-color .3s, color .3s;
   }
 
-  .menu_item:hover { background-color: #eaeff6 }
-  .menu_item.active:not(.menu_account_item) { background-color: #eaeff6 }
-  .menu_item.active .menu_item_icon { background-color: #5181b8 }
+  .menu_item:hover { background-color: #f7f7f7 }
+  .menu_item.active { background-color: #eef1f5 }
+  .menu_item.active .menu_item_icon { background-color: #648fc1 }
   .menu_item.active .menu_item_name { color: #3e70a9 }
 
-  .menu_item_name { flex-grow: 1 }
+  .menu_item_name {
+    flex-grow: 1;
+    user-select: none;
+  }
 
   .menu_item_counter:not(:empty) {
     color: #4d5f75;
@@ -208,24 +208,17 @@
 
   /* Кнопка выхода из аккаунта */
 
-  .menu_item.logout {
-    position: relative;
-    margin-top: 20px;
-  }
-
-  .menu_item.logout::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    width: 100%;
-    border-top: 1px solid #e4e4e4;
-    pointer-events: none;
+  .menu_separator {
+    width: calc(100% - 20px);
+    height: 1px;
+    margin: 10px;
+    background-color: #e4e4e4;
   }
 
   .menu_item.logout .menu_item_name {
     margin-left: 15px;
     font-size: 16px;
     color: #de3f3f;
-    margin-top: -2px;
+    margin-top: -4px;
   }
 </style>
