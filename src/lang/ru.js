@@ -1,6 +1,8 @@
 export default {
   // Частые переводы
   cancel: 'Отмена',
+  you: 'Вы',
+  yesterday: 'вчера',
 
   // Контекстное меню
   open_console: 'Открыть консоль',
@@ -25,6 +27,5 @@ export default {
   },
 
   // Сообщения
-  im_header_title: 'Сообщения',
-  you: 'Вы'
+  im_header_title: 'Сообщения'
 }
