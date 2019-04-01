@@ -10,6 +10,17 @@ Vue.directive('emoji', (el, { value = '', modifiers }) => {
   if(el.innerHTML != value) el.innerHTML = emoji(value);
 });
 
+function nWord(count) {
+  let num1 = Math.abs(count) % 100,
+      num2 = num1 % 10;
+
+  if(num1 > 10 && num1 < 20) return 2;
+  if(num2 > 1 && num2 < 5) return 1;
+  if(num2 == 1) return 0;
+
+  return 2;
+}
+
 Vue.prototype.l = function(name, key, replaces, number) {
   if(Array.isArray(key)) {
     number = replaces;
@@ -18,14 +29,14 @@ Vue.prototype.l = function(name, key, replaces, number) {
   }
 
   if(typeof key == 'boolean') key = key ? 1 : 0;
-  if(number != undefined) key = getWordEnding(number);
+  if(number != undefined) key = nWord(number);
 
   let data = this.$store.getters['settings/lang'][name];
-  if(![null, undefined].includes(key)) data = data[key];
+  if(key != null) data = data[key];
 
   if(Array.isArray(replaces)) {
     for(let i in replaces) {
-      let regexp = new RegExp(`\\{${i}\\}`, 'g');
+      const regexp = new RegExp(`\\{${i}\\}`, 'g');
 
       data = String(data).replace(regexp, replaces[i]);
     }

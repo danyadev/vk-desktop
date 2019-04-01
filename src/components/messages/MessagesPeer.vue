@@ -13,8 +13,7 @@
       <div class="message_wrap">
         <div class="message">
           <div class="author">{{ authorName }}</div>
-          <div v-if="isDeletedContent" class="text content_deleted">({{ l('content_deleted') }})</div>
-          <div v-else class="text" v-emoji.push="message" :class="{ isAttachment }"></div>
+          <div class="text" :class="{ isAttachment, isDeletedContent }" v-emoji.push="message"></div>
         </div>
         <div class="unread" :class="{ outread: msg.outread, muted: peer.muted }">{{ peer.unread || '' }}</div>
       </div>
@@ -76,20 +75,31 @@
         }
       },
       authorName() {
+        const user = this.$store.getters['users/user'];
+
         if(this.msg.action || this.peer.channel) return '';
-        else if(this.msg.out || this.msg.from == this.$store.getters['users/user'].id) return `${this.l('you')}:`;
+        else if(this.msg.out || this.msg.from == user.id) return `${this.l('you')}:`;
         else if(this.author) {
           if(this.isChat) return `${this.author.name || this.author.first_name}:`;
         } else return '...:';
       },
       message() {
-        return this.msg.text;
+        if(this.isAttachment) {
+          const { isReplyMsg, fwdCount, attachments } = this.msg;
+
+          if(isReplyMsg) return this.l('im_replied');
+          else if(fwdCount) return this.l('im_forwarded', [fwdCount], fwdCount);
+          else return this.l('im_attachments', attachments[0].type);
+        } else return this.msg.text;
       },
       isDeletedContent() {
         return false;
       },
       isAttachment() {
-        return false;
+        const msg = this.msg;
+        const isFwd = msg.fwdCount || msg.isReplyMsg;
+
+        return !msg.text && (isFwd || !msg.action && msg.attachments.length);
       }
     }
   }
@@ -210,11 +220,8 @@
   }
 
   .text { display: inline }
-
-  .text.content_deleted {
-    display: inline;
-    color: #4a4a4a;
-  }
+  .text.isAttachment { color: #254f79 }
+  .text.isDeletedContent { color: #4a4a4a }
 
   .unread {
     padding: 0 6px;
