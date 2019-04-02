@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import emoji from './emoji';
 import { regexp } from './utils';
+import getTranslate from './getTranslate';
 
 Vue.config.productionTip = false;
 
@@ -21,26 +22,4 @@ function nWord(count) {
   return 2;
 }
 
-Vue.prototype.l = function(name, key, replaces, number) {
-  if(Array.isArray(key)) {
-    number = replaces;
-    replaces = key;
-    key = null;
-  }
-
-  if(typeof key == 'boolean') key = key ? 1 : 0;
-  if(number != undefined) key = nWord(number);
-
-  let data = this.$store.getters['settings/lang'][name];
-  if(key != null) data = data[key];
-
-  if(Array.isArray(replaces)) {
-    for(let i in replaces) {
-      const regexp = new RegExp(`\\{${i}\\}`, 'g');
-
-      data = String(data).replace(regexp, replaces[i]);
-    }
-  }
-
-  return data;
-}
+Vue.prototype.l = getTranslate;

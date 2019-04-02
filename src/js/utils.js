@@ -6,6 +6,17 @@ export const regexp = {
   push: /\[(club|id)(\d+)\|(.+?)\]/gi
 }
 
+// Заменяем опасные для разметки символы в выводимых данных на безопасные
+export function escape(text = '') {
+  if(text == null) return '';
+
+  return String(text)
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&apos;')
+    .replace(/"/g, '&quot;');
+}
+
 // Вызывает переданную функцию после прохождения delay мс после последнего вызова экземпляра
 export function debounce(fn, delay) {
   let timerId;

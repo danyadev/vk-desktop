@@ -33,5 +33,5 @@ document.addEventListener('contextmenu', (event) => {
 });
 
 window.addEventListener('resize', debounce(() => {
-  app.$store.commit('settings/setWindowBounds', win.getBounds());
+  store.commit('settings/setWindowBounds', win.getBounds());
 }, 2000));

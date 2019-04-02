@@ -24,6 +24,7 @@
 <script>
   import { mapState } from 'vuex';
   import moment from 'moment';
+  import { getServiceMessage } from 'js/messages';
 
   moment.locale('ru');
 
@@ -84,7 +85,8 @@
         } else return '...:';
       },
       message() {
-        if(this.isAttachment) {
+        if(this.msg.action) return getServiceMessage(this.msg.action, this.author);
+        else if(this.isAttachment) {
           const { isReplyMsg, fwdCount, attachments } = this.msg;
 
           if(isReplyMsg) return this.l('im_replied');
