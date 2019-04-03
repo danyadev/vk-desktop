@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import { users } from './../Storage';
+import vkapi from 'js/vkapi';
+import { fields } from 'js/utils';
 
 export default {
   state: users.data,
@@ -17,6 +19,13 @@ export default {
   getters: {
     user(state) {
       return state.users[state.activeUser];
+    }
+  },
+  actions: {
+    async updateUserData({ commit }) {
+      const [ user ] = await vkapi('users.get', { fields });
+
+      commit('updateUser', user);
     }
   }
 }

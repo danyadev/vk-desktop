@@ -1,5 +1,5 @@
 // Минимальный fields для получения профилей в приложении
-export const fields = 'photo_50,photo_100,verified,sex,first_name_acc,last_name_acc,online,last_seen,screen_name';
+export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,screen_name';
 
 // Список нужных регулярных выражений
 export const regexp = {

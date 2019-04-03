@@ -26,6 +26,8 @@
     },
     mounted() {
       this.$router.replace(this.activeUser ? '/messages' : '/auth');
+
+      if(this.activeUser) this.$store.dispatch('users/updateUserData');
     }
   }
 </script>
