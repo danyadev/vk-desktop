@@ -1,10 +1,10 @@
 <template>
-  <div class="menu_wrap" ref="wrap" :class="{ active: menuState }" @click="toggleMenu">
+  <div class="menu_wrap" :class="{ active: menuState }" ref="wrap" @click="toggleMenu">
     <div class="menu">
       <div class="account_block">
         <img class="account_background" :src="user.photo_100">
-        <div class="account_multiaccount" @click.stop="openModal('multiaccount')"></div>
-        <img class="account_photo" :src="user.photo_100" @click="/*openPage('profile')*/">
+        <div class="account_multiaccount"></div>
+        <img class="account_photo" :src="photo">
         <div class="account_name">
           {{ user.first_name }} {{ user.last_name }}
           <div v-if="user.verified" class="verified"></div>
@@ -19,12 +19,11 @@
         >
           <div class="menu_item_icon" :class="route"></div>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
-          <!-- <div class="menu_item_counter">{{ counters[page] || '' }}</div> -->
         </div>
-        <div class="menu_separator"></div>
-        <div class="menu_item logout" @click.stop="openModal('logout')">
+        <!-- <div class="menu_separator"></div>
+        <div class="menu_item logout">
           <div class="menu_item_name">{{ l('logout') }}</div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -32,14 +31,18 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex';
+  import { getPhoto } from 'js/utils';
 
   export default {
     data: () => ({
       routes: ['messages']
     }),
     computed: {
+      ...mapState(['menuState']),
       ...mapGetters('users', ['user']),
-      ...mapState(['menuState'])
+      photo() {
+        return getPhoto(this.user.photo_50, this.user.photo_100);
+      }
     },
     methods: {
       toggleMenu(event) {
@@ -56,12 +59,6 @@
         // Если открыть раздел, удерживая Shift, то можно будет вернуться обратно.
         if(event.shiftKey) this.$router.push(page);
         else this.$router.replace(page);
-      },
-      openModal(name) {
-        this.toggleMenu(false);
-
-        // Задержка нужна для того, чтобы меню успело закрыться
-        // setTimeout(() => this.$modals.open(name), 100);
       }
     }
   }

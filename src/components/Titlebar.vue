@@ -30,7 +30,7 @@
       if(this.mac) {
         this.$refs.drag.addEventListener('dblclick', () => {
           if(win.isFullScreen()) return;
-          if(win.isMaximized()) win.emit('unmaximize');
+          else if(win.isMaximized()) win.emit('unmaximize');
           else win.emit('maximize');
         });
       }

@@ -47,6 +47,7 @@ export function parseMessage(message, conversation) {
     text: escape(message.text).replace(/\n/g, '<br>'),
     from: message.from_id,
     date: message.date,
+    out: message.from_id == store.getters['users/user'].id,
     editTime: message.update_time || 0,
     hidden: message.is_hidden,
     action: message.action,
@@ -121,7 +122,7 @@ export function getServiceMessage(action, author, isFull) {
       else if(isFull) return getTranslate('im_chat_invite_user', g(0), [name(0), name(1, 1)]);
       else return getTranslate('im_chat_invite_user_short', g(1), [name(1, 1)]);
     case 'chat_kick_user':
-      if(isAuthor) return app.lgetTranslate('im_chat_left_user', g(0), [name(0)]);
+      if(isAuthor) return getTranslate('im_chat_left_user', g(0), [name(0)]);
       else if(isFull) return getTranslate('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
       else return getTranslate('im_chat_kick_user_short', g(1), [name(1, 1)]);
     default:

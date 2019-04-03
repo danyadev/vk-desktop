@@ -47,7 +47,7 @@
         return this.profiles[this.msg.from];
       },
       online() {
-        if(this.peer.owner > 2e9 || !this.owner || !this.owner.online) return '';
+        if(this.isChat || !this.owner || !this.owner.online) return '';
         else return this.owner.online_mobile ? 'mobile' : 'desktop';
       },
       photo() {
@@ -55,10 +55,11 @@
         else if(this.owner) return this.owner.photo;
       },
       chatName() {
+        const owner = this.owner;
+
         if(this.isChat) return this.peer.title || '...';
-        else if(this.owner) {
-          return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
-        } else return '...';
+        else if(owner) return owner.name || `${owner.first_name} ${owner.last_name}`;
+        else return '...';
       },
       time() {
         const nowDate = moment();
@@ -79,10 +80,10 @@
         const user = this.$store.getters['users/user'];
 
         if(this.msg.action || this.peer.channel) return '';
-        else if(this.msg.out || this.msg.from == user.id) return `${this.l('you')}:`;
-        else if(this.author) {
-          if(this.isChat) return `${this.author.name || this.author.first_name}:`;
-        } else return '...:';
+        else if(this.msg.out) return `${this.l('you')}:`;
+        else if(!this.isChat) return '';
+        else if(this.author) return `${this.author.name || this.author.first_name}:`;
+        else return '...:';
       },
       message() {
         if(this.msg.action) return getServiceMessage(this.msg.action, this.author);
@@ -95,7 +96,7 @@
         } else return this.msg.text;
       },
       isDeletedContent() {
-        return false;
+        return !this.message;
       },
       isAttachment() {
         const msg = this.msg;

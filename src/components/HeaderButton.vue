@@ -1,12 +1,18 @@
 <template>
   <div class="open_menu" @click="openMenu">
-    <!-- TODO: иконка назад -->
-    <img src="~assets/menu.png">
+    <img v-if="showBackIcon" src="~assets/back.svg">
+    <img v-else src="~assets/menu.png">
   </div>
 </template>
 
 <script>
   export default {
+    computed: {
+      showBackIcon() {
+        // TODO: vue router history length (if > 1 then true)
+        return false;
+      }
+    },
     methods: {
       openMenu() {
         this.$store.commit('setMenuState', true);
