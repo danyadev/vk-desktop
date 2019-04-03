@@ -4,7 +4,7 @@
       <div class="account_block">
         <img class="account_background" :src="user.photo_100">
         <div class="account_multiaccount"></div>
-        <img class="account_photo" :src="photo">
+        <img class="account_photo" :src="user.photo_100">
         <div class="account_name">
           {{ user.first_name }} {{ user.last_name }}
           <div v-if="user.verified" class="verified"></div>
@@ -31,7 +31,6 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex';
-  import { getPhoto } from 'js/utils';
 
   export default {
     data: () => ({
@@ -39,10 +38,7 @@
     }),
     computed: {
       ...mapState(['menuState']),
-      ...mapGetters('users', ['user']),
-      photo() {
-        return getPhoto(this.user.photo_50, this.user.photo_100);
-      }
+      ...mapGetters('users', ['user'])
     },
     methods: {
       toggleMenu(event) {
