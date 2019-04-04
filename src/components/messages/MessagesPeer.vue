@@ -23,10 +23,8 @@
 
 <script>
   import { mapState } from 'vuex';
-  import moment from 'moment';
   import { getServiceMessage } from 'js/messages';
-
-  moment.locale('ru');
+  import { getShortDate } from 'js/date';
 
   export default {
     props: ['peer'],
@@ -62,19 +60,7 @@
         else return '...';
       },
       time() {
-        const nowDate = moment();
-        const msgDate = moment(this.msg.date * 1000);
-
-        if(msgDate.year() < nowDate.year()) return msgDate.year();
-        else if(msgDate._d.toLocaleDateString() == nowDate._d.toLocaleDateString()) {
-          return msgDate.format('HH:mm');
-        } else {
-          const yesterday = nowDate.clone().add(-1, 'day').date();
-          const isThisMonth = nowDate.month() == msgDate.month();
-
-          if(isThisMonth && yesterday == msgDate.date()) return this.l('yesterday');
-          else return msgDate.format('DD MMM');
-        }
+        return getShortDate(new Date(this.msg.date * 1000));
       },
       authorName() {
         const user = this.$store.getters['users/user'];
