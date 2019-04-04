@@ -5,6 +5,8 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = (env, { mode }) => {
   const isDev = mode == 'development';
@@ -13,6 +15,35 @@ module.exports = (env, { mode }) => {
     mode,
     target: 'electron-renderer',
     stats: { children: false },
+    optimization: {
+      minimizer: [
+        new TerserWebpackPlugin({
+          cache: true,
+          parallel: true,
+          terserOptions: {
+            ecma: 8,
+            output: {
+              comments: false
+            },
+            compress: {
+              arguments: true,
+              ecma: 8,
+              warnings: true,
+              keep_fargs: false,
+              toplevel: true,
+              unsafe: true,
+              unsafe_arrows: true,
+              unsafe_comps: true,
+              unsafe_methods: true,
+              unsafe_proto: true,
+              unsafe_regexp: true,
+              unsafe_undefined: true
+            }
+          }
+        }),
+        new OptimizeCSSAssetsWebpackPlugin()
+      ]
+    },
     entry: './src/main.js',
     output: {
       publicPath: 'dist/',
