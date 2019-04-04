@@ -19,12 +19,12 @@ export const modifiers = {
 
 // Преобразует эмодзи символ в hex-код
 export function getEmojiCode(emoji) {
-  let symbol = emoji
-        .split('')
-        .map((e) => e.charCodeAt(0).toString(16))
-        .filter((e) => 'fe0f' != e.toLowerCase())
-        .map((e) => String.fromCodePoint(parseInt(e, 16)))
-        .join('');
+  const symbol = emoji
+    .split('')
+    .map((e) => e.charCodeAt(0).toString(16))
+    .filter((e) => 'fe0f' != e.toLowerCase())
+    .map((e) => String.fromCodePoint(parseInt(e, 16)))
+    .join('');
 
   return encodeURIComponent(symbol).replace(/%/g, '').toLowerCase();
 }

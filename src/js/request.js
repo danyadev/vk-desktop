@@ -4,10 +4,10 @@ import fs from 'fs';
 
 function request(params, post = '') {
   return new Promise((resolve, reject) => {
-    let req = https.request(params, (res) => {
-      if(params.pipe) res.pipe(params.pipe);
+    const req = https.request(params, (res) => {
+      const chunks = [];
 
-      let chunks = [];
+      if(params.pipe) res.pipe(params.pipe);
 
       res.on('data', (chunk) => chunks.push(chunk));
       res.on('end', () => {
@@ -23,11 +23,11 @@ function request(params, post = '') {
     if(params.timeout) req.setTimeout(params.timeout, req.abort);
 
     if(params.method == 'POST' && params.multipart) {
-      let data = params.multipart,
-          names = Object.keys(params.multipart),
-          boundary = Math.random().toString(16),
-          body = renderMultipartBody(names, data, boundary),
-          length = 0;
+      const data = params.multipart;
+      const names = Object.keys(data);
+      const boundary = Math.random().toString(16);
+      const body = renderMultipartBody(names, data, boundary);
+      let length = 0;
 
       body.forEach((part) => length += Buffer.byteLength(part));
 
@@ -51,11 +51,10 @@ function renderMultipartBody(names, data, boundary) {
 
   names.forEach((name, i) => {
     if(data[name].value) {
-      body[i] =
-          `--${boundary}\r\n` +
-          `Content-Type: ${data[name].contentType}\r\n` +
-          `Content-Disposition: form-data; name="${name}"; filename="${data[name].filename}"\r\n` +
-          `Content-Transfer-Encoding: binary\r\n\r\n`
+      body[i] = `--${boundary}\r\n` +
+                `Content-Type: ${data[name].contentType}\r\n` +
+                `Content-Disposition: form-data; name="${name}"; filename="${data[name].filename}"\r\n` +
+                'Content-Transfer-Encoding: binary\r\n\r\n'
     } else {
       body[i] = `--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${data[name]}`;
     }
@@ -68,7 +67,7 @@ function sendMultipartParts(boundary, body, data, names, req, i) {
   req.write(`\r\n${body[i]}`);
 
   function write() {
-    if(i+1 <= names.length-1) {
+    if(names.length-1 >= i+1) {
       req.write(`\r\n--${boundary}`);
       sendMultipartParts(boundary, body, data, names, req, i+1);
     } else req.end(`\r\n--${boundary}--`);
@@ -84,11 +83,12 @@ async function isConnected() {
   catch(e) { return false }
 }
 
-let reqList = [],
-    inWork = false;
+const reqList = [];
+let inWork = false;
 
 async function resolveRequest() {
-  let { data, resolve, reject } = reqList[0];
+  const { data, resolve, reject } = reqList[0];
+
   inWork = true;
 
   try {

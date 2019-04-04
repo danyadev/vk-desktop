@@ -1,7 +1,7 @@
 import { settings } from './../Storage';
 
 function getLangFile(name) {
-  let lang = require(`js/../lang/${name}.js`).default;
+  const lang = require(`js/../lang/${name}.js`).default;
 
   if(name != 'ru') return Object.assign(getLangFile('ru'), lang);
   else return lang;

@@ -60,9 +60,9 @@ export async function getDesktopToken(androidToken) {
     headers: { 'User-Agent': DesktopUserAgent }
   };
 
-  let { data } = await request(reqParams),
-      link = 'https://oauth.vk.com' + data.match(/\/auth_by_token?.+=\w+/)[0],
-      { headers } = await request(link);
+  const { data } = await request(reqParams);
+  const link = 'https://oauth.vk.com' + data.match(/\/auth_by_token?.+=\w+/)[0];
+  const { headers } = await request(link);
 
   return headers.location.match(/#access_token=([A-z0-9]{85})/)[1];
 }

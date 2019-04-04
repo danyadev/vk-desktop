@@ -23,8 +23,9 @@ export default {
       });
     },
     lastMessage: (state, getters) => (peerID) => {
-      let peer = state.conversations[peerID];
-      if(peer) return peer.lastMsg;
+      const peer = state.conversations[peerID];
+
+      return peer && peer.lastMsg;
     },
   }
 }

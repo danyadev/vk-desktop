@@ -10,8 +10,8 @@ export default {
       state.activeUser = id;
     },
     updateUser(state, data) {
-      let user = state.users[data.id],
-          newUser = Object.assign({}, user, data);
+      const user = state.users[data.id];
+      const newUser = Object.assign({}, user, data);
 
       Vue.set(state.users, data.id, newUser);
     }

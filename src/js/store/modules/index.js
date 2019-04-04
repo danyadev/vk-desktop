@@ -17,8 +17,8 @@ export default {
       }
     },
     updateProfile(state, profile) {
-      let old = state.profiles[profile.id] || {},
-          user = { ...old, ...profile };
+      const old = state.profiles[profile.id] || {};
+      const user = { ...old, ...profile };
 
       user.photo = getPhoto(user.photo_50, user.photo_100);
       Vue.set(state.profiles, user.id, user);

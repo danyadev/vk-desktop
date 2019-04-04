@@ -4,14 +4,14 @@ import emoji from './emoji';
 import getTranslate from './getTranslate';
 
 export function parseConversation(conversation) {
-  let isChat = conversation.peer.type == 'chat',
-      isChannel = isChat && conversation.chat_settings.is_group_channel,
-      chatPhoto, chatTitle;
+  const isChat = conversation.peer.type == 'chat';
+  const isChannel = isChat && conversation.chat_settings.is_group_channel;
+  let chatPhoto, chatTitle;
 
   if(isChat) {
-    let photos = conversation.chat_settings.photo;
-    if(photos) chatPhoto = getPhoto(photos.photo_50, photos.photo_100);
+    const photos = conversation.chat_settings.photo;
 
+    chatPhoto = photos && getPhoto(photos.photo_50, photos.photo_100);
     chatTitle = escape(conversation.chat_settings.title).replace(/\n/g, ' ');
   }
 
@@ -33,8 +33,6 @@ export function parseConversation(conversation) {
 }
 
 export function parseMessage(message, conversation) {
-  if(!message) return;
-
   if(message.geo) {
     message.attachments.push({
       type: 'geo',
@@ -42,7 +40,7 @@ export function parseMessage(message, conversation) {
     });
   }
 
-  let msg = {
+  const msg = {
     id: message.id,
     text: escape(message.text).replace(/\n/g, '<br>'),
     from: message.from_id,
@@ -61,10 +59,8 @@ export function parseMessage(message, conversation) {
   }
 
   if(conversation) {
-    Object.assign(msg, {
-      unread: conversation.in_read < message.id,
-      outread: conversation.out_read < message.id && message.out
-    });
+    msg.unread = conversation.in_read < message.id;
+    msg.outread = message.out && conversation.out_read < message.id;
   }
 
   return msg;

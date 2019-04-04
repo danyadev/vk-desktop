@@ -11,12 +11,12 @@ function vkapi(name, params = {}) {
     const user = store.getters['users/user'];
 
     params = Object.assign({
-      access_token: user ? user.access_token : null,
+      access_token: user && user.access_token,
       lang: 'ru',
       v: version
     }, params);
 
-    let { data } = await request({
+    const { data } = await request({
       host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST',
@@ -34,7 +34,8 @@ let methods = [],
     inWork = false;
 
 async function executeMethod() {
-  let { data, resolve, reject } = methods[0];
+  const { data, resolve, reject } = methods[0];
+
   inWork = true;
 
   try {

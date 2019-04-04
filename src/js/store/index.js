@@ -1,13 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import path from 'path';
-
 import { settings, users } from './Storage';
 import rootModule from './modules/index';
 
 Vue.use(Vuex);
 
-let modules = {};
+const modules = {};
 
 ['messages', 'settings', 'users'].forEach((name) => {
   modules[name] = Object.assign(require(`./modules/${name}`).default, {
@@ -15,7 +14,7 @@ let modules = {};
   });
 });
 
-let store = new Vuex.Store({ ...rootModule, modules });
+const store = new Vuex.Store({ ...rootModule, modules });
 
 store.subscribe(({ type }, store) => {
   if(/^settings\//.test(type)) settings.update(store.settings);

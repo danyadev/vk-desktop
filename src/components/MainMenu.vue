@@ -20,10 +20,6 @@
           <div class="menu_item_icon" :class="route"></div>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
         </div>
-        <!-- <div class="menu_separator"></div>
-        <div class="menu_item logout">
-          <div class="menu_item_name">{{ l('logout') }}</div>
-        </div> -->
       </div>
     </div>
   </div>

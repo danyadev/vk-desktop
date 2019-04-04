@@ -1,10 +1,10 @@
 import { remote as electron } from 'electron';
-
 const win = electron.getCurrentWindow();
 
 class Storage {
   constructor(name, defaults = {}) {
-    let storageData = JSON.parse(localStorage.getItem(name) || '{}');
+    const storageData = JSON.parse(localStorage.getItem(name) || '{}');
+
     this.data = Object.assign({}, defaults, storageData);
     this.name = name;
     this.save();

@@ -37,7 +37,7 @@
     },
     methods: {
       async load() {
-        let { items, profiles, groups } = await vkapi('messages.getConversations', {
+        const { items, profiles, groups } = await vkapi('messages.getConversations', {
           offset: this.peersList.length,
           fields: fields,
           extended: true
@@ -61,7 +61,7 @@
   }
 </script>
 
-<style media="screen">
+<style>
   .peers_wrap {
     width: 100%;
     /* 45px - постоянная высота у .header */
