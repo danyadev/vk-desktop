@@ -132,7 +132,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, .4);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
   }
 
   .account_name {

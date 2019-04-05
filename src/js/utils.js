@@ -48,3 +48,11 @@ export function concatProfiles(profiles = [], groups = []) {
 export function getPhoto(p1, p2) {
   return devicePixelRatio >= 2 ? p2 : p1;
 }
+
+// Возвращает функцию, которая вызывает колбэк, если юзер долистал
+// список до конца, чтобы загрузить новую часть списка
+export function endScroll(callback) {
+  return function({ y: { scrollTop, scrollHeight, viewportHeight } }) {
+    if(scrollTop + viewportHeight + 100 >= scrollHeight) callback.bind(this)();
+  }
+}

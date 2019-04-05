@@ -4,8 +4,8 @@
       <HeaderButton/>
       <div class="header_name">{{ l('im_header_title') }}</div>
     </div>
-    <Scrolly class="peers_wrap" :passiveScroll="true">
-      <ScrollyViewport>
+    <Scrolly class="peers_wrap" :passiveScroll="true" @scrollchange="onScroll">
+      <ScrollyViewport :class="{ loading }">
         <MessagesPeer v-for="peer of peersList" :key="peer.id" :peer="peer"/>
       </ScrollyViewport>
       <ScrollyBar/>
@@ -16,7 +16,7 @@
 <script>
   import vkapi from 'js/vkapi';
   import { mapGetters } from 'vuex';
-  import { fields, concatProfiles } from 'js/utils';
+  import { fields, concatProfiles, endScroll } from 'js/utils';
   import { parseConversation, parseMessage } from 'js/messages';
   import { Scrolly, ScrollyViewport, ScrollyBar } from 'vue-scrolly';
 
@@ -53,7 +53,16 @@
             lastMsg: parseMessage(last_message, conversation)
           });
         }
-      }
+
+        this.loading = false;
+        if(items.length < 20) this.loaded = true;
+      },
+      onScroll: endScroll(function() {
+        if(!this.loading && !this.loaded) {
+          this.loading = true;
+          this.load();
+        }
+      })
     },
     mounted() {
       this.load();

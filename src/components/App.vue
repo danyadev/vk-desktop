@@ -160,4 +160,19 @@
     padding: 0 0 1px 10px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   }
+
+  @keyframes spinner {
+    from { transform: rotate(0deg) }
+    to { transform: rotate(360deg) }
+  }
+
+  .loading::after {
+    content: '';
+    display: block;
+    width: 18px;
+    height: 18px;
+    margin: 10px auto;
+    animation: spinner .7s infinite linear;
+    background: url('~assets/spinner.png') 0 / contain;
+  }
 </style>
