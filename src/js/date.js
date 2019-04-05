@@ -1,5 +1,5 @@
 // В будущем добавится en и uk
-import { ru } from 'date-fns/locale/ru';
+import { ru } from 'date-fns/locale';
 import { format, subDays, isSameDay } from 'date-fns';
 import getTranslate from './getTranslate';
 
