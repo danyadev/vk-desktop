@@ -61,6 +61,15 @@
     height: 100vh;
   }
 
+  a, .link {
+    display: inline-block;
+    color: #254f79;
+    cursor: pointer;
+    transition: color .3s;
+  }
+
+  a:hover, .link:hover { text-decoration: underline }
+
   img, .is-scrolling {
     -webkit-user-drag: none;
     user-select: none;

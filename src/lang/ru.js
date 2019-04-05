@@ -29,6 +29,8 @@ export default {
 
   // Сообщения
   im_header_title: 'Сообщения',
+  im_choose_chat_1: 'Выберите диалог или',
+  im_choose_chat_2: 'создайте новый',
 
   // Вложения в сообщениях
   im_replied: 'Ответ на сообщение',
