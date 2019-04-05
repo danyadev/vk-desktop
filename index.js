@@ -4,16 +4,15 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 const { app, BrowserWindow, Menu } = require('electron');
 const fs = require('fs');
-let win;
 
 app.on('ready', () => {
-  if(fs.readdirSync('.').find((file) => file == 'vue-devtools')) {
+  const { screen } = require('electron');
+
+  if(fs.existsSync('./vue-devtools')) {
     BrowserWindow.addDevToolsExtension('./vue-devtools');
   }
 
-  const { screen } = require('electron');
-
-  win = new BrowserWindow({
+  const win = new BrowserWindow({
     minWidth: 360,
     minHeight: 480,
     show: false,
@@ -22,12 +21,12 @@ app.on('ready', () => {
   });
 
   win.webContents.once('dom-ready', async () => {
-    let data = await win.webContents.executeJavaScript('localStorage.getItem("settings")'),
-        { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
     if(data) {
-      let { window } = JSON.parse(data),
-          maximized = window.width >= width && window.height >= height;
+      const { window } = JSON.parse(data);
+      const maximized = window.width >= width && window.height >= height;
 
       win.setBounds({
         x: window.x,
@@ -39,10 +38,9 @@ app.on('ready', () => {
       if(maximized) win.maximize();
     }
 
-    // Вместо того, чтобы открывать окно при событии ready-to-show,
-    // я открываю его после вызова JavaScript из renderer процесса,
-    // ведь в этот момент renderer процесс уже загружен и мы уже установили
-    // окно на нужное положение, и мы не увидим его смещение после открытия.
+    // Для того, чтобы не видеть скачков окна при открытии приложения,
+    // я открываю его после события dom-ready и executeJavaScript, что дает
+    // гарантию того, что приложение уже установлено на нужное положение.
     win.show();
   });
 
@@ -54,8 +52,6 @@ app.on('ready', () => {
       ? 'http://localhost:8080/dist/'
       : `file://${__dirname}/dist/index.html`
   );
-
-  win.on('closed', () => win = null);
 });
 
 app.on('window-all-closed', app.exit);
