@@ -41,16 +41,14 @@
   	font-family: 'Segoe UI';
   	font-weight: 400;
   	font-display: block;
-  	src: local('Segoe UI'),
-         url('~assets/SegoeUI.ttf');
+  	src: url('~assets/SegoeUI.ttf');
   }
 
   @font-face {
   	font-family: 'Segoe UI';
   	font-weight: 500;
   	font-display: block;
-  	src: local('Segoe UI Semibold'),
-         url('~assets/SegoeUISemiBold.ttf');
+  	src: url('~assets/SegoeUISemiBold.ttf');
   }
 
   body {
