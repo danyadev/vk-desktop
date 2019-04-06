@@ -175,4 +175,12 @@
     animation: spinner .7s infinite linear;
     background: url('~assets/spinner.png') 0 / contain;
   }
+
+  .verified {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    background: url('~assets/verified.svg');
+  }
 </style>
