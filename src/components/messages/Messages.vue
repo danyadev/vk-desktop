@@ -1,22 +1,19 @@
 <template>
-  <div class="messages_container">
+  <div class="messages_container" :class="{ hasChat }">
     <MessagesPeers/>
-    <MessagesChatEmpty/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-  import { mapState } from 'vuex';
   import MessagesPeers from './MessagesPeers.vue';
-  import MessagesChatEmpty from './MessagesChatEmpty.vue';
 
   export default {
-    components: {
-      MessagesPeers,
-      MessagesChatEmpty
-    },
+    components: { MessagesPeers },
     computed: {
-      ...mapState('messages', ['activeChat'])
+      hasChat() {
+        return this.$route.name == 'chat';
+      }
     }
   }
 </script>

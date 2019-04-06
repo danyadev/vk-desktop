@@ -24,7 +24,7 @@ document.addEventListener('contextmenu', (event) => {
       click: win.openDevTools
     },
     {
-      label: app.l('open_in_devtools'),
+      label: app.l('open_devtools'),
       click(temp, win) {
         win.inspectElement(event.x, event.y);
       }

@@ -1,4 +1,4 @@
-import { settings } from './../Storage';
+import { settings } from '../Storage';
 
 function getLangFile(name) {
   const lang = require(`js/../lang/${name}.js`).default;

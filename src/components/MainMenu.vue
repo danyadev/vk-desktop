@@ -14,8 +14,8 @@
       <div class="menu_items">
         <div v-for="route of routes"
              class="menu_item"
-             :class="{ active: $route.path == `/${route}` }"
-             @click.stop="openPage(route)"
+             :class="{ active: isActiveRoute(`/${route}`) }"
+             @click.stop="openPage(`/${route}`)"
         >
           <div class="menu_item_icon" :class="route"></div>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
@@ -45,12 +45,17 @@
 
         this.$store.commit('setMenuState', state);
       },
-      openPage(page) {
+      isActiveRoute(route) {
+        const regex = new RegExp(`/${route.slice(1)}($|/)`);
+
+        return regex.test(this.$route.path);
+      },
+      openPage(route) {
         this.toggleMenu(false);
 
-        // Если открыть раздел, удерживая Shift, то можно будет вернуться обратно.
-        if(event.shiftKey) this.$router.push(page);
-        else this.$router.replace(page);
+        if(this.isActiveRoute(route)) return;
+        else if(event.shiftKey) this.$router.push(route);
+        else this.$router.replace(route);
       }
     }
   }

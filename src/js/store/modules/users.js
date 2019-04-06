@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { users } from './../Storage';
+import { users } from '../Storage';
 import vkapi from 'js/vkapi';
 import { fields } from 'js/utils';
 

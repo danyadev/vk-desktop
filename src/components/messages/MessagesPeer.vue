@@ -1,5 +1,5 @@
 <template>
-  <div class="peer">
+  <div class="peer" @click="openChat">
     <div class="photo_wrap" :class="online"><img :src="photo"></div>
     <div class="content">
       <div class="title">
@@ -27,7 +27,7 @@
   import { getShortDate } from 'js/date';
 
   export default {
-    props: ['peer'],
+    props: ['peer', 'msg'],
     data() {
       return {
         isChat: this.peer.type == 'chat'
@@ -35,9 +35,6 @@
     },
     computed: {
       ...mapState(['profiles']),
-      msg() {
-        return this.$store.getters['messages/lastMessage'](this.peer.id);
-      },
       owner() {
         return this.profiles[this.peer.owner];
       },
@@ -89,6 +86,11 @@
         const isFwd = msg.fwdCount || msg.isReplyMsg;
 
         return !msg.text && (isFwd || !msg.action && msg.attachments.length);
+      }
+    },
+    methods: {
+      openChat() {
+        this.$router.replace(`/messages/${this.peer.id}`);
       }
     }
   }

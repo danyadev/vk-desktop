@@ -7,7 +7,7 @@ export default {
 
   // Контекстное меню
   open_console: 'Открыть консоль',
-  open_in_devtools: 'Открыть в DevTools',
+  open_devtools: 'Открыть в DevTools',
 
   // Авторизация
   enter_login: 'Введите логин',

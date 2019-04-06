@@ -6,7 +6,7 @@
     </div>
     <Scrolly class="peers_wrap" :passiveScroll="true" @scrollchange="onScroll">
       <ScrollyViewport :class="{ loading }">
-        <MessagesPeer v-for="peer of peersList" :key="peer.id" :peer="peer"/>
+        <MessagesPeer v-for="{ peer, msg } of conversations" :key="peer.id" :peer="peer" :msg="msg"/>
       </ScrollyViewport>
       <ScrollyBar/>
     </Scrolly>
@@ -21,7 +21,7 @@
   import { Scrolly, ScrollyViewport, ScrollyBar } from 'vue-scrolly';
 
   import MessagesPeer from './MessagesPeer.vue';
-  import HeaderButton from './../HeaderButton.vue';
+  import HeaderButton from '../HeaderButton.vue';
 
   export default {
     components: {
@@ -33,12 +33,14 @@
       loaded: false
     }),
     computed: {
-      ...mapGetters('messages', ['peersList'])
+      ...mapGetters('messages', {
+        conversations: 'conversationsList'
+      })
     },
     methods: {
       async load() {
         const { items, profiles, groups } = await vkapi('messages.getConversations', {
-          offset: this.peersList.length,
+          offset: this.conversations.length,
           fields: fields,
           extended: true
         });
@@ -50,7 +52,7 @@
 
           this.$store.commit('messages/addPeer', {
             peer: parseConversation(conversation),
-            lastMsg: parseMessage(last_message, conversation)
+            msg: parseMessage(last_message, conversation)
           });
         }
 
