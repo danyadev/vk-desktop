@@ -74,15 +74,14 @@
   }
 
   .scrolly-bar {
-    box-sizing: content-box;
+    box-sizing: content-box !important;
     width: 7px !important;
-    right: 4px !important;
-    border-right: 0 solid transparent;
-    transition: opacity .3s ease;
+    border: 4px solid transparent !important;
+    transition: opacity .3s ease !important;
   }
 
   .scrolly-bar:hover:before {
-    background: rgba(0, 0, 0, .4);
+    background: rgba(0, 0, 0, .4) !important;
   }
 
   .app { height: calc(100vh - 32px) }
