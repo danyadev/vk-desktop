@@ -172,7 +172,7 @@
 
   .verified {
     flex: none;
-    margin: 1px 0 1px 3px;
+    margin: 1px 0 0 4px;
   }
 
   .name_wrap .muted {

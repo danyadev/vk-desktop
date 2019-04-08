@@ -6,7 +6,7 @@
       <div class="header_center">
         <div class="name_wrap">
           <div class="name" v-emoji="title"></div>
-          <div class="verified" v-if="owner && owner.verified"></div>
+          <div class="verified white" v-if="owner && owner.verified"></div>
           <div class="messages_muted" v-if="peer && peer.muted"></div>
         </div>
         <div class="online">{{ online }}</div>
@@ -113,7 +113,7 @@
 
   .name_wrap .verified {
     flex: none;
-    margin-left: 3px;
+    margin-left: 4px;
   }
 
   .name_wrap .messages_muted {

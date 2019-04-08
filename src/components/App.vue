@@ -178,6 +178,11 @@
     width: 16px;
     height: 16px;
     vertical-align: middle;
-    background: url('~assets/verified.svg');
+    background-image: url('~assets/verified.svg');
+  }
+
+  .verified.white {
+    background-image: url('~assets/verified_white.svg');
+    opacity: .7;
   }
 </style>
