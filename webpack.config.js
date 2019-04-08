@@ -46,7 +46,7 @@ module.exports = (env, { mode }) => {
     },
     entry: './src/main.js',
     output: {
-      publicPath: 'dist/',
+      publicPath: 'http://localhost:8080/dist',
       filename: 'bundle.js'
     },
     devServer: {
@@ -78,7 +78,6 @@ module.exports = (env, { mode }) => {
           loader: 'file-loader',
           options: {
             publicPath: 'assets/',
-            outputPath: 'assets/',
             name: '[name].[ext]',
             emitFile: false
           }
@@ -99,9 +98,6 @@ module.exports = (env, { mode }) => {
         js: path.resolve(__dirname, 'src/js/'),
         assets: path.resolve(__dirname, 'src/assets/')
       }
-    },
-    node: {
-      __dirname: true
     }
   };
 }
