@@ -20,6 +20,8 @@
 </template>
 
 <script>
+  import { getLastOnlineDate } from 'js/date';
+
   export default {
     computed: {
       id() {
@@ -48,7 +50,23 @@
         } else return '...';
       },
       online() {
-        return 'что...';
+        if(this.id < 0) return this.l('im_chat_group');
+        else if(this.id > 2e9) {
+          const members = this.peer.members;
+
+          if(!this.peer.can_write.allowed) return this.l('im_chat_cant_write');
+          else if(this.peer.left) return this.l('im_chat_left');
+          else return this.l('im_chat_members', [members], members);
+        } else {
+          if(!this.owner || !this.owner.last_seen) return this.l('loading');
+          if(this.owner.deactivated) return this.l('im_user_deleted');
+
+          const { online, mobile, time } = this.owner.last_seen;
+
+          if(mobile) return this.l('im_chat_online', 1);
+          else if(online) return this.l('im_chat_online', 0);
+          else return getLastOnlineDate(new Date(time * 1000), this.owner.sex == 1);
+        }
       }
     },
     methods: {

@@ -4,6 +4,11 @@ export default {
   you: 'Вы',
   you2: 'Вас',
   yesterday: 'вчера',
+  loading: 'Загрузка..',
+
+  // Время
+  date_now: 'только что',
+  date_at: 'в',
 
   // Контекстное меню
   open_console: 'Открыть консоль',
@@ -31,6 +36,13 @@ export default {
   im_header_title: 'Сообщения',
   im_choose_chat_1: 'Выберите диалог или',
   im_choose_chat_2: 'создайте новый',
+  im_chat_members: ['{0} участник', '{0} участника', '{0} участников'],
+  im_chat_online: ['Онлайн', 'Онлайн с телефона', 'Онлайн с {0}'],
+  im_chat_was_online: ['Был в сети {0}', 'Была в сети {0}'],
+  im_chat_group: 'Сообщество',
+  im_chat_cant_write: 'Отправка сообщений ограничена',
+  im_chat_left: 'Вы вышли из беседы',
+  im_user_deleted: 'Страница удалена',
 
   // Вложения в сообщениях
   im_replied: 'Ответ на сообщение',

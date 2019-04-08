@@ -42,8 +42,8 @@
         return this.profiles[this.msg.from];
       },
       online() {
-        if(this.isChat || !this.owner || !this.owner.online) return '';
-        else return this.owner.online_mobile ? 'mobile' : 'desktop';
+        if(this.isChat || !this.owner || this.peer.id < 0 || !this.owner.last_seen.online) return '';
+        else return this.owner.last_seen.mobile ? 'mobile' : 'desktop';
       },
       photo() {
         if(this.isChat) return this.peer.photo || 'assets/im_chat_photo.png';
