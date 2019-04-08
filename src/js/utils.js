@@ -53,6 +53,10 @@ export function getPhoto(p1, p2) {
 // список до конца, чтобы загрузить новую часть списка
 export function endScroll(callback) {
   return function({ y: { scrollTop, scrollHeight, viewportHeight } }) {
+    // Если блок пустой либо видимая область блока = 0px, то игнорировать это событие.
+    // Обычно возникает когда у блока стоит display: none или он скрыт другим способом.
+    if(!scrollHeight || !viewportHeight) return;
+
     if(scrollTop + viewportHeight + 100 >= scrollHeight) callback.bind(this)();
   }
 }
