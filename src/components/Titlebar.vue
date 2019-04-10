@@ -1,10 +1,9 @@
 <template>
-  <div class="titlebar" :class="{ maximized, mac }">
+  <div :class="['titlebar', { maximized, mac }]">
     <div class="titlebar_drag" ref="drag">VK Desktop</div>
     <div class="titlebar_buttons">
       <div v-for="button of buttons"
-           class="titlebar_button"
-           :class="button"
+           :class="['titlebar_button', button]"
            @click="click(button)"
       >
         <img :src="`assets/window_${button}.svg`">

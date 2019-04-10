@@ -1,6 +1,6 @@
 <template>
   <div class="peer" @click="openChat">
-    <div class="photo_wrap" :class="online"><img :src="photo"></div>
+    <div :class="['photo_wrap', online]"><img :src="photo"></div>
     <div class="content">
       <div class="title">
         <div class="name_wrap">
@@ -13,9 +13,9 @@
       <div class="message_wrap">
         <div class="message">
           <div class="author">{{ authorName }}</div>
-          <div class="text" :class="{ isAttachment, isDeletedContent }" v-emoji.push="message"></div>
+          <div :class="['text', { isAttachment, isDeletedContent }]" v-emoji.push="message"></div>
         </div>
-        <div class="unread" :class="{ outread: msg.outread, muted: peer.muted }">{{ peer.unread || '' }}</div>
+        <div :class="['unread', { outread: msg.outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
       </div>
     </div>
   </div>

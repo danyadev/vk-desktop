@@ -1,5 +1,5 @@
 <template>
-  <div class="messages_container" :class="{ hasChat }" @keyup.esc="closeChat" tabindex="0">
+  <div :class="['messages_container', { hasChat }]" @keyup.esc="closeChat" tabindex="0">
     <MessagesPeers/>
     <router-view/>
   </div>

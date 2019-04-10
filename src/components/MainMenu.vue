@@ -1,5 +1,5 @@
 <template>
-  <div class="menu_wrap" :class="{ active: menuState }" ref="wrap" @click="toggleMenu">
+  <div :class="['menu_wrap', { active: menuState }]" ref="wrap" @click="toggleMenu">
     <div class="menu">
       <div class="account_block">
         <img class="account_background" :src="user.photo_100">
@@ -13,11 +13,12 @@
       </div>
       <div class="menu_items">
         <div v-for="route of routes"
-             class="menu_item"
-             :class="{ active: isActiveRoute(`/${route}`) }"
+             :class="['menu_item', { active: isActiveRoute(`/${route}`) }]"
              @click.stop="openPage(`/${route}`)"
         >
-          <div class="menu_item_icon" :class="route"></div>
+          <div class="menu_item_icon"
+               :style="{ webkitMaskImage: `url('assets/menu_${route}.svg')` }"
+          ></div>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
         </div>
       </div>
@@ -46,7 +47,7 @@
         this.$store.commit('setMenuState', state);
       },
       isActiveRoute(route) {
-        const regex = new RegExp(`/${route.slice(1)}($|/)`);
+        const regex = new RegExp(`${route}($|/)`);
 
         return regex.test(this.$route.path);
       },
@@ -196,9 +197,6 @@
     -webkit-mask-size: cover;
     transition: background-color .3s;
   }
-
-  .menu_item_icon.messages { -webkit-mask-image: url('~assets/menu_messages.svg') }
-  .menu_item_icon.groups { -webkit-mask-image: url('~assets/menu_groups.svg') }
 
   /* Кнопка выхода из аккаунта */
 

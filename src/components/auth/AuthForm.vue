@@ -5,13 +5,12 @@
     <input class="input" type="text" :placeholder="l('enter_login')" v-model="login">
     <div class="auth_password_wrap">
       <input class="input" :type="inputType" :placeholder="l('enter_password')" v-model="password">
-      <div class="auth_password_switch"
-           :class="{ hidden: hidePassword }"
+      <div :class="['auth_password_switch', { hidden: hidePassword }]"
            @click="hidePassword = !hidePassword"
       ></div>
     </div>
-    <button class="button auth_button" @click="auth" :disabled="disableBtn">{{ l('login') }}</button>
-    <div class="auth_error" :class="{ active: error }">{{ l('wrong_login_or_password') }}</div>
+    <button class="button auth_button" :disabled="disableBtn" @click="auth">{{ l('login') }}</button>
+    <div :class="['auth_error', { active: error }]">{{ l('wrong_login_or_password') }}</div>
   </div>
 </template>
 
