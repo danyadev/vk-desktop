@@ -8,9 +8,9 @@ const fs = require('fs');
 app.on('ready', () => {
   const { screen } = require('electron');
 
-  if(fs.existsSync('./vue-devtools')) {
-    BrowserWindow.addDevToolsExtension('./vue-devtools');
-  }
+  try {
+    BrowserWindow.addDevToolsExtension(require('vue-devtools'));
+  } catch(e) {}
 
   const win = new BrowserWindow({
     minWidth: 360,
