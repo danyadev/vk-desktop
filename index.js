@@ -1,48 +1,18 @@
 'use strict';
 
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+
 const { app, BrowserWindow, Menu } = require('electron');
 const fs = require('fs');
-let win;
-
-if(!app.isPackaged) {
-  function throttle(fn, delay) {
-    let lastCall = 0;
-
-    return (...args) => {
-      let now = new Date().getTime();
-      if(now - lastCall < delay) return;
-      lastCall = now;
-      return fn(...args);
-    }
-  }
-
-  function reloadApp(filename) {
-    if(!/^renderer/.test(filename)) return;
-
-    BrowserWindow.getAllWindows().forEach((win) => {
-      win.webContents.reloadIgnoringCache();
-    });
-  }
-
-  let onChange = throttle(reloadApp, 200);
-
-  fs.watch('.', { recursive: true }, (event, filename) => {
-    if(!filename) return;
-
-    // На macOS, в отличии от других систем, событие приходит только 1 раз.
-    if(process.platform == 'darwin') reloadApp(filename);
-    else onChange(filename);
-  });
-}
 
 app.on('ready', () => {
-  if(fs.readdirSync('.').find((file) => file == 'vue-devtools')) {
-    BrowserWindow.addDevToolsExtension('./vue-devtools');
-  }
-
   const { screen } = require('electron');
 
-  win = new BrowserWindow({
+  try {
+    BrowserWindow.addDevToolsExtension(require('vue-devtools'));
+  } catch(e) {}
+
+  const win = new BrowserWindow({
     minWidth: 360,
     minHeight: 480,
     show: false,
@@ -51,12 +21,12 @@ app.on('ready', () => {
   });
 
   win.webContents.once('dom-ready', async () => {
-    let data = await win.webContents.executeJavaScript('localStorage.getItem("settings")'),
-        { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
     if(data) {
-      let { window } = JSON.parse(data),
-          maximized = window.width >= width && window.height >= height;
+      const { window } = JSON.parse(data);
+      const maximized = window.width >= width && window.height >= height;
 
       win.setBounds({
         x: window.x,
@@ -68,35 +38,20 @@ app.on('ready', () => {
       if(maximized) win.maximize();
     }
 
-    // Вместо того, чтобы открывать окно при событии ready-to-show,
-    // можно открывать его после вызова JavaScript из renderer процесса,
-    // ведь в этот момент renderer процесс уже загружен и мы уже установили
-    // окно на нужное положение, и оно не будет "улетать" после открытия.
+    // Для того, чтобы не видеть скачков окна при открытии приложения,
+    // я открываю его после события dom-ready и executeJavaScript, что дает
+    // гарантию того, что приложение уже установлено на нужное положение.
     win.show();
   });
 
-  // Fix: Не работала вставка текста в инпуты на macOS
-  if(process.platform == 'darwin') {
-    let menuTemplate = [{
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'pasteandmatchstyle' },
-        { role: 'delete' },
-        { role: 'selectall' }
-      ]
-    }];
+  if(process.platform == 'darwin') require('./menu')(win);
+  else win.setMenu(null);
 
-    Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
-  } else win.setMenu(null);
-
-  win.loadFile('renderer/index.html');
-  win.on('closed', () => win = null);
+  win.loadURL(
+    process.argv.indexOf('dev-mode') != -1
+      ? 'http://localhost:8080/dist/'
+      : `file://${__dirname}/dist/index.html`
+  );
 });
 
 app.on('window-all-closed', app.exit);
