@@ -1,5 +1,5 @@
 <template>
-  <div class="chat_container" @keyup.esc="closeChat">
+  <div class="chat_container">
     <div class="header">
       <img class="header_back" src="~assets/im_back.png" @click="closeChat">
       <img class="header_photo" :src="photo">

@@ -37,6 +37,8 @@
 
   *, *::before, *::after { box-sizing: border-box }
 
+  :focus { outline: none }
+
   @font-face {
   	font-family: 'Segoe UI';
   	font-weight: 400;

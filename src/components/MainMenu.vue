@@ -121,7 +121,7 @@
     background-color: white;
     -webkit-mask-size: cover;
     -webkit-mask-image: url('~assets/menu_groups.svg');
-    cursor: pointer;
+    /* cursor: pointer; */
   }
 
   .account_photo {
@@ -129,7 +129,7 @@
     height: 56px;
     border-radius: 50%;
     background-size: 100%;
-    cursor: pointer;
+    /* cursor: pointer; */
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
   }
 

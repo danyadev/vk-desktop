@@ -1,5 +1,5 @@
 <template>
-  <div class="messages_container" :class="{ hasChat }">
+  <div class="messages_container" :class="{ hasChat }" @keyup.esc="closeChat" tabindex="0">
     <MessagesPeers/>
     <router-view/>
   </div>
@@ -13,6 +13,11 @@
     computed: {
       hasChat() {
         return this.$route.name == 'chat';
+      }
+    },
+    methods: {
+      closeChat() {
+        if(this.hasChat) this.$router.replace('/messages');
       }
     }
   }
