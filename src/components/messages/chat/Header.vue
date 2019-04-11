@@ -15,6 +15,8 @@
 </template>
 
 <script>
+  import { getLastOnlineDate } from 'js/date';
+  
   export default {
     props: ['id'],
     computed: {

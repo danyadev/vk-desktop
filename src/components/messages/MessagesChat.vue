@@ -9,8 +9,6 @@
 </template>
 
 <script>
-  import { getLastOnlineDate } from 'js/date';
-
   import ChatHeader from './chat/Header.vue';
   import ChatInput from './chat/Input.vue';
   import ChatList from './chat/List.vue';
