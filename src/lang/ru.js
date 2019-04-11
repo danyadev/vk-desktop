@@ -27,6 +27,7 @@ export default {
   ],
   login: 'Войти',
   logout: 'Выход',
+
   // Меню
   menu: {
     messages: 'Сообщения'
@@ -43,6 +44,7 @@ export default {
   im_chat_cant_write: 'Отправка сообщений ограничена',
   im_chat_left: 'Вы вышли из беседы',
   im_user_deleted: 'Страница удалена',
+  im_input_placeholder: 'Введите сообщение...',
 
   // Вложения в сообщениях
   im_replied: 'Ответ на сообщение',

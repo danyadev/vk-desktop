@@ -48,7 +48,7 @@ app.on('ready', () => {
   else win.setMenu(null);
 
   win.loadURL(
-    process.argv.indexOf('dev-mode') != -1
+    process.argv.includes('dev-mode')
       ? 'http://localhost:8080/dist/'
       : `file://${__dirname}/dist/index.html`
   );
