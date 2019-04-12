@@ -1,5 +1,5 @@
 import { AndroidUserAgent, DesktopUserAgent } from 'js/user-agent';
-import vkapi, { version as apiVersion } from 'js/vkapi';
+import vkapi, { version } from 'js/vkapi';
 import querystring from 'querystring';
 import request from 'js/request';
 
@@ -16,7 +16,7 @@ export function getAndroidToken(login, password, params = {}) {
         '2fa_supported': 1,
         grant_type: 'password',
         lang: 'ru',
-        v: apiVersion,
+        v: version,
         ...params
       }),
       headers: { 'User-Agent': AndroidUserAgent }
