@@ -165,6 +165,7 @@
 
   .name {
     margin-top: -2px;
+    height: 20px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
