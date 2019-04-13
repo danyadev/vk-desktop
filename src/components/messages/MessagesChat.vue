@@ -1,6 +1,6 @@
 <template>
   <div class="chat_container">
-    <ChatHeader :id="id" @close="closeChat"/>
+    <ChatHeader :id="$route.params.id" @close="closeChat"/>
     <div class="chat_wrap">
       <ChatList/>
       <ChatInput/>
@@ -18,19 +18,6 @@
       ChatHeader,
       ChatInput,
       ChatList
-    },
-    computed: {
-      id() {
-        return this.$route.params.id;
-      },
-      peer() {
-        const conversation = this.$store.state.messages.conversations[this.id];
-
-        return conversation && conversation.peer;
-      },
-      owner() {
-        return this.peer && this.$store.state.profiles[this.peer.owner];
-      }
     },
     methods: {
       closeChat() {

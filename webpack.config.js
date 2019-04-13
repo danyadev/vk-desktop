@@ -98,9 +98,6 @@ module.exports = (env, { mode }) => {
         js: path.resolve(__dirname, 'src/js/'),
         assets: path.resolve(__dirname, 'src/assets/')
       }
-    },
-    node: {
-      __dirname: true
     }
   };
 }
