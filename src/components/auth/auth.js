@@ -2,6 +2,7 @@ import { AndroidUserAgent, DesktopUserAgent } from 'js/user-agent';
 import vkapi, { version } from 'js/vkapi';
 import querystring from 'querystring';
 import request from 'js/request';
+import { EventBus } from 'js/utils';
 
 export function getAndroidToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
@@ -28,16 +29,15 @@ export function getAndroidToken(login, password, params = {}) {
       // app.$toast(`${member_name}, ${message}`);
       resolve({ error: 'invalid_client' });
     } else if(data.error == 'need_captcha') {
-      console.warn('[Auth] need_captcha');
-      // app.$modals.open('captcha', {
-      //   src: data.captcha_img,
-      //   send(code) {
-      //     getAndroidToken(login, password, Object.assign(params, {
-      //       captcha_sid: data.captcha_sid,
-      //       captcha_key: code
-      //     })).then(resolve);
-      //   }
-      // });
+      EventBus.emit('modal:open', 'captcha', {
+        src: data.captcha_img,
+        send(code) {
+          getAndroidToken(login, password, Object.assign(params, {
+            captcha_sid: data.captcha_sid,
+            captcha_key: code
+          })).then(resolve);
+        }
+      });
     } else resolve(data);
   });
 }

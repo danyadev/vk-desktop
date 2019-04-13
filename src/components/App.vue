@@ -2,20 +2,27 @@
   <div class="root">
     <Titlebar/>
     <div class="app">
-      <MainMenu/>
-      <router-view/>
+      <MainMenu v-if="activeUser"/>
+      <RouterView/>
+      <ModalsWrapper/>
     </div>
   </div>
 </template>
 
 <script>
   import { mapState } from 'vuex';
+
+  import ModalsWrapper from './ModalsWrapper.vue';
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
 
   export default {
     name: 'App',
-    components: { Titlebar, MainMenu },
+    components: {
+      Titlebar,
+      MainMenu,
+      ModalsWrapper
+    },
     computed: {
       ...mapState('users', ['activeUser'])
     },

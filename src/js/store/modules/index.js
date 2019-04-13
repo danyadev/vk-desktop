@@ -4,8 +4,16 @@ import { getPhoto } from 'js/utils';
 function updateUserObject(user) {
   user.photo = getPhoto(user.photo_50, user.photo_100);
 
-  // Если это группа
-  if(!user.last_seen) return user;
+  if(!user.last_seen) {
+    if(user.id > 0) {
+      user.last_seen = {
+        online: false,
+        mobile: false
+      };
+    }
+
+    return user;
+  }
 
   user.last_seen.online = user.online;
   user.last_seen.mobile = user.online && user.online_mobile;

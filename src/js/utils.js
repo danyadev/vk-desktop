@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 // Минимальный fields для получения профилей в приложении
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,screen_name';
 
@@ -60,3 +62,6 @@ export function endScroll(callback) {
     if(scrollTop + viewportHeight + 100 >= scrollHeight) callback.bind(this)();
   }
 }
+
+// Шина событий вне Vue
+export const EventBus = new EventEmitter();

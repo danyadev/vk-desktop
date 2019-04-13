@@ -2,6 +2,7 @@ import { DesktopUserAgent } from './user-agent';
 import querystring from 'querystring';
 import request from './request';
 import store from './store/';
+import { EventBus } from './utils';
 
 export const version = '5.92';
 
@@ -26,7 +27,27 @@ function vkapi(name, params = {}) {
     console.log(`[API] ${name} ${Date.now() - startTime}ms`);
 
     if(data.response !== undefined) resolve(data.response);
-    else reject(data);
+    else if(data.error.error_code == 14) {
+      EventBus.emit('modal:open', 'captcha', {
+        src: data.error.captcha_img,
+        send(code) {
+          const newParams = Object.assign(params, {
+            captcha_sid: data.error.captcha_sid,
+            captcha_key: code
+          });
+
+          if(name != 'captcha.force') {
+            methods.unshift({
+              data: [name, newParams],
+              resolve,
+              reject
+            });
+          } else methods.shift();
+
+          executeMethod();
+        }
+      });
+    } else reject(data);
   });
 }
 

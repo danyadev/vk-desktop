@@ -42,7 +42,7 @@
         return this.profiles[this.msg.from];
       },
       online() {
-        if(this.isChat || !this.owner || this.peer.id < 0 || !this.owner.last_seen.online) return '';
+        if(this.isChat || this.peer.id < 0 || !this.owner || !this.owner.last_seen.online) return '';
         else return this.owner.last_seen.mobile ? 'mobile' : 'desktop';
       },
       photo() {

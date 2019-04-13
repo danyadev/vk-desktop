@@ -16,9 +16,14 @@
 
 <script>
   import { getLastOnlineDate } from 'js/date';
-  
+
   export default {
-    props: ['id'],
+    props: {
+      id: {
+        required: true,
+        type: Number
+      }
+    },
     computed: {
       peer() {
         const conversation = this.$store.state.messages.conversations[this.id];
