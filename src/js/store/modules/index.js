@@ -26,12 +26,19 @@ function updateUserObject(user) {
   return user;
 }
 
-export default {
-  state: {
+function getState() {
+  return {
     menuState: false,
     profiles: {}
-  },
+  };
+}
+
+export default {
+  state: getState(),
   mutations: {
+    resetState(state) {
+      Object.assign(state, getState());
+    },
     setMenuState(state, value) {
       state.menuState = value;
     },

@@ -21,6 +21,9 @@
           ></div>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
         </div>
+        <div class="menu_item logout" @click.stop="$modal.open('logout')">
+          <div class="menu_item_name">{{ l('logout') }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -170,7 +173,7 @@
     transition: background-color .3s, color .3s;
   }
 
-  .menu_item:hover { background-color: #f7f7f7 }
+  .menu_item:hover { background-color: #f5f8fb }
   .menu_item.active { background-color: #eef1f5 }
   .menu_item.active .menu_item_icon { background-color: #648fc1 }
   .menu_item.active .menu_item_name { color: #3e70a9 }
@@ -198,13 +201,10 @@
     transition: background-color .3s;
   }
 
-  /* Кнопка выхода из аккаунта */
+  /* Выход из аккаунта */
 
-  .menu_separator {
-    width: calc(100% - 20px);
-    height: 1px;
-    margin: 10px;
-    background-color: #e4e4e4;
+  .menu_item.logout {
+    margin-top: 10px;
   }
 
   .menu_item.logout .menu_item_name {

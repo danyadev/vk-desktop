@@ -12,7 +12,7 @@
   import { EventBus } from 'js/utils';
   const ModalComponents = {};
 
-  ['Captcha'].forEach((name) => {
+  ['Captcha', 'Logout'].forEach((name) => {
     ModalComponents[`Modal${name}`] = require(`./modals/${name}.vue`).default;
   });
 
@@ -31,7 +31,7 @@
         const isModal = !path.find((el) => el.classList && el.classList.contains('modal'));
         const name = isModal && target.children[0] && target.children[0].attributes.name.value;
         const header = document.querySelector(`.modal[name="${name}"] .modal_header`);
-        const closable = !header || header.dataset.closable;
+        const closable = !header || header.attributes.closable.value;
 
         if(isModal && closable) EventBus.emit('modal:close', name);
       }
@@ -100,6 +100,10 @@
   .modal_footer .light_button {
     min-width: 110px;
     margin: 9px 5px;
+  }
+
+  .modal_footer .light_button {
+    background-color: #e4e9ef;
   }
 
   .modal_footer .button.right:first-child,

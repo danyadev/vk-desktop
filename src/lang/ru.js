@@ -1,6 +1,7 @@
 export default {
   // Частые переводы
   cancel: 'Отмена',
+  yes: 'Да',
   you: 'Вы',
   you2: 'Вас',
   yesterday: 'вчера',
@@ -143,7 +144,12 @@ export default {
   ],
 
   // Модалки
-  // -- Капча
+
+  // |- Капча
   modal_captcha_header: 'Введите капчу',
-  modal_captcha_write: 'Введите код с картинки'
+  modal_captcha_write: 'Введите код с картинки',
+
+  // |- Выход из аккаунта
+  modal_logout_header: 'Выход из аккаунта',
+  modal_logout_sure: 'Вы действительно хотите выйти из аккаунта?'
 }

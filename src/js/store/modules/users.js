@@ -14,6 +14,9 @@ export default {
       const newUser = Object.assign({}, user, data);
 
       Vue.set(state.users, data.id, newUser);
+    },
+    removeUser(state, id) {
+      Vue.delete(state.users, id);
     }
   },
   getters: {
