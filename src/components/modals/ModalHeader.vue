@@ -44,7 +44,7 @@
     cursor: pointer;
     opacity: .7;
     margin-right: -15px;
-    background-image: url('~assets/modal_close.svg');
+    background-image: url('~assets/close_white.svg');
     background-size: 16px;
     background-position: center;
     background-repeat: no-repeat;

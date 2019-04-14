@@ -168,5 +168,13 @@ export default {
     Восстановите аккаунт и вернитесь позже.`
   ],
   modal_blocked_account_logout: 'Выйти из аккаунта',
-  modal_blocked_account_close_app: 'Закрыть приложение'
+  modal_blocked_account_close_app: 'Закрыть приложение',
+
+  // |- Мультиаккаунт
+  modal_multiaccount_header: 'Выберите аккаунт',
+  modal_multiaccount_add_account: 'Добавить аккаунт',
+  modal_multiaccount_active_account: 'Активный аккаунт',
+
+  // |- Модалка авторизации
+  modal_auth_header: 'Авторизация'
 }

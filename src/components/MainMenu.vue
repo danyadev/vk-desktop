@@ -3,7 +3,7 @@
     <div class="menu">
       <div class="account_block">
         <img class="account_background" :src="user.photo_100">
-        <div class="account_multiaccount"></div>
+        <div class="account_multiaccount" @click.stop="openModal('multiaccount')"></div>
         <img class="account_photo" :src="user.photo_100">
         <div class="account_name">
           {{ user.first_name }} {{ user.last_name }}
@@ -21,7 +21,7 @@
           ></div>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
         </div>
-        <div class="menu_item logout" @click.stop="$modal.open('logout')">
+        <div class="menu_item logout" @click.stop="openModal('logout')">
           <div class="menu_item_name">{{ l('logout') }}</div>
         </div>
       </div>
@@ -60,6 +60,12 @@
         if(this.isActiveRoute(route)) return;
         else if(event.shiftKey) this.$router.push(route);
         else this.$router.replace(route);
+      },
+      openModal(name) {
+        this.toggleMenu(false);
+
+        // Открытие модалки после закрытия меню
+        setTimeout(() => this.$modal.open(name), 150);
       }
     }
   }
@@ -125,7 +131,7 @@
     background-color: white;
     -webkit-mask-size: cover;
     -webkit-mask-image: url('~assets/menu_groups.svg');
-    /* cursor: pointer; */
+    cursor: pointer;
   }
 
   .account_photo {

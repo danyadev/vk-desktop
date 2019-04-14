@@ -33,7 +33,8 @@
             android_token: data.access_token
           });
 
-          this.$store.commit('users/setActiveUser', user.id);
+          if(this.isModal) this.$modal.close(this.$parent.$attrs.name);
+          else this.$store.commit('users/setActiveUser', user.id);
         }
       }
     }
