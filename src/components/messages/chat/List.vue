@@ -1,5 +1,5 @@
 <template>
-  <Scrolly class="messages_list" :passiveScroll="true">
+  <Scrolly class="messages_list">
     <ScrollyViewport>
 
     </ScrollyViewport>

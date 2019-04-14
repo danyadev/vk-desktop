@@ -77,20 +77,9 @@
 
   a:hover, .link:hover { text-decoration: underline }
 
-  img, .is-scrolling {
+  img {
     -webkit-user-drag: none;
     user-select: none;
-  }
-
-  .scrolly-bar {
-    box-sizing: content-box !important;
-    width: 7px !important;
-    border: 4px solid transparent !important;
-    transition: opacity .3s ease !important;
-  }
-
-  .scrolly-bar:hover:before {
-    background: rgba(0, 0, 0, .4) !important;
   }
 
   .app { height: calc(100vh - 32px) }

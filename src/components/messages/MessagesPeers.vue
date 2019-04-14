@@ -4,7 +4,7 @@
       <HeaderButton/>
       <div class="header_name">{{ l('im_header_title') }}</div>
     </div>
-    <Scrolly class="peers_wrap" :passiveScroll="true" @scrollchange="onScroll">
+    <Scrolly class="peers_wrap" @scrollchange="onScroll">
       <ScrollyViewport :class="{ loading }">
         <MessagesPeer v-for="{ peer, msg } of conversations" :key="peer.id" :peer="peer" :msg="msg"/>
       </ScrollyViewport>
