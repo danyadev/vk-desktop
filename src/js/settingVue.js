@@ -25,7 +25,7 @@ Vue.prototype.$modal = {
   }
 }
 
-Vue.config.errorHandler = Vue.config.warnHandler = function(stack, vm, type) {
+Vue.config.errorHandler = function(stack, vm, type) {
   const { activeUser } = store.state.users;
 
   request({
