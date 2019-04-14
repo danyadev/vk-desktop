@@ -12,7 +12,7 @@
   import { EventBus } from 'js/utils';
   const ModalComponents = {};
 
-  ['Captcha', 'Logout'].forEach((name) => {
+  ['Captcha', 'Logout', 'BlockedAccount'].forEach((name) => {
     ModalComponents[`Modal${name}`] = require(`./modals/${name}.vue`).default;
   });
 

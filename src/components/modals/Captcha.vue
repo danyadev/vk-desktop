@@ -23,12 +23,7 @@
   import ModalHeader from './ModalHeader.vue';
 
   export default {
-    props: {
-      data: {
-        required: true,
-        type: Object
-      }
-    },
+    props: ['data'],
     components: { ModalHeader },
     data: () => ({
       text: ''

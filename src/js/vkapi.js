@@ -47,6 +47,24 @@ function vkapi(name, params = {}) {
           executeMethod();
         }
       });
+    } else if(data.error.error_code == 5) {
+      const error = data.error.error_msg.slice(27);
+      let id = 0;
+
+      switch(error) {
+        case 'user revoke access for this token.':
+        case 'invalid session.':
+          id = 0;
+          break;
+        case 'user is deactivated.':
+          id = 1;
+          break;
+        case 'invalid access_token (2).':
+          id = 2;
+          break;
+      }
+
+      EventBus.emit('modal:open', 'blocked-account', id);
     } else reject(data);
   });
 }

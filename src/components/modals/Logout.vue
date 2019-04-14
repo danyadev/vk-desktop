@@ -17,7 +17,7 @@
     components: { ModalHeader },
     methods: {
       logout() {
-        let { activeUser } = this.$store.state.users;
+        const { activeUser } = this.$store.state.users;
 
         this.$store.commit('users/setActiveUser', null);
         this.$store.commit('users/removeUser', activeUser);
