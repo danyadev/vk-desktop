@@ -4,6 +4,11 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 const { app, BrowserWindow, Menu } = require('electron');
 const fs = require('fs');
+const Sentry = require('@sentry/electron');
+
+Sentry.init({
+  dsn: 'https://158852fabff14fe185220d8105412aed@sentry.io/1395595'
+});
 
 app.on('ready', () => {
   const { screen } = require('electron');
