@@ -46,7 +46,7 @@
     width: calc(100% - 108px);
     margin: 6px 0;
     background-color: #fff;
-    border: 1px solid #bac6ce;
+    border: 1px solid #d2d8dc;
     border-radius: 20px;
   }
 

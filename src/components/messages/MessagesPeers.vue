@@ -15,10 +15,10 @@
   import { mapGetters } from 'vuex';
   import { fields, concatProfiles, endScroll } from 'js/utils';
   import { parseConversation, parseMessage } from 'js/messages';
-  import Scrolly from 'vue-scrolly';
 
-  import MessagesPeer from './MessagesPeer.vue';
+  import Scrolly from 'vue-scrolly';
   import HeaderButton from '../HeaderButton.vue';
+  import MessagesPeer from './MessagesPeer.vue';
 
   export default {
     components: {

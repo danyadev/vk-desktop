@@ -1,6 +1,6 @@
 <template>
-  <Scrolly class="messages_list" @scrollchange="onScroll">
-    
+  <Scrolly class="messages_list">
+
   </Scrolly>
 </template>
 

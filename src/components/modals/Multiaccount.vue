@@ -42,16 +42,18 @@
         if(this.activeUser == id) return;
 
         if(this.activeUser) {
-          const { fullPath } = this.$router.currentRoute;
+          // Получаем корневой роут
+          // Например, из роута /messages/100 мы получим /messages
+          const [{ path }] = this.$router.currentRoute.matched;
 
-          // 1. Мы переходим на страницу загрузки
-          this.$router.replace('loading');
-          // 2. Мы ждем, когда эта страница отрендерится
+          // 1. Переходим на страницу загрузки
+          this.$router.replace('/loading');
+          // 2. Ждем, когда эта страница отрендерится
           await this.$nextTick();
-          // 3. Мы обновляем стейт всех модулей приложения
+          // 3. Обновляем стейт всех модулей приложения
           resetAppState();
-          // 4. Мы возвращаемся на страницу, откуда мы начали
-          this.$router.replace(fullPath);
+          // 4. Возвращаемся на страницу, откуда мы начали
+          this.$router.replace(path);
         }
 
         this.$store.commit('users/setActiveUser', id);
