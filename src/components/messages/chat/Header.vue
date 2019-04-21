@@ -34,8 +34,10 @@
         else return 'assets/im_chat_photo.png';
       },
       title() {
-        if(this.id > 2e9) return this.peer && this.peer.title || '...';
-        else if(this.owner) {
+        if(this.id > 2e9) {
+          if(!this.peer || this.peer.title == null || !this.peer.title.length) return '...';
+          else return this.peer.title;
+        } else if(this.owner) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         } else return '...';
       },

@@ -28,11 +28,11 @@
     },
     watch: {
       activeUser(state) {
-        this.$router.replace(state ? '/messages' : '/auth');
+        this.$router.replace(state ? 'messages' : 'auth');
       }
     },
     mounted() {
-      this.$router.replace(this.activeUser ? '/messages' : '/auth');
+      this.$router.replace(this.activeUser ? 'messages' : 'auth');
 
       if(this.activeUser) this.$store.dispatch('users/updateUserData');
     }

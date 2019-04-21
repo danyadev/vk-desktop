@@ -1,20 +1,17 @@
 <template>
-  <Scrolly class="messages_list">
-    <ScrollyViewport>
-
-    </ScrollyViewport>
-    <ScrollyBar/>
+  <Scrolly class="messages_list" @scrollchange="onScroll">
+    
   </Scrolly>
 </template>
 
 <script>
-  import { Scrolly, ScrollyViewport, ScrollyBar } from 'vue-scrolly';
+  import Scrolly from 'vue-scrolly';
+  import Message from './Message.vue';
 
   export default {
     components: {
       Scrolly,
-      ScrollyViewport,
-      ScrollyBar
+      Message
     }
   }
 </script>

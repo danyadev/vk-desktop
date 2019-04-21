@@ -38,9 +38,22 @@
         if(this.activeUser != id) return `@id${id}`;
         else return this.l('modal_multiaccount_active_account');
       },
-      setAccount(id) {
+      async setAccount(id) {
         if(this.activeUser == id) return;
-        if(this.activeUser) resetAppState();
+
+        if(this.activeUser) {
+          const { fullPath } = this.$router.currentRoute;
+
+          // 1. Мы переходим на страницу загрузки
+          this.$router.replace('loading');
+          // 2. Мы ждем, когда эта страница отрендерится
+          await this.$nextTick();
+          // 3. Мы обновляем стейт всех модулей приложения
+          resetAppState();
+          // 4. Мы возвращаемся на страницу, откуда мы начали
+          this.$router.replace(fullPath);
+        }
+
         this.$store.commit('users/setActiveUser', id);
       },
       removeAccount(id) {
