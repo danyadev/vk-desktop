@@ -1,8 +1,8 @@
 <template>
-  <div :class="['modals_container', { active: hasModals }]">
+  <div :class="['modals_container', { active: hasModals }]" tabindex="0" @keydown.esc="onEscape">
     <TransitionGroup name="modal">
       <div v-for="modal in modals" class="modal_wrap" :key="modal.name" @click.stop="closeModal">
-        <component :is="`modal-${modal.name}`" :name="modal.name" :data="modal.data"/>
+        <Component :is="`modal-${modal.name}`" :name="modal.name" :data="modal.data"/>
       </div>
     </TransitionGroup>
   </div>
@@ -34,12 +34,18 @@
     },
     methods: {
       closeModal({ path, target }) {
-        const isModal = !path.find((el) => el.classList && el.classList.contains('modal'));
-        const name = isModal && target.children[0] && target.children[0].attributes.name.value;
-        const header = document.querySelector(`.modal[name="${name}"] .modal_header`);
-        const closable = !header || header.attributes.closable.value;
+        if(!target.matches('.modal_wrap')) return;
 
-        if(isModal && closable) EventBus.emit('modal:close', name);
+        const modal = target.children[0];
+        const name = modal.getAttribute('name');
+        const closable = modal.querySelector('.modal_header').getAttribute('closable');
+
+        if(closable) EventBus.emit('modal:close', name);
+      },
+      onEscape() {
+        const keys = Object.keys(this.modals);
+
+        if(keys) EventBus.emit('modal:close', keys[keys.length-1]);
       }
     },
     mounted() {
