@@ -16,7 +16,9 @@
 
 <script>
   export default {
-
+    activated() {
+      this.$refs.input.focus();
+    }
   }
 </script>
 
@@ -51,6 +53,7 @@
   }
 
   .chat_input {
+    color: #222;
     min-height: 18px;
     max-height: 180px;
     line-height: 18px;

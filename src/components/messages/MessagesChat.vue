@@ -1,9 +1,9 @@
 <template>
   <div class="chat_container">
-    <ChatHeader :id="$route.params.id" @close="closeChat"/>
+    <ChatHeader :id="id" @close="closeChat"/>
     <div class="chat_wrap">
-      <ChatList/>
-      <ChatInput/>
+      <ChatList :id="id"/>
+      <ChatInput :id="id"/>
     </div>
   </div>
 </template>
@@ -18,6 +18,11 @@
       ChatHeader,
       ChatInput,
       ChatList
+    },
+    data() {
+      return {
+        id: this.$route.params.id
+      };
     },
     methods: {
       closeChat() {

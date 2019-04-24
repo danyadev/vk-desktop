@@ -72,9 +72,6 @@ export function getServiceMessage(action, author, isFull) {
   const { id } = store.getters['users/user'];
   const isAuthor = actID == author.id;
 
-  // TODO: проверить все возможные сервисные сообщения
-  if(actID) console.log('[INFO ServiceMsg] id =', action.member_id ? 'member_id' : 'mid');
-
   function g(type) {
     const user = type ? actUser : author;
 
