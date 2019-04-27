@@ -33,7 +33,9 @@
   }
 
   .attachments_btn, .send_btn {
+    box-sizing: content-box;
     padding: 14px 15px;
+    width: 24px;
     opacity: .7;
     cursor: pointer;
     transition: opacity .3s;

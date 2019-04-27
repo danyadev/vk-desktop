@@ -10,6 +10,7 @@
 </template>
 
 <script>
+  import 'vue-scrolly/dist/vue-scrolly.css';
   import { mapState } from 'vuex';
 
   import ModalsWrapper from './ModalsWrapper.vue';
