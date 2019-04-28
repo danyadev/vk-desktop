@@ -5,7 +5,10 @@ function getState() {
     // Все беседы, которые были загружены в приложение
     conversations: {},
     // Беседы, которые отображаются в списке бесед
-    peersList: []
+    peersList: [],
+
+    // { peer_id: { messages[] }
+    messages: {}
   };
 }
 
@@ -22,6 +25,11 @@ export default {
     },
     updatePeer(state, peer) {
 
+    },
+
+    addMessage(state, { peer_id, msg }) {
+      let messages = [msg, ...state.messages[peer_id] || []];
+      Vue.set(state.messages, peer_id, messages);
     }
   },
   getters: {

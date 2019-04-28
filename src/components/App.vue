@@ -78,7 +78,7 @@
 
   a:hover, .link:hover { text-decoration: underline }
 
-  img {
+  img:not(.emoji) {
     -webkit-user-drag: none;
     user-select: none;
   }
