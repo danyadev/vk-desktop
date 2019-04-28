@@ -1,13 +1,14 @@
 {
   "appId": "ru.danyadev.vkdesktop",
-  "electronVersion": "5.0.0",
+  "electronVersion": "3.0.0",
   "productName": "VK Desktop",
   "directories": {
     "output": "out"
   },
   "files": [
     "dist/**",
-    "index.js"
+    "index.js",
+    "menu.js"
   ],
   "nsis": {
     "oneClick": "false",

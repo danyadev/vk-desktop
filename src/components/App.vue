@@ -123,8 +123,8 @@
   }
 
   .button {
-    background-color: #598ac1;
-    color: white;
+    background-color: #5789c5;
+    color: #f3f3f3;
   }
 
   .light_button {

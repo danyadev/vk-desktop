@@ -91,7 +91,6 @@
     background-color: rgba(0, 0, 0, .4);
   }
 
-
   .modal {
     position: absolute;
     max-width: 95%;

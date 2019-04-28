@@ -1,7 +1,7 @@
 <template>
   <div class="modal_header" :closable="closable">
     <div class="modal_header_title"><slot></slot></div>
-    <div v-if="closable" @click.stop="close" class="modal_header_close"></div>
+    <img v-if="closable" src="~assets/close_white.svg" class="modal_header_close" @click.stop="close">
   </div>
 </template>
 
@@ -27,27 +27,23 @@
     align-items: center;
     justify-content: space-between;
     background-color: #5281b9;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-    height: 50px;
-    padding: 0 25px;
+    height: 48px;
+    padding: 0 10px 0 25px;
     border-radius: 5px 5px 0 0;
   }
 
   .modal_header_title {
     font-size: 15px;
-    color: #eee;
+    color: #f3f3f3;
   }
 
   .modal_header_close {
-    width: 32px;
-    height: 32px;
+    box-sizing: content-box;
+    width: 16px;
+    height: 16px;
+    padding: 8px;
     cursor: pointer;
     opacity: .7;
-    margin-right: -15px;
-    background-image: url('~assets/close_white.svg');
-    background-size: 16px;
-    background-position: center;
-    background-repeat: no-repeat;
     transition: opacity .3s;
   }
 

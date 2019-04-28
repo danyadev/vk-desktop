@@ -75,20 +75,19 @@
     display: flex;
     cursor: pointer;
     user-select: none;
-    margin: 0 20px;
+    padding: 0 15px;
   }
 
   .item_photo {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin: 15px 10px 0 0;
+    margin: 10px 10px 0 0;
   }
 
   .item_data {
     flex-grow: 1;
-    padding: 15px 0;
-    max-width: 200px;
+    padding: 10px 0;
   }
 
   .item:not(:last-child) .item_data {
@@ -104,16 +103,16 @@
 
   .item_description {
     color: #3e70a9;
-    margin-top: 4px;
+    margin-top: 2px;
   }
 
   .item_close {
     margin: 3px;
     width: 14px;
     height: 14px;
-    opacity: .5;
+    opacity: .8;
     transition: opacity .3s;
   }
 
-  .item_close:hover { opacity: .6 }
+  .item_close:hover { opacity: 1 }
 </style>

@@ -18,7 +18,7 @@ let app = new Vue({
 });
 
 document.addEventListener('contextmenu', (event) => {
-  Menu.buildFromTemplate([
+  const menu = Menu.buildFromTemplate([
     {
       label: app.l('open_console'),
       click: win.openDevTools
@@ -29,7 +29,9 @@ document.addEventListener('contextmenu', (event) => {
         win.inspectElement(event.x, event.y);
       }
     }
-  ]).popup();
+  ]);
+
+  menu.popup(menu);
 });
 
 window.addEventListener('resize', debounce(() => {
