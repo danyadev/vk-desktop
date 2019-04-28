@@ -15,6 +15,7 @@ export default {
     resetState(state) {
       Object.assign(state, getState());
     },
+
     addPeer(state, data) {
       Vue.set(state.conversations, data.peer.id, data);
       state.peersList.push(data.peer.id);

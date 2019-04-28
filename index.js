@@ -17,7 +17,11 @@ app.on('ready', () => {
     minHeight: 480,
     show: false,
     frame: false,
-    titleBarStyle: 'hidden'
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      nodeIntegration: true,
+      webSecurity: false
+    }
   });
 
   win.webContents.once('dom-ready', async () => {

@@ -26,18 +26,11 @@ module.exports = (env, { mode }) => {
               comments: false
             },
             compress: {
-              arguments: true,
-              ecma: 8,
-              warnings: true,
               keep_fargs: false,
-              toplevel: true,
               unsafe: true,
               unsafe_arrows: true,
               unsafe_comps: true,
-              unsafe_methods: true,
-              unsafe_proto: true,
-              unsafe_regexp: true,
-              unsafe_undefined: true
+              unsafe_methods: true
             }
           }
         }),
