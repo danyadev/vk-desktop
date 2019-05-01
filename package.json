@@ -7,7 +7,7 @@
     "dev": "webpack-dev-server --mode development --hot",
     "build": "npm run dist && npm run pack",
     "dist": "webpack --mode production",
-    "pack": "electron-builder --config build/config.json --x64"
+    "pack": "electron-builder --config build/config.json --ia32 --x64"
   },
   "repository": "https://github.com/danyadev/vk-desktop",
   "author": {
@@ -19,7 +19,7 @@
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "2.0.0",
     "date-fns": "2.0.0-alpha.27",
-    "electron": "3.0.0",
+    "electron": "4.0.4",
     "electron-builder": "20.38.5",
     "file-loader": "3.0.1",
     "mini-css-extract-plugin": "0.2.0",
@@ -29,7 +29,7 @@
     "vue-devtools": "https://github.com/danyadev/vue-devtools/tarball/5.1.0",
     "vue-loader": "15.7.0",
     "vue-router": "3.0.6",
-    "vue-scrolly": "https://github.com/danyadev/vue-scrolly/tarball/1.6.1",
+    "vue-scrolly": "https://github.com/danyadev/vue-scrolly/tarball/1.7.0",
     "vue-style-loader": "4.1.2",
     "vue-template-compiler": "2.6.10",
     "vuex": "3.1.0",

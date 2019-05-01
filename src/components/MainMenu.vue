@@ -172,6 +172,7 @@
     height: 44px;
     display: flex;
     align-items: center;
+    padding-left: 20px;
     cursor: pointer;
   }
 
@@ -179,8 +180,10 @@
     transition: background-color .3s, color .3s;
   }
 
-  .menu_item:hover { background-color: #f5f8fb }
-  .menu_item.active { background-color: #eef1f5 }
+  .menu_item:hover, .menu_item.active {
+    background-color: #eff4f9;
+  }
+
   .menu_item.active .menu_item_icon { background-color: #648fc1 }
   .menu_item.active .menu_item_name { color: #3e70a9 }
 
@@ -201,7 +204,7 @@
   .menu_item_icon {
     width: 26px;
     height: 26px;
-    margin: 0 10px;
+    margin-right: 10px;
     background-color: #a6a6a6;
     -webkit-mask-size: cover;
     transition: background-color .3s;
@@ -214,7 +217,6 @@
   }
 
   .menu_item.logout .menu_item_name {
-    margin-left: 15px;
     font-size: 16px;
     color: #de3f3f;
     margin-top: -4px;

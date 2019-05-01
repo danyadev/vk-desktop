@@ -47,6 +47,7 @@ export default {
   im_chat_left: 'Вы вышли из беседы',
   im_user_deleted: 'Страница удалена',
   im_input_placeholder: 'Введите сообщение...',
+  im_empty_dialog: 'Ваш список сообщений пуст',
 
   // Вложения в сообщениях
   im_replied: 'Ответ на сообщение',

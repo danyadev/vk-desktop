@@ -19,6 +19,8 @@ export function getEmojiFromCode(rawCode) {
   return start + decodeURIComponent('%' + code.match(/(..?)/g).join('%'));
 }
 
+// Извлекает из запакованной локальной записи позицию
+// эмодзи в виде [id, x, y, posX, posY]
 function parseLocalEmoji(data) {
   return data.split('|').map((n) => {
     const nums = [288, 0, 5, 128, 7, 6, 160, 64, 96, 208, 112, 80, 16, 192, 48, 4, 176, 32, 224, 144, 256, 240, 2, 1, 3, 8];

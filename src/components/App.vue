@@ -60,7 +60,7 @@
   	font-display: block;
   	src: url('~assets/SegoeUISemiBold.ttf');
   }
-
+  
   body {
     font-family: BlinkMacSystemFont, 'Segoe UI';
     font-size: 15px;

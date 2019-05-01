@@ -1,5 +1,13 @@
 <template>
-  <Scrolly class="messages_list" :vclass="{ loading }">
+  <Scrolly class="messages_list_wrap" :vclass="['messages_list', { empty: !hasMessages }]">
+    <div v-if="hasMessages" class="messages_empty_block"></div>
+    <div v-if="loading" class="loading"></div>
+
+    <div v-if="!hasMessages && !loading" class="messages_empty_dialog">
+      <img src="~assets/placeholder_empty_messages.png">
+      {{ l('im_empty_dialog') }}
+    </div>
+
     <Message v-for="msg of messages" :key="msg.id" :msg="msg" :id="id"/>
   </Scrolly>
 </template>
@@ -28,6 +36,9 @@
     computed: {
       messages() {
         return this.$store.state.messages.messages[this.id] || [];
+      },
+      hasMessages() {
+        return !!this.messages.length;
       }
     },
     methods: {
@@ -70,10 +81,30 @@
   }
 </script>
 
-<style scoped>
-  .messages_list {
+<style>
+  .messages_list_wrap {
     display: flex;
     flex-direction: column;
     height: 100%;
+  }
+
+  .messages_list.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .messages_empty_block {
+    flex-grow: 1;
+  }
+
+  .messages_empty_dialog {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .messages_empty_dialog img {
+    height: 160px;
   }
 </style>

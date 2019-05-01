@@ -54,6 +54,7 @@ export async function getDesktopToken(androidToken) {
       lang: 'ru',
       scope: 136297695,
       client_id: 6717234,
+      v: version,
       sdk_package: 'ru.danyadev.vkdesktop',
       sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
     }),
