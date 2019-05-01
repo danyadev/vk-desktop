@@ -24,11 +24,14 @@ export default {
       state.peersList.push(data.peer.id);
     },
     updatePeer(state, peer) {
+      const conv = { ...state.conversations[peer.id] || {} };
+      conv.peer = Object.assign({}, conv.peer, peer);
 
+      Vue.set(state.conversations, peer.id, conv);
     },
 
     addMessage(state, { peer_id, msg }) {
-      let messages = [msg, ...state.messages[peer_id] || []];
+      const messages = [msg, ...state.messages[peer_id] || []];
       Vue.set(state.messages, peer_id, messages);
     }
   },

@@ -16,12 +16,15 @@
 
 <script>
   import { getLastOnlineDate } from 'js/date';
+  import { loadConversation } from 'js/utils';
 
   export default {
     props: ['id'],
     computed: {
       peer() {
         const conversation = this.$store.state.messages.conversations[this.id];
+
+        if(!conversation) loadConversation(this.id);
 
         return conversation && conversation.peer;
       },
@@ -35,7 +38,7 @@
       },
       title() {
         if(this.id > 2e9) {
-          if(!this.peer || this.peer.title == null || !this.peer.title.length) return '...';
+          if(!this.peer || !this.peer.title) return '...';
           else return this.peer.title;
         } else if(this.owner) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;

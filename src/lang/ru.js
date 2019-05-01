@@ -5,7 +5,7 @@ export default {
   you: 'Вы',
   you2: 'Вас',
   yesterday: 'вчера',
-  loading: 'Загрузка..',
+  loading: 'Загрузка...',
   send: 'Отправить',
 
   // Время

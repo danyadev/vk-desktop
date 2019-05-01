@@ -1,4 +1,7 @@
 import { EventEmitter } from 'events';
+import vkapi from './vkapi';
+import store from './store/';
+import { parseConversation } from './messages';
 
 // Минимальный fields для получения профилей в приложении
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,screen_name';
@@ -69,3 +72,39 @@ export function endScroll(callback, reverse = false) {
 
 // Шина событий вне Vue
 export const EventBus = new EventEmitter();
+
+// Загрузка профилей
+const loadingProfiles = [];
+let isLoadingProfiles = false;
+
+export async function loadProfile(id) {
+  if(id && loadingProfiles.find((e) => e == id) || isLoadingProfiles) return;
+  else {
+    if(id) loadingProfiles.push(id);
+    isLoadingProfiles = true;
+  }
+
+  const profiles = loadingProfiles.slice();
+  const data = await vkapi('execute.getProfiles', {
+    fields: fields,
+    profile_ids: profiles.join(',')
+  });
+
+  store.commit('addProfiles', data);
+
+  loadingProfiles.splice(0, profiles.length);
+  isLoadingProfiles = false;
+
+  if(loadingProfiles.length) loadProfile();
+}
+
+export async function loadConversation(id) {
+  const { items: [conv], profiles, groups } = await vkapi('messages.getConversationsById', {
+    peer_ids: id,
+    extended: 1,
+    fields: fields
+  });
+
+  store.commit('addProfiles', concatProfiles(profiles, groups));
+  store.commit('messages/updatePeer', parseConversation(conv));
+}

@@ -102,6 +102,8 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    font-size: 16px;
+    color: #282829;
   }
 
   .messages_empty_dialog img {
