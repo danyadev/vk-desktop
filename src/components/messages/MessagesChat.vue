@@ -1,28 +1,39 @@
 <template>
   <div class="chat_container">
-    <ChatHeader :id="id" @close="closeChat"/>
+    <ChatHeader :id="id" :peer="peer" @close="closeChat"/>
     <div class="chat_wrap">
       <ChatList :id="id"/>
-      <ChatInput :id="id"/>
+      <ChatInput :peer="peer"/>
     </div>
   </div>
 </template>
 
 <script>
+  import { loadConversation } from 'js/utils';
+
   import ChatHeader from './chat/Header.vue';
-  import ChatInput from './chat/Input.vue';
   import ChatList from './chat/List.vue';
+  import ChatInput from './chat/Input.vue';
 
   export default {
     components: {
       ChatHeader,
-      ChatInput,
-      ChatList
+      ChatList,
+      ChatInput
     },
     data() {
       return {
         id: this.$route.params.id
       };
+    },
+    computed: {
+      peer() {
+        const conversation = this.$store.state.messages.conversations[this.id];
+
+        if(!conversation) loadConversation(this.id);
+
+        return conversation && conversation.peer;
+      }
     },
     methods: {
       closeChat() {

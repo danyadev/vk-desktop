@@ -16,18 +16,10 @@
 
 <script>
   import { getLastOnlineDate } from 'js/date';
-  import { loadConversation } from 'js/utils';
 
   export default {
-    props: ['id'],
+    props: ['id', 'peer'],
     computed: {
-      peer() {
-        const conversation = this.$store.state.messages.conversations[this.id];
-
-        if(!conversation) loadConversation(this.id);
-
-        return conversation && conversation.peer;
-      },
       owner() {
         return this.peer && this.$store.state.profiles[this.peer.owner];
       },
@@ -49,10 +41,10 @@
 
         if(this.id < 0) return this.l('im_chat_group');
         else if(this.id > 2e9) {
-          const members = this.peer.members;
+          const { canWrite, members, channel, left } = this.peer;
 
-          if(!this.peer.can_write.allowed) return this.l('im_chat_cant_write');
-          else if(this.peer.left) return this.l('im_chat_left');
+          if(!canWrite.allowed && !channel) return this.l('im_chat_kicked');
+          else if(left) return this.l('im_chat_left');
           else return this.l('im_chat_members', [members], members);
         } else {
           if(!this.owner || !this.owner.last_seen) return this.l('loading');

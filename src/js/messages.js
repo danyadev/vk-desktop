@@ -26,7 +26,7 @@ export function parseConversation(conversation) {
     unread: conversation.unread_count || 0,
     photo: chatPhoto,
     title: chatTitle,
-    can_write: conversation.can_write,
+    canWrite: conversation.can_write,
     in_read: conversation.in_read,
     out_read: conversation.out_read
   }

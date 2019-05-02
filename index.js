@@ -9,7 +9,7 @@ app.on('ready', () => {
   const { screen } = require('electron');
 
   try {
-    BrowserWindow.addDevToolsExtension(require('vue-devtools'));
+    BrowserWindow.addDevToolsExtension(require('@vkdesktop/vue-devtools'));
   } catch(e) {}
 
   const win = new BrowserWindow({

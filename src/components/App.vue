@@ -10,7 +10,9 @@
 </template>
 
 <script>
-  import 'vue-scrolly/dist/vue-scrolly.css';
+  import '@vkdesktop/vue-scrolly/dist/vue-scrolly.css';
+  import '@vkdesktop/vue-ripple/dist/vue-ripple.css';
+
   import { mapState } from 'vuex';
 
   import ModalsWrapper from './ModalsWrapper.vue';
@@ -60,7 +62,14 @@
   	font-display: block;
   	src: url('~assets/SegoeUISemiBold.ttf');
   }
-  
+
+  @font-face {
+    font-family: 'Roboto';
+  	font-weight: 400;
+  	font-display: block;
+  	src: url('~assets/Roboto.ttf');
+  }
+
   body {
     font-family: BlinkMacSystemFont, 'Segoe UI';
     font-size: 15px;

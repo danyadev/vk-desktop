@@ -1,35 +1,65 @@
 <template>
   <div class="chat_input_container">
-    <img class="attachments_btn" src="~assets/attachments_icon.svg">
-    <div class="chat_input_wrap">
-      <div class="chat_input"
-           role="textbox"
-           ref="input"
-           contenteditable
-           :placeholder="l('im_input_placeholder')"
-      ></div>
-      <img class="emoji_btn" src="~assets/emoji_icon.svg">
+    <template v-if="canWrite.allowed">
+      <img class="attachments_btn" src="~assets/attachments_icon.svg">
+      <div class="chat_input_wrap">
+        <div class="chat_input"
+             role="textbox"
+             ref="input"
+             contenteditable
+             :placeholder="l('im_input_placeholder')"
+        ></div>
+        <img class="emoji_btn" src="~assets/emoji_icon.svg">
+      </div>
+      <img class="send_btn" src="~assets/im_send.svg">
+    </template>
+    <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#d9d9d9">
+      <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
+      {{ l('toggle_notifications', !peer.muted) }}
+    </Ripple>
+    <div v-else class="chat_input_error">
+      <div class="chat_input_error_img"></div>
+      <div class="chat_input_error_text">{{ canWrite.text }}</div>
     </div>
-    <img class="send_btn" src="~assets/im_send.svg">
+    </div>
   </div>
 </template>
 
 <script>
+  import Ripple from '@vkdesktop/vue-ripple';
+
   export default {
+    props: ['peer'],
+    components: {
+      Ripple
+    },
+    computed: {
+      canWrite() {
+        if(this.peer && this.peer.canWrite.allowed) {
+          return { allowed: true };
+        } else {
+          return {
+            allowed: false,
+            text: this.peer ? this.l('im_chat_cant_write') : this.l('loading'),
+            channel: this.peer ? this.peer.channel : false
+          };
+        }
+      }
+    },
     activated() {
-      this.$refs.input.focus();
+      const { input } = this.$refs;
+      if(input) input.focus();
     }
   }
 </script>
 
-<style scoped>
+<style>
   .chat_input_container {
-    position: relative;
     display: flex;
-    align-items: flex-end;
     flex: none;
-    border-top: 1px solid #e7e8ec;
-    background-color: #fafbfc;
+    font-family: Roboto;
+    border-top: 1px solid #d8dade;
+    background-color: #fbfbfb;
   }
 
   .attachments_btn, .send_btn {
@@ -80,4 +110,36 @@
 
   .emoji_btn:hover { opacity: 1 }
   .emoji_btn:active { transform: translateY(1px) }
+
+  .chat_input_error {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3e3f40;
+  }
+
+  .chat_input_error.channel {
+    color: #3f70a7;
+    user-select: none;
+    cursor: pointer;
+    transition: background-color .2s;
+  }
+
+  .chat_input_error.channel img {
+    margin-right: 8px;
+  }
+
+  .chat_input_error_img {
+    width: 36px;
+    height: 36px;
+    -webkit-mask-size: 36px;
+    -webkit-mask-image: url('~assets/im_chat_error.png');
+    background-color: #f3690b;
+  }
+
+  .chat_input_error_text {
+    margin-left: 10px;
+  }
 </style>
