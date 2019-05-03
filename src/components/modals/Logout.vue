@@ -10,8 +10,8 @@
 </template>
 
 <script>
-  import ModalHeader from './ModalHeader.vue';
   import { resetAppState } from 'js/store/';
+  import ModalHeader from './ModalHeader.vue';
 
   export default {
     components: { ModalHeader },

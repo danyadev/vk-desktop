@@ -1,7 +1,7 @@
 <template>
   <div :class="['modals_container', { active: hasModals }]" tabindex="0" @keydown.esc="onEscape">
     <TransitionGroup name="modal">
-      <div v-for="modal in modals" class="modal_wrap" :key="modal.name" @click.stop="closeModal">
+      <div v-for="modal in modals" :key="modal.name" class="modal_wrap" @click.stop="closeModal">
         <Component :is="`modal-${modal.name}`" :name="modal.name" :data="modal.data"/>
       </div>
     </TransitionGroup>
@@ -10,20 +10,22 @@
 
 <script>
   import { EventBus } from 'js/utils';
-  const ModalComponents = {};
 
-  [
+  const modalComponents = {};
+  const modalNames = [
     'Captcha',
     'Logout',
     'BlockedAccount',
     'Multiaccount',
     'Auth'
-  ].forEach((name) => {
-    ModalComponents[`Modal${name}`] = require(`./modals/${name}.vue`).default;
+  ];
+
+  modalNames.forEach((name) => {
+    modalComponents[`Modal${name}`] = require(`./modals/${name}.vue`).default;
   });
 
   export default {
-    components: ModalComponents,
+    components: modalComponents,
     data: () => ({
       modals: {}
     }),

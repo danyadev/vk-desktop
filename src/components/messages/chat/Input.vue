@@ -13,7 +13,7 @@
       </div>
       <img class="send_btn" src="~assets/im_send.svg">
     </template>
-    <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#d9d9d9">
+    <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#e1e5f0">
       <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
       {{ l('toggle_notifications', !peer.muted) }}
     </Ripple>

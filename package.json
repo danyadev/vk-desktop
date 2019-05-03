@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@vkdesktop/vue-devtools": "5.1.0",
-    "@vkdesktop/vue-ripple": "1.0.0",
+    "@vkdesktop/vue-ripple": "1.0.1",
     "@vkdesktop/vue-scrolly": "1.0.2",
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "2.0.0",

@@ -1,17 +1,28 @@
 <template>
   <div class="modal_header" :closable="closable">
     <div class="modal_header_title"><slot></slot></div>
-    <img v-if="closable" src="~assets/close_white.svg" class="modal_header_close" @click.stop="close">
+    <Ripple v-if="closable"
+            color="rgba(255, 255, 255, .2)"
+            class="fast modal_header_close"
+            @click.stop="close"
+    >
+      <img src="~assets/close_white.svg">
+    </Ripple>
   </div>
 </template>
 
 <script>
-  module.exports = {
+  import Ripple from '@vkdesktop/vue-ripple';
+
+  export default {
     props: {
       closable: {
         type: Boolean,
         default: true
       }
+    },
+    components: {
+      Ripple
     },
     methods: {
       close() {
@@ -42,6 +53,7 @@
     width: 16px;
     height: 16px;
     padding: 8px;
+    border-radius: 50%;
     cursor: pointer;
     opacity: .7;
     transition: opacity .3s;

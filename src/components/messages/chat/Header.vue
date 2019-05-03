@@ -1,6 +1,8 @@
 <template>
   <div class="header">
-    <img class="header_back" src="~assets/im_back.png" @click="$emit('close')">
+    <Ripple color="rgba(255, 255, 255, .2)" class="fast header_back" @click="$emit('close')">
+      <img src="~assets/im_back.png">
+    </Ripple>
     <img class="header_photo" :src="photo">
     <div class="header_center">
       <div class="name_wrap">
@@ -16,9 +18,13 @@
 
 <script>
   import { getLastOnlineDate } from 'js/date';
+  import Ripple from '@vkdesktop/vue-ripple';
 
   export default {
     props: ['id', 'peer'],
+    components: {
+      Ripple
+    },
     computed: {
       owner() {
         return this.peer && this.$store.state.profiles[this.peer.owner];
@@ -62,15 +68,22 @@
 </script>
 
 <style scoped>
+  .header_back, .header_back img {
+    width: 40px;
+    height: 40px;
+  }
+
   .header_back {
     display: none;
     flex: none;
-    width: 40px;
-    height: 40px;
-    padding: 8px;
+    border-radius: 50%;
     cursor: pointer;
     opacity: .7;
     transition: opacity .3s;
+  }
+
+  .header_back img {
+    padding: 8px;
   }
 
   .header_photo {

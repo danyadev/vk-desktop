@@ -2,7 +2,7 @@
   <div class="loading_page loading"></div>
 </template>
 
-<style scoped>
+<style>
   .loading_page {
     display: flex;
     align-items: center;

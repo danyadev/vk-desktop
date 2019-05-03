@@ -193,4 +193,14 @@
     background-image: url('~assets/verified_white.svg');
     opacity: .7;
   }
+
+  .ripple-outer.fast .ripple-enter-active,
+  .ripple-outer.fast .ripple-enter-to-active {
+    transition: all 1s ease-out;
+  }
+
+  .ripple-outer.fast .ripple-leave-active,
+  .ripple-outer.fast .ripple-leave-to-active {
+    transition: all .4s ease-out;
+  }
 </style>

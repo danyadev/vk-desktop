@@ -2,7 +2,7 @@
   <div class="modal">
     <ModalHeader>{{ l('modal_multiaccount_header') }}</ModalHeader>
     <div class="modal_content">
-      <div class="item" v-for="user in users" @click="setAccount(user.id)" :key="user.id">
+      <div class="item" v-for="user in users" :key="user.id" @click="setAccount(user.id)">
         <img class="item_photo" :src="user.photo_100">
         <div class="item_data">
           <div class="item_name_wrap">
@@ -24,9 +24,9 @@
 </template>
 
 <script>
-  import ModalHeader from './ModalHeader.vue';
   import { mapState } from 'vuex';
   import { resetAppState } from 'js/store/';
+  import ModalHeader from './ModalHeader.vue';
 
   export default {
     components: { ModalHeader },

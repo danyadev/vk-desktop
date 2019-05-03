@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import Auth from './../auth/Auth.vue';
+  import Auth from '../auth/Auth.vue';
   import ModalHeader from './ModalHeader.vue';
 
   export default {

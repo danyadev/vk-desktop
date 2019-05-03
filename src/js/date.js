@@ -1,6 +1,5 @@
 import { ru } from 'date-fns/locale';
 import getTranslate from './getTranslate';
-
 import {
   format,
   formatDistanceStrict,

@@ -1,9 +1,14 @@
 <template>
-  <div :class="['menu_wrap', { active: menuState }]" ref="wrap" @click="toggleMenu">
+  <div :class="['menu_wrap', { active: menuState }]" @click="toggleMenu">
     <div class="menu">
       <div class="account_block">
         <img class="account_background" :src="user.photo_100">
-        <div class="account_multiaccount" @click.stop="openModal('multiaccount')"></div>
+        <Ripple color="rgba(0, 0, 0, .2)"
+                class="fast account_multiaccount"
+                @click.stop="openModal('multiaccount')"
+        >
+          <img src="~assets/menu_groups.svg">
+        </Ripple>
         <img class="account_photo" :src="user.photo_100">
         <div class="account_name">
           {{ user.first_name }} {{ user.last_name }}
@@ -11,19 +16,26 @@
         </div>
         <div class="account_status" v-emoji="user.status"></div>
       </div>
+
       <div class="menu_items">
-        <div v-for="route of routes"
-             :class="['menu_item', { active: isActiveRoute(`/${route}`) }]"
-             @click.stop="openPage(`/${route}`)"
+        <Ripple v-for="route of routes"
+                :key="route"
+                color="#e1e7ed"
+                :class="['menu_item', { active: isActiveRoute(`/${route}`) }]"
+                @click.stop="openPage(`/${route}`)"
         >
           <div class="menu_item_icon"
                :style="{ webkitMaskImage: `url('assets/menu_${route}.svg')` }"
           ></div>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
-        </div>
-        <div class="menu_item logout" @click.stop="openModal('logout')">
+        </Ripple>
+
+        <Ripple color="#e1e7ed"
+                class="menu_item logout"
+                @click.stop="openModal('logout')"
+        >
           <div class="menu_item_name">{{ l('logout') }}</div>
-        </div>
+        </Ripple>
       </div>
     </div>
   </div>
@@ -31,8 +43,12 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex';
+  import Ripple from '@vkdesktop/vue-ripple';
 
   export default {
+    components: {
+      Ripple
+    },
     data: () => ({
       routes: ['messages']
     }),
@@ -45,7 +61,7 @@
         let state;
 
         if(typeof event == 'boolean') state = event;
-        else state = this.$refs.wrap != event.target;
+        else state = this.$el != event.target;
 
         this.$store.commit('setMenuState', state);
       },
@@ -64,8 +80,9 @@
       openModal(name) {
         this.toggleMenu(false);
 
-        // Открытие модалки после закрытия меню
-        setTimeout(() => this.$modal.open(name), 150);
+        this.$el.addEventListener('transitionend', () => {
+          this.$modal.open(name);
+        }, { once: true });
       }
     }
   }
@@ -124,14 +141,18 @@
   }
 
   .account_multiaccount {
-    width: 26px;
-    height: 21px;
     position: absolute;
     right: 10px;
-    background-color: white;
-    -webkit-mask-size: cover;
-    -webkit-mask-image: url('~assets/menu_groups.svg');
+    padding: 3px 0 0 3px;
+    width: 33px;
+    height: 32px;
+    border-radius: 50%;
     cursor: pointer;
+  }
+
+  .account_multiaccount img {
+    width: 26px;
+    height: 26px;
   }
 
   .account_photo {

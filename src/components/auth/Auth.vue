@@ -41,7 +41,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .auth {
     height: 100%;
     display: flex;
