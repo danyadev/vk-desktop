@@ -1,5 +1,5 @@
 <template>
-  <div class="peer" @click="openChat">
+  <Ripple color="#e6ebf2" class="peer" @click="openChat">
     <div :class="['photo_wrap', online]"><img :src="photo"></div>
     <div class="content">
       <div class="title">
@@ -18,16 +18,20 @@
         <div :class="['unread', { outread: msg.outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
       </div>
     </div>
-  </div>
+  </Ripple>
 </template>
 
 <script>
   import { mapState } from 'vuex';
   import { getServiceMessage } from 'js/messages';
   import { getShortDate } from 'js/date';
+  import Ripple from '@vkdesktop/vue-ripple';
 
   export default {
     props: ['peer', 'msg'],
+    components: {
+      Ripple
+    },
     data() {
       return {
         isChat: this.peer.type == 'chat'

@@ -57,7 +57,6 @@
   .chat_input_container {
     display: flex;
     flex: none;
-    font-family: Roboto;
     border-top: 1px solid #d8dade;
     background-color: #fbfbfb;
   }
@@ -112,11 +111,12 @@
   .emoji_btn:active { transform: translateY(1px) }
 
   .chat_input_error {
-    width: 100%;
-    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: 50px;
+    font-family: Roboto;
     color: #3e3f40;
   }
 

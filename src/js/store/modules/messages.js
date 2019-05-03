@@ -19,9 +19,11 @@ export default {
       Object.assign(state, getState());
     },
 
-    addPeer(state, data) {
-      Vue.set(state.conversations, data.peer.id, data);
-      state.peersList.push(data.peer.id);
+    addConversations(state, conversations) {
+      for(let conversation of conversations) {
+        Vue.set(state.conversations, conversation.peer.id, conversation);
+        state.peersList.push(conversation.peer.id);
+      }
     },
     updatePeer(state, peer) {
       const conv = { ...state.conversations[peer.id] || {} };
@@ -30,9 +32,11 @@ export default {
       Vue.set(state.conversations, peer.id, conv);
     },
 
-    addMessage(state, { peer_id, msg }) {
-      const messages = [msg, ...state.messages[peer_id] || []];
-      Vue.set(state.messages, peer_id, messages);
+    addMessages(state, { peer_id, messages }) {
+      for(let msg of messages) {
+        const msgs = [msg, ...state.messages[peer_id] || []];
+        Vue.set(state.messages, peer_id, msgs);
+      }
     }
   },
   getters: {

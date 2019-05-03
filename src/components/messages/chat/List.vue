@@ -1,5 +1,5 @@
 <template>
-  <Scrolly class="messages_list_wrap" :vclass="['messages_list', { empty: !hasMessages }]">
+  <Scrolly class="messages_list_wrap" :vclass="['messages_list', { empty: !hasMessages }]" @scrollchange="onScroll">
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loading" class="loading"></div>
 
@@ -8,7 +8,7 @@
       {{ l('im_empty_dialog') }}
     </div>
 
-    <Message v-for="msg of messages" :key="msg.id" :msg="msg" :id="id"/>
+    <Message v-for="msg of messages" :key="msg.id" :msg="msg" :peer_id="id" :list="messages"/>
   </Scrolly>
 </template>
 
@@ -28,9 +28,11 @@
     },
     data() {
       return {
-        isChat: this.id > 2e9,
         loading: false,
-        loaded: false
+        loaded: false,
+
+        scrollTop: null,
+        isFirstLoad: true
       }
     },
     computed: {
@@ -42,39 +44,74 @@
       }
     },
     methods: {
+      scrollToEnd() {
+        const messagesList = this.$el.firstChild;
+
+        messagesList.scrollTop = messagesList.scrollHeight;
+      },
       async load() {
         this.loading = true;
 
         const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.id,
-          offset: 0,
+          offset: this.messages.length,
           extended: 1,
-          fields: fields,
-          count: 50
+          fields: fields
         });
-
-        const conversation = parseConversation(conversations[0]);
 
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
 
-        for(let item of items) {
-          const msg = parseMessage(item, conversation);
+        const conversation = parseConversation(conversations[0]);
+        const messages = [];
 
-          this.$store.commit('messages/addMessage', {
-            peer_id: this.id,
-            msg: msg
-          });
+        for(let item of items) {
+          messages.push(parseMessage(item, conversation));
         }
 
-        this.loading = false;
-      }
+        this.$store.commit('messages/addMessages', {
+          peer_id: this.id,
+          messages: messages
+        });
+
+        const messagesList = this.$el.firstChild;
+        const { scrollTop, scrollHeight } = messagesList;
+
+        this.$nextTick().then(() => {
+          if(this.isFirstLoad) {
+            this.isFirstLoad = false;
+            this.scrollToEnd();
+          } else {
+            messagesList.scrollTop = messagesList.scrollHeight - scrollHeight - scrollTop;
+          }
+
+          this.loading = false;
+          if(items.length < 20) this.loaded = true;
+        });
+      },
+      onScroll(e) {
+        this.scrollTop = this.$el.firstChild.scrollTop;
+
+        this.checkScrolling(e);
+      },
+      checkScrolling: endScroll(function() {
+        if(!this.loading && !this.loaded) {
+          this.loading = true;
+          this.load();
+        }
+      }, true)
     },
     mounted() {
       this.load();
     },
     activated() {
+      if(this.scrollTop != null) {
+        const messagesList = this.$el.firstChild;
+
+        messagesList.scrollTop = this.scrollTop;
+      } else this.scrollToEnd();
+
       // Обновление данных юзера при каждом открытии чата
-      if(!this.isChat && this.id > 0) {
+      if(this.id > 0 && this.id < 2e9) {
         // *Получить юзера и обработать данные*
       }
     }
@@ -88,8 +125,12 @@
     height: 100%;
   }
 
-  .messages_list.empty {
+  .messages_list {
     display: flex;
+    flex-direction: column;
+  }
+
+  .messages_list.empty {
     align-items: center;
     justify-content: center;
   }

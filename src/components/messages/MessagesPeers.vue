@@ -45,16 +45,20 @@
 
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
 
-        for(let item of items) {
-          let { conversation, last_message } = item;
+        const conversations = [];
 
-          this.$store.commit('messages/addPeer', {
+        for(let item of items) {
+          const { conversation, last_message } = item;
+
+          conversations.push({
             peer: parseConversation(conversation),
             msg: parseMessage(last_message, conversation)
           });
         }
 
+        this.$store.commit('messages/addConversations', conversations);
         this.loading = false;
+
         if(items.length < 20) this.loaded = true;
       },
       onScroll: endScroll(function() {
