@@ -22,6 +22,19 @@ export function escape(text = '') {
     .replace(/"/g, '&quot;');
 }
 
+// Возвращает одну из фотографий:
+// p1 - фото для обычных дисплеев
+// p2 - фото для Retina дисплеев, в 2 раза больше p1
+export function getPhoto(p1, p2) {
+  return devicePixelRatio >= 2 ? p2 : p1;
+}
+
+// Пишет текст с большой буквы
+// привет всем -> Привет всем
+export function capitalize(str) {
+  return str[0].toUpperCase() + str.slice(1);
+}
+
 // Вызывает переданную функцию после прохождения delay мс после последнего вызова экземпляра
 export function debounce(fn, delay) {
   let timerId;
@@ -45,13 +58,6 @@ export function concatProfiles(profiles = [], groups = []) {
   }, []);
 
   return profiles.concat(groups);
-}
-
-// Возвращает одну из фотографий:
-// p1 - фото для обычных дисплеев
-// p2 - фото для Retina дисплеев, в 2 раза больше p1
-export function getPhoto(p1, p2) {
-  return devicePixelRatio >= 2 ? p2 : p1;
 }
 
 // Возвращает функцию, которая вызывает колбэк, если юзер долистал

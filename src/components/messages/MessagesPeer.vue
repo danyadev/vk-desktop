@@ -194,6 +194,8 @@
     margin-left: 5px;
     color: #848a96;
     font-size: 13px;
+    margin-top: 2px;
+    font-family: Roboto;
   }
 
   .message_wrap {
@@ -207,7 +209,13 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-family: Roboto;
+    margin-top: 2px;
     color: #4c4d50;
+  }
+
+  .message >>> b {
+    font-weight: 500;
   }
 
   .author:not(:empty) {

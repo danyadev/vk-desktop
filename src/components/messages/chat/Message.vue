@@ -1,21 +1,30 @@
 <template>
-  <div :class="['message_wrap', { showUserData, serviceMessage, isPrevServiceMsg }]">
-    <img class="message_photo" :src="photo">
+  <div class="message_container">
+    <div v-if="messageDate" class="message_date">{{ messageDate }}</div>
+    <div v-if="isStartUnreaded" class="message_unreaded_messages">
+      <span>{{ l('im_unread_messages') }}</span>
+    </div>
 
-    <div class="message">
-      <div class="message_name">
-        {{ name }}
-        <div v-if="user && user.verified" class="verified"></div>
-        <div class="message_time">{{ time }}</div>
+    <div :class="['message_wrap', { showUserData, serviceMessage, isPrevServiceMsg }]">
+      <img class="message_photo" :src="photo">
+
+      <div class="message">
+        <div class="message_name">
+          {{ name }}
+          <div v-if="user && user.verified" class="verified"></div>
+          <div class="message_time">{{ time }}</div>
+        </div>
+        <div v-if="serviceMessage" class="message_content" v-html="serviceMessage"></div>
+        <div v-else class="message_content" v-emoji.push.br="msg.text"></div>
       </div>
-      <div v-if="serviceMessage" class="message_content" v-html="serviceMessage"></div>
-      <div v-else class="message_content" v-emoji.push.br="msg.text"></div>
     </div>
   </div>
 </template>
 
 <script>
-  import { getTime } from 'js/date';
+  import { isSameDay } from 'date-fns';
+  import { getTime, getMessageDate } from 'js/date';
+  import { capitalize } from 'js/utils';
   import { getServiceMessage } from 'js/messages';
 
   export default {
@@ -46,6 +55,17 @@
 
         return this.list[index - 1];
       },
+      messageDate() {
+        const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
+        const thisMsgDate = new Date(this.msg.date * 1000);
+
+        if(!this.prevMsg || !isSameDay(prevMsgDate, thisMsgDate)) {
+          return capitalize(getMessageDate(thisMsgDate));
+        }
+      },
+      isStartUnreaded() {
+        return (!this.prevMsg || !this.prevMsg.unread) && this.msg.unread;
+      },
       serviceMessage() {
         return this.msg.action && getServiceMessage(this.msg.action, this.user, true);
       },
@@ -56,7 +76,8 @@
         return !this.serviceMessage && (
           !this.prevMsg ||
           this.prevMsg.from != this.msg.from ||
-          this.isPrevServiceMsg
+          this.isPrevServiceMsg ||
+          this.messageDate
         );
       }
     },
@@ -67,9 +88,41 @@
 </script>
 
 <style scoped>
+  .message_container {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+  }
+
+  .message_date, .message_unreaded_messages {
+    text-align: center;
+    font-family: Roboto;
+    margin: 20px 0 5px 0;
+    color: #5d6165;
+  }
+
+  .message_unreaded_messages {
+    position: relative;
+  }
+
+  .message_unreaded_messages span {
+    position: relative;
+    background-color: #fff;
+    padding: 10px;
+  }
+
+  .message_unreaded_messages::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background: #d4d6da;
+  }
+
   .message_wrap {
     display: flex;
-    flex: none;
     margin: 20px 20px 0 20px;
   }
 
@@ -78,11 +131,11 @@
   }
 
   .message_wrap.serviceMessage {
-    /* Центровка текста в сервисном сообщении, когда он не помещается в 1 строку */
-    text-align: center;
     /* Центровка текста в списке сообщений */
     justify-content: center;
-    color: #4e4f50;
+    /* Центровка текста в сервисном сообщении, когда он не помещается в 1 строку */
+    text-align: center;
+    color: #5d6165;
     margin-left: 20px;
   }
 

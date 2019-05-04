@@ -4,7 +4,6 @@ export default {
   yes: 'Да',
   you: 'Вы',
   you2: 'Вас',
-  yesterday: 'вчера',
   loading: 'Загрузка...',
   send: 'Отправить',
   toggle_notifications: [
@@ -15,6 +14,8 @@ export default {
   // Время
   date_now: 'только что',
   date_at: 'в',
+  today: 'сегодня',
+  yesterday: 'вчера',
 
   // Контекстное меню
   open_console: 'Открыть консоль',
@@ -53,6 +54,7 @@ export default {
   im_user_deleted: 'Страница удалена',
   im_input_placeholder: 'Введите сообщение...',
   im_empty_dialog: 'Ваш список сообщений пуст',
+  im_unread_messages: 'Непрочитанные сообщения',
 
   // Вложения в сообщениях
   im_replied: 'Ответ на сообщение',

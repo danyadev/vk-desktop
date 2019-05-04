@@ -16,6 +16,23 @@ export function getTime(date) {
   return format(date, 'HH:mm', { locale: ru });
 }
 
+// Возвращает дату в виде:
+// 1) Сегодня, 2 мая
+// 2) Вчера, 1 мая
+// 3) 21 апреля
+export function getMessageDate(date) {
+  const day = format(date, 'd MMMM', { locale: ru });
+  const now = new Date();
+
+  if(isSameDay(date, now)) {
+    return `${getTranslate('today')}, ${day}`;
+  } else if(isSameDay(subDays(now, 1), date)) {
+    return `${getTranslate('yesterday')}, ${day}`;
+  } else {
+    return day;
+  }
+}
+
 // Используется в списке диалогов
 export function getShortDate(date) {
   const now = new Date();

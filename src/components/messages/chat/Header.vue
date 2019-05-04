@@ -130,11 +130,13 @@
   .online {
     color: rgba(255, 255, 255, 0.75);
     font-size: 13px;
+    font-family: Roboto;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin-top: 2px;
   }
 
   .actions_btn {
