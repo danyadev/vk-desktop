@@ -121,16 +121,13 @@
 </script>
 
 <style>
-  .messages_list_wrap {
+  .messages_list_wrap, .messages_list {
     display: flex;
     flex-direction: column;
-    height: 100%;
   }
 
-  .messages_list {
-    display: flex;
-    flex-direction: column;
-  }
+  .messages_list_wrap { height: 100% }
+  .messages_list { padding-bottom: 25px }
 
   .messages_list.empty {
     align-items: center;

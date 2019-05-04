@@ -57,7 +57,7 @@
   	font-family: 'Segoe UI';
   	font-weight: 500;
   	font-display: block;
-  	src: url('~assets/SegoeUISemiBold.ttf');
+  	src: url('~assets/SegoeUIMedium.ttf');
   }
 
   @font-face {
@@ -65,6 +65,13 @@
   	font-weight: 400;
   	font-display: block;
   	src: url('~assets/Roboto.ttf');
+  }
+
+  @font-face {
+    font-family: 'Roboto';
+  	font-weight: 500;
+  	font-display: block;
+  	src: url('~assets/RobotoMedium.ttf');
   }
 
   body {
@@ -189,15 +196,5 @@
   .verified.white {
     background-image: url('~assets/verified_white.svg');
     opacity: .7;
-  }
-
-  .ripple-outer.fast .ripple-enter-active,
-  .ripple-outer.fast .ripple-enter-to-active {
-    transition: all 1s ease-out;
-  }
-
-  .ripple-outer.fast .ripple-leave-active,
-  .ripple-outer.fast .ripple-leave-to-active {
-    transition: all .4s ease-out;
   }
 </style>
