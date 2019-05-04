@@ -6,6 +6,7 @@
       <div class="message_name">
         {{ name }}
         <div v-if="user && user.verified" class="verified"></div>
+        <div class="message_time">{{ time }}</div>
       </div>
       <div class="message_content" v-emoji.push.br="msg.text"></div>
     </div>
@@ -13,6 +14,8 @@
 </template>
 
 <script>
+  import { getTime } from 'js/date';
+
   export default {
     props: ['msg', 'peer_id', 'list'],
     data() {
@@ -31,6 +34,9 @@
         return this.user
           ? this.user.name || `${this.user.first_name} ${this.user.last_name}`
           : '...';
+      },
+      time() {
+        return getTime(new Date(this.msg.date * 1000));
       }
     },
     methods: {
@@ -61,6 +67,15 @@
 
   .message_name .verified {
     margin-top: -1px;
+  }
+
+  .message_time {
+    display: inline;
+    margin-left: 2px;
+    font-family: Roboto;
+    font-weight: 400;
+    font-size: 13px;
+    color: #6c737a;
   }
 
   .message_content {

@@ -80,7 +80,10 @@
             this.isFirstLoad = false;
             this.scrollToEnd();
           } else {
-            messagesList.scrollTop = messagesList.scrollHeight - scrollHeight - scrollTop;
+            // Отнимаем от общей текущей высоты скролла прошлую высоту
+            // и прибавляем прошлый остаток до вершины скролла
+            // чтобы при добавлении контента остаться на своем месте
+            messagesList.scrollTop = messagesList.scrollHeight - scrollHeight + scrollTop;
           }
 
           this.loading = false;

@@ -10,6 +10,12 @@ import {
   differenceInCalendarYears
 } from 'date-fns';
 
+export function getTime(date) {
+  // В будущем здесь будет автоматически указываться
+  // локаль и эта функция будет иметь смысл :)
+  return format(date, 'HH:mm', { locale: ru });
+}
+
 // Используется в списке диалогов
 export function getShortDate(date) {
   const now = new Date();
