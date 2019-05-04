@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import Ripple from '@vkdesktop/vue-ripple';
+  import Ripple from '../../UI/Ripple.vue';
 
   export default {
     props: ['peer'],

@@ -11,10 +11,10 @@
 
 <script>
   import { remote as electron } from 'electron';
-  const { app } = electron;
-
-  import ModalHeader from './ModalHeader.vue';
   import { resetAppState } from 'js/store/';
+  import ModalHeader from './ModalHeader.vue';
+
+  const { app } = electron;
 
   export default {
     props: {

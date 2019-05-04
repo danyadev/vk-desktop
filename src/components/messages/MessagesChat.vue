@@ -10,7 +10,6 @@
 
 <script>
   import { loadConversation } from 'js/utils';
-
   import ChatHeader from './chat/Header.vue';
   import ChatList from './chat/List.vue';
   import ChatInput from './chat/Input.vue';

@@ -18,7 +18,7 @@
 
 <script>
   import { getLastOnlineDate } from 'js/date';
-  import Ripple from '@vkdesktop/vue-ripple';
+  import Ripple from '../../UI/Ripple.vue';
 
   export default {
     props: ['id', 'peer'],

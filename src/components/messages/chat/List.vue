@@ -1,5 +1,5 @@
 <template>
-  <Scrolly class="messages_list_wrap" :vclass="['messages_list', { empty: !hasMessages }]" @scrollchange="onScroll">
+  <Scrolly class="messages_list_wrap" :vclass="['messages_list', { empty: !hasMessages }]" @scroll="onScroll">
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loading" class="loading"></div>
 
@@ -16,8 +16,7 @@
   import vkapi from 'js/vkapi';
   import { fields, concatProfiles, endScroll } from 'js/utils';
   import { parseConversation, parseMessage } from 'js/messages';
-
-  import Scrolly from '@vkdesktop/vue-scrolly';
+  import Scrolly from '../../UI/Scrolly.vue';
   import Message from './Message.vue';
 
   export default {

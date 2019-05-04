@@ -43,7 +43,7 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex';
-  import Ripple from '@vkdesktop/vue-ripple';
+  import Ripple from './UI/Ripple.vue';
 
   export default {
     components: {

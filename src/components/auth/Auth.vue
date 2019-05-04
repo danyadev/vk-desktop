@@ -9,7 +9,6 @@
   import { getDesktopToken } from './auth';
   import { fields } from 'js/utils';
   import vkapi from 'js/vkapi';
-
   import AuthCode from './AuthCode.vue';
   import AuthForm from './AuthForm.vue';
 
