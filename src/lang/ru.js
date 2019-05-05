@@ -22,6 +22,7 @@ export default {
   open_devtools: 'Открыть в DevTools',
 
   // Авторизация
+  available_accounts_list: 'Список доступных аккаунтов',
   enter_login: 'Введите логин',
   enter_password: 'Введите пароль',
   wrong_login_or_password: 'Неверный логин или пароль',

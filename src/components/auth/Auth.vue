@@ -2,6 +2,9 @@
   <div class="auth">
     <AuthCode v-if="error" :data="error" @auth="auth"/>
     <AuthForm v-else @auth="auth"/>
+    <div v-if="hasUsers" class="auth_open_multiacc" @click="openMultiacc">
+      {{ l('available_accounts_list') }}
+    </div>
   </div>
 </template>
 
@@ -18,6 +21,11 @@
     data: () => ({
       error: null
     }),
+    computed: {
+      hasUsers() {
+        return !this.isModal && Object.keys(this.$store.state.users.users).length;
+      }
+    },
     methods: {
       async auth(data) {
         if(data.error == 'need_validation') this.error = data;
@@ -35,6 +43,9 @@
           if(this.isModal) this.$modal.close(this.$parent.$attrs.name);
           else this.$store.commit('users/setActiveUser', user.id);
         }
+      },
+      openMultiacc() {
+        this.$modal.open('multiaccount');
       }
     }
   }
@@ -47,5 +58,15 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+  }
+
+  .auth_open_multiacc {
+    position: absolute;
+    bottom: 0;
+    color: #306aab;
+    user-select: none;
+    cursor: pointer;
+    font-family: Roboto;
+    margin-bottom: 10px;
   }
 </style>
