@@ -13,7 +13,7 @@
                  @click.stop="removeAccount(user.id)"
             >
           </div>
-          <div class="item_description">{{ getUserDescription(user.id) }}</div>
+          <div class="item_description">{{ getUserDescription(user) }}</div>
         </div>
       </div>
     </div>
@@ -34,8 +34,8 @@
       ...mapState('users', ['users', 'activeUser'])
     },
     methods: {
-      getUserDescription(id) {
-        if(this.activeUser != id) return `@id${id}`;
+      getUserDescription(user) {
+        if(this.activeUser != user.id) return '@' + user.domain;
         else return this.l('modal_multiaccount_active_account');
       },
       async setAccount(id) {
