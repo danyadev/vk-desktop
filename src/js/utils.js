@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import vkapi from './vkapi';
 import store from './store/';
 import { parseConversation } from './messages';
+import { version as AppVersion } from 'package-json';
 
 // Минимальный fields для получения профилей в приложении
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,screen_name';
@@ -10,6 +11,10 @@ export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,las
 export const regexp = {
   push: /\[(club|id)(\d+)\|(.+?)\]/gi
 }
+
+// User-Agents для выполнения запросов
+export const DesktopUserAgent = `VKDesktop/${AppVersion}`;
+export const AndroidUserAgent = 'VKAndroidApp/5.33-3626';
 
 // Заменяем опасные для разметки символы в выводимых данных на безопасные
 export function escape(text = '') {

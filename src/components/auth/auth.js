@@ -1,4 +1,4 @@
-import { AndroidUserAgent, DesktopUserAgent } from 'js/user-agent';
+import { AndroidUserAgent, DesktopUserAgent } from 'js/utils';
 import vkapi, { version } from 'js/vkapi';
 import querystring from 'querystring';
 import request from 'js/request';

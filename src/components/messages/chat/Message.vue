@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import { isSameDay } from 'date-fns';
+  import { isSameDay, differenceInMinutes } from 'date-fns';
   import { getTime, getMessageDate } from 'js/date';
   import { capitalize } from 'js/utils';
   import { getServiceMessage } from 'js/messages';
@@ -73,11 +73,15 @@
         return this.prevMsg && this.prevMsg.action;
       },
       showUserData() {
+        const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
+        const thisMsgDate = new Date(this.msg.date * 1000);
+
         return !this.serviceMessage && (
           !this.prevMsg ||
           this.prevMsg.from != this.msg.from ||
           this.isPrevServiceMsg ||
-          this.messageDate
+          this.messageDate ||
+          differenceInMinutes(thisMsgDate, prevMsgDate) > 10
         );
       }
     },

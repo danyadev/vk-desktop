@@ -11,7 +11,9 @@
 
 <script>
   import { mapState } from 'vuex';
-
+  import longpoll from 'js/longpoll';
+  import vkapi from 'js/vkapi';
+  import { fields } from 'js/utils';
   import ModalsWrapper from './ModalsWrapper.vue';
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
@@ -26,15 +28,33 @@
     computed: {
       ...mapState('users', ['activeUser'])
     },
+    methods: {
+      async initUser() {
+        this.$router.replace(this.activeUser ? '/messages' : '/auth');
+
+        if(longpoll.started) longpoll.stop();
+
+        if(this.activeUser) {
+          const { lp, counters, user } = await vkapi('execute.init', {
+            lp_version: longpoll.version,
+            fields: fields
+          });
+
+          this.$store.commit('users/updateUser', user);
+
+          if(longpoll.stopped) longpoll.start(lp);
+          else longpoll.once('stop', () => longpoll.start(lp));
+        }
+      }
+    },
     watch: {
-      activeUser(state) {
-        this.$router.replace(state ? '/messages' : '/auth');
+      activeUser() {
+        this.initUser();
       }
     },
     mounted() {
-      this.$router.replace(this.activeUser ? '/messages' : '/auth');
 
-      if(this.activeUser) this.$store.dispatch('users/updateUserData');
+      this.initUser();
     }
   }
 </script>

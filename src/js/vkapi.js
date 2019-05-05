@@ -1,4 +1,4 @@
-import { DesktopUserAgent } from './user-agent';
+import { DesktopUserAgent } from './utils';
 import querystring from 'querystring';
 import request from './request';
 import store from './store/';
