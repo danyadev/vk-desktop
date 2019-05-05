@@ -83,29 +83,15 @@ async function isConnected() {
   catch(e) { return false }
 }
 
-const reqList = [];
-let inWork = false;
-
-async function resolveRequest() {
-  const { data, resolve, reject } = reqList[0];
-
-  inWork = true;
-
-  try {
-    resolve(await request(...data));
-    reqList.shift();
-  } catch(err) {
-    if(await isConnected()) reject(err);
-    else await new Promise((r) => setTimeout(r, 1500));
-  }
-
-  if(reqList.length) resolveRequest();
-  else inWork = false;
-}
-
 export default function(...data) {
-  return new Promise((resolve, reject) => {
-    reqList.push({ data, resolve, reject });
-    if(reqList.length == 1 && !inWork) resolveRequest();
+  return new Promise(async function tryRequest(resolve, reject) {
+    try {
+      resolve(await request(...data));
+    } catch(err) {
+      if(!await isConnected()) {
+        await new Promise((r) => setTimeout(r, 1500)); // Ждем 1.5 сек
+        tryRequest(...arguments);
+      } else reject(err);
+    }
   });
 }
