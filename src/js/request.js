@@ -84,14 +84,21 @@ async function isConnected() {
 }
 
 export default function(...data) {
-  return new Promise(async function tryRequest(resolve, reject) {
-    try {
-      resolve(await request(...data));
-    } catch(err) {
-      if(!await isConnected()) {
-        await new Promise((r) => setTimeout(r, 1500)); // Ждем 1.5 сек
-        tryRequest(...arguments);
-      } else reject(err);
+  return new Promise(async (resolve, reject) => {
+    let done = false;
+
+    while(!done) {
+      try {
+        resolve(await request(...data));
+        done = true;
+      } catch(err) {
+        if(!await isConnected()) {
+          await new Promise((r) => setTimeout(r, 1500)); // Ждем 1.5 сек
+        } else {
+          reject(err);
+          done = true;
+        }
+      }
     }
   });
 }
