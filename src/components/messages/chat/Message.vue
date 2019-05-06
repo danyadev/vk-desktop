@@ -101,7 +101,7 @@
   .message_date, .message_unreaded_messages {
     text-align: center;
     font-family: Roboto;
-    margin: 20px 0 5px 0;
+    margin: 20px 0 0 0;
     color: #5d6165;
   }
 
@@ -145,6 +145,10 @@
 
   .message_wrap.serviceMessage:not(.isPrevServiceMsg) {
     margin-top: 15px;
+  }
+
+  .message_date + .message_wrap.serviceMessage {
+    margin-top: 20px;
   }
 
   .message_content >>> b {

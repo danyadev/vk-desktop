@@ -20,6 +20,7 @@ export function getTime(date) {
 // 1) Сегодня, 2 мая
 // 2) Вчера, 1 мая
 // 3) 21 апреля
+// 4) 7 декабря 2018
 export function getMessageDate(date) {
   const day = format(date, 'd MMMM', { locale: ru });
   const now = new Date();
@@ -28,6 +29,8 @@ export function getMessageDate(date) {
     return `${getTranslate('today')}, ${day}`;
   } else if(isSameDay(subDays(now, 1), date)) {
     return `${getTranslate('yesterday')}, ${day}`;
+  } else if(differenceInCalendarYears(now, date)) {
+    return `${day} ${date.getFullYear()}`;
   } else {
     return day;
   }
