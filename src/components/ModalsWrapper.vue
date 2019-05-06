@@ -9,7 +9,7 @@
 </template>
 
 <script>
-  import { EventBus } from 'js/utils';
+  import { eventBus } from 'js/utils';
 
   const modalComponents = {};
   const modalNames = [
@@ -42,20 +42,20 @@
         const name = modal.getAttribute('name');
         const closable = modal.querySelector('.modal_header').getAttribute('closable');
 
-        if(closable) EventBus.emit('modal:close', name);
+        if(closable) eventBus.emit('modal:close', name);
       },
       onEscape() {
         const keys = Object.keys(this.modals);
 
-        if(keys) EventBus.emit('modal:close', keys[keys.length-1]);
+        if(keys) eventBus.emit('modal:close', keys[keys.length-1]);
       }
     },
     mounted() {
-      EventBus.on('modal:open', (name, data = {}) => {
+      eventBus.on('modal:open', (name, data = {}) => {
         this.$set(this.modals, name, { name, data });
       });
 
-      EventBus.on('modal:close', (name) => {
+      eventBus.on('modal:close', (name) => {
         this.$delete(this.modals, name);
       });
     }

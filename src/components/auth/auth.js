@@ -2,7 +2,7 @@ import querystring from 'querystring';
 import { AndroidUserAgent, DesktopUserAgent } from 'js/utils';
 import vkapi, { version } from 'js/vkapi';
 import request from 'js/request';
-import { EventBus } from 'js/utils';
+import { eventBus } from 'js/utils';
 
 export function getAndroidToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
@@ -24,7 +24,7 @@ export function getAndroidToken(login, password, params = {}) {
     });
 
     if(data.error == 'need_captcha') {
-      EventBus.emit('modal:open', 'captcha', {
+      eventBus.emit('modal:open', 'captcha', {
         src: data.captcha_img,
         send(code) {
           getAndroidToken(login, password, Object.assign(params, {

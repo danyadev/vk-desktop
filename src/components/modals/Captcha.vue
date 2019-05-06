@@ -41,7 +41,7 @@
         if(this.disabled) return;
 
         this.data.send(this.text.trim());
-        this.$modal.close(this.$attrs.name);
+        this.$modals.close(this.$attrs.name);
       }
     }
   }

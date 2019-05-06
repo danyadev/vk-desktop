@@ -81,7 +81,7 @@
         this.toggleMenu(false);
 
         this.$el.addEventListener('transitionend', () => {
-          this.$modal.open(name);
+          this.$modals.open(name);
         }, { once: true });
       }
     }

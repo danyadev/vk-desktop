@@ -26,7 +26,7 @@
         resetAppState();
       },
       closeModal() {
-        this.$modal.close(this.$attrs.name);
+        this.$modals.close(this.$attrs.name);
       }
     }
   }

@@ -34,7 +34,7 @@
         this.$store.commit('users/setActiveUser', null);
         this.$store.commit('users/removeUser', activeUser);
 
-        this.$modal.close(this.$attrs.name);
+        this.$modals.close(this.$attrs.name);
         resetAppState();
       }
     }

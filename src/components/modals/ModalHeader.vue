@@ -26,7 +26,7 @@
     },
     methods: {
       close() {
-        this.$modal.close(this.$parent.$attrs.name);
+        this.$modals.close(this.$parent.$attrs.name);
       }
     }
   }

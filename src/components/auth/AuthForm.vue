@@ -1,5 +1,5 @@
 <template>
-  <div class="auth_wrap" @keydown.enter="auth">
+  <div class="auth" @keydown.enter="auth">
     <img src="~assets/logo.png" class="auth_logo">
     <div class="auth_name">VK Desktop</div>
     <input class="input" type="text" :placeholder="l('enter_login')" v-model="login">
@@ -10,7 +10,10 @@
       ></div>
     </div>
     <button class="button auth_button" :disabled="disableBtn" @click="auth">{{ l('login') }}</button>
-    <div :class="['auth_error', { active: error }]">{{ errorText }}</div>
+    <div :class="['auth_error', { active: hasError }]">{{ errorText }}</div>
+    <div v-if="hasUsers" class="auth_open_multiacc" @click="openMultiacc">
+      {{ l('available_accounts_list') }}
+    </div>
   </div>
 </template>
 
@@ -18,10 +21,14 @@
   import { getAndroidToken } from './auth';
 
   export default {
+    props: ['isModal'],
     data: () => ({
       login: '',
       password: '',
-      error: null,
+
+      hasError: false,
+      errorType: null,
+
       progress: false,
       hidePassword: true
     }),
@@ -36,18 +43,22 @@
         return {
           account_banned: this.l('your_page_blocked'),
           invalid_client: this.l('wrong_login_or_password')
-        }[this.error];
+        }[this.errorType];
+      },
+      hasUsers() {
+        return !this.isModal && Object.keys(this.$store.state.users.users).length;
       }
     },
     methods: {
       async auth() {
         this.progress = true;
-        this.error = null;
+        this.hasError = false;
 
         const data = await getAndroidToken(this.login, this.password);
 
         if(['invalid_client', 'account_banned'].includes(data.error)) {
-          this.error = data.error;
+          this.errorType = data.error;
+          this.hasError = true;
           this.progress = false;
         } else if(data.error == 'need_validation') {
           this.$emit('auth', {
@@ -56,14 +67,25 @@
             ...data
           });
         } else this.$emit('auth', data);
+      },
+      openMultiacc() {
+        this.$modals.open('multiaccount');
       }
     }
   }
 </script>
 
 <style scoped>
-  .auth_wrap { text-align: center }
-  .auth_wrap input { margin-bottom: 6px }
+  .auth_logo {
+    width: 125px;
+    height: 125px;
+  }
+
+  .auth_name {
+    font-size: 20px;
+    margin: 15px 0 30px 0;
+  }
+
   .auth_password_wrap { position: relative }
 
   .auth_password_switch {
@@ -82,26 +104,15 @@
     background-image: url('~assets/hide.svg');
   }
 
-  .auth_logo {
-    width: 125px;
-    height: 125px;
-  }
-
-  .auth_name {
-    font-size: 20px;
-    margin: 15px 0 30px 0;
-  }
-
-  .auth_error {
-    padding: 7px 0;
-    margin-top: 6px;
-    color: #de3f3f;
-    border: 1px solid #de3f3f;
-    border-radius: 5px;
-    opacity: 0;
-    transition: opacity .3s;
-  }
-
-  .auth_error.active { opacity: 1 }
   .auth_button { width: 250px }
+
+  .auth_open_multiacc {
+    position: absolute;
+    bottom: 0;
+    color: #306aab;
+    user-select: none;
+    cursor: pointer;
+    font-family: Roboto;
+    margin-bottom: 10px;
+  }
 </style>

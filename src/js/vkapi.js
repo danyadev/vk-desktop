@@ -2,7 +2,7 @@ import { DesktopUserAgent } from './utils';
 import querystring from 'querystring';
 import request from './request';
 import store from './store/';
-import { EventBus } from './utils';
+import { eventBus } from './utils';
 
 export const version = '5.95';
 
@@ -28,7 +28,7 @@ function vkapi(name, params = {}) {
 
     if(data.response !== undefined) resolve(data.response);
     else if(data.error.error_code == 14) {
-      EventBus.emit('modal:open', 'captcha', {
+      eventBus.emit('modal:open', 'captcha', {
         src: data.error.captcha_img,
         send(code) {
           const newParams = Object.assign(params, {
@@ -64,7 +64,7 @@ function vkapi(name, params = {}) {
           break;
       }
 
-      EventBus.emit('modal:open', 'blocked-account', id);
+      eventBus.emit('modal:open', 'blocked-account', id);
     } else reject(data);
   });
 }

@@ -1,11 +1,6 @@
 <template>
-  <div class="auth">
-    <AuthCode v-if="error" :data="error" @auth="auth"/>
-    <AuthForm v-else @auth="auth"/>
-    <div v-if="hasUsers" class="auth_open_multiacc" @click="openMultiacc">
-      {{ l('available_accounts_list') }}
-    </div>
-  </div>
+  <AuthForm v-if="!error" :isModal="isModal" @auth="auth"/>
+  <AuthCode v-else :data="error" @auth="auth"/>
 </template>
 
 <script>
@@ -21,11 +16,6 @@
     data: () => ({
       error: null
     }),
-    computed: {
-      hasUsers() {
-        return !this.isModal && Object.keys(this.$store.state.users.users).length;
-      }
-    },
     methods: {
       async auth(data) {
         if(data.error == 'need_validation') this.error = data;
@@ -40,12 +30,9 @@
             android_token: data.access_token
           });
 
-          if(this.isModal) this.$modal.close(this.$parent.$attrs.name);
+          if(this.isModal) this.$modals.close(this.$parent.$attrs.name);
           else this.$store.commit('users/setActiveUser', user.id);
         }
-      },
-      openMultiacc() {
-        this.$modal.open('multiaccount');
       }
     }
   }
@@ -58,15 +45,22 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    text-align: center;
   }
 
-  .auth_open_multiacc {
-    position: absolute;
-    bottom: 0;
-    color: #306aab;
-    user-select: none;
-    cursor: pointer;
+  .auth input { margin-bottom: 6px }
+
+  .auth_error {
     font-family: Roboto;
-    margin-bottom: 10px;
+    padding: 8px 0;
+    margin: 6px 0;
+    width: 250px;
+    color: #de3f3f;
+    border: 1px solid #de3f3f;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity .3s;
   }
+
+  .auth_error.active { opacity: 1 }
 </style>

@@ -1,19 +1,19 @@
 <template>
-  <div class="auth_wrap" @keydown.enter="auth">
+  <div class="auth" @keydown.enter="auth">
     <div class="auth_code_header">{{ l('security_check') }}</div>
     <div class="auth_code_descr">{{ l('code_sent_to', isAppCode, [data.phone_mask]) }}</div>
     <input class="input" ref="input" :placeholder="l('enter_code')" v-model="code"/>
-    <div class="auth_error" v-if="error">{{ l('wrong_code') }}</div>
     <div class="auth_code_buttons">
       <button class="light_button" @click="cancel" :disabled="load">{{ l('cancel') }}</button>
       <button class="button" @click="auth" :disabled="load || !code.trim()">{{ l('login') }}</button>
     </div>
+    <div :class="['auth_error', { active: error }]">{{ l('wrong_code') }}</div>
   </div>
 </template>
 
 <script>
   import { getAndroidToken } from './auth';
-  
+
   export default {
     props: ['data'],
     data: () => ({
@@ -36,7 +36,7 @@
 
         const data = await getAndroidToken(this.data.login, this.data.password, { code: this.code });
 
-        if(data.error == 'invalid_code') {
+        if(data.error == 'invalid_request') {
           this.load = false;
           this.error = true;
         } else this.$emit('auth', data);
@@ -49,17 +49,6 @@
 </script>
 
 <style scoped>
-  .auth_wrap { text-align: center }
-  .auth_wrap input { margin-bottom: 6px }
-
-  .auth_error {
-    padding: 7px 0;
-    margin-bottom: 6px;
-    color: #de3f3f;
-    border: 1px solid #de3f3f;
-    border-radius: 5px;
-  }
-
   .auth_code_header {
     font-size: 24px;
     margin-bottom: 5px;

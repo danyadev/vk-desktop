@@ -82,7 +82,7 @@ export function endScroll(callback, reverse = false) {
 }
 
 // Шина событий вне Vue
-export const EventBus = new EventEmitter();
+export const eventBus = new EventEmitter();
 
 // Загрузка профилей
 const loadingProfiles = [];

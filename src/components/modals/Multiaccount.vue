@@ -62,7 +62,7 @@
         this.$store.commit('users/removeUser', id);
       },
       openAuthModal() {
-        this.$modal.open('auth', { isModal: true });
+        this.$modals.open('auth', { isModal: true });
       }
     }
   }
