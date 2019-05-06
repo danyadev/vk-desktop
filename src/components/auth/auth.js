@@ -1,6 +1,6 @@
+import querystring from 'querystring';
 import { AndroidUserAgent, DesktopUserAgent } from 'js/utils';
 import vkapi, { version } from 'js/vkapi';
-import querystring from 'querystring';
 import request from 'js/request';
 import { EventBus } from 'js/utils';
 
@@ -23,12 +23,7 @@ export function getAndroidToken(login, password, params = {}) {
       headers: { 'User-Agent': AndroidUserAgent }
     });
 
-    if(data.ban_info) {
-      // let { member_name, message } = data.ban_info;
-      //
-      // app.$toast(`${member_name}, ${message}`);
-      resolve({ error: 'invalid_client' });
-    } else if(data.error == 'need_captcha') {
+    if(data.error == 'need_captcha') {
       EventBus.emit('modal:open', 'captcha', {
         src: data.captcha_img,
         send(code) {
@@ -38,6 +33,8 @@ export function getAndroidToken(login, password, params = {}) {
           })).then(resolve);
         }
       });
+    } else if(data.ban_info) {
+      resolve({ error: 'account_banned' });
     } else resolve(data);
   });
 }

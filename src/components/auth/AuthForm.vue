@@ -10,7 +10,7 @@
       ></div>
     </div>
     <button class="button auth_button" :disabled="disableBtn" @click="auth">{{ l('login') }}</button>
-    <div :class="['auth_error', { active: error }]">{{ l('wrong_login_or_password') }}</div>
+    <div :class="['auth_error', { active: error }]">{{ errorText }}</div>
   </div>
 </template>
 
@@ -21,7 +21,7 @@
     data: () => ({
       login: '',
       password: '',
-      error: false,
+      error: null,
       progress: false,
       hidePassword: true
     }),
@@ -31,17 +31,23 @@
       },
       inputType() {
         return this.hidePassword ? 'password' : 'text';
+      },
+      errorText() {
+        return {
+          account_banned: this.l('your_page_blocked'),
+          invalid_client: this.l('wrong_login_or_password')
+        }[this.error];
       }
     },
     methods: {
       async auth() {
         this.progress = true;
-        this.error = false;
+        this.error = null;
 
         const data = await getAndroidToken(this.login, this.password);
 
-        if(data.error == 'invalid_client') {
-          this.error = true;
+        if(['invalid_client', 'account_banned'].includes(data.error)) {
+          this.error = data.error;
           this.progress = false;
         } else if(data.error == 'need_validation') {
           this.$emit('auth', {
