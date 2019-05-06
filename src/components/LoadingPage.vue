@@ -1,4 +1,4 @@
-<template>
+<template functional>
   <div class="loading_page loading"></div>
 </template>
 

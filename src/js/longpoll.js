@@ -2,9 +2,16 @@ import { EventEmitter } from 'events';
 import querystring from 'querystring';
 import request from './request';
 import vkapi from './vkapi';
-import { concatProfiles } from './utils';
+import { concatProfiles, fields } from './utils';
 import { parseMessge, parseConversation } from './messages';
+import store from './store/';
 import longpollEvents from './longpollEvents';
+
+function getLastMsgId() {
+  const peer = store.getters['messages/conversationsList'][0];
+
+  return peer && peer.msg.id;
+}
 
 export default new class Longpoll extends EventEmitter {
   constructor() {
@@ -88,23 +95,6 @@ export default new class Longpoll extends EventEmitter {
     }
   }
 
-  emitHistory(history = []) {
-    if(!history.length) return;
-
-    for(let item of history) {
-      const id = item.splice(0, 1)[0];
-      const parseItem = longpollEvents[`e${id}`];
-
-      if(!parseItem) {
-        console.warn('[longpoll] Неизвестное событие', [id, ...item]);
-        continue;
-      }
-
-      const { name, data } = parseItem(item) || {};
-      if(name) this.emit(name, data);
-    }
-  }
-
   async getHistory() {
     const history = await vkapi('messages.getLongPollHistory', {
       ts: this.ts,
@@ -112,39 +102,26 @@ export default new class Longpoll extends EventEmitter {
       msgs_limit: 500,
       max_msg_id: getLastMsgId(),
       lp_version: this.version,
-      fields: utils.fields
+      fields: fields
     });
 
+    store.commit('addProfiles', concatProfiles(history.profiles, history.groups));
+
     this.pts = history.new_pts;
-
-    app.$store.commit('addProfiles', concatProfiles(history.profiles, history.groups));
-
-    const peers = history.conversations.reduce((peers, peer) => {
-      peers[peer.peer.id] = parseConversation(peer);
-      return peers;
-    }, {});
-
-    const messages = history.messages.items.reduce((msgs, msg) => {
-      msgs[msg.id] = parseMessage(msg, peers[msg.peer_id]);
-      return msgs;
-    }, {});
-
-    let events = [];
-
-    for(let item of history.history) {
-      events.push(item);
-
-      // Что я высрал
-      // if([3, 4, 5, 18].includes(item[0])) {
-      //   events.push([item[0], {
-      //     peer: peers[item[3]],
-      //     msg: messages[item[1]]
-      //   }]);
-      // } else events.push(item);
-    }
-
-    this.emitHistory(events);
+    this.emitHistory(history.history);
 
     if(history.more) await this.getHistory();
+  }
+
+  emitHistory(history = []) {
+    if(!history.length) return;
+
+    for(let item of history) {
+      const [ id ] = item.splice(0, 1);
+      const event = longpollEvents[id];
+
+      if(!event) console.warn('[longpoll] Неизвестное событие', [id, ...item]);
+      else event.handler(event.parser(item));
+    }
   }
 }
