@@ -64,7 +64,10 @@ module.exports = (env, { mode }) => {
         },
         {
           test: /\.vue$/,
-          loader: 'vue-loader'
+          loader: 'vue-loader',
+          options: {
+            productionMode: !isDev
+          }
         },
         {
           test: /\.(png|svg|gif|ttf)$/,
