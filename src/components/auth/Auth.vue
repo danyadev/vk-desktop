@@ -51,7 +51,7 @@
   .auth input { margin-bottom: 6px }
 
   .auth_error {
-    font-family: Roboto;
+    font-family: BlinkMacSystemFont, Roboto;
     padding: 8px 0;
     margin: 6px 0;
     width: 250px;

@@ -17,7 +17,7 @@
       <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
       {{ l('toggle_notifications', !peer.muted) }}
     </Ripple>
-    <div v-else class="chat_input_error">
+    <div v-else class="chat_input_error ff-roboto">
       <div class="chat_input_error_img"></div>
       <div class="chat_input_error_text">{{ canWrite.text }}</div>
     </div>
@@ -116,7 +116,6 @@
     justify-content: center;
     width: 100%;
     height: 50px;
-    font-family: Roboto;
     color: #3e3f40;
   }
 

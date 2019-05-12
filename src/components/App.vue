@@ -10,10 +10,11 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
   import longpoll from 'js/longpoll';
-  import vkapi from 'js/vkapi';
   import { fields } from 'js/utils';
+  import { mapState } from 'vuex';
+  import vkapi from 'js/vkapi';
+
   import ModalsWrapper from './ModalsWrapper.vue';
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
@@ -53,7 +54,6 @@
       }
     },
     mounted() {
-
       this.initUser();
     }
   }
@@ -67,39 +67,43 @@
   :focus { outline: none }
 
   @font-face {
-  	font-family: 'Segoe UI';
+  	font-family: Segoe UI;
   	font-weight: 400;
   	font-display: block;
   	src: url('~assets/SegoeUI.ttf');
   }
 
   @font-face {
-  	font-family: 'Segoe UI';
+  	font-family: Segoe UI;
   	font-weight: 500;
   	font-display: block;
   	src: url('~assets/SegoeUIMedium.ttf');
   }
 
   @font-face {
-    font-family: 'Roboto';
+    font-family: Roboto;
   	font-weight: 400;
   	font-display: block;
   	src: url('~assets/Roboto.ttf');
   }
 
   @font-face {
-    font-family: 'Roboto';
+    font-family: Roboto;
   	font-weight: 500;
   	font-display: block;
   	src: url('~assets/RobotoMedium.ttf');
   }
 
   body {
-    font-family: BlinkMacSystemFont, 'Segoe UI';
+    font-family: BlinkMacSystemFont, Segoe UI;
     font-size: 15px;
     margin: 0;
     overflow: hidden;
     height: 100vh;
+  }
+
+  .ff-roboto {
+    font-family: BlinkMacSystemFont, Roboto;
   }
 
   a, .link {

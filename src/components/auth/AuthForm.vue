@@ -11,7 +11,7 @@
     </div>
     <button class="button auth_button" :disabled="disableBtn" @click="auth">{{ l('login') }}</button>
     <div :class="['auth_error', { active: hasError }]">{{ errorText }}</div>
-    <div v-if="hasUsers" class="auth_open_multiacc" @click="openMultiacc">
+    <div v-if="hasUsers" class="auth_open_multiacc ff-roboto" @click="openMultiacc">
       {{ l('available_accounts_list') }}
     </div>
   </div>
@@ -112,7 +112,6 @@
     color: #306aab;
     user-select: none;
     cursor: pointer;
-    font-family: Roboto;
     margin-bottom: 10px;
   }
 </style>

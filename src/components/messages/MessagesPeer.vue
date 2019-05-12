@@ -8,10 +8,10 @@
           <div v-if="owner && owner.verified" class="verified"></div>
           <div v-if="peer.muted" class="muted"></div>
         </div>
-        <div class="time">{{ time }}</div>
+        <div class="time ff-roboto">{{ time }}</div>
       </div>
       <div class="message_wrap">
-        <div class="message">
+        <div class="message ff-roboto">
           <div class="author">{{ authorName }}</div>
           <div :class="['text', { isAttachment, isDeletedContent }]" v-emoji.push="message"></div>
         </div>
@@ -195,7 +195,6 @@
     color: #848a96;
     font-size: 13px;
     margin-top: 2px;
-    font-family: Roboto;
   }
 
   .message_wrap {
@@ -209,7 +208,6 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-family: Roboto;
     margin-top: 2px;
     color: #4c4d50;
   }

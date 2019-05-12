@@ -10,7 +10,7 @@ import App from './components/App.vue';
 const win = electron.getCurrentWindow();
 const { Menu } = electron;
 
-let app = new Vue({
+const app = new Vue({
   el: '#app',
   store,
   router,

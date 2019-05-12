@@ -1,7 +1,6 @@
 <template>
-  <Ripple color="rgba(255, 255, 255, .2)" class="fast open_menu" @click="openMenu">
-    <img v-if="showBackIcon" src="~assets/back.svg">
-    <img v-else src="~assets/menu.png">
+  <Ripple color="rgba(255, 255, 255, .2)" class="fast open_menu_btn" @click="openMenu">
+    <img :src="back ? 'assets/back.svg' : 'assets/menu.png'">
   </Ripple>
 </template>
 
@@ -9,25 +8,26 @@
   import Ripple from './UI/Ripple.vue';
 
   export default {
+    props: {
+      back: {
+        type: Boolean,
+        default: false
+      }
+    },
     components: {
       Ripple
     },
-    computed: {
-      showBackIcon() {
-        // TODO: vue router history length (if n > 1 то true)
-        return false;
-      }
-    },
     methods: {
       openMenu() {
+        // TODO: Действие при this.back = true
         this.$store.commit('setMenuState', true);
       }
     }
   }
 </script>
 
-<style scoped>
-  .open_menu {
+<style>
+  .open_menu_btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -39,5 +39,5 @@
     transition: opacity .3s;
   }
 
-  .open_menu:hover { opacity: 1 }
+  .open_menu_btn:hover { opacity: 1 }
 </style>

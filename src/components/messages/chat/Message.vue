@@ -1,5 +1,5 @@
 <template>
-  <div class="message_container">
+  <div class="message_container ff-roboto">
     <div v-if="messageDate" class="message_date">{{ messageDate }}</div>
     <div v-if="isStartUnreaded" class="message_unreaded_messages">
       <span>{{ l('im_unread_messages') }}</span>
@@ -12,7 +12,7 @@
         <div class="message_name">
           {{ name }}
           <div v-if="user && user.verified" class="verified"></div>
-          <div class="message_time">{{ time }}</div>
+          <div class="message_time ff-roboto">{{ time }}</div>
         </div>
         <div v-if="serviceMessage" class="message_content" v-html="serviceMessage"></div>
         <div v-else class="message_content" v-emoji.push.br="msg.text"></div>
@@ -100,7 +100,6 @@
 
   .message_date, .message_unreaded_messages {
     text-align: center;
-    font-family: Roboto;
     margin: 20px 0 0 0;
     color: #5d6165;
   }
@@ -155,7 +154,9 @@
     font-weight: 500;
   }
 
-  .message_wrap:not(.showUserData) .message_photo { display: none }
+  .message_wrap:not(.showUserData) .message_photo,
+  .message_wrap:not(.showUserData) .message_name { display: none }
+
   .message_photo {
     border-radius: 50%;
     width: 40px;
@@ -164,9 +165,9 @@
     flex: none;
   }
 
-  .message_wrap:not(.showUserData) .message_name { display: none }
   .message_name {
     color: #254f79;
+    font-family: BlinkMacSystemFont, Segoe UI;
     font-weight: 500;
   }
 
@@ -177,14 +178,12 @@
   .message_time {
     display: inline;
     margin-left: 2px;
-    font-family: Roboto;
     font-weight: 400;
     font-size: 13px;
     color: #6c737a;
   }
 
   .message_content {
-    font-family: Roboto;
     line-height: 20px;
     margin-top: 2px;
     word-break: break-word;

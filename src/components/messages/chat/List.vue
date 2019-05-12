@@ -69,7 +69,7 @@
 
         this.$store.commit('messages/addMessages', {
           peer_id: this.id,
-          messages: messages
+          messages: messages.reverse()
         });
 
         const messagesList = this.$el.firstChild;
