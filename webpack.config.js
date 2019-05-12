@@ -39,6 +39,7 @@ module.exports = (env, { mode }) => {
     },
     entry: './src/main.js',
     output: {
+      path: path.resolve(__dirname, 'dist/dist'),
       publicPath: 'http://localhost:8080/dist',
       filename: 'bundle.js'
     },
@@ -84,6 +85,9 @@ module.exports = (env, { mode }) => {
       new VueLoaderPlugin(),
       new MiniCssExtractPlugin({ filename: 'bundle.css' }),
       new CopyWebpackPlugin([
+        { from: 'package.json', to: '../package.json' },
+        { from: 'index.js', to: '../index.js' },
+        { from: 'menu.js', to: '../menu.js' },
         { from: 'index.html', to: 'index.html' },
         { from: 'src/assets', to: 'assets' }
       ])
