@@ -28,7 +28,7 @@
     height: 100%;
     margin-top: -65px;
     color: #38383a;
-    font-size: 16px;
+    font-family: Roboto;
   }
 
   .choose_chat span {

@@ -10,6 +10,7 @@
 
 <script>
   import { loadConversation } from 'js/utils';
+  
   import ChatHeader from './chat/Header.vue';
   import ChatList from './chat/List.vue';
   import ChatInput from './chat/Input.vue';
@@ -29,8 +30,6 @@
       peer() {
         const conversation = this.$store.state.messages.conversations[this.id];
 
-        if(!conversation) loadConversation(this.id);
-
         return conversation && conversation.peer;
       }
     },
@@ -38,6 +37,9 @@
       closeChat() {
         this.$router.replace('/messages');
       }
+    },
+    mounted() {
+      if(!this.peer) loadConversation(this.id);
     }
   }
 </script>

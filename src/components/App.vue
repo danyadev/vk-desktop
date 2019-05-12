@@ -127,6 +127,7 @@
     color: #3c3c3c;
     line-height: 32px;
     padding: 0 30px 0 9px;
+    user-select: none;
     transition: border-color .3s;
   }
 

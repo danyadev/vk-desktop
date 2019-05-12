@@ -93,9 +93,9 @@
   .titlebar:not(.maximized) .titlebar_button.restore { display: none }
 
   .titlebar.mac { height: 22px }
+  .titlebar.mac + .app { height: calc(100vh - 22px) }
   .titlebar.mac:not(.maximized) .titlebar_drag { margin-right: 4px }
   .titlebar.mac .titlebar_buttons { display: none }
-  .titlebar.mac + .app { height: calc(100% - 22px) }
 
   .titlebar.mac .titlebar_drag {
     text-align: center;
