@@ -120,8 +120,12 @@ export default new class Longpoll extends EventEmitter {
       const [ id ] = item.splice(0, 1);
       const event = longpollEvents[id];
 
-      if(!event) console.warn('[longpoll] Неизвестное событие', [id, ...item]);
-      else event.handler(event.parser(item));
+      if(!event) {
+        console.warn('[longpoll] Неизвестное событие', [id, ...item]);
+      } else {
+        const data = event.parser(item);
+        if(data) event.handler(data);
+      }
     }
   }
 }

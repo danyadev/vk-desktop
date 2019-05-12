@@ -49,6 +49,11 @@
       time() {
         return getTime(new Date(this.msg.date * 1000));
       },
+      peer() {
+        const conv = this.$store.state.messages.conversations[this.peer_id];
+
+        return conv && conv.peer;
+      },
 
       prevMsg() {
         const index = this.list.findIndex(({ id }) => id == this.msg.id);
@@ -64,7 +69,11 @@
         }
       },
       isStartUnreaded() {
-        return (!this.prevMsg || !this.prevMsg.unread) && this.msg.unread;
+        const in_read = this.peer && this.peer.in_read;
+        const isPrevUnread = this.prevMsg && this.prevMsg.id > in_read;
+        const isThisUnread = this.msg.id > in_read;
+
+        return !this.msg.out && !isPrevUnread && isThisUnread;
       },
       serviceMessage() {
         return this.msg.action && getServiceMessage(this.msg.action, this.user, true);

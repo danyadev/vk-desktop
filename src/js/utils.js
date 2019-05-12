@@ -117,5 +117,7 @@ export async function loadConversation(id) {
   });
 
   store.commit('addProfiles', concatProfiles(profiles, groups));
-  store.commit('messages/updatePeer', parseConversation(conv));
+  store.commit('messages/updateConversation', {
+    peer: parseConversation(conv)
+  });
 }

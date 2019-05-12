@@ -51,7 +51,7 @@
 
           conversations.push({
             peer: parseConversation(conversation),
-            msg: parseMessage(last_message, conversation)
+            msg: parseMessage(last_message)
           });
         }
 

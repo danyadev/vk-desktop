@@ -15,7 +15,7 @@
           <div class="author">{{ authorName }}</div>
           <div :class="['text', { isAttachment, isDeletedContent }]" v-emoji.push="message"></div>
         </div>
-        <div :class="['unread', { outread: msg.outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
+        <div :class="['unread', { outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
       </div>
     </div>
   </Ripple>
@@ -90,6 +90,9 @@
         const isFwd = msg.fwdCount || msg.isReplyMsg;
 
         return !msg.text && (isFwd || !msg.action && msg.attachments.length);
+      },
+      outread() {
+        return this.peer.out_read != this.peer.last_msg_id;
       }
     },
     methods: {

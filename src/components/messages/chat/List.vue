@@ -15,7 +15,7 @@
 <script>
   import vkapi from 'js/vkapi';
   import { fields, concatProfiles, endScroll } from 'js/utils';
-  import { parseConversation, parseMessage } from 'js/messages';
+  import { parseMessage } from 'js/messages';
   import Scrolly from '../../UI/Scrolly.vue';
   import Message from './Message.vue';
 
@@ -51,7 +51,7 @@
       async load() {
         this.loading = true;
 
-        const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
+        const { items, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.id,
           offset: this.messages.length,
           extended: 1,
@@ -59,17 +59,9 @@
         });
 
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
-
-        const conversation = parseConversation(conversations[0]);
-        const messages = [];
-
-        for(let item of items) {
-          messages.push(parseMessage(item, conversation));
-        }
-
         this.$store.commit('messages/addMessages', {
           peer_id: this.id,
-          messages: messages.reverse()
+          messages: items.map(parseMessage).reverse()
         });
 
         const messagesList = this.$el.firstChild;

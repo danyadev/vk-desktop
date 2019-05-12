@@ -73,11 +73,10 @@
         // (^ Возможно будет исправлено в Vue 3.0 или 2.x-next)
         // 2) Если вызов произошел из-за ripple-анимации
         if(records.every(({ target, addedNodes: a, removedNodes: r }) => {
-          return target.matches('.ripples') || isNodesEqual(a, r);
+          return target.matches && target.matches('.ripples') || isNodesEqual(a, r);
         })) return;
 
         this.refreshScrollLayout();
-        this.activateScrollBars();
       });
 
       this.observer.observe(this.$refs.viewport, {

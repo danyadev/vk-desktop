@@ -27,12 +27,15 @@ export function parseConversation(conversation) {
     photo: chatPhoto,
     title: chatTitle,
     canWrite: conversation.can_write,
+    last_msg_id: conversation.last_message_id,
+    // id последнего прочтенного входящего сообщения
     in_read: conversation.in_read,
+    // id последнего прочтенного исходящего сообщения
     out_read: conversation.out_read
   }
 }
 
-export function parseMessage(message, conversation) {
+export function parseMessage(message) {
   if(message.geo) {
     message.attachments.push({
       type: 'geo',
@@ -40,7 +43,7 @@ export function parseMessage(message, conversation) {
     });
   }
 
-  const msg = {
+  return {
     id: message.id,
     text: escape(message.text).replace(/\n/g, '<br>'),
     from: message.from_id,
@@ -54,16 +57,9 @@ export function parseMessage(message, conversation) {
     fwdMessages: message.fwd_messages || [],
     replyMsg: message.reply_message,
     attachments: message.attachments,
-    conversation_id: message.conversation_message_id,
+    conversation_msg_id: message.conversation_message_id,
     random_id: message.random_id
-  }
-
-  if(conversation) {
-    msg.unread = conversation.in_read < message.id;
-    msg.outread = message.out && conversation.out_read < message.id;
-  }
-
-  return msg;
+  };
 }
 
 export function getServiceMessage(action, author, isFull) {
