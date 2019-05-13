@@ -29,9 +29,7 @@
       return {
         loading: false,
         loaded: false,
-
-        scrollTop: null,
-        isFirstLoad: true
+        scrollTop: null
       }
     },
     computed: {
@@ -39,7 +37,7 @@
         return this.$store.state.messages.messages[this.id] || [];
       },
       hasMessages() {
-        return !!this.messages.length;
+        return this.messages.length;
       }
     },
     methods: {
@@ -51,6 +49,7 @@
       async load() {
         this.loading = true;
 
+        const hasMessages = this.hasMessages;
         const { items, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.id,
           offset: this.messages.length,
@@ -68,8 +67,7 @@
         const { scrollTop, scrollHeight } = messagesList;
 
         this.$nextTick().then(() => {
-          if(this.isFirstLoad) {
-            this.isFirstLoad = false;
+          if(!hasMessages) {
             this.scrollToEnd();
           } else {
             // Отнимаем от общей текущей высоты скролла прошлую высоту
@@ -83,7 +81,7 @@
         });
       },
       onScroll(e) {
-        this.scrollTop = this.$el.firstChild.scrollTop;
+        this.scrollTop = e.scrollTop;
 
         this.checkScrolling(e);
       },
@@ -94,8 +92,15 @@
         }
       }, true)
     },
-    mounted() {
-      this.load();
+    async mounted() {
+      if(!this.messages.length) {
+        this.load();
+      } else {
+        await this.$nextTick();
+
+        this.scrollToEnd();
+        this.checkScrolling(this.$el.firstChild);
+      }
     },
     activated() {
       if(this.scrollTop != null) {

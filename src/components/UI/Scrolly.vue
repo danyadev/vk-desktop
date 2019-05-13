@@ -124,30 +124,26 @@
 
         function moveScrollBar({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
           const isMoveToPoint = isMouseUp && target.matches('.scrolly-bar-wrap');
-          const { offsetWidth, offsetHeight } = bar;
-          const {
-            scrollWidth, offsetWidth: viewportWidth,
-            scrollHeight, offsetHeight: viewportHeight
-          } = viewport;
+          const { scrollWidth, scrollHeight, offsetWidth, offsetHeight } = viewport;
 
           if(bar.parentElement.matches('.axis-x')) {
-            const maxBarLeft = viewportWidth - offsetWidth;
+            const maxBarLeft = offsetWidth - bar.offsetWidth;
             let barLeft;
 
             if(isMoveToPoint) barLeft = normalize(offsetX - offsetWidth/2, maxBarLeft);
             else barLeft = normalize(initialBarLeft + (pageX - initialPageX), maxBarLeft);
 
-            bar.style.left = toPercent(barLeft / viewportWidth);
-            viewport.scrollLeft = barLeft / maxBarLeft * (scrollWidth - viewportWidth);
+            bar.style.left = toPercent(barLeft / offsetWidth);
+            viewport.scrollLeft = barLeft / maxBarLeft * (scrollWidth - offsetWidth);
           } else {
-            const maxBarTop = viewportHeight - offsetHeight;
+            const maxBarTop = offsetHeight - bar.offsetHeight;
             let barTop;
 
             if(isMoveToPoint) barTop = normalize(offsetY - offsetHeight/2, maxBarTop);
             else barTop = normalize(initialBarTop + (pageY - initialPageY), maxBarTop);
 
-            bar.style.top = toPercent(barTop / viewportHeight);
-            viewport.scrollTop = barTop / maxBarTop * (scrollHeight - viewportHeight);
+            bar.style.top = toPercent(barTop / offsetHeight);
+            viewport.scrollTop = barTop / maxBarTop * (scrollHeight - offsetHeight);
           }
 
           self.refreshScrollLayout.apply(self);
@@ -233,34 +229,27 @@
         viewport.scrollTop += dy;
 
         const {
-          scrollLeft, scrollWidth, offsetWidth: viewportWidth,
-          scrollTop, scrollHeight, offsetHeight: viewportHeight
+          scrollLeft, scrollWidth, offsetWidth,
+          scrollTop, scrollHeight, offsetHeight
         } = viewport;
 
-        const width = toPercent(viewportWidth / scrollWidth);
-        const maxBarLeft = viewportWidth - barX.offsetWidth;
-        const barLeft = normalize(scrollLeft / (scrollWidth - viewportWidth) * maxBarLeft, maxBarLeft);
+        const width = toPercent(offsetWidth / scrollWidth);
+        const maxBarLeft = offsetWidth - barX.offsetWidth;
+        const barLeft = normalize(scrollLeft / (scrollWidth - offsetWidth) * maxBarLeft, maxBarLeft);
 
-        barX.style.left = toPercent(barLeft / viewportWidth);
+        barX.style.left = toPercent(barLeft / offsetWidth);
         barX.parentElement.style.display = width == '100%' ? 'none' : 'block';
         barX.style.width = width;
 
-        const height = toPercent(viewportHeight / scrollHeight);
-        const maxBarTop = viewportHeight - barY.offsetHeight;
-        const barTop = normalize(scrollTop / (scrollHeight - viewportHeight) * maxBarTop, maxBarTop);
+        const height = toPercent(offsetHeight / scrollHeight);
+        const maxBarTop = offsetHeight - barY.offsetHeight;
+        const barTop = normalize(scrollTop / (scrollHeight - offsetHeight) * maxBarTop, maxBarTop);
 
-        barY.style.top = toPercent(barTop / viewportHeight);
+        barY.style.top = toPercent(barTop / offsetHeight);
         barY.parentElement.style.display = height == '100%' ? 'none' : 'block';
         barY.style.height = height;
 
-        this.$emit('scroll', {
-          scrollLeft,
-          scrollWidth,
-          viewportWidth,
-          scrollTop,
-          scrollHeight,
-          viewportHeight
-        });
+        this.$emit('scroll', viewport);
       }
     }
   }
