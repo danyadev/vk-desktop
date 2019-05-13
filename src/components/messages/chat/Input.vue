@@ -65,6 +65,7 @@
     box-sizing: content-box;
     padding: 14px 15px;
     width: 24px;
+    height: 24px;
     opacity: .7;
     cursor: pointer;
     transition: opacity .3s;
@@ -90,6 +91,10 @@
     line-height: 18px;
     padding: 10px 35px 10px 13px;
     overflow-x: auto;
+  }
+
+  .chat_input::-webkit-scrollbar {
+    display: none;
   }
 
   .chat_input:empty::before {

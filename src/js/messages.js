@@ -1,4 +1,4 @@
-import { escape, getPhoto } from './utils';
+import { escape, getPhoto, loadProfile } from './utils';
 import store from './store';
 import emoji from './emoji';
 import getTranslate from './getTranslate';
