@@ -90,10 +90,8 @@ let isLoadingProfiles = false;
 
 export async function loadProfile(id) {
   if(id && loadingProfiles.find((e) => e == id) || isLoadingProfiles) return;
-  else {
-    if(id) loadingProfiles.push(id);
-    isLoadingProfiles = true;
-  }
+  if(id) loadingProfiles.push(id);
+  isLoadingProfiles = true;
 
   const profiles = loadingProfiles.slice();
   const data = await vkapi('execute.getProfiles', {

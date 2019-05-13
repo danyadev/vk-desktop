@@ -31,7 +31,8 @@ export function parseConversation(conversation) {
     // id последнего прочтенного входящего сообщения
     in_read: conversation.in_read,
     // id последнего прочтенного исходящего сообщения
-    out_read: conversation.out_read
+    out_read: conversation.out_read,
+    loaded: true
   }
 }
 

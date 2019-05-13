@@ -23,7 +23,7 @@ function getServiceMessage(data) {
     const match = item.match(/source_(.+)/);
 
     if(match) {
-      let value = data[key],
+      let value = data[item],
           key = match[1];
 
       if(Number(value) == value) value = Number(value);
@@ -37,21 +37,21 @@ function getServiceMessage(data) {
 }
 
 function getAttachments(data) {
-  const attachs = [
-    ...(data.geo ? [{ type: 'geo' }] : [])
-  ];
+  const attachs = [];
+
+  if(data.geo) attachs.push({ type: 'geo' });
 
   Object.keys(data).forEach((key) => {
     const match = key.match(/attach(\d+)$/);
 
     if(match) {
       const id = match[1];
-      const attach = { type: data[`attach${id}_type`] };
+      let type = data[`attach${id}_type`];
 
-      if(data[`attach${id}_kind`] == 'audiomsg') attach.type = 'audio_message';
-      if(data[`attach${id}_kind`] == 'graffiti') attach.type = 'graffiti';
+      if(data[`attach${id}_kind`] == 'audiomsg') type = 'audio_message';
+      if(data[`attach${id}_kind`] == 'graffiti') type = 'graffiti';
 
-      attachs.push(attach);
+      attachs.push({ type });
     }
   });
 

@@ -43,9 +43,16 @@ export default {
       state.menuState = value;
     },
     addProfiles(state, profiles) {
+      const result = {};
+
       for(let profile of profiles) {
-        Vue.set(state.profiles, profile.id, updateUserObject(profile));
+        result[profile.id] = updateUserObject(profile);
       }
+
+      state.profiles = {
+        ...state.profiles,
+        ...result
+      };
     },
     updateProfile(state, profile) {
       const old = state.profiles[profile.id] || {};
