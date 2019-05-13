@@ -7,7 +7,7 @@
            :class="['titlebar_button', button]"
            @click="click(button)"
       >
-        <img :src="`assets/window_${button}.svg`">
+        <img :src="`assets/titlebar/${button}.svg`">
       </div>
     </div>
   </div>
@@ -27,6 +27,7 @@
       click: (button) => win[button]()
     },
     mounted() {
+      // TODO: senyadev нужен ли этот кусок кода?
       if(this.mac) {
         this.$refs.drag.addEventListener('dblclick', () => {
           if(win.isFullScreen()) return;
@@ -44,7 +45,6 @@
 <style>
   .titlebar {
     display: flex;
-    justify-content: space-between;
     position: relative;
     height: 32px;
     z-index: 7;
@@ -67,8 +67,6 @@
   .titlebar.maximized .titlebar_drag {
     padding: 4px 0 0 8px;
     margin: 0;
-    width: calc(100% - 152px);
-    height: 100%;
   }
 
   .titlebar_buttons { display: flex }
@@ -77,10 +75,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 48px;
     cursor: pointer;
     transition: .2s background-color;
-    width: 48px;
-    height: 32px;
   }
 
   .titlebar_button:hover { background-color: rgba(0, 0, 0, .2) }
@@ -94,7 +91,6 @@
 
   .titlebar.mac { height: 22px }
   .titlebar.mac + .app { height: calc(100vh - 22px) }
-  .titlebar.mac:not(.maximized) .titlebar_drag { margin-right: 4px }
   .titlebar.mac .titlebar_buttons { display: none }
 
   .titlebar.mac .titlebar_drag {
