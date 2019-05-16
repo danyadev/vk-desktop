@@ -27,7 +27,6 @@
       click: (button) => win[button]()
     },
     mounted() {
-      // TODO: senyadev нужен ли этот кусок кода?
       if(this.mac) {
         this.$refs.drag.addEventListener('dblclick', () => {
           if(win.isFullScreen()) return;

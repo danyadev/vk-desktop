@@ -20,8 +20,6 @@ function request(params, post = '') {
       });
     });
 
-    if(params.timeout) req.setTimeout(params.timeout, req.abort);
-
     if(params.method == 'POST' && params.multipart) {
       const data = params.multipart;
       const names = Object.keys(data);

@@ -36,7 +36,7 @@
         if(longpoll.started) longpoll.stop();
 
         if(this.activeUser) {
-          const { lp, counters, user } = await vkapi('execute.init', {
+          const { lp, user } = await vkapi('execute.init', {
             lp_version: longpoll.version,
             fields: fields
           });

@@ -18,6 +18,7 @@
 
 <script>
   import { getLastOnlineDate } from 'js/date';
+  import { getPhoto } from 'js/utils';
   import Ripple from '../../UI/Ripple.vue';
 
   export default {
@@ -30,22 +31,19 @@
         return this.peer && this.$store.state.profiles[this.peer.owner];
       },
       photo() {
-        if(this.owner) return this.owner.photo;
-        else if(this.peer && this.peer.photo) return this.peer.photo;
-        else return 'assets/im_chat_photo.png';
+        if(this.owner) return getPhoto(this.owner);
+        else return this.peer && this.peer.photo || 'assets/im_chat_photo.png';
       },
       title() {
         if(this.id > 2e9) {
-          if(!this.peer || !this.peer.title) return '...';
-          else return this.peer.title;
+          return this.peer && this.peer.title || '...';
         } else if(this.owner) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         } else return '...';
       },
       online() {
         if(!this.peer) return this.l('loading');
-
-        if(this.id < 0) return this.l('im_chat_group');
+        else if(this.id < 0) return this.l('im_chat_group');
         else if(this.id > 2e9) {
           const { canWrite, members, channel, left } = this.peer;
 
@@ -53,12 +51,12 @@
           else if(left) return this.l('im_chat_left');
           else return this.l('im_chat_members', [members], members);
         } else {
-          if(!this.owner || !this.owner.last_seen) return this.l('loading');
+          if(!this.owner) return this.l('loading');
           else if(this.owner.deactivated) return this.l('im_user_deleted');
 
-          const { online, mobile, time } = this.owner.last_seen;
+          const { online, online_mobile, last_seen: { time } } = this.owner;
 
-          if(mobile) return this.l('im_chat_online', 1);
+          if(online_mobile) return this.l('im_chat_online', 1);
           else if(online) return this.l('im_chat_online', 0);
           else return getLastOnlineDate(new Date(time * 1000), this.owner.sex == 1);
         }

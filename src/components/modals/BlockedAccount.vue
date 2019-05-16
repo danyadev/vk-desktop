@@ -1,10 +1,10 @@
 <template>
   <div class="modal">
-    <ModalHeader :closable="false">{{ l('modal_blocked_account_titles', data) }}</ModalHeader>
-    <div class="modal_content" v-html="l('modal_blocked_account_contents', data)"></div>
+    <ModalHeader :closable="false">{{ l('ml_blocked_account_title', data) }}</ModalHeader>
+    <div class="modal_content" v-html="l('ml_blocked_account_content', data)"></div>
     <div class="modal_footer">
-      <button class="button right" @click="exit">{{ l('modal_blocked_account_logout') }}</button>
-      <button class="button right" @click="closeApp" v-if="data == 1">{{ l('modal_blocked_account_close_app') }}</button>
+      <button class="button right" @click="exit">{{ l('ml_blocked_account_logout') }}</button>
+      <button class="button right" @click="closeApp" v-if="data == 1">{{ l('ml_blocked_account_close_app') }}</button>
     </div>
   </div>
 </template>
@@ -14,19 +14,14 @@
   import { resetAppState } from 'js/store/';
   import ModalHeader from './ModalHeader.vue';
 
-  const { app } = electron;
-
   export default {
-    props: {
-      data: {
-        required: true,
-        type: Number
-      }
+    props: ['data'],
+    components: {
+      ModalHeader
     },
-    components: { ModalHeader },
     methods: {
       closeApp() {
-        app.exit();
+        electron.app.exit();
       },
       exit() {
         const { activeUser } = this.$store.state.users;

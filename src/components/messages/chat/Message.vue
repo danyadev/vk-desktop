@@ -24,7 +24,7 @@
 <script>
   import { isSameDay, differenceInMinutes } from 'date-fns';
   import { getTime, getMessageDate } from 'js/date';
-  import { capitalize } from 'js/utils';
+  import { capitalize, getPhoto } from 'js/utils';
   import { getServiceMessage } from 'js/messages';
 
   export default {
@@ -39,7 +39,7 @@
         return this.$store.state.profiles[this.user_id];
       },
       photo() {
-        return this.user ? this.user.photo : 'assets/blank.gif';
+        return this.user ? getPhoto(this.user) : 'assets/blank.gif';
       },
       name() {
         return this.user

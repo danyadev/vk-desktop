@@ -38,7 +38,7 @@
       closeModal({ path, target }) {
         if(!target.matches('.modal_wrap')) return;
 
-        const modal = target.children[0];
+        const [modal] = target.children;
         const name = modal.getAttribute('name');
         const closable = modal.querySelector('.modal_header').getAttribute('closable');
 

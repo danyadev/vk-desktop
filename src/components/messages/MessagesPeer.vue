@@ -25,6 +25,7 @@
   import { mapState } from 'vuex';
   import { getServiceMessage } from 'js/messages';
   import { getShortDate } from 'js/date';
+  import { getPhoto } from 'js/utils';
   import Ripple from '../UI/Ripple.vue';
 
   export default {
@@ -46,17 +47,17 @@
         return this.profiles[this.msg.from];
       },
       online() {
-        if(this.isChat || this.peer.id < 0 || !this.owner || !this.owner.last_seen.online) return '';
-        else return this.owner.last_seen.mobile ? 'mobile' : 'desktop';
+        if(this.isChat || this.peer.id < 0 || !this.owner || !this.owner.online) return '';
+        else return this.owner.online_mobile ? 'mobile' : 'desktop';
       },
       photo() {
         if(this.isChat) return this.peer.photo || 'assets/im_chat_photo.png';
-        else if(this.owner) return this.owner.photo;
+        else return getPhoto(this.owner);
       },
       chatName() {
-        const owner = this.owner;
+        const { owner, peer } = this;
 
-        if(this.isChat) return this.peer.title || '...';
+        if(this.isChat) return peer.title || '...';
         else if(owner) return owner.name || `${owner.first_name} ${owner.last_name}`;
         else return '...';
       },
@@ -86,7 +87,7 @@
         return !this.message;
       },
       isAttachment() {
-        const msg = this.msg;
+        const { msg } = this;
         const isFwd = msg.fwdCount || msg.isReplyMsg;
 
         return !msg.text && (isFwd || !msg.action && msg.attachments.length);

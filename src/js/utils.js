@@ -13,7 +13,7 @@ export const regexp = {
 }
 
 // User-Agents для выполнения запросов
-export const DesktopUserAgent = `VKDesktop/${AppVersion}`;
+export const VKDesktopUserAgent = `VKDesktop/${AppVersion}`;
 export const AndroidUserAgent = 'VKAndroidApp/5.33-3626';
 
 // Заменяем опасные для разметки символы в выводимых данных на безопасные
@@ -30,8 +30,12 @@ export function escape(text = '') {
 // Возвращает одну из фотографий:
 // p1 - фото для обычных дисплеев
 // p2 - фото для Retina дисплеев, в 2 раза больше p1
-export function getPhoto(p1, p2) {
-  return devicePixelRatio >= 2 ? p2 : p1;
+export function getPhoto(p1 = {}, p2) {
+  const x2 = devicePixelRatio >= 2;
+
+  return p2
+    ? x2 ? p2 : p1
+    : x2 ? p1.photo_100 : p1.photo_50;
 }
 
 // Пишет текст с большой буквы

@@ -1,5 +1,5 @@
 import querystring from 'querystring';
-import { AndroidUserAgent, DesktopUserAgent } from 'js/utils';
+import { AndroidUserAgent, VKDesktopUserAgent } from 'js/utils';
 import vkapi, { version } from 'js/vkapi';
 import request from 'js/request';
 import { eventBus } from 'js/utils';
@@ -55,7 +55,7 @@ export async function getDesktopToken(androidToken) {
       sdk_package: 'ru.danyadev.vkdesktop',
       sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
     }),
-    headers: { 'User-Agent': DesktopUserAgent }
+    headers: { 'User-Agent': VKDesktopUserAgent }
   };
 
   const { data } = await request(reqParams);

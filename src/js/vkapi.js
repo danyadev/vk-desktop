@@ -1,4 +1,4 @@
-import { DesktopUserAgent } from './utils';
+import { VKDesktopUserAgent } from './utils';
 import querystring from 'querystring';
 import request from './request';
 import store from './store/';
@@ -21,7 +21,7 @@ function vkapi(name, params = {}) {
       host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST',
-      headers: { 'User-Agent': DesktopUserAgent }
+      headers: { 'User-Agent': VKDesktopUserAgent }
     }, querystring.stringify(params));
 
     console.log(`[API] ${name} ${Date.now() - startTime}ms`);

@@ -8,7 +8,7 @@ import store from './store/';
 import longpollEvents from './longpollEvents';
 
 function getLastMsgId() {
-  const peer = store.getters['messages/conversationsList'][0];
+  const [peer] = store.getters['messages/conversationsList'];
 
   return peer && peer.msg.id;
 }

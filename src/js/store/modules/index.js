@@ -1,30 +1,4 @@
 import Vue from 'vue';
-import { getPhoto } from 'js/utils';
-
-function updateUserObject(user) {
-  user.photo = getPhoto(user.photo_50, user.photo_100);
-
-  if(!user.last_seen) {
-    if(user.id > 0) {
-      user.last_seen = {
-        online: false,
-        mobile: false
-      };
-    }
-
-    return user;
-  }
-
-  user.last_seen.online = user.online;
-  user.last_seen.mobile = user.online && user.online_mobile;
-  user.last_seen.app = user.online_app;
-
-  delete user.online;
-  delete user.online_mobile;
-  delete user.online_app;
-
-  return user;
-}
 
 function getState() {
   return {
@@ -43,11 +17,10 @@ export default {
       state.menuState = value;
     },
     addProfiles(state, profiles) {
-      const result = {};
-
-      for(let profile of profiles) {
-        result[profile.id] = updateUserObject(profile);
-      }
+      const result = profiles.reduce((users, user) => {
+        users[user.id] = user;
+        return users;
+      }, {});
 
       state.profiles = {
         ...state.profiles,

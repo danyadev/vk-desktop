@@ -1,8 +1,8 @@
 <template>
   <div class="modal">
-    <ModalHeader>{{ l('modal_auth_header') }}</ModalHeader>
+    <ModalHeader>{{ l('ml_auth_header') }}</ModalHeader>
     <div class="modal_content">
-      <Auth :isModal="data.isModal"/>
+      <Auth :isModal="true"/>
     </div>
   </div>
 </template>
@@ -12,8 +12,10 @@
   import ModalHeader from './ModalHeader.vue';
 
   export default {
-    props: ['data'],
-    components: { Auth, ModalHeader }
+    components: {
+      Auth,
+      ModalHeader
+    }
   }
 </script>
 

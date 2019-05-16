@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <ModalHeader>{{ l('modal_multiaccount_header') }}</ModalHeader>
+    <ModalHeader>{{ l('ml_multiacc_header') }}</ModalHeader>
     <div class="modal_content">
       <div class="item" v-for="user in users" :key="user.id" @click="setAccount(user.id)">
         <img class="item_photo" :src="user.photo_100">
@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="modal_footer">
-      <button class="button right" @click="openAuthModal">{{ l('modal_multiaccount_add_account') }}</button>
+      <button class="button right" @click="openAuthModal">{{ l('ml_multiacc_add_account') }}</button>
     </div>
   </div>
 </template>
@@ -36,7 +36,7 @@
     methods: {
       getUserDescription(user) {
         if(this.activeUser != user.id) return '@' + user.domain;
-        else return this.l('modal_multiaccount_active_account');
+        else return this.l('ml_multiacc_active_account');
       },
       async setAccount(id) {
         if(this.activeUser == id) return;
@@ -62,7 +62,7 @@
         this.$store.commit('users/removeUser', id);
       },
       openAuthModal() {
-        this.$modals.open('auth', { isModal: true });
+        this.$modals.open('auth');
       }
     }
   }

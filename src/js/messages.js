@@ -9,9 +9,7 @@ export function parseConversation(conversation) {
   let chatPhoto, chatTitle;
 
   if(isChat) {
-    const photos = conversation.chat_settings.photo;
-
-    chatPhoto = photos && getPhoto(photos.photo_50, photos.photo_100);
+    chatPhoto = getPhoto(conversation.chat_settings.photo);
     chatTitle = escape(conversation.chat_settings.title).replace(/\n/g, ' ');
   }
 

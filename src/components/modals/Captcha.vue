@@ -1,13 +1,13 @@
 <template>
   <div class="modal">
-    <ModalHeader :closable="false">{{ l('modal_captcha_header') }}</ModalHeader>
+    <ModalHeader :closable="false">{{ l('ml_captcha_header') }}</ModalHeader>
     <div class="modal_content">
       <div class="captcha_img">
-        <img :src="data.src" @click="updateIMG">
+        <img :src="data.src" @click="updatePic">
       </div>
       <div class="captcha_key">
         <input class="input"
-               :placeholder="l('modal_captcha_write')"
+               :placeholder="l('ml_captcha_write')"
                v-model="text"
                @keydown.enter="sendCode"
         >
@@ -24,7 +24,9 @@
 
   export default {
     props: ['data'],
-    components: { ModalHeader },
+    components: {
+      ModalHeader
+    },
     data: () => ({
       text: ''
     }),
@@ -34,7 +36,7 @@
       }
     },
     methods: {
-      updateIMG(event) {
+      updatePic() {
         this.data.src += this.data.src.indexOf('&s=1') != -1 ? '1' : '&s=1';
       },
       sendCode() {

@@ -15,6 +15,7 @@
   import { mapGetters } from 'vuex';
   import { fields, concatProfiles, endScroll } from 'js/utils';
   import { parseConversation, parseMessage } from 'js/messages';
+
   import Scrolly from '../UI/Scrolly.vue';
   import HeaderButton from '../HeaderButton.vue';
   import MessagesPeer from './MessagesPeer.vue';
@@ -44,16 +45,10 @@
 
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
 
-        const conversations = [];
-
-        for(let item of items) {
-          const { conversation, last_message } = item;
-
-          conversations.push({
-            peer: parseConversation(conversation),
-            msg: parseMessage(last_message)
-          });
-        }
+        const conversations = items.map((item) => ({
+          peer: parseConversation(item.conversation),
+          msg: parseMessage(item.last_message)
+        }));
 
         this.$store.commit('messages/addConversations', conversations);
         this.loading = false;
