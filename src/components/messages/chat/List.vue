@@ -1,5 +1,5 @@
 <template>
-  <Scrolly class="messages_list_wrap" :vclass="['messages_list', { empty: !hasMessages }]" @scroll="onScroll">
+  <Scrolly class="messages_list_wrap ff-roboto" :vclass="['messages_list', { empty: !hasMessages }]" @scroll="onScroll">
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loading" class="loading"></div>
 
@@ -16,6 +16,7 @@
   import vkapi from 'js/vkapi';
   import { fields, concatProfiles, endScroll } from 'js/utils';
   import { parseMessage } from 'js/messages';
+
   import Scrolly from '../../UI/Scrolly.vue';
   import Message from './Message.vue';
 
@@ -66,19 +67,19 @@
         const messagesList = this.$el.firstChild;
         const { scrollTop, scrollHeight } = messagesList;
 
-        this.$nextTick().then(() => {
-          if(!hasMessages) {
-            this.scrollToEnd();
-          } else {
-            // Отнимаем от общей текущей высоты скролла прошлую высоту
-            // и прибавляем прошлый остаток до вершины скролла
-            // чтобы при добавлении контента остаться на своем месте
-            messagesList.scrollTop = messagesList.scrollHeight - scrollHeight + scrollTop;
-          }
+        await this.$nextTick();
 
-          this.loading = false;
-          if(items.length < 20) this.loaded = true;
-        });
+        if(!hasMessages) {
+          this.scrollToEnd();
+        } else {
+          // Отнимаем от общей текущей высоты скролла прошлую высоту
+          // и прибавляем прошлый остаток до вершины скролла
+          // чтобы при добавлении контента остаться на своем месте
+          messagesList.scrollTop = messagesList.scrollHeight - scrollHeight + scrollTop;
+        }
+
+        this.loading = false;
+        if(items.length < 20) this.loaded = true;
       },
       onScroll(e) {
         this.scrollTop = e.scrollTop;

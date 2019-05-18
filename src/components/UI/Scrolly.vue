@@ -130,7 +130,7 @@
             const maxBarLeft = offsetWidth - bar.offsetWidth;
             let barLeft;
 
-            if(isMoveToPoint) barLeft = normalize(offsetX - offsetWidth/2, maxBarLeft);
+            if(isMoveToPoint) barLeft = normalize(offsetX - bar.offsetWidth/2, maxBarLeft);
             else barLeft = normalize(initialBarLeft + (pageX - initialPageX), maxBarLeft);
 
             bar.style.left = toPercent(barLeft / offsetWidth);
@@ -139,7 +139,7 @@
             const maxBarTop = offsetHeight - bar.offsetHeight;
             let barTop;
 
-            if(isMoveToPoint) barTop = normalize(offsetY - offsetHeight/2, maxBarTop);
+            if(isMoveToPoint) barTop = normalize(offsetY - bar.offsetHeight/2, maxBarTop);
             else barTop = normalize(initialBarTop + (pageY - initialPageY), maxBarTop);
 
             bar.style.top = toPercent(barTop / offsetHeight);
