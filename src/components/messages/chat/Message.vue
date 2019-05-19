@@ -1,5 +1,5 @@
 <template>
-  <div class="message_container ff-roboto">
+  <div class="message_container">
     <div v-if="messageDate" class="message_date">{{ messageDate }}</div>
     <div v-if="isStartUnreaded" class="message_unreaded_messages">
       <span>{{ l('im_unread_messages') }}</span>
@@ -90,12 +90,10 @@
           this.prevMsg.from != this.msg.from ||
           this.isPrevServiceMsg ||
           this.messageDate ||
+          this.isStartUnreaded ||
           differenceInMinutes(thisMsgDate, prevMsgDate) > 10
         );
       }
-    },
-    methods: {
-
     }
   }
 </script>
@@ -120,7 +118,7 @@
   .message_unreaded_messages span {
     position: relative;
     background-color: #fff;
-    padding: 10px;
+    padding: 0 10px;
   }
 
   .message_unreaded_messages::before {
@@ -138,7 +136,7 @@
     margin: 20px 20px 0 20px;
   }
 
-  .message_wrap:not(.showUserData) {
+  .message_wrap:not(.showUserData):not(.serviceMessage) {
     margin: 10px 20px 0 70px;
   }
 
@@ -148,7 +146,6 @@
     /* Центровка текста в сервисном сообщении, когда он не помещается в 1 строку */
     text-align: center;
     color: #5d6165;
-    margin-left: 20px;
   }
 
   .message_wrap.serviceMessage:not(.isPrevServiceMsg) {
