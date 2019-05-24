@@ -12,11 +12,11 @@ const moduleNames = [
   'users'
 ];
 
-moduleNames.forEach((name) => {
+for(const name of moduleNames) {
   modules[name] = Object.assign(require(`./modules/${name}`).default, {
     namespaced: true
   });
-});
+}
 
 const store = new Vuex.Store({ ...rootModule, modules });
 
@@ -28,7 +28,7 @@ store.subscribe(({ type }, store) => {
 export function resetAppState() {
   store.commit('resetState');
 
-  for(let name of moduleNames) {
+  for(const name of moduleNames) {
     const mod = modules[name];
 
     if(mod.mutations && mod.mutations.resetState) {

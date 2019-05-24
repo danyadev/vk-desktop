@@ -20,9 +20,9 @@
     'Auth'
   ];
 
-  modalNames.forEach((name) => {
+  for(const name of modalNames) {
     modalComponents[`Modal${name}`] = require(`./modals/${name}.vue`).default;
-  });
+  }
 
   export default {
     components: modalComponents,

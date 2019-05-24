@@ -5,7 +5,7 @@
       <span>{{ l('im_unread_messages') }}</span>
     </div>
 
-    <div :class="['message_wrap', { showUserData, serviceMessage, isPrevServiceMsg }]">
+    <div :class="['message_wrap', { showUserData, serviceMessage, isPrevServiceMsg, isUnreaded }]">
       <img class="message_photo" :src="photo">
 
       <div class="message">
@@ -68,12 +68,17 @@
           return capitalize(getMessageDate(thisMsgDate));
         }
       },
+      // Не прочитано мной
       isStartUnreaded() {
         const in_read = this.peer && this.peer.in_read;
         const isPrevUnread = this.prevMsg && this.prevMsg.id > in_read;
         const isThisUnread = this.msg.id > in_read;
 
         return !this.msg.out && !isPrevUnread && isThisUnread;
+      },
+      // Либо непрочитано мной, либо непрочитано собеседником
+      isUnreaded() {
+        return this.msg.id > this.peer.in_read || this.msg.id > this.peer.out_read;
       },
       serviceMessage() {
         return this.msg.action && getServiceMessage(this.msg.action, this.user, true);
@@ -107,7 +112,7 @@
 
   .message_date, .message_unreaded_messages {
     text-align: center;
-    margin: 20px 0 0 0;
+    margin: 10px 0;
     color: #5d6165;
   }
 
@@ -133,11 +138,16 @@
 
   .message_wrap {
     display: flex;
-    margin: 20px 20px 0 20px;
+    padding: 10px 20px;
+  }
+
+  .message_wrap.isUnreaded:not(.serviceMessage) {
+    background-color: #edf0f5;
   }
 
   .message_wrap:not(.showUserData):not(.serviceMessage) {
-    margin: 10px 20px 0 70px;
+    padding: 0 20px 10px 70px;
+    margin-top: -2px;
   }
 
   .message_wrap.serviceMessage {
@@ -148,12 +158,8 @@
     color: #5d6165;
   }
 
-  .message_wrap.serviceMessage:not(.isPrevServiceMsg) {
-    margin-top: 15px;
-  }
-
-  .message_date + .message_wrap.serviceMessage {
-    margin-top: 20px;
+  .message_wrap.serviceMessage.isPrevServiceMsg {
+    padding-top: 0;
   }
 
   .message_content >>> b {

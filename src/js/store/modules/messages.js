@@ -22,7 +22,7 @@ export default {
     },
 
     addConversations(state, conversations) {
-      for(let conversation of conversations) {
+      for(const conversation of conversations) {
         Vue.set(state.conversations, conversation.peer.id, conversation);
         state.peersList.push(conversation.peer.id);
       }

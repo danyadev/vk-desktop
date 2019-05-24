@@ -9,7 +9,7 @@ function hasFlag(mask, name) {
     deleted_for_all: 131072, reply_msg: 2097152
   };
 
-  for(let flag in allFlags) {
+  for(const flag in allFlags) {
     if(allFlags[flag] & mask) flags.push(flag);
   }
 
@@ -19,7 +19,7 @@ function hasFlag(mask, name) {
 function getServiceMessage(data) {
   const source = {};
 
-  Object.keys(data).forEach((item) => {
+  for(const item in data) {
     const match = item.match(/source_(.+)/);
 
     if(match) {
@@ -31,7 +31,7 @@ function getServiceMessage(data) {
 
       source[key] = value;
     }
-  });
+  }
 
   return Object.keys(source).length ? source : null;
 }
@@ -41,7 +41,7 @@ function getAttachments(data) {
 
   if(data.geo) attachs.push({ type: 'geo' });
 
-  Object.keys(data).forEach((key) => {
+  for(const key in data) {
     const match = key.match(/attach(\d+)$/);
 
     if(match) {
@@ -53,7 +53,7 @@ function getAttachments(data) {
 
       attachs.push({ type });
     }
-  });
+  }
 
   return attachs;
 }

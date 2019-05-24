@@ -28,7 +28,7 @@ export default function(name, key, replaces, number) {
   if(key != null) data = data[key];
 
   if(Array.isArray(replaces)) {
-    for(let i in replaces) {
+    for(const i in replaces) {
       const regexp = new RegExp(`\\{${i}\\}`, 'g');
 
       data = String(data).replace(regexp, replaces[i]);
