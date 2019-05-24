@@ -77,7 +77,11 @@ export function getServiceMessage(action, author, isFull) {
   }
 
   function e(text) {
-    return emoji(escape(text)).replace(/<br>/g, ' ');
+    text = escape(text.replace(/<br>/g, ' '));
+
+    if(isFull) text = emoji(text);
+
+    return text;
   }
 
   function name(type, isAccCase) {
