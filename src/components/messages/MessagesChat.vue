@@ -9,9 +9,7 @@
 </template>
 
 <script>
-  import { loadConversation, fields, concatProfiles } from 'js/utils';
-  import vkapi from 'js/vkapi';
-
+  import { loadConversation, loadConversationMembers } from 'js/messages';
   import ChatHeader from './chat/Header.vue';
   import ChatList from './chat/List.vue';
   import ChatInput from './chat/Input.vue';
@@ -40,14 +38,7 @@
       }
     },
     async mounted() {
-      if(this.id > 2e9) {
-        const { profiles, groups } = await vkapi('messages.getConversationMembers', {
-          peer_id: this.id,
-          fields: fields
-        });
-
-        this.$store.commit('addProfiles', concatProfiles(profiles, groups));
-      }
+      if(this.id > 2e9) loadConversationMembers(this.id);
     },
     activated() {
       if(!this.peer || !this.peer.loaded || this.id < 2e9) loadConversation(this.id);

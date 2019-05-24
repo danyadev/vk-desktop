@@ -29,7 +29,9 @@
   import ModalHeader from './ModalHeader.vue';
 
   export default {
-    components: { ModalHeader },
+    components: {
+      ModalHeader
+    },
     computed: {
       ...mapState('users', ['users', 'activeUser'])
     },

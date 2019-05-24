@@ -11,8 +11,11 @@
   import AuthForm from './AuthForm.vue';
 
   export default {
-    components: { AuthCode, AuthForm },
     props: ['isModal'],
+    components: {
+      AuthCode,
+      AuthForm
+    },
     data: () => ({
       error: null
     }),

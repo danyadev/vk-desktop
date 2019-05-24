@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 import vkapi from './vkapi';
 import store from './store/';
-import { parseConversation } from './messages';
 import { version as AppVersion } from 'package-json';
 
 // Минимальный fields для получения профилей в приложении
@@ -109,17 +108,4 @@ export async function loadProfile(id) {
   isLoadingProfiles = false;
 
   if(loadingProfiles.length) loadProfile();
-}
-
-export async function loadConversation(id) {
-  const { items: [conv], profiles, groups } = await vkapi('messages.getConversationsById', {
-    peer_ids: id,
-    extended: 1,
-    fields: fields
-  });
-
-  store.commit('addProfiles', concatProfiles(profiles, groups));
-  store.commit('messages/updateConversation', {
-    peer: parseConversation(conv)
-  });
 }

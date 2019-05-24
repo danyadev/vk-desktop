@@ -1,7 +1,8 @@
-import { escape, getPhoto, loadProfile } from './utils';
+import { escape, getPhoto, fields, loadProfile, concatProfiles } from './utils';
+import getTranslate from './getTranslate';
 import store from './store';
 import emoji from './emoji';
-import getTranslate from './getTranslate';
+import vkapi from './vkapi';
 
 export function parseConversation(conversation) {
   const isChat = conversation.peer.type == 'chat';
@@ -117,4 +118,36 @@ export function getServiceMessage(action, author, isFull) {
       console.warn('[messages] Неизвестное действие:', action.type);
       return action.type;
   }
+}
+
+const loadedConversations = {};
+
+export async function loadConversation(id) {
+  if(loadedConversations[id]) return;
+  else loadedConversations[id] = 1;
+
+  const { items: [conv], profiles, groups } = await vkapi('messages.getConversationsById', {
+    peer_ids: id,
+    extended: 1,
+    fields: fields
+  });
+
+  store.commit('addProfiles', concatProfiles(profiles, groups));
+  store.commit('messages/updateConversation', {
+    peer: parseConversation(conv)
+  });
+}
+
+const loadedConvMembers = {};
+
+export async function loadConversationMembers(id) {
+  if(loadedConvMembers[id]) return;
+  else loadedConvMembers[id] = 1;
+
+  const { profiles, groups } = await vkapi('messages.getConversationMembers', {
+    peer_id: id,
+    fields: fields
+  });
+
+  store.commit('addProfiles', concatProfiles(profiles, groups));
 }

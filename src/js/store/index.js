@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import path from 'path';
 import { settings, users } from './Storage';
 import rootModule from './modules/index';
 
@@ -28,7 +27,7 @@ store.subscribe(({ type }, store) => {
 
 export function resetAppState() {
   store.commit('resetState');
-  
+
   for(let name of moduleNames) {
     const mod = modules[name];
 

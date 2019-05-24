@@ -8,13 +8,13 @@
 </template>
 
 <script>
-  import Auth from '../auth/Auth.vue';
   import ModalHeader from './ModalHeader.vue';
+  import Auth from '../auth/Auth.vue';
 
   export default {
     components: {
-      Auth,
-      ModalHeader
+      ModalHeader,
+      Auth
     }
   }
 </script>

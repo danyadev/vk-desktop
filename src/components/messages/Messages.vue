@@ -9,7 +9,9 @@
   import MessagesPeers from './MessagesPeers.vue';
 
   export default {
-    components: { MessagesPeers },
+    components: {
+      MessagesPeers
+    },
     computed: {
       hasChat() {
         return this.$route.name == 'chat';

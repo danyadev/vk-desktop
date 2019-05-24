@@ -23,7 +23,7 @@
 
 <script>
   import { mapState } from 'vuex';
-  import { getServiceMessage } from 'js/messages';
+  import { getServiceMessage, loadConversationMembers } from 'js/messages';
   import { getShortDate } from 'js/date';
   import { getPhoto } from 'js/utils';
   import Ripple from '../UI/Ripple.vue';
@@ -71,7 +71,7 @@
         else if(this.msg.out) return `${this.l('you')}:`;
         else if(!this.isChat) return '';
         else if(this.author) return `${this.author.name || this.author.first_name}:`;
-        else return '...:';
+        else return loadConversationMembers(this.peer.id), '...:';
       },
       message() {
         if(this.msg.action) return getServiceMessage(this.msg.action, this.author);

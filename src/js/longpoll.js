@@ -3,7 +3,6 @@ import querystring from 'querystring';
 import request from './request';
 import vkapi from './vkapi';
 import { concatProfiles, fields } from './utils';
-import { parseMessge, parseConversation } from './messages';
 import store from './store/';
 import longpollEvents from './longpollEvents';
 

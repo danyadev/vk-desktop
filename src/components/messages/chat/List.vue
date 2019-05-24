@@ -16,7 +16,6 @@
   import vkapi from 'js/vkapi';
   import { fields, concatProfiles, endScroll } from 'js/utils';
   import { parseMessage } from 'js/messages';
-
   import Scrolly from '../../UI/Scrolly.vue';
   import Message from './Message.vue';
 

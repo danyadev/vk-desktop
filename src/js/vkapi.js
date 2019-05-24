@@ -69,8 +69,8 @@ function vkapi(name, params = {}) {
   });
 }
 
-let methods = [],
-    inWork = false;
+const methods = [];
+let inWork = false;
 
 async function executeMethod() {
   const { data, resolve, reject } = methods[0];
@@ -85,6 +85,7 @@ async function executeMethod() {
   }
 
   methods.shift();
+  
   if(methods.length) executeMethod();
   else inWork = false;
 }
