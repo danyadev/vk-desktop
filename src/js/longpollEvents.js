@@ -68,7 +68,6 @@ function getMessage(data, isNewMsg) {
   return {
     peer: {
       id: data[2],
-      type: data[2] > 2e9 ? 'chat' : 'user',
       channel: isChannel,
       owner: isChannel ? from_id : data[2]
     },
@@ -172,20 +171,31 @@ export default {
   },
 
   6: {
-    parser(data) {
-
-    },
-    handler(data) {
-
+    // Ты прочитал сообщения до msg_id
+    // [peer_id, msg_id, count]
+    parser: (data) => data,
+    handler([peer_id, msg_id, count]) {
+      store.commit('messages/updateConversation', {
+        peer: {
+          id: peer_id,
+          unread: count,
+          in_read: msg_id
+        }
+      });
     }
   },
 
   7: {
-    parser(data) {
-
-    },
-    handler(data) {
-
+    // Собеседник прочитал твои сообщения до msg_id
+    // [peer_id, msg_id, count]
+    parser: (data) => data,
+    handler([peer_id, msg_id, count]) {
+      store.commit('messages/updateConversation', {
+        peer: {
+          id: peer_id,
+          out_read: msg_id
+        }
+      });
     }
   },
 
