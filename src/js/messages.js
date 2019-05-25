@@ -19,13 +19,13 @@ export function parseConversation(conversation) {
     type: conversation.peer.type,
     channel: isChannel,
     members: isChat ? conversation.chat_settings.members_count : null,
-    left: isChat ? conversation.chat_settings.state == 'left' : false,
+    left: isChat ? ['left', 'kicked'].includes(conversation.chat_settings.state) : false,
     owner: isChannel ? conversation.chat_settings.owner_id : conversation.peer.id,
     muted: !!conversation.push_settings,
     unread: conversation.unread_count || 0,
     photo: chatPhoto,
     title: chatTitle,
-    canWrite: conversation.can_write,
+    canWrite: conversation.can_write.allowed,
     last_msg_id: conversation.last_message_id,
     // id последнего прочтенного входящего сообщения
     in_read: conversation.in_read,
@@ -124,12 +124,7 @@ export function getServiceMessage(action, author, isFull) {
   }
 }
 
-const loadedConversations = {};
-
 export async function loadConversation(id) {
-  if(loadedConversations[id]) return;
-  else loadedConversations[id] = 1;
-
   const { items: [conv], profiles, groups } = await vkapi('messages.getConversationsById', {
     peer_ids: id,
     extended: 1,
@@ -144,14 +139,18 @@ export async function loadConversation(id) {
 
 const loadedConvMembers = {};
 
-export async function loadConversationMembers(id) {
-  if(loadedConvMembers[id]) return;
+export async function loadConversationMembers(id, force) {
+  if(!force && loadedConvMembers[id]) return;
   else loadedConvMembers[id] = 1;
 
-  const { profiles, groups } = await vkapi('messages.getConversationMembers', {
-    peer_id: id,
-    fields: fields
-  });
+  try {
+    const { profiles, groups } = await vkapi('messages.getConversationMembers', {
+      peer_id: id,
+      fields: fields
+    });
 
-  store.commit('addProfiles', concatProfiles(profiles, groups));
+    store.commit('addProfiles', concatProfiles(profiles, groups));
+  } catch(e) {
+    delete loadedConvMembers[id];
+  }
 }

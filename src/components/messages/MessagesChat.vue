@@ -37,7 +37,7 @@
         this.$router.replace('/messages');
       }
     },
-    async mounted() {
+    mounted() {
       if(this.id > 2e9) loadConversationMembers(this.id);
     },
     activated() {

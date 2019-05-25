@@ -25,7 +25,7 @@
         else if(data.error == 'cancel_enter_code') this.error = null;
         else {
           const access_token = await getDesktopToken(data.access_token);
-          const [ user ] = await vkapi('users.get', { access_token, fields });
+          const [user] = await vkapi('users.get', { access_token, fields });
 
           this.$store.commit('users/updateUser', {
             ...user,

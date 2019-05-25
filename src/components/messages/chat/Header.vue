@@ -32,7 +32,7 @@
       },
       photo() {
         if(this.owner) return getPhoto(this.owner);
-        else return this.peer && this.peer.photo || 'assets/im_chat_photo.png';
+        else return this.peer && !this.peer.left && this.peer.photo || 'assets/im_chat_photo.png';
       },
       title() {
         if(this.id > 2e9) {
@@ -42,12 +42,12 @@
         } else return '...';
       },
       online() {
-        if(!this.peer) return this.l('loading');
+        if(!this.peer || this.peer.members == null) return this.l('loading');
         else if(this.id < 0) return this.l('im_chat_group');
         else if(this.id > 2e9) {
           const { canWrite, members, channel, left } = this.peer;
 
-          if(!canWrite.allowed && !channel) return this.l('im_chat_kicked');
+          if(!canWrite && !channel) return this.l('im_chat_kicked');
           else if(left) return this.l('im_chat_left');
           else return this.l('im_chat_members', [members], members);
         } else {

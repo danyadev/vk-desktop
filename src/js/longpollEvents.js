@@ -1,3 +1,4 @@
+import { loadConversation, loadConversationMembers } from './messages';
 import store from './store/';
 
 function hasFlag(mask, name) {
@@ -109,7 +110,7 @@ export default {
     // 1) Восстановление удаленного сообщения (128)
     // 2) Отмена пометки сообщения как спам (64)
     // 3) Прочитано сообщение (1) [msg_id, flags, peer_id], не юзается
-    // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, random_id, conv_msg_id, edit_time]
+    // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
     parser: (data) => !hasFlag(data[1], 'unread') && getMessage(data),
     handler(data) {
 
@@ -117,11 +118,22 @@ export default {
   },
 
   4: {
-    // 1) Новое сообщение
-    // [msg_id, flags, peer_id, timestamp, text, {from, actions}, {attachs}, random_id, conv_msg_id, edit_time]
+    // Новое сообщение
+    // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
     parser: (data) => getMessage(data, true),
     handler({ peer, msg }) {
       const conv = store.state.messages.conversations[peer.id];
+
+      const peerData = {
+        id: peer.id,
+        unread: msg.out ? 0 : conv && conv.peer.unread + 1,
+        last_msg_id: msg.id,
+        ...(msg.out ? { in_read: msg.id } : { out_read: msg.id })
+      };
+
+      if(msg.action && ['chat_create', 'chat_title_update'].includes(msg.action.type)) {
+        peerData.title = msg.action.text;
+      }
 
       store.commit('messages/addMessages', {
         peer_id: peer.id,
@@ -130,12 +142,7 @@ export default {
       });
 
       store.commit('messages/updateConversation', {
-        peer: {
-          id: peer.id,
-          unread: msg.out ? 0 : conv && conv.peer.unread + 1,
-          last_msg_id: msg.id,
-          ...(msg.out ? { in_read: msg.id } : { out_read: msg.id })
-        },
+        peer: peerData,
         msg: msg
       });
     }
@@ -232,11 +239,58 @@ export default {
   },
 
   52: {
-    parser(data) {
+    // Изменение данных чата
+    // https://vk.com/dev/using_longpoll_2?f=3.2.+Дополнительные+поля+чатов
+    // [type, peer_id, info]
+    parser: (data) => data,
+    handler([type, peer_id, info]) {
+      const isMe = info == store.getters['users/user'].id;
+      const conv = store.state.messages.conversations[peer_id];
+      const peer = conv && conv.peer;
+      if(!peer) return;
 
-    },
-    handler(data) {
+      switch(type) {
+        case 2: // Изменилась аватарка беседы
+          loadConversation(peer_id);
+          break;
+        case 3: // Назначен новый администратор
+          // TODO
+          break;
+        case 5: // Закреплено сообщение
+          // TODO
+          break;
+        case 6: // Пользователь присоединился к беседе
+          if(peer.members != null) peer.members++;
 
+          if(isMe) {
+            peer.left = false;
+            peer.canWrite = true;
+            
+            loadConversation(peer_id);
+            loadConversationMembers(peer.id, true);
+          }
+
+          break;
+        case 7: // Пользователь покинул беседу
+          if(peer.members != null) peer.members--;
+          if(isMe) peer.left = true;
+
+          break;
+        case 8: // Пользователя исключили из беседы
+          if(peer.members != null) peer.members--;
+
+          if(isMe) {
+            peer.left = true;
+            peer.canWrite = false;
+          }
+
+          break;
+        case 9: // С пользователя сняты права администратора
+          // TODO
+          break;
+      }
+
+      store.commit('messages/updateConversation', { peer });
     }
   },
 

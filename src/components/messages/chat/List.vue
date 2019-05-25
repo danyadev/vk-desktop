@@ -104,14 +104,9 @@
     },
     activated() {
       if(this.scrollTop != null) {
-        const messagesList = this.$el.firstChild;
-
-        messagesList.scrollTop = this.scrollTop;
-      } else this.scrollToEnd();
-
-      // Обновление данных юзера при каждом открытии чата
-      if(this.id > 0 && this.id < 2e9) {
-        // *Получить юзера и обработать данные*
+        this.$el.firstChild.scrollTop = this.scrollTop;
+      } else {
+        this.scrollToEnd();
       }
     }
   }

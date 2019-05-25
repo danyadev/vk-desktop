@@ -35,7 +35,7 @@
     },
     computed: {
       canWrite() {
-        if(this.peer && this.peer.canWrite.allowed) {
+        if(this.peer && this.peer.canWrite) {
           return { allowed: true };
         } else {
           return {

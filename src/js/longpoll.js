@@ -116,7 +116,7 @@ export default new class Longpoll extends EventEmitter {
     if(!history.length) return;
 
     for(let item of history) {
-      const [ id ] = item.splice(0, 1);
+      const [id] = item.splice(0, 1);
       const event = longpollEvents[id];
 
       if(!event) {
