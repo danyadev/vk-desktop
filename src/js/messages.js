@@ -5,7 +5,7 @@ import emoji from './emoji';
 import vkapi from './vkapi';
 
 export function parseConversation(conversation) {
-  const isChat = conversation.peer.type == 'chat';
+  const isChat = conversation.peer.id > 2e9;
   const isChannel = isChat && conversation.chat_settings.is_group_channel;
   let chatPhoto, chatTitle;
 
@@ -16,7 +16,6 @@ export function parseConversation(conversation) {
 
   return {
     id: conversation.peer.id,
-    type: conversation.peer.type,
     channel: isChannel,
     members: isChat ? conversation.chat_settings.members_count : null,
     left: isChat ? ['left', 'kicked'].includes(conversation.chat_settings.state) : false,

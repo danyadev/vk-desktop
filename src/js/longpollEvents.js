@@ -141,10 +141,19 @@ export default {
         addNew: true
       });
 
-      store.commit('messages/updateConversation', {
-        peer: peerData,
-        msg: msg
-      });
+      if(store.state.messages.peersList.indexOf(peer.id) == -1) {
+        store.commit('messages/addConversations', [{
+          peer: peerData,
+          msg: msg
+        }]);
+
+        loadConversation(peer.id);
+      } else {
+        store.commit('messages/updateConversation', {
+          peer: peerData,
+          msg: msg
+        });
+      }
 
       store.commit('messages/moveConversation', {
         peer_id: peer.id,

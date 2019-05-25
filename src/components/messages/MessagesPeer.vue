@@ -35,7 +35,7 @@
     },
     data() {
       return {
-        isChat: this.peer.type == 'chat'
+        isChat: this.peer.id > 2e9
       }
     },
     computed: {
@@ -55,10 +55,8 @@
         else return getPhoto(this.owner);
       },
       chatName() {
-        const { owner, peer } = this;
-
-        if(this.isChat) return peer.title || '...';
-        else if(owner) return owner.name || `${owner.first_name} ${owner.last_name}`;
+        if(this.isChat) return this.peer.title || '...';
+        else if(this.owner) return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         else return '...';
       },
       time() {
