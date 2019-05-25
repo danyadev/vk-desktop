@@ -78,7 +78,7 @@
       },
       // Либо непрочитано мной, либо непрочитано собеседником
       isUnreaded() {
-        return this.msg.id > this.peer.in_read || this.msg.id > this.peer.out_read;
+        return this.peer && (this.msg.id > this.peer.in_read || this.msg.id > this.peer.out_read);
       },
       serviceMessage() {
         return this.msg.action && getServiceMessage(this.msg.action, this.user, true);

@@ -268,6 +268,7 @@
   .scrolly-viewport {
     overflow: hidden;
     height: 100%;
+    z-index: -1;
   }
 
   .scrolly-bar-wrap {
