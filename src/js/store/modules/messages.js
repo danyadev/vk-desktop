@@ -30,7 +30,10 @@ export default {
     addConversations(state, conversations) {
       for(const conversation of conversations) {
         Vue.set(state.conversations, conversation.peer.id, conversation);
-        state.peersList.push(conversation.peer.id);
+
+        if(!state.peersList.includes(conversation.peer.id)) {
+          state.peersList.push(conversation.peer.id);
+        }
       }
     },
 

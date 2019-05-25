@@ -30,7 +30,7 @@
       ...mapState('users', ['activeUser'])
     },
     methods: {
-      async initUser() {
+      initUser() {
         if(longpoll.started) longpoll.stop();
 
         if(this.activeUser) {
