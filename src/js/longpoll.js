@@ -3,6 +3,7 @@ import querystring from 'querystring';
 import request from './request';
 import vkapi from './vkapi';
 import { concatProfiles, fields } from './utils';
+import { parseConversation, parseMessage } from './messages';
 import store from './store/';
 import longpollEvents from './longpollEvents';
 
@@ -105,9 +106,32 @@ export default new class Longpoll extends EventEmitter {
     });
 
     store.commit('addProfiles', concatProfiles(history.profiles, history.groups));
-
     this.pts = history.new_pts;
-    this.emitHistory(history.history);
+
+    const peers = history.conversations.reduce((peers, peer) => {
+      peers[peer.peer.id] = parseConversation(peer);
+      return peers;
+    }, {});
+
+    const messages = history.messages.items.reduce((msgs, msg) => {
+      msgs[msg.id] = parseMessage(msg, peers[msg.peer_id]);
+      return msgs;
+    }, {});
+
+    const events = [];
+
+    for(const item of history.history) {
+      if([3, 4, 5, 18].includes(item[0])) {
+        if(item[0] == 3 && !item[4]) continue;
+
+        events.push([item[0], {
+          peer: peers[item[3]],
+          msg: messages[item[1]]
+        }, 'fake']);
+      } else events.push(item);
+    }
+
+    this.emitHistory(events);
 
     if(history.more) await this.getHistory();
   }
@@ -122,7 +146,7 @@ export default new class Longpoll extends EventEmitter {
       if(!event) {
         console.warn('[longpoll] Неизвестное событие', [id, ...item]);
       } else {
-        const data = event.parser(item);
+        const data = event.parser(item[1] == 'fake' ? item[0] : item);
         if(data) event.handler(data);
       }
     }

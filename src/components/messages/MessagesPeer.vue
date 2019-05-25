@@ -72,7 +72,7 @@
         else return loadConversationMembers(this.peer.id), '...:';
       },
       message() {
-        if(this.msg.action) return getServiceMessage(this.msg.action, this.author);
+        if(this.msg.action) return getServiceMessage(this.msg.action, this.author || { id: this.msg.from });
         else if(this.isAttachment) {
           const { isReplyMsg, fwdCount, attachments } = this.msg;
 

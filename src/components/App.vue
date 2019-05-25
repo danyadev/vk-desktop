@@ -31,21 +31,21 @@
     },
     methods: {
       async initUser() {
-        this.$router.replace(this.activeUser ? '/messages' : '/auth');
-
         if(longpoll.started) longpoll.stop();
 
         if(this.activeUser) {
-          const { lp, user } = await vkapi('execute.init', {
+          vkapi('execute.init', {
             lp_version: longpoll.version,
             fields: fields
+          }).then(({ lp, user }) => {
+            this.$store.commit('users/updateUser', user);
+
+            if(longpoll.stopped) longpoll.start(lp);
+            else longpoll.once('stop', () => longpoll.start(lp));
           });
-
-          this.$store.commit('users/updateUser', user);
-
-          if(longpoll.stopped) longpoll.start(lp);
-          else longpoll.once('stop', () => longpoll.start(lp));
         }
+
+        this.$router.replace(this.activeUser ? '/messages' : '/auth');
       }
     },
     watch: {

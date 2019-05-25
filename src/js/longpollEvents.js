@@ -60,6 +60,11 @@ function getAttachments(data) {
 }
 
 function getMessage(data, isNewMsg) {
+  // Если данные получены через messages.getLongPollHistory
+  if(!Array.isArray(data)) return data;
+  // Если это 2 событие прочтения сообщения
+  if(!data[3]) return;
+
   const flag = hasFlag.bind(this, data[1]);
   const action = getServiceMessage(data[5]);
   const from_id = flag('outbox') ? store.getters['users/user'].id : Number(data[5].from || data[2]);
@@ -110,7 +115,7 @@ export default {
     // 2) Отмена пометки сообщения как спам (64)
     // 3) Прочитано сообщение (1) [msg_id, flags, peer_id], не юзается
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser: (data) => !hasFlag(data[1], 'unread') && getMessage(data),
+    parser: (data) => getMessage(data),
     handler(data) {
 
     }
@@ -121,16 +126,20 @@ export default {
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
     parser: (data) => getMessage(data, true),
     handler({ peer, msg }) {
+      // В случае, если данные были получены через messages.getLongPollHistory
+      const isFullData = peer.unread != null;
       const conv = store.state.messages.conversations[peer.id];
 
-      const peerData = {
+      let peerData = {
         id: peer.id,
         unread: msg.out ? 0 : conv && conv.peer.unread + 1,
         last_msg_id: msg.id,
         ...(msg.out ? { in_read: msg.id } : { out_read: msg.id })
       };
 
-      if(msg.action && ['chat_create', 'chat_title_update'].includes(msg.action.type)) {
+      if(isFullData) {
+        peerData = peer;
+      } else if(msg.action && ['chat_create', 'chat_title_update'].includes(msg.action.type)) {
         peerData.title = msg.action.text;
       }
 
@@ -146,7 +155,7 @@ export default {
           msg: msg
         }]);
 
-        loadConversation(peer.id);
+        if(!isFullData) loadConversation(peer.id);
       } else {
         store.commit('messages/updateConversation', {
           peer: peerData,
@@ -162,6 +171,8 @@ export default {
   },
 
   5: {
+    // Редактирование сообщения
+    // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
     parser(data) {
 
     },
@@ -245,6 +256,8 @@ export default {
   },
 
   18: {
+    // Добавление сниппета к сообщению (при сообщении с ссылкой)
+    // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
     parser(data) {
 
     },
