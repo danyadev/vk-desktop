@@ -145,6 +145,11 @@ export default {
         peer: peerData,
         msg: msg
       });
+
+      store.commit('messages/moveConversation', {
+        peer_id: peer.id,
+        moveUp: true
+      });
     }
   },
 
@@ -265,7 +270,7 @@ export default {
           if(isMe) {
             peer.left = false;
             peer.canWrite = true;
-            
+
             loadConversation(peer_id);
             loadConversationMembers(peer.id, true);
           }

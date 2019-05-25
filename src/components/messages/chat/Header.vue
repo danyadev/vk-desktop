@@ -42,7 +42,7 @@
         } else return '...';
       },
       online() {
-        if(!this.peer || this.peer.members == null) return this.l('loading');
+        if(!this.peer || !this.peer.left && this.peer.members == null) return this.l('loading');
         else if(this.id < 0) return this.l('im_chat_group');
         else if(this.id > 2e9) {
           const { canWrite, members, channel, left } = this.peer;
