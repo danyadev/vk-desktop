@@ -27,8 +27,11 @@ export default {
       Object.assign(state, getState());
     },
 
-    addPeerToList(state, peer_id) {
-      state.peersList.push(peer_id);
+    updatePeersList(state, { id, remove }) {
+      if(remove) {
+        const index = state.peersList.indexOf(id);
+        if(index != -1) state.peersList.splice(index, 1);
+      } else state.peersList.push(id);
     },
 
     addConversations(state, conversations) {
@@ -53,6 +56,45 @@ export default {
       const index = state.peersList.indexOf(peer_id);
 
       if(index != -1) Vue.delete(state.peersList, index);
+    },
+
+    removeConversationMessages(state, id) {
+      Vue.set(state.messages, id, []);
+    },
+
+    moveConversation(state, { peer_id, newMsg, restoreMsg }) {
+      const index = state.peersList.indexOf(peer_id);
+      if(index == -1) return;
+
+      if(newMsg) {
+        moveArrItem(state.peersList, index, 0);
+      } else {
+        const peers = this.getters['messages/conversationsList'];
+        const peerDate = peers[index].msg.date;
+        let newIndex = index;
+
+        if(restoreMsg) {
+          if(index == 0) return;
+
+          for(let i=0; i<index; i++) {
+            if(peers[i].msg.date < peerDate) {
+              newIndex = i;
+              break;
+            }
+          }
+        } else if(index != peers.length-1) {
+          for(let i=peers.length-1; i>index; i--) {
+            if(peers[i].msg.date > peerDate) {
+              newIndex = i;
+              break;
+            }
+          }
+        } else {
+          return Vue.delete(state.peersList, index);
+        }
+
+        moveArrItem(state.peersList, index, newIndex);
+      }
     },
 
     addMessages(state, { peer_id, messages, addNew }) {
@@ -103,41 +145,6 @@ export default {
       }
 
       Vue.set(state.messages, peer_id, messages);
-    },
-
-    moveConversation(state, { peer_id, newMsg, restoreMsg }) {
-      const index = state.peersList.indexOf(peer_id);
-      if(index == -1) return;
-
-      if(newMsg) {
-        moveArrItem(state.peersList, index, 0);
-      } else {
-        const peers = this.getters['messages/conversationsList'];
-        const peerDate = peers[index].msg.date;
-        let newIndex = index;
-
-        if(restoreMsg) {
-          if(index == 0) return;
-
-          for(let i=0; i<index; i++) {
-            if(peers[i].msg.date < peerDate) {
-              newIndex = i;
-              break;
-            }
-          }
-        } else if(index != peers.length-1) {
-          for(let i=peers.length-1; i>index; i--) {
-            if(peers[i].msg.date > peerDate) {
-              newIndex = i;
-              break;
-            }
-          }
-        } else {
-          return Vue.delete(state.peersList, index);
-        }
-
-        moveArrItem(state.peersList, index, newIndex);
-      }
     }
   },
   getters: {

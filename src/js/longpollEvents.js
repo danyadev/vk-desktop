@@ -159,7 +159,7 @@ export default {
             store.commit('messages/addConversations', [{ peer, msg }]);
             loadConversation(peer.id);
           } else {
-            store.commit('messages/addPeerToList', peer.id);
+            store.commit('messages/updatePeersList', { id: peer.id });
             await getLastMessage(peer.id);
           }
         } else {
@@ -314,7 +314,7 @@ export default {
     }),
     handler({ id, timestamp }) {
       if(!store.state.profiles[id]) return;
-      
+
       store.commit('updateProfile', {
         id: id,
         online: false,
@@ -327,6 +327,17 @@ export default {
   },
 
   10: {
+    // Только у диалогов сообществ
+    parser(data) {
+
+    },
+    handler(data) {
+
+    }
+  },
+
+  11: {
+    // Только у диалогов сообществ
     parser(data) {
 
     },
@@ -336,6 +347,7 @@ export default {
   },
 
   12: {
+    // Только у диалогов сообществ
     parser(data) {
 
     },
@@ -345,11 +357,15 @@ export default {
   },
 
   13: {
-    parser(data) {
-
-    },
-    handler(data) {
-
+    // Удаление диалога
+    // [peer_id, msg_id]
+    parser: (data) => data,
+    handler([peer_id, msg_id]) {
+      store.commit('messages/removeConversationMessages', peer_id);
+      store.commit('messages/updatePeersList', {
+        id: peer_id,
+        remove: true
+      });
     }
   },
 
