@@ -5,6 +5,7 @@ import vkapi from './vkapi';
 function hasFlag(mask, name) {
   const flags = [];
   const allFlags = {
+    // 524288 и 8192 - ?
     unread: 1, outbox: 2, replied: 4, important: 8,
     chat: 16, friends: 32, spam: 64, deleted: 128,
     fixed: 256, media: 512, hidden: 65536,
@@ -68,19 +69,15 @@ function getMessage(data, isNewMsg) {
 
   const flag = hasFlag.bind(this, data[1]);
   const action = getServiceMessage(data[5]);
-  const from_id = flag('outbox') ? store.getters['users/user'].id : Number(data[5].from || data[2]);
-  const isChannel = isNewMsg && !data[1];
 
   return {
     peer: {
-      id: data[2],
-      channel: isChannel,
-      owner: isChannel ? from_id : data[2]
+      id: data[2]
     },
     msg: {
       id: data[0],
       text: action ? '' : data[4],
-      from: from_id,
+      from: flag('outbox') ? store.getters['users/user'].id : Number(data[5].from || data[2]),
       date: data[3],
       out: flag('outbox'),
       editTime: data[9],
@@ -124,14 +121,8 @@ export default {
     // 2) Пометка как спам (64)
     // 3) Удаление для всех (131200)
     // [msg_id, flags, peer_id]
-    parser: (data) => ({
-      // TODO: возможность восстановления сообщений
-      // (и также отображение удаленных)
-      // all: hasFlag(data[1], 'deleted_for_all'),
-      msg_id: data[0],
-      peer_id: data[2]
-    }),
-    async handler({ msg_id, peer_id }) {
+    parser: (data) => data,
+    async handler([msg_id, flags, peer_id]) {
       if(!store.state.messages.peersList.includes(peer_id)) return;
 
       const msg = await getLastMessage(peer_id);
@@ -240,9 +231,7 @@ export default {
   5: {
     // Редактирование сообщения
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser(data) {
-
-    },
+    parser: (data) => getMessage(data, true),
     handler(data) {
 
     }

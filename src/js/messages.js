@@ -76,7 +76,7 @@ export function getServiceMessage(action, author, isFull) {
   }
 
   function e(text) {
-    text = escape(text.replace(/<br>/g, ' '));
+    text = escape(String(text).replace(/<br>/g, ' '));
 
     if(isFull) text = emoji(text);
 
