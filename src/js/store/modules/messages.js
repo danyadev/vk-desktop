@@ -27,6 +27,10 @@ export default {
       Object.assign(state, getState());
     },
 
+    addPeerToList(state, peer_id) {
+      state.peersList.push(peer_id);
+    },
+
     addConversations(state, conversations) {
       for(const conversation of conversations) {
         Vue.set(state.conversations, conversation.peer.id, conversation);
@@ -62,6 +66,25 @@ export default {
       Vue.set(state.messages, peer_id, newList);
     },
 
+    insertMessage(state, { peer_id, msg }) {
+      const list = [...state.messages[peer_id] || []];
+
+      if(!list.length || msg.id > list[list.length-1].id) {
+        list.push(msg);
+      } else if(msg.id < list[0].id) {
+        list.unshift(msg);
+      } else {
+        for(let i=list.length-1; i>=0; i--) {
+          if(list[i].id < msg.id) {
+            list.splice(i+1, 0, msg);
+            break;
+          }
+        }
+      }
+
+      Vue.set(state.messages, peer_id, list);
+    },
+
     removeMessages(state, { peer_id, msg_ids }) {
       let messages = [...state.messages[peer_id] || []];
 
@@ -83,7 +106,9 @@ export default {
         const peerDate = peers[index].msg.date;
         let newIndex = index;
 
-        if(restoreMsg && index > 0) {
+        if(restoreMsg) {
+          if(index == 0) return;
+
           for(let i=0; i<index; i++) {
             if(peers[i].msg.date < peerDate) {
               newIndex = i;

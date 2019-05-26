@@ -95,6 +95,29 @@ function getMessage(data, isNewMsg) {
   };
 }
 
+async function getLastMessage(peer_id) {
+  const {
+    msg,
+    unread,
+    in_read,
+    out_read,
+    last_msg_id
+  } = await vkapi('execute.getLastMessage', { peer_id });
+
+  store.commit('messages/updateConversation', {
+    peer: {
+      id: peer_id,
+      unread,
+      in_read,
+      out_read,
+      last_msg_id
+    },
+    msg: msg && parseMessage(msg)
+  });
+
+  return msg;
+}
+
 export default {
   2: {
     // 1) Удаление сообщения (128)
@@ -111,24 +134,7 @@ export default {
     async handler({ msg_id, peer_id }) {
       if(!store.state.messages.peersList.includes(peer_id)) return;
 
-      const {
-        msg,
-        unread,
-        in_read,
-        out_read,
-        last_msg_id
-      } = await vkapi('execute.getLastMessage', { peer_id });
-
-      store.commit('messages/updateConversation', {
-        peer: {
-          id: peer_id,
-          unread,
-          in_read,
-          out_read,
-          last_msg_id
-        },
-        msg: msg && parseMessage(msg)
-      });
+      const msg = await getLastMessage(peer_id);
 
       if(!msg) {
         store.commit('messages/removeConversation', peer_id);
@@ -149,8 +155,36 @@ export default {
     // 3) Прочитано сообщение (1) [msg_id, flags, peer_id], не юзается
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
     parser: (data) => getMessage(data),
-    handler(data) {
+    async handler({ peer, msg }) {
+      const list = store.getters['messages/conversationsList'];
+      const lastPeer = list[list.length-1];
+      const inList = store.state.messages.peersList.includes(peer.id);
 
+      if(inList || msg.date > lastPeer.msg.date) {
+        if(!inList) {
+          const conv = store.state.messages.conversations[peer.id];
+
+          if(!conv) {
+            store.commit('messages/addConversations', [{ peer, msg }]);
+            loadConversation(peer.id);
+          } else {
+            store.commit('messages/addPeerToList', peer.id);
+            await getLastMessage(peer.id);
+          }
+        } else {
+          await getLastMessage(peer.id);
+        }
+
+        store.commit('messages/insertMessage', {
+          peer_id: peer.id,
+          msg: msg
+        });
+
+        store.commit('messages/moveConversation', {
+          peer_id: peer.id,
+          restoreMsg: true
+        });
+      }
     }
   },
 
