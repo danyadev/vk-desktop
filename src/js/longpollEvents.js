@@ -446,6 +446,8 @@ export default {
   },
 
   63: {
+    // Написание сообщения
+    // [peer_id, [from_id], 1, timestamp]
     parser(data) {
 
     },
@@ -455,6 +457,8 @@ export default {
   },
 
   64: {
+    // Запись голосового сообщения
+    // [peer_id, [from_id], 1, timestamp]
     parser(data) {
 
     },
@@ -464,24 +468,36 @@ export default {
   },
 
   80: {
-    parser(data) {
-
-    },
-    handler(data) {
+    // Изменении количества сообщений
+    // [count, count_with_notifications, 0]
+    // count_with_notifications - кол-во непрочитанных диалогов, в которых включены уведомления
+    parser: ([count]) => count,
+    handler(count) {
 
     }
   },
 
   114: {
-    parser(data) {
+    // Изменеие настроек пуш-уведомлений в беседе
+    // [{ peer_id, sound, disabled_until }]
+    // disabled_until: -1 - выключены; 0 - включены; * - время их включения
+    // При значении > 0 нужно самому следить за временем, ибо событие при включении не приходит.
+    parser: (data) => data,
+    handler([{ peer_id, disabled_until }]) {
+      const conv = store.state.messages.conversations[peer_id];
+      if(!conv) return;
 
-    },
-    handler(data) {
-
+      store.commit('messages/updateConversation', {
+        peer: {
+          id: peer_id,
+          muted: disabled_until != 0
+        }
+      });
     }
   },
 
   115: {
+    // Звонок
     parser(data) {
 
     },

@@ -31,8 +31,9 @@
         return this.peer && this.$store.state.profiles[this.peer.owner];
       },
       photo() {
-        if(this.owner) return getPhoto(this.owner);
-        else return this.peer && !this.peer.left && this.peer.photo || 'assets/im_chat_photo.png';
+        if(!this.peer || this.peer.id > 2e9) {
+          return this.peer && !this.peer.left && this.peer.photo || 'assets/im_chat_photo.png';
+        } else return getPhoto(this.owner);
       },
       title() {
         if(this.id > 2e9) {

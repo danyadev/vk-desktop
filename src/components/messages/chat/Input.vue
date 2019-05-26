@@ -13,7 +13,7 @@
       </div>
       <img class="send_btn" src="~assets/im_send.svg">
     </template>
-    <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#e1e5f0">
+    <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#e1e5f0" @click="toggleNotifications">
       <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
       {{ l('toggle_notifications', !peer.muted) }}
     </Ripple>
@@ -27,6 +27,7 @@
 
 <script>
   import Ripple from '../../UI/Ripple.vue';
+  import vkapi from 'js/vkapi';
 
   export default {
     props: ['peer'],
@@ -44,6 +45,14 @@
             channel: this.peer ? this.peer.channel : false
           };
         }
+      }
+    },
+    methods: {
+      toggleNotifications() {
+        vkapi('account.setSilenceMode', {
+          peer_id: this.peer.id,
+          time: this.peer.muted ? 0 : -1
+        });
       }
     },
     activated() {
