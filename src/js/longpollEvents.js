@@ -61,7 +61,7 @@ function getAttachments(data) {
   return attachs;
 }
 
-function getMessage(data, isNewMsg) {
+function getMessage(data) {
   // Если данные получены через messages.getLongPollHistory
   if(!Array.isArray(data)) return data;
   // Если это 2 событие прочтения сообщения
@@ -182,7 +182,7 @@ export default {
   4: {
     // Новое сообщение
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser: (data) => getMessage(data, true),
+    parser: (data) => getMessage(data),
     handler({ peer, msg }) {
       // В случае, если данные были получены через messages.getLongPollHistory
       const isFullData = peer.unread != null;
@@ -231,9 +231,19 @@ export default {
   5: {
     // Редактирование сообщения
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser: (data) => getMessage(data, true),
-    handler(data) {
+    parser: (data) => getMessage(data),
+    handler({ peer, msg }) {
+      store.commit('messages/updateConversation', {
+        peer: {
+          id: peer.id
+        },
+        msg: msg
+      });
 
+      store.commit('messages/editMessage', {
+        peer_id: peer.id,
+        msg: msg
+      });
     }
   },
 

@@ -85,6 +85,16 @@ export default {
       Vue.set(state.messages, peer_id, list);
     },
 
+    editMessage(state, { peer_id, msg }) {
+      const list = [...state.messages[peer_id] || []];
+      const index = list.findIndex(({ id }) => id == msg.id);
+      if(index == -1) return;
+
+      list[index] = { ...list[index], ...msg };
+
+      Vue.set(state.messages, peer_id, list);
+    },
+
     removeMessages(state, { peer_id, msg_ids }) {
       let messages = [...state.messages[peer_id] || []];
 

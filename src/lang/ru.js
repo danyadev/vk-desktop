@@ -57,6 +57,7 @@ export default {
   im_input_placeholder: 'Введите сообщение...',
   im_empty_dialog: 'Ваш список сообщений пуст',
   im_unread_messages: 'Непрочитанные сообщения',
+  im_msg_edited: 'ред',
 
   // Вложения в сообщениях
   im_replied: 'Ответ на сообщение',
