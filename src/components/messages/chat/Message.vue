@@ -13,10 +13,12 @@
           {{ name }}
           <div v-if="user && user.verified" class="verified"></div>
           <div class="message_time ff-roboto">{{ time }}</div>
-          <div v-if="msg.editTime" class="message_edited ff-roboto">{{ l('im_msg_edited') }}</div>
         </div>
         <div v-if="serviceMessage" class="message_content" v-html="serviceMessage"></div>
-        <div v-else class="message_content" v-emoji.push.br="msg.text"></div>
+        <div v-else class="message_content ff-roboto">
+          <div v-emoji.push.br="msg.text"></div>
+          <div v-if="msg.editTime" class="message_edited">({{ l('im_msg_edited') }})</div>
+        </div>
       </div>
     </div>
   </div>
@@ -188,7 +190,7 @@
     margin-top: -1px;
   }
 
-  .message_time, .message_edited {
+  .message_time {
     display: inline;
     margin-left: 2px;
     font-weight: 400;
@@ -196,19 +198,18 @@
     color: #6c737a;
   }
 
-  .message_edited::before {
-    content: '';
-    display: inline-block;
-    width: 2px;
-    height: 2px;
-    margin: 0 4px 3px -2px;
-    border-radius: 50%;
-    background-color: #696969;
-  }
-
   .message_content {
+    display: flex;
     line-height: 20px;
     margin-top: 2px;
     word-break: break-word;
+  }
+
+  .message_edited {
+    display: inline-block;
+    user-select: none;
+    margin: 1px 0 0 5px;
+    font-size: 14px;
+    color: #6c737a;
   }
 </style>

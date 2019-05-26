@@ -233,11 +233,14 @@ export default {
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
     parser: (data) => getMessage(data),
     handler({ peer, msg }) {
+      const conv = store.state.messages.conversations[peer.id];
+      const isLastMsg = conv && conv.msg.id == msg.id;
+
       store.commit('messages/updateConversation', {
         peer: {
           id: peer.id
         },
-        msg: msg
+        ...(isLastMsg ? { msg: msg } : {})
       });
 
       store.commit('messages/editMessage', {
