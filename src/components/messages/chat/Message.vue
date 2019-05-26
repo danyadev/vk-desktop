@@ -165,10 +165,6 @@
     padding-top: 0;
   }
 
-  .message_content >>> b {
-    font-weight: 500;
-  }
-
   .message_wrap:not(.showUserData) .message_photo,
   .message_wrap:not(.showUserData) .message_name { display: none }
 
@@ -199,17 +195,23 @@
   }
 
   .message_content {
-    display: flex;
     line-height: 20px;
     margin-top: 2px;
     word-break: break-word;
   }
 
+  .message_content >>> * {
+    display: inline-block;
+  }
+
+  .message_content >>> b {
+    font-weight: 500;
+  }
+
   .message_edited {
     display: inline-block;
     user-select: none;
-    margin: 1px 0 0 5px;
-    font-size: 14px;
+    font-size: 13.5px;
     color: #6c737a;
   }
 </style>

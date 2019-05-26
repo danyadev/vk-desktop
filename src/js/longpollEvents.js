@@ -280,20 +280,49 @@ export default {
   },
 
   8: {
-    parser(data) {
+    // Юзер появился в сети
+    // [-user_id, platform, timestamp]
+    // 1: любое приложение, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
+    parser: ([user_id, platform, timestamp]) => ({
+      id: -user_id,
+      mobile: ![6, 7].includes(platform),
+      platform: platform,
+      timestamp: timestamp
+    }),
+    handler({ id, mobile, platform, timestamp }) {
+      if(!store.state.profiles[id]) return;
 
-    },
-    handler(data) {
-
+      store.commit('updateProfile', {
+        id: id,
+        online: true,
+        online_mobile: mobile,
+        last_seen: {
+          time: timestamp,
+          platform: platform
+        }
+      });
     }
   },
 
   9: {
-    parser(data) {
-
-    },
-    handler(data) {
-
+    // Юзер вышел из сети
+    // [-user_id, flag, timestamp]
+    // flag: 0 - вышел с сайта, 1 - по таймауту
+    parser: ([id, flag, timestamp]) => ({
+      id: -id,
+      timestamp: timestamp
+    }),
+    handler({ id, timestamp }) {
+      if(!store.state.profiles[id]) return;
+      
+      store.commit('updateProfile', {
+        id: id,
+        online: false,
+        online_mobile: false,
+        last_seen: {
+          time: timestamp
+        }
+      });
     }
   },
 
