@@ -45,6 +45,12 @@ export default {
       Vue.set(state.conversations, peer.id, conv);
     },
 
+    removeConversation(state, peer_id) {
+      const index = state.peersList.indexOf(peer_id);
+
+      if(index != -1) Vue.delete(state.peersList, index);
+    },
+
     addMessages(state, { peer_id, messages, addNew }) {
       const oldMsgs = state.messages[peer_id] || [];
       const newMsgs = messages.filter(({ id }) => {
@@ -56,14 +62,46 @@ export default {
       Vue.set(state.messages, peer_id, newList);
     },
 
-    moveConversation(state, { peer_id, moveUp }) {
+    removeMessages(state, { peer_id, msg_ids }) {
+      let messages = [...state.messages[peer_id] || []];
+
+      for(let i in messages) {
+        if(msg_ids.includes(messages[i].id)) messages.splice(i, 1);
+      }
+
+      Vue.set(state.messages, peer_id, messages);
+    },
+
+    moveConversation(state, { peer_id, newMsg, restoreMsg }) {
       const index = state.peersList.indexOf(peer_id);
       if(index == -1) return;
 
-      if(moveUp) { // Переместить беседу в самый верх списка
+      if(newMsg) {
         moveArrItem(state.peersList, index, 0);
-      } else { // Самому посчитать положение беседы
-        // TODO удаление и восстановление сообщений
+      } else {
+        const peers = this.getters['messages/conversationsList'];
+        const peerDate = peers[index].msg.date;
+        let newIndex = index;
+
+        if(restoreMsg && index > 0) {
+          for(let i=0; i<index; i++) {
+            if(peers[i].msg.date < peerDate) {
+              newIndex = i;
+              break;
+            }
+          }
+        } else if(index != peers.length-1) {
+          for(let i=peers.length-1; i>index; i--) {
+            if(peers[i].msg.date > peerDate) {
+              newIndex = i;
+              break;
+            }
+          }
+        } else {
+          return Vue.delete(state.peersList, index);
+        }
+
+        moveArrItem(state.peersList, index, newIndex);
       }
     }
   },

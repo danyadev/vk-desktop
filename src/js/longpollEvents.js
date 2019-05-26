@@ -1,5 +1,6 @@
-import { loadConversation, loadConversationMembers } from './messages';
+import { parseMessage, loadConversation, loadConversationMembers } from './messages';
 import store from './store/';
+import vkapi from './vkapi';
 
 function hasFlag(mask, name) {
   const flags = [];
@@ -101,12 +102,44 @@ export default {
     // 3) Удаление для всех (131200)
     // [msg_id, flags, peer_id]
     parser: (data) => ({
-      all: hasFlag(data[1], 'deleted_for_all'),
+      // TODO: возможность восстановления сообщений
+      // (и также отображение удаленных)
+      // all: hasFlag(data[1], 'deleted_for_all'),
       msg_id: data[0],
       peer_id: data[2]
     }),
-    handler(data) {
+    async handler({ msg_id, peer_id }) {
+      if(!store.state.messages.peersList.includes(peer_id)) return;
 
+      const {
+        msg,
+        unread,
+        in_read,
+        out_read,
+        last_msg_id
+      } = await vkapi('execute.getLastMessage', { peer_id });
+
+      store.commit('messages/updateConversation', {
+        peer: {
+          id: peer_id,
+          unread,
+          in_read,
+          out_read,
+          last_msg_id
+        },
+        msg: msg && parseMessage(msg)
+      });
+
+      if(!msg) {
+        store.commit('messages/removeConversation', peer_id);
+      }
+
+      store.commit('messages/removeMessages', {
+        peer_id: peer_id,
+        msg_ids: [msg_id]
+      });
+
+      store.commit('messages/moveConversation', { peer_id });
     }
   },
 
@@ -165,7 +198,7 @@ export default {
 
       store.commit('messages/moveConversation', {
         peer_id: peer.id,
-        moveUp: true
+        newMsg: true
       });
     }
   },
@@ -200,7 +233,7 @@ export default {
     // Собеседник прочитал твои сообщения до msg_id
     // [peer_id, msg_id, count]
     parser: (data) => data,
-    handler([peer_id, msg_id, count]) {
+    handler([peer_id, msg_id]) {
       store.commit('messages/updateConversation', {
         peer: {
           id: peer_id,
