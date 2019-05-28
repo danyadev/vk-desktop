@@ -64,7 +64,7 @@ function getAttachments(data) {
 function getMessage(data) {
   // Если данные получены через messages.getLongPollHistory
   if(!Array.isArray(data)) return data;
-  // Если это 2 событие прочтения сообщения
+  // Если это 2 событие прочтения сообщения или пометки его важным
   if(!data[3]) return;
 
   const flag = hasFlag.bind(this, data[1]);
@@ -117,35 +117,49 @@ async function getLastMessage(peer_id) {
 
 export default {
   2: {
-    // 1) Удаление сообщения (128)
+    // 1) Пометка важным (8), не юзается
     // 2) Пометка как спам (64)
-    // 3) Удаление для всех (131200)
+    // 3) Удаление сообщения (128)
+    // 4) Удаление для всех (131200)
     // [msg_id, flags, peer_id]
-    parser: (data) => data,
-    async handler([msg_id, flags, peer_id]) {
-      if(!store.state.messages.peersList.includes(peer_id)) return;
+    packKey: 2,
+    parser(data) {
+      return hasFlag(data[1], 'important') ? null : data[0];
+    },
+    async handler({ key: peer_id, items: msg_ids }) {
+      if(!store.state.messages.conversations[peer_id]) return;
 
-      const msg = await getLastMessage(peer_id);
+      store.commit('messages/removeMessages', { peer_id, msg_ids });
 
-      if(!msg) {
-        store.commit('messages/removeConversation', peer_id);
+      const conv = store.state.messages.conversations[peer_id];
+      const messages = store.state.messages.messages[peer_id];
+      const lastMsg = messages[messages.length - 1];
+
+      if(conv && lastMsg) {
+        if(msg_ids.includes(conv.peer.in_read)) conv.peer.in_read = lastMsg.id;
+        if(msg_ids.includes(conv.peer.out_read)) conv.peer.out_read = lastMsg.id;
+
+        conv.peer.unread = Math.max(0, conv.peer.unread - msg_ids.length);
+        conv.peer.last_msg_id = lastMsg.id;
+      } else if(!await getLastMessage(peer_id)) {
+        store.commit('messages/updatePeersList', {
+          id: peer_id,
+          remove: true
+        });
       }
-
-      store.commit('messages/removeMessages', {
-        peer_id: peer_id,
-        msg_ids: [msg_id]
-      });
 
       store.commit('messages/moveConversation', { peer_id });
     }
   },
 
   3: {
-    // 1) Восстановление удаленного сообщения (128)
-    // 2) Отмена пометки сообщения как спам (64)
-    // 3) Прочитано сообщение (1) [msg_id, flags, peer_id], не юзается
+    // 1) Прочитано сообщение (1), не юзается
+    // 2) Отмена пометки важным (8), не юзается
+    // 3) Отмена пометки сообщения как спам (64)
+    // 4) Восстановление удаленного сообщения (128)
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser: (data) => getMessage(data),
+    // [msg_id, flags, peer_id] (1 или 2)
+    parser: getMessage,
     async handler({ peer, msg }) {
       const list = store.getters['messages/conversationsList'];
       const lastPeer = list[list.length-1];
@@ -182,7 +196,7 @@ export default {
   4: {
     // Новое сообщение
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser: (data) => getMessage(data),
+    parser: getMessage,
     handler({ peer, msg }) {
       // В случае, если данные были получены через messages.getLongPollHistory
       const isFullData = peer.unread != null;
@@ -231,7 +245,7 @@ export default {
   5: {
     // Редактирование сообщения
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser: (data) => getMessage(data),
+    parser: getMessage,
     handler({ peer, msg }) {
       const conv = store.state.messages.conversations[peer.id];
       const isLastMsg = conv && conv.msg.id == msg.id;
@@ -381,12 +395,11 @@ export default {
   },
 
   51: {
-    parser(data) {
-
-    },
-    handler(data) {
-
-    }
+    // Изменение данных чата
+    // [chat_id]
+    // Событие не используется, так как событие 52 полностью его заменяет
+    parser() {},
+    handler() {}
   },
 
   52: {

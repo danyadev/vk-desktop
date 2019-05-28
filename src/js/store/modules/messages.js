@@ -52,12 +52,6 @@ export default {
       Vue.set(state.conversations, peer.id, conv);
     },
 
-    removeConversation(state, peer_id) {
-      const index = state.peersList.indexOf(peer_id);
-
-      if(index != -1) Vue.delete(state.peersList, index);
-    },
-
     removeConversationMessages(state, id) {
       Vue.set(state.messages, id, []);
     },
@@ -140,7 +134,7 @@ export default {
     removeMessages(state, { peer_id, msg_ids }) {
       let messages = [...state.messages[peer_id] || []];
 
-      for(let i in messages) {
+      for(const i in messages) {
         if(msg_ids.includes(messages[i].id)) messages.splice(i, 1);
       }
 

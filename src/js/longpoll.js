@@ -17,6 +17,7 @@ export default new class Longpoll extends EventEmitter {
   constructor() {
     super();
 
+    this.debug = false;
     this.started = false;
     this.stopped = true;
     this.version = 6;
@@ -139,7 +140,11 @@ export default new class Longpoll extends EventEmitter {
   emitHistory(history = []) {
     if(!history.length) return;
 
+    const packs = {};
+
     for(let item of history) {
+      if(this.debug && ![8, 9].includes(item[0])) console.log('[lp]', item.slice());
+
       const [id] = item.splice(0, 1);
       const event = longpollEvents[id];
 
@@ -147,7 +152,23 @@ export default new class Longpoll extends EventEmitter {
         console.warn('[longpoll] Неизвестное событие', [id, ...item]);
       } else {
         const data = event.parser(item[1] == 'fake' ? item[0] : item);
-        if(data) event.handler(data);
+
+        if(event.packKey != null && data) {
+          const key = item[event.packKey];
+
+          if(!packs[id]) packs[id] = {};
+
+          if(!packs[id][key]) packs[id][key] = [data];
+          else packs[id][key].push(data);
+        } else if(data) event.handler(data);
+      }
+    }
+
+    for(const id in packs) {
+      const pack = packs[id];
+
+      for(const key in pack) {
+        longpollEvents[id].handler({ key: Number(key), items: pack[key] });
       }
     }
   }
