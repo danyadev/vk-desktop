@@ -141,6 +141,11 @@ export default {
 
         conv.peer.unread = Math.max(0, conv.peer.unread - msg_ids.length);
         conv.peer.last_msg_id = lastMsg.id;
+
+        store.commit('messages/updateConversation', {
+          peer: { id: peer_id },
+          msg: lastMsg
+        });
       } else if(!await getLastMessage(peer_id)) {
         store.commit('messages/updatePeersList', {
           id: peer_id,
