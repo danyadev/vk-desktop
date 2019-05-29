@@ -128,7 +128,7 @@ export default new class Longpoll extends EventEmitter {
         events.push([item[0], {
           peer: peers[item[3]],
           msg: messages[item[1]]
-        }, 'fake']);
+        }, 'fake', item[3]]);
       } else events.push(item);
     }
 
@@ -153,8 +153,8 @@ export default new class Longpoll extends EventEmitter {
       } else {
         const data = event.parser(item[1] == 'fake' ? item[0] : item);
 
-        if(event.packKey != null && data) {
-          const key = item[event.packKey];
+        if(event.pack && data) {
+          const key = item[2];
 
           if(!packs[id]) packs[id] = {};
 

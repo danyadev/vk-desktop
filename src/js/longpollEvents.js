@@ -122,7 +122,7 @@ export default {
     // 3) Удаление сообщения (128)
     // 4) Удаление для всех (131200)
     // [msg_id, flags, peer_id]
-    packKey: 2,
+    pack: true,
     parser(data) {
       return hasFlag(data[1], 'important') ? null : data[0];
     },
@@ -147,7 +147,7 @@ export default {
           msg: lastMsg
         });
       } else if(!await getLastMessage(peer_id)) {
-        store.commit('messages/updatePeersList', {
+        return store.commit('messages/updatePeersList', {
           id: peer_id,
           remove: true
         });
@@ -164,34 +164,33 @@ export default {
     // 4) Восстановление удаленного сообщения (128)
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
     // [msg_id, flags, peer_id] (1 или 2)
+    pack: true,
     parser: getMessage,
-    async handler({ peer, msg }) {
-      const list = store.getters['messages/conversationsList'];
-      const lastPeer = list[list.length-1];
-      const inList = store.state.messages.peersList.includes(peer.id);
+    async handler({ key: peer_id, items }) {
+      const conv = store.state.messages.conversations[peer_id];
+      const { peersList } = store.state.messages;
+      const lastAddedMsg = items[items.length-1];
+      const lastLocalMsg = conv && conv.msg;
+      const lastLocalConv = store.state.conversationsList[peersList.length - 1];
 
-      if(inList || msg.date > lastPeer.msg.date) {
-        if(!inList) {
-          const conv = store.state.messages.conversations[peer.id];
-
-          if(!conv) {
-            store.commit('messages/addConversations', [{ peer, msg }]);
-            loadConversation(peer.id);
-          } else {
-            store.commit('messages/updatePeersList', { id: peer.id });
-            await getLastMessage(peer.id);
-          }
-        } else {
-          await getLastMessage(peer.id);
+      if(!lastLocalMsg || lastAddedMsg.msg.date > lastLocalMsg.date) {
+        for(const { msg } of items) {
+          store.commit('messages/insertMessage', { peer_id, msg });
         }
 
-        store.commit('messages/insertMessage', {
-          peer_id: peer.id,
-          msg: msg
-        });
+        const msg = await getLastMessage(peer_id);
+
+        if(lastLocalConv && msg.date < lastLocalConv.msg.date) return;
+
+        if(!conv) {
+          store.commit('messages/addConversations', [lastAddedMsg]);
+          loadConversation(peer_id);
+        } else if(!peersList.includes(peer_id)) {
+          store.commit('messages/updatePeersList', { id: peer_id });
+        }
 
         store.commit('messages/moveConversation', {
-          peer_id: peer.id,
+          peer_id: peer_id,
           restoreMsg: true
         });
       }
@@ -216,7 +215,7 @@ export default {
 
       if(isFullData) {
         peerData = peer;
-      } else if(msg.action && ['chat_create', 'chat_title_update'].includes(msg.action.type)) {
+      } else if(msg.action && msg.action.type == 'chat_title_update') {
         peerData.title = msg.action.text;
       }
 
