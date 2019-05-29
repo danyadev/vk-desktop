@@ -169,9 +169,10 @@ export default {
     async handler({ key: peer_id, items }) {
       const conv = store.state.messages.conversations[peer_id];
       const { peersList } = store.state.messages;
-      const lastAddedMsg = items[items.length-1];
+      const convList = store.getters['messages/conversationsList'];
       const lastLocalMsg = conv && conv.msg;
-      const lastLocalConv = store.state.conversationsList[peersList.length - 1];
+      const lastAddedMsg = items[items.length-1];
+      const lastLocalConv = convList[peersList.length - 1];
 
       if(!lastLocalMsg || lastAddedMsg.msg.date > lastLocalMsg.date) {
         for(const { msg } of items) {
@@ -200,47 +201,47 @@ export default {
   4: {
     // Новое сообщение
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
+    pack: true,
     parser: getMessage,
-    handler({ peer, msg }) {
+    handler({ key: peer_id, items }) {
       // В случае, если данные были получены через messages.getLongPollHistory
-      const isFullData = peer.unread != null;
-      const conv = store.state.messages.conversations[peer.id];
+      const conv = store.state.messages.conversations[peer_id];
+      const lastMsg = items[items.length - 1].msg;
 
-      let peerData = {
-        id: peer.id,
-        unread: msg.out ? 0 : conv && conv.peer.unread + 1,
-        last_msg_id: msg.id,
-        ...(msg.out ? { in_read: msg.id } : { out_read: msg.id })
+      const peerData = {
+        id: peer_id,
+        last_msg_id: lastMsg.id
       };
 
-      if(isFullData) {
-        peerData = peer;
-      } else if(msg.action && msg.action.type == 'chat_title_update') {
-        peerData.title = msg.action.text;
+      for(const { msg } of items) {
+        peerData.unread = msg.out ? 0 : conv && conv.peer.unread + 1;
+
+        if(msg.out) peerData.in_read = msg.id;
+        else peerData.out_read = msg.id;
       }
 
       store.commit('messages/addMessages', {
-        peer_id: peer.id,
-        messages: [msg],
+        peer_id: peer_id,
+        messages: items.map(({ msg }) => msg),
         addNew: true
       });
 
-      if(store.state.messages.peersList.indexOf(peer.id) == -1) {
+      if(!store.state.messages.peersList.includes(peer_id)) {
         store.commit('messages/addConversations', [{
           peer: peerData,
-          msg: msg
+          msg: lastMsg
         }]);
 
-        if(!isFullData) loadConversation(peer.id);
+        loadConversation(peer_id);
       } else {
         store.commit('messages/updateConversation', {
           peer: peerData,
-          msg: msg
+          msg: lastMsg
         });
       }
 
       store.commit('messages/moveConversation', {
-        peer_id: peer.id,
+        peer_id: peer_id,
         newMsg: true
       });
     }
@@ -388,13 +389,11 @@ export default {
   },
 
   18: {
-    // Добавление сниппета к сообщению (при сообщении с ссылкой)
+    // Добавление сниппета к сообщению (если сообщение с ссылкой)
     // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser(data) {
-
-    },
-    handler(data) {
-
+    parser: getMessage,
+    handler({ peer: { id: peer_id }, msg }) {
+      store.commit('messages/editMessage', { peer_id, msg });
     }
   },
 
@@ -418,6 +417,7 @@ export default {
       if(!peer) return;
 
       switch(type) {
+        case 1: // Изменилось название беседы
         case 2: // Изменилась аватарка беседы
           loadConversation(peer_id);
           break;

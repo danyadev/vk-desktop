@@ -141,6 +141,7 @@ export default new class Longpoll extends EventEmitter {
     if(!history.length) return;
 
     const packs = {};
+    const otherEvents = [];
 
     for(let item of history) {
       if(this.debug && ![8, 9].includes(item[0])) console.log('[lp]', item.slice());
@@ -160,16 +161,19 @@ export default new class Longpoll extends EventEmitter {
 
           if(!packs[id][key]) packs[id][key] = [data];
           else packs[id][key].push(data);
-        } else if(data) event.handler(data);
+        } else if(data) otherEvents.push([event.handler, data]);
       }
     }
 
-    for(const id in packs) {
+    for(const id of [4, 2, 3]) {
       const pack = packs[id];
+      if(!pack) continue;
 
       for(const key in pack) {
         longpollEvents[id].handler({ key: Number(key), items: pack[key] });
       }
     }
+
+    for(const [handler, data] of otherEvents) handler(data);
   }
 }
