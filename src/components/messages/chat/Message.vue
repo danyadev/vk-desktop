@@ -142,7 +142,7 @@
 
   .message_wrap {
     display: flex;
-    padding: 10px 20px 7px 20px;
+    padding: 7px 20px;
   }
 
   .message_wrap.isUnreaded:not(.serviceMessage) {
@@ -150,7 +150,7 @@
   }
 
   .message_wrap:not(.showUserData):not(.serviceMessage) {
-    padding: 4px 20px 5px 70px;
+    padding: 6px 20px 6px 70px;
     margin-top: -3px;
   }
 

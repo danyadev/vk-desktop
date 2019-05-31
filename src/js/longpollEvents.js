@@ -2,6 +2,7 @@ import { parseMessage, loadConversation, loadConversationMembers } from './messa
 import longpoll from 'js/longpoll';
 import store from './store/';
 import vkapi from './vkapi';
+import { timer } from './utils';
 
 function hasFlag(mask, name) {
   const flags = [];
@@ -114,6 +115,24 @@ async function getLastMessage(peer_id) {
   });
 
   return msg;
+}
+
+async function watchTyping(peer_id, user_id) {
+  const user = store.state.messages.typing[peer_id][user_id];
+
+  if(user && user.time) {
+    store.commit('messages/addUserTyping', {
+      peer_id,
+      user_id,
+      type: user.type,
+      time: user.time - 1
+    });
+
+    await timer(1000);
+    return watchTyping(peer_id, user_id);
+  }
+
+  store.commit('messages/removeUserTyping', { peer_id, user_id });
 }
 
 export default {
@@ -470,22 +489,30 @@ export default {
   63: {
     // Написание сообщения
     // [peer_id, [from_id], 1, timestamp]
-    parser(data) {
+    parser: (data) => data,
+    handler([peer_id, [user_id]]) {
+      store.commit('messages/addUserTyping', {
+        type: 'text',
+        peer_id,
+        user_id
+      });
 
-    },
-    handler(data) {
-
+      watchTyping(peer_id, user_id);
     }
   },
 
   64: {
     // Запись голосового сообщения
     // [peer_id, [from_id], 1, timestamp]
-    parser(data) {
+    parser: (data) => data,
+    handler([peer_id, [user_id]]) {
+      store.commit('messages/addUserTyping', {
+        type: 'audio',
+        peer_id,
+        user_id
+      });
 
-    },
-    handler(data) {
-
+      watchTyping(peer_id, user_id);
     }
   },
 

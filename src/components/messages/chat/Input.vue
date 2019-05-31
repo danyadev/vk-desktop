@@ -8,6 +8,7 @@
              ref="input"
              contenteditable
              :placeholder="l('im_input_placeholder')"
+             @input="onInput($event, id)"
              @drop.prevent
              @paste.prevent="paste"
              @keydown.enter.exact.prevent="sendMessage"
@@ -30,7 +31,7 @@
 <script>
   import { remote as electron } from 'electron';
   import { getTextWithEmoji } from 'js/messages';
-  import { random } from 'js/utils';
+  import { random, throttle } from 'js/utils';
   import emoji from 'js/emoji';
   import vkapi from 'js/vkapi';
   import Ripple from '../../UI/Ripple.vue';
@@ -87,7 +88,15 @@
       paste() {
         const text = clipboard.readText().replace(/\n/g, '<br>');
         document.execCommand('insertHTML', false, emoji(text));
-      }
+      },
+      onInput: throttle((e, id) => {
+        if(!e.data) return;
+
+        vkapi('messages.setActivity', {
+          peer_id: id,
+          type: 'typing'
+        });
+      }, 1500)
     },
     activated() {
       const { input } = this.$refs;

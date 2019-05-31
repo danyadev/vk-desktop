@@ -11,7 +11,8 @@
         <div class="time ff-roboto">{{ time }}</div>
       </div>
       <div class="message_wrap">
-        <div class="message ff-roboto">
+        <Typing v-if="hasTyping" :peer_id="this.peer.id" :left="false"/>
+        <div v-else class="message ff-roboto">
           <div class="author">{{ authorName }}</div>
           <div :class="['text', { isAttachment, isDeletedContent }]" v-emoji.push="message"></div>
         </div>
@@ -26,12 +27,15 @@
   import { getServiceMessage, loadConversationMembers } from 'js/messages';
   import { getShortDate } from 'js/date';
   import { getPhoto } from 'js/utils';
+
   import Ripple from '../UI/Ripple.vue';
+  import Typing from './Typing.vue';
 
   export default {
     props: ['peer', 'msg'],
     components: {
-      Ripple
+      Ripple,
+      Typing
     },
     data() {
       return {
@@ -80,6 +84,11 @@
           else if(fwdCount) return this.l('im_forwarded', [fwdCount], fwdCount);
           else return this.l('im_attachments', attachments[0].type);
         } else return this.msg.text;
+      },
+      hasTyping() {
+        const typing = this.$store.state.messages.typing[this.peer.id] || {};
+
+        return Object.keys(typing).length;
       },
       isDeletedContent() {
         return !this.message;
@@ -205,18 +214,16 @@
     margin-top: 4px
   }
 
-  .message {
+  .message_wrap div:first-child {
     flex-grow: 1;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     margin-top: 2px;
-    color: #4c4d50;
   }
 
-  .message >>> b {
-    font-weight: 500;
-  }
+  .message { color: #4c4d50 }
+  .message >>> b { font-weight: 500 }
 
   .author:not(:empty) {
     display: inline;

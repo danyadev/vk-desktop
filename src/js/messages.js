@@ -7,6 +7,7 @@ import vkapi from './vkapi';
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
   const isChannel = isChat && conversation.chat_settings.is_group_channel;
+  const { push_settings } = conversation;
   let chatPhoto, chatTitle;
 
   if(isChat) {
@@ -20,7 +21,7 @@ export function parseConversation(conversation) {
     members: isChat ? conversation.chat_settings.members_count : null,
     left: isChat ? ['left', 'kicked'].includes(conversation.chat_settings.state) : false,
     owner: isChannel ? conversation.chat_settings.owner_id : conversation.peer.id,
-    muted: !!conversation.push_settings,
+    muted: push_settings && push_settings.disabled_forever,
     unread: conversation.unread_count || 0,
     photo: chatPhoto,
     title: chatTitle,

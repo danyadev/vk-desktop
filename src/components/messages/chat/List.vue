@@ -9,7 +9,9 @@
       <img src="~assets/placeholder_empty_messages.png">
       {{ l('im_empty_dialog') }}
     </div>
-    <div v-else class="messages_typing" ref="typing"></div>
+    <div v-else class="messages_typing" ref="typing">
+      <Typing v-if="hasTyping" :peer_id="id"/>
+    </div>
   </Scrolly>
 </template>
 
@@ -18,14 +20,17 @@
   import { fields, concatProfiles, endScroll } from 'js/utils';
   import { parseMessage } from 'js/messages';
   import longpoll from 'js/longpoll';
+
   import Scrolly from '../../UI/Scrolly.vue';
   import Message from './Message.vue';
+  import Typing from '../Typing.vue';
 
   export default {
     props: ['id'],
     components: {
       Scrolly,
-      Message
+      Message,
+      Typing
     },
     data() {
       return {
@@ -40,6 +45,11 @@
       },
       hasMessages() {
         return this.messages.length;
+      },
+      hasTyping() {
+        const typing = this.$store.state.messages.typing[this.id] || {};
+
+        return Object.keys(typing).length;
       }
     },
     methods: {
@@ -139,8 +149,15 @@
   .messages_list_wrap { height: 100% }
 
   .messages_typing {
+    display: flex;
+    align-items: center;
     flex: none;
-    height: 25px;
+    height: 30px;
+    margin: 0 20px;
+  }
+
+  .messages_typing .typing_text {
+    margin-left: 15px;
   }
 
   .messages_list.empty {

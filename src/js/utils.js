@@ -62,6 +62,25 @@ export function debounce(fn, delay) {
   }
 }
 
+// Вызывает переданную функцию, если после последнего вызова прошло более delay мс
+export function throttle(fn, delay) {
+  let lastCall = 0;
+
+  return (...args) => {
+    const now = Date.now();
+
+    if(now - lastCall < delay) return;
+    lastCall = now;
+
+    return fn(...args);
+  }
+}
+
+// Создает промис, который разрешается за указанное время
+export function timer(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 // Собирает массивы профилей и групп в единый массив, где у групп отрицательный id
 export function concatProfiles(profiles = [], groups = []) {
   groups = groups.reduce((list, group) => {

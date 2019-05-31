@@ -1,6 +1,7 @@
 import { promises as dns } from 'dns';
 import https from 'https';
 import fs from 'fs';
+import { time } from './utils';
 
 function request(params, post = '') {
   return new Promise((resolve, reject) => {
@@ -91,7 +92,7 @@ export default function(...data) {
         done = true;
       } catch(err) {
         if(!await isConnected()) {
-          await new Promise((r) => setTimeout(r, 1500)); // Ждем 1.5 сек
+          await timer(1500);
         } else {
           reject(err);
           done = true;

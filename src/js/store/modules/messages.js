@@ -19,7 +19,10 @@ function getState() {
     messages: {},
     // Отправленные, но еще не полученные сообщения
     // { peer_id: [random_id] }
-    loadingMessages: {}
+    loadingMessages: {},
+    // Список юзеров, которые печатают в различных беседах
+    // { peer_id: { user_id: { time, type } } }
+    typing: {}
   };
 }
 
@@ -158,6 +161,20 @@ export default {
         ids.splice(index, 1);
         Vue.set(state.loadingMessages, peer_id, ids);
       }
+    },
+
+    addUserTyping(state, { peer_id, user_id, type, time = 5 }) {
+      const users = { ...state.typing[peer_id] || {} };
+
+      users[user_id] = { type, time };
+      Vue.set(state.typing, peer_id, users);
+    },
+
+    removeUserTyping(state, { peer_id, user_id }) {
+      const users = { ...state.typing[peer_id] || {} };
+
+      delete users[user_id];
+      Vue.set(state.typing, peer_id, users);
     }
   },
   getters: {
