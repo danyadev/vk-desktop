@@ -152,7 +152,7 @@
     display: flex;
     align-items: center;
     flex: none;
-    height: 30px;
+    height: 35px;
     margin: 0 20px;
   }
 

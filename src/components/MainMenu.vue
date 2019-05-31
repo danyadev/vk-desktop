@@ -214,7 +214,7 @@
   }
 
   .menu_item_counter:not(:empty) {
-    color: #5b6a7b;
+    color: #475769;
     background-color: #d2dfea;
     padding: 2px 6px;
     border-radius: 4px;
