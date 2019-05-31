@@ -65,7 +65,7 @@ function sendMultipartParts(boundary, body, data, names, req, i) {
   req.write(`\r\n${body[i]}`);
 
   function write() {
-    if(names.length-1 >= i+1) {
+    if(names.length-2 >= i) {
       req.write(`\r\n--${boundary}`);
       sendMultipartParts(boundary, body, data, names, req, i+1);
     } else req.end(`\r\n--${boundary}--`);

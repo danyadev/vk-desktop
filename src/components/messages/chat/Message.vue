@@ -79,9 +79,11 @@
 
         return !this.msg.out && !isPrevUnread && isThisUnread;
       },
-      // Либо непрочитано мной, либо непрочитано собеседником
       isUnreaded() {
-        return this.peer && (this.msg.id > this.peer.in_read || this.msg.id > this.peer.out_read);
+        return this.peer && (
+          this.msg.id > this.peer.out_read || // непрочитано собеседником
+          this.msg.id > this.peer.in_read // непрочитано мной
+        );
       },
       serviceMessage() {
         return this.msg.action && getServiceMessage(this.msg.action, this.user, true);
@@ -141,7 +143,7 @@
 
   .message_wrap {
     display: flex;
-    padding: 10px 20px;
+    padding: 10px 20px 7px 20px;
   }
 
   .message_wrap.isUnreaded:not(.serviceMessage) {
@@ -149,8 +151,8 @@
   }
 
   .message_wrap:not(.showUserData):not(.serviceMessage) {
-    padding: 0 20px 10px 70px;
-    margin-top: -2px;
+    padding: 4px 20px 6px 70px;
+    margin-top: -3px;
   }
 
   .message_wrap.serviceMessage {
@@ -196,11 +198,14 @@
 
   .message_content {
     line-height: 20px;
-    margin-top: 2px;
     word-break: break-word;
   }
 
-  .message_content >>> * {
+  .message_content.showUserData {
+    margin-top: 2px;
+  }
+
+  .message_content * {
     display: inline-block;
   }
 
