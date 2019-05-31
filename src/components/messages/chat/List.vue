@@ -107,6 +107,7 @@
         this.$el.firstChild.scrollTop = this.scrollTop;
       } else {
         this.scrollToEnd();
+        this.checkScrolling(this.$el.firstChild);
       }
     },
     mounted() {

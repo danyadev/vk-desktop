@@ -295,6 +295,7 @@ export default {
       store.commit('messages/updateConversation', {
         peer: {
           id: peer_id,
+          in_read: msg_id,
           out_read: msg_id
         }
       });

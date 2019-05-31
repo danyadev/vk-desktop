@@ -201,8 +201,9 @@
     word-break: break-word;
   }
 
-  .message_content.showUserData {
+  .message_wrap.showUserData .message_content {
     margin-top: 2px;
+    margin-bottom: -2px;
   }
 
   .message_content * {
