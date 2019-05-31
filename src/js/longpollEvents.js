@@ -155,18 +155,7 @@ export default {
       const messages = store.state.messages.messages[peer_id];
       const lastMsg = messages[messages.length - 1];
 
-      if(conv && lastMsg) {
-        if(msg_ids.includes(conv.peer.in_read)) conv.peer.in_read = lastMsg.id;
-        if(msg_ids.includes(conv.peer.out_read)) conv.peer.out_read = lastMsg.id;
-
-        conv.peer.unread = Math.max(0, conv.peer.unread - msg_ids.length);
-        conv.peer.last_msg_id = lastMsg.id;
-
-        store.commit('messages/updateConversation', {
-          peer: { id: peer_id },
-          msg: lastMsg
-        });
-      } else if(!await getLastMessage(peer_id)) {
+      if(!await getLastMessage(peer_id)) {
         return store.commit('messages/updatePeersList', {
           id: peer_id,
           remove: true
@@ -227,6 +216,7 @@ export default {
       // В случае, если данные были получены через messages.getLongPollHistory
       const conv = store.state.messages.conversations[peer_id];
       const lastMsg = items[items.length - 1].msg;
+      const typing = store.state.messages.typing[peer_id] || {};
 
       const peerData = {
         id: peer_id,
@@ -235,6 +225,13 @@ export default {
 
       for(const { msg } of items) {
         peerData.unread = msg.out ? 0 : conv && conv.peer.unread + 1;
+
+        if(typing[msg.from]) {
+          store.commit('messages/removeUserTyping', {
+            peer_id: peer_id,
+            user_id: msg.from
+          });
+        }
 
         if(msg.out) peerData.in_read = msg.id;
         else peerData.out_read = msg.id;
@@ -276,6 +273,14 @@ export default {
     handler({ peer, msg }) {
       const conv = store.state.messages.conversations[peer.id];
       const isLastMsg = conv && conv.msg.id == msg.id;
+      const typing = store.state.messages.typing[peer.id] || {};
+
+      if(typing[msg.from]) {
+        store.commit('messages/removeUserTyping', {
+          peer_id: peer.id,
+          user_id: msg.from
+        });
+      }
 
       store.commit('messages/updateConversation', {
         peer: {
@@ -437,8 +442,21 @@ export default {
     handler([type, peer_id, info]) {
       const isMe = info == store.getters['users/user'].id;
       const conv = store.state.messages.conversations[peer_id];
+      const typing = store.state.messages.typing[peer_id] || {};
       const peer = conv && conv.peer;
       if(!peer) return;
+
+      if([7, 8].includes(type)) {
+        let id;
+
+        if(typing[info] && !isMe) id = info;
+        else if(!isMe) return;
+
+        store.commit('messages/removeUserTyping', {
+          peer_id: peer_id,
+          user_id: id
+        });
+      }
 
       switch(type) {
         case 1: // Изменилось название беседы
@@ -488,31 +506,39 @@ export default {
 
   63: {
     // Написание сообщения
-    // [peer_id, [from_id], 1, timestamp]
+    // [peer_id, [from_ids], ids_length, timestamp]
     parser: (data) => data,
-    handler([peer_id, [user_id]]) {
-      store.commit('messages/addUserTyping', {
-        type: 'text',
-        peer_id,
-        user_id
-      });
+    handler([peer_id, ids]) {
+      for(const id of ids) {
+        if(id == store.getters['users/user'].id) continue;
 
-      watchTyping(peer_id, user_id);
+        store.commit('messages/addUserTyping', {
+          peer_id: peer_id,
+          user_id: id,
+          type: 'text'
+        });
+
+        watchTyping(peer_id, id);
+      }
     }
   },
 
   64: {
     // Запись голосового сообщения
-    // [peer_id, [from_id], 1, timestamp]
+    // [peer_id, [from_ids], ids_length, timestamp]
     parser: (data) => data,
-    handler([peer_id, [user_id]]) {
-      store.commit('messages/addUserTyping', {
-        type: 'audio',
-        peer_id,
-        user_id
-      });
+    handler([peer_id, ids]) {
+      for(const id of ids) {
+        if(id == store.getters['users/user'].id) continue;
 
-      watchTyping(peer_id, user_id);
+        store.commit('messages/addUserTyping', {
+          peer_id: peer_id,
+          user_id: id,
+          type: 'audio'
+        });
+
+        watchTyping(peer_id, id);
+      }
     }
   },
 

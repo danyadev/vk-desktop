@@ -138,13 +138,14 @@ export default {
     },
 
     removeMessages(state, { peer_id, msg_ids }) {
-      let messages = [...state.messages[peer_id] || []];
+      const messages = [...state.messages[peer_id] || []];
+      const newMessages = [];
 
-      for(const i in messages) {
-        if(msg_ids.includes(messages[i].id)) messages.splice(i, 1);
+      for(const msg of messages) {
+        if(!msg_ids.includes(msg.id)) newMessages.push(msg);
       }
 
-      Vue.set(state.messages, peer_id, messages);
+      Vue.set(state.messages, peer_id, newMessages);
     },
 
     addLoadingMessage(state, { peer_id, random_id }) {
@@ -174,7 +175,7 @@ export default {
       const users = { ...state.typing[peer_id] || {} };
 
       delete users[user_id];
-      Vue.set(state.typing, peer_id, users);
+      Vue.set(state.typing, peer_id, user_id ? users : []);
     }
   },
   getters: {
