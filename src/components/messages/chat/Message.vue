@@ -151,7 +151,7 @@
   }
 
   .message_wrap:not(.showUserData):not(.serviceMessage) {
-    padding: 4px 20px 6px 70px;
+    padding: 4px 20px 5px 70px;
     margin-top: -3px;
   }
 

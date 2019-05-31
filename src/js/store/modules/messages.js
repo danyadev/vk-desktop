@@ -16,7 +16,10 @@ function getState() {
     peersList: [],
     // Списки сообщений у бесед
     // { peer_id: [message] }
-    messages: {}
+    messages: {},
+    // Отправленные, но еще не полученные сообщения
+    // { peer_id: [random_id] }
+    loadingMessages: {}
   };
 }
 
@@ -139,6 +142,22 @@ export default {
       }
 
       Vue.set(state.messages, peer_id, messages);
+    },
+
+    addLoadingMessage(state, { peer_id, random_id }) {
+      const ids = [...state.loadingMessages[peer_id] || [], random_id];
+
+      Vue.set(state.loadingMessages, peer_id, ids);
+    },
+
+    removeLoadingMessage(state, { peer_id, random_id }) {
+      const ids = [...state.loadingMessages[peer_id] || []];
+      const index = ids.indexOf(random_id);
+
+      if(index != -1) {
+        ids.splice(index, 1);
+        Vue.set(state.loadingMessages, peer_id, ids);
+      }
     }
   },
   getters: {

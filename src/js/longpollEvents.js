@@ -1,4 +1,5 @@
 import { parseMessage, loadConversation, loadConversationMembers } from './messages';
+import longpoll from 'js/longpoll';
 import store from './store/';
 import vkapi from './vkapi';
 
@@ -226,6 +227,8 @@ export default {
         addNew: true
       });
 
+      for(const { msg } of items) longpoll.emit('new_message', msg.random_id);
+
       if(!store.state.messages.peersList.includes(peer_id)) {
         store.commit('messages/addConversations', [{
           peer: peerData,
@@ -346,7 +349,8 @@ export default {
   },
 
   10: {
-    // Только у диалогов сообществ
+    // Включение уведомлений в чате (16)
+    // [peer_id, flag]
     parser(data) {
 
     },
@@ -356,7 +360,6 @@ export default {
   },
 
   11: {
-    // Только у диалогов сообществ
     parser(data) {
 
     },
@@ -366,7 +369,8 @@ export default {
   },
 
   12: {
-    // Только у диалогов сообществ
+    // Выключение уведомлений в чате
+    // [peer_id, flag]
     parser(data) {
 
     },

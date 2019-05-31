@@ -3,12 +3,13 @@
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loading" class="loading"></div>
 
+    <Message v-for="msg of messages" :key="msg.id" :msg="msg" :peer_id="id" :list="messages"/>
+
     <div v-if="!hasMessages && !loading" class="messages_empty_dialog">
       <img src="~assets/placeholder_empty_messages.png">
       {{ l('im_empty_dialog') }}
     </div>
-
-    <Message v-for="msg of messages" :key="msg.id" :msg="msg" :peer_id="id" :list="messages"/>
+    <div v-else class="messages_typing" ref="typing"></div>
   </Scrolly>
 </template>
 
@@ -16,6 +17,7 @@
   import vkapi from 'js/vkapi';
   import { fields, concatProfiles, endScroll } from 'js/utils';
   import { parseMessage } from 'js/messages';
+  import longpoll from 'js/longpoll';
   import Scrolly from '../../UI/Scrolly.vue';
   import Message from './Message.vue';
 
@@ -42,9 +44,7 @@
     },
     methods: {
       scrollToEnd() {
-        const messagesList = this.$el.firstChild;
-
-        messagesList.scrollTop = messagesList.scrollHeight;
+        if(this.$refs.typing) this.$refs.typing.scrollIntoView(false);
       },
       async load() {
         this.loading = true;
@@ -108,6 +108,22 @@
       } else {
         this.scrollToEnd();
       }
+    },
+    mounted() {
+      longpoll.on('new_message', (random_id) => {
+        const loadingMessages = store.state.messages.loadingMessages[this.id] || [];
+        const { scrollTop, clientHeight, scrollHeight } = this.$el.firstChild;
+
+        this.$nextTick(() => {
+          if(loadingMessages.includes(random_id)) {
+            store.commit('messages/removeLoadingMessage', random_id);
+
+            this.scrollToEnd();
+          } else if(scrollTop + clientHeight == scrollHeight) {
+            this.scrollToEnd();
+          }
+        });
+      });
     }
   }
 </script>
@@ -119,7 +135,11 @@
   }
 
   .messages_list_wrap { height: 100% }
-  .messages_list { padding-bottom: 25px }
+
+  .messages_typing {
+    flex: none;
+    height: 25px;
+  }
 
   .messages_list.empty {
     align-items: center;

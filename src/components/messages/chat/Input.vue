@@ -8,10 +8,13 @@
              ref="input"
              contenteditable
              :placeholder="l('im_input_placeholder')"
+             @drop.prevent
+             @paste.prevent="paste"
+             @keydown.enter.exact.prevent="sendMessage"
         ></div>
         <img class="emoji_btn" src="~assets/emoji_icon.svg">
       </div>
-      <img class="send_btn" src="~assets/im_send.svg">
+      <img class="send_btn" src="~assets/im_send.svg" @click="sendMessage">
     </template>
     <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#e1e5f0" @click="toggleNotifications">
       <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
@@ -21,16 +24,21 @@
       <div class="chat_input_error_img"></div>
       <div class="chat_input_error_text">{{ canWrite.text }}</div>
     </div>
-    </div>
   </div>
 </template>
 
 <script>
-  import Ripple from '../../UI/Ripple.vue';
+  import { remote as electron } from 'electron';
+  import { getTextWithEmoji } from 'js/messages';
+  import { random } from 'js/utils';
+  import emoji from 'js/emoji';
   import vkapi from 'js/vkapi';
+  import Ripple from '../../UI/Ripple.vue';
+
+  const { clipboard } = electron;
 
   export default {
-    props: ['peer'],
+    props: ['id', 'peer'],
     components: {
       Ripple
     },
@@ -48,11 +56,37 @@
       }
     },
     methods: {
+      async sendMessage() {
+        const { text } = getTextWithEmoji(this.$refs.input.childNodes);
+        const random_id = random(0, 9e8);
+
+        if(!text) return;
+        this.$refs.input.innerHTML = '';
+
+        try {
+          await vkapi('messages.send', {
+            peer_id: this.id,
+            message: text,
+            random_id: random_id
+          });
+
+          store.commit('messages/addLoadingMessage', {
+            peer_id: this.id,
+            random_id: random_id
+          });
+        } catch(data) {
+          console.error(data);
+        }
+      },
       toggleNotifications() {
         vkapi('account.setSilenceMode', {
           peer_id: this.peer.id,
           time: this.peer.muted ? 0 : -1
         });
+      },
+      paste() {
+        const text = clipboard.readText().replace(/\n/g, '<br>');
+        document.execCommand('insertHTML', false, emoji(text));
       }
     },
     activated() {
@@ -72,6 +106,7 @@
 
   .attachments_btn, .send_btn {
     box-sizing: content-box;
+    margin-top: auto;
     padding: 14px 15px;
     width: 24px;
     height: 24px;

@@ -3,7 +3,7 @@
     <ChatHeader :id="id" :peer="peer" @close="closeChat"/>
     <div class="chat_wrap">
       <ChatList :id="id"/>
-      <ChatInput :peer="peer"/>
+      <ChatInput :id="id" :peer="peer"/>
     </div>
   </div>
 </template>

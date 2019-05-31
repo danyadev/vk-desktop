@@ -1,7 +1,7 @@
 import { escape, getPhoto, fields, loadProfile, concatProfiles } from './utils';
 import getTranslate from './getTranslate';
 import store from './store';
-import emoji from './emoji';
+import emoji, { getEmojiCode } from './emoji';
 import vkapi from './vkapi';
 
 export function parseConversation(conversation) {
@@ -120,6 +120,33 @@ export function getServiceMessage(action, author, isFull) {
     default:
       console.warn('[messages] Неизвестное действие:', action.type);
       return action.type;
+  }
+}
+
+export function getTextWithEmoji(nodes) {
+  const emojis = {};
+  let text = '';
+
+  for(const node of nodes || []) {
+    switch(node.nodeName) {
+      case 'IMG':
+        const code = getEmojiCode(node.alt);
+
+        emojis[code] = (emojis[code] || 0) + 1;
+        text += node.alt;
+        break;
+      case 'BR':
+        text += '<br>';
+        break;
+      default:
+        text += node.data || node.innerText || '';
+        break
+    }
+  }
+
+  return {
+    text: text.trim(),
+    emojis: emojis
   }
 }
 

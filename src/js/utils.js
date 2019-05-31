@@ -26,6 +26,11 @@ export function escape(text = '') {
     .replace(/"/g, '&quot;');
 }
 
+// Возвращает рандомное число в указанном диапазоне
+export function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // Возвращает одну из фотографий:
 // p1 - фото для обычных дисплеев
 // p2 - фото для Retina дисплеев, в 2 раза больше p1
