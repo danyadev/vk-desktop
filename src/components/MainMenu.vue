@@ -28,6 +28,7 @@
                :style="{ webkitMaskImage: `url('assets/menu_${route}.svg')` }"
           ></div>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
+          <div class="menu_item_counter">{{ menuCounters[route] || '' }}</div>
         </Ripple>
 
         <Ripple color="#e1e7ed"
@@ -53,7 +54,7 @@
       routes: ['messages']
     }),
     computed: {
-      ...mapState(['menuState']),
+      ...mapState(['menuState', 'menuCounters']),
       ...mapGetters('users', ['user'])
     },
     methods: {
@@ -160,7 +161,6 @@
     height: 56px;
     border-radius: 50%;
     background-size: 100%;
-    /* cursor: pointer; */
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
   }
 
@@ -214,8 +214,8 @@
   }
 
   .menu_item_counter:not(:empty) {
-    color: #4d5f75;
-    background-color: #cad9e6;
+    color: #5b6a7b;
+    background-color: #d2dfea;
     padding: 2px 6px;
     border-radius: 4px;
     margin-right: 8px;

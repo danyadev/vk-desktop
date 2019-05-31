@@ -37,8 +37,9 @@
           vkapi('execute.init', {
             lp_version: longpoll.version,
             fields: fields
-          }).then(({ lp, user }) => {
+          }).then(({ lp, counters, user }) => {
             this.$store.commit('users/updateUser', user);
+            this.$store.commit('setMenuCounters', counters);
 
             if(longpoll.stopped) longpoll.start(lp);
             else longpoll.once('stop', () => longpoll.start(lp));

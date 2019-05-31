@@ -1,7 +1,7 @@
 import { promises as dns } from 'dns';
 import https from 'https';
 import fs from 'fs';
-import { time } from './utils';
+import { timer } from './utils';
 
 function request(params, post = '') {
   return new Promise((resolve, reject) => {

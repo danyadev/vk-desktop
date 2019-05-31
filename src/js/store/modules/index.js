@@ -3,6 +3,7 @@ import Vue from 'vue';
 function getState() {
   return {
     menuState: false,
+    menuCounters: {},
     profiles: {}
   };
 }
@@ -15,6 +16,9 @@ export default {
     },
     setMenuState(state, value) {
       state.menuState = value;
+    },
+    setMenuCounters(state, counters) {
+      state.menuCounters = counters;
     },
     addProfiles(state, profiles) {
       const result = profiles.reduce((users, user) => {
