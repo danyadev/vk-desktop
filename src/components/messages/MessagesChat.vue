@@ -35,13 +35,27 @@
     methods: {
       closeChat() {
         this.$router.replace('/messages');
+      },
+      setInRead() {
+        const { peer } = this.$store.state.messages.conversations[this.id];
+
+        this.$store.commit('messages/updateConversation', {
+          peer: {
+            id: this.id,
+            new_in_read: peer.in_read
+          }
+        });
       }
     },
     mounted() {
-      if(this.id > 2e9) loadConversationMembers(this.id);
+      if(this.id > 2e9) loadConversationMembers(this.id, true);
     },
     activated() {
-      if(!this.peer || !this.peer.loaded || this.id < 2e9) loadConversation(this.id);
+      if(!this.peer || !this.peer.loaded) loadConversation(this.id).then(this.setInRead);
+      else {
+        if(this.id < 2e9) loadConversation(this.id);
+        this.setInRead();
+      }
     }
   }
 </script>

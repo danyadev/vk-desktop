@@ -81,8 +81,9 @@
         if(items.length < 20) this.loaded = true;
       },
       onScroll(e) {
-        this.scrollTop = e.scrollTop;
+        if(!e.scrollHeight) return;
 
+        this.scrollTop = e.scrollTop;
         this.checkScrolling(e);
       },
       checkScrolling: endScroll(function() {

@@ -71,9 +71,8 @@
           return capitalize(getMessageDate(thisMsgDate));
         }
       },
-      // Не прочитано мной
       isStartUnreaded() {
-        const in_read = this.peer && this.peer.in_read;
+        const in_read = this.peer && (this.peer.new_in_read || this.peer.in_read);
         const isPrevUnread = this.prevMsg && this.prevMsg.id > in_read;
         const isThisUnread = this.msg.id > in_read;
 
@@ -207,7 +206,7 @@
   }
 
   .message_content * {
-    display: inline-block;
+    display: inline;
   }
 
   .message_content >>> b {
@@ -215,7 +214,6 @@
   }
 
   .message_edited {
-    display: inline-block;
     user-select: none;
     font-size: 13.5px;
     color: #6c737a;
