@@ -20,7 +20,7 @@
       <div class="menu_items">
         <Ripple v-for="route of routes"
                 :key="route"
-                color="#e1e7ed"
+                color="var(--menu_item_ripples)"
                 :class="['menu_item', { active: isActiveRoute(`/${route}`) }]"
                 @click.stop="openPage(`/${route}`)"
         >
@@ -31,7 +31,7 @@
           <div class="menu_item_counter">{{ menuCounters[route] || '' }}</div>
         </Ripple>
 
-        <Ripple color="#e1e7ed"
+        <Ripple color="var(--menu_item_ripples)"
                 class="menu_item logout"
                 @click.stop="openModal('logout')"
         >
@@ -114,7 +114,7 @@
     height: 100%;
     z-index: 3;
     overflow: hidden;
-    background-color: white;
+    background-color: var(--background_content);
     box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
   }
 
@@ -195,6 +195,7 @@
     align-items: center;
     padding-left: 20px;
     cursor: pointer;
+    color: var(--menu_item_text_color);
   }
 
   .menu_item, .menu_item_icon, .menu_item_name {
@@ -202,11 +203,11 @@
   }
 
   .menu_item:hover, .menu_item.active {
-    background-color: #eff4f9;
+    background-color: var(--menu_item_hover_background);
   }
 
-  .menu_item.active .menu_item_icon { background-color: #648fc1 }
-  .menu_item.active .menu_item_name { color: #3e70a9 }
+  .menu_item.active .menu_item_icon { background-color: var(--menu_item_active_icon_background) }
+  .menu_item.active .menu_item_name { color: var(--menu_item_active_text_color) }
 
   .menu_item_name {
     flex-grow: 1;
@@ -214,19 +215,24 @@
   }
 
   .menu_item_counter:not(:empty) {
-    color: #475769;
-    background-color: #d2dfea;
+    background-color: var(--counter_secondary_background);
+    color: var(--counter_secondary_text);
     padding: 2px 6px;
     border-radius: 4px;
     margin-right: 8px;
     font-size: 14px;
   }
 
+  .menu_item.active .menu_item_counter:not(:empty) {
+    background-color: var(--counter_primary_background);
+    color: var(--counter_primary_text);
+  }
+
   .menu_item_icon {
     width: 26px;
     height: 26px;
     margin-right: 10px;
-    background-color: #a6a6a6;
+    background-color: var(--menu_item_icon_background);
     -webkit-mask-size: cover;
     transition: background-color .3s;
   }
@@ -239,7 +245,7 @@
 
   .menu_item.logout .menu_item_name {
     font-size: 16px;
-    color: #de3f3f;
+    color: var(--destructive);
     margin-top: -4px;
   }
 </style>

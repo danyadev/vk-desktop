@@ -27,7 +27,7 @@
     align-items: center;
     height: 100%;
     margin-top: -65px;
-    color: #38383a;
+    color: var(--text_primary);
   }
 
   .choose_chat span {

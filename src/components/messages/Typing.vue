@@ -75,7 +75,7 @@
 <style scoped>
   .typing_wrap {
     display: flex;
-    color: #254f79;
+    color: var(--text_link);
   }
 
   .typing { margin: 0 6px }
@@ -94,7 +94,7 @@
 
   .typing_item {
     display: inline-block;
-    background-color: #5281b9;
+    background-color: var(--text_link);
     margin-bottom: 2px;
     animation: 1.1s linear 0s infinite activity_typing;
     width: 5px;

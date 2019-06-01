@@ -126,7 +126,7 @@
 
   .message_unreaded_messages span {
     position: relative;
-    background-color: #fff;
+    background-color: var(--background_content);
     padding: 0 10px;
   }
 
@@ -137,7 +137,7 @@
     left: 0;
     height: 1px;
     width: 100%;
-    background: #d4d6da;
+    background: var(--border_color);
   }
 
   .message_wrap {
@@ -146,7 +146,7 @@
   }
 
   .message_wrap.isUnreaded:not(.serviceMessage) {
-    background-color: #edf0f5;
+    background-color: var(--im_unread_background);
   }
 
   .message_wrap:not(.showUserData):not(.serviceMessage) {
@@ -178,7 +178,7 @@
   }
 
   .message_name {
-    color: #254f79;
+    color: var(--text_link);
     font-family: BlinkMacSystemFont, Segoe UI;
     font-weight: 500;
   }
@@ -217,5 +217,9 @@
     user-select: none;
     font-size: 13.5px;
     color: #6c737a;
+  }
+
+  .message_container .message_content div {
+    color: var(--text_primary);
   }
 </style>

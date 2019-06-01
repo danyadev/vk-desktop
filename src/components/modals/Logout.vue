@@ -35,5 +35,8 @@
 </script>
 
 <style scoped>
-  .modal_content { padding: 25px }
+  .modal_content {
+    padding: 25px;
+    color: var(--text_primary);
+  }
 </style>

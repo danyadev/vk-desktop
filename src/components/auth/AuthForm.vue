@@ -81,9 +81,15 @@
     height: 125px;
   }
 
+  body[scheme="dark"] .auth_logo { /* обводка логотипа только в тёмной теме */
+    border: 3px solid var(--text_primary);
+    border-radius: 50%;
+  }
+
   .auth_name {
     font-size: 20px;
     margin: 15px 0 30px 0;
+    color: var(--text_primary);
   }
 
   .auth_password_wrap { position: relative }

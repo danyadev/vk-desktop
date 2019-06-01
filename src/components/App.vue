@@ -19,6 +19,8 @@
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
 
+  import '../css/themes.css';
+
   export default {
     name: 'App',
     components: {
@@ -95,6 +97,8 @@
   	src: url('~assets/RobotoMedium.ttf');
   }
 
+  ::selection { background: var(--button_primary_background); color: var(--button_primary_color); }
+
   body {
     font-family: BlinkMacSystemFont, Segoe UI;
     font-size: 15px;
@@ -109,7 +113,7 @@
 
   a, .link {
     display: inline-block;
-    color: #254f79;
+    color: var(--text_link);
     cursor: pointer;
     transition: color .3s;
   }
@@ -121,7 +125,10 @@
     user-select: none;
   }
 
-  .app { height: calc(100vh - 32px) }
+  .app {
+    height: calc(100vh - 32px);
+    background: var(--background_content);
+  }
 
   .input {
     width: 250px;
@@ -139,7 +146,7 @@
   .input:disabled { color: #999 }
   .input:hover { border: 1px solid #a2a5a8 }
   .input:focus { border: 1px solid #7e7f7f }
-  .input::-webkit-input-placeholder { color: #a0a0a0 }
+  .input::-webkit-input-placeholder { color: var(--text_placeholder) }
 
   .button, .light_button {
     display: inline-block;
@@ -162,19 +169,19 @@
   }
 
   .button {
-    background-color: #5789c5;
-    color: #f3f3f3;
+    background-color: var(--button_primary_background);
+    color: var(--button_primary_color);
   }
 
   .light_button {
-    background-color: #e4eaf0;
-    color: #55677d;
+    background-color: var(--button_secondary_background);
+    color: var(--button_secondary_color);
   }
 
-  .button:not(:disabled):hover { background-color: #547fb3 }
-  .button:not(:disabled):active { background-color: #4977a9 }
-  .light_button:not(:disabled):hover { background-color: #dbe3eb }
-  .light_button:not(:disabled):active { background-color: #d3dce6 }
+  .button:not(:disabled):hover { background-color: var(--button_primary_hover_background) }
+  .button:not(:disabled):active { background-color: var(--button_primary_active_background) }
+  .light_button:not(:disabled):hover { background-color: var(--button_secondary_hover_background) }
+  .light_button:not(:disabled):active { background-color: var(--button_secondary_active_background) }
 
   .emoji {
     margin: 0 1px -3px 1px;
@@ -185,13 +192,15 @@
   .header {
     display: flex;
     align-items: center;
-    background-color: #5281b9;
+    background-color: var(--titlebar_background);
     width: 100%;
     height: 45px;
   }
 
+  body[scheme="dark"] .header { border-bottom: 1px solid var(--border_color) }
+
   .header_name {
-    color: white;
+    color: #fff;
     padding: 0 0 1px 10px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   }
@@ -222,5 +231,13 @@
   .verified.white {
     background-image: url('~assets/verified_white.svg');
     opacity: .7;
+  }
+
+  .scrolly-bar:before {
+    background: var(--scrolly_background);
+  }
+
+  .scrolly-bar:hover:before, .scrolly.isScrolling .scrolly-bar:before {
+    background: var(--scrolly_highlighted);
   }
 </style>

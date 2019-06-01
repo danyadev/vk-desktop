@@ -101,10 +101,13 @@
     margin-top: 4px;
   }
 
-  .item_name { flex-grow: 1 }
+  .item_name {
+    flex-grow: 1;
+    color: var(--text_primary);
+  }
 
   .item_description {
-    color: #3e70a9;
+    color: var(--text_link);
     margin-top: 2px;
   }
 

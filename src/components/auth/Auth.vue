@@ -58,8 +58,8 @@
     padding: 8px 0;
     margin: 6px 0;
     width: 250px;
-    color: #de3f3f;
-    border: 1px solid #de3f3f;
+    color: var(--destructive);
+    border: 1px solid var(--destructive);
     border-radius: 5px;
     opacity: 0;
     transition: opacity .3s;
