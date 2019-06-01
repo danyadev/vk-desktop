@@ -31,14 +31,12 @@ function vkapi(name, params = {}) {
       eventBus.emit('modal:open', 'captcha', {
         src: data.error.captcha_img,
         send(code) {
-          const newParams = Object.assign(params, {
-            captcha_sid: data.error.captcha_sid,
-            captcha_key: code
-          });
+          params.captcha_sid = data.error.captcha_sid;
+          params.captcha_key = code;
 
           if(name != 'captcha.force') {
             methods.unshift({
-              data: [name, newParams],
+              data: [name, params],
               resolve,
               reject
             });
@@ -48,10 +46,9 @@ function vkapi(name, params = {}) {
         }
       });
     } else if(data.error.error_code == 5) {
-      const error = data.error.error_msg.slice(27);
       let id = 0;
 
-      switch(error) {
+      switch(data.error.error_msg.slice(27)) {
         case 'user revoke access for this token.':
         case 'invalid session.':
           id = 0;
@@ -85,7 +82,7 @@ async function executeMethod() {
   }
 
   methods.shift();
-  
+
   if(methods.length) executeMethod();
   else inWork = false;
 }

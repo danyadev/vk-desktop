@@ -19,7 +19,7 @@
     </template>
     <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#e1e5f0" @click="toggleNotifications">
       <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
-      {{ l('toggle_notifications', !peer.muted) }}
+      {{ l('im_toggle_notifications', !peer.muted) }}
     </Ripple>
     <div v-else class="chat_input_error ff-roboto">
       <div class="chat_input_error_img"></div>

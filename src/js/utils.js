@@ -13,7 +13,7 @@ export const regexp = {
 
 // User-Agents для выполнения запросов
 export const VKDesktopUserAgent = `VKDesktop/${AppVersion}`;
-export const AndroidUserAgent = 'VKAndroidApp/5.33-3626';
+export const AndroidUserAgent = 'VKAndroidApp/5.35-3700';
 
 // Заменяем опасные для разметки символы в выводимых данных на безопасные
 export function escape(text = '') {
@@ -34,12 +34,12 @@ export function random(min, max) {
 // Возвращает одну из фотографий:
 // p1 - фото для обычных дисплеев
 // p2 - фото для Retina дисплеев, в 2 раза больше p1
-export function getPhoto(p1 = {}, p2) {
+export function getPhoto(p1, p2) {
   const x2 = devicePixelRatio >= 2;
 
   return p2
     ? x2 ? p2 : p1
-    : x2 ? p1.photo_100 : p1.photo_50;
+    : p1 && (x2 ? p1.photo_100 : p1.photo_50);
 }
 
 // Пишет текст с большой буквы
@@ -104,7 +104,7 @@ export function endScroll(callback, reverse = false) {
       ? scrollTop <= 100
       : scrollTop + offsetHeight + 100 >= scrollHeight;
 
-    if(isScrolled) callback.bind(this)();
+    if(isScrolled) callback.call(this);
   }
 }
 

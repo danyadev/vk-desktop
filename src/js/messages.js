@@ -8,23 +8,17 @@ export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
   const isChannel = isChat && conversation.chat_settings.is_group_channel;
   const { push_settings } = conversation;
-  let chatPhoto, chatTitle;
-
-  if(isChat) {
-    chatPhoto = getPhoto(conversation.chat_settings.photo);
-    chatTitle = escape(conversation.chat_settings.title).replace(/\n/g, ' ');
-  }
 
   return {
     id: conversation.peer.id,
     channel: isChannel,
-    members: isChat ? conversation.chat_settings.members_count : null,
+    members: isChat && conversation.chat_settings.members_count,
     left: isChat ? ['left', 'kicked'].includes(conversation.chat_settings.state) : false,
     owner: isChannel ? conversation.chat_settings.owner_id : conversation.peer.id,
     muted: push_settings && push_settings.disabled_forever,
     unread: conversation.unread_count || 0,
-    photo: chatPhoto,
-    title: chatTitle,
+    photo: isChat && getPhoto(conversation.chat_settings.photo),
+    title: isChat && escape(conversation.chat_settings.title).replace(/\n/g, ' '),
     canWrite: conversation.can_write.allowed,
     last_msg_id: conversation.last_message_id,
     // id последнего прочтенного входящего сообщения
@@ -32,7 +26,7 @@ export function parseConversation(conversation) {
     // id последнего прочтенного исходящего сообщения
     out_read: conversation.out_read,
     loaded: true
-  }
+  };
 }
 
 export function parseMessage(message) {

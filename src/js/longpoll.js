@@ -143,7 +143,7 @@ export default new class Longpoll extends EventEmitter {
     const packs = {};
     const otherEvents = [];
 
-    for(let item of history) {
+    for(const item of history) {
       if(this.debug && ![8, 9].includes(item[0])) console.log('[lp]', item.slice());
 
       const [id] = item.splice(0, 1);

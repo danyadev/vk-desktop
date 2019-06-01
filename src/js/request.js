@@ -31,7 +31,7 @@ function request(params, post = '') {
       body.forEach((part) => length += Buffer.byteLength(part));
 
       names.forEach((name) => {
-        if(data[name].value != undefined) {
+        if(data[name].value) {
           length += fs.statSync(data[name].value.path).size;
         }
       });
@@ -46,7 +46,7 @@ function request(params, post = '') {
 }
 
 function renderMultipartBody(names, data, boundary) {
-  let body = [];
+  const body = [];
 
   names.forEach((name, i) => {
     if(data[name].value) {

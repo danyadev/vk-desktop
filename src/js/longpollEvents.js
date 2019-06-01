@@ -64,10 +64,14 @@ function getAttachments(data) {
 }
 
 function getMessage(data) {
+  const user = store.getters['users/user'];
+
+  // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
   // Если данные получены через messages.getLongPollHistory
   if(!Array.isArray(data)) return data;
   // Если это 2 событие прочтения сообщения или пометки его важным
-  if(!data[3]) return;
+  // Или юзер уже вышел из аккаунта
+  if(!data[3] || !user) return;
 
   const flag = hasFlag.bind(this, data[1]);
   const action = getServiceMessage(data[5]);
@@ -79,7 +83,7 @@ function getMessage(data) {
     msg: {
       id: data[0],
       text: action ? '' : data[4],
-      from: flag('outbox') ? store.getters['users/user'].id : Number(data[5].from || data[2]),
+      from: flag('outbox') ? user.id : Number(data[5].from || data[2]),
       date: data[3],
       out: flag('outbox'),
       editTime: data[9],
@@ -121,6 +125,8 @@ async function watchTyping(peer_id, user_id) {
   const user = store.state.messages.typing[peer_id][user_id];
 
   if(user && user.time) {
+    await timer(1000);
+
     store.commit('messages/addUserTyping', {
       peer_id,
       user_id,
@@ -128,11 +134,21 @@ async function watchTyping(peer_id, user_id) {
       time: user.time - 1
     });
 
-    await timer(1000);
     return watchTyping(peer_id, user_id);
   }
 
   store.commit('messages/removeUserTyping', { peer_id, user_id });
+}
+
+function removeTyping(peer_id, user_id, remove) {
+  const typing = store.state.messages.typing[peer_id] || {};
+
+  if(typing[user_id] || remove) {
+    store.commit('messages/removeUserTyping', {
+      peer_id: peer_id,
+      user_id: !remove && user_id
+    });
+  }
 }
 
 export default {
@@ -144,25 +160,22 @@ export default {
     // [msg_id, flags, peer_id]
     pack: true,
     parser(data) {
-      return hasFlag(data[1], 'important') ? null : data[0];
+      if(!hasFlag(data[1], 'important')) return data[0];
     },
     async handler({ key: peer_id, items: msg_ids }) {
-      if(!store.state.messages.conversations[peer_id]) return;
+      const messages = store.state.messages.messages[peer_id] || [];
+      if(!messages.length) return;
 
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
-      const conv = store.state.messages.conversations[peer_id];
-      const messages = store.state.messages.messages[peer_id];
-      const lastMsg = messages[messages.length - 1];
-
       if(!await getLastMessage(peer_id)) {
-        return store.commit('messages/updatePeersList', {
+        store.commit('messages/updatePeersList', {
           id: peer_id,
           remove: true
         });
+      } else {
+        store.commit('messages/moveConversation', { peer_id });
       }
-
-      store.commit('messages/moveConversation', { peer_id });
     }
   },
 
@@ -216,7 +229,6 @@ export default {
       // В случае, если данные были получены через messages.getLongPollHistory
       const conv = store.state.messages.conversations[peer_id];
       const lastMsg = items[items.length - 1].msg;
-      const typing = store.state.messages.typing[peer_id] || {};
 
       const peerData = {
         id: peer_id,
@@ -224,14 +236,9 @@ export default {
       };
 
       for(const { msg } of items) {
-        peerData.unread = msg.out ? 0 : conv && conv.peer.unread + 1;
+        removeTyping(peer_id, msg.from);
 
-        if(typing[msg.from]) {
-          store.commit('messages/removeUserTyping', {
-            peer_id: peer_id,
-            user_id: msg.from
-          });
-        }
+        peerData.unread = msg.out ? 0 : conv && conv.peer.unread + 1;
 
         if(msg.out) peerData.in_read = msg.id;
         else peerData.out_read = msg.id;
@@ -273,19 +280,11 @@ export default {
     handler({ peer, msg }) {
       const conv = store.state.messages.conversations[peer.id];
       const isLastMsg = conv && conv.msg.id == msg.id;
-      const typing = store.state.messages.typing[peer.id] || {};
 
-      if(typing[msg.from]) {
-        store.commit('messages/removeUserTyping', {
-          peer_id: peer.id,
-          user_id: msg.from
-        });
-      }
+      removeTyping(peer.id, msg.from);
 
       store.commit('messages/updateConversation', {
-        peer: {
-          id: peer.id
-        },
+        peer: { id: peer.id },
         ...(isLastMsg ? { msg: msg } : {})
       });
 
@@ -330,19 +329,14 @@ export default {
     // Юзер появился в сети
     // [-user_id, platform, timestamp]
     // 1: любое приложение, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
-    parser: ([user_id, platform, timestamp]) => ({
-      id: -user_id,
-      mobile: ![6, 7].includes(platform),
-      platform: platform,
-      timestamp: timestamp
-    }),
-    handler({ id, mobile, platform, timestamp }) {
-      if(!store.state.profiles[id]) return;
+    parser: (data) => data,
+    handler([id, platform, timestamp]) {
+      if(!store.state.profiles[-id]) return;
 
       store.commit('updateProfile', {
-        id: id,
+        id: -id,
         online: true,
-        online_mobile: mobile,
+        online_mobile: ![6, 7].includes(platform),
         last_seen: {
           time: timestamp,
           platform: platform
@@ -355,15 +349,12 @@ export default {
     // Юзер вышел из сети
     // [-user_id, flag, timestamp]
     // flag: 0 - вышел с сайта, 1 - по таймауту
-    parser: ([id, flag, timestamp]) => ({
-      id: -id,
-      timestamp: timestamp
-    }),
-    handler({ id, timestamp }) {
-      if(!store.state.profiles[id]) return;
+    parser: (data) => data,
+    handler([id, flag, timestamp]) {
+      if(!store.state.profiles[-id]) return;
 
       store.commit('updateProfile', {
-        id: id,
+        id: -id,
         online: false,
         online_mobile: false,
         last_seen: {
@@ -442,21 +433,10 @@ export default {
     handler([type, peer_id, info]) {
       const isMe = info == store.getters['users/user'].id;
       const conv = store.state.messages.conversations[peer_id];
-      const typing = store.state.messages.typing[peer_id] || {};
       const peer = conv && conv.peer;
       if(!peer) return;
 
-      if([7, 8].includes(type)) {
-        let id;
-
-        if(typing[info] && !isMe) id = info;
-        else if(!isMe) return;
-
-        store.commit('messages/removeUserTyping', {
-          peer_id: peer_id,
-          user_id: id
-        });
-      }
+      if([7, 8].includes(type)) removeTyping(peer_id, info, isMe);
 
       switch(type) {
         case 1: // Изменилось название беседы
@@ -559,8 +539,7 @@ export default {
     // При значении > 0 нужно самому следить за временем, ибо событие при включении не приходит.
     parser: (data) => data,
     handler([{ peer_id, disabled_until }]) {
-      const conv = store.state.messages.conversations[peer_id];
-      if(!conv) return;
+      if(!store.state.messages.conversations[peer_id]) return;
 
       store.commit('messages/updateConversation', {
         peer: {
