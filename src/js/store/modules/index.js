@@ -20,6 +20,9 @@ export default {
     setMenuCounters(state, counters) {
       state.menuCounters = counters;
     },
+    updateMenuCounters(state, { name, value }) {
+      Vue.set(state.menuCounters, name, value);
+    },
     addProfiles(state, profiles) {
       const result = profiles.reduce((users, user) => {
         users[user.id] = user;

@@ -168,12 +168,19 @@ export default {
 
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
-      if(!await getLastMessage(peer_id)) {
+      const lastMsg = await getLastMessage(peer_id);
+
+      if(!lastMsg) {
         store.commit('messages/updatePeersList', {
           id: peer_id,
           remove: true
         });
       } else {
+        store.commit('messages/updateConversation', {
+          peer: { id: peer_id },
+          msg: lastMsg
+        });
+
         store.commit('messages/moveConversation', { peer_id });
       }
     }
@@ -196,13 +203,20 @@ export default {
       const lastAddedMsg = items[items.length-1];
       const lastLocalConv = convList[peersList.length - 1];
 
+      const { items: newMessages } = await vkapi('messages.getById', {
+        message_ids: items.map(({ msg }) => msg.id)
+      });
+
+      for(const msg of newMessages) {
+        store.commit('messages/insertMessage', {
+          peer_id: peer_id,
+          msg: parseMessage(msg)
+        });
+      }
+
+      const msg = await getLastMessage(peer_id);
+
       if(!lastLocalMsg || lastAddedMsg.msg.date > lastLocalMsg.date) {
-        for(const { msg } of items) {
-          store.commit('messages/insertMessage', { peer_id, msg });
-        }
-
-        const msg = await getLastMessage(peer_id);
-
         if(lastLocalConv && msg.date < lastLocalConv.msg.date) return;
 
         if(!conv) {
@@ -226,7 +240,6 @@ export default {
     pack: true,
     parser: getMessage,
     handler({ key: peer_id, items }) {
-      // В случае, если данные были получены через messages.getLongPollHistory
       const conv = store.state.messages.conversations[peer_id];
       const lastMsg = items[items.length - 1].msg;
 
@@ -251,6 +264,8 @@ export default {
       });
 
       for(const { msg } of items) longpoll.emit('new_message', msg.random_id);
+
+      if(lastMsg.hidden) return;
 
       if(!store.state.messages.peersList.includes(peer_id)) {
         store.commit('messages/addConversations', [{
@@ -523,12 +538,15 @@ export default {
   },
 
   80: {
-    // Изменении количества сообщений
+    // Изменение количества непрочитанных диалогов
     // [count, count_with_notifications, 0]
     // count_with_notifications - кол-во непрочитанных диалогов, в которых включены уведомления
     parser: ([count]) => count,
     handler(count) {
-
+      store.commit('updateMenuCounters', {
+        name: 'messages',
+        value: count
+      });
     }
   },
 

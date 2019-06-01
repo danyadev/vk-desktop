@@ -60,11 +60,13 @@ export default new class Longpoll extends EventEmitter {
         version: this.version
       }));
 
-      if(data.failed) await this.catchErrors(data);
-      if(data.ts) this.ts = data.ts;
-      if(data.pts) this.pts = data.pts;
+      if(this.started) {
+        if(data.failed) await this.catchErrors(data);
+        if(data.ts) this.ts = data.ts;
+        if(data.pts) this.pts = data.pts;
 
-      this.emitHistory(data.updates);
+        this.emitHistory(data.updates);
+      }
     }
 
     this.stopped = true;

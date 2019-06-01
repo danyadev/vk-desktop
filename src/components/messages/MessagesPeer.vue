@@ -4,7 +4,7 @@
     <div class="content">
       <div class="title">
         <div class="name_wrap">
-          <div class="name" v-emoji="chatName"></div>
+          <div :class="['name', { greenName }]" v-emoji="chatName"></div>
           <div v-if="owner && owner.verified" class="verified"></div>
           <div v-if="peer.muted" class="muted"></div>
         </div>
@@ -62,6 +62,9 @@
         if(this.isChat) return this.peer.title || '...';
         else if(this.owner) return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         else return '...';
+      },
+      greenName() {
+        return [100, 101, 333].includes(Number(this.peer.id));
       },
       time() {
         return getShortDate(new Date(this.msg.date * 1000));
@@ -186,6 +189,10 @@
     text-overflow: ellipsis;
   }
 
+  .name.greenName {
+    color: #265b96;
+  }
+
   .verified {
     flex: none;
     margin: 1px 0 0 4px;
@@ -219,7 +226,6 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    margin-top: 2px;
   }
 
   .message { color: #4c4d50 }

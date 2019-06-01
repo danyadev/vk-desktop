@@ -40,10 +40,15 @@ export function getMessageDate(date) {
 export function getShortDate(date) {
   const now = new Date();
 
-  if(isSameDay(date, now)) return format(date, 'HH:mm', { locale: ru });
-  else if(isSameDay(subDays(now, 1), date)) return getTranslate('yesterday');
-  else if(date.getFullYear() != now.getFullYear()) return date.getFullYear();
-  else return format(date, 'd MMM', { locale: ru });
+  if(isSameDay(date, now)) {
+    return format(date, 'HH:mm', { locale: ru });
+  } else if(isSameDay(subDays(now, 1), date)) {
+    return getTranslate('yesterday');
+  } else if(differenceInCalendarYears(now, date)) {
+    return format(date, 'd MMM yyyy', { locale: ru });
+  } else {
+    return format(date, 'd MMM', { locale: ru });
+  }
 }
 
 // Используется в шапке чата
