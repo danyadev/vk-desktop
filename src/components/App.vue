@@ -101,6 +101,7 @@
     margin: 0;
     overflow: hidden;
     height: 100vh;
+    -webkit-rtl-ordering: visual;
   }
 
   .ff-roboto {
