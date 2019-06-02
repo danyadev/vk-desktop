@@ -80,7 +80,7 @@
         return this.msg.action && getServiceMessage(this.msg.action, this.user, true);
       },
       isPrevServiceMsg() {
-        return this.prevMsg && this.prevMsg.action;
+        return !this.messageDate && this.prevMsg && this.prevMsg.action;
       },
       showUserData() {
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
@@ -110,7 +110,7 @@
       prevFirstMsg() {
         const msg = this.prevMsg;
 
-        return msg && msg.from == this.msg.from && !this.showUserData && this.prevMsgShowUserData;
+        return msg && msg.from == this.msg.from && !this.showUserData && this.prevMsgShowUserData && !this.msg.action;
       }
     }
   }
@@ -125,7 +125,7 @@
 
   .message_date, .message_unreaded_messages {
     text-align: center;
-    margin: 10px 0;
+    margin: 10px 0 8px 0;
     color: #5d6165;
   }
 
@@ -162,7 +162,7 @@
     padding: 0px 20px 4px 70px;
   }
 
-  .message_wrap:not(.prevFirstMsg):not(.showUserData) {
+  .message_wrap:not(.prevFirstMsg):not(.showUserData):not(.serviceMessage) {
     padding: 4px 20px 4px 70px;
   }
 
