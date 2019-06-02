@@ -62,6 +62,9 @@ function vkapi(name, params = {}) {
       }
 
       eventBus.emit('modal:open', 'blocked-account', id);
+
+      methods.length = 0;
+      inWork = false;
     } else reject(data);
   });
 }

@@ -219,7 +219,7 @@
   .message_wrap {
     display: flex;
     height: 20px;
-    margin-top: 4px
+    margin-top: 5px
   }
 
   .message_wrap div:first-child {
