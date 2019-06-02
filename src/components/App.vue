@@ -69,6 +69,11 @@
 
   :focus { outline: none }
 
+  ::selection {
+    background: var(--button-primary-background);
+    color: var(--button-primary-color);
+  }
+
   @font-face {
   	font-family: Segoe UI;
   	font-weight: 400;
@@ -95,11 +100,6 @@
   	font-weight: 500;
   	font-display: block;
   	src: url('~assets/RobotoMedium.ttf');
-  }
-
-  ::selection {
-    background: var(--button-primary-background);
-    color: var(--button-primary-color);
   }
 
   body {
