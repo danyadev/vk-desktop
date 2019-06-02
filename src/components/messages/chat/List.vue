@@ -123,12 +123,12 @@
     },
     mounted() {
       longpoll.on('new_message', (random_id) => {
-        const loadingMessages = store.state.messages.loadingMessages[this.id] || [];
+        const loadingMessages = this.$store.state.messages.loadingMessages[this.id] || [];
         const { scrollTop, clientHeight, scrollHeight } = this.$el.firstChild;
 
         this.$nextTick(() => {
           if(loadingMessages.includes(random_id)) {
-            store.commit('messages/removeLoadingMessage', random_id);
+            this.$store.commit('messages/removeLoadingMessage', random_id);
 
             this.scrollToEnd();
           } else if(scrollTop + clientHeight == scrollHeight) {
