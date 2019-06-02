@@ -29,6 +29,7 @@ body {
   --modal-header-color: #ffffff;
   --modal-footer-background: #f7f8fa;
   --border-color: #e4e6e9;
+  --online-color: #4bb34b;
   --text-primary: #000000;
   --text-secondary: #909499;
   --text-placeholder: #818C99;
@@ -69,6 +70,7 @@ body[scheme="dark"] {
   --modal-header-color: #e1e3e6;
   --modal-footer-background: #19191a;
   --border-color: #313233;
+  --online-color: #4bb34b;
   --text-primary: #e1e3e6;
   --text-secondary: #76787a;
   --text-placeholder: #aaaeb3;

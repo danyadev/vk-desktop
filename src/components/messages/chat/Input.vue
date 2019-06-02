@@ -152,9 +152,11 @@
 
   .chat_input:empty::before {
     content: attr(placeholder);
-    color: #828282;
+    color: var(--text-placeholder);
     cursor: text;
   }
+
+  .chat_input:not(:empty) { color: var(--text-primary) }
 
   .emoji_btn {
     position: absolute;
@@ -174,11 +176,11 @@
     justify-content: center;
     width: 100%;
     height: 50px;
-    color: #3e3f40;
+    color: var(--text-primary);
   }
 
   .chat_input_error.channel {
-    color: #3f70a7;
+    color: var(--text-link);
     user-select: none;
     cursor: pointer;
     transition: background-color .2s;

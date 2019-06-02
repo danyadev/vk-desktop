@@ -141,7 +141,7 @@
     width: 8px;
     bottom: 2px;
     right: -1px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--background-content);
   }
 
   .photo_wrap.mobile::after {
@@ -153,7 +153,7 @@
   .photo_wrap.desktop::after {
     height: 8px;
     border-radius: 50%;
-    background-color: #8ac176;
+    background-color: var(--online-color);
   }
 
   .photo_wrap img {
@@ -241,8 +241,8 @@
     display: inline;
     color: var(--im-peer-text);
   }
-  .text.isAttachment { color: #254f79 }
-  .text.isDeletedContent { color: #4a4a4a }
+  .text.isAttachment { color: var(--text-link) }
+  .text.isDeletedContent { color: var(--text-secondary) }
 
   .unread {
     padding: 0 6px;

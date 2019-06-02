@@ -223,7 +223,7 @@
   .message_edited {
     user-select: none;
     font-size: 13.5px;
-    color: var(--text-secondary);
+    color: var(--text-secondary) !important;
   }
 
   .message_container .message_content div {
