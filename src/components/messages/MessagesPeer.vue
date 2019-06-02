@@ -1,5 +1,5 @@
 <template>
-  <Ripple color="var(--im_peer_ripples)" class="peer" @click="openChat">
+  <Ripple color="var(--im-peer-ripples)" class="peer" @click="openChat">
     <div :class="['photo_wrap', online]"><img :src="photo"></div>
     <div class="content">
       <div class="title">
@@ -122,7 +122,7 @@
   }
 
   .peer:hover {
-    background-color: var(--im_peer_highlighted);
+    background-color: var(--im-peer-highlighted);
     cursor: pointer;
   }
 
@@ -141,13 +141,13 @@
     width: 8px;
     bottom: 2px;
     right: -1px;
-    border: 2px solid var(--border_color);
+    border: 2px solid var(--border-color);
   }
 
   .photo_wrap.mobile::after {
     height: 11px;
     border-radius: 3px;
-    background: url('~assets/online_mobile.svg') no-repeat var(--background_content);
+    background: url('~assets/online_mobile.svg') no-repeat var(--background-content);
   }
 
   .photo_wrap.desktop::after {
@@ -167,7 +167,7 @@
     padding: 10px 16px 10px 0;
   }
 
-  .peer:not(:last-child) .content { border-bottom: 1px solid var(--border_color) }
+  .peer:not(:last-child) .content { border-bottom: 1px solid var(--border-color) }
 
   .title {
     display: flex;
@@ -187,11 +187,11 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    color: var(--im_peer_chat);
+    color: var(--im-peer-chat);
   }
 
   .name.greenName {
-    color: var(--text_link);
+    color: var(--text-link);
   }
 
   .verified {
@@ -234,12 +234,12 @@
 
   .author:not(:empty) {
     display: inline;
-    color: var(--im_peer_author);
+    color: var(--im-peer-author);
   }
 
   .text {
     display: inline;
-    color: var(--im_peer_text);
+    color: var(--im-peer-text);
   }
   .text.isAttachment { color: #254f79 }
   .text.isDeletedContent { color: #4a4a4a }
@@ -248,8 +248,8 @@
     padding: 0 6px;
     margin: 2px 0 0 3px;
     border-radius: 10px;
-    background-color: var(--counter_primary_background);
-    color: var(--counter_primary_text);
+    background-color: var(--counter-primary-background);
+    color: var(--counter-primary-text);
     font-size: 11px;
     font-weight: 500;
     line-height: 18px;
@@ -257,8 +257,8 @@
 
   .unread:not(.outread):empty { display: none }
   .unread:not(.outread).muted {
-    background-color: var(--counter_secondary_background);
-    color: var(--counter_secondary_text);
+    background-color: var(--counter-secondary-background);
+    color: var(--counter-secondary-text);
   }
 
   .unread.outread {

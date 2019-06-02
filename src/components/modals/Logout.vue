@@ -37,6 +37,6 @@
 <style scoped>
   .modal_content {
     padding: 25px;
-    color: var(--text_primary);
+    color: var(--text-primary);
   }
 </style>

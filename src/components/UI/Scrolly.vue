@@ -308,14 +308,14 @@
     width: 100%;
     height: 100%;
     content: '';
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--scrolly-background);
     border-radius: 7px;
     transition: background-color .3s ease;
   }
 
   .scrolly-bar:hover:before,
   .scrolly.isScrolling .scrolly-bar:before {
-    background-color: rgba(0, 0, 0, .4);
+    background-color: var(--scrolly-highlighted);
   }
 
   .scrolly-bar-wrap.axis-x .scrolly-bar {

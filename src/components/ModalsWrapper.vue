@@ -99,14 +99,14 @@
     max-width: 95%;
     max-height: 95%;
     border-radius: 7px;
-    background-color: var(--background_content);
+    background-color: var(--background-content);
     box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
   }
 
   .modal_footer {
     height: 56px;
-    border-top: 1px solid var(--border_color);
-    background-color: var(--modal_footer_background);
+    border-top: 1px solid var(--border-color);
+    background-color: var(--modal-footer-background);
     border-radius: 0 0 5px 5px;
   }
 
@@ -114,10 +114,6 @@
   .modal_footer .light_button {
     min-width: 110px;
     margin: 9px 5px;
-  }
-
-  body:not([scheme="dark"]) .modal_footer .light_button {
-    background-color: #e4e9ef;
   }
 
   .modal_footer .button.right:first-child,

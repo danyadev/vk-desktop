@@ -103,11 +103,11 @@
 
   .item_name {
     flex-grow: 1;
-    color: var(--text_primary);
+    color: var(--text-primary);
   }
 
   .item_description {
-    color: var(--text_link);
+    color: var(--text-link);
     margin-top: 2px;
   }
 

@@ -73,6 +73,6 @@
     width: 100%;
     /* 45px - постоянная высота у .header */
     height: calc(100% - 45px);
-    border-right: 1px solid var(--border_color);
+    border-right: 1px solid var(--border-color);
   }
 </style>

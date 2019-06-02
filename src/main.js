@@ -31,7 +31,10 @@ document.addEventListener('contextmenu', (event) => {
     },
     {
       label: 'Dark mode',
-      click: () => document.querySelector('body').setAttribute('scheme', document.querySelector('body').getAttribute('scheme') == 'dark' ? '' : 'dark')
+      click: () => {
+        const isDark = document.querySelector('body').getAttribute('scheme') == 'dark';
+        document.querySelector('body').setAttribute('scheme', isDark ? '' : 'dark');
+      }
     }
   ]).popup();
 });

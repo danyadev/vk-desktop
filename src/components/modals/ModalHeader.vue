@@ -37,7 +37,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--titlebar_background);
+    background-color: var(--titlebar-background);
     height: 48px;
     padding: 0 10px 0 25px;
     border-radius: 5px 5px 0 0;
@@ -45,7 +45,7 @@
 
   .modal_header_title {
     font-size: 15px;
-    color: var(--modal_header_color);
+    color: var(--modal-header-color);
   }
 
   .modal_header_close {

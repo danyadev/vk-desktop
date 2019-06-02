@@ -20,7 +20,7 @@
       <div class="menu_items">
         <Ripple v-for="route of routes"
                 :key="route"
-                color="var(--menu_item_ripples)"
+                color="var(--menu-item-ripples)"
                 :class="['menu_item', { active: isActiveRoute(`/${route}`) }]"
                 @click.stop="openPage(`/${route}`)"
         >
@@ -31,7 +31,7 @@
           <div class="menu_item_counter">{{ menuCounters[route] || '' }}</div>
         </Ripple>
 
-        <Ripple color="var(--menu_item_ripples)"
+        <Ripple color="var(--menu-item-ripples)"
                 class="menu_item logout"
                 @click.stop="openModal('logout')"
         >
@@ -114,7 +114,7 @@
     height: 100%;
     z-index: 3;
     overflow: hidden;
-    background-color: var(--background_content);
+    background-color: var(--background-content);
     box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
   }
 
@@ -195,7 +195,7 @@
     align-items: center;
     padding-left: 20px;
     cursor: pointer;
-    color: var(--menu_item_text_color);
+    color: var(--menu-item-text-color);
   }
 
   .menu_item, .menu_item_icon, .menu_item_name {
@@ -203,11 +203,11 @@
   }
 
   .menu_item:hover, .menu_item.active {
-    background-color: var(--menu_item_hover_background);
+    background-color: var(--menu-item-hover-background);
   }
 
-  .menu_item.active .menu_item_icon { background-color: var(--menu_item_active_icon_background) }
-  .menu_item.active .menu_item_name { color: var(--menu_item_active_text_color) }
+  .menu_item.active .menu_item_icon { background-color: var(--menu-item-active-icon-background) }
+  .menu_item.active .menu_item_name { color: var(--menu-item-active-text-color) }
 
   .menu_item_name {
     flex-grow: 1;
@@ -215,8 +215,8 @@
   }
 
   .menu_item_counter:not(:empty) {
-    background-color: var(--counter_secondary_background);
-    color: var(--counter_secondary_text);
+    background-color: var(--counter-secondary-background);
+    color: var(--counter-secondary-text);
     padding: 2px 6px;
     border-radius: 4px;
     margin-right: 8px;
@@ -224,15 +224,15 @@
   }
 
   .menu_item.active .menu_item_counter:not(:empty) {
-    background-color: var(--counter_primary_background);
-    color: var(--counter_primary_text);
+    background-color: var(--counter-primary-background);
+    color: var(--counter-primary-text);
   }
 
   .menu_item_icon {
     width: 26px;
     height: 26px;
     margin-right: 10px;
-    background-color: var(--menu_item_icon_background);
+    background-color: var(--menu-item-icon-background);
     -webkit-mask-size: cover;
     transition: background-color .3s;
   }

@@ -47,7 +47,7 @@
     position: relative;
     height: 32px;
     z-index: 7;
-    background-color: var(--titlebar_background);
+    background-color: var(--titlebar-background);
   }
 
   .titlebar_drag {

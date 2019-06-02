@@ -135,7 +135,7 @@
 
   .message_unreaded_messages span {
     position: relative;
-    background-color: var(--background_content);
+    background-color: var(--background-content);
     padding: 0 10px;
   }
 
@@ -146,11 +146,11 @@
     left: 0;
     height: 1px;
     width: 100%;
-    background: var(--border_color);
+    background: var(--border-color);
   }
 
   .message_wrap.isUnreaded:not(.serviceMessage) {
-    background-color: var(--im_unread_background);
+    background-color: var(--im-unread-background);
   }
 
   .message_wrap {
@@ -171,7 +171,7 @@
     justify-content: center;
     /* Центровка текста в сервисном сообщении, когда он не помещается в 1 строку */
     text-align: center;
-    color: var(--text_secondary);
+    color: var(--text-secondary);
   }
 
   .message_wrap.serviceMessage.isPrevServiceMsg {
@@ -190,7 +190,7 @@
   }
 
   .message_name {
-    color: var(--text_link);
+    color: var(--text-link);
     font-family: BlinkMacSystemFont, Segoe UI;
     font-weight: 500;
   }
@@ -223,10 +223,10 @@
   .message_edited {
     user-select: none;
     font-size: 13.5px;
-    color: var(--text_secondary);
+    color: var(--text-secondary);
   }
 
   .message_container .message_content div {
-    color: var(--text_primary);
+    color: var(--text-primary);
   }
 </style>

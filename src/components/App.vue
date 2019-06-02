@@ -97,7 +97,10 @@
   	src: url('~assets/RobotoMedium.ttf');
   }
 
-  ::selection { background: var(--button_primary_background); color: var(--button_primary_color); }
+  ::selection {
+    background: var(--button-primary-background);
+    color: var(--button-primary-color);
+  }
 
   body {
     font-family: BlinkMacSystemFont, Segoe UI;
@@ -114,7 +117,7 @@
 
   a, .link {
     display: inline-block;
-    color: var(--text_link);
+    color: var(--text-link);
     cursor: pointer;
     transition: color .3s;
   }
@@ -128,27 +131,27 @@
 
   .app {
     height: calc(100vh - 32px);
-    background: var(--background_content);
+    background: var(--background-content);
   }
 
   .input {
     width: 250px;
     outline: none;
-    border: 1px solid var(--border_color);
+    border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 15px;
-    color: var(--text_placeholder);
+    color: var(--text-placeholder);
     line-height: 32px;
     padding: 0 30px 0 9px;
     user-select: none;
     transition: border-color .3s;
-    background: var(--background_content);
+    background: var(--background-content);
   }
 
   .input:disabled { color: #999 }
   .input:hover { border: 1px solid #a2a5a8 }
   .input:focus { border: 1px solid #7e7f7f }
-  .input::-webkit-input-placeholder { color: var(--text_placeholder) }
+  .input::-webkit-input-placeholder { color: var(--text-placeholder) }
 
   .button, .light_button {
     display: inline-block;
@@ -171,19 +174,19 @@
   }
 
   .button {
-    background-color: var(--button_primary_background);
-    color: var(--button_primary_color);
+    background-color: var(--button-primary-background);
+    color: var(--button-primary-color);
   }
 
   .light_button {
-    background-color: var(--button_secondary_background);
-    color: var(--button_secondary_color);
+    background-color: var(--button-secondary-background);
+    color: var(--button-secondary-color);
   }
 
-  .button:not(:disabled):hover { background-color: var(--button_primary_hover_background) }
-  .button:not(:disabled):active { background-color: var(--button_primary_active_background) }
-  .light_button:not(:disabled):hover { background-color: var(--button_secondary_hover_background) }
-  .light_button:not(:disabled):active { background-color: var(--button_secondary_active_background) }
+  .button:not(:disabled):hover { background-color: var(--button-primary-hover-background) }
+  .button:not(:disabled):active { background-color: var(--button-primary-active-background) }
+  .light_button:not(:disabled):hover { background-color: var(--button-secondary-hover-background) }
+  .light_button:not(:disabled):active { background-color: var(--button-secondary-active-background) }
 
   .emoji {
     margin: 0 1px -3px 1px;
@@ -194,15 +197,15 @@
   .header {
     display: flex;
     align-items: center;
-    background-color: var(--titlebar_background);
+    background-color: var(--titlebar-background);
     width: 100%;
     height: 45px;
   }
 
-  body[scheme="dark"] .header { border-bottom: 1px solid var(--border_color) }
+  body[scheme="dark"] .header { border-bottom: 1px solid var(--border-color) }
 
   .header_name {
-    color: #fff;
+    color: var(--modal-header-color);
     padding: 0 0 1px 10px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   }
@@ -233,13 +236,5 @@
   .verified.white {
     background-image: url('~assets/verified_white.svg');
     opacity: .7;
-  }
-
-  .scrolly-bar:before {
-    background: var(--scrolly_background);
-  }
-
-  .scrolly-bar:hover:before, .scrolly.isScrolling .scrolly-bar:before {
-    background: var(--scrolly_highlighted);
   }
 </style>

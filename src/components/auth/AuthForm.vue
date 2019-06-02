@@ -82,14 +82,14 @@
   }
 
   body[scheme="dark"] .auth_logo { /* обводка логотипа только в тёмной теме */
-    border: 3px solid var(--text_primary);
+    border: 3px solid var(--text-primary);
     border-radius: 50%;
   }
 
   .auth_name {
     font-size: 20px;
     margin: 15px 0 30px 0;
-    color: var(--text_primary);
+    color: var(--text-primary);
   }
 
   .auth_password_wrap { position: relative }

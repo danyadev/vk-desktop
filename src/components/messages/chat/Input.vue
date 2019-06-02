@@ -109,8 +109,8 @@
   .chat_input_container {
     display: flex;
     flex: none;
-    border-top: 1px solid var(--border_color);
-    background-color: var(--im_input_background);
+    border-top: 1px solid var(--border-color);
+    background-color: var(--im-input-background);
   }
 
   .attachments_btn, .send_btn {
@@ -132,13 +132,13 @@
     position: relative;
     width: calc(100% - 108px);
     margin: 6px 0;
-    background-color: var(--background_content);
-    border: 1px solid var(--border_color);
+    background-color: var(--background-content);
+    border: 1px solid var(--border-color);
     border-radius: 20px;
   }
 
   .chat_input {
-    color: var(--text_placeholder);
+    color: var(--text-placeholder);
     min-height: 18px;
     max-height: 180px;
     line-height: 18px;
