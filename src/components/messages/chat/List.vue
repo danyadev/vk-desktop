@@ -9,7 +9,7 @@
       <img src="~assets/placeholder_empty_messages.png">
       {{ l('im_empty_dialog') }}
     </div>
-    <div v-else class="messages_typing" ref="typing">
+    <div v-else-if="!loading" class="messages_typing" ref="typing">
       <Typing v-if="hasTyping" :peer_id="id"/>
     </div>
   </Scrolly>
