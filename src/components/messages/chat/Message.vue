@@ -110,7 +110,7 @@
       prevFirstMsg() {
         const msg = this.prevMsg;
 
-        return msg && msg.from == this.msg.from && !this.showUserData && this.prevMsgShowUserData;
+        return msg && msg.from == this.msg.from && !this.showUserData && this.prevMsgShowUserData && !this.msg.action;
       }
     }
   }
@@ -162,7 +162,7 @@
     padding: 0px 20px 4px 70px;
   }
 
-  .message_wrap:not(.prevFirstMsg):not(.showUserData) {
+  .message_wrap:not(.prevFirstMsg):not(.showUserData):not(.serviceMessage) {
     padding: 4px 20px 4px 70px;
   }
 
