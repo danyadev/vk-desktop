@@ -52,7 +52,7 @@
 <style scoped>
   .modal_content {
     width: 300px;
-    background-color: #fcfcfc;
+    background-color: var(--background_content);
   }
 
   .captcha_img {

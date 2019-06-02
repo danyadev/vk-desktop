@@ -133,14 +133,15 @@
   .input {
     width: 250px;
     outline: none;
-    border: 1px solid #d2d8de;
+    border: 1px solid var(--border_color);
     border-radius: 5px;
     font-size: 15px;
-    color: #3c3c3c;
+    color: var(--text_placeholder);
     line-height: 32px;
     padding: 0 30px 0 9px;
     user-select: none;
     transition: border-color .3s;
+    background: var(--background_content);
   }
 
   .input:disabled { color: #999 }
