@@ -150,7 +150,7 @@
   }
 
   .message_wrap.isUnreaded:not(.serviceMessage) {
-    background-color: #edf0f5;
+    background-color: var(--im_unread_background);
   }
 
   .message_wrap {
@@ -160,7 +160,6 @@
 
   .message_wrap.prevFirstMsg {
     padding: 0px 20px 4px 70px;
-    background-color: var(--im_unread_background);
   }
 
   .message_wrap:not(.prevFirstMsg):not(.showUserData) {
@@ -172,7 +171,7 @@
     justify-content: center;
     /* Центровка текста в сервисном сообщении, когда он не помещается в 1 строку */
     text-align: center;
-    color: #5d6165;
+    color: var(--text_secondary);
   }
 
   .message_wrap.serviceMessage.isPrevServiceMsg {
@@ -224,7 +223,7 @@
   .message_edited {
     user-select: none;
     font-size: 13.5px;
-    color: #6c737a;
+    color: var(--text_secondary);
   }
 
   .message_container .message_content div {
