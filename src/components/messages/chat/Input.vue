@@ -32,7 +32,6 @@
   import { remote as electron } from 'electron';
   import { getTextWithEmoji } from 'js/messages';
   import { random, throttle } from 'js/utils';
-  import store from 'js/store/';
   import emoji from 'js/emoji';
   import vkapi from 'js/vkapi';
   import Ripple from '../../UI/Ripple.vue';
@@ -72,7 +71,7 @@
             random_id: random_id
           });
 
-          store.commit('messages/addLoadingMessage', {
+          this.$store.commit('messages/addLoadingMessage', {
             peer_id: this.id,
             random_id: random_id
           });
