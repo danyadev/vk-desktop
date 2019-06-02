@@ -93,7 +93,7 @@
   }
 
   .item:not(:last-child) .item_data {
-    border-bottom: 1px solid #e7e8ec;
+    border-bottom: 1px solid var(--border-color);
   }
 
   .item_name_wrap {

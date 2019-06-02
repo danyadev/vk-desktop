@@ -49,6 +49,8 @@
 </script>
 
 <style scoped>
+  .auth_code_header, .auth_code_descr { color: var(--text-primary) }
+
   .auth_code_header {
     font-size: 24px;
     margin-bottom: 5px;
