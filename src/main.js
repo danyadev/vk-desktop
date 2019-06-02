@@ -28,13 +28,6 @@ document.addEventListener('contextmenu', (event) => {
       click(temp, win) {
         win.inspectElement(event.x, event.y);
       }
-    },
-    {
-      label: 'Dark mode',
-      click: () => {
-        const isDark = document.querySelector('body').getAttribute('scheme') == 'dark';
-        document.querySelector('body').setAttribute('scheme', isDark ? '' : 'dark');
-      }
     }
   ]).popup();
 });

@@ -36,7 +36,9 @@ export default {
 
   // Меню
   menu: {
-    messages: 'Сообщения'
+    messages: 'Сообщения',
+    dark_theme: 'Тёмная тема',
+    light_theme: 'Светлая тема'
   },
 
   // Сообщения

@@ -32,6 +32,16 @@
         </Ripple>
 
         <Ripple color="var(--menu-item-ripples)"
+                class="menu_item"
+                @click.stop="switchTheme()"
+        >
+          <div class="menu_item_icon"
+               :style="{ webkitMaskImage: `url('assets/palette.svg')` }"
+          ></div>
+          <div class="menu_item_name">{{ getTheme() }}</div>
+        </Ripple>
+
+        <Ripple color="var(--menu-item-ripples)"
                 class="menu_item logout"
                 @click.stop="openModal('logout')"
         >
@@ -84,6 +94,16 @@
         this.$el.addEventListener('transitionend', () => {
           this.$modals.open(name);
         }, { once: true });
+      },
+      getTheme() {
+        const isDark = document.querySelector('body').getAttribute('scheme') == 'dark';
+        return isDark ? this.l('menu', 'light_theme') : this.l('menu', 'dark_theme');
+      },
+      switchTheme() {
+        this.toggleMenu(false);
+
+        const isDark = document.querySelector('body').getAttribute('scheme') == 'dark';
+        document.querySelector('body').setAttribute('scheme', isDark ? '' : 'dark');
       }
     }
   }
