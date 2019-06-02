@@ -5,7 +5,7 @@
       <span>{{ l('im_unread_messages') }}</span>
     </div>
 
-    <div :class="['message_wrap', { showUserData, serviceMessage, isPrevServiceMsg, isUnreaded }]">
+    <div :class="['message_wrap', { showUserData, serviceMessage, isPrevServiceMsg, isUnreaded, prevFirstMsg }]">
       <img class="message_photo" :src="photo">
 
       <div class="message">
@@ -32,14 +32,9 @@
 
   export default {
     props: ['msg', 'peer_id', 'list'],
-    data() {
-      return {
-        user_id: this.msg.from
-      };
-    },
     computed: {
       user() {
-        return this.$store.state.profiles[this.user_id];
+        return this.$store.state.profiles[this.msg.from];
       },
       photo() {
         return this.user ? getPhoto(this.user) : 'assets/blank.gif';
@@ -57,11 +52,8 @@
 
         return conv && conv.peer;
       },
-
       prevMsg() {
-        const index = this.list.findIndex(({ id }) => id == this.msg.id);
-
-        return this.list[index - 1];
+        return this.list[this.list.indexOf(this.msg) - 1];
       },
       messageDate() {
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
@@ -94,14 +86,31 @@
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
         const thisMsgDate = new Date(this.msg.date * 1000);
 
-        return !this.serviceMessage && (
+        return !this.msg.action && (
           !this.prevMsg ||
           this.prevMsg.from != this.msg.from ||
-          this.isPrevServiceMsg ||
-          this.messageDate ||
+          this.prevMsg.action ||
           this.isStartUnreaded ||
-          differenceInMinutes(thisMsgDate, prevMsgDate) > 10
+          differenceInMinutes(thisMsgDate, prevMsgDate) > 9
         );
+      },
+      prevMsgShowUserData() {
+        const prevMsg = this.list[this.list.indexOf(this.msg) - 2];
+        const msg = this.prevMsg;
+        const in_read = this.peer && (this.peer.new_in_read || this.peer.in_read);
+
+        return msg && !msg.action && (
+          !prevMsg ||
+          prevMsg.from != msg.from ||
+          prevMsg.action ||
+          (prevMsg.id <= in_read && msg.id > in_read) ||
+          differenceInMinutes(new Date(msg.date * 1000), new Date(prevMsg.date * 1000)) > 9
+        );
+      },
+      prevFirstMsg() {
+        const msg = this.prevMsg;
+
+        return msg && msg.from == this.msg.from && !this.showUserData && this.prevMsgShowUserData;
       }
     }
   }
@@ -140,18 +149,21 @@
     background: #d4d6da;
   }
 
-  .message_wrap {
-    display: flex;
-    padding: 7px 20px;
-  }
-
   .message_wrap.isUnreaded:not(.serviceMessage) {
     background-color: #edf0f5;
   }
 
-  .message_wrap:not(.showUserData):not(.serviceMessage) {
-    padding: 6px 20px 6px 70px;
-    margin-top: -3px;
+  .message_wrap {
+    display: flex;
+    padding: 10px 20px 8px 20px;
+  }
+
+  .message_wrap.prevFirstMsg {
+    padding: 0px 20px 4px 70px;
+  }
+
+  .message_wrap:not(.prevFirstMsg):not(.showUserData) {
+    padding: 4px 20px 4px 70px;
   }
 
   .message_wrap.serviceMessage {
@@ -198,11 +210,6 @@
   .message_content {
     line-height: 20px;
     word-break: break-word;
-  }
-
-  .message_wrap.showUserData .message_content {
-    margin-top: 2px;
-    margin-bottom: -2px;
   }
 
   .message_content * {
