@@ -13,8 +13,9 @@ body {
   --im_input_background: #fbfbfb;
   --im_peer_highlighted: #F9F9F9;
   --im_peer_ripples: #e6ebf2;
-  --im_peer_author: #777a7d;
-  --im_peer_text: #000;
+  --im_peer_author: #8b939b;
+  --im_peer_text: #656565;
+  --im_peer_chat: #222;
   --counter_primary_background: #528bcc;
   --counter_primary_text: #FFFFFF;
   --counter_secondary_background: #aaaeb3;
@@ -54,6 +55,7 @@ body[scheme="dark"] {
   --im_peer_ripples: #444445;
   --im_peer_author: #94979A;
   --im_peer_text: #A6A7AB;
+  --im_peer_chat: #E1E3E6;
   --counter_primary_background: #71AAEB;
   --counter_primary_text: #FFFFFF;
   --counter_secondary_background: #76787A;

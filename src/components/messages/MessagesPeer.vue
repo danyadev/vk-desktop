@@ -187,7 +187,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    color: var(--text_primary);
+    color: var(--im_peer_chat);
   }
 
   .name.greenName {
