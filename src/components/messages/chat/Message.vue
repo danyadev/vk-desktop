@@ -80,7 +80,7 @@
         return this.msg.action && getServiceMessage(this.msg.action, this.user, true);
       },
       isPrevServiceMsg() {
-        return this.prevMsg && this.prevMsg.action;
+        return !this.messageDate && this.prevMsg && this.prevMsg.action;
       },
       showUserData() {
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
@@ -125,7 +125,7 @@
 
   .message_date, .message_unreaded_messages {
     text-align: center;
-    margin: 10px 0;
+    margin: 10px 0 8px 0;
     color: #5d6165;
   }
 
