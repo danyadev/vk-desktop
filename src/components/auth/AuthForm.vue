@@ -95,13 +95,13 @@
     opacity: .8;
     width: 34px;
     height: 34px;
-    background: url('~assets/show.svg') 50% no-repeat;
+    background: url('~assets/hide.svg') 50% no-repeat;
     transition: opacity .3s;
   }
 
   .auth_password_switch:hover { opacity: 1 }
   .auth_password_switch.hidden {
-    background-image: url('~assets/hide.svg');
+    background-image: url('~assets/show.svg');
   }
 
   .auth_button { width: 250px }
