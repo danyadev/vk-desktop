@@ -31,7 +31,7 @@
 <script>
   import { remote as electron } from 'electron';
   import { getTextWithEmoji } from 'js/messages';
-  import { random, throttle } from 'js/utils';
+  import { random, throttle, escape } from 'js/utils';
   import emoji from 'js/emoji';
   import vkapi from 'js/vkapi';
   import Ripple from '../../UI/Ripple.vue';
@@ -86,7 +86,7 @@
         });
       },
       paste() {
-        const text = clipboard.readText().replace(/\n/g, '<br>');
+        const text = escape(clipboard.readText()).replace(/\n/g, '<br>');
         document.execCommand('insertHTML', false, emoji(text));
       },
       onInput: throttle((e, id) => {
