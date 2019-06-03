@@ -221,7 +221,7 @@
     margin-top: 4px
   }
 
-  .message_wrap div:first-child {
+  .message_wrap > div:first-child {
     flex-grow: 1;
     overflow: hidden;
     white-space: nowrap;
