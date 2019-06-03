@@ -218,7 +218,7 @@
   .message_wrap {
     display: flex;
     height: 20px;
-    margin-top: 5px
+    margin-top: 4px
   }
 
   .message_wrap div:first-child {
@@ -226,6 +226,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin-top: 2px;
   }
 
   .message { color: #4c4d50 }
