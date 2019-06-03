@@ -122,11 +122,11 @@ async function getLastMessage(peer_id) {
 }
 
 async function watchTyping(peer_id, user_id) {
+  await timer(1000);
+  
   const user = store.state.messages.typing[peer_id][user_id];
 
   if(user && user.time) {
-    await timer(1000);
-
     store.commit('messages/addUserTyping', {
       peer_id,
       user_id,
@@ -140,13 +140,13 @@ async function watchTyping(peer_id, user_id) {
   store.commit('messages/removeUserTyping', { peer_id, user_id });
 }
 
-function removeTyping(peer_id, user_id, remove) {
+function removeTyping(peer_id, user_id, clearChat) {
   const typing = store.state.messages.typing[peer_id] || {};
 
-  if(typing[user_id] || remove) {
+  if(typing[user_id] || clearChat) {
     store.commit('messages/removeUserTyping', {
       peer_id: peer_id,
-      user_id: !remove && user_id
+      user_id: !clearChat && user_id
     });
   }
 }

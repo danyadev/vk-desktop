@@ -212,6 +212,10 @@
     word-break: break-word;
   }
 
+  .message_wrap:not(.serviceMessage) .message_content {
+    margin-top: 2px;
+  }
+
   .message_content * {
     display: inline;
   }

@@ -175,7 +175,7 @@ export default {
       const users = { ...state.typing[peer_id] || {} };
 
       delete users[user_id];
-      Vue.set(state.typing, peer_id, user_id ? users : []);
+      Vue.set(state.typing, peer_id, user_id ? users : {});
     }
   },
   getters: {
