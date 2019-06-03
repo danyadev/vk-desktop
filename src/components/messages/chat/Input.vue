@@ -99,8 +99,7 @@
       }, 1500)
     },
     activated() {
-      const { input } = this.$refs;
-      if(input) input.focus();
+      if(this.$refs.input) this.$refs.input.focus();
     }
   }
 </script>

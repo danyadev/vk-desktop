@@ -9,7 +9,7 @@
       <img src="~assets/placeholder_empty_messages.png">
       {{ l('im_empty_dialog') }}
     </div>
-    <div v-else-if="!loading" class="messages_typing" ref="typing">
+    <div v-else-if="hasMessages" class="messages_typing" ref="typing">
       <Typing v-if="hasTyping" :peer_id="id"/>
     </div>
   </Scrolly>
@@ -103,6 +103,14 @@
         }
       }, true)
     },
+    activated() {
+      if(this.scrollTop != null) {
+        this.$el.firstChild.scrollTop = this.scrollTop;
+      } else {
+        this.scrollToEnd();
+        this.checkScrolling(this.$el.firstChild);
+      }
+    },
     async mounted() {
       if(!this.messages.length) {
         this.load();
@@ -112,29 +120,20 @@
         this.scrollToEnd();
         this.checkScrolling(this.$el.firstChild);
       }
-    },
-    activated() {
-      if(this.scrollTop != null) {
-        this.$el.firstChild.scrollTop = this.scrollTop;
-      } else {
-        this.scrollToEnd();
-        this.checkScrolling(this.$el.firstChild);
-      }
-    },
-    mounted() {
-      longpoll.on('new_message', (random_id) => {
+
+      longpoll.on('new_message', async (random_id) => {
         const loadingMessages = this.$store.state.messages.loadingMessages[this.id] || [];
         const { scrollTop, clientHeight, scrollHeight } = this.$el.firstChild;
 
-        this.$nextTick(() => {
-          if(loadingMessages.includes(random_id)) {
-            this.$store.commit('messages/removeLoadingMessage', random_id);
+        await this.$nextTick();
 
-            this.scrollToEnd();
-          } else if(scrollTop + clientHeight == scrollHeight) {
-            this.scrollToEnd();
-          }
-        });
+        if(loadingMessages.includes(random_id)) {
+          this.$store.commit('messages/removeLoadingMessage', random_id);
+
+          this.scrollToEnd();
+        } else if(scrollTop + clientHeight == scrollHeight) {
+          this.scrollToEnd();
+        }
       });
     }
   }
