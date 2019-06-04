@@ -1,6 +1,6 @@
 <template>
   <Ripple color="rgba(255, 255, 255, .2)" class="fast open_menu_btn" @click="openMenu">
-    <img :src="back ? 'assets/back.svg' : 'assets/menu.png'">
+    <img src="assets/menu.webp">
   </Ripple>
 </template>
 
@@ -19,7 +19,6 @@
     },
     methods: {
       openMenu() {
-        // TODO: Действие при this.back = true
         this.$store.commit('setMenuState', true);
       }
     }

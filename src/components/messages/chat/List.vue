@@ -6,7 +6,7 @@
     <Message v-for="msg of messages" :key="msg.id" :msg="msg" :peer_id="id" :list="messages"/>
 
     <div v-if="!hasMessages && !loading" class="messages_empty_dialog">
-      <img src="~assets/placeholder_empty_messages.png">
+      <img src="~assets/placeholder_empty_messages.webp">
       {{ l('im_empty_dialog') }}
     </div>
     <div v-else-if="hasMessages" class="messages_typing" ref="typing">

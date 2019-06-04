@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <Ripple color="rgba(255, 255, 255, .2)" class="fast header_back" @click="$emit('close')">
-      <img src="~assets/im_back.png">
+      <img src="~assets/im_back.webp">
     </Ripple>
     <img class="header_photo" :src="photo">
     <div class="header_center">

@@ -6,25 +6,23 @@ function moveArrItem(arr, from, to) {
   return arr;
 }
 
-function getState() {
-  return {
-    // Все беседы, которые были загружены в приложение
-    // { peer_id: { peer, msg } }
-    conversations: {},
-    // Беседы, которые отображаются в списке бесед
-    // [peer_id]
-    peersList: [],
-    // Списки сообщений у бесед
-    // { peer_id: [message] }
-    messages: {},
-    // Отправленные, но еще не полученные сообщения
-    // { peer_id: [random_id] }
-    loadingMessages: {},
-    // Список юзеров, которые печатают в различных беседах
-    // { peer_id: { user_id: { time, type } } }
-    typing: {}
-  };
-}
+const getState = () => ({
+  // Все беседы, которые были загружены в приложение
+  // { peer_id: { peer, msg } }
+  conversations: {},
+  // Беседы, которые отображаются в списке бесед
+  // [peer_id]
+  peersList: [],
+  // Списки сообщений у бесед
+  // { peer_id: [message] }
+  messages: {},
+  // Отправленные, но еще не полученные сообщения
+  // { peer_id: [random_id] }
+  loadingMessages: {},
+  // Список юзеров, которые печатают в различных беседах
+  // { peer_id: { user_id: { time, type } } }
+  typing: {}
+});
 
 export default {
   state: getState(),
@@ -50,7 +48,7 @@ export default {
       }
     },
 
-    updateConversation(state, { peer, msg = {} }) {
+    updateConversation(state, { peer, msg }) {
       const conv = { ...state.conversations[peer.id] || {} };
       conv.peer = Object.assign({}, conv.peer, peer);
       conv.msg = Object.assign({}, conv.msg, msg);

@@ -6,7 +6,7 @@ import { eventBus } from './utils';
 
 export const version = '5.95';
 
-function vkapi(name, params = {}) {
+function vkapi(name, params) {
   return new Promise(async (resolve, reject) => {
     const startTime = Date.now();
     const user = store.getters['users/user'];

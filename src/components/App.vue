@@ -209,7 +209,7 @@
     height: 18px;
     margin: 10px auto;
     animation: spinner .7s infinite linear;
-    background: url('~assets/spinner.png') 0 / contain;
+    background: url('~assets/spinner.webp') 0 / contain;
   }
 
   .verified {

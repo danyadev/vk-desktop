@@ -1,12 +1,10 @@
 import Vue from 'vue';
 
-function getState() {
-  return {
-    menuState: false,
-    menuCounters: {},
-    profiles: {}
-  };
-}
+const getState = () => ({
+  menuState: false,
+  menuCounters: {},
+  profiles: {}
+});
 
 export default {
   state: getState(),

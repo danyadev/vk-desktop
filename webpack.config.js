@@ -22,15 +22,18 @@ module.exports = (env, { mode }) => {
           parallel: true,
           terserOptions: {
             ecma: 8,
-            output: {
-              comments: false
-            },
+            module: true,
             compress: {
+              booleans_as_integers: true,
               keep_fargs: false,
+              passes: 2,
               unsafe: true,
               unsafe_arrows: true,
-              unsafe_comps: true,
-              unsafe_methods: true
+              unsafe_methods: true,
+              unsafe_proto: true
+            },
+            output: {
+              comments: false
             }
           }
         }),
@@ -71,7 +74,7 @@ module.exports = (env, { mode }) => {
           }
         },
         {
-          test: /\.(png|svg|gif|ttf)$/,
+          test: /\.(png|webp|svg|gif|ttf)$/,
           loader: 'file-loader',
           options: {
             publicPath: 'assets/',

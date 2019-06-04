@@ -1,6 +1,6 @@
 <template>
   <div class="auth" @keydown.enter="auth">
-    <img src="~assets/logo.png" class="auth_logo">
+    <img src="~assets/logo.webp" class="auth_logo">
     <div class="auth_name">VK Desktop</div>
     <input class="input" type="text" :placeholder="l('enter_login')" v-model="login">
     <div class="auth_password_wrap">

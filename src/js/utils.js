@@ -16,7 +16,7 @@ export const VKDesktopUserAgent = `VKDesktop/${AppVersion}`;
 export const AndroidUserAgent = 'VKAndroidApp/5.35-3700';
 
 // Заменяем опасные для разметки символы в выводимых данных на безопасные
-export function escape(text = '') {
+export function escape(text) {
   if(text == null) return '';
 
   return String(text)
@@ -94,7 +94,7 @@ export function concatProfiles(profiles = [], groups = []) {
 
 // Возвращает функцию, которая вызывает колбэк, если юзер долистал
 // список до конца, чтобы загрузить новую часть списка
-export function endScroll(callback, reverse = false) {
+export function endScroll(callback, reverse) {
   return function({ scrollTop, scrollHeight, offsetHeight }) {
     // Если блок пустой либо видимая область блока = 0px, то игнорировать это событие.
     // Обычно возникает когда у блока стоит display: none или он скрыт другим способом.
