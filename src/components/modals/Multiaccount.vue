@@ -84,7 +84,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin: 10px 10px 0 0;
+    margin: 10px 10px 10px 0;
   }
 
   .item_data {
@@ -105,11 +105,11 @@
 
   .item_description {
     color: #3e70a9;
-    margin-top: 2px;
+    margin-top: 4px;
   }
 
   .item_close {
-    margin: 3px;
+    margin: 3px 0 0 3px;
     width: 14px;
     height: 14px;
     opacity: .8;

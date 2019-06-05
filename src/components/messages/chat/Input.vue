@@ -21,7 +21,7 @@
       <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
       {{ l('im_toggle_notifications', !peer.muted) }}
     </Ripple>
-    <div v-else class="chat_input_error ff-roboto">
+    <div v-else class="chat_input_error">
       <div class="chat_input_error_img"></div>
       <div class="chat_input_error_text">{{ canWrite.text }}</div>
     </div>

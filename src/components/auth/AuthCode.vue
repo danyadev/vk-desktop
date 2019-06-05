@@ -57,7 +57,7 @@
   .auth_code_descr {
     font-size: 14px;
     margin-bottom: 20px;
-    width: 300px;
+    width: 310px;
   }
 
   .auth_code_buttons button { width: 123px }

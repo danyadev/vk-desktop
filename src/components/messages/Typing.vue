@@ -1,5 +1,5 @@
 <template>
-  <div class="typing_wrap ff-roboto">
+  <div class="typing_wrap">
     <div v-if="!left" class="typing_text">{{ text }}</div>
     <div class="typing">
       <div class="typing_item"></div>
@@ -78,7 +78,10 @@
     color: #254f79;
   }
 
-  .typing { margin: 0 6px }
+  .typing {
+    margin: 0 6px;
+    user-select: none;
+  }
 
   .typing_text {
     overflow: hidden;

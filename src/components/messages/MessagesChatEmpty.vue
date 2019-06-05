@@ -1,7 +1,7 @@
 <template>
   <div class="chat_container">
     <div class="header"></div>
-    <div class="choose_chat ff-roboto">
+    <div class="choose_chat">
       <img src="~assets/im_choose_chat.png">
       <span>{{ l('im_choose_chat_1') }} <a @click="createChat">{{ l('im_choose_chat_2') }}</a></span>
     </div>

@@ -8,11 +8,11 @@
           <div v-if="owner && owner.verified" class="verified"></div>
           <div v-if="peer.muted" class="muted"></div>
         </div>
-        <div class="time ff-roboto">{{ time }}</div>
+        <div class="time">{{ time }}</div>
       </div>
       <div class="message_wrap">
         <Typing v-if="hasTyping" :peer_id="this.peer.id" :left="false"/>
-        <div v-else class="message ff-roboto">
+        <div v-else class="message">
           <div class="author">{{ authorName }}</div>
           <div :class="['text', { isAttachment, isDeletedContent }]" v-emoji.push="message"></div>
         </div>
@@ -182,8 +182,8 @@
   }
 
   .name {
-    margin-top: -2px;
     height: 20px;
+    line-height: 18px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -218,7 +218,7 @@
   .message_wrap {
     display: flex;
     height: 20px;
-    margin-top: 4px
+    margin-top: 2px
   }
 
   .message_wrap > div:first-child {
@@ -249,7 +249,7 @@
     color: #fff;
     font-size: 11px;
     font-weight: 500;
-    line-height: 18px;
+    line-height: 20px;
   }
 
   .unread:not(.outread):empty { display: none }

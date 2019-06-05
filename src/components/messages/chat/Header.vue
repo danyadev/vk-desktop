@@ -10,7 +10,7 @@
         <div class="verified white" v-if="owner && owner.verified"></div>
         <div class="messages_muted" v-if="peer && peer.muted"></div>
       </div>
-      <div class="online ff-roboto">{{ online }}</div>
+      <div class="online">{{ online }}</div>
     </div>
     <img src="~assets/actions_icon.svg" class="actions_btn">
   </div>

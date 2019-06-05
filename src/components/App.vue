@@ -61,25 +61,9 @@
 </script>
 
 <style>
-  /* Основные стили приложения */
-
   *, *::before, *::after { box-sizing: border-box }
 
   :focus { outline: none }
-
-  @font-face {
-  	font-family: Segoe UI;
-  	font-weight: 400;
-  	font-display: block;
-  	src: url('~assets/SegoeUI.ttf');
-  }
-
-  @font-face {
-  	font-family: Segoe UI;
-  	font-weight: 500;
-  	font-display: block;
-  	src: url('~assets/SegoeUIMedium.ttf');
-  }
 
   @font-face {
     font-family: Roboto;
@@ -96,16 +80,12 @@
   }
 
   body {
-    font-family: BlinkMacSystemFont, Segoe UI;
+    font-family: BlinkMacSystemFont, Roboto;
     font-size: 15px;
     margin: 0;
     overflow: hidden;
     height: 100vh;
     -webkit-rtl-ordering: visual;
-  }
-
-  .ff-roboto {
-    font-family: BlinkMacSystemFont, Roboto;
   }
 
   a, .link {
@@ -192,8 +172,8 @@
   }
 
   .header_name {
-    color: white;
-    padding: 0 0 1px 10px;
+    color: #fff;
+    padding-left: 10px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   }
 

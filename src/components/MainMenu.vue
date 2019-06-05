@@ -172,7 +172,7 @@
   }
 
   .account_name {
-    margin-top: 12px;
+    margin: 12px 0 2px 0;
     color: #fff;
   }
 
@@ -216,7 +216,7 @@
   .menu_item_counter:not(:empty) {
     color: #475769;
     background-color: #d2dfea;
-    padding: 2px 6px;
+    padding: 3px 5px 1px 5px;
     border-radius: 4px;
     margin-right: 8px;
     font-size: 14px;

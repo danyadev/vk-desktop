@@ -12,10 +12,10 @@
         <div class="message_name">
           {{ name }}
           <div v-if="user && user.verified" class="verified"></div>
-          <div class="message_time ff-roboto">{{ time }}</div>
+          <div class="message_time">{{ time }}</div>
         </div>
         <div v-if="serviceMessage" class="message_content" v-html="serviceMessage"></div>
-        <div v-else class="message_content ff-roboto">
+        <div v-else class="message_content">
           <div v-emoji.push.br="msg.text"></div>
           <div v-if="msg.editTime" class="message_edited">({{ l('im_msg_edited') }})</div>
         </div>
@@ -191,7 +191,6 @@
 
   .message_name {
     color: #254f79;
-    font-family: BlinkMacSystemFont, Segoe UI;
     font-weight: 500;
   }
 

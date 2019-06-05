@@ -34,15 +34,9 @@ function vkapi(name, params) {
           params.captcha_sid = data.error.captcha_sid;
           params.captcha_key = code;
 
-          if(name != 'captcha.force') {
-            methods.unshift({
-              data: [name, params],
-              resolve,
-              reject
-            });
-          } else methods.shift();
+          if(name == 'captcha.force') methods.shift();
 
-          executeMethod();
+          reject();
         }
       });
     } else if(data.error.error_code == 5) {
@@ -64,8 +58,8 @@ function vkapi(name, params) {
       eventBus.emit('modal:open', 'blocked-account', id);
 
       methods.length = 0;
-      inWork = false;
-    } else reject(data);
+      reject();
+    } else reject(data.error.error_code != 6 && data);
   });
 }
 
@@ -74,17 +68,20 @@ let inWork = false;
 
 async function executeMethod() {
   const { data, resolve, reject } = methods[0];
+  let shift = true;
 
   inWork = true;
 
   try {
     resolve(await vkapi(...data));
   } catch(err) {
-    console.warn('[VKAPI] error', err);
-    reject(err);
+    if(err) {
+      console.warn('[VKAPI] error', err);
+      reject(err);
+    } else shift = false;
   }
 
-  methods.shift();
+  if(shift) methods.shift();
 
   if(methods.length) executeMethod();
   else inWork = false;
