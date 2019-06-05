@@ -24,7 +24,6 @@ module.exports = (env, { mode }) => {
             ecma: 8,
             module: true,
             compress: {
-              booleans_as_integers: true,
               keep_fargs: false,
               passes: 2,
               unsafe: true,
