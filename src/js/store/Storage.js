@@ -22,6 +22,7 @@ class Storage {
 
 export const users = new Storage('users', {
   activeUser: null,
+  trustedHashes: {},
   users: {}
 });
 

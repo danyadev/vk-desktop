@@ -15,6 +15,9 @@ export default {
     },
     removeUser(state, id) {
       Vue.delete(state.users, id);
+    },
+    setTrusredHash(state, { login, hash }) {
+      Vue.set(state.trustedHashes, login, hash);
     }
   },
   getters: {

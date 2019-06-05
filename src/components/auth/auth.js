@@ -3,6 +3,7 @@ import { AndroidUserAgent, VKDesktopUserAgent } from 'js/utils';
 import vkapi, { version } from 'js/vkapi';
 import request from 'js/request';
 import { eventBus } from 'js/utils';
+import store from 'js/store/';
 
 export function getAndroidToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
@@ -18,10 +19,18 @@ export function getAndroidToken(login, password, params = {}) {
         grant_type: 'password',
         lang: 'ru',
         v: version,
+        trusted_hash: store.state.users.trustedHashes[login],
         ...params
       }),
       headers: { 'User-Agent': AndroidUserAgent }
     });
+
+    if(data.trusted_hash) {
+      store.commit('users/setTrusredHash', {
+        login: login,
+        hash: data.trusted_hash
+      });
+    }
 
     if(data.error == 'need_captcha') {
       eventBus.emit('modal:open', 'captcha', {
@@ -40,7 +49,7 @@ export function getAndroidToken(login, password, params = {}) {
 }
 
 export async function getDesktopToken(androidToken) {
-  const reqParams = {
+  const { data } = await request({
     host: 'oauth.vk.com',
     path: '/authorize?' + querystring.stringify({
       redirect_uri: 'https://oauth.vk.com/blank.html',
@@ -56,9 +65,8 @@ export async function getDesktopToken(androidToken) {
       sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
     }),
     headers: { 'User-Agent': VKDesktopUserAgent }
-  };
+  });
 
-  const { data } = await request(reqParams);
   const link = 'https://oauth.vk.com' + data.match(/\/auth_by_token?.+=\w+/)[0];
   const { headers } = await request(link);
 
