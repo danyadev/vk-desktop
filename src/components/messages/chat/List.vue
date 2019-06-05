@@ -1,5 +1,9 @@
 <template>
-  <Scrolly class="messages_list_wrap ff-roboto" :vclass="['messages_list', { empty: !hasMessages }]" @scroll="onScroll">
+  <Scrolly class="messages_list_wrap"
+           :vclass="['messages_list', { empty: !hasMessages }]"
+           :lock="lockScroll"
+           @scroll="onScroll"
+  >
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loading" class="loading"></div>
 
@@ -36,7 +40,9 @@
       return {
         loading: false,
         loaded: false,
-        scrollTop: null
+
+        scrollTop: null,
+        lockScroll: false
       }
     },
     computed: {
@@ -66,6 +72,8 @@
           extended: 1,
           fields: fields
         });
+
+        this.lockScroll = true;
 
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
         this.$store.commit('messages/addMessages', {
@@ -102,6 +110,9 @@
           this.load();
         }
       }, true)
+    },
+    updated() {
+      setTimeout(() => this.lockScroll = false, 0);
     },
     activated() {
       if(this.scrollTop != null) {

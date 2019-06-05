@@ -59,6 +59,9 @@
     props: {
       vclass: {
         default: ''
+      },
+      lock: {
+        default: false
       }
     },
 
@@ -170,6 +173,8 @@
       },
 
       onWheel({ altKey, deltaX, deltaY }) {
+        if(this.lock) return;
+
         if(altKey) { // Возможность скролла по горизонтали при нажатой клавише Alt
           deltaX = deltaY > 0 ? 100 : -100;
           deltaY = 0;
