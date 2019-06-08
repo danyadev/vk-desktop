@@ -36,8 +36,8 @@
   }
 </script>
 
-<style scoped>
-  .modal_content {
+<style>
+  .modal[name=blocked-account] .modal_content {
     padding: 20px;
     max-width: 450px;
   }

@@ -1,20 +1,20 @@
 <template>
   <div :class="['menu_wrap', { active: menuState }]" @click="toggleMenu">
     <div class="menu">
-      <div class="account_block">
-        <img class="account_background" :src="user.photo_100">
+      <div class="menu_account_block">
+        <img class="menu_account_background" :src="user.photo_100">
         <Ripple color="rgba(0, 0, 0, .2)"
-                class="fast account_multiaccount"
+                class="fast menu_account_multiaccount"
                 @click.stop="openModal('multiaccount')"
         >
           <img src="~assets/menu_groups.svg">
         </Ripple>
-        <img class="account_photo" :src="user.photo_100">
-        <div class="account_name">
+        <img class="menu_account_photo" :src="user.photo_100">
+        <div class="menu_account_name">
           {{ user.first_name }} {{ user.last_name }}
           <div v-if="user.verified" class="verified"></div>
         </div>
-        <div class="account_status" v-emoji="user.status"></div>
+        <div class="menu_account_status" v-emoji="user.status"></div>
       </div>
 
       <div class="menu_items">
@@ -89,7 +89,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .menu_wrap {
     position: absolute;
     width: 100%;
@@ -122,7 +122,7 @@
 
   /* панелька профиля */
 
-  .account_block {
+  .menu_account_block {
     position: relative;
     overflow: hidden;
     height: 125px;
@@ -130,7 +130,7 @@
     background-color: rgba(38, 37, 37, .5);
   }
 
-  .account_background {
+  .menu_account_background {
     width: 260px;
     height: 135px;
     position: absolute;
@@ -141,7 +141,7 @@
     filter: blur(3px);
   }
 
-  .account_multiaccount {
+  .menu_account_multiaccount {
     position: absolute;
     right: 10px;
     padding: 3px 0 0 3px;
@@ -151,12 +151,12 @@
     cursor: pointer;
   }
 
-  .account_multiaccount img {
+  .menu_account_multiaccount img {
     width: 26px;
     height: 26px;
   }
 
-  .account_photo {
+  .menu_account_photo {
     width: 56px;
     height: 56px;
     border-radius: 50%;
@@ -164,19 +164,19 @@
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
   }
 
-  .account_name, .account_status {
+  .menu_account_name, .menu_account_status {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
   }
 
-  .account_name {
+  .menu_account_name {
     margin: 12px 0 2px 0;
     color: #fff;
   }
 
-  .account_status {
+  .menu_account_status {
     font-size: 13px;
     color: #d9d9d9;
   }

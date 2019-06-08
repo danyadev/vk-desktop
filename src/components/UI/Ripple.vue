@@ -64,20 +64,20 @@
     cursor: pointer;
   }
 
-  .ripples {
+  .ripples, .ripple {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
+  }
+
+  .ripples {
+    top: 0;
+    left: 0;
     z-index: -1;
     pointer-events: none;
   }
 
   .ripple {
-    width: 100%;
-    height: 100%;
-    position: absolute;
     border-radius: 50%;
     opacity: 0;
   }

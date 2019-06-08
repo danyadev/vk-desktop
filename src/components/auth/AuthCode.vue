@@ -48,7 +48,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .auth_code_header {
     font-size: 24px;
     margin-bottom: 5px;

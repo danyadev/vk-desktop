@@ -19,6 +19,6 @@
   }
 </script>
 
-<style scoped>
-  .modal_content { padding: 25px }
+<style>
+  .modal[name=auth] .modal_content { padding: 25px }
 </style>

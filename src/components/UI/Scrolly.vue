@@ -313,7 +313,7 @@
     width: 100%;
     height: 100%;
     content: '';
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, .3);
     border-radius: 7px;
     transition: background-color .3s ease;
   }

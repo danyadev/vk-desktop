@@ -34,6 +34,6 @@
   }
 </script>
 
-<style scoped>
-  .modal_content { padding: 25px }
+<style>
+  .modal[name=logout] .modal_content { padding: 25px }
 </style>

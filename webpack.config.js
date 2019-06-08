@@ -6,7 +6,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
-const OptimizeCSSAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = (env, { mode }) => {
   const isDev = mode == 'development';
@@ -35,8 +34,7 @@ module.exports = (env, { mode }) => {
               comments: false
             }
           }
-        }),
-        new OptimizeCSSAssetsWebpackPlugin()
+        })
       ]
     },
     entry: './src/main.js',
@@ -62,7 +60,8 @@ module.exports = (env, { mode }) => {
           test: /\.css$/,
           use: [
             isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
-            'css-loader'
+            'css-loader',
+            'clean-css-loader?level=2'
           ]
         },
         {

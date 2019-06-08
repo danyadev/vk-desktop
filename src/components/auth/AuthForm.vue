@@ -75,7 +75,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .auth_logo {
     width: 125px;
     height: 125px;

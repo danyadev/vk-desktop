@@ -72,7 +72,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .typing_wrap {
     display: flex;
     color: #254f79;
@@ -89,7 +89,7 @@
     text-overflow: ellipsis;
   }
 
-  @keyframes activity_typing {
+  @keyframes typing {
     0% { opacity: 1 }
     30% { opacity: .5 }
     100% { opacity: 1 }
@@ -99,7 +99,7 @@
     display: inline-block;
     background-color: #5281b9;
     margin-bottom: 2px;
-    animation: 1.1s linear 0s infinite activity_typing;
+    animation: 1.1s linear 0s infinite typing;
     width: 5px;
     height: 5px;
     border-radius: 50%;
