@@ -3,6 +3,7 @@
     <div class="header">
       <HeaderButton/>
       <div class="header_name">{{ l('im_header_title') }}</div>
+      <MessagesListMenu/>
     </div>
     <Scrolly class="peers_wrap" :vclass="{ loading }" @scroll="onScroll">
       <MessagesPeer v-for="{ peer, msg } of conversations" :key="peer.id" :peer="peer" :msg="msg"/>
@@ -17,12 +18,14 @@
   import { parseConversation, parseMessage } from 'js/messages';
 
   import Scrolly from '../UI/Scrolly.vue';
+  import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
   import HeaderButton from '../HeaderButton.vue';
   import MessagesPeer from './MessagesPeer.vue';
 
   export default {
     components: {
       Scrolly,
+      MessagesListMenu,
       HeaderButton,
       MessagesPeer
     },
@@ -74,5 +77,9 @@
     /* 45px - постоянная высота у .header */
     height: calc(100% - 45px);
     border-right: 1px solid #e7e8ec;
+  }
+
+  .peers_container .header_name {
+    flex-grow: 1;
   }
 </style>

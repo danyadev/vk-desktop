@@ -47,7 +47,7 @@
       onEscape() {
         const keys = Object.keys(this.modals);
 
-        if(keys) eventBus.emit('modal:close', keys[keys.length-1]);
+        if(keys.length) eventBus.emit('modal:close', keys[keys.length-1]);
       }
     },
     mounted() {
