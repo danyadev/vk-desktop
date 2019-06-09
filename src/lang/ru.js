@@ -18,6 +18,8 @@ export default {
   open_console: 'Открыть консоль',
   open_devtools: 'Открыть в DevTools',
 
+  dark_theme: ['Включить темную тему', 'Выключить темную тему'],
+
   // Авторизация
   available_accounts_list: 'Список доступных аккаунтов',
   enter_login: 'Введите логин',

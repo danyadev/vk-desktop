@@ -28,5 +28,6 @@ export const users = new Storage('users', {
 
 export const settings = new Storage('settings', {
   window: win.getBounds(),
-  langName: 'ru'
+  langName: 'ru',
+  theme: 'light'
 });

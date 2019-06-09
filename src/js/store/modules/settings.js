@@ -12,6 +12,9 @@ export default {
   mutations: {
     setWindowBounds(state, bounds) {
       state.window = bounds;
+    },
+    setTheme(state, name) {
+      state.theme = name;
     }
   },
   getters: {

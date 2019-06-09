@@ -1,8 +1,8 @@
 <template>
   <ActionsMenu>
-    <div class="act_menu_item">
+    <div class="act_menu_item" @click="setDarkTheme">
       <img src="~assets/palette.svg" class="act_menu_icon">
-      <div class="act_menu_data">Тут ничего нет</div>
+      <div class="act_menu_data">{{ l('dark_theme', isDarkTheme) }}</div>
     </div>
   </ActionsMenu>
 </template>
@@ -13,6 +13,16 @@
   export default {
     components: {
       ActionsMenu
+    },
+    computed: {
+      isDarkTheme() {
+        return this.$store.state.settings.theme == 'dark';
+      }
+    },
+    methods: {
+      setDarkTheme() {
+        this.$store.commit('settings/setTheme', this.isDarkTheme ? 'light' : 'dark');
+      }
     }
   }
 </script>

@@ -31,13 +31,14 @@
           return el.classList && el.classList.contains('act_menu_wrap');
         });
 
+        clearTimeout(this.timeout);
+
         if(close) {
           this.timeout = setTimeout(() => {
             document.body.removeEventListener('mousemove', this.onMouseMove);
             this.active = false;
-          }, 750);
+          }, 600);
         } else {
-          clearTimeout(this.timeout);
           this.active = true;
         }
       }
@@ -52,11 +53,9 @@
 
   .act_menu_btn_wrap {
     height: 40px;
-    padding-top: .5px;
   }
 
   .act_menu_btn {
-    flex: none;
     width: 40px;
     height: 40px;
     padding: 8px;

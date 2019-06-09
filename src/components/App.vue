@@ -1,5 +1,5 @@
 <template>
-  <div class="root">
+  <div class="root" :theme="theme">
     <Titlebar/>
     <div class="app">
       <MainMenu v-if="activeUser"/>
@@ -19,6 +19,8 @@
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
 
+  import '../themes/default.css';
+
   export default {
     name: 'App',
     components: {
@@ -27,7 +29,8 @@
       ModalsWrapper
     },
     computed: {
-      ...mapState('users', ['activeUser'])
+      ...mapState('users', ['activeUser']),
+      ...mapState('settings', ['theme'])
     },
     methods: {
       initUser() {
