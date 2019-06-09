@@ -123,7 +123,7 @@ async function getLastMessage(peer_id) {
 
 async function watchTyping(peer_id, user_id) {
   await timer(1000);
-  
+
   const user = store.state.messages.typing[peer_id][user_id];
 
   if(user && user.time) {
@@ -253,7 +253,7 @@ export default {
 
         peerData.unread = msg.out ? 0 : conv && conv.peer.unread + 1;
 
-        if(msg.out) peerData.in_read = msg.id;
+        if(msg.out) peerData.in_read = peerData.new_in_read = msg.id;
         else peerData.out_read = msg.id;
       }
 
