@@ -57,7 +57,7 @@
         this.initUser();
       }
     },
-    mounted() {
+    created() {
       this.initUser();
     }
   }
