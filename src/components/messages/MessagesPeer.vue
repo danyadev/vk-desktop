@@ -55,7 +55,7 @@
         else return this.owner.online_mobile ? 'mobile' : 'desktop';
       },
       photo() {
-        if(this.isChat) return this.peer.photo || 'assets/im_chat_photo.png';
+        if(this.isChat) return !this.peer.left && this.peer.photo || 'assets/im_chat_photo.png';
         else return getPhoto(this.owner);
       },
       chatName() {

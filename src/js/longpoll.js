@@ -154,7 +154,7 @@ export default new class Longpoll extends EventEmitter {
         console.warn('[longpoll] Неизвестное событие', [id, ...item]);
       } else {
         const data = event.parser(item[1] == 'fake' ? item[0] : item);
-        if(!data) return;
+        if(!data) continue;
 
         if(event.pack) {
           const prev = events[events.length - 1];
