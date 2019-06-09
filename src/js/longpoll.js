@@ -142,8 +142,7 @@ export default new class Longpoll extends EventEmitter {
   emitHistory(history = []) {
     if(!history.length) return;
 
-    const packs = {};
-    const otherEvents = [];
+    const events = [];
 
     for(const item of history) {
       if(this.debug && ![8, 9].includes(item[0])) console.log('[lp]', item.slice());
@@ -155,27 +154,22 @@ export default new class Longpoll extends EventEmitter {
         console.warn('[longpoll] Неизвестное событие', [id, ...item]);
       } else {
         const data = event.parser(item[1] == 'fake' ? item[0] : item);
+        if(!data) return;
 
-        if(event.pack && data) {
-          const key = item[2];
+        if(event.pack) {
+          const prev = events[events.length - 1];
 
-          if(!packs[id]) packs[id] = {};
-
-          if(!packs[id][key]) packs[id][key] = [data];
-          else packs[id][key].push(data);
-        } else if(data) otherEvents.push([event.handler, data]);
+          if(prev && prev[2] == item[2]) prev[1].push(data);
+          else events.push([id, [data], item[2]]);
+        } else events.push([id, data]);
       }
     }
 
-    for(const id of [4, 2, 3]) {
-      const pack = packs[id];
-      if(!pack) continue;
+    for(const item of events) {
+      const { handler } = longpollEvents[item[0]];
 
-      for(const key in pack) {
-        longpollEvents[id].handler({ key: Number(key), items: pack[key] });
-      }
+      if(item[2]) handler({ key: Number(item[2]), items: item[1] });
+      else handler(item[1]);
     }
-
-    for(const [handler, data] of otherEvents) handler(data);
   }
 }

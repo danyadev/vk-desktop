@@ -248,22 +248,28 @@ export default {
         last_msg_id: lastMsg.id
       };
 
-      for(const { msg } of items) {
-        removeTyping(peer_id, msg.from);
-
-        peerData.unread = msg.out ? 0 : conv && conv.peer.unread + 1;
-
-        if(msg.out) peerData.in_read = peerData.new_in_read = msg.id;
-        else peerData.out_read = msg.id;
-      }
-
       store.commit('messages/addMessages', {
         peer_id: peer_id,
         messages: items.map(({ msg }) => msg),
         addNew: true
       });
 
-      for(const { msg } of items) longpoll.emit('new_message', msg.random_id);
+      for(const { msg } of items) {
+        longpoll.emit('new_message', msg.random_id);
+
+        removeTyping(peer_id, msg.from);
+
+        if(msg.out) {
+          peerData.new_in_read = msg.id;
+          peerData.in_read = msg.id;
+          peerData.unread = 0;
+        } else {
+          peerData.out_read = msg.id;
+
+          if(peerData.unread != null) peerData.unread++;
+          else if(conv) peerData.unread = conv.peer.unread + 1;
+        }
+      }
 
       if(lastMsg.hidden) return;
 
