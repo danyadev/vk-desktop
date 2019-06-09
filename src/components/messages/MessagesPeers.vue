@@ -5,7 +5,11 @@
       <div class="header_name">{{ l('im_header_title') }}</div>
       <MessagesListMenu/>
     </div>
-    <Scrolly class="peers_wrap" :vclass="{ loading }" @scroll="onScroll">
+    <Scrolly class="peers_wrap"
+             :vclass="{ loading }"
+             :lock="lockScroll"
+             @scroll="onScroll"
+    >
       <MessagesPeer v-for="{ peer, msg } of conversations" :key="peer.id" :peer="peer" :msg="msg"/>
     </Scrolly>
   </div>
@@ -31,7 +35,8 @@
     },
     data: () => ({
       loading: true,
-      loaded: false
+      loaded: false,
+      lockScroll: false
     }),
     computed: {
       ...mapGetters('messages', {
@@ -45,6 +50,8 @@
           fields: fields,
           extended: true
         });
+
+        this.lockScroll = true;
 
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
 
@@ -64,6 +71,9 @@
           this.load();
         }
       })
+    },
+    updated() {
+      setTimeout(() => this.lockScroll = false, 0);
     },
     mounted() {
       this.load();
