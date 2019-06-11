@@ -54,7 +54,7 @@
           const { canWrite, members, channel, left } = this.peer;
 
           if(!canWrite && !channel) return this.l('im_chat_kicked');
-          else if(left) return this.l('im_chat_left');
+          else if(left) return this.l(channel ? 'im_chat_left_channel' : 'im_chat_left');
           else return this.l('im_chat_members', [members], members);
         } else {
           if(!this.owner) return this.l('loading');

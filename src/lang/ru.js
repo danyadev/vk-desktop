@@ -51,6 +51,7 @@ export default {
   im_chat_group: 'Сообщество',
   im_chat_cant_write: 'Отправка сообщений ограничена',
   im_chat_left: 'Вы вышли из беседы',
+  im_chat_left_channel: 'Вы отписаны от канала',
   im_chat_kicked: 'Вы исключены из беседы',
   im_user_deleted: 'Страница удалена',
   im_input_placeholder: 'Введите сообщение...',

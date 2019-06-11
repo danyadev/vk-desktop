@@ -18,8 +18,14 @@
       <img class="send_btn" src="~assets/im_send.svg" @click="sendMessage">
     </template>
     <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#e1e5f0" @click="toggleNotifications">
-      <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
-      {{ l('im_toggle_notifications', !peer.muted) }}
+      <template v-if="peer.left">
+        <img src="~assets/plus.svg">
+        {{ l('im_toggle_left_state', 3) }}
+      </template>
+      <template v-else>
+        <img v-if="":src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
+        {{ l('im_toggle_notifications', !peer.muted) }}
+      </template>
     </Ripple>
     <div v-else class="chat_input_error">
       <div class="chat_input_error_img"></div>
@@ -80,10 +86,17 @@
         }
       },
       toggleNotifications() {
-        vkapi('account.setSilenceMode', {
-          peer_id: this.peer.id,
-          time: this.peer.muted ? 0 : -1
-        });
+        if(this.peer.left) {
+          vkapi('messages.addChatUser', {
+            chat_id: this.peer.id - 2e9,
+            user_id: this.$store.getters['users/user'].id
+          });
+        } else {
+          vkapi('account.setSilenceMode', {
+            peer_id: this.peer.id,
+            time: this.peer.muted ? 0 : -1
+          });
+        }
       },
       paste() {
         const text = escape(clipboard.readText()).replace(/\n/g, '<br>');
