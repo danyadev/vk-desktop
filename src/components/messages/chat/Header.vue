@@ -8,7 +8,7 @@
       <div class="name_wrap">
         <div class="name" v-emoji="title"></div>
         <div class="verified white" v-if="owner && owner.verified"></div>
-        <div class="messages_muted" v-if="peer && peer.muted"></div>
+        <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="messages_muted"/>
       </div>
       <div class="online">{{ online }}</div>
     </div>
@@ -19,11 +19,14 @@
 <script>
   import { getLastOnlineDate } from 'js/date';
   import { getPhoto } from 'js/utils';
+
+  import Icon from '../../UI/Icon.vue';
   import Ripple from '../../UI/Ripple.vue';
 
   export default {
     props: ['id', 'peer'],
     components: {
+      Icon,
       Ripple
     },
     computed: {
@@ -110,10 +113,10 @@
     margin-left: 4px;
   }
 
-  .name_wrap .messages_muted {
-    opacity: 0.7;
-    background: url('~assets/muted_white.svg') 0 / 13px no-repeat;
-    width: 12px;
+  .messages_muted {
+    opacity: .7;
+    width: 14px;
+    height: 16px;
     margin-left: 3px;
   }
 

@@ -6,13 +6,14 @@
             class="fast modal_header_close"
             @click.stop="close"
     >
-      <img src="~assets/close_white.svg">
+      <Icon name="close" color="#fff"/>
     </Ripple>
   </div>
 </template>
 
 <script>
   import Ripple from '../UI/Ripple.vue';
+  import Icon from '../UI/Icon.vue';
 
   export default {
     props: {
@@ -22,7 +23,8 @@
       }
     },
     components: {
-      Ripple
+      Ripple,
+      Icon
     },
     methods: {
       close() {
@@ -49,14 +51,18 @@
   }
 
   .modal_header_close {
-    box-sizing: content-box;
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
     padding: 8px;
     border-radius: 50%;
     cursor: pointer;
     opacity: .7;
     transition: opacity .3s;
+  }
+
+  .modal_header_close svg {
+    width: 16px;
+    height: 16px;
   }
 
   .modal_header_close:hover { opacity: 1 }

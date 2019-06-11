@@ -61,7 +61,7 @@ module.exports = (env, { mode }) => {
           use: [
             isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
             'css-loader',
-            'clean-css-loader?level=2'
+            ...(isDev ? [] : ['clean-css-loader?level=2'])
           ]
         },
         {

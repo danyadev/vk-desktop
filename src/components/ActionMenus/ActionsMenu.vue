@@ -77,7 +77,7 @@
     margin-top: -6px;
     opacity: 0;
     pointer-events: none;
-    z-index: 10;
+    z-index: 5;
     background-color: #fff;
     border-radius: 6px;
     border: 1px solid rgba(0, 0, 0, .12);
