@@ -111,6 +111,9 @@
   }
 
   .act_menu_icon {
+    flex: none;
+    width: 24px;
+    height: 24px;
     margin-right: 12px;
   }
 </style>

@@ -17,7 +17,8 @@
     'Logout',
     'BlockedAccount',
     'Multiaccount',
-    'Auth'
+    'Auth',
+    'ClearHistory'
   ];
 
   for(const name of modalNames) {

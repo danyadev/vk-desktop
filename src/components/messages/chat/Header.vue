@@ -12,7 +12,7 @@
       </div>
       <div class="online">{{ online }}</div>
     </div>
-    <img src="~assets/actions_icon.svg" class="actions_btn">
+    <MessagesChatMenu :peer_id="id"/>
   </div>
 </template>
 
@@ -22,12 +22,14 @@
 
   import Icon from '../../UI/Icon.vue';
   import Ripple from '../../UI/Ripple.vue';
+  import MessagesChatMenu from '../../ActionMenus/MessagesChatMenu.vue';
 
   export default {
     props: ['id', 'peer'],
     components: {
       Icon,
-      Ripple
+      Ripple,
+      MessagesChatMenu
     },
     computed: {
       owner() {
@@ -84,6 +86,10 @@
     transition: opacity .3s;
   }
 
+  .header_back:hover {
+    opacity: 1;
+  }
+
   .header_back img {
     padding: 8px;
   }
@@ -138,19 +144,5 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     margin-top: 2px;
-  }
-
-  .actions_btn {
-    flex: none;
-    width: 40px;
-    height: 40px;
-    padding: 8px;
-    cursor: pointer;
-    opacity: .7;
-    transition: opacity .3s;
-  }
-
-  .header_back:hover, .actions_btn:hover {
-    opacity: 1;
   }
 </style>
