@@ -201,7 +201,6 @@ export default {
       const messagesList = store.state.messages.messages[peer_id] || [];
       const lastLocalConv = convList[convList.length - 1];
       const [firstLocalMsg] = messagesList;
-      const { peersList } = store.state.messages;
       const newMsgPeer = items[0].peer;
 
       items = items.sort((a, b) => a.id - b.id);
@@ -242,7 +241,7 @@ export default {
         if(!conv) {
           store.commit('messages/addConversations', [items[items.length - 1]]);
           loadConversation(peer_id);
-        } else if(!peersList.includes(peer_id)) {
+        } else if(!store.state.messages.peersList.includes(peer_id)) {
           store.commit('messages/updatePeersList', { id: peer_id });
         }
 
