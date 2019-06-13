@@ -85,6 +85,7 @@
         const { scrollTop, scrollHeight } = messagesList;
 
         await this.$nextTick();
+        setTimeout(() => this.lockScroll = false, 0);
 
         if(!hasMessages) {
           this.scrollToEnd();
@@ -110,9 +111,6 @@
           this.load();
         }
       }, true)
-    },
-    updated() {
-      setTimeout(() => this.lockScroll = false, 0);
     },
     activated() {
       if(this.scrollTop != null) {

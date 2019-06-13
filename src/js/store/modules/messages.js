@@ -68,21 +68,21 @@ export default {
         moveArrItem(state.peersList, index, 0);
       } else {
         const peers = this.getters['messages/conversationsList'];
-        const peerDate = peers[index].msg.date;
+        const { id } = peers[index].msg;
         let newIndex = index;
 
         if(restoreMsg) {
           if(index == 0) return;
 
           for(let i=0; i<index; i++) {
-            if(peers[i].msg.date < peerDate) {
+            if(peers[i].msg.id < id) {
               newIndex = i;
               break;
             }
           }
         } else if(index != peers.length-1) {
           for(let i=peers.length-1; i>index; i--) {
-            if(peers[i].msg.date > peerDate) {
+            if(peers[i].msg.id > id) {
               newIndex = i;
               break;
             }

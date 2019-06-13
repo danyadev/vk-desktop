@@ -61,8 +61,11 @@
         }));
 
         this.$store.commit('messages/addConversations', conversations);
-        this.loading = false;
 
+        await this.$nextTick();
+        setTimeout(() => this.lockScroll = false, 0);
+
+        this.loading = false;
         if(items.length < 20) this.loaded = true;
       },
       onScroll: endScroll(function() {
@@ -71,9 +74,6 @@
           this.load();
         }
       })
-    },
-    updated() {
-      setTimeout(() => this.lockScroll = false, 0);
     },
     mounted() {
       this.load();

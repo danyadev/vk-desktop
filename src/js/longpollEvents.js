@@ -197,14 +197,36 @@ export default {
     parser: getMessage,
     async handler({ key: peer_id, items }) {
       const conv = store.state.messages.conversations[peer_id];
-      const { peersList } = store.state.messages;
       const convList = store.getters['messages/conversationsList'];
-      const lastLocalMsg = conv && conv.msg;
-      const lastAddedMsg = items[items.length-1];
-      const lastLocalConv = convList[peersList.length - 1];
+      const messagesList = store.state.messages.messages[peer_id] || [];
+      const lastLocalConv = convList[convList.length - 1];
+      const [firstLocalMsg] = messagesList;
+      const { peersList } = store.state.messages;
+      const newMsgPeer = items[0].peer;
+
+      items = items.sort((a, b) => a.id - b.id);
+
+      if(!firstLocalMsg || items[0].msg.id < firstLocalMsg.id) {
+        const { items: [prevMsg] } = await vkapi('messages.getHistory', {
+          peer_id: peer_id,
+          offset: messagesList.length,
+          count: 1
+        });
+
+        if(prevMsg) {
+          let id = prevMsg.conversation_msg_id;
+
+          for(const { msg } of items) {
+            if(msg.conversation_msg_id-1 == id) id = msg.conversation_msg_id;
+          }
+
+          items = items.filter(({ msg }) => msg.conversation_msg_id >= id);
+          items.push({ peer: newMsgPeer, msg: prevMsg });
+        }
+      }
 
       const { items: newMessages } = await vkapi('messages.getById', {
-        message_ids: items.map(({ msg }) => msg.id)
+        message_ids: items.map(({ msg }) => msg.id).join(',')
       });
 
       for(const msg of newMessages) {
@@ -216,11 +238,9 @@ export default {
 
       const msg = await getLastMessage(peer_id);
 
-      if(!lastLocalMsg || lastAddedMsg.msg.date > lastLocalMsg.date) {
-        if(lastLocalConv && msg.date < lastLocalConv.msg.date) return;
-
+      if(!lastLocalConv || lastLocalConv.msg.id < msg.id) {
         if(!conv) {
-          store.commit('messages/addConversations', [lastAddedMsg]);
+          store.commit('messages/addConversations', [items[items.length - 1]]);
           loadConversation(peer_id);
         } else if(!peersList.includes(peer_id)) {
           store.commit('messages/updatePeersList', { id: peer_id });
@@ -396,17 +416,8 @@ export default {
     }
   },
 
-  11: {
-    parser(data) {
-
-    },
-    handler(data) {
-
-    }
-  },
-
   12: {
-    // Выключение уведомлений в чате
+    // Выключение уведомлений в чате (16)
     // [peer_id, flag]
     parser(data) {
 
@@ -442,8 +453,7 @@ export default {
     // Изменение данных чата
     // [chat_id]
     // Событие не используется, так как событие 52 полностью его заменяет
-    parser() {},
-    handler() {}
+    parser() {}
   },
 
   52: {
@@ -475,10 +485,12 @@ export default {
 
           if(isMe) {
             peer.left = false;
-            peer.canWrite = true;
+            peer.canWrite = !peer.channel;
 
-            loadConversation(peer_id);
-            loadConversationMembers(peer.id, true);
+            if(!peer.channel) {
+              loadConversation(peer_id);
+              loadConversationMembers(peer.id, true);
+            }
           }
 
           break;
