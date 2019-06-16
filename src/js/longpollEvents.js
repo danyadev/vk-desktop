@@ -66,7 +66,7 @@ function getAttachments(data) {
 function getMessage(data) {
   const user = store.getters['users/user'];
 
-  // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
+  // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
   // Если данные получены через messages.getLongPollHistory
   if(!Array.isArray(data)) return data;
   // Если это 2 событие прочтения сообщения или пометки его важным
@@ -75,15 +75,18 @@ function getMessage(data) {
 
   const flag = hasFlag.bind(this, data[1]);
   const action = getServiceMessage(data[5]);
+  const from_id = flag('outbox') ? user.id : Number(data[5].from || data[2]);
+  const { keyboard } = data[5];
 
   return {
     peer: {
-      id: data[2]
+      id: data[2],
+      keyboard: keyboard && Object.assign(keyboard, { author_id: from_id })
     },
     msg: {
       id: data[0],
       text: action ? '' : data[4],
-      from: flag('outbox') ? user.id : Number(data[5].from || data[2]),
+      from: from_id,
       date: data[3],
       out: flag('outbox'),
       editTime: data[9],
@@ -191,7 +194,7 @@ export default {
     // 2) Отмена пометки важным (8), не юзается
     // 3) Отмена пометки сообщения как спам (64)
     // 4) Восстановление удаленного сообщения (128)
-    // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
+    // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
     // [msg_id, flags, peer_id] (1 или 2)
     pack: true,
     parser: getMessage,
@@ -255,7 +258,7 @@ export default {
 
   4: {
     // Новое сообщение
-    // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
+    // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
     pack: true,
     parser: getMessage,
     handler({ key: peer_id, items }) {
@@ -273,7 +276,7 @@ export default {
         addNew: true
       });
 
-      for(const { msg } of items) {
+      for(const { msg, peer: { keyboard } } of items) {
         longpoll.emit('new_message', msg.random_id);
 
         removeTyping(peer_id, msg.from);
@@ -284,6 +287,8 @@ export default {
           peerData.unread = 0;
         } else {
           peerData.out_read = msg.id;
+
+          if(keyboard) peerData.keyboard = keyboard;
 
           if(peerData.unread != null) peerData.unread++;
           else if(conv) peerData.unread = conv.peer.unread + 1;
@@ -315,7 +320,7 @@ export default {
 
   5: {
     // Редактирование сообщения
-    // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
+    // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
     parser: getMessage,
     handler({ peer, msg }) {
       const conv = store.state.messages.conversations[peer.id];
@@ -441,7 +446,7 @@ export default {
 
   18: {
     // Добавление сниппета к сообщению (если сообщение с ссылкой)
-    // [msg_id, flags, peer_id, timestamp, text, {from, action}, {attachs}, random_id, conv_msg_id, edit_time]
+    // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
     parser: getMessage,
     handler({ peer: { id: peer_id }, msg }) {
       store.commit('messages/editMessage', { peer_id, msg });

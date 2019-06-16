@@ -135,7 +135,7 @@
 
   .message_unreaded_messages span {
     position: relative;
-    background-color: #fff;
+    background: #fff;
     padding: 0 10px;
   }
 
@@ -150,7 +150,7 @@
   }
 
   .message_wrap.isUnreaded:not(.serviceMessage) {
-    background-color: #edf0f5;
+    background: #edf0f5;
   }
 
   .message_wrap {

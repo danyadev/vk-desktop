@@ -1,5 +1,5 @@
 <template>
-  <Component :is="require(`!vue-svg-loader!../../assets/${name}.svg`)"/>
+  <Component :is="require(`!vue-svg-loader!assets/${name}.svg`)"/>
 </template>
 
 <script>

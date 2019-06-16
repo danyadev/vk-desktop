@@ -39,7 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #5281b9;
+    background: #5281b9;
     height: 48px;
     padding: 0 10px 0 25px;
     border-radius: 5px 5px 0 0;

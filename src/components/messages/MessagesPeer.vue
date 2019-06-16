@@ -122,7 +122,7 @@
   }
 
   .peer:hover {
-    background-color: #f5f7fa;
+    background: #f5f7fa;
     cursor: pointer;
   }
 
@@ -153,7 +153,7 @@
   .photo_wrap.desktop::after {
     height: 8px;
     border-radius: 50%;
-    background-color: #8ac176;
+    background: #8ac176;
   }
 
   .photo_wrap img {
@@ -203,8 +203,7 @@
     width: 13px;
     height: 13px;
     margin: 3px 0 0 4px;
-    background-image: url('~assets/muted.svg');
-    background-size: 13px;
+    background: url('~assets/muted.svg') 0 / 13px;
   }
 
   .time {
@@ -245,7 +244,7 @@
     padding: 0 6px;
     margin: 2px 0 0 3px;
     border-radius: 10px;
-    background-color: #5181b8;
+    background: #5181b8;
     color: #fff;
     font-size: 11px;
     font-weight: 500;
@@ -253,7 +252,7 @@
   }
 
   .unread:not(.outread):empty { display: none }
-  .unread:not(.outread).muted { background-color: #b2b7c2 }
+  .unread:not(.outread).muted { background: #b2b7c2 }
 
   .unread.outread {
     flex: none;
@@ -261,6 +260,6 @@
     margin: 7px 4px 0 4px;
     width: 8px;
     height: 8px;
-    background-color: #93adc8;
+    background: #93adc8;
   }
 </style>

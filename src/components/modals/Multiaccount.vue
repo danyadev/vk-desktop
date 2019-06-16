@@ -37,7 +37,7 @@
     },
     methods: {
       getUserDescription(user) {
-        if(this.activeUser != user.id) return '@' + user.domain;
+        if(this.activeUser != user.id) return '@' + user.screen_name;
         else return this.l('ml_multiacc_active_account');
       },
       async setAccount(id) {

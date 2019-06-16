@@ -47,7 +47,7 @@
     position: relative;
     height: 32px;
     z-index: 7;
-    background-color: #5281b9;
+    background: #5281b9;
   }
 
   .titlebar_drag {
@@ -79,11 +79,11 @@
     transition: .2s background-color;
   }
 
-  .titlebar_button:hover { background-color: rgba(0, 0, 0, .2) }
-  .titlebar_button:active { background-color: rgba(0, 0, 0, .3) }
+  .titlebar_button:hover { background: rgba(0, 0, 0, .2) }
+  .titlebar_button:active { background: rgba(0, 0, 0, .3) }
 
-  .titlebar_button.close:hover { background-color: #eb0716 }
-  .titlebar_button.close:active { background-color: #de000f }
+  .titlebar_button.close:hover { background: #eb0716 }
+  .titlebar_button.close:active { background: #de000f }
 
   .titlebar.maximized .titlebar_button.maximize { display: none }
   .titlebar:not(.maximized) .titlebar_button.restore { display: none }

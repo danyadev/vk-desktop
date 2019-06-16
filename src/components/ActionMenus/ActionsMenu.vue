@@ -78,7 +78,7 @@
     opacity: 0;
     pointer-events: none;
     z-index: 5;
-    background-color: #fff;
+    background: #fff;
     border-radius: 6px;
     border: 1px solid rgba(0, 0, 0, .12);
     box-shadow: 0 4px 36px -6px rgba(0, 0, 0, .4);
@@ -101,13 +101,13 @@
   }
 
   .act_menu_item:hover {
-    background-color: #f1f1f3;
+    background: #f1f1f3;
   }
 
   .act_menu_separator {
     height: 1px;
     margin: 4px 0;
-    background-color: #e0e0e0;
+    background: #e0e0e0;
   }
 
   .act_menu_icon {

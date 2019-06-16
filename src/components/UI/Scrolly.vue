@@ -320,7 +320,7 @@
 
   .scrolly-bar:hover:before,
   .scrolly.isScrolling .scrolly-bar:before {
-    background-color: rgba(0, 0, 0, .4);
+    background: rgba(0, 0, 0, .4);
   }
 
   .scrolly-bar-wrap.axis-x .scrolly-bar {

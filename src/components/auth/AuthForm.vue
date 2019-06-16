@@ -100,6 +100,7 @@
   }
 
   .auth_password_switch:hover { opacity: 1 }
+
   .auth_password_switch.hidden {
     background-image: url('~assets/hide.svg');
   }

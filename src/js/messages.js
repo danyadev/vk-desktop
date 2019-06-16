@@ -20,6 +20,7 @@ export function parseConversation(conversation) {
     photo: isChat && getPhoto(conversation.chat_settings.photo),
     title: isChat && escape(conversation.chat_settings.title).replace(/\n/g, ' '),
     canWrite: conversation.can_write.allowed,
+    keyboard: conversation.current_keyboard,
     last_msg_id: conversation.last_message_id,
     // id последнего прочтенного входящего сообщения
     in_read: conversation.in_read,

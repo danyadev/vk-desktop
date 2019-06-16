@@ -97,7 +97,7 @@
 
   .typing_item {
     display: inline-block;
-    background-color: #5281b9;
+    background: #5281b9;
     margin-bottom: 2px;
     animation: 1.1s linear 0s infinite typing;
     width: 5px;

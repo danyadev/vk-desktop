@@ -95,15 +95,20 @@
     width: 100%;
     height: 100%;
     z-index: 5;
-    background-color: rgba(0, 0, 0, 0);
+    background: #fff0;
     visibility: hidden;
   }
 
-  .menu_wrap { transition: background-color .15s, visibility .15s }
-  .menu_wrap.active .menu { transform: translateZ(0) }
+  .menu_wrap {
+    transition: background-color .15s, visibility .15s;
+  }
+
+  .menu_wrap.active .menu {
+    transform: translateZ(0);
+  }
 
   .menu_wrap.active {
-    background-color: rgba(0, 0, 0, .5);
+    background: rgba(0, 0, 0, .5);
     visibility: visible;
   }
 
@@ -114,7 +119,7 @@
     height: 100%;
     z-index: 3;
     overflow: hidden;
-    background-color: white;
+    background: #fff;
     box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
   }
 
@@ -127,7 +132,7 @@
     overflow: hidden;
     height: 125px;
     padding: 8px 10px 10px 12px;
-    background-color: rgba(38, 37, 37, .5);
+    background: rgba(38, 37, 37, .5);
   }
 
   .menu_account_background {
@@ -202,10 +207,10 @@
   }
 
   .menu_item:hover, .menu_item.active {
-    background-color: #eff4f9;
+    background: #eff4f9;
   }
 
-  .menu_item.active .menu_item_icon { background-color: #648fc1 }
+  .menu_item.active .menu_item_icon { background: #648fc1 }
   .menu_item.active .menu_item_name { color: #3e70a9 }
 
   .menu_item_name {
@@ -215,7 +220,7 @@
 
   .menu_item_counter:not(:empty) {
     color: #475769;
-    background-color: #d2dfea;
+    background: #d2dfea;
     padding: 3px 5px 1px 5px;
     border-radius: 4px;
     margin-right: 8px;
@@ -226,7 +231,7 @@
     width: 26px;
     height: 26px;
     margin-right: 10px;
-    background-color: #a6a6a6;
+    background: #a6a6a6;
     -webkit-mask-size: cover;
     transition: background-color .3s;
   }
@@ -240,6 +245,5 @@
   .menu_item.logout .menu_item_name {
     font-size: 16px;
     color: #de3f3f;
-    margin-top: -4px;
   }
 </style>

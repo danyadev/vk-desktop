@@ -4,7 +4,7 @@ import store from './store/';
 import { version as AppVersion } from 'package-json';
 
 // Минимальный fields для получения профилей в приложении
-export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,domain';
+export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,screen_name';
 
 // Список нужных регулярных выражений
 export const regexp = {
@@ -13,7 +13,7 @@ export const regexp = {
 
 // User-Agents для выполнения запросов
 export const VKDesktopUserAgent = `VKDesktop/${AppVersion}`;
-export const AndroidUserAgent = 'VKAndroidApp/5.35-3700';
+export const AndroidUserAgent = 'VKAndroidApp/5.36-3760';
 
 // Заменяем опасные для разметки символы в выводимых данных на безопасные
 export function escape(text) {

@@ -146,19 +146,19 @@
   }
 
   .button {
-    background-color: #5789c5;
+    background: #5789c5;
     color: #f3f3f3;
   }
 
   .light_button {
-    background-color: #e4eaf0;
+    background: #e4eaf0;
     color: #55677d;
   }
 
-  .button:not(:disabled):hover { background-color: #547fb3 }
-  .button:not(:disabled):active { background-color: #4977a9 }
-  .light_button:not(:disabled):hover { background-color: #dbe3eb }
-  .light_button:not(:disabled):active { background-color: #d3dce6 }
+  .button:not(:disabled):hover { background: #547fb3 }
+  .button:not(:disabled):active { background: #4977a9 }
+  .light_button:not(:disabled):hover { background: #dbe3eb }
+  .light_button:not(:disabled):active { background: #d3dce6 }
 
   .emoji {
     margin: 0 1px -3px 1px;
@@ -169,7 +169,7 @@
   .header {
     display: flex;
     align-items: center;
-    background-color: #5281b9;
+    background: #5281b9;
     width: 100%;
     height: 45px;
   }
@@ -200,11 +200,11 @@
     width: 16px;
     height: 16px;
     vertical-align: middle;
-    background-image: url('~assets/verified.svg');
+    background: url('~assets/verified.svg');
   }
 
   .verified.white {
-    background-image: url('~assets/verified_white.svg');
+    background: url('~assets/verified_white.svg');
     opacity: .7;
   }
 </style>

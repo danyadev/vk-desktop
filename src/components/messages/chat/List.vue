@@ -137,7 +137,10 @@
         await this.$nextTick();
 
         if(loadingMessages.includes(random_id)) {
-          this.$store.commit('messages/removeLoadingMessage', random_id);
+          this.$store.commit('messages/removeLoadingMessage', {
+            peer_id: this.id,
+            random_id: random_id
+          });
 
           this.scrollToEnd();
         } else if(scrollTop + clientHeight == scrollHeight) {
