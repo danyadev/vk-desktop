@@ -32,7 +32,7 @@
 <style>
   .keyboard {
     max-height: 40vh;
-    padding: 8px 8px 12px 8px;
+    padding: 8px 12px 12px 12px;
   }
 
   .keyboard_line {

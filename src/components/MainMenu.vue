@@ -6,9 +6,7 @@
         <Ripple color="rgba(0, 0, 0, .2)"
                 class="fast menu_account_multiaccount"
                 @click.stop="openModal('multiaccount')"
-        >
-          <img src="~assets/menu_groups.svg">
-        </Ripple>
+        ><img :src="'assets/menu/groups.svg'"></Ripple>
         <img class="menu_account_photo" :src="user.photo_100">
         <div class="menu_account_name">
           {{ user.first_name }} {{ user.last_name }}
@@ -18,15 +16,12 @@
       </div>
 
       <div class="menu_items">
-        <Ripple v-for="route of routes"
-                :key="route"
+        <Ripple v-for="{ route, active } of routes" :key="route"
                 color="#e1e7ed"
-                :class="['menu_item', { active: isActiveRoute(`/${route}`) }]"
+                :class="['menu_item', { active }]"
                 @click.stop="openPage(`/${route}`)"
         >
-          <div class="menu_item_icon"
-               :style="{ webkitMaskImage: `url('assets/menu_${route}.svg')` }"
-          ></div>
+          <Icon :name="`menu/${route}`" :color="active ? '#648fc1' : '#a6a6a6'" width="26" height="26"/>
           <div class="menu_item_name">{{ l('menu', route) }}</div>
           <div class="menu_item_counter">{{ menuCounters[route] || '' }}</div>
         </Ripple>
@@ -44,18 +39,24 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex';
+
   import Ripple from './UI/Ripple.vue';
+  import Icon from './UI/Icon.vue';
 
   export default {
     components: {
-      Ripple
+      Ripple,
+      Icon
     },
-    data: () => ({
-      routes: ['messages']
-    }),
     computed: {
       ...mapState(['menuState', 'menuCounters']),
-      ...mapGetters('users', ['user'])
+      ...mapGetters('users', ['user']),
+      routes() {
+        return ['messages'].map((page) => ({
+          route: page,
+          active: this.isActiveRoute(`/${page}`)
+        }));
+      }
     },
     methods: {
       toggleMenu(event) {
@@ -67,16 +68,12 @@
         this.$store.commit('setMenuState', state);
       },
       isActiveRoute(route) {
-        const regex = new RegExp(`${route}($|/)`);
-
-        return regex.test(this.$route.path);
+        return new RegExp(`${route}($|/)`).test(this.$route.path);
       },
       openPage(route) {
         this.toggleMenu(false);
 
-        if(this.isActiveRoute(route)) return;
-        else if(event.shiftKey) this.$router.push(route);
-        else this.$router.replace(route);
+        if(!this.isActiveRoute(route)) this.$router.replace(route);
       },
       openModal(name) {
         this.toggleMenu(false);
@@ -210,11 +207,13 @@
     background: #eff4f9;
   }
 
-  .menu_item.active .menu_item_icon { background: #648fc1 }
-  .menu_item.active .menu_item_name { color: #3e70a9 }
+  .menu_item.active .menu_item_name {
+    color: #3e70a9;
+  }
 
   .menu_item_name {
     flex-grow: 1;
+    margin-left: 10px;
     user-select: none;
   }
 
@@ -225,15 +224,6 @@
     border-radius: 4px;
     margin-right: 8px;
     font-size: 14px;
-  }
-
-  .menu_item_icon {
-    width: 26px;
-    height: 26px;
-    margin-right: 10px;
-    background: #a6a6a6;
-    -webkit-mask-size: cover;
-    transition: background-color .3s;
   }
 
   /* Выход из аккаунта */
