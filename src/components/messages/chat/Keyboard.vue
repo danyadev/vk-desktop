@@ -1,22 +1,24 @@
 <template>
-  <div class="keyboard">
-    <div v-for="line of buttons" class="keyboard_line">
-      <Ripple v-for="{ action, color } of line"
-              :key="action.type + action.label"
-              :color="color == 'default' ? '#ced7e0' : 'rgba(0, 0, 0, .2)'"
-              :class="['keyboard_button', color]"
-              @click="$emit('click', action, keyboard.author_id)"
-      >{{ action.label }}</Ripple>
-    </div>
-  </div>
+    <Scrolly vclass="keyboard">
+      <div v-for="line of buttons" class="keyboard_line">
+        <Ripple v-for="({ action, color }, i) of line"
+                :key="i"
+                :color="color == 'default' ? '#ced7e0' : 'rgba(0, 0, 0, .2)'"
+                :class="['keyboard_button', color]"
+                @click="$emit('click', action, keyboard.author_id)"
+        >{{ action.label }}</Ripple>
+      </div>
+    </Scrolly>
 </template>
 
 <script>
+  import Scrolly from '../../UI/Scrolly.vue';
   import Ripple from '../../UI/Ripple.vue';
 
   export default {
     props: ['keyboard'],
     components: {
+      Scrolly,
       Ripple
     },
     computed: {
@@ -27,8 +29,9 @@
   }
 </script>
 
-<style scoped>
+<style>
   .keyboard {
+    max-height: 40vh;
     padding: 8px 8px 12px 8px;
   }
 
