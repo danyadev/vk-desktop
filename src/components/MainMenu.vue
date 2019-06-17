@@ -199,7 +199,7 @@
     cursor: pointer;
   }
 
-  .menu_item, .menu_item_icon, .menu_item_name {
+  .menu_item, .menu_item_name {
     transition: background-color .3s, color .3s;
   }
 

@@ -281,6 +281,10 @@ export default {
 
         removeTyping(peer_id, msg.from);
 
+        if(msg.action && msg.action.type == 'chat_title_update') {
+          peerData.title = msg.action.text;
+        }
+
         if(msg.out) {
           peerData.new_in_read = msg.id;
           peerData.in_read = msg.id;
@@ -469,20 +473,14 @@ export default {
       const isMe = info == store.getters['users/user'].id;
       const conv = store.state.messages.conversations[peer_id];
       const peer = conv && conv.peer;
-      if(!peer) return;
 
+      if(!peer) return;
       if([7, 8].includes(type)) removeTyping(peer_id, info, isMe);
 
       switch(type) {
-        case 1: // Изменилось название беседы
         case 2: // Изменилась аватарка беседы
           loadConversation(peer_id);
-          break;
-        case 3: // Назначен новый администратор
-          // TODO
-          break;
-        case 5: // Закреплено сообщение
-          // TODO
+
           break;
         case 6: // Пользователь присоединился к беседе
           if(peer.members != null) peer.members++;
@@ -511,9 +509,6 @@ export default {
             peer.canWrite = false;
           }
 
-          break;
-        case 9: // С пользователя сняты права администратора
-          // TODO
           break;
       }
 

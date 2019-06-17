@@ -16,15 +16,11 @@
     }),
     methods: {
       openMenu() {
-        clearTimeout(this.timeout);
+        if(this.active) document.body.removeEventListener('mousemove', this.onMouseMove);
+        else document.body.addEventListener('mousemove', this.onMouseMove);
 
-        if(this.active) {
-          document.body.removeEventListener('mousemove', this.onMouseMove);
-          this.active = false;
-        } else {
-          document.body.addEventListener('mousemove', this.onMouseMove);
-          this.active = true;
-        }
+        clearTimeout(this.timeout);
+        this.active = !this.active;
       },
       onMouseMove(event) {
         const close = !event.path.find((el) => {
@@ -33,14 +29,8 @@
 
         clearTimeout(this.timeout);
 
-        if(close) {
-          this.timeout = setTimeout(() => {
-            document.body.removeEventListener('mousemove', this.onMouseMove);
-            this.active = false;
-          }, 600);
-        } else {
-          this.active = true;
-        }
+        if(close) this.timeout = setTimeout(() => this.openMenu(), 500);
+        else this.active = true;
       }
     }
   }
