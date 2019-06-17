@@ -1,12 +1,11 @@
 <template>
     <Scrolly vclass="keyboard">
       <div v-for="line of buttons" class="keyboard_line">
-        <Ripple v-for="({ action, color }, i) of line"
-                :key="i"
+        <Ripple v-for="({ action, color }, i) of line" :key="i"
                 :color="color == 'default' ? '#ced7e0' : 'rgba(0, 0, 0, .2)'"
                 :class="['keyboard_button', color]"
-                @click="$emit('click', action, keyboard.author_id)"
-        >{{ action.label }}</Ripple>
+                @click="click(action)"
+        >{{ action.type == 'text' ? action.label : 'Не поддерживается' }}</Ripple>
       </div>
     </Scrolly>
 </template>
@@ -24,6 +23,15 @@
     computed: {
       buttons() {
         return this.keyboard.buttons || [];
+      }
+    },
+    methods: {
+      click(action) {
+        switch(action.type) {
+          case 'text':
+            this.$emit('click', action, this.keyboard.author_id);
+            break;
+        }
       }
     }
   }

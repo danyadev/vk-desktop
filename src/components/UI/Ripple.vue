@@ -1,9 +1,8 @@
 <template>
   <div class="ripple-outer" @mousedown="addRipple" v-on="$listeners">
     <TransitionGroup class="ripples" name="ripple">
-      <div class="ripple"
-           v-for="ripple in ripples"
-           :key="ripple.id"
+      <div v-for="ripple in ripples" :key="ripple.id"
+           class="ripple"
            :style="{
              top: ripple.top,
              left: ripple.left,

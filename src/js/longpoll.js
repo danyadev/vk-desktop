@@ -20,7 +20,7 @@ export default new class Longpoll extends EventEmitter {
     this.debug = false;
     this.started = false;
     this.stopped = true;
-    this.version = 6;
+    this.version = 7;
   }
 
   async getServer() {

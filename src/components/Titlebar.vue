@@ -2,8 +2,7 @@
   <div :class="['titlebar', { maximized, mac }]">
     <div class="titlebar_drag" ref="drag">VK Desktop</div>
     <div class="titlebar_buttons">
-      <div v-for="button of buttons"
-           :key="button"
+      <div v-for="button of buttons" :key="button"
            :class="['titlebar_button', button]"
            @click="click(button)"
       >
