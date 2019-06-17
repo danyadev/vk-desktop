@@ -9,7 +9,7 @@ export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,las
 // Список нужных регулярных выражений
 export const regexp = {
   push: /\[(club|id)(\d+)\|(.+?)\]/gi
-}
+};
 
 // User-Agents для выполнения запросов
 export const VKDesktopUserAgent = `VKDesktop/${AppVersion}`;
@@ -116,8 +116,10 @@ const loadingProfiles = [];
 let isLoadingProfiles = false;
 
 export async function loadProfile(id) {
-  if(id && loadingProfiles.find((e) => e == id) || isLoadingProfiles) return;
+  if(id && loadingProfiles.find((uid) => uid == id)) return;
   if(id) loadingProfiles.push(id);
+  if(isLoadingProfiles) return;
+
   isLoadingProfiles = true;
 
   const profiles = loadingProfiles.slice();

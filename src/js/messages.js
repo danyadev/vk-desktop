@@ -31,12 +31,7 @@ export function parseConversation(conversation) {
 }
 
 export function parseMessage(message) {
-  if(message.geo) {
-    message.attachments.push({
-      type: 'geo',
-      geo: message.geo
-    });
-  }
+  if(message.geo) message.attachments.push({ type: 'geo' });
 
   return {
     id: message.id,
@@ -136,14 +131,14 @@ export function getTextWithEmoji(nodes) {
         break;
       default:
         text += node.data || node.innerText || '';
-        break
+        break;
     }
   }
 
   return {
     text: text.trim(),
     emojis: emojis
-  }
+  };
 }
 
 export async function loadConversation(id) {
