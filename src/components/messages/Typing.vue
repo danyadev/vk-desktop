@@ -21,6 +21,11 @@
         type: Boolean,
         default: true
       },
+      // Полностью ли отображать фамилию
+      full: {
+        type: Boolean,
+        default: false
+      },
       peer_id: {
         type: [String, Number],
         required: true
@@ -34,18 +39,20 @@
         let msg = '';
 
         for(const id in typing) {
-          if(typing[id].type == 'audio') audio.push(id);
-          else text.push(id);
+          if(typing[id].type == 'text') text.push(id);
+          else audio.push(id);
         }
 
         const name = (id) => {
-          // В лс просто отображается "печатает"
-          if(this.peer_id < 2e9) return '';
-
           const user = this.$store.state.profiles[id];
-          if(!user) return loadProfile(id), '...';
 
-          return user.name || `${user.first_name} ${user.last_name[0] + '.'}`;
+          if(this.peer_id < 2e9) return '';
+          if(!user) return loadProfile(id), '...';
+          if(user.name) return user.name;
+
+          const lastName = this.full ? user.last_name : user.last_name[0] + '.';
+
+          return `${user.first_name} ${lastName}`;
         }
 
         function getText(type, data) {

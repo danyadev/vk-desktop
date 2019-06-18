@@ -3,7 +3,7 @@
     <div class="header">
       <HeaderButton/>
       <div class="header_name">{{ l('im_header_title') }}</div>
-      <MessagesListMenu/>
+      <!-- <MessagesListMenu/> -->
     </div>
     <Scrolly class="peers_wrap"
              :vclass="{ loading }"
@@ -22,14 +22,14 @@
   import { parseConversation, parseMessage } from 'js/messages';
 
   import Scrolly from '../UI/Scrolly.vue';
-  import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
+  // import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
   import HeaderButton from '../HeaderButton.vue';
   import MessagesPeer from './MessagesPeer.vue';
 
   export default {
     components: {
       Scrolly,
-      MessagesListMenu,
+      // MessagesListMenu,
       HeaderButton,
       MessagesPeer
     },

@@ -15,11 +15,9 @@
   import { mapState } from 'vuex';
   import vkapi from 'js/vkapi';
 
-  import ModalsWrapper from './ModalsWrapper.vue';
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
-
-  import '../themes/default.css';
+  import ModalsWrapper from './ModalsWrapper.vue';
 
   export default {
     name: 'App',
@@ -33,23 +31,23 @@
       ...mapState('settings', ['theme'])
     },
     methods: {
-      initUser() {
+      async initUser() {
         if(longpoll.started) longpoll.stop();
 
+        this.$router.replace(this.activeUser ? '/messages' : '/auth');
+
         if(this.activeUser) {
-          vkapi('execute.init', {
+          const { lp, counters, user } = await vkapi('execute.init', {
             lp_version: longpoll.version,
             fields: fields
-          }).then(({ lp, counters, user }) => {
-            this.$store.commit('users/updateUser', user);
-            this.$store.commit('setMenuCounters', counters);
-
-            if(longpoll.stopped) longpoll.start(lp);
-            else longpoll.once('stop', () => longpoll.start(lp));
           });
-        }
 
-        this.$router.replace(this.activeUser ? '/messages' : '/auth');
+          this.$store.commit('users/updateUser', user);
+          this.$store.commit('setMenuCounters', counters);
+
+          if(longpoll.stopped) longpoll.start(lp);
+          else longpoll.once('stop', () => longpoll.start(lp));
+        }
       }
     },
     watch: {

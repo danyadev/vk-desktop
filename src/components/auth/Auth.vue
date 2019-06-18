@@ -7,14 +7,15 @@
   import { getDesktopToken } from './auth';
   import { fields } from 'js/utils';
   import vkapi from 'js/vkapi';
-  import AuthCode from './AuthCode.vue';
+
   import AuthForm from './AuthForm.vue';
+  import AuthCode from './AuthCode.vue';
 
   export default {
     props: ['isModal'],
     components: {
-      AuthCode,
-      AuthForm
+      AuthForm,
+      AuthCode
     },
     data: () => ({
       error: null
@@ -54,7 +55,6 @@
   .auth input { margin-bottom: 6px }
 
   .auth_error {
-    font-family: BlinkMacSystemFont, Roboto;
     padding: 8px 0;
     margin: 6px 0;
     width: 250px;

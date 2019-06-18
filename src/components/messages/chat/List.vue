@@ -14,7 +14,7 @@
       {{ l('im_empty_dialog') }}
     </div>
     <div v-else-if="hasMessages" class="messages_typing" ref="typing">
-      <Typing v-if="hasTyping" :peer_id="id"/>
+      <Typing v-if="hasTyping" :peer_id="id" :full="true"/>
     </div>
   </Scrolly>
 </template>

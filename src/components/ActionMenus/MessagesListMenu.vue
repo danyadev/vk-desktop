@@ -2,7 +2,7 @@
   <ActionsMenu>
     <div class="act_menu_item" @click="setDarkTheme">
       <img src="~assets/palette.svg" class="act_menu_icon">
-      <div class="act_menu_data">{{ l('dark_theme', isDarkTheme) }} (beta)</div>
+      <div class="act_menu_data">{{ l('dark_theme', isDarkTheme) }}</div>
     </div>
   </ActionsMenu>
 </template>

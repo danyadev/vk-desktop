@@ -5,9 +5,7 @@
       <div v-for="button of buttons" :key="button"
            :class="['titlebar_button', button]"
            @click="click(button)"
-      >
-        <img :src="`assets/titlebar/${button}.svg`">
-      </div>
+      ><img :src="`assets/titlebar/${button}.svg`"></div>
     </div>
   </div>
 </template>
@@ -79,10 +77,7 @@
   }
 
   .titlebar_button:hover { background: rgba(0, 0, 0, .2) }
-  .titlebar_button:active { background: rgba(0, 0, 0, .3) }
-
   .titlebar_button.close:hover { background: #eb0716 }
-  .titlebar_button.close:active { background: #de000f }
 
   .titlebar.maximized .titlebar_button.maximize { display: none }
   .titlebar:not(.maximized) .titlebar_button.restore { display: none }
