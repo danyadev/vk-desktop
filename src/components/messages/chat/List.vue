@@ -59,9 +59,6 @@
       }
     },
     methods: {
-      scrollToEnd() {
-        if(this.$refs.typing) this.$refs.typing.scrollIntoView(false);
-      },
       async load() {
         this.loading = true;
 
@@ -98,6 +95,9 @@
 
         this.loading = false;
         if(items.length < 20) this.loaded = true;
+      },
+      scrollToEnd() {
+        if(this.$refs.typing) this.$refs.typing.scrollIntoView(false);
       },
       onScroll(e) {
         if(!e.scrollHeight) return;
@@ -157,7 +157,9 @@
     flex-direction: column;
   }
 
-  .messages_list_wrap { height: 100% }
+  .messages_list_wrap {
+    height: 100%;
+  }
 
   .messages_typing {
     display: flex;

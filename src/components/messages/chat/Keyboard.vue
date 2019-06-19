@@ -2,10 +2,11 @@
     <Scrolly vclass="keyboard">
       <div v-for="line of buttons" class="keyboard_line">
         <Ripple v-for="({ action, color }, i) of line" :key="i"
+                :text="action.type == 'text' ? emoji(action.label) : 'Не поддерживается'"
                 :color="color == 'default' ? '#ced7e0' : 'rgba(0, 0, 0, .2)'"
                 :class="['keyboard_button', color]"
                 @click="click(action)"
-        >{{ action.type == 'text' ? action.label : 'Не поддерживается' }}</Ripple>
+        />
       </div>
     </Scrolly>
 </template>
@@ -13,6 +14,7 @@
 <script>
   import Scrolly from '../../UI/Scrolly.vue';
   import Ripple from '../../UI/Ripple.vue';
+  import emoji from 'js/emoji';
 
   export default {
     props: ['keyboard'],
@@ -26,6 +28,7 @@
       }
     },
     methods: {
+      emoji: emoji,
       click(action) {
         switch(action.type) {
           case 'text':

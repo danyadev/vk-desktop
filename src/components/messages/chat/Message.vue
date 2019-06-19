@@ -5,11 +5,11 @@
       <span>{{ l('im_unread_messages') }}</span>
     </div>
 
-    <div :class="['message_wrap', { showUserData, serviceMessage, isPrevServiceMsg, isUnreaded, prevFirstMsg }]">
-      <img class="message_photo" :src="photo">
+    <div :class="['message_wrap', { showUserData, serviceMessage, isUnreaded }]">
+      <img v-if="showUserData" class="message_photo" :src="photo">
 
       <div class="message">
-        <div class="message_name">
+        <div v-if="showUserData" class="message_name">
           {{ name }}
           <div v-if="user && user.verified" class="verified"></div>
           <div class="message_time">{{ time }}</div>
@@ -79,9 +79,6 @@
       serviceMessage() {
         return this.msg.action && getServiceMessage(this.msg.action, this.user, true);
       },
-      isPrevServiceMsg() {
-        return !this.messageDate && this.prevMsg && this.prevMsg.action;
-      },
       showUserData() {
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
         const thisMsgDate = new Date(this.msg.date * 1000);
@@ -91,26 +88,9 @@
           this.prevMsg.from != this.msg.from ||
           this.prevMsg.action ||
           this.isStartUnreaded ||
+          this.messageDate ||
           differenceInMinutes(thisMsgDate, prevMsgDate) > 9
         );
-      },
-      prevMsgShowUserData() {
-        const prevMsg = this.list[this.list.indexOf(this.msg) - 2];
-        const msg = this.prevMsg;
-        const in_read = this.peer && (this.peer.new_in_read || this.peer.in_read);
-
-        return msg && !msg.action && (
-          !prevMsg ||
-          prevMsg.from != msg.from ||
-          prevMsg.action ||
-          (prevMsg.id <= in_read && msg.id > in_read) ||
-          differenceInMinutes(new Date(msg.date * 1000), new Date(prevMsg.date * 1000)) > 9
-        );
-      },
-      prevFirstMsg() {
-        const msg = this.prevMsg;
-
-        return msg && msg.from == this.msg.from && !this.showUserData && this.prevMsgShowUserData && !this.msg.action;
       }
     }
   }
@@ -155,31 +135,18 @@
 
   .message_wrap {
     display: flex;
-    padding: 10px 20px 8px 20px;
+    padding: 8px 20px 6px 20px;
   }
 
-  .message_wrap.prevFirstMsg {
-    padding: 0px 20px 4px 70px;
-  }
-
-  .message_wrap:not(.prevFirstMsg):not(.showUserData):not(.serviceMessage) {
-    padding: 4px 20px 4px 70px;
+  .message_wrap:not(.showUserData):not(.serviceMessage) {
+    padding: 3px 20px 5px 70px;
   }
 
   .message_wrap.serviceMessage {
-    /* Центровка текста в списке сообщений */
     justify-content: center;
-    /* Центровка текста в сервисном сообщении, когда он не помещается в 1 строку */
     text-align: center;
     color: #5d6165;
   }
-
-  .message_wrap.serviceMessage.isPrevServiceMsg {
-    padding-top: 0;
-  }
-
-  .message_wrap:not(.showUserData) .message_photo,
-  .message_wrap:not(.showUserData) .message_name { display: none }
 
   .message_photo {
     border-radius: 50%;
@@ -211,7 +178,7 @@
     word-break: break-word;
   }
 
-  .message_wrap:not(.serviceMessage) .message_content {
+  .message_wrap.showUserData .message_content {
     margin-top: 2px;
   }
 

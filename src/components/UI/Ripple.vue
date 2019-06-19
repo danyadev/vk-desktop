@@ -12,7 +12,8 @@
            }"
       ></div>
     </TransitionGroup>
-    <slot></slot>
+    <slot v-if="$slots.default"></slot>
+    <span v-else v-html="text"></span>
   </div>
 </template>
 
@@ -22,6 +23,9 @@
       color: {
         type: String,
         default: 'rgba(255, 255, 255, .3)'
+      },
+      text: {
+        default: ''
       }
     },
     data: () => ({
