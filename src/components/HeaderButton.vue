@@ -1,5 +1,5 @@
 <template>
-  <Ripple color="rgba(255, 255, 255, .2)" class="fast open_menu_btn" @click="openMenu">
+  <Ripple color="rgba(255, 255, 255, .2)" class="ripple_fast open_menu_btn" @click="openMenu">
     <img src="assets/menu.webp">
   </Ripple>
 </template>

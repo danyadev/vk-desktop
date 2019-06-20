@@ -1,5 +1,5 @@
 <template>
-  <div class="ripple-outer" @mousedown="addRipple" v-on="$listeners">
+  <div class="ripple_outer" @mousedown="addRipple" v-on="$listeners">
     <TransitionGroup class="ripples" name="ripple">
       <div v-for="ripple in ripples" :key="ripple.id"
            class="ripple"
@@ -60,7 +60,7 @@
 </script>
 
 <style>
-  .ripple-outer {
+  .ripple_outer {
     position: relative;
     z-index: 1;
     overflow: hidden;
@@ -93,13 +93,13 @@
     transition: all .7s ease-out;
   }
 
-  .ripple-outer.fast .ripple-enter-active,
-  .ripple-outer.fast .ripple-enter-to-active {
+  .ripple_fast .ripple-enter-active,
+  .ripple_fast .ripple-enter-to-active {
     transition: all 1s ease-out;
   }
 
-  .ripple-outer.fast .ripple-leave-active,
-  .ripple-outer.fast .ripple-leave-to-active {
+  .ripple_fast .ripple-leave-active,
+  .ripple_fast .ripple-leave-to-active {
     transition: all .4s ease-out;
   }
 

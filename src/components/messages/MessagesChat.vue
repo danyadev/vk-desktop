@@ -1,7 +1,7 @@
 <template>
-  <div class="chat_container">
+  <div class="im_chat_container">
     <ChatHeader :id="id" :peer="peer" @close="closeChat"/>
-    <div class="chat_wrap">
+    <div class="im_chat_wrap">
       <ChatList :id="id"/>
       <ChatInput :id="id" :peer="peer"/>
     </div>
@@ -60,8 +60,8 @@
   }
 </script>
 
-<style scoped>
-  .chat_wrap {
+<style>
+  .im_chat_wrap {
     display: flex;
     flex-direction: column;
     height: calc(100% - 45px);

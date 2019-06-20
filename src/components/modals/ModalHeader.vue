@@ -3,7 +3,7 @@
     <div class="modal_header_title"><slot></slot></div>
     <Ripple v-if="closable"
             color="rgba(255, 255, 255, .2)"
-            class="fast modal_header_close"
+            class="ripple_fast modal_header_close"
             @click.stop="close"
     >
       <Icon name="close" color="#fff"/>

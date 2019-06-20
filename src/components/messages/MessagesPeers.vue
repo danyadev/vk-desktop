@@ -1,16 +1,16 @@
 <template>
-  <div class="peers_container">
+  <div class="im_peers_container">
     <div class="header">
       <HeaderButton/>
       <div class="header_name">{{ l('im_header_title') }}</div>
       <!-- <MessagesListMenu/> -->
     </div>
-    <Scrolly class="peers_wrap"
+    <Scrolly class="im_peers_wrap"
              :vclass="{ loading }"
              :lock="lockScroll"
              @scroll="onScroll"
     >
-      <MessagesPeer v-for="{ peer, msg } of conversations" :key="peer.id" :peer="peer" :msg="msg"/>
+      <MessagesPeer v-for="{ peer, msg } of conversationsList" :key="peer.id" :peer="peer" :msg="msg"/>
     </Scrolly>
   </div>
 </template>
@@ -39,14 +39,12 @@
       lockScroll: false
     }),
     computed: {
-      ...mapGetters('messages', {
-        conversations: 'conversationsList'
-      })
+      ...mapGetters('messages', ['conversationsList'])
     },
     methods: {
       async load() {
         const { items, profiles, groups } = await vkapi('messages.getConversations', {
-          offset: this.conversations.length,
+          offset: this.conversationsList.length,
           fields: fields,
           extended: true
         });
@@ -82,14 +80,14 @@
 </script>
 
 <style>
-  .peers_wrap {
+  .im_peers_wrap {
     width: 100%;
     /* 45px - постоянная высота у .header */
     height: calc(100% - 45px);
     border-right: 1px solid #e7e8ec;
   }
 
-  .peers_container .header_name {
+  .im_peers_container .header_name {
     flex-grow: 1;
   }
 </style>

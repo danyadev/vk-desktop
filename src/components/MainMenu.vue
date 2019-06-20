@@ -4,7 +4,7 @@
       <div class="menu_account_block">
         <img class="menu_account_background" :src="user.photo_100">
         <Ripple color="rgba(0, 0, 0, .2)"
-                class="fast menu_account_multiaccount"
+                class="ripple_fast menu_account_multiaccount"
                 @click.stop="openModal('multiaccount')"
         ><img :src="'assets/menu/groups.svg'"></Ripple>
         <img class="menu_account_photo" :src="user.photo_100">

@@ -1,22 +1,22 @@
 <template>
-  <Ripple color="#e6ebf2" class="peer" @click="openChat">
-    <div :class="['photo_wrap', online]"><img :src="photo"></div>
-    <div class="content">
-      <div class="title">
-        <div class="name_wrap">
-          <div :class="['name', { greenName }]" v-emoji="chatName"></div>
+  <Ripple color="#e6ebf2" class="im_peer" @click="openChat">
+    <div :class="['im_peer_photo', online]"><img :src="photo"></div>
+    <div class="im_peer_content">
+      <div class="im_peer_title">
+        <div class="im_peer_name_wrap">
+          <div :class="['im_peer_name', { greenName }]" v-emoji="chatName"></div>
           <div v-if="owner && owner.verified" class="verified"></div>
-          <div v-if="peer.muted" class="muted"></div>
+          <div v-if="peer.muted" class="im_peer_muted"></div>
         </div>
-        <div class="time">{{ time }}</div>
+        <div class="im_peer_time">{{ time }}</div>
       </div>
-      <div class="message_wrap">
+      <div class="im_peer_message_wrap">
         <Typing v-if="hasTyping" :peer_id="this.peer.id" :left="false"/>
-        <div v-else class="message">
-          <div class="author">{{ authorName }}</div>
-          <div :class="['text', { isAttachment, isDeletedContent }]" v-emoji.push="message"></div>
+        <div v-else class="im_peer_message">
+          <div class="im_peer_author">{{ authorName }}</div>
+          <div :class="['im_peer_text', { isAttachment, isDeletedContent }]" v-emoji.push="message"></div>
         </div>
-        <div :class="['unread', { outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
+        <div :class="['im_peer_unread', { outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
       </div>
     </div>
   </Ripple>
@@ -114,27 +114,27 @@
   }
 </script>
 
-<style scoped>
-  .peer {
+<style>
+  .im_peer {
     display: flex;
     position: relative;
     transition: background-color .3s;
   }
 
-  .peer:hover {
+  .im_peer:hover {
     background: #f5f7fa;
     cursor: pointer;
   }
 
-  .photo_wrap {
+  .im_peer_photo {
     position: relative;
     width: 50px;
     height: 50px;
     margin: 10px 10px 10px 16px;
   }
 
-  .photo_wrap.mobile::after,
-  .photo_wrap.desktop::after {
+  .im_peer_photo.mobile::after,
+  .im_peer_photo.desktop::after {
     content: '';
     position: absolute;
     box-sizing: content-box;
@@ -144,44 +144,46 @@
     border: 2px solid #fff;
   }
 
-  .photo_wrap.mobile::after {
+  .im_peer_photo.mobile::after {
     height: 11px;
     border-radius: 3px;
     background: url('~assets/online_mobile.svg') no-repeat #fff;
   }
 
-  .photo_wrap.desktop::after {
+  .im_peer_photo.desktop::after {
     height: 8px;
     border-radius: 50%;
     background: #8ac176;
   }
 
-  .photo_wrap img {
+  .im_peer_photo img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
   }
 
-  .content {
+  .im_peer_content {
     width: calc(100% - 76px);
     padding: 10px 16px 10px 0;
   }
 
-  .peer:not(:last-child) .content { border-bottom: 1px solid #e7e8ec }
+  .im_peer:not(:last-child) .im_peer_content {
+    border-bottom: 1px solid #e7e8ec;
+  }
 
-  .title {
+  .im_peer_title {
     display: flex;
     margin-top: 5px;
   }
 
-  .name_wrap {
+  .im_peer_name_wrap {
     display: flex;
     flex-grow: 1;
     overflow: hidden;
     font-weight: 500;
   }
 
-  .name {
+  .im_peer_name {
     height: 20px;
     line-height: 18px;
     overflow: hidden;
@@ -189,7 +191,7 @@
     text-overflow: ellipsis;
   }
 
-  .name.greenName {
+  .im_peer_name.greenName {
     color: #265b96;
   }
 
@@ -198,7 +200,7 @@
     margin: 1px 0 0 4px;
   }
 
-  .name_wrap .muted {
+  .im_peer_muted {
     flex: none;
     width: 13px;
     height: 13px;
@@ -206,7 +208,7 @@
     background: url('~assets/muted.svg') 0 / 13px;
   }
 
-  .time {
+  .im_peer_time {
     flex: none;
     margin-left: 5px;
     color: #848a96;
@@ -214,13 +216,13 @@
     margin-top: 2px;
   }
 
-  .message_wrap {
+  .im_peer_message_wrap {
     display: flex;
     height: 20px;
     margin-top: 2px
   }
 
-  .message_wrap > div:first-child {
+  .im_peer_message_wrap > div:first-child {
     flex-grow: 1;
     overflow: hidden;
     white-space: nowrap;
@@ -228,19 +230,21 @@
     margin-top: 2px;
   }
 
-  .message { color: #4c4d50 }
-  .message >>> b { font-weight: 500 }
+  .im_peer_message {
+    color: #4c4d50;
+  }
 
-  .author:not(:empty) {
+  .im_peer_author:not(:empty) {
     display: inline;
     color: #777a7d;
   }
 
-  .text { display: inline }
-  .text.isAttachment { color: #254f79 }
-  .text.isDeletedContent { color: #4a4a4a }
+  .im_peer_text { display: inline }
+  .im_peer_text b { font-weight: 500 }
+  .im_peer_text.isAttachment { color: #254f79 }
+  .im_peer_text.isDeletedContent { color: #4a4a4a }
 
-  .unread {
+  .im_peer_unread {
     padding: 0 6px;
     margin: 2px 0 0 3px;
     border-radius: 10px;
@@ -251,10 +255,10 @@
     line-height: 20px;
   }
 
-  .unread:not(.outread):empty { display: none }
-  .unread:not(.outread).muted { background: #b2b7c2 }
+  .im_peer_unread:not(.outread):empty { display: none }
+  .im_peer_unread:not(.outread).muted { background: #b2b7c2 }
 
-  .unread.outread {
+  .im_peer_unread.outread {
     flex: none;
     padding: 0;
     margin: 7px 4px 0 4px;

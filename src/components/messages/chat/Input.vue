@@ -145,12 +145,12 @@
         document.execCommand('insertHTML', false, emoji(text));
       },
       onInput: throttle((e, id) => {
-        if(!e.data) return;
-
-        vkapi('messages.setActivity', {
-          peer_id: id,
-          type: 'typing'
-        });
+        if(e.data) {
+          vkapi('messages.setActivity', {
+            peer_id: id,
+            type: 'typing'
+          });
+        }
       }, 1500)
     },
     activated() {

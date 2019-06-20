@@ -1,16 +1,16 @@
 <template>
   <div class="header">
-    <Ripple color="rgba(255, 255, 255, .2)" class="fast header_back" @click="$emit('close')">
+    <Ripple color="rgba(255, 255, 255, .2)" class="ripple_fast im_header_back" @click="$emit('close')">
       <img src="~assets/im_back.webp">
     </Ripple>
-    <img class="header_photo" :src="photo">
-    <div class="header_center">
-      <div class="name_wrap">
-        <div class="name" v-emoji="title"></div>
+    <img class="im_header_photo" :src="photo">
+    <div class="im_header_center">
+      <div class="im_header_name_wrap">
+        <div class="im_header_name" v-emoji="title"></div>
         <div class="verified white" v-if="owner && owner.verified"></div>
-        <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="messages_muted"/>
+        <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="im_header_muted"/>
       </div>
-      <div class="online">{{ online }}</div>
+      <div class="im_header_online">{{ online }}</div>
     </div>
     <MessagesChatMenu :peer_id="id"/>
   </div>
@@ -71,13 +71,13 @@
   }
 </script>
 
-<style scoped>
-  .header_back, .header_back img {
+<style>
+  .im_header_back, .im_header_back img {
     width: 40px;
     height: 40px;
   }
 
-  .header_back {
+  .im_header_back {
     display: none;
     flex: none;
     border-radius: 50%;
@@ -86,63 +86,60 @@
     transition: opacity .3s;
   }
 
-  .header_back:hover {
+  .im_header_back:hover {
     opacity: 1;
   }
 
-  .header_back img {
+  .im_header_back img {
     padding: 8px;
   }
 
-  .header_photo {
+  .im_header_photo {
     width: 35px;
     height: 35px;
     border-radius: 50%;
     margin: 0 5px 0 5px;
   }
 
-  .header_center {
+  .im_header_center {
     flex-grow: 1;
+  }
+
+  .im_header_center, .im_header_name, .im_header_online {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
 
-  .name_wrap {
+  .im_header_name_wrap {
     display: flex;
     justify-content: center;
     height: 16px;
   }
 
-  .name_wrap .verified {
+  .im_header_name_wrap .verified {
     flex: none;
     margin-left: 4px;
   }
 
-  .messages_muted {
+  .im_header_muted {
     opacity: .7;
     width: 14px;
     height: 16px;
     margin-left: 3px;
   }
 
-  .name {
+  .im_header_name {
     color: #fff;
     line-height: 14px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
-  .online {
+  .im_header_online {
     color: rgba(255, 255, 255, 0.75);
     font-size: 13px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
     text-align: center;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     margin-top: 2px;
   }
 </style>
