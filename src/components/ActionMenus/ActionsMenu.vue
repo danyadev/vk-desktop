@@ -16,8 +16,8 @@
     }),
     methods: {
       openMenu() {
-        if(this.active) document.body.removeEventListener('mousemove', this.onMouseMove);
-        else document.body.addEventListener('mousemove', this.onMouseMove);
+        if(this.active) removeEventListener('mousemove', this.onMouseMove);
+        else addEventListener('mousemove', this.onMouseMove);
 
         clearTimeout(this.timeout);
         this.active = !this.active;
@@ -29,7 +29,7 @@
 
         clearTimeout(this.timeout);
 
-        if(close) this.timeout = setTimeout(() => this.openMenu(), 500);
+        if(close) this.timeout = setTimeout(this.openMenu, 500);
         else this.active = true;
       }
     }

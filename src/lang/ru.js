@@ -14,10 +14,6 @@ export default {
   today: 'сегодня',
   yesterday: 'вчера',
 
-  // Контекстное меню
-  open_console: 'Открыть консоль',
-  open_devtools: 'Открыть в DevTools',
-
   dark_theme: ['Включить темную тему', 'Выключить темную тему'],
 
   // Авторизация

@@ -1,5 +1,6 @@
 import { remote as electron } from 'electron';
 import { debounce } from 'js/utils';
+import shortcut from 'js/shortcut';
 import router from 'js/router';
 import store from 'js/store/';
 import Vue from 'vue';
@@ -8,7 +9,6 @@ import 'js/settingVue.js';
 import App from './components/App.vue';
 
 const win = electron.getCurrentWindow();
-const { Menu } = electron;
 
 const app = new Vue({
   el: '#app',
@@ -17,19 +17,9 @@ const app = new Vue({
   render: (h) => h(App)
 });
 
-document.addEventListener('contextmenu', (event) => {
-  Menu.buildFromTemplate([
-    {
-      label: app.l('open_console'),
-      click: win.openDevTools
-    },
-    {
-      label: app.l('open_devtools'),
-      click(temp, win) {
-        win.inspectElement(event.x, event.y);
-      }
-    }
-  ]).popup();
+shortcut('Ctrl+Shift+I', () => {
+  if(win.isDevToolsOpened()) win.closeDevTools();
+  else win.openDevTools();
 });
 
 window.addEventListener('resize', debounce(() => {
