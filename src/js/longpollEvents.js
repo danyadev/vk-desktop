@@ -31,7 +31,7 @@ function getServiceMessage(data) {
       let value = data[item],
           key = match[1];
 
-      if(Number(value) == value) value = Number(value);
+      if(parseInt(value) == value) value = String(value);
       if(key == 'act') key = 'type';
 
       source[key] = value;
