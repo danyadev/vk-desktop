@@ -128,6 +128,7 @@
         function moveScrollBar({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
           const isMoveToPoint = isMouseUp && target.matches('.scrolly-bar-wrap');
           const { scrollWidth, scrollHeight, offsetWidth, offsetHeight } = viewport;
+          let dx = 0, dy = 0;
 
           if(bar.parentElement.matches('.axis-x')) {
             const maxBarLeft = offsetWidth - bar.offsetWidth;
@@ -136,8 +137,11 @@
             if(isMoveToPoint) barLeft = normalize(offsetX - bar.offsetWidth/2, maxBarLeft);
             else barLeft = normalize(initialBarLeft + (pageX - initialPageX), maxBarLeft);
 
+            const scrollLeft = barLeft / maxBarLeft * (scrollWidth - offsetWidth);
+            dx = scrollLeft - viewport.scrollLeft;
+
             bar.style.left = toPercent(barLeft / offsetWidth);
-            viewport.scrollLeft = barLeft / maxBarLeft * (scrollWidth - offsetWidth);
+            viewport.scrollLeft = scrollLeft;
           } else {
             const maxBarTop = offsetHeight - bar.offsetHeight;
             let barTop;
@@ -145,11 +149,14 @@
             if(isMoveToPoint) barTop = normalize(offsetY - bar.offsetHeight/2, maxBarTop);
             else barTop = normalize(initialBarTop + (pageY - initialPageY), maxBarTop);
 
+            const scrollTop = barTop / maxBarTop * (scrollHeight - offsetHeight);
+            dy = scrollTop - viewport.scrollTop;
+
             bar.style.top = toPercent(barTop / offsetHeight);
-            viewport.scrollTop = barTop / maxBarTop * (scrollHeight - offsetHeight);
+            viewport.scrollTop = scrollTop;
           }
 
-          self.refreshScrollLayout.apply(self);
+          self.refreshScrollLayout.call(self, dx, dy, true);
           clearTimeout(timers[self._uid]);
           timers[self._uid] = null;
         }
@@ -207,8 +214,7 @@
 
       activateScrollBars(e, isMouseMove, clear) {
         if(clear || isMouseMove && e.target.closest('.scrolly-bar-wrap')) {
-          // При перемещении мыши по полосе скроллбара
-          // Либо touchstart
+          // При перемещении мыши по полосе скроллбара или при событии touchstart
           this.isActive = true;
           clearTimeout(timers[this._uid]);
           timers[this._uid] = null;
@@ -217,7 +223,7 @@
           // но в данный момент не происходящим скроллом
           this.hideScrollBars();
         } else if(!isMouseMove) {
-          // При скролле колеиском (возможно с зажатым Alt)
+          // При скролле колеиском (возможно с зажатым alt)
           this.isActive = true;
           this.hideScrollBars();
         }
@@ -227,11 +233,24 @@
         this.isActive = false;
       }),
 
-      refreshScrollLayout(dx = 0, dy = 0) {
+      refreshScrollLayout(dx = 0, dy = 0, mousemove) {
         const { viewport, barX, barY } = this.$refs;
+        const {
+          scrollTop: prevScrollTop,
+          scrollLeft: prevScrollLeft
+        } = viewport;
+
+        if(mousemove) {
+          return this.$emit('scroll', Object.assign(viewport, { dx, dy }));
+        }
 
         viewport.scrollLeft += dx;
         viewport.scrollTop += dy;
+
+        if(
+          dy && prevScrollTop == viewport.scrollTop ||
+          dx && prevScrollLeft == viewport.scrollLeft
+        ) return;
 
         const {
           scrollLeft, scrollWidth, offsetWidth,
@@ -254,7 +273,7 @@
         barY.parentElement.style.display = height == '100%' ? 'none' : 'block';
         barY.style.height = height;
 
-        this.$emit('scroll', viewport);
+        if(dx || dy) this.$emit('scroll', Object.assign(viewport, { dx, dy }));
       }
     }
   }

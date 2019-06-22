@@ -16,6 +16,10 @@
     <div v-else-if="hasMessages" class="messages_typing" ref="typing">
       <Typing v-if="hasTyping" :peer_id="id" :full="true"/>
     </div>
+
+    <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
+      <img src="~assets/arrow_bottom.webp">
+    </div>
   </Scrolly>
 </template>
 
@@ -36,15 +40,16 @@
       Message,
       Typing
     },
-    data() {
-      return {
-        loading: false,
-        loaded: false,
+    data: () => ({
+      loading: false,
+      loaded: false,
 
-        scrollTop: null,
-        lockScroll: false
-      }
-    },
+      scrollTop: null,
+      lockScroll: false,
+
+      showEndBtn: false,
+      showTopTime: false
+    }),
     computed: {
       messages() {
         return this.$store.state.messages.messages[this.id] || [];
@@ -97,12 +102,19 @@
         if(items.length < 20) this.loaded = true;
       },
       scrollToEnd() {
-        if(this.$refs.typing) this.$refs.typing.scrollIntoView(false);
+        if(this.$refs.typing) {
+          this.showEndBtn = false;
+          this.$refs.typing.scrollIntoView(false);
+        }
       },
       onScroll(e) {
         if(!e.scrollHeight) return;
 
+        const isBottom = e.scrollTop + e.offsetHeight + 250 >= e.scrollHeight;
+
         this.scrollTop = e.scrollTop;
+        this.showEndBtn = !isBottom && e.dy > 0;
+
         this.checkScrolling(e);
       },
       checkScrolling: endScroll(function() {
@@ -192,5 +204,38 @@
 
   .messages_empty_dialog img {
     height: 160px;
+  }
+
+  .im_scroll_end_btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 25px;
+    bottom: 30px;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: solid 1px #cfd9e1;
+    border-radius: 50%;
+    opacity: 1;
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
+    transition: background-color .3s, transform .2s, opacity .2s, visibility .2s;
+  }
+
+  .im_scroll_end_btn img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .im_scroll_end_btn:hover {
+    background: #f6f8fb;
+  }
+
+  .im_scroll_end_btn.hidden {
+    transform: translateY(20px);
+    opacity: 0;
+    visibility: hidden;
   }
 </style>

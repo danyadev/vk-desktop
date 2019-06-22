@@ -136,7 +136,7 @@
   }
 
   .im_header_online {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, .75);
     font-size: 13px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
     text-align: center;

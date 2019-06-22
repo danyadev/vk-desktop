@@ -28,13 +28,11 @@ function getServiceMessage(data) {
     const match = item.match(/source_(.+)/);
 
     if(match) {
-      let value = data[item],
-          key = match[1];
+      let key = match[1];
 
-      if(parseInt(value) == value) value = String(value);
       if(key == 'act') key = 'type';
 
-      source[key] = value;
+      source[key] = data[item];
     }
   }
 
