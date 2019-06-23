@@ -22,7 +22,9 @@ app.once('ready', () => {
 
   ipcMain.on('addShortcut', (event, data) => {
     globalShortcut.register(data.accelerator, () => {
-      event.sender.send('emitShortcut', data.id);
+      if(win.isFocused()) {
+        event.sender.send('emitShortcut', data.id);
+      }
     });
   });
 
