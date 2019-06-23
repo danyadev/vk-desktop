@@ -1,27 +1,31 @@
 <template>
   <ActionsMenu>
-    <div class="act_menu_item" @click="setDarkTheme">
-      <img src="~assets/palette.svg" class="act_menu_icon">
-      <div class="act_menu_data">{{ l('dark_theme', isDarkTheme) }}</div>
+    <div class="act_menu_item" @click="click('typing')">
+      <Checkbox :active="messagesSettings.typing"/>
+      <div class="act_menu_data">{{ l('im_send_typing') }}</div>
     </div>
   </ActionsMenu>
 </template>
 
 <script>
+  import { mapState } from 'vuex';
   import ActionsMenu from './ActionsMenu.vue';
+  import Checkbox from '../UI/Checkbox.vue';
 
   export default {
     components: {
-      ActionsMenu
+      ActionsMenu,
+      Checkbox
     },
     computed: {
-      isDarkTheme() {
-        return this.$store.state.settings.theme == 'dark';
-      }
+      ...mapState('settings', ['messagesSettings'])
     },
     methods: {
-      setDarkTheme() {
-        this.$store.commit('settings/setTheme', this.isDarkTheme ? 'light' : 'dark');
+      click(name) {
+        this.$store.commit('settings/updateMessagesSettings', {
+          key: name,
+          value: !this.messagesSettings[name]
+        });
       }
     }
   }

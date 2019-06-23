@@ -20,17 +20,23 @@
         else addEventListener('mousemove', this.onMouseMove);
 
         clearTimeout(this.timeout);
+        this.timeout = null;
+
         this.active = !this.active;
       },
       onMouseMove(event) {
-        const close = !event.path.find((el) => {
-          return el.classList && el.classList.contains('act_menu_wrap');
-        });
+        const close = !event.path.find((el) => el == this.$el);
 
-        clearTimeout(this.timeout);
+        if(close) {
+          if(!this.timeout) {
+            this.timeout = setTimeout(this.openMenu, 500);
+          }
+        } else {
+          clearTimeout(this.timeout);
+          this.timeout = null;
 
-        if(close) this.timeout = setTimeout(this.openMenu, 500);
-        else this.active = true;
+          this.active = true;
+        }
       }
     }
   }
@@ -72,7 +78,7 @@
     border-radius: 6px;
     border: 1px solid rgba(0, 0, 0, .12);
     box-shadow: 0 4px 36px -6px rgba(0, 0, 0, .4);
-    transition: all .3s;
+    transition: opacity .3s, margin-top .3s;
   }
 
   .act_menu.active {
@@ -104,6 +110,9 @@
     flex: none;
     width: 24px;
     height: 24px;
-    margin-right: 12px;
+  }
+
+  .act_menu_data {
+    margin-left: 12px;
   }
 </style>

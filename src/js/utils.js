@@ -52,11 +52,11 @@ export function capitalize(str) {
 export function debounce(fn, delay) {
   let timerId;
 
-  return (...args) => {
+  return function(...args) {
     if(timerId) clearTimeout(timerId);
 
     timerId = setTimeout(() => {
-      fn(...args);
+      fn.apply(this, args);
       timerId = null;
     }, delay);
   }
@@ -66,13 +66,13 @@ export function debounce(fn, delay) {
 export function throttle(fn, delay) {
   let lastCall = 0;
 
-  return (...args) => {
+  return function(...args) {
     const now = Date.now();
 
     if(now - lastCall < delay) return;
     lastCall = now;
 
-    return fn(...args);
+    return fn.apply(this, args);
   }
 }
 

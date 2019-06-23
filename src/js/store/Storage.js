@@ -29,5 +29,7 @@ export const users = new Storage('users', {
 export const settings = new Storage('settings', {
   window: win.getBounds(),
   langName: 'ru',
-  theme: 'light'
+  messagesSettings: {
+    typing: true
+  }
 });

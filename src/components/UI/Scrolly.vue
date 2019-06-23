@@ -21,12 +21,12 @@
   const timers = {};
 
   function debounce(fn) {
-    return function() {
+    return function(...args) {
       const id = this._uid;
       clearTimeout(timers[id]);
 
       timers[id] = setTimeout(() => {
-        fn.apply(this, arguments);
+        fn.apply(this, args);
         timers[id] = null;
       }, 500);
     }

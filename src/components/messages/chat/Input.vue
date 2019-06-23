@@ -9,7 +9,7 @@
                ref="input"
                contenteditable
                :placeholder="l('im_input_placeholder')"
-               @input="onInput($event, id)"
+               @input="onInput"
                @drop.prevent
                @paste.prevent="paste"
                @keydown.enter.exact.prevent="sendMessage()"
@@ -144,10 +144,12 @@
         const text = escape(clipboard.readText()).replace(/\n/g, '<br>');
         document.execCommand('insertHTML', false, emoji(text));
       },
-      onInput: throttle((e, id) => {
-        if(e.data) {
+      onInput: throttle(function(e) {
+        const { typing } = this.$store.state.settings.messagesSettings;
+
+        if(typing && e.data) {
           vkapi('messages.setActivity', {
-            peer_id: id,
+            peer_id: this.id,
             type: 'typing'
           });
         }

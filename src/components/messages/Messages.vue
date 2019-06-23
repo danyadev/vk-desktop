@@ -43,12 +43,12 @@
   }
 
   @media screen and (min-width: 650px) and (max-width: 899px) {
-    .im_peers_container { width: 43% }
-    .im_chat_container { width: 57% }
+    .im_peers_container { width: 42% }
+    .im_chat_container { width: 58% }
   }
 
   @media screen and (min-width: 900px) {
-    .im_peers_container { width: 387px }
-    .im_chat_container { width: calc(100% - 387px) }
+    .im_peers_container { width: 378px }
+    .im_chat_container { width: calc(100% - 378px) }
   }
 </style>

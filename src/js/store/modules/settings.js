@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { settings } from '../Storage';
 
 function getLangFile(name) {
@@ -13,8 +14,8 @@ export default {
     setWindowBounds(state, bounds) {
       state.window = bounds;
     },
-    setTheme(state, name) {
-      state.theme = name;
+    updateMessagesSettings(state, { key, value }) {
+      Vue.set(state.messagesSettings, key, value);
     }
   },
   getters: {
