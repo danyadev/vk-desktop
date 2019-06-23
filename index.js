@@ -2,10 +2,10 @@
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const fs = require('fs');
 
-app.on('ready', () => {
+app.once('ready', () => {
   const { screen } = require('electron');
 
   try {
@@ -18,6 +18,16 @@ app.on('ready', () => {
     show: false,
     frame: false,
     titleBarStyle: 'hidden'
+  });
+
+  ipcMain.on('addShortcut', (event, data) => {
+    globalShortcut.register(data.accelerator, () => {
+      event.sender.send('emitShortcut', data.id);
+    });
+  });
+
+  ipcMain.on('removeAllShortcuts', () => {
+    globalShortcut.unregisterAll();
   });
 
   win.webContents.once('dom-ready', async () => {
@@ -38,9 +48,6 @@ app.on('ready', () => {
       if(maximized) win.maximize();
     }
 
-    // Для того, чтобы не видеть скачков окна при открытии приложения,
-    // я открываю его после события dom-ready и executeJavaScript, что дает
-    // гарантию того, что приложение уже установлено на нужное положение.
     win.show();
   });
 

@@ -9,7 +9,7 @@
            @click="hidePassword = !hidePassword"
       ></div>
     </div>
-    <button class="button auth_button" :disabled="disableBtn" @click="auth">{{ l('login') }}</button>
+    <Button class="auth_button" :disabled="disableBtn" @click="auth">{{ l('login') }}</Button>
     <div :class="['auth_error', { active: hasError }]">{{ errorText }}</div>
     <div v-if="hasUsers" class="auth_open_multiacc" @click="openMultiacc">
       {{ l('available_accounts_list') }}
@@ -19,9 +19,13 @@
 
 <script>
   import { getAndroidToken } from './auth';
+  import Button from '../UI/Button.vue';
 
   export default {
     props: ['isModal'],
+    components: {
+      Button
+    },
     data: () => ({
       login: '',
       password: '',
@@ -86,7 +90,9 @@
     margin: 15px 0 30px 0;
   }
 
-  .auth_password_wrap { position: relative }
+  .auth_password_wrap {
+    position: relative;
+  }
 
   .auth_password_switch {
     position: absolute;
@@ -99,20 +105,23 @@
     transition: opacity .3s;
   }
 
-  .auth_password_switch:hover { opacity: 1 }
+  .auth_password_switch:hover {
+    opacity: 1;
+  }
 
   .auth_password_switch.hidden {
     background-image: url('~assets/hide.svg');
   }
 
-  .auth_button { width: 250px }
+  .auth_button {
+    width: 250px;
+  }
 
   .auth_open_multiacc {
     position: absolute;
-    bottom: 0;
+    bottom: 10px;
     color: #306aab;
     user-select: none;
     cursor: pointer;
-    margin-bottom: 10px;
   }
 </style>

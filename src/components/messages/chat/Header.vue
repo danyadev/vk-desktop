@@ -119,7 +119,7 @@
 
   .im_header_name_wrap .verified {
     flex: none;
-    margin-left: 4px;
+    margin: 0 0 0 4px;
   }
 
   .im_header_muted {

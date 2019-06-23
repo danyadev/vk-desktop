@@ -75,14 +75,16 @@
   .modals_container {
     position: absolute;
     top: 0;
-    z-index: 6;
+    z-index: 3;
     width: 100%;
     height: 100%;
     visibility: hidden;
     transition: visibility .3s;
   }
 
-  .modals_container.active { visibility: visible }
+  .modals_container.active {
+    visibility: visible;
+  }
 
   .modal_wrap {
     position: absolute;
@@ -92,7 +94,7 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, .4);
-    z-index: 100;
+    z-index: 1;
   }
 
   .modal {
@@ -111,21 +113,20 @@
     border-radius: 0 0 5px 5px;
   }
 
-  .modal_footer .button,
-  .modal_footer .light_button {
+  .modal_footer .button {
     min-width: 110px;
     margin: 9px 5px;
   }
 
-  .modal_footer .light_button {
+  .modal_footer .button.light {
     background: #e4e9ef;
   }
 
-  .modal_footer .button.right:first-child,
-  .modal_footer .light_button.right:first-child {
-    margin-right: 10px;
+  .modal_footer .button.right {
+    float: right;
   }
 
-  .modal_footer .button.right,
-  .modal_footer .light_button.right { float: right }
+  .modal_footer .button.right:first-child {
+    margin-right: 10px;
+  }
 </style>

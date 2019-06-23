@@ -123,41 +123,6 @@
   .input:focus { border: 1px solid #7e7f7f }
   .input::-webkit-input-placeholder { color: #a0a0a0 }
 
-  .button, .light_button {
-    display: inline-block;
-    font-size: 15px;
-    padding: 9px;
-    outline: none;
-    border: none;
-    border-radius: 5px;
-    user-select: none;
-    text-align: center;
-    transition: opacity .3s, background-color .3s;
-  }
-
-  .button:not(:disabled), .light_button:not(:disabled) {
-    cursor: pointer;
-  }
-
-  .button:disabled, .light_button:disabled {
-    opacity: .8;
-  }
-
-  .button {
-    background: #5789c5;
-    color: #f3f3f3;
-  }
-
-  .light_button {
-    background: #e4eaf0;
-    color: #55677d;
-  }
-
-  .button:not(:disabled):hover { background: #547fb3 }
-  .button:not(:disabled):active { background: #4977a9 }
-  .light_button:not(:disabled):hover { background: #dbe3eb }
-  .light_button:not(:disabled):active { background: #d3dce6 }
-
   .emoji {
     margin: 0 1px -3px 1px;
     width: 16px;

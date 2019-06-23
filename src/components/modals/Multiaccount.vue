@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="modal_footer">
-      <button class="button right" @click="openAuthModal">{{ l('ml_multiacc_add_account') }}</button>
+      <Button class="right" @click="openAuthModal">{{ l('ml_multiacc_add_account') }}</Button>
     </div>
   </div>
 </template>
@@ -26,11 +26,14 @@
 <script>
   import { mapState } from 'vuex';
   import { resetAppState } from 'js/store/';
+
   import ModalHeader from './ModalHeader.vue';
+  import Button from '../UI/Button.vue';
 
   export default {
     components: {
-      ModalHeader
+      ModalHeader,
+      Button
     },
     computed: {
       ...mapState('users', ['users', 'activeUser'])

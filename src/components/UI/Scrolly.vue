@@ -296,7 +296,7 @@
 
   .scrolly-bar-wrap {
     position: absolute;
-    z-index: 4;
+    z-index: 1;
   }
 
   .scrolly-bar-wrap.axis-x {

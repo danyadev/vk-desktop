@@ -1,12 +1,16 @@
-import { remote as electron } from 'electron';
+import { ipcRenderer } from 'electron';
 
-const { globalShortcut } = electron;
-const win = electron.getCurrentWindow();
+const callbacks = [];
+
+ipcRenderer.on('emitShortcut', (e, id) => callbacks[id]());
+
+// При перезагрузке страницы или выходе из приложения
+window.addEventListener('beforeunload', () => {
+  ipcRenderer.send('removeAllShortcuts');
+});
 
 export default function(accelerator, callback) {
-  if(typeof callback != 'function') return;
+  callbacks.push(callback);
 
-  globalShortcut.register(accelerator, () => {
-    if(win.isFocused()) callback();
-  });
+  ipcRenderer.send('addShortcut', { accelerator, id: callbacks.length-1 });
 }

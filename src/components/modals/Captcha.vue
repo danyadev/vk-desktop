@@ -14,18 +14,20 @@
       </div>
     </div>
     <div class="modal_footer">
-      <button class="button right" :disabled="disabled" @click="sendCode">{{ l('send') }}</button>
+      <Button class="right" :disabled="disabled" @click="sendCode">{{ l('send') }}</Button>
     </div>
   </div>
 </template>
 
 <script>
   import ModalHeader from './ModalHeader.vue';
+  import Button from '../UI/Button.vue';
 
   export default {
     props: ['data'],
     components: {
-      ModalHeader
+      ModalHeader,
+      Button
     },
     data: () => ({
       text: ''

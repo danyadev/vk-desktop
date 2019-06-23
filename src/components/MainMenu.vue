@@ -91,7 +91,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 5;
+    z-index: 3;
     background: #fff0;
     visibility: hidden;
   }
@@ -114,7 +114,6 @@
     transform: translate(-100%);
     width: 250px;
     height: 100%;
-    z-index: 3;
     overflow: hidden;
     background: #fff;
     box-shadow: 4px 0 6px rgba(0, 0, 0, .2);

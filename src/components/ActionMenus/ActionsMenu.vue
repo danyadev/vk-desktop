@@ -69,11 +69,10 @@
     width: 250px;
     right: 0;
     padding: 4px 0;
-    margin: 6px;
-    margin-top: -6px;
+    margin: -6px 6px 6px 6px;
     opacity: 0;
     pointer-events: none;
-    z-index: 5;
+    z-index: 2;
     background: #fff;
     border-radius: 6px;
     border: 1px solid rgba(0, 0, 0, .12);

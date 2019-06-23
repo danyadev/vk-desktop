@@ -4,8 +4,8 @@
     <div class="auth_code_descr">{{ l('code_sent_to', isAppCode, [data.phone_mask]) }}</div>
     <input class="input" ref="input" :placeholder="l('enter_code')" v-model="code"/>
     <div class="auth_code_buttons">
-      <button class="light_button" @click="cancel" :disabled="load">{{ l('cancel') }}</button>
-      <button class="button" @click="auth" :disabled="load || !code.trim()">{{ l('login') }}</button>
+      <Button light @click="cancel" :disabled="load">{{ l('cancel') }}</Button>
+      <Button @click="auth" :disabled="load || !code.trim()">{{ l('login') }}</Button>
     </div>
     <div :class="['auth_error', { active: error }]">{{ l('wrong_code') }}</div>
   </div>
@@ -13,9 +13,13 @@
 
 <script>
   import { getAndroidToken } from './auth';
+  import Button from '../UI/Button.vue';
 
   export default {
     props: ['data'],
+    components: {
+      Button
+    },
     data: () => ({
       code: '',
       load: false,

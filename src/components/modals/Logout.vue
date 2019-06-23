@@ -3,19 +3,22 @@
     <ModalHeader>{{ l('ml_logout_header') }}</ModalHeader>
     <div class="modal_content">{{ l('ml_logout_sure') }}</div>
     <div class="modal_footer">
-      <button class="button right" @click="logout">{{ l('yes') }}</button>
-      <button class="light_button right" @click="closeModal">{{ l('cancel') }}</button>
+      <Button class="right" @click="logout">{{ l('yes') }}</Button>
+      <Button class="right" light @click="closeModal">{{ l('cancel') }}</Button>
     </div>
   </div>
 </template>
 
 <script>
   import { resetAppState } from 'js/store/';
+
   import ModalHeader from './ModalHeader.vue';
+  import Button from '../UI/Button.vue';
 
   export default {
     components: {
-      ModalHeader
+      ModalHeader,
+      Button
     },
     methods: {
       logout() {
