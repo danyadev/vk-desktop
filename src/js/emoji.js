@@ -21,9 +21,9 @@ export function getEmojiCode(emoji) {
 export function getEmojiFromCode(rawCode) {
   // isKeyCap = true только в случаях с эмодзи "1⃣".
   // Его код - (0-9#*)e283a3
-  let isKeyCap = rawCode.length % 2 == 1,
-      start = isKeyCap ? rawCode.slice(0, 1) : '',
-      code = isKeyCap ? rawCode.slice(1) : rawCode;
+  const isKeyCap = rawCode.length % 2 == 1;
+  const start = isKeyCap ? rawCode.slice(0, 1) : '';
+  const code = isKeyCap ? rawCode.slice(1) : rawCode;
 
   return start + decodeURIComponent('%' + code.match(/(..?)/g).join('%'));
 }
@@ -46,7 +46,7 @@ export function generateEmojiImage(emoji) {
     const [id, x, y, posX, posY] = parseLocalEmoji(local);
     let style = `background: url('assets/emoji_sprites/sprite_${id}.webp') -${x}px -${y}px`;
 
-    if(devicePixelRatio >= 2) style += ` / ${posX}px ${posY}px;`;
+    if(devicePixelRatio >= 2) style += ` / ${posX}px ${posY}px`;
 
     return `<img class="emoji" src="assets/blank.gif" style="${style}" alt="${emoji}">`;
   } else {
