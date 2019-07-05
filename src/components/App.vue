@@ -45,8 +45,7 @@
           this.$store.commit('users/updateUser', user);
           this.$store.commit('setMenuCounters', counters);
 
-          if(longpoll.stopped) longpoll.start(lp);
-          else longpoll.once('stop', () => longpoll.start(lp));
+          longpoll.start(lp);
         }
       }
     },

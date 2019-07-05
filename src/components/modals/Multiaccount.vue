@@ -26,6 +26,8 @@
 <script>
   import { mapState } from 'vuex';
   import { resetAppState } from 'js/store/';
+  import { abortAllRequests } from 'js/request';
+  import { clearMethodsList } from 'js/vkapi';
 
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
@@ -51,13 +53,16 @@
           // Например, из роута /messages/100 мы получим /messages
           const [{ path }] = this.$router.currentRoute.matched;
 
-          // 1. Переходим на страницу загрузки
-          this.$router.replace('/loading');
+          // 1. Переходим на пустую страницу
+          this.$router.replace('/empty');
           // 2. Ждем, когда эта страница отрендерится
           await this.$nextTick();
-          // 3. Обновляем стейт всех модулей приложения
+          // 3. Останавливаем все активные запросы в VK API
+          abortAllRequests();
+          clearMethodsList();
+          // 4. Обновляем стейт всех модулей приложения
           resetAppState();
-          // 4. Возвращаемся на страницу, откуда мы начали
+          // 5. Возвращаемся на страницу, откуда мы начали
           this.$router.replace(path);
         }
 

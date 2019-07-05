@@ -3,8 +3,12 @@ import https from 'https';
 import fs from 'fs';
 import { timer } from './utils';
 
+const requests = {};
+
 function request(params, post = '') {
-  return new Promise((resolve, reject) => {
+  const symbol = Symbol();
+
+  const promise = new Promise((resolve, reject) => {
     const req = https.request(params, (res) => {
       const chunks = [];
 
@@ -17,8 +21,17 @@ function request(params, post = '') {
         try { data = JSON.parse(data) }
         catch(e) {}
 
+        delete requests[symbol];
+
         resolve({ data, headers: res.headers });
       });
+    });
+
+    requests[symbol] = req;
+
+    req.on('error', (...data) => {
+      delete requests[symbol];
+      reject(...data);
     });
 
     if(params.method == 'POST' && params.multipart) {
@@ -40,9 +53,9 @@ function request(params, post = '') {
       req.setHeader('Content-Length', length + (16 * (names.length - 1)) + 8 + Buffer.byteLength(boundary));
       sendMultipartParts(boundary, body, data, names, req, 0);
     } else req.end(post);
-
-    req.on('error', reject);
   });
+
+  return { symbol, promise };
 }
 
 function renderMultipartBody(names, data, boundary) {
@@ -77,9 +90,29 @@ function sendMultipartParts(boundary, body, data, names, req, i) {
   } else write();
 }
 
-async function isConnected() {
-  try { return !!(await dns.lookup('https://google.com')) }
-  catch(e) { return false }
+async function waitConnection() {
+  let firstValue, connection;
+
+  while(!connection) {
+    try {
+      connection = !!(await dns.lookup('https://google.com'));
+    }
+    catch(e) {}
+
+    if(firstValue == null) firstValue = connection;
+    if(!connection) await timer(1500);
+  }
+
+  return firstValue;
+}
+
+export function abortAllRequests() {
+  const symbols = Object.getOwnPropertySymbols(requests);
+
+  symbols.forEach((symbol) => {
+    requests[symbol].abort();
+    delete requests[symbol];
+  });
 }
 
 export default function(...data) {
@@ -87,13 +120,14 @@ export default function(...data) {
     let done = false;
 
     while(!done) {
+      const { symbol, promise } = request(...data);
+
       try {
-        resolve(await request(...data));
+        resolve(await promise);
         done = true;
       } catch(err) {
-        if(!await isConnected()) {
-          await timer(1500);
-        } else {
+        if(!requests[symbol]) done = true;
+        else if(await waitConnection()) {
           reject(err);
           done = true;
         }

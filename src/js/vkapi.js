@@ -2,7 +2,7 @@ import { VKDesktopUserAgent } from './utils';
 import querystring from 'querystring';
 import request from './request';
 import store from './store/';
-import { eventBus } from './utils';
+import { eventBus, timer } from './utils';
 
 export const version = '5.103';
 
@@ -59,7 +59,6 @@ function vkapi(name, params) {
         break;
       case 6: // Много запросов в секунду
         setTimeout(reject, 500);
-
         break;
       case 10: // Internal Server Error
         const thisParams = methods[0].data[1] || {};
@@ -67,6 +66,7 @@ function vkapi(name, params) {
         if(thisParams.ise) {
           reject(data.error);
         } else {
+          await timer(1000);
           methods[0].data[1] = Object.assign(thisParams, { ise: true });
           reject();
         }
@@ -88,7 +88,6 @@ function vkapi(name, params) {
         break;
       default: // Все остальные ошибки
         reject(data.error);
-
         break;
     }
   });
@@ -96,6 +95,11 @@ function vkapi(name, params) {
 
 const methods = [];
 let inWork = false;
+
+export function clearMethodsList() {
+  methods.length = 0;
+  inWork = false;
+}
 
 async function executeMethod() {
   const { data, resolve, reject } = methods[0];

@@ -7,7 +7,7 @@
     <div class="im_header_center">
       <div class="im_header_name_wrap">
         <div class="im_header_name" v-emoji="title"></div>
-        <div class="verified white" v-if="owner && owner.verified"></div>
+        <div v-if="owner && owner.verified" class="verified white"></div>
         <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="im_header_muted"/>
       </div>
       <div class="im_header_online">{{ online }}</div>

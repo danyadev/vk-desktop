@@ -38,10 +38,8 @@ export default new class Longpoll extends EventEmitter {
     this.pts = data.pts;
     this.ts = data.ts;
 
-    this.stopped = false;
     this.started = true;
 
-    this.emit('start');
     this.loop();
   }
 
@@ -68,9 +66,6 @@ export default new class Longpoll extends EventEmitter {
         this.emitHistory(data.updates);
       }
     }
-
-    this.stopped = true;
-    this.emit('stop');
   }
 
   async catchErrors(data) {
