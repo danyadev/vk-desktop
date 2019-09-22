@@ -13,7 +13,7 @@ app.once('ready', () => {
   } catch(e) {}
 
   const win = new BrowserWindow({
-    minWidth: 360,
+    minWidth: 400,
     minHeight: 480,
     show: false,
     frame: false,

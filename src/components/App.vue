@@ -3,7 +3,7 @@
     <Titlebar/>
     <div class="app">
       <MainMenu v-if="activeUser"/>
-      <RouterView/>
+      <KeepAlive><RouterView/></KeepAlive>
       <ModalsWrapper/>
     </div>
   </div>

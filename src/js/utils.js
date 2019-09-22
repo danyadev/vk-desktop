@@ -42,6 +42,13 @@ export function getPhoto(p1, p2) {
     : p1 && (x2 ? p1.photo_100 : p1.photo_50);
 }
 
+// Возвращает фотографию нужного размера из обьекта фотографий
+export function getPhotoFromSizes(sizes, size) {
+  const photo = sizes.find((ph) => ph.type == size);
+
+  return photo || sizes[sizes.length-1];
+}
+
 // Пишет текст с большой буквы
 // привет всем -> Привет всем
 export function capitalize(str) {

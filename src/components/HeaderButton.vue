@@ -1,6 +1,6 @@
 <template>
   <Ripple color="rgba(255, 255, 255, .2)" class="ripple_fast open_menu_btn" @click="openMenu">
-    <img src="assets/menu.webp">
+    <img :src="`assets/${back ? 'back.svg' : 'menu.webp'}`">
   </Ripple>
 </template>
 
@@ -8,18 +8,14 @@
   import Ripple from './UI/Ripple.vue';
 
   export default {
-    props: {
-      back: {
-        type: Boolean,
-        default: false
-      }
-    },
+    props: ['back'],
     components: {
       Ripple
     },
     methods: {
       openMenu() {
-        this.$store.commit('setMenuState', true);
+        if(this.back) this.$emit('back');
+        else this.$store.commit('setMenuState', true);
       }
     }
   }

@@ -52,7 +52,7 @@
       ...mapState(['menuState', 'menuCounters']),
       ...mapGetters('users', ['user']),
       routes() {
-        return ['messages'].map((page) => ({
+        return ['messages', 'photos'].map((page) => ({
           route: page,
           active: this.isActiveRoute(`/${page}`)
         }));
@@ -119,7 +119,9 @@
     box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
   }
 
-  .menu { transition: transform .35s }
+  .menu {
+    transition: transform .35s;
+  }
 
   /* панелька профиля */
 
@@ -190,12 +192,17 @@
     height: calc(100% - 125px);
   }
 
+  .menu_items .menu_item:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
   .menu_item {
     height: 44px;
     display: flex;
     align-items: center;
     padding-left: 20px;
     cursor: pointer;
+    color: #808080;
   }
 
   .menu_item, .menu_item_name {
