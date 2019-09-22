@@ -275,7 +275,7 @@ export default {
       });
 
       for(const { msg, peer: { keyboard } } of items) {
-        longpoll.emit('new_message', msg.random_id);
+        longpoll.emit('new_message', msg, peer_id);
 
         removeTyping(peer_id, msg.from);
 

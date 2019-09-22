@@ -4,7 +4,7 @@ import request from './request';
 import store from './store/';
 import { eventBus, timer } from './utils';
 
-export const version = '5.103';
+export const version = '5.107';
 
 function vkapi(name, params) {
   return new Promise(async (resolve, reject) => {

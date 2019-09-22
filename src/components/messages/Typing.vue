@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  import { loadProfile } from 'js/utils';
+  import { loadConversationMembers } from 'js/messages';
   import getTranslate from 'js/getTranslate';
 
   export default {
@@ -47,7 +47,7 @@
           const user = this.$store.state.profiles[id];
 
           if(this.peer_id < 2e9) return '';
-          if(!user) return loadProfile(id), '...';
+          if(!user) return loadConversationMembers(id), '...';
           if(user.name) return user.name;
 
           const lastName = this.full ? user.last_name : user.last_name[0] + '.';

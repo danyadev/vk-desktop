@@ -29,10 +29,7 @@ function request(params, post = '') {
 
     requests[symbol] = req;
 
-    req.on('error', (...data) => {
-      delete requests[symbol];
-      reject(...data);
-    });
+    req.on('error', reject);
 
     if(params.method == 'POST' && params.multipart) {
       const data = params.multipart;
@@ -95,9 +92,10 @@ async function waitConnection() {
 
   while(!connection) {
     try {
-      connection = !!(await dns.lookup('https://google.com'));
+      connection = !!(await dns.lookup('google.com'));
+    } catch(e) {
+      connection = false;
     }
-    catch(e) {}
 
     if(firstValue == null) firstValue = connection;
     if(!connection) await timer(1500);
@@ -130,7 +128,7 @@ export default function(...data) {
         else if(await waitConnection()) {
           reject(err);
           done = true;
-        }
+        } else delete requests[symbol];
       }
     }
   });

@@ -19,8 +19,7 @@ export default new class Longpoll extends EventEmitter {
 
     this.debug = false;
     this.started = false;
-    this.stopped = true;
-    this.version = 7;
+    this.version = 8;
   }
 
   async getServer() {
@@ -39,7 +38,6 @@ export default new class Longpoll extends EventEmitter {
     this.ts = data.ts;
 
     this.started = true;
-
     this.loop();
   }
 
@@ -75,12 +73,10 @@ export default new class Longpoll extends EventEmitter {
       case 1:
         await this.getHistory();
         this.ts = data.ts;
-
         break;
       case 2:
         const { key } = await this.getServer();
         this.key = key;
-
         break;
       case 3:
         await this.getHistory();
@@ -88,7 +84,6 @@ export default new class Longpoll extends EventEmitter {
         const server = await this.getServer();
         this.key = server.key;
         this.ts = server.ts;
-
         break;
     }
   }

@@ -136,7 +136,7 @@ export function getTextWithEmoji(nodes) {
   }
 
   return {
-    text: text.trim(),
+    text: text.replace(/\n/g, '').trim(),
     emojis: emojis
   };
 }
@@ -159,6 +159,8 @@ const loadedConvMembers = {};
 export async function loadConversationMembers(id, force) {
   if(!force && loadedConvMembers[id]) return;
   else loadedConvMembers[id] = 1;
+
+  if(id < 2e9) return loadProfile(id);
 
   try {
     const { profiles, groups } = await vkapi('messages.getConversationMembers', {
