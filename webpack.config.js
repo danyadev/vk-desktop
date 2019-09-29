@@ -17,8 +17,6 @@ module.exports = (env, { mode }) => {
     optimization: {
       minimizer: [
         new TerserWebpackPlugin({
-          cache: true,
-          parallel: true,
           terserOptions: {
             ecma: 8,
             module: true,
