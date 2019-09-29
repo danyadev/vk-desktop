@@ -565,6 +565,18 @@ export default {
     }
   },
 
+  81: {
+    // Изменение состояния неведимки
+    // [-user_id, state, ts, -1, 0]
+    // state: 1 - включена, 0 - выключена
+    parser(data) {
+
+    },
+    handler(data) {
+
+    }
+  }
+
   114: {
     // Изменеие настроек пуш-уведомлений в беседе
     // [{ peer_id, sound, disabled_until }]
