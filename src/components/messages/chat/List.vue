@@ -8,6 +8,7 @@
     <div v-if="loading" class="loading"></div>
 
     <Message v-for="msg of messages" :key="msg.id" :msg="msg" :peer_id="id" :list="messages"/>
+    <LoadingMessages :id="id" :list="messages" :loadingMessages="loadingMessages"/>
 
     <div v-if="!hasMessages && !loading" class="messages_empty_dialog">
       <img src="~assets/placeholder_empty_messages.webp">
@@ -32,13 +33,15 @@
   import Scrolly from '../../UI/Scrolly.vue';
   import Message from './Message.vue';
   import Typing from '../Typing.vue';
+  import LoadingMessages from './LoadingMessages.vue';
 
   export default {
     props: ['id'],
     components: {
       Scrolly,
       Message,
-      Typing
+      Typing,
+      LoadingMessages
     },
     data: () => ({
       loading: false,
@@ -61,6 +64,9 @@
         const typing = this.$store.state.messages.typing[this.id] || {};
 
         return Object.keys(typing).length;
+      },
+      loadingMessages() {
+        return this.$store.state.messages.loadingMessages[this.id] || [];
       }
     },
     methods: {
@@ -142,13 +148,14 @@
         this.checkScrolling(this.$el.firstChild);
       }
 
-      longpoll.on('new_message', async (random_id) => {
-        const loadingMessages = this.$store.state.messages.loadingMessages[this.id] || [];
+      longpoll.on('new_message', async ({ random_id }, peer_id) => {
+        if(peer_id != this.id) return;
+
         const { scrollTop, clientHeight, scrollHeight } = this.$el.firstChild;
 
         await this.$nextTick();
 
-        if(loadingMessages.includes(random_id)) {
+        if(this.loadingMessages.find((msg) => msg.random_id == random_id)) {
           this.$store.commit('messages/removeLoadingMessage', {
             peer_id: this.id,
             random_id: random_id
@@ -177,8 +184,8 @@
     display: flex;
     align-items: center;
     flex: none;
-    height: 35px;
-    margin: 0 20px;
+    min-height: 35px;
+    padding: 8px 20px;
   }
 
   .messages_typing .typing_text {

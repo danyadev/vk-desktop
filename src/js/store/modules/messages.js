@@ -17,7 +17,7 @@ const getState = () => ({
   // { peer_id: [message] }
   messages: {},
   // Отправленные, но еще не полученные сообщения
-  // { peer_id: [random_id] }
+  // { peer_id: [{ random_id, text, date, error, hasAttachment }] }
   loadingMessages: {},
   // Список юзеров, которые печатают в различных беседах
   // { peer_id: { user_id: { time, type } } }
@@ -146,19 +146,29 @@ export default {
       Vue.set(state.messages, peer_id, newMessages);
     },
 
-    addLoadingMessage(state, { peer_id, random_id }) {
-      const ids = [...state.loadingMessages[peer_id] || [], random_id];
+    addLoadingMessage(state, { peer_id, msg }) {
+      const messages = [...state.loadingMessages[peer_id] || [], msg];
 
-      Vue.set(state.loadingMessages, peer_id, ids);
+      Vue.set(state.loadingMessages, peer_id, messages);
+    },
+
+    editLoadingMessage(state, { peer_id, random_id, error }) {
+      const messages = [...state.loadingMessages[peer_id] || []];
+      const index = messages.findIndex((msg) => msg.random_id == random_id);
+
+      if(index != -1) {
+        Object.assign(messages[index], { error });
+        Vue.set(state.loadingMessages, peer_id, messages);
+      }
     },
 
     removeLoadingMessage(state, { peer_id, random_id }) {
-      const ids = [...state.loadingMessages[peer_id] || []];
-      const index = ids.indexOf(random_id);
+      const messages = [...state.loadingMessages[peer_id] || []];
+      const index = messages.findIndex((msg) => msg.random_id == random_id);
 
       if(index != -1) {
-        ids.splice(index, 1);
-        Vue.set(state.loadingMessages, peer_id, ids);
+        messages.splice(index, 1);
+        Vue.set(state.loadingMessages, peer_id, messages);
       }
     },
 

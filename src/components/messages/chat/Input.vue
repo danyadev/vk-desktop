@@ -32,12 +32,12 @@
         {{ l('im_toggle_left_state', 3) }}
       </template>
       <template v-else>
-        <img v-if="":src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
+        <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
         {{ l('im_toggle_notifications', !peer.muted) }}
       </template>
     </Ripple>
     <div v-else class="chat_input_error">
-      <div class="chat_input_error_img"></div>
+      <img class="chat_input_error_img" src="~assets/error.svg">
       <div class="chat_input_error_text">{{ canWrite.text }}</div>
     </div>
   </div>
@@ -112,19 +112,42 @@
         this.$refs.input.innerHTML = '';
 
         try {
+          this.$store.commit('messages/addLoadingMessage', {
+            peer_id: this.id,
+            msg: {
+              random_id,
+              text,
+              date: (Date.now() / 1000).toFixed()
+            }
+          });
+
+          this.$nextTick().then(this.$parent.$refs.chatList.scrollToEnd);
+
+          if(text == 'err') throw 1;
+
           await vkapi('messages.send', {
             peer_id: this.id,
             message: text,
             random_id: random_id,
             payload: action && action.payload
           });
-
-          this.$store.commit('messages/addLoadingMessage', {
+        } catch(e) {
+          this.$store.commit('messages/editLoadingMessage', {
             peer_id: this.id,
-            random_id: random_id
+            random_id: random_id,
+            error: true
           });
-        } catch(data) {
-          console.error(data);
+
+          // 900 = Нельзя отправить пользователю из черного списка
+          // 902 = Нельзя отправить сообщение из-за настроек приватности собеседника
+          if([900, 902].includes(e.error_code)) {
+            this.$store.commit('messages/updateConversation', {
+              peer: {
+                id: this.id,
+                canWrite: false
+              }
+            });
+          }
         }
       },
       toggleNotifications() {
@@ -265,9 +288,6 @@
   .chat_input_error_img {
     width: 36px;
     height: 36px;
-    -webkit-mask-size: 36px;
-    -webkit-mask-image: url('~assets/im_chat_error.png');
-    background: #f3690b;
   }
 
   .chat_input_error_text {

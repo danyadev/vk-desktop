@@ -6,6 +6,12 @@
     </div>
 
     <div :class="['message_wrap', { showUserData, serviceMessage, isUnreaded }]">
+      <img v-if="msg.fake"
+           :class="['message_recent', { error: msg.error }]"
+           :src="`assets/recent${msg.error ? '_error' : ''}.svg`"
+           @click="msg.error && 0"
+      />
+
       <img v-if="showUserData" class="message_photo" :src="photo">
 
       <div class="message">
@@ -53,11 +59,19 @@
         return conv && conv.peer;
       },
       prevMsg() {
-        return this.list[this.list.indexOf(this.msg) - 1];
+        const index = this.msg.fake
+          ? this.msg.isFirstFake
+              ? this.list.length
+              : 0
+          : this.list.indexOf(this.msg);
+
+        return this.list[index - 1];
       },
       messageDate() {
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
         const thisMsgDate = new Date(this.msg.date * 1000);
+
+        if(this.msg.fake && !this.msg.isFirstFake) return;
 
         if(!this.prevMsg || !isSameDay(prevMsgDate, thisMsgDate)) {
           return capitalize(getMessageDate(thisMsgDate));
@@ -71,17 +85,21 @@
         return !this.msg.out && !isPrevUnread && isThisUnread;
       },
       isUnreaded() {
-        return this.peer && (
+        return this.msg.fake || this.peer && (
           this.msg.id > this.peer.out_read || // непрочитано собеседником
           this.msg.id > this.peer.in_read // непрочитано мной
         );
       },
       serviceMessage() {
-        return this.msg.action && getServiceMessage(this.msg.action, this.user, true);
+        if(this.msg.action) {
+          return getServiceMessage(this.msg.action, this.user || { id: this.msg.from }, true);
+        }
       },
       showUserData() {
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
         const thisMsgDate = new Date(this.msg.date * 1000);
+
+        if(this.msg.fake && !this.msg.isFirstFake) return;
 
         return !this.msg.action && (
           !this.prevMsg ||
@@ -100,6 +118,7 @@
   .message_container {
     display: flex;
     flex-direction: column;
+    position: relative;
     flex: none;
   }
 
@@ -135,11 +154,12 @@
 
   .message_wrap {
     display: flex;
-    padding: 8px 20px 6px 20px;
+    padding: 8px 8px 6px 8px;
+    margin: 0 28px;
   }
 
   .message_wrap:not(.showUserData):not(.serviceMessage) {
-    padding: 3px 20px 5px 70px;
+    padding: 3px 8px 5px 58px;
   }
 
   .message_wrap.serviceMessage {
@@ -171,6 +191,25 @@
     font-weight: 400;
     font-size: 13px;
     color: #6c737a;
+  }
+
+  .message_recent {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .message_recent.error {
+    left: 6px;
+    width: 16px;
+    height: 16px;
+    /* cursor: pointer; */
+  }
+
+  .message_wrap.showUserData .message_recent {
+    top: 20px;
   }
 
   .message_content {
