@@ -49,10 +49,11 @@ function getAttachments(data) {
 
     if(match) {
       const id = match[1];
+      const kind = data[`attach${id}_kind`];
       let type = data[`attach${id}_type`];
 
-      if(data[`attach${id}_kind`] == 'audiomsg') type = 'audio_message';
-      if(data[`attach${id}_kind`] == 'graffiti') type = 'graffiti';
+      if(kind == 'audiomsg') type = 'audio_message';
+      if(kind == 'graffiti') type = 'graffiti';
 
       attachs.push({ type });
     }
@@ -375,7 +376,7 @@ export default {
   8: {
     // Юзер появился в сети
     // [-user_id, platform, timestamp]
-    // 1: любое приложение, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
+    // platform: 1: любое приложение, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
     parser: (data) => data,
     handler([id, platform, timestamp]) {
       if(!store.state.profiles[-id]) return;
@@ -464,8 +465,8 @@ export default {
 
   52: {
     // Изменение данных чата
-    // https://vk.com/dev/using_longpoll_2?f=3.2.+Дополнительные+поля+чатов
     // [type, peer_id, info]
+    // https://vk.com/dev/using_longpoll_2?f=3.2.+Дополнительные+поля+чатов
     parser: (data) => data,
     handler([type, peer_id, info]) {
       const isMe = info == store.getters['users/user'].id;
@@ -555,7 +556,7 @@ export default {
   80: {
     // Изменение количества непрочитанных диалогов
     // [count, count_with_notifications, 0]
-    // count_with_notifications - кол-во непрочитанных диалогов, в которых включены уведомления
+    // count_with_notifications: кол-во непрочитанных диалогов, в которых включены уведомления
     parser: ([count]) => count,
     handler(count) {
       store.commit('updateMenuCounters', {

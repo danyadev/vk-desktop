@@ -1,0 +1,27 @@
+{
+  "productName": "VK Desktop",
+  "compression": "maximum",
+  "appId": "ru.danyadev.vkdesktop",
+  "artifactName": "VK Desktop Setup ${version}-${env.arch}.${ext}",
+  "electronVersion": "4.2.11",
+  "asar": false,
+  "npmRebuild": false,
+  "directories": {
+    "output": "out"
+  },
+  "files": ["dist/**", "index.js", "menu.js"],
+  "nsis": {
+    "deleteAppDataOnUninstall": true,
+    "uninstallDisplayName": "VK Desktop"
+  },
+  "mac": {
+    "category": "public.app-category.social-networking",
+    "gatekeeperAssess": true,
+    "target": "dmg"
+  },
+  "linux": {
+    "synopsis": "Клиент ВКонтакте",
+    "category": "Network",
+    "target": "dir"
+  }
+}

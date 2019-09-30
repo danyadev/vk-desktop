@@ -5,6 +5,10 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const fs = require('fs');
 
+require('update-electron-app')({
+  repo: 'danyadev/vk-desktop'
+});
+
 app.once('ready', () => {
   const { screen } = require('electron');
 
