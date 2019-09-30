@@ -17,7 +17,7 @@ const app = new Vue({
   render: (h) => h(App)
 });
 
-shortcut('Ctrl+Shift+I', () => {
+shortcut(['Ctrl+Shift+I', 'F12'], () => {
   if(win.isDevToolsOpened()) win.closeDevTools();
   else win.openDevTools();
 });

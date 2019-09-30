@@ -160,7 +160,7 @@ export default new class Longpoll extends EventEmitter {
     for(const item of events) {
       const { handler } = longpollEvents[item[0]];
 
-      if(item[2] && item[1].length) {
+      if(item[2]) {
         handler({ key: Number(item[2]), items: item[1] });
       } else {
         handler(item[1]);
