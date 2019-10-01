@@ -1,6 +1,6 @@
 <template>
   <Ripple :color="isLight ? '#ced7e0' : 'rgba(0, 0, 0, .15)'"
-          :class="['button', { light: isLight }]"
+          :class="['button', { light: isLight, disabled }]"
           v-on="$listeners"
   >
     <slot></slot>
@@ -11,7 +11,7 @@
   import Ripple from './Ripple.vue';
 
   export default {
-    props: ['light'],
+    props: ['light', 'disabled'],
     components: {
       Ripple
     },
@@ -33,11 +33,12 @@
     transition: opacity .3s, background-color .3s;
   }
 
-  .button:not(:disabled) {
+  .button:not(.disabled) {
     cursor: pointer;
   }
 
-  .button:disabled {
+  .button.disabled {
+    pointer-events: none;
     opacity: .8;
   }
 
@@ -51,6 +52,6 @@
     color: #55677d;
   }
 
-  .button:not(:disabled):hover { background: #547fb3 }
-  .button.light:not(:disabled):hover { background: #dbe3eb }
+  .button:not(.disabled):hover { background: #547fb3 }
+  .button.light:not(.disabled):hover { background: #dbe3eb }
 </style>

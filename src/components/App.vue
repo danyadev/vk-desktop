@@ -3,7 +3,8 @@
     <Titlebar/>
     <div class="app">
       <MainMenu v-if="activeUser"/>
-      <KeepAlive><RouterView/></KeepAlive>
+      <KeepAlive v-if="activeUser"><RouterView/></KeepAlive>
+      <Auth v-else/>
       <ModalsWrapper/>
     </div>
   </div>
@@ -17,6 +18,7 @@
 
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
+  import Auth from './auth/Auth.vue';
   import ModalsWrapper from './ModalsWrapper.vue';
 
   export default {
@@ -24,6 +26,7 @@
     components: {
       Titlebar,
       MainMenu,
+      Auth,
       ModalsWrapper
     },
     computed: {
@@ -34,9 +37,9 @@
       async initUser() {
         if(longpoll.started) longpoll.stop();
 
-        this.$router.replace(this.activeUser ? '/messages' : '/auth');
-
         if(this.activeUser) {
+          if(this.$router.currentRoute.path != '/messages') this.$router.replace('/messages');
+
           const { lp, counters, user } = await vkapi('execute.init', {
             lp_version: longpoll.version,
             fields: fields

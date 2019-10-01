@@ -126,7 +126,8 @@ async function getLastMessage(peer_id) {
 async function watchTyping(peer_id, user_id) {
   await timer(1000);
 
-  const user = store.state.messages.typing[peer_id][user_id];
+  const typingPeer = store.state.messages.typing[peer_id];
+  const user = typingPeer && typingPeer[user_id];
 
   if(user && user.time) {
     store.commit('messages/addUserTyping', {

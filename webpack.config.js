@@ -17,6 +17,7 @@ module.exports = (env, { mode }) => {
     optimization: {
       minimizer: [
         new TerserWebpackPlugin({
+          extractComments: false,
           terserOptions: {
             ecma: 8,
             module: true,

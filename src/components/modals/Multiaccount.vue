@@ -25,9 +25,7 @@
 
 <script>
   import { mapState } from 'vuex';
-  import { resetAppState } from 'js/store/';
-  import { abortAllRequests } from 'js/request';
-  import { clearMethodsList } from 'js/vkapi';
+  import { clearUserSession } from 'js/utils';
 
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
@@ -48,24 +46,9 @@
       async setAccount(id) {
         if(this.activeUser == id) return;
 
-        if(this.activeUser) {
-          // Получаем корневой роут
-          // Например, из роута /messages/100 мы получим /messages
-          const [{ path }] = this.$router.currentRoute.matched;
-
-          // 1. Переходим на пустую страницу
-          this.$router.replace('/empty');
-          // 2. Ждем, когда эта страница отрендерится
-          await this.$nextTick();
-          // 3. Останавливаем все активные запросы в VK API
-          abortAllRequests();
-          clearMethodsList();
-          // 4. Обновляем стейт всех модулей приложения
-          resetAppState();
-          // 5. Возвращаемся на страницу, откуда мы начали
-          this.$router.replace(path);
-        }
-
+        this.$store.commit('users/setActiveUser', null);
+        clearUserSession();
+        await this.$nextTick();
         this.$store.commit('users/setActiveUser', id);
       },
       removeAccount(id) {

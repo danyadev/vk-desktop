@@ -64,5 +64,5 @@
     width: 310px;
   }
 
-  .auth_code_buttons button { width: 123px }
+  .auth_code_buttons .button { width: 123px }
 </style>

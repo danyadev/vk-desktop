@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
-import vkapi from './vkapi';
-import store from './store/';
+import { abortAllRequests } from 'js/request';
+import vkapi, { clearMethodsList } from './vkapi';
+import store, { resetAppState } from './store/';
 import { version as AppVersion } from 'package-json';
 
 // Минимальный fields для получения профилей в приложении
@@ -117,6 +118,15 @@ export function endScroll(callback, reverse) {
 
 // Шина событий вне Vue
 export const eventBus = new EventEmitter();
+
+export function clearUserSession() {
+  // 1. Остановка всех активных запросов в сеть (longpoll)
+  abortAllRequests();
+  // 2. Очистка очереди запросов VK API
+  clearMethodsList();
+  // 3. Обнуление локального хранилища (где хранятся, например, загруженные сообщения)
+  resetAppState();
+}
 
 // Загрузка профилей
 const loadingProfiles = [];
