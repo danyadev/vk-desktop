@@ -7,7 +7,11 @@
     "dev": "webpack-dev-server --mode development --hot",
     "build": "npm run dist && npm run pack",
     "dist": "webpack --mode production",
-    "pack": "electron-builder --config build/config.json"
+    "pack": "electron-builder --config build/config.json",
+
+    "win-setup": "npm run win-setup64 && npm run win-setup32",
+    "win-setup64": "innosetup-compiler build/config-x64.iss --verbose",
+    "win-setup32": "innosetup-compiler build/config-ia32.iss --verbose"
   },
   "repository": "https://github.com/danyadev/vk-desktop",
   "author": {
@@ -24,6 +28,7 @@
     "electron": "4.2.11",
     "electron-builder": "21.2.0",
     "file-loader": "4.2.0",
+    "innosetup-compiler": "5.6.1",
     "mini-css-extract-plugin": "0.8.0",
     "terser-webpack-plugin": "2.1.2",
     "vue": "2.6.10",

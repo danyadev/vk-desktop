@@ -9,28 +9,14 @@
   },
   "files": ["dist/**", "index.js", "menu.js"],
   "win": {
-    "target": [
-      {
-        "target": "nsis"
-      },
-      {
-        "target": "zip",
-        "arch": ["x64", "ia32"]
-      }
-    ]
-  },
-  "nsis": {
-    "deleteAppDataOnUninstall": true,
-    "uninstallDisplayName": "VK Desktop"
+    "target": [{
+      "target": "zip",
+      "arch": ["x64", "ia32"]
+    }]
   },
   "mac": {
     "category": "public.app-category.social-networking",
     "gatekeeperAssess": true,
     "target": "dmg"
-  },
-  "linux": {
-    "synopsis": "Клиент ВКонтакте",
-    "category": "Network",
-    "target": "dir"
   }
 }
