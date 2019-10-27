@@ -591,7 +591,7 @@ export default {
       store.commit('messages/updateConversation', {
         peer: {
           id: peer_id,
-          muted: disabled_until != 0
+          muted: !!disabled_until
         }
       });
     }

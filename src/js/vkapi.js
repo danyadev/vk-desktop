@@ -4,7 +4,7 @@ import request from './request';
 import store from './store/';
 import { eventBus, timer } from './utils';
 
-export const version = '5.107';
+export const version = '5.113';
 
 function vkapi(name, params) {
   return new Promise(async (resolve, reject) => {
@@ -57,10 +57,14 @@ function vkapi(name, params) {
         reject();
 
         break;
+
       case 6: // Много запросов в секунду
-        setTimeout(reject, 500);
+      case 9: // Flood control
+        setTimeout(reject, 1000);
         break;
+
       case 10: // Internal Server Error
+      // TODO добавить модалку
         const thisParams = methods[0].data[1] || {};
 
         if(thisParams.ise) {
@@ -72,6 +76,7 @@ function vkapi(name, params) {
         }
 
         break;
+
       case 14: // Captcha
         eventBus.emit('modal:open', 'captcha', {
           src: data.error.captcha_img,
@@ -86,6 +91,7 @@ function vkapi(name, params) {
         });
 
         break;
+
       default: // Все остальные ошибки
         reject(data.error);
         break;
