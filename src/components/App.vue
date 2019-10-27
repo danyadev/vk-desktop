@@ -89,6 +89,7 @@
     overflow: hidden;
     height: 100vh;
     -webkit-rtl-ordering: visual;
+    text-rendering: optimizeSpeed;
   }
 
   a, .link {

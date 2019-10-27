@@ -5,7 +5,6 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const fs = require('fs');
 
-
 app.once('ready', () => {
   const { screen } = require('electron');
 
@@ -24,6 +23,8 @@ app.once('ready', () => {
     }
   });
 
+  require('./main/win').setWindow(win);
+
   ipcMain.on('addShortcut', (event, data) => {
     globalShortcut.registerAll(data.accelerators, () => {
       if(win.isFocused()) {
@@ -35,6 +36,8 @@ app.once('ready', () => {
   ipcMain.on('removeAllShortcuts', () => {
     globalShortcut.unregisterAll();
   });
+
+  require('./main/updater').init();
 
   win.webContents.once('dom-ready', async () => {
     const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
@@ -57,7 +60,7 @@ app.once('ready', () => {
     win.show();
   });
 
-  if(process.platform == 'darwin') require('./menu')(win);
+  if(process.platform == 'darwin') require('./main/menu')(win);
   else win.removeMenu();
 
   win.loadURL(

@@ -18,7 +18,8 @@
     'BlockedAccount',
     'Multiaccount',
     'Auth',
-    'ClearHistory'
+    'ClearHistory',
+    'UpdateAvailable'
   ];
 
   for(const name of modalNames) {
@@ -88,22 +89,28 @@
 
   .modal_wrap {
     position: absolute;
+    top: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 32px);
     background: rgba(0, 0, 0, .4);
     z-index: 1;
   }
 
   .modal {
     position: absolute;
-    max-width: 95%;
-    max-height: 95%;
+    max-width: 92vw;
+    max-height: 92vh;
     border-radius: 7px;
     background: #fff;
     box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
+  }
+
+  .modal_content {
+    /* <modal-max-height> - <titlebar> - <modal-header> - <modal-footer> */
+    max-height: calc(92vh - 32px - 48px - 56px);
   }
 
   .modal_footer {
@@ -116,6 +123,14 @@
   .modal_footer .button {
     min-width: 110px;
     margin: 9px 5px;
+  }
+
+  .modal_footer .button.left:first-child {
+    margin-left: 9px;
+  }
+
+  .modal_footer .button.right:last-child {
+    margin-right: 9px;
   }
 
   .modal_footer .button.light {

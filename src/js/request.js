@@ -5,16 +5,39 @@ import { timer } from './utils';
 
 const requests = {};
 
-function request(params, post = '') {
+function request(params, post) {
   const symbol = Symbol();
+  let url;
+
+  if(params && params.url) url = params.url;
+  else url = params;
 
   const promise = new Promise((resolve, reject) => {
-    const req = https.request(params, (res) => {
+    const req = https.request(url, (res) => {
       const chunks = [];
+      const MB = 1048576;
+      const contentLength = +res.headers['content-length'];
+      let loadedLength = 0;
 
       if(params.pipe) res.pipe(params.pipe);
 
-      res.on('data', (chunk) => chunks.push(chunk));
+      res.on('data', (chunk) => {
+        if(!params.pipe) chunks.push(chunk);
+
+        if(typeof params.progress == 'function') {
+          loadedLength += chunk.length;
+
+          params.progress({
+            // Размер файла в МБ
+            size: contentLength / MB,
+            // Сколько МБ уже скачалось
+            downloaded: loadedLength / MB,
+            // Сколько МБ уже скачалось в процентах
+            progress: loadedLength / contentLength * 100
+          });
+        }
+      });
+
       res.on('end', () => {
         let data = String(Buffer.concat(chunks));
 
@@ -23,7 +46,11 @@ function request(params, post = '') {
 
         delete requests[symbol];
 
-        resolve({ data, headers: res.headers });
+        resolve({
+          data,
+          headers: res.headers,
+          statusCode: res.statusCode
+        });
       });
     });
 
@@ -49,7 +76,7 @@ function request(params, post = '') {
       req.setHeader('Content-Type', `multipart/form-data; boundary="${boundary}"`);
       req.setHeader('Content-Length', length + (16 * (names.length - 1)) + 8 + Buffer.byteLength(boundary));
       sendMultipartParts(boundary, body, data, names, req, 0);
-    } else req.end(post);
+    } else req.end(post || '');
   });
 
   return { symbol, promise };
