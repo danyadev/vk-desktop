@@ -21,11 +21,14 @@ app.once('ready', () => {
     minHeight: 480,
     show: false,
     frame: false,
-    titleBarStyle: 'hidden'
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   ipcMain.on('addShortcut', (event, data) => {
-    globalShortcut.register(data.accelerator, () => {
+    globalShortcut.registerAll(data.accelerators, () => {
       if(win.isFocused()) {
         event.sender.send('emitShortcut', data.id);
       }
@@ -58,7 +61,7 @@ app.once('ready', () => {
   });
 
   if(process.platform == 'darwin') require('./menu')(win);
-  else win.setMenu(null);
+  else win.removeMenu();
 
   win.loadURL(
     process.argv.includes('dev-mode')

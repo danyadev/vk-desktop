@@ -21,13 +21,16 @@ export default function(accelerators, callback) {
 
   if(!Array.isArray(accelerators)) accelerators = [accelerators];
 
-  for(const accelerator of accelerators) {
-    const id = callbacks.length-1;
+  const id = callbacks.length-1;
 
-    if(/\+/.test(accelerator)) {
-      ipcRenderer.send('addShortcut', { accelerator, id });
-    } else {
-      buttons.push({ key: accelerator, id });
+  for(let i in accelerators) {
+    const item = accelerators[i];
+
+    if(!/\+/.test(item)) {
+      buttons.push({ key: item, id });
+      accelerators.splice(i, 1);
     }
   }
+
+  ipcRenderer.send('addShortcut', { accelerators, id });
 }
