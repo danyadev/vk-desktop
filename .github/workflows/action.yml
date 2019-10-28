@@ -9,14 +9,18 @@ jobs:
     runs-on: macOS-latest
     steps:
     - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: 12.11.1
     - name: Install dependencies
       run: npm i --no-optional
     - name: Package electron app and create installer
       run: npm run build
     - name: Upload VK-Desktop.dmg
-      uses: JasonEtco/upload-to-release@master
+      uses: danyadev/upload-to-release@master
       with:
-        args: ./out/VK-Desktop.dmg application/octet-stream
+        files:
+          - [./out/VK-Desktop.dmg, VK-Desktop.dmg, application/octet-stream]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -24,6 +28,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: 12.11.1
     - name: Install node-gyp
       run: npm install -g node-gyp
     - name: Set node config to use python2.7
@@ -39,30 +46,13 @@ jobs:
     - name: Create installer
       run: npm run win-setup
 
-    - name: Upload x64 installer
-      uses: JasonEtco/upload-to-release@master
+    - name: Upload release files
+      uses: danyadev/upload-to-release@master
+      with:
+        files:
+          - [./out/VK-Desktop-Setup-x64.exe,  VK-Desktop-Setup-x64.exe, application/octet-stream]
+          - [./out/VK-Desktop-Setup-x32.exe,  VK-Desktop-Setup-x32.exe, application/octet-stream]
+          - [./out/VK-Desktop-Setup-x64.zip,  VK-Desktop-Setup-x64.zip, application/zip]
+          - [./out/VK-Desktop-Setup-ia32.zip, VK-Desktop-Setup-x32.zip, application/zip]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        args: ./out/VK-Desktop-Setup-x64.exe application/octet-stream
-
-    - name: Upload x32 installer
-      uses: JasonEtco/upload-to-release@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        args: ./out/VK-Desktop-Setup-x32.exe application/octet-stream
-
-    - name: Upload x64 zip file
-      uses: JasonEtco/upload-to-release@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        args: ./out/VK-Desktop-Setup-x64.zip application/zip
-
-    - name: Upload ia32 zip file
-      uses: JasonEtco/upload-to-release@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        args: ./out/VK-Desktop-Setup-ia32.zip application/zip
