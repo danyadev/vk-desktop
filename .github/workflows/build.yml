@@ -1,0 +1,17 @@
+name: Build VK Desktop
+
+on:
+  release:
+    types: [created]
+jobs:
+  build_on_mac:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        ref: master
+    - uses: actions/setup-node@master
+      with:
+        node-version: 12.11.1
+    - name: see directory
+      run: ls
