@@ -9,9 +9,6 @@ jobs:
     runs-on: macOS-latest
     steps:
     - uses: actions/checkout@master
-    - uses: actions/setup-node@master
-      with:
-        node-version: 12.11.1
     - name: Install dependencies
       run: npm i --no-optional
     - name: Package electron app and create installer
@@ -27,9 +24,6 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@master
-    - uses: actions/setup-node@master
-      with:
-        node-version: 12.11.1
     - name: Install node-gyp
       run: npm install -g node-gyp
     - name: Set node config to use python2.7
