@@ -13,7 +13,9 @@ jobs:
       with:
         node-version: 12.11.1
     - name: Install dependencies
-      run: npm i
+      run: |
+        npm i -g npm
+        npm i
     - name: Package electron app and create installer
       run: npm run build
     - name: Upload VK-Desktop.dmg
@@ -22,7 +24,7 @@ jobs:
         args: ./out/VK-Desktop.dmg application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   build_on_win:
     runs-on: windows-latest
     steps:
@@ -30,8 +32,6 @@ jobs:
     - uses: actions/setup-node@master
       with:
         node-version: 12.11.1
-    - name: Install node tools
-      run: npm install -g windows-build-tools
     - name: Install node-gyp
       run: npm install -g node-gyp
     - name: Set node config to use python2.7
