@@ -1,8 +1,10 @@
 name: Build VK Desktop
 
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - electron
+
 jobs:
   build_on_mac:
     runs-on: macOS-latest
