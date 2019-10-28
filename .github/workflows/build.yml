@@ -1,7 +1,8 @@
 name: Build VK Desktop
 
 on:
-  release
+  release:
+    types: [published]
 
 jobs:
   build_on_mac:
@@ -22,20 +23,17 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
-  
   build_on_win:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@master
-      with:
-        ref: feature/github-actions        
     - uses: actions/setup-node@master
       with:
         node-version: 12.11.1
-    - name: install node tools
-      run: npm install --global --production windows-build-tools@4.0.0
-    - name: install node-gyp
-      run: npm install --global node-gyp@latest
+    - name: Install node tools
+      run: npm install -g windows-build-tools
+    - name: Install node-gyp
+      run: npm install -g node-gyp
     - name: Set node config to use python2.7
       run: npm config set python python2.7
     - name: Set node config to set msvs_version to 2015
@@ -50,31 +48,31 @@ jobs:
       run: npm run build
     - name: Create installer
       run: npm run win-setup
+
     - name: Upload x64 installer
       uses: JasonEtco/upload-to-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         args: ./out/VK-Desktop-Setup-x64.exe application/octet-stream
-          
+
     - name: Upload x32 installer
       uses: JasonEtco/upload-to-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         args: ./out/VK-Desktop-Setup-x32.exe application/octet-stream
-        
+
     - name: Upload x64 zip file
       uses: JasonEtco/upload-to-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         args: ./out/VK-Desktop-Setup-x64.zip application/zip
-        
+
     - name: Upload ia32 zip file
       uses: JasonEtco/upload-to-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         args: ./out/VK-Desktop-Setup-ia32.zip application/zip
-    

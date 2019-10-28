@@ -93,7 +93,7 @@ class WindowsUpdater extends Updater {
       '--ewu-install',
       installDstDir,
       exeName,
-      winutils.isUserAdmin() ? 1 : 0,
+      require('winutils').isUserAdmin() ? 1 : 0,
       process.argv.includes('--disable-gpu') ? 1 : 0,
       writable ? 0 : 1
     ];
@@ -174,9 +174,9 @@ function run(path, args) {
 }
 
 function runElevated(path, args) {
-  const cmdLine = args.map((arg) => winutils.escapeShellArg(String(arg))).join(' ');
+  const cmdLine = args.map((arg) => require('winutils').escapeShellArg(String(arg))).join(' ');
 
-  if(!winutils.elevate(path, cmdLine)) {
+  if(!require('winutils').elevate(path, cmdLine)) {
     run(path, args);
   }
 }
