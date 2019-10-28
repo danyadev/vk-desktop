@@ -19,7 +19,8 @@ jobs:
     - name: Upload VK-Desktop.dmg
       uses: danyadev/upload-to-release@master
       with:
-        files: [./out/VK-Desktop.dmg, VK-Desktop.dmg, application/octet-stream]
+        files: |
+          [./out/VK-Desktop.dmg, VK-Desktop.dmg, application/octet-stream]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
