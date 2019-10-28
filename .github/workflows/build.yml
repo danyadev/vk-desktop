@@ -4,16 +4,97 @@ on:
   push:
     branches:
       - electron
-
 jobs:
   build_on_mac:
     runs-on: macOS-latest
     steps:
     - uses: actions/checkout@master
-      with:
-        ref: master
     - uses: actions/setup-node@master
       with:
-        node-version: 12.11.1
-    - name: see directory
-      run: ls
+        node-version: 10.16
+    - name: Install dependencies
+      run: npm i
+    - name: Package electron app and create installer
+      run: npm run build
+    - name: Create new release
+      id: create_release
+      uses: actions/create-release@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: auto
+        release_name: VK Desktop release
+        draft: true
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./VK Desktop Setup.dmg
+        asset_name: VK.Desktop Setup.dmg
+  
+  
+  build_on_win:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        ref: feature/github-actions        
+    - uses: actions/setup-node@master
+      with:
+        node-version: 10.16
+    - name: install node tools
+      run: npm install --global --production windows-build-tools@4.0.0
+    - name: install node-gyp
+      run: npm install --global node-gyp@latest
+    - name: Set node config to use python2.7
+      run: npm config set python python2.7
+    - name: Set node config to set msvs_version to 2015
+      run: npm config set msvs_version 2015
+    - name: Work around for Windows Server 2019
+      run: set path=%path%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
+    - name: Install dependencies
+      run: |
+        npm install
+        npm run rebuild
+    - name: Build Electron app
+      run: npm run build
+    - name: Create installer
+      run: npm run win-setup
+    - name: Upload x64 installer
+      uses: actions/upload-release-asset@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ jobs.build_on_mac.steps.create_release.outputs.upload_url }}
+        asset_path: ./VK Desktop Setup x64.exe
+        asset_name: VK Desktop Setup x64.exe
+    
+    - name: Upload x32 installer
+      uses: actions/upload-release-asset@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ jobs.build_on_mac.steps.create_release.outputs.upload_url }}
+        asset_path: ./VK Desktop Setup x32.exe
+        asset_name: VK Desktop Setup x32.exe
+        
+    - name: Upload x64 zip file
+      uses: actions/upload-release-asset@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ jobs.build_on_mac.steps.create_release.outputs.upload_url }}
+        asset_path: ./VK Desktop Setup x64.zip
+        asset_name: VK Desktop Setup x64.zip
+        
+    - name: Upload x32 zip file
+      uses: actions/upload-release-asset@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ jobs.build_on_mac.steps.create_release.outputs.upload_url }}
+        asset_path: ./VK Desktop Setup ia32.zip
+        asset_name: VK Desktop Setup ia32.zip
+    
