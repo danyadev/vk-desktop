@@ -63,7 +63,8 @@ bridge.listen(async (data, resolve) => {
   }
 });
 
-if(1||electron.remote.app.isPackaged) {
+// Для автообновления на macOS нужно подписывать приложение
+if(electron.remote.app.isPackaged && process.platform != 'darwin') {
   updater.check();
 
   setInterval(() => {

@@ -13,9 +13,7 @@ jobs:
       with:
         node-version: 12.11.1
     - name: Install dependencies
-      run: |
-        npm i -g npm
-        npm i
+      run: npm i --no-optional
     - name: Package electron app and create installer
       run: npm run build
     - name: Upload VK-Desktop.dmg
@@ -38,8 +36,6 @@ jobs:
       run: npm config set python python2.7
     - name: Set node config to set msvs_version to 2015
       run: npm config set msvs_version 2015
-    - name: Work around for Windows Server 2019
-      run: set path=%path%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
     - name: Install dependencies
       run: |
         npm install

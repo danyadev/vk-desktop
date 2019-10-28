@@ -46,7 +46,9 @@
   "dependencies": {
     "extract-zip": "1.6.7",
     "fs-extra": "8.1.0",
-    "temp": "0.9.0",
+    "temp": "0.9.0"
+  },
+  "optionalDependencies": {
     "winutils": "https://github.com/danyadev/winutils"
   }
 }
