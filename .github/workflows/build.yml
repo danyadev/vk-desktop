@@ -1,9 +1,8 @@
 name: Build VK Desktop
 
 on:
-  push:
-    branches:
-      - electron
+  release
+
 jobs:
   build_on_mac:
     runs-on: macOS-latest
@@ -11,28 +10,17 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
       with:
-        node-version: 10.16
+        node-version: 12.11.1
     - name: Install dependencies
       run: npm i
     - name: Package electron app and create installer
       run: npm run build
-    - name: Create new release
-      id: create_release
-      uses: actions/create-release@master
+    - name: Upload VK-Desktop.dmg
+      uses: JasonEtco/upload-to-release@master
+      with:
+        args: ./out/VK-Desktop.dmg application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: auto
-        release_name: VK Desktop release
-        draft: true
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./VK Desktop Setup.dmg
-        asset_name: VK.Desktop Setup.dmg
   
   
   build_on_win:
@@ -43,7 +31,7 @@ jobs:
         ref: feature/github-actions        
     - uses: actions/setup-node@master
       with:
-        node-version: 10.16
+        node-version: 12.11.1
     - name: install node tools
       run: npm install --global --production windows-build-tools@4.0.0
     - name: install node-gyp
@@ -63,38 +51,30 @@ jobs:
     - name: Create installer
       run: npm run win-setup
     - name: Upload x64 installer
-      uses: actions/upload-release-asset@master
+      uses: JasonEtco/upload-to-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ jobs.build_on_mac.steps.create_release.outputs.upload_url }}
-        asset_path: ./VK Desktop Setup x64.exe
-        asset_name: VK Desktop Setup x64.exe
-    
+        args: ./out/VK-Desktop-Setup-x64.exe application/octet-stream
+          
     - name: Upload x32 installer
-      uses: actions/upload-release-asset@master
+      uses: JasonEtco/upload-to-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ jobs.build_on_mac.steps.create_release.outputs.upload_url }}
-        asset_path: ./VK Desktop Setup x32.exe
-        asset_name: VK Desktop Setup x32.exe
+        args: ./out/VK-Desktop-Setup-x32.exe application/octet-stream
         
     - name: Upload x64 zip file
-      uses: actions/upload-release-asset@master
+      uses: JasonEtco/upload-to-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ jobs.build_on_mac.steps.create_release.outputs.upload_url }}
-        asset_path: ./VK Desktop Setup x64.zip
-        asset_name: VK Desktop Setup x64.zip
+        args: ./out/VK-Desktop-Setup-x64.zip application/zip
         
-    - name: Upload x32 zip file
-      uses: actions/upload-release-asset@master
+    - name: Upload ia32 zip file
+      uses: JasonEtco/upload-to-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ jobs.build_on_mac.steps.create_release.outputs.upload_url }}
-        asset_path: ./VK Desktop Setup ia32.zip
-        asset_name: VK Desktop Setup ia32.zip
+        args: ./out/VK-Desktop-Setup-ia32.zip application/zip
     
