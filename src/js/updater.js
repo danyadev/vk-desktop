@@ -41,7 +41,7 @@ bridge.listen(async (data, resolve) => {
       const platform = updater.getPlatform();
       const [, version, filename] = res.data.url.match(/.+\/(.+)\/(.+)/);
 
-      res.data.url = res.data.url.replace(filename, `VK.Desktop.${version}-${platform}.zip`);
+      res.data.url = res.data.url.replace(filename, `VK-Desktop-${platform}.zip`);
     }
 
     resolve(res.data);
