@@ -20,7 +20,7 @@ jobs:
       uses: danyadev/upload-to-release@master
       with:
         files: |
-          [./out/VK-Desktop.dmg, VK-Desktop.dmg, application/octet-stream]
+          [./out/VK-Desktop-Setup.dmg, VK-Desktop-Setup.dmg, application/octet-stream]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
