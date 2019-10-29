@@ -4,7 +4,7 @@
   "description": "Клиент ВКонтакте",
   "main": "index.js",
   "scripts": {
-    "rebuild": "electron-rebuild",
+    "rebuild": "electron-rebuild -w winutils",
     "dev": "webpack-dev-server --mode development --hot",
     "build": "yarn dist && yarn pack",
     "dist": "webpack --mode production",
