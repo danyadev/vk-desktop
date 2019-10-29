@@ -17,7 +17,7 @@ jobs:
     - name: Package electron app and create installer
       run: yarn build
     - name: Check out directory
-    - run: |
+      run: |
         cd out
         ls
         cd ..
