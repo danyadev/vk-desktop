@@ -37,7 +37,8 @@ jobs:
         npm config set msvs_version 2015
 
         yarn global add node-gyp
-        yarn install --force
+        yarn cache clean
+        yarn upgrade
         npm run rebuild
     - name: Build Electron app
       run: yarn build
