@@ -6,10 +6,10 @@
   "scripts": {
     "rebuild": "electron-rebuild -w winutils",
     "dev": "webpack-dev-server --mode development --hot",
-    "build": "yarn dist && yarn pack",
+    "build": "yarn run dist && yarn run pack",
     "dist": "webpack --mode production",
     "pack": "electron-builder --config build/config.json",
-    "win-setup": "yarn win-setup64 && yarn win-setup32",
+    "win-setup": "yarn run win-setup64 && yarn run win-setup32",
     "win-setup64": "innosetup-compiler build/config-x64.iss --verbose",
     "win-setup32": "innosetup-compiler build/config-ia32.iss --verbose"
   },
