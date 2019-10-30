@@ -6,16 +6,16 @@
 
 ## Сборка приложения
 
-Для начала, вы должны установить [Node.js](http://nodejs.org) **10+** и [Yarn](https://yarnpkg.com/en/docs/install).
+У вас должен быть установлен [Node.js](http://nodejs.org) **версии 10+**.
 
 После клонирования этого репозитория запустите следующее:
 
 ``` bash
-$ yarn # Установит все зависимости в проекте
-$ yarn rebuild # Только для Windows, соберет пакет winutils
+$ npm i # Установит все зависимости в проекте
+$ npm run rebuild # Только для Windows, соберет пакет winutils
 
-$ yarn build # Собирает VK Desktop + собирает установщик для macOS
+$ npm run build # Собирает VK Desktop + собирает установщик для macOS
 
 # Здесь можно указать 32, 64 или ничего, чтобы собрать под все разрядности
-$ yarn win-setup[32|64] # Собирает установщик для Windows
+$ npm run win-setup[32|64] # Собирает установщик для Windows
 ```

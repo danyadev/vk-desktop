@@ -13,9 +13,9 @@ jobs:
       with:
         node-version: 12.11.1
     - name: Install dependencies
-      run: yarn install
+      run: npm i
     - name: Package electron app and create installer
-      run: yarn run build
+      run: npm run build
     - name: Upload VK-Desktop.dmg
       uses: danyadev/upload-to-release@master
       with:
@@ -36,14 +36,13 @@ jobs:
         npm config set python python2.7
         npm config set msvs_version 2015
 
-        yarn global add node-gyp
-        yarn cache clean
-        yarn upgrade
+        npm i -g node-gyp
+        npm i
         npm run rebuild
     - name: Build Electron app
-      run: yarn build
+      run: npm run build
     - name: Create installer
-      run: yarn win-setup
+      run: npm run win-setup
 
     - name: Upload release files
       uses: danyadev/upload-to-release@master
