@@ -4,21 +4,49 @@ import store from './store/';
 import vkapi from './vkapi';
 import { timer } from './utils';
 
-function hasFlag(mask, name) {
-  const flags = [];
-  const allFlags = {
-    // 524288 и 8192 - ?
-    unread: 1, outbox: 2, replied: 4, important: 8,
-    chat: 16, friends: 32, spam: 64, deleted: 128,
-    fixed: 256, media: 512, hidden: 65536,
-    deleted_for_all: 131072, reply_msg: 2097152
+function hasFlag(mask, flag) {
+  const flags = {
+    unread:       1 << 0,  // Приходит всегда
+    outbox:       1 << 1,  // Сообщение от тебя
+    important:    1 << 3,  // Важное сообщение
+    chat:         1 << 4,  // Отправка сообщения в беседу через (m.)vk.com
+    friends:      1 << 5,  // Отправлено тобой либо другом в лс
+    spam:         1 << 6,  // Пометка сообщения как спам
+    deleted:      1 << 7,  // Удаление сообщения
+    chat2:        1 << 13, // Отправка в беседу через клиенты
+    cancel_spam:  1 << 15, // Отмена пометки как спам
+    hidden:       1 << 16, // Приветственное сообщение от группы
+    deleted_all:  1 << 17, // Удаление сообщения для всех
+    chat_in:      1 << 19, // Входящее сообщение в беседе
+    fuckin_flag:  1 << 20, // Приветственное сообщение, выход из беседы
+    reply_msg:    1 << 21  // Ответ на сообщение
   };
 
-  for(const flag in allFlags) {
-    if(allFlags[flag] & mask) flags.push(flag);
+  let newMask = mask;
+  const msgFlags = [];
+
+  for(const name in flags) {
+    const flag = flags[name];
+
+    if(flag & mask) {
+      newMask -= flag;
+      msgFlags.push(name);
+    }
   }
 
-  return flags.includes(name);
+  const newFlags = newMask.toString(2).split('').reverse().reduce((arr, item, index) => {
+    if(item == 1) arr.push(1 << index);
+
+    return arr;
+  }, []);
+
+  if(longpoll.debug || newFlags.length) {
+    console.log(mask, msgFlags, newFlags);
+  }
+
+  const checkFlag = (flag) => flags[flag] & mask;
+
+  return flag ? checkFlag(flag) : checkFlag;
 }
 
 function getServiceMessage(data) {
@@ -63,16 +91,16 @@ function getAttachments(data) {
 }
 
 function getMessage(data) {
-  const user = store.getters['users/user'];
-
   // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
+  const user = store.getters['users/user'];
+  const flag = hasFlag(data[1]);
+
   // Если данные получены через messages.getLongPollHistory
   if(!Array.isArray(data)) return data;
   // Если это 2 событие прочтения сообщения или пометки его важным
   // Или юзер уже вышел из аккаунта
   if(!data[3] || !user) return;
 
-  const flag = hasFlag.bind(this, data[1]);
   const action = getServiceMessage(data[5]);
   const from_id = flag('outbox') ? user.id : Number(data[5].from || data[2]);
   const { keyboard } = data[5];
@@ -556,7 +584,7 @@ export default {
 
   80: {
     // Изменение количества непрочитанных диалогов
-    // [count, count_with_notifications, 0]
+    // [count, count_with_notifications, 0, 0]
     // count_with_notifications: кол-во непрочитанных диалогов, в которых включены уведомления
     parser: ([count]) => count,
     handler(count) {
