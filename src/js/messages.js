@@ -48,7 +48,8 @@ export function parseMessage(message) {
     replyMsg: message.reply_message,
     attachments: message.attachments,
     conversation_msg_id: message.conversation_message_id,
-    random_id: message.random_id
+    random_id: message.random_id,
+    was_listened: !!message.was_listened
   };
 }
 

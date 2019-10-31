@@ -124,7 +124,8 @@ function getMessage(data) {
       isReplyMsg: flag('reply_msg'),
       attachments: getAttachments(data[6]),
       conversation_msg_id: data[8],
-      random_id: data[7]
+      random_id: data[7],
+      was_listened: false
     }
   };
 }
@@ -195,7 +196,19 @@ export default {
     parser(data) {
       const flag = hasFlag(data[1]);
 
-      if(!flag('important') && !flag('audio_listened')) return data[0];
+      // Так как в handler обрабатываются только пачки удаленных
+      // сообщений, я решил обработать audio_listened здесь.
+      if(flag('audio_listened')) {
+        return store.commit('messages/editMessage', {
+          peer_id: data[2],
+          msg: {
+            id: data[0],
+            was_listened: true
+          }
+        });
+      }
+
+      if(!flag('important')) return data[0];
     },
     async handler({ key: peer_id, items: msg_ids }) {
       const messages = store.state.messages.messages[peer_id] || [];
