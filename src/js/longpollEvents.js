@@ -6,20 +6,21 @@ import { timer } from './utils';
 
 function hasFlag(mask, flag) {
   const flags = {
-    unread:       1 << 0,  // Приходит всегда
-    outbox:       1 << 1,  // Сообщение от тебя
-    important:    1 << 3,  // Важное сообщение
-    chat:         1 << 4,  // Отправка сообщения в беседу через (m.)vk.com
-    friends:      1 << 5,  // Отправлено тобой либо другом в лс
-    spam:         1 << 6,  // Пометка сообщения как спам
-    deleted:      1 << 7,  // Удаление сообщения
-    chat2:        1 << 13, // Отправка в беседу через клиенты
-    cancel_spam:  1 << 15, // Отмена пометки как спам
-    hidden:       1 << 16, // Приветственное сообщение от группы
-    deleted_all:  1 << 17, // Удаление сообщения для всех
-    chat_in:      1 << 19, // Входящее сообщение в беседе
-    fuckin_flag:  1 << 20, // Приветственное сообщение, выход из беседы
-    reply_msg:    1 << 21  // Ответ на сообщение
+    unread:         1 << 0,  // Приходит всегда
+    outbox:         1 << 1,  // Сообщение от тебя
+    important:      1 << 3,  // Важное сообщение
+    chat:           1 << 4,  // Отправка сообщения в беседу через (m.)vk.com
+    friends:        1 << 5,  // Отправлено тобой либо другом в лс
+    spam:           1 << 6,  // Пометка сообщения как спам
+    deleted:        1 << 7,  // Удаление сообщения
+    audio_listened: 1 << 12, // Прослушано голосовое сообщение
+    chat2:          1 << 13, // Отправка в беседу через клиенты
+    cancel_spam:    1 << 15, // Отмена пометки как спам
+    hidden:         1 << 16, // Приветственное сообщение от группы
+    deleted_all:    1 << 17, // Удаление сообщения для всех
+    chat_in:        1 << 19, // Входящее сообщение в беседе
+    fuckin_flag:    1 << 20, // Приветственное сообщение, выход из беседы
+    reply_msg:      1 << 21  // Ответ на сообщение
   };
 
   let newMask = mask;
@@ -184,14 +185,17 @@ function removeTyping(peer_id, user_id, clearChat) {
 
 export default {
   2: {
-    // 1) Пометка важным (8), не юзается
-    // 2) Пометка как спам (64)
-    // 3) Удаление сообщения (128)
-    // 4) Удаление для всех (131200)
+    // 1) Пометка важным (important)
+    // 2) Пометка как спам (spam)
+    // 3) Удаление сообщения (deleted)
+    // 4) Прослушка голосового сообщения (audio_listened)
+    // 5) Удаление для всех (deleted, deleted_all)
     // [msg_id, flags, peer_id]
     pack: true,
     parser(data) {
-      if(!hasFlag(data[1], 'important')) return data[0];
+      const flag = hasFlag(data[1]);
+
+      if(!flag('important') && !flag('audio_listened')) return data[0];
     },
     async handler({ key: peer_id, items: msg_ids }) {
       const messages = store.state.messages.messages[peer_id] || [];
@@ -218,12 +222,12 @@ export default {
   },
 
   3: {
-    // 1) Прочитано сообщение (1), не юзается
-    // 2) Отмена пометки важным (8), не юзается
-    // 3) Отмена пометки сообщения как спам (64)
-    // 4) Восстановление удаленного сообщения (128)
+    // 1) Прочитано сообщение (unread)
+    // 2) Отмена пометки важным (important)
+    // 3) Отмена пометки сообщения как спам (spam, cancel_spam)
+    // 4) Восстановление удаленного сообщения (deleted)
     // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
-    // [msg_id, flags, peer_id] (1 или 2)
+    // [msg_id, flags, peer_id] (пункты 1 и 2)
     pack: true,
     parser: getMessage,
     async handler({ key: peer_id, items }) {

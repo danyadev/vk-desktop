@@ -21,8 +21,8 @@ export default function(name, key, replaces, number) {
     key = null;
   }
 
-  if(typeof key == 'boolean') key = key ? 1 : 0;
   if(number != null) key = caseOfNumber(number);
+  else if(typeof key == 'boolean') key = key ? 1 : 0;
 
   let data = store.getters['settings/lang'][name];
   if(key != null) data = data[key];
