@@ -14,13 +14,9 @@
     "win-setup32": "innosetup-compiler build/config-ia32.iss --verbose"
   },
   "repository": "https://github.com/danyadev/vk-desktop",
-  "author": {
-    "name": "danyadev",
-    "email": "danyadev@mail.ru"
-  },
+  "author": "danyadev <danyadev@mail.ru>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@danyadev/vue-devtools": "5.1.1",
     "clean-css-loader": "2.0.0",
     "copy-webpack-plugin": "5.0.4",
     "css-loader": "3.2.0",
@@ -33,6 +29,7 @@
     "mini-css-extract-plugin": "0.8.0",
     "terser-webpack-plugin": "2.2.1",
     "vue": "2.6.10",
+    "vue-devtools": "https://github.com/danyadev/vue-devtools",
     "vue-loader": "15.7.1",
     "vue-router": "3.1.3",
     "vue-style-loader": "4.1.2",
@@ -40,13 +37,13 @@
     "vue-template-compiler": "2.6.10",
     "vuex": "3.1.1",
     "webpack": "4.41.2",
-    "webpack-cli": "3.3.9",
+    "webpack-cli": "3.3.10",
     "webpack-dev-server": "3.9.0"
   },
   "dependencies": {
     "extract-zip": "1.6.7",
     "fs-extra": "8.1.0",
-    "temp": "0.9.0"
+    "temp": "0.9.1"
   },
   "optionalDependencies": {
     "winutils": "https://github.com/danyadev/winutils"

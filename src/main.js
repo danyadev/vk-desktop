@@ -1,4 +1,4 @@
-import { remote as electron } from 'electron';
+import electron from 'electron';
 import { debounce } from 'js/utils';
 import shortcut from 'js/shortcut';
 import router from 'js/router';
@@ -10,7 +10,7 @@ import 'js/updater.js';
 
 import App from './components/App.vue';
 
-const win = electron.getCurrentWindow();
+const win = electron.remote.getCurrentWindow();
 
 const app = new Vue({
   el: '#app',
