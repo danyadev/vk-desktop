@@ -8,7 +8,6 @@
     <div v-if="loading" class="loading"></div>
 
     <Message v-for="msg of messages" :key="msg.id" :msg="msg" :peer_id="id" :list="messages"/>
-    <LoadingMessages :id="id" :list="messages" :loadingMessages="loadingMessages"/>
 
     <div v-if="!hasMessages && !loading" class="messages_empty_dialog">
       <img src="~assets/placeholder_empty_messages.webp">
@@ -33,15 +32,13 @@
   import Scrolly from '../../UI/Scrolly.vue';
   import Message from './Message.vue';
   import Typing from '../Typing.vue';
-  import LoadingMessages from './LoadingMessages.vue';
 
   export default {
     props: ['id'],
     components: {
       Scrolly,
       Message,
-      Typing,
-      LoadingMessages
+      Typing
     },
     data: () => ({
       loading: false,
@@ -107,12 +104,14 @@
         this.loading = false;
         if(items.length < 20) this.loaded = true;
       },
+
       scrollToEnd() {
         if(this.$refs.typing) {
           this.showEndBtn = false;
           this.$refs.typing.scrollIntoView(false);
         }
       },
+
       onScroll(e) {
         if(!e.scrollHeight) return;
 
@@ -123,6 +122,7 @@
 
         this.checkScrolling(e);
       },
+
       checkScrolling: endScroll(function() {
         if(!this.loading && !this.loaded) {
           this.loading = true;

@@ -84,6 +84,7 @@
           const { isReplyMsg, fwdCount, attachments } = this.msg;
 
           if(isReplyMsg) return this.l('im_replied');
+          else if(fwdCount < 0) return this.l('im_forwarded_some');
           else if(fwdCount) return this.l('im_forwarded', [fwdCount], fwdCount);
           else return this.l('im_attachments', attachments[0].type);
         } else return this.msg.text;

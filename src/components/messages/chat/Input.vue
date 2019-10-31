@@ -117,13 +117,12 @@
             msg: {
               random_id,
               text,
-              date: (Date.now() / 1000).toFixed()
+              date: (Date.now() / 1000).toFixed(),
+              isLoading: true
             }
           });
 
           this.$nextTick().then(this.$parent.$refs.chatList.scrollToEnd);
-
-          if(text == 'err') throw 1;
 
           await vkapi('messages.send', {
             peer_id: this.id,
@@ -135,7 +134,7 @@
           this.$store.commit('messages/editLoadingMessage', {
             peer_id: this.id,
             random_id: random_id,
-            error: true
+            isLoadingFailed: true
           });
 
           // 900 = Нельзя отправить пользователю из черного списка
@@ -150,6 +149,7 @@
           }
         }
       },
+
       toggleNotifications() {
         if(this.peer.left) {
           vkapi('messages.addChatUser', {
@@ -163,10 +163,12 @@
           });
         }
       },
+
       paste() {
         const text = escape(clipboard.readText()).replace(/\n/g, '<br>');
         document.execCommand('insertHTML', false, emoji(text));
       },
+
       onInput: throttle(function(e) {
         const { typing } = this.$store.state.settings.messagesSettings;
 

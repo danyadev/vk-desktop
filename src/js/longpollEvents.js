@@ -19,7 +19,7 @@ function hasFlag(mask, flag) {
     hidden:         1 << 16, // Приветственное сообщение от группы
     deleted_all:    1 << 17, // Удаление сообщения для всех
     chat_in:        1 << 19, // Входящее сообщение в беседе
-    fuckin_flag:    1 << 20, // Приветственное сообщение, выход из беседы
+    fuckin_flag:    1 << 20, // Приходит в не связанных между собой событиях
     reply_msg:      1 << 21  // Ответ на сообщение
   };
 
@@ -120,7 +120,7 @@ function getMessage(data) {
       editTime: data[9],
       hidden: flag('hidden'),
       action: action,
-      fwdCount: Number(data[5].fwd_count || 0),
+      fwdCount: Number(data[5].fwd_count || (data[6].fwd ? -1 : 0)),
       isReplyMsg: flag('reply_msg'),
       attachments: getAttachments(data[6]),
       conversation_msg_id: data[8],

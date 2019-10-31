@@ -6,12 +6,6 @@
     </div>
 
     <div :class="['message_wrap', { showUserData, serviceMessage, isUnreaded }]">
-      <img v-if="msg.fake"
-           :class="['message_recent', { error: msg.error }]"
-           :src="`assets/recent${msg.error ? '_error' : ''}.svg`"
-           @click="msg.error && 0"
-      />
-
       <img v-if="showUserData" class="message_photo" :src="photo">
 
       <div class="message">
@@ -43,7 +37,7 @@
         return this.$store.state.profiles[this.msg.from];
       },
       photo() {
-        return this.user ? getPhoto(this.user) : 'assets/blank.gif';
+        return getPhoto(this.user) || 'assets/blank.gif';
       },
       name() {
         return this.user
@@ -59,19 +53,11 @@
         return conv && conv.peer;
       },
       prevMsg() {
-        const index = this.msg.fake
-          ? this.msg.isFirstFake
-              ? this.list.length
-              : 0
-          : this.list.indexOf(this.msg);
-
-        return this.list[index - 1];
+        return this.list[this.list.indexOf(this.msg) - 1];
       },
       messageDate() {
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
         const thisMsgDate = new Date(this.msg.date * 1000);
-
-        if(this.msg.fake && !this.msg.isFirstFake) return;
 
         if(!this.prevMsg || !isSameDay(prevMsgDate, thisMsgDate)) {
           return capitalize(getMessageDate(thisMsgDate));
@@ -85,7 +71,7 @@
         return !this.msg.out && !isPrevUnread && isThisUnread;
       },
       isUnreaded() {
-        return this.msg.fake || this.peer && (
+        return this.peer && (
           this.msg.id > this.peer.out_read || // непрочитано собеседником
           this.msg.id > this.peer.in_read // непрочитано мной
         );
@@ -98,8 +84,6 @@
       showUserData() {
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
         const thisMsgDate = new Date(this.msg.date * 1000);
-
-        if(this.msg.fake && !this.msg.isFirstFake) return;
 
         return !this.msg.action && (
           !this.prevMsg ||
@@ -118,7 +102,6 @@
   .message_container {
     display: flex;
     flex-direction: column;
-    position: relative;
     flex: none;
   }
 
@@ -191,25 +174,6 @@
     font-weight: 400;
     font-size: 13px;
     color: #6c737a;
-  }
-
-  .message_recent {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 18px;
-    height: 18px;
-  }
-
-  .message_recent.error {
-    left: 6px;
-    width: 16px;
-    height: 16px;
-    /* cursor: pointer; */
-  }
-
-  .message_wrap.showUserData .message_recent {
-    top: 20px;
   }
 
   .message_content {
