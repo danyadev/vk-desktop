@@ -5,7 +5,7 @@ import store, { resetAppState } from './store/';
 import { version as AppVersion } from 'package-json';
 
 // Минимальный fields для получения профилей в приложении
-export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,screen_name';
+export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,screen_name';
 
 // Список нужных регулярных выражений
 export const regexp = {

@@ -62,11 +62,13 @@
           if(!this.owner) return this.l('loading');
           else if(this.owner.deactivated) return this.l('im_user_deleted');
 
-          const { online, online_mobile, last_seen: { time } } = this.owner;
+          const { online, online_mobile, online_info: info, last_seen } = this.owner;
+          const isGirl = this.owner.sex == 1;
 
           if(online_mobile) return this.l('im_chat_online', 1);
           else if(online) return this.l('im_chat_online', 0);
-          else return getLastOnlineDate(new Date(time * 1000), this.owner.sex == 1);
+          else if(!info.visible) return this.l(`im_chat_online_${info.status}`, isGirl)
+          else return getLastOnlineDate(new Date(last_seen.time * 1000), isGirl);
         }
       }
     }
