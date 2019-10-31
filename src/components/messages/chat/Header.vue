@@ -38,7 +38,9 @@
       photo() {
         if(!this.peer || this.peer.id > 2e9) {
           return this.peer && !this.peer.left && this.peer.photo || 'assets/im_chat_photo.png';
-        } else return getPhoto(this.owner);
+        } else {
+          return getPhoto(this.owner) || 'assets/blank.gif';
+        }
       },
       title() {
         if(this.id > 2e9) {
