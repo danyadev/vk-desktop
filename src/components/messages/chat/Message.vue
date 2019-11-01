@@ -5,19 +5,27 @@
       <span>{{ l('im_unread_messages') }}</span>
     </div>
 
-    <div :class="['message_wrap', { showUserData, serviceMessage, isUnreaded }]">
-      <img v-if="showUserData" class="message_photo" :src="photo">
+    <div :class="['message_wrap', { showUserData, serviceMessage, isUnreaded, out }]">
+      <div v-if="showUserData" class="message_name">
+        {{ name }}
+        <div v-if="user && user.verified" class="verified"></div>
+      </div>
 
       <div class="message">
-        <div v-if="showUserData" class="message_name">
-          {{ name }}
-          <div v-if="user && user.verified" class="verified"></div>
-          <div class="message_time">{{ time }}</div>
-        </div>
-        <div v-if="serviceMessage" class="message_content" v-html="serviceMessage"></div>
-        <div v-else class="message_content">
-          <div v-emoji.push.br="msg.text"></div>
-          <div v-if="msg.editTime" class="message_edited">({{ l('im_msg_edited') }})</div>
+        <img v-if="showUserData" class="message_photo" :src="photo">
+        <div v-else-if="isChat && !serviceMessage && !out && !isChannel" class="message_photo"></div>
+
+        <div class="message_bubble">
+          <div v-if="serviceMessage" v-html="serviceMessage"></div>
+          <div v-else v-emoji.push.br="msg.text"></div>
+
+          <div class="message_time_wrap">
+            <template v-if="msg.editTime">
+              <div class="message_edited">{{ l('im_msg_edited') }}</div>
+              <div class="dot"></div>
+            </template>
+            <div class="message_time">{{ time }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -25,7 +33,7 @@
 </template>
 
 <script>
-  import { isSameDay, differenceInMinutes } from 'date-fns';
+  import { isSameDay } from 'date-fns';
   import { getTime, getMessageDate } from 'js/date';
   import { capitalize, getPhoto } from 'js/utils';
   import { getServiceMessage } from 'js/messages';
@@ -38,6 +46,16 @@
       },
       photo() {
         return getPhoto(this.user) || 'assets/blank.gif';
+      },
+      out() {
+        // Только для использования в css
+        return this.msg.out && !this.serviceMessage;
+      },
+      isChat() {
+        return this.peer_id > 2e9;
+      },
+      isChannel() {
+        return this.peer && this.peer.channel;
       },
       name() {
         return this.user
@@ -85,13 +103,12 @@
         const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
         const thisMsgDate = new Date(this.msg.date * 1000);
 
-        return !this.msg.action && (
+        return !this.msg.action && !this.msg.out && this.isChat && !this.isChannel && (
           !this.prevMsg ||
           this.prevMsg.from != this.msg.from ||
           this.prevMsg.action ||
           this.isStartUnreaded ||
-          this.messageDate ||
-          differenceInMinutes(thisMsgDate, prevMsgDate) > 9
+          this.messageDate
         );
       }
     }
@@ -100,9 +117,7 @@
 
 <style scoped>
   .message_container {
-    display: flex;
     flex-direction: column;
-    flex: none;
   }
 
   .message_date, .message_unreaded_messages {
@@ -131,71 +146,92 @@
     background: #d4d6da;
   }
 
-  .message_wrap.isUnreaded:not(.serviceMessage) {
-    background: #edf0f5;
-  }
-
   .message_wrap {
-    display: flex;
-    padding: 8px 8px 6px 8px;
-    margin: 0 28px;
+    padding: 8px 14px 6px 14px;
   }
 
   .message_wrap:not(.showUserData):not(.serviceMessage) {
-    padding: 3px 8px 5px 58px;
+    padding: 3px 14px 5px 14px;
   }
 
   .message_wrap.serviceMessage {
+    display: flex;
     justify-content: center;
     text-align: center;
     color: #5d6165;
   }
 
-  .message_photo {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-    flex: none;
-  }
-
   .message_name {
     color: #254f79;
     font-weight: 500;
+    margin-left: 50px;
+    margin-bottom: 2px;
   }
 
   .message_name .verified {
     margin-top: -1px;
   }
 
-  .message_time {
-    display: inline;
-    margin-left: 2px;
-    font-weight: 400;
-    font-size: 13px;
-    color: #6c737a;
+  .message {
+    display: flex;
   }
 
-  .message_content {
-    line-height: 20px;
+  .message_wrap.out .message {
+    justify-content: flex-end;
+  }
+
+  .message_photo {
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+  }
+
+  .message_wrap:not(.serviceMessage) .message_bubble {
+    max-width: 75%;
+    background-color: #dfe6ea;
+    padding: 8px 12px;
+    border-radius: 18px;
     word-break: break-word;
   }
 
-  .message_wrap.showUserData .message_content {
-    margin-top: 2px;
+  .message_wrap.out .message_bubble {
+    background-color: #c7dff9;
   }
 
-  .message_content * {
+  .message_bubble * {
     display: inline;
   }
 
-  .message_content >>> b {
+  .message_bubble >>> b {
     font-weight: 500;
   }
 
+  .message_time_wrap {
+    position: relative;
+    bottom: -4px;
+    display: flex;
+    float: right;
+    color: #696969;
+    font-weight: 500;
+    font-size: 11px;
+    margin: 6px 0 0 6px;
+    pointer-events: none;
+  }
+
+  .message_wrap.serviceMessage .message_time_wrap {
+    display: none;
+  }
+
   .message_edited {
-    user-select: none;
-    font-size: 13.5px;
-    color: #6c737a;
+    margin-top: -1px;
+  }
+
+  .dot {
+    width: 2px;
+    height: 2px;
+    margin: 6px 3px 0 3px;
+    border-radius: 50%;
+    background-color: #696969;
   }
 </style>

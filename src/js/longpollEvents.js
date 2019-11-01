@@ -109,7 +109,8 @@ function getMessage(data) {
   return {
     peer: {
       id: data[2],
-      keyboard: keyboard && Object.assign(keyboard, { author_id: from_id })
+      keyboard: keyboard && Object.assign(keyboard, { author_id: from_id }),
+      channel: from_id < 0 && data[2] > 2e9 && data[5].title === ''
     },
     msg: {
       id: data[0],

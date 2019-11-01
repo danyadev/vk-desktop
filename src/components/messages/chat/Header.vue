@@ -67,7 +67,7 @@
 
           if(online_mobile) return this.l('im_chat_online', 1);
           else if(online) return this.l('im_chat_online', 0);
-          else if(!info.visible) return this.l(`im_chat_online_${info.status}`, isGirl)
+          else if(!info.visible) return this.l(`im_chat_online_${info.status}`, isGirl);
           else return getLastOnlineDate(new Date(last_seen.time * 1000), isGirl);
         }
       }

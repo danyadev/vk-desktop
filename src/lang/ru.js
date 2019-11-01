@@ -56,7 +56,7 @@ export default {
   im_input_placeholder: 'Введите сообщение...',
   im_empty_dialog: 'Ваш список сообщений пуст',
   im_unread_messages: 'Новые сообщения',
-  im_msg_edited: 'ред.',
+  im_msg_edited: 'ред',
   im_toggle_notifications: ['Включить уведомления', 'Отключить уведомления'],
   im_clear_history: 'Удалить историю',
   im_toggle_left_state: [
