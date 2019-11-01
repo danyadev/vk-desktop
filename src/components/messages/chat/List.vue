@@ -7,7 +7,7 @@
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loading" class="loading"></div>
 
-    <Message v-for="msg of messages" :key="msg.id" :msg="msg" :peer_id="id" :list="messages"/>
+    <MessagesList :peer_id="id" :list="messages" />
 
     <div v-if="!hasMessages && !loading" class="messages_empty_dialog">
       <img src="~assets/placeholder_empty_messages.webp">
@@ -30,14 +30,14 @@
   import longpoll from 'js/longpoll';
 
   import Scrolly from '../../UI/Scrolly.vue';
-  import Message from './Message.vue';
+  import MessagesList from './MessagesList.vue';
   import Typing from '../Typing.vue';
 
   export default {
     props: ['id'],
     components: {
       Scrolly,
-      Message,
+      MessagesList,
       Typing
     },
     data: () => ({

@@ -1,31 +1,24 @@
 <template>
-  <div class="message_container">
-    <div v-if="messageDate" class="message_date">{{ messageDate }}</div>
-    <div v-if="isStartUnreaded" class="message_unreaded_messages">
-      <span>{{ l('im_unread_messages') }}</span>
+  <div :class="['message_wrap', { showUserData, isUnread, out }]">
+    <div v-if="showUserData" class="message_name">
+      {{ name }}
+      <div v-if="user && user.verified" class="verified"></div>
     </div>
 
-    <div :class="['message_wrap', { showUserData, serviceMessage, isUnreaded, out }]">
-      <div v-if="showUserData" class="message_name">
-        {{ name }}
-        <div v-if="user && user.verified" class="verified"></div>
-      </div>
+    <div class="message">
+      <img v-if="showUserData" class="message_photo" :src="photo">
+      <div v-else-if="isChat && !out && !isChannel" class="message_photo"></div>
 
-      <div class="message">
-        <img v-if="showUserData" class="message_photo" :src="photo">
-        <div v-else-if="isChat && !serviceMessage && !out && !isChannel" class="message_photo"></div>
+      <div class="message_bubble">
+        <div v-emoji.push.br="msg.text"></div>
 
-        <div class="message_bubble">
-          <div v-if="serviceMessage" v-html="serviceMessage"></div>
-          <div v-else v-emoji.push.br="msg.text"></div>
+        <div class="message_time_wrap">
+          <template v-if="msg.editTime">
+            <div class="message_edited">{{ l('im_msg_edited') }}</div>
+            <div class="dot"></div>
+          </template>
 
-          <div class="message_time_wrap">
-            <template v-if="msg.editTime">
-              <div class="message_edited">{{ l('im_msg_edited') }}</div>
-              <div class="dot"></div>
-            </template>
-            <div class="message_time">{{ time }}</div>
-          </div>
+          <div class="message_time">{{ time }}</div>
         </div>
       </div>
     </div>
@@ -33,13 +26,11 @@
 </template>
 
 <script>
-  import { isSameDay } from 'date-fns';
-  import { getTime, getMessageDate } from 'js/date';
-  import { capitalize, getPhoto } from 'js/utils';
-  import { getServiceMessage } from 'js/messages';
+  import { getTime } from 'js/date';
+  import { getPhoto } from 'js/utils';
 
   export default {
-    props: ['msg', 'peer_id', 'list'],
+    props: ['msg', 'peer', 'peer_id', 'messageDate', 'isStartUnread', 'prevMsg'],
     computed: {
       user() {
         return this.$store.state.profiles[this.msg.from];
@@ -48,8 +39,7 @@
         return getPhoto(this.user) || 'assets/blank.gif';
       },
       out() {
-        // Только для использования в css
-        return this.msg.out && !this.serviceMessage;
+        return this.msg.out;
       },
       isChat() {
         return this.peer_id > 2e9;
@@ -65,49 +55,18 @@
       time() {
         return getTime(new Date(this.msg.date * 1000));
       },
-      peer() {
-        const conv = this.$store.state.messages.conversations[this.peer_id];
-
-        return conv && conv.peer;
-      },
-      prevMsg() {
-        return this.list[this.list.indexOf(this.msg) - 1];
-      },
-      messageDate() {
-        const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
-        const thisMsgDate = new Date(this.msg.date * 1000);
-
-        if(!this.prevMsg || !isSameDay(prevMsgDate, thisMsgDate)) {
-          return capitalize(getMessageDate(thisMsgDate));
-        }
-      },
-      isStartUnreaded() {
-        const in_read = this.peer && (this.peer.new_in_read || this.peer.in_read);
-        const isPrevUnread = this.prevMsg && this.prevMsg.id > in_read;
-        const isThisUnread = this.msg.id > in_read;
-
-        return !this.msg.out && !isPrevUnread && isThisUnread;
-      },
-      isUnreaded() {
+      isUnread() {
         return this.peer && (
           this.msg.id > this.peer.out_read || // непрочитано собеседником
           this.msg.id > this.peer.in_read // непрочитано мной
         );
       },
-      serviceMessage() {
-        if(this.msg.action) {
-          return getServiceMessage(this.msg.action, this.user || { id: this.msg.from }, true);
-        }
-      },
       showUserData() {
-        const prevMsgDate = this.prevMsg && new Date(this.prevMsg.date * 1000);
-        const thisMsgDate = new Date(this.msg.date * 1000);
-
-        return !this.msg.action && !this.msg.out && this.isChat && !this.isChannel && (
+        return !this.msg.out && this.isChat && !this.isChannel && (
           !this.prevMsg ||
           this.prevMsg.from != this.msg.from ||
           this.prevMsg.action ||
-          this.isStartUnreaded ||
+          this.isStartUnread ||
           this.messageDate
         );
       }
@@ -116,49 +75,12 @@
 </script>
 
 <style scoped>
-  .message_container {
-    flex-direction: column;
-  }
-
-  .message_date, .message_unreaded_messages {
-    text-align: center;
-    margin: 10px 0 8px 0;
-    color: #5d6165;
-  }
-
-  .message_unreaded_messages {
-    position: relative;
-  }
-
-  .message_unreaded_messages span {
-    position: relative;
-    background: #fff;
-    padding: 0 10px;
-  }
-
-  .message_unreaded_messages::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 1px;
-    width: 100%;
-    background: #d4d6da;
-  }
-
   .message_wrap {
-    padding: 8px 14px 6px 14px;
+    padding: 8px 14px 4px 14px;
   }
 
-  .message_wrap:not(.showUserData):not(.serviceMessage) {
-    padding: 3px 14px 5px 14px;
-  }
-
-  .message_wrap.serviceMessage {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    color: #5d6165;
+  .message_wrap:not(.showUserData) {
+    padding: 4px 14px;
   }
 
   .message_name {
@@ -187,7 +109,8 @@
     margin-right: 10px;
   }
 
-  .message_wrap:not(.serviceMessage) .message_bubble {
+  .message_bubble {
+    position: relative;
     max-width: 75%;
     background-color: #dfe6ea;
     padding: 8px 12px;
@@ -203,10 +126,6 @@
     display: inline;
   }
 
-  .message_bubble >>> b {
-    font-weight: 500;
-  }
-
   .message_time_wrap {
     position: relative;
     bottom: -4px;
@@ -219,10 +138,6 @@
     pointer-events: none;
   }
 
-  .message_wrap.serviceMessage .message_time_wrap {
-    display: none;
-  }
-
   .message_edited {
     margin-top: -1px;
   }
@@ -233,5 +148,25 @@
     margin: 6px 3px 0 3px;
     border-radius: 50%;
     background-color: #696969;
+  }
+
+  .message_wrap.isUnread .message_bubble::before,
+  .message_wrap.isUnread .message_bubble::after {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    bottom: 12px;
+    border-radius: 50%;
+    background-color: #93adc8;
+  }
+
+  .message_wrap.isUnread.out .message_bubble::before {
+    content: '';
+    left: -15px;
+  }
+
+  .message_wrap.isUnread:not(.out) .message_bubble::after {
+    content: '';
+    right: -15px;
   }
 </style>
