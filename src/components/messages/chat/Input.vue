@@ -45,7 +45,7 @@
 
 <script>
   import { remote as electron } from 'electron';
-  import { getTextWithEmoji } from 'js/messages';
+  import { getTextWithEmoji, getLastMsgId } from 'js/messages';
   import { random, throttle, escape } from 'js/utils';
   import emoji from 'js/emoji';
   import vkapi from 'js/vkapi';
@@ -64,7 +64,8 @@
       Keyboard
     },
     data: () => ({
-      showKeyboard: true
+      showKeyboard: true,
+      counter: 0
     }),
     computed: {
       canWrite() {
@@ -110,13 +111,17 @@
         if(!text) return;
 
         this.$refs.input.innerHTML = '';
+        this.counter++;
 
         try {
           this.$store.commit('messages/addLoadingMessage', {
             peer_id: this.id,
             msg: {
-              random_id,
+              id: getLastMsgId() + this.counter*1e5,
               text,
+              random_id,
+              from: this.$store.getters['users/user'].id,
+              out: true,
               date: (Date.now() / 1000).toFixed(),
               isLoading: true
             }
@@ -127,13 +132,13 @@
           await vkapi('messages.send', {
             peer_id: this.id,
             message: text,
-            random_id: random_id,
+            random_id,
             payload: action && action.payload
           });
         } catch(e) {
           this.$store.commit('messages/editLoadingMessage', {
             peer_id: this.id,
-            random_id: random_id,
+            random_id,
             isLoadingFailed: true
           });
 

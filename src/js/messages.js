@@ -142,6 +142,12 @@ export function getTextWithEmoji(nodes) {
   };
 }
 
+export function getLastMsgId() {
+  const [peer] = store.getters['messages/conversationsList'];
+
+  return peer && peer.msg.id;
+}
+
 export async function loadConversation(id) {
   const { items: [conv], profiles, groups } = await vkapi('messages.getConversationsById', {
     peer_ids: id,

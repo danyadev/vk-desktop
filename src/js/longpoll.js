@@ -3,15 +3,9 @@ import querystring from 'querystring';
 import request from './request';
 import vkapi from './vkapi';
 import { concatProfiles, fields } from './utils';
-import { parseConversation, parseMessage } from './messages';
+import { parseConversation, parseMessage, getLastMsgId } from './messages';
 import store from './store/';
 import longpollEvents from './longpollEvents';
-
-function getLastMsgId() {
-  const [peer] = store.getters['messages/conversationsList'];
-
-  return peer && peer.msg.id;
-}
 
 export default new class Longpoll extends EventEmitter {
   constructor() {

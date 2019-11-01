@@ -1,5 +1,5 @@
 <template>
-  <div :class="['message_wrap', { showUserData, isUnread, out }]">
+  <div :class="['message_wrap', { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading }]">
     <div v-if="showUserData" class="message_name">
       {{ name }}
       <div v-if="user && user.verified" class="verified"></div>
@@ -7,7 +7,7 @@
 
     <div class="message">
       <img v-if="showUserData" class="message_photo" :src="photo">
-      <div v-else-if="isChat && !out && !isChannel" class="message_photo"></div>
+      <div v-else-if="isChat && !msg.out && !isChannel" class="message_photo"></div>
 
       <div class="message_bubble">
         <div v-emoji.push.br="msg.text" class="message_text"></div>
@@ -37,9 +37,6 @@
       },
       photo() {
         return getPhoto(this.user) || 'assets/blank.gif';
-      },
-      out() {
-        return this.msg.out;
       },
       isChat() {
         return this.peer_id > 2e9;
@@ -168,5 +165,14 @@
   .message_wrap.isUnread:not(.out) .message_bubble::after {
     content: '';
     right: -15px;
+  }
+
+  .message_wrap.isLoading .message_bubble::before {
+    content: '';
+    left: -25px;
+    bottom: 8px;
+    width: 18px;
+    height: 18px;
+    background: url(~assets/recent.svg) center / contain;
   }
 </style>

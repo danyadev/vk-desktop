@@ -3,6 +3,7 @@
            :vclass="['messages_list', { empty: !hasMessages }]"
            :lock="lockScroll"
            @scroll="onScroll"
+           ref="scrolly"
   >
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loading" class="loading"></div>
@@ -52,7 +53,9 @@
     }),
     computed: {
       messages() {
-        return this.$store.state.messages.messages[this.id] || [];
+        const messages = this.$store.state.messages.messages[this.id] || [];
+
+        return messages.concat(this.loadingMessages);
       },
       hasMessages() {
         return this.messages.length;
@@ -108,8 +111,8 @@
       scrollToEnd() {
         if(this.$refs.typing) {
           this.showEndBtn = false;
-          this.$el.firstChild.scrollTo(0, this.$el.firstChild.scrollHeight);
-          eventBus.emit('scrolly:update');
+          this.$refs.typing.scrollIntoView(false);
+          this.$refs.scrolly.refreshScrollLayout();
         }
       },
 

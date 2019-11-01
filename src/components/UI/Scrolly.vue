@@ -18,8 +18,6 @@
 </template>
 
 <script>
-  import { eventBus } from 'js/utils';
-
   const timers = {};
 
   function debounce(fn) {
@@ -88,10 +86,6 @@
         childList: true,
         characterData: true,
         subtree: true
-      });
-
-      eventBus.on('scrolly:update', () => {
-        this.refreshScrollLayout();
       });
     },
 
