@@ -10,6 +10,7 @@
 
 <script>
   import { loadConversation, loadConversationMembers } from 'js/messages';
+  import { eventBus } from 'js/utils';
   import ChatHeader from './chat/Header.vue';
   import ChatList from './chat/List.vue';
   import ChatInput from './chat/Input.vue';
@@ -34,6 +35,7 @@
     },
     methods: {
       closeChat() {
+        eventBus.emit(`messages:closeChat${this.id}`);
         this.$router.replace('/messages');
       },
       setInRead() {

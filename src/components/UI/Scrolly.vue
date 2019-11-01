@@ -11,13 +11,15 @@
        @keydown="onKeyDown"
        tabindex="1"
   >
-    <div class="scrolly-viewport" ref="viewport" :class="vclass"><slot></slot></div>
+    <div :class="['scrolly-viewport', vclass]" ref="viewport"><slot></slot></div>
     <div class="scrolly-bar-wrap axis-x"><div class="scrolly-bar" ref="barX"></div></div>
     <div class="scrolly-bar-wrap axis-y"><div class="scrolly-bar" ref="barY"></div></div>
   </div>
 </template>
 
 <script>
+  import { eventBus } from 'js/utils';
+
   const timers = {};
 
   function debounce(fn) {
@@ -86,6 +88,10 @@
         childList: true,
         characterData: true,
         subtree: true
+      });
+
+      eventBus.on('scrolly:update', () => {
+        this.refreshScrollLayout();
       });
     },
 

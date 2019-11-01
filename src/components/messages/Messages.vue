@@ -6,6 +6,7 @@
 </template>
 
 <script>
+  import { eventBus } from 'js/utils';
   import MessagesPeers from './MessagesPeers.vue';
 
   export default {
@@ -19,7 +20,10 @@
     },
     methods: {
       closeChat() {
-        if(this.hasChat) this.$router.replace('/messages');
+        if(this.hasChat) {
+          eventBus.emit(`messages:closeChat${this.$route.params.id}`);
+          this.$router.replace('/messages');
+        }
       }
     }
   }

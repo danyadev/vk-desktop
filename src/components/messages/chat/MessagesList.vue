@@ -3,7 +3,7 @@
   import { getMessageDate } from 'js/date';
   import { capitalize } from 'js/utils';
   import { getServiceMessage } from 'js/messages';
-
+  
   import Message from './Message.vue';
 
   export default {

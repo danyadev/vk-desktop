@@ -25,7 +25,7 @@
 
 <script>
   import vkapi from 'js/vkapi';
-  import { fields, concatProfiles, endScroll } from 'js/utils';
+  import { fields, concatProfiles, endScroll, eventBus } from 'js/utils';
   import { parseMessage } from 'js/messages';
   import longpoll from 'js/longpoll';
 
@@ -108,7 +108,8 @@
       scrollToEnd() {
         if(this.$refs.typing) {
           this.showEndBtn = false;
-          this.$refs.typing.scrollIntoView(false);
+          this.$el.firstChild.scrollTo(0, this.$el.firstChild.scrollHeight);
+          eventBus.emit('scrolly:update');
         }
       },
 
@@ -117,7 +118,6 @@
 
         const isBottom = e.scrollTop + e.offsetHeight + 250 >= e.scrollHeight;
 
-        this.scrollTop = e.scrollTop;
         this.showEndBtn = !isBottom && e.dy > 0;
 
         this.checkScrolling(e);
@@ -147,6 +147,10 @@
         this.scrollToEnd();
         this.checkScrolling(this.$el.firstChild);
       }
+
+      eventBus.on(`messages:closeChat${this.id}`, () => {
+        this.scrollTop = this.$el.firstChild.scrollTop;
+      });
 
       longpoll.on('new_message', async ({ random_id }, peer_id) => {
         if(peer_id != this.id) return;

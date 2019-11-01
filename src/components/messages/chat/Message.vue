@@ -10,7 +10,7 @@
       <div v-else-if="isChat && !out && !isChannel" class="message_photo"></div>
 
       <div class="message_bubble">
-        <div v-emoji.push.br="msg.text"></div>
+        <div v-emoji.push.br="msg.text" class="message_text"></div>
 
         <div class="message_time_wrap">
           <template v-if="msg.editTime">
@@ -122,7 +122,7 @@
     background-color: #c7dff9;
   }
 
-  .message_bubble * {
+  .message_text {
     display: inline;
   }
 
