@@ -151,8 +151,14 @@
         this.checkScrolling(this.$el.firstChild);
       }
 
-      eventBus.on(`messages:closeChat${this.id}`, () => {
-        this.scrollTop = this.$el.firstChild.scrollTop;
+      eventBus.on('messages:closeChat', (peer_id) => {
+        if(this.id == peer_id) {
+          this.scrollTop = this.$el.firstChild.scrollTop;
+        }
+      });
+
+      eventBus.on('messages:load', (peer_id) => {
+        if(this.id == peer_id) this.checkScrolling(this.$el.firstChild);
       });
 
       longpoll.on('new_message', async ({ random_id }, peer_id) => {

@@ -2,7 +2,7 @@ import { parseMessage, loadConversation, loadConversationMembers } from './messa
 import longpoll from 'js/longpoll';
 import store from './store/';
 import vkapi from './vkapi';
-import { timer } from './utils';
+import { timer, eventBus } from './utils';
 
 function hasFlag(mask, flag) {
   const flags = {
@@ -231,6 +231,8 @@ export default {
         });
 
         store.commit('messages/moveConversation', { peer_id });
+
+        eventBus.emit('messages:load', peer_id);
       }
     }
   },

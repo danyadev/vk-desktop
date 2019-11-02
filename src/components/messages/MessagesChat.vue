@@ -35,7 +35,7 @@
     },
     methods: {
       closeChat() {
-        eventBus.emit(`messages:closeChat${this.id}`);
+        eventBus.emit('messages:closeChat', this.id);
         this.$router.replace('/messages');
       },
       setInRead() {
