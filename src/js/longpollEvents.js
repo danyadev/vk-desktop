@@ -1,4 +1,4 @@
-import { parseMessage, loadConversation, loadConversationMembers } from './messages';
+import { parseMessage, parseConversation, loadConversation, loadConversationMembers } from './messages';
 import longpoll from 'js/longpoll';
 import store from './store/';
 import vkapi from './vkapi';
@@ -132,26 +132,17 @@ function getMessage(data) {
 }
 
 async function getLastMessage(peer_id) {
-  const {
-    msg,
-    unread,
-    in_read,
-    out_read,
-    last_msg_id
-  } = await vkapi('execute.getLastMessage', { peer_id });
-
-  store.commit('messages/updateConversation', {
-    peer: {
-      id: peer_id,
-      unread,
-      in_read,
-      out_read,
-      last_msg_id
-    },
-    msg: msg && parseMessage(msg)
+  const { message, conversation } = await vkapi('execute.getLastMessage', {
+    peer_id,
+    func_v: 2
   });
 
-  return msg;
+  const msg = message && parseMessage(message);
+  const peer = parseConversation(conversation);
+
+  store.commit('messages/updateConversation', { msg, peer });
+
+  return { msg, peer };
 }
 
 async function watchTyping(peer_id, user_id) {
@@ -217,19 +208,14 @@ export default {
 
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
-      const lastMsg = await getLastMessage(peer_id);
+      const { msg, peer } = await getLastMessage(peer_id);
 
-      if(!lastMsg) {
+      if(!msg) {
         store.commit('messages/updatePeersList', {
           id: peer_id,
           remove: true
         });
       } else {
-        store.commit('messages/updateConversation', {
-          peer: { id: peer_id },
-          msg: lastMsg
-        });
-
         store.commit('messages/moveConversation', { peer_id });
 
         eventBus.emit('messages:load', peer_id);
@@ -254,7 +240,9 @@ export default {
       const [firstLocalMsg] = messagesList;
       const newMsgPeer = items[0].peer;
 
-      items = items.sort((a, b) => a.id - b.id);
+      items = items.sort((a, b) => a.msg.id - b.msg.id);
+
+      const { msg, peer } = await getLastMessage(peer_id);
 
       if(!firstLocalMsg || items[0].msg.id < firstLocalMsg.id) {
         const { items: [prevMsg] } = await vkapi('messages.getHistory', {
@@ -286,13 +274,10 @@ export default {
         });
       }
 
-      const msg = await getLastMessage(peer_id);
+      eventBus.emit('messages:load', peer_id, true);
 
       if(!lastLocalConv || lastLocalConv.msg.id < msg.id) {
-        if(!conv) {
-          store.commit('messages/addConversations', [items[items.length - 1]]);
-          loadConversation(peer_id);
-        } else if(!store.state.messages.peersList.includes(peer_id)) {
+        if(conv && !store.state.messages.peersList.includes(peer_id)) {
           store.commit('messages/updatePeersList', { id: peer_id });
         }
 
