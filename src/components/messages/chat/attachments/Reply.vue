@@ -3,7 +3,7 @@
     <img v-if="reply.photo" class="attach_reply_photo" :src="reply.photo">
 
     <div class="attach_reply_content">
-      <div class="attach_reply_name">{{ reply.name || 'loading...' }}</div>
+      <div class="attach_reply_name">{{ reply.name || '...' }}</div>
 
       <div v-if="reply.isDeletedContent" class="attach_reply_text isContentDeleted">{{ l('im_content_deleted') }}</div>
       <div v-else :class="['attach_reply_text', { isAttachment: reply.isAttachment }]" v-emoji.push="reply.text || '...'"></div>
@@ -66,6 +66,10 @@
     height: 40px;
     margin-bottom: 4px;
     /* cursor: pointer; */
+  }
+
+  .message_wrap:not(.hideBubble).isSticker .attach_reply {
+    width: 128px;
   }
 
   .attach_reply::before {

@@ -1,5 +1,5 @@
 <template>
-  <div :class="['message_wrap', { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading }]">
+  <div :class="['message_wrap', { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading, isSticker, hideBubble }]">
     <div v-if="showUserData" class="message_name">
       {{ name }}
       <div v-if="user && user.verified" class="verified"></div>
@@ -11,7 +11,7 @@
 
       <div class="message_bubble">
         <Reply :msg="msg" />
-        
+
         <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
         <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
@@ -78,6 +78,12 @@
           this.isStartUnread ||
           this.messageDate
         );
+      },
+      isSticker() {
+        return this.msg.attachments.find(({ type }) => type == 'sticker');
+      },
+      hideBubble() {
+        return this.isSticker && !this.msg.isReplyMsg;
       }
     }
   }
@@ -121,13 +127,16 @@
   .message_bubble {
     position: relative;
     max-width: 75%;
+  }
+
+  .message_wrap:not(.hideBubble) .message_bubble {
     background-color: #dfe6ea;
     padding: 8px 12px;
     border-radius: 18px;
     word-break: break-word;
   }
 
-  .message_wrap.out .message_bubble {
+  .message_wrap:not(.hideBubble).out .message_bubble {
     background-color: #c7dff9;
   }
 
@@ -141,14 +150,40 @@
 
   .message_time_wrap {
     position: relative;
-    bottom: -4px;
     display: flex;
     float: right;
     color: #696969;
     font-weight: 500;
     font-size: 11px;
-    margin: 6px 0 0 6px;
+    user-select: none;
     pointer-events: none;
+  }
+
+  .message_wrap:not(.isSticker) .message_time_wrap {
+    bottom: -4px;
+    margin: 6px 0 0 6px;
+  }
+
+  .message_wrap.isSticker .message_time_wrap {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #ffffffdf;
+    border-radius: 9px;
+    padding: 2px 6px;
+  }
+
+  .message_wrap.isSticker:not(.hideBubble) .message_time_wrap {
+    right: 3px;
+    bottom: 3px;
+  }
+
+  .message_wrap.isSticker:not(.hideBubble).out .message_time_wrap {
+    background-color: #c7dff9df;
+  }
+
+  .message_wrap.isSticker:not(.hideBubble):not(.out) .message_time_wrap {
+    background-color: #dfe6eadf;
   }
 
   .message_edited {

@@ -119,10 +119,13 @@
             msg: {
               id: getLastMsgId() + this.counter*1e5,
               text,
-              random_id,
               from: this.$store.getters['users/user'].id,
-              out: true,
               date: (Date.now() / 1000).toFixed(),
+              out: true,
+              editTime: 0,
+              fwdCount: 0,
+              attachments: [],
+              random_id,
               isLoading: true
             }
           });

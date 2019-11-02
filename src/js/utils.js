@@ -36,7 +36,7 @@ export function random(min, max) {
 // p1 - фото для обычных дисплеев
 // p2 - фото для Retina дисплеев, в 2 раза больше p1
 export function getPhoto(p1, p2) {
-  const x2 = devicePixelRatio >= 2;
+  const x2 = devicePixelRatio > 1;
 
   return p2
     ? x2 ? p2 : p1
