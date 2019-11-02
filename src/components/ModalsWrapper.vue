@@ -53,7 +53,7 @@
       }
     },
     mounted() {
-      eventBus.on('modal:open', (name, data = {}) => {
+      eventBus.on('modal:open', (name, data) => {
         this.$set(this.modals, name, { name, data });
       });
 

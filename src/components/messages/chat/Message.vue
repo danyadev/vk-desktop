@@ -10,8 +10,12 @@
       <div v-else-if="isChat && !msg.out && !isChannel" class="message_photo"></div>
 
       <div class="message_bubble">
+        <Reply :msg="msg" />
+        
         <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
         <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
+
+        <Attachments :msg="msg" />
 
         <div class="message_time_wrap">
           <template v-if="msg.editTime">
@@ -30,8 +34,15 @@
   import { getTime } from 'js/date';
   import { getPhoto } from 'js/utils';
 
+  import Attachments from './attachments/Attachments.vue';
+  import Reply from './attachments/Reply.vue';
+
   export default {
     props: ['msg', 'peer', 'peer_id', 'messageDate', 'isStartUnread', 'prevMsg'],
+    components: {
+      Attachments,
+      Reply
+    },
     computed: {
       user() {
         return this.$store.state.profiles[this.msg.from];
