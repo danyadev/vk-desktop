@@ -105,6 +105,8 @@ function getMessage(data) {
   const action = getServiceMessage(data[5]);
   const from_id = flag('outbox') ? user.id : Number(data[5].from || data[2]);
   const { keyboard } = data[5];
+  const attachments = getAttachments(data[6]);
+  const isReplyMsg = flag('reply_msg');
 
   return {
     peer: {
@@ -122,11 +124,12 @@ function getMessage(data) {
       hidden: flag('hidden'),
       action: action,
       fwdCount: Number(data[5].fwd_count || (data[6].fwd ? -1 : 0)),
-      isReplyMsg: flag('reply_msg'),
-      attachments: getAttachments(data[6]),
+      isReplyMsg: isReplyMsg,
+      attachments: attachments,
       conversation_msg_id: data[8],
       random_id: data[7],
-      was_listened: false
+      was_listened: false,
+      isContentDeleted: !data[4] && !action && !attachments.length && !data[6].fwd && !isReplyMsg
     }
   };
 }

@@ -10,7 +10,8 @@
       <div v-else-if="isChat && !msg.out && !isChannel" class="message_photo"></div>
 
       <div class="message_bubble">
-        <div v-emoji.push.br="msg.text" class="message_text"></div>
+        <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
+        <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
         <div class="message_time_wrap">
           <template v-if="msg.editTime">
@@ -121,6 +122,10 @@
 
   .message_text {
     display: inline;
+  }
+
+  .message_text.isContentDeleted {
+    color: #696969;
   }
 
   .message_time_wrap {

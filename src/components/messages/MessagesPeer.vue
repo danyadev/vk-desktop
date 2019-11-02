@@ -14,7 +14,8 @@
         <Typing v-if="hasTyping" :peer_id="this.peer.id" :left="false"/>
         <div v-else class="im_peer_message">
           <div class="im_peer_author">{{ authorName }}</div>
-          <div :class="['im_peer_text', { isAttachment, isDeletedContent }]" v-emoji.push="message"></div>
+          <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted">{{ l('im_content_deleted') }}</div>
+          <div v-else :class="['im_peer_text', { isAttachment }]" v-emoji.push="message"></div>
         </div>
         <div :class="['im_peer_unread', { outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
       </div>
@@ -96,9 +97,6 @@
         const typing = this.$store.state.messages.typing[this.peer.id] || {};
 
         return Object.keys(typing).length;
-      },
-      isDeletedContent() {
-        return !this.message;
       },
       isAttachment() {
         const { msg } = this;
@@ -246,7 +244,7 @@
   .im_peer_text { display: inline }
   .im_peer_text b { font-weight: 500 }
   .im_peer_text.isAttachment { color: #254f79 }
-  .im_peer_text.isDeletedContent { color: #4a4a4a }
+  .im_peer_text.isContentDeleted { color: #696969 }
 
   .im_peer_unread {
     padding: 0 6px;

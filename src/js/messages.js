@@ -33,6 +33,8 @@ export function parseConversation(conversation) {
 export function parseMessage(message) {
   if(message.geo) message.attachments.push({ type: 'geo' });
 
+  const fwdCount = message.fwd_messages ? message.fwd_messages.length : 0;
+
   return {
     id: message.id,
     text: escape(message.text).replace(/\n/g, '<br>'),
@@ -42,14 +44,15 @@ export function parseMessage(message) {
     editTime: message.update_time || 0,
     hidden: message.is_hidden,
     action: message.action,
-    fwdCount: message.fwd_messages ? message.fwd_messages.length : 0,
+    fwdCount: fwdCount,
     isReplyMsg: !!message.reply_message,
     fwdMessages: message.fwd_messages || [],
     replyMsg: message.reply_message,
     attachments: message.attachments,
     conversation_msg_id: message.conversation_message_id,
     random_id: message.random_id,
-    was_listened: !!message.was_listened
+    was_listened: !!message.was_listened,
+    isContentDeleted: !message.text && !message.action && !message.attachments.length && !fwdCount && !message.reply_message
   };
 }
 
