@@ -21,6 +21,10 @@
               }
             })
           );
+        } else {
+          attachments.push(
+            h('div', { class: 'attach_unknown' }, `(Вложение ${type})`)
+          );
         }
       }
 
@@ -34,5 +38,10 @@
 <style scoped>
   .im_attachments {
     display: flex;
+    flex-direction: column;
+  }
+
+  .attach_unknown {
+    color: #696969;
   }
 </style>
