@@ -157,7 +157,7 @@
     background-color: #93adc8;
   }
 
-  .message_wrap.isUnread.out .message_bubble::before {
+  .message_wrap:not(.isLoading).isUnread.out .message_bubble::before {
     content: '';
     left: -15px;
   }
@@ -169,10 +169,10 @@
 
   .message_wrap.isLoading .message_bubble::before {
     content: '';
-    left: -25px;
-    bottom: 8px;
     width: 18px;
     height: 18px;
+    left: -20px;
+    bottom: 7px;
     background: url(~assets/recent.svg) center / contain;
   }
 </style>
