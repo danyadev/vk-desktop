@@ -99,10 +99,7 @@
         return Object.keys(typing).length;
       },
       isAttachment() {
-        const { msg } = this;
-        const isFwd = msg.fwdCount || msg.isReplyMsg;
-
-        return !msg.text && (isFwd || !msg.action && msg.attachments.length);
+        return !this.msg.text && this.msg.hasAttachment;
       },
       outread() {
         return this.peer.out_read != this.peer.last_msg_id;

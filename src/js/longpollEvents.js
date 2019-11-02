@@ -107,6 +107,7 @@ function getMessage(data) {
   const { keyboard } = data[5];
   const attachments = getAttachments(data[6]);
   const isReplyMsg = flag('reply_msg');
+  const hasAttachment = isReplyMsg || data[6].fwd || attachments.length;
 
   return {
     peer: {
@@ -129,7 +130,8 @@ function getMessage(data) {
       conversation_msg_id: data[8],
       random_id: data[7],
       was_listened: false,
-      isContentDeleted: !data[4] && !action && !attachments.length && !data[6].fwd && !isReplyMsg
+      hasAttachment: hasAttachment,
+      isContentDeleted: !data[4] && !action && !hasAttachment
     }
   };
 }
@@ -146,6 +148,19 @@ async function getLastMessage(peer_id) {
   store.commit('messages/updateConversation', { msg, peer });
 
   return { msg, peer };
+}
+
+async function loadMessages(peer_id, msg_ids) {
+  const { items } = await vkapi('messages.getById', {
+    message_ids: msg_ids.join(',')
+  });
+
+  for(const msg of items) {
+    store.commit('messages/editMessage', {
+      peer_id,
+      msg: parseMessage(msg)
+    });
+  }
 }
 
 async function watchTyping(peer_id, user_id) {
@@ -300,7 +315,7 @@ export default {
     handler({ key: peer_id, items }) {
       const conv = store.state.messages.conversations[peer_id];
       const lastMsg = items[items.length - 1].msg;
-
+      const messagesWithAttachments = [];
       const peerData = {
         id: peer_id,
         last_msg_id: lastMsg.id
@@ -316,6 +331,8 @@ export default {
         longpoll.emit('new_message', msg, peer_id);
 
         removeTyping(peer_id, msg.from);
+
+        if(msg.hasAttachment) messagesWithAttachments.push(msg.id);
 
         if(msg.action && msg.action.type == 'chat_title_update') {
           peerData.title = msg.action.text;
@@ -333,6 +350,10 @@ export default {
           if(peerData.unread != null) peerData.unread++;
           else if(conv) peerData.unread = conv.peer.unread + 1;
         }
+      }
+
+      if(messagesWithAttachments.length) {
+        loadMessages(peer_id, messagesWithAttachments);
       }
 
       if(lastMsg.hidden) return;
@@ -368,14 +389,18 @@ export default {
 
       removeTyping(peer.id, msg.from);
 
-      store.commit('messages/updateConversation', {
-        peer: { id: peer.id },
-        ...(isLastMsg ? { msg: msg } : {})
-      });
+      if(msg.hasAttachment) loadMessages(peer.id, [msg.id]);
+
+      if(isLastMsg) {
+        store.commit('messages/updateConversation', {
+          peer: { id: peer.id },
+          msg
+        });
+      }
 
       store.commit('messages/editMessage', {
         peer_id: peer.id,
-        msg: msg
+        msg
       });
     }
   },

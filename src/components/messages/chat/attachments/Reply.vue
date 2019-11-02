@@ -3,7 +3,7 @@
     <img v-if="reply.photo" class="attach_reply_photo" :src="reply.photo">
 
     <div class="attach_reply_content">
-      <div class="attach_reply_name">{{ reply.name || '...' }}</div>
+      <div class="attach_reply_name">{{ reply.name || 'loading...' }}</div>
 
       <div v-if="reply.isDeletedContent" class="attach_reply_text isContentDeleted">{{ l('im_content_deleted') }}</div>
       <div v-else :class="['attach_reply_text', { isAttachment: reply.isAttachment }]" v-emoji.push="reply.text || '...'"></div>
@@ -41,6 +41,8 @@
     },
     computed: {
       reply() {
+        if(!this.msg.replyMsg) return {};
+
         const msg = parseMessage(this.msg.replyMsg);
         const user = this.$store.state.profiles[msg.from];
         const text = this.getText(msg);
@@ -50,7 +52,7 @@
           name: user && (user.name || `${user.first_name} ${user.last_name}`),
           text: text,
           isContentDeleted: msg.isContentDeleted,
-          isAttachment: !msg.text
+          isAttachment: !msg.text && msg.hasAttachment
         }
       }
     }

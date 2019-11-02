@@ -34,6 +34,7 @@ export function parseMessage(message) {
   if(message.geo) message.attachments.push({ type: 'geo' });
 
   const fwdCount = message.fwd_messages ? message.fwd_messages.length : 0;
+  const hasAttachment = fwdCount || message.reply_message || message.attachments.length;
 
   return {
     id: message.id,
@@ -52,7 +53,8 @@ export function parseMessage(message) {
     conversation_msg_id: message.conversation_message_id,
     random_id: message.random_id,
     was_listened: !!message.was_listened,
-    isContentDeleted: !message.text && !message.action && !message.attachments.length && !fwdCount && !message.reply_message
+    hasAttachment: hasAttachment,
+    isContentDeleted: !message.text && !message.action && !hasAttachment
   };
 }
 
