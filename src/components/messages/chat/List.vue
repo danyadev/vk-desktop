@@ -201,6 +201,32 @@
         }
       });
 
+      eventBus.on('messages:jumpTo', (peer_id, { msg_id }) => {
+        async function onLoad() {
+          const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
+
+          if(msg) {
+            const el = this.$el.firstChild;
+            el.scrollTop = msg.offsetTop - el.clientHeight / 2;
+
+            this.$refs.scrolly.refreshScrollLayout();
+            this.checkScrolling(this.$el.firstChild);
+
+            msg.setAttribute('active', '');
+
+            setTimeout(() => {
+              msg.removeAttribute('active');
+            }, 2000);
+          }
+        }
+
+        if(this.messages.find((msg) => msg.id == msg_id)) {
+          onLoad.call(this);
+        } else {
+          this.load({ start_message_id: msg_id }).then(onLoad.bind(this));
+        }
+      });
+
       longpoll.on('new_message', async ({ random_id }, peer_id) => {
         if(peer_id != this.id) return;
 

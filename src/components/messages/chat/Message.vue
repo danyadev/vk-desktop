@@ -1,5 +1,5 @@
 <template>
-  <div :class="['message_wrap', { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading, isSticker, hideBubble }]">
+  <div :class="['message_wrap', { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading, isSticker, hideBubble }]" :id="msg.id">
     <div v-if="showUserData" class="message_name">
       {{ name }}
       <div v-if="user && user.verified" class="verified"></div>
@@ -10,7 +10,7 @@
       <div v-else-if="isChat && !msg.out && !isChannel" class="message_photo"></div>
 
       <div class="message_bubble">
-        <Reply :msg="msg" />
+        <Reply :msg="msg" :peer_id="peer_id" />
 
         <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
         <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
@@ -95,6 +95,16 @@
 <style scoped>
   .message_wrap {
     padding: 8px 14px 4px 14px;
+    background-color: #fff;
+    transition: background-color 1s;
+  }
+
+  .message_wrap[active] {
+    background-color: #ebf1f5;
+  }
+
+  .message_wrap[active].out {
+    background-color: #e9f3ff;
   }
 
   .message_wrap:not(.showUserData) {

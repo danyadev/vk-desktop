@@ -1,11 +1,11 @@
 <template>
-  <div v-if="msg.isReplyMsg" class="attach_reply">
+  <div v-if="msg.isReplyMsg" class="attach_reply" @click="jump">
     <img v-if="reply.photo" class="attach_reply_photo" :src="reply.photo">
 
     <div class="attach_reply_content">
       <div class="attach_reply_name">{{ reply.name || '...' }}</div>
 
-      <div v-if="reply.isDeletedContent" class="attach_reply_text isContentDeleted">{{ l('im_content_deleted') }}</div>
+      <div v-if="reply.isContentDeleted" class="attach_reply_text isContentDeleted">{{ l('im_content_deleted') }}</div>
       <div v-else :class="['attach_reply_text', { isAttachment: reply.isAttachment }]" v-emoji.push="reply.text || '...'"></div>
     </div>
   </div>
@@ -13,10 +13,10 @@
 
 <script>
   import { parseMessage } from 'js/messages';
-  import { getPhotoFromSizes } from 'js/utils';
+  import { getPhotoFromSizes, eventBus } from 'js/utils';
 
   export default {
-    props: ['msg'],
+    props: ['msg', 'peer_id'],
     methods: {
       getPhoto(msg) {
         let url;
@@ -33,10 +33,20 @@
         if(msg.text) return msg.text;
 
         const { isReplyMsg, fwdCount, attachments } = msg;
+        const [attach] = attachments;
 
         if(isReplyMsg) return this.l('im_replied');
         else if(fwdCount) return this.l('im_forwarded', [fwdCount], fwdCount);
-        else return this.l('im_attachments', attachments[0].type);
+        else if(attach) return this.l('im_attachments', attach.type);
+      },
+      jump() {
+        const { replyMsg } = this.msg;
+
+        if(replyMsg) {
+          eventBus.emit('messages:jumpTo', this.peer_id, {
+            msg_id: replyMsg.id
+          });
+        }
       }
     },
     computed: {
@@ -65,7 +75,7 @@
     position: relative;
     height: 40px;
     margin-bottom: 4px;
-    /* cursor: pointer; */
+    cursor: pointer;
   }
 
   .message_wrap:not(.hideBubble).isSticker .attach_reply {
@@ -117,5 +127,9 @@
 
   .attach_reply_text.isAttachment {
     color: #254f79;
+  }
+
+  .attach_reply_text.isContentDeleted {
+    color: #696969;
   }
 </style>
