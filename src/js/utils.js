@@ -108,11 +108,19 @@ export function endScroll(callback, reverse) {
     // Обычно возникает когда у блока стоит display: none или он скрыт другим способом.
     if(!scrollHeight || !offsetHeight) return;
 
-    const isScrolled = reverse
-      ? scrollTop <= 100
-      : scrollTop + offsetHeight + 100 >= scrollHeight;
+    const isScrolledUp = scrollTop <= 100;
+    const isScrolledDown = scrollTop + offsetHeight + 100 >= scrollHeight;
 
-    if(isScrolled) callback.call(this);
+    const isScrolled = reverse
+      ? (reverse == -1 ? (isScrolledUp || isScrolledDown) : isScrolledUp)
+      : isScrolledDown;
+
+    if(isScrolled) {
+      callback.call(this, {
+        isUp: isScrolledUp,
+        isDown: isScrolledDown
+      });
+    }
   }
 }
 

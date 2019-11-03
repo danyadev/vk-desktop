@@ -6,11 +6,13 @@
            ref="scrolly"
   >
     <div v-if="hasMessages" class="messages_empty_block"></div>
-    <div v-if="loading" class="loading"></div>
+    <div v-if="loadingUp" class="loading"></div>
 
-    <MessagesList :peer_id="id" :list="messages" />
+    <MessagesList :peer_id="id" :list="messagesWithLoading" />
 
-    <div v-if="!hasMessages && !loading" class="messages_empty_dialog">
+    <div v-if="loadingDown" class="loading"></div>
+
+    <div v-if="!hasMessages && !loadingUp" class="messages_empty_dialog">
       <img src="~assets/placeholder_empty_messages.webp">
       {{ l('im_empty_dialog') }}
     </div>
@@ -42,8 +44,11 @@
       Typing
     },
     data: () => ({
-      loading: false,
-      loaded: false,
+      loadingUp: false,
+      loadedUp: false,
+
+      loadingDown: false,
+      loadedDown: false,
 
       scrollTop: null,
       lockScroll: false,
@@ -53,12 +58,13 @@
     }),
     computed: {
       messages() {
-        const messages = this.$store.state.messages.messages[this.id] || [];
-
-        return messages.concat(this.loadingMessages);
+        return this.$store.state.messages.messages[this.id] || [];
+      },
+      messagesWithLoading() {
+        return this.messages.concat(this.loadingMessages);
       },
       hasMessages() {
-        return this.messages.length;
+        return this.messagesWithLoading.length;
       },
       hasTyping() {
         const typing = this.$store.state.messages.typing[this.id] || {};
@@ -70,15 +76,17 @@
       }
     },
     methods: {
-      async load() {
-        this.loading = true;
+      async load(params = {}, { isDown, isFirstLoad } = {}) {
+        if(isDown) this.loadingDown = true;
+        else this.loadingUp = true;
 
+        const { peer } = this.$store.state.messages.conversations[this.id];
         const hasMessages = this.hasMessages;
         const { items, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.id,
-          offset: this.messages.length,
           extended: 1,
-          fields: fields
+          fields: fields,
+          ...params
         });
 
         this.lockScroll = true;
@@ -86,7 +94,8 @@
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
         this.$store.commit('messages/addMessages', {
           peer_id: this.id,
-          messages: items.map(parseMessage).reverse()
+          messages: items.map(parseMessage).reverse(),
+          addNew: isDown
         });
 
         const messagesList = this.$el.firstChild;
@@ -97,15 +106,24 @@
 
         if(!hasMessages) {
           this.scrollToEnd();
-        } else {
-          // Отнимаем от общей текущей высоты скролла прошлую высоту
-          // и прибавляем прошлый остаток до вершины скролла
-          // чтобы при добавлении контента остаться на своем месте
+        } else if(!isDown) {
+          // Остаемся на месте при добавлении контента сверху
           messagesList.scrollTop = messagesList.scrollHeight - scrollHeight + scrollTop;
         }
 
-        this.loading = false;
-        if(items.length < 20) this.loaded = true;
+        if(isDown || isFirstLoad) {
+          this.loadingDown = false;
+          this.loadedDown = !items[0] || items[0].id == peer.last_msg_id;
+        }
+
+        if(!isDown) {
+          this.loadingUp = false;
+          this.loadedUp = !isFirstLoad && items.length < 20;
+        }
+
+        this.checkScrolling(this.$el.firstChild);
+
+        return items;
       },
 
       scrollToEnd() {
@@ -126,30 +144,47 @@
         this.checkScrolling(e);
       },
 
-      checkScrolling: endScroll(function() {
-        if(!this.loading && !this.loaded) {
-          this.loading = true;
-          this.load();
+      checkScrolling: endScroll(function({ isUp, isDown }) {
+        if(isUp && !this.loadingUp && !this.loadedUp) {
+          const [msg] = this.messages;
+
+          this.loadingUp = true;
+
+          this.load({
+            start_message_id: msg ? msg.id : -1
+          });
         }
-      }, true)
+
+        if(isDown && !this.loadingUp && !this.loadingDown && !this.loadedDown) {
+          this.loadingDown = true;
+
+          this.load({
+            start_message_id: this.messages[this.messages.length-1].id,
+            offset: -20
+          }, { isDown: true });
+        }
+      }, -1)
     },
     activated() {
       if(this.scrollTop != null) {
         this.$el.firstChild.scrollTop = this.scrollTop;
       } else {
-        this.scrollToEnd();
         this.checkScrolling(this.$el.firstChild);
       }
     },
-    async mounted() {
-      if(!this.messages.length) {
-        this.load();
-      } else {
-        await this.$nextTick();
+    mounted() {
+      this.load({
+        start_message_id: -1,
+        offset: -10
+      }, { isFirstLoad: true }).then((items) => {
+        const unreadMessages = document.querySelector('.message_unreaded_messages');
 
-        this.scrollToEnd();
-        this.checkScrolling(this.$el.firstChild);
-      }
+        if(unreadMessages) {
+          const el = this.$el.firstChild;
+
+          el.scrollTop = unreadMessages.offsetTop - el.clientHeight / 2;
+        }
+      });
 
       eventBus.on('messages:closeChat', (peer_id) => {
         if(this.id == peer_id) {
@@ -157,10 +192,11 @@
         }
       });
 
-      eventBus.on('messages:load', (peer_id, force) => {
+      eventBus.on('messages:load', (peer_id, { unlockUp, unlockDown } = {}) => {
         if(this.id == peer_id) {
-          if(force) this.loaded = false;
-          
+          if(unlockUp) this.loadedUp = false;
+          if(unlockDown) this.loadedDown = false;
+
           this.checkScrolling(this.$el.firstChild);
         }
       });
@@ -173,6 +209,7 @@
         await this.$nextTick();
 
         if(this.loadingMessages.find((msg) => msg.random_id == random_id)) {
+          // Пришло мое сообщение
           this.$store.commit('messages/removeLoadingMessage', {
             peer_id: this.id,
             random_id: random_id
@@ -180,6 +217,7 @@
 
           this.scrollToEnd();
         } else if(scrollTop + clientHeight == scrollHeight) {
+          // Пришло сообщение, когда ты был в конце беседы
           this.scrollToEnd();
         }
       });

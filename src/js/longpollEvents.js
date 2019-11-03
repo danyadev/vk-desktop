@@ -254,46 +254,34 @@ export default {
     async handler({ key: peer_id, items }) {
       const conv = store.state.messages.conversations[peer_id];
       const convList = store.getters['messages/conversationsList'];
-      const messagesList = store.state.messages.messages[peer_id] || [];
       const lastLocalConv = convList[convList.length - 1];
-      const [firstLocalMsg] = messagesList;
-      const newMsgPeer = items[0].peer;
-
-      items = items.sort((a, b) => a.msg.id - b.msg.id);
-
+      const messagesList = store.state.messages.messages[peer_id] || [];
+      const [topMsg] = messagesList;
+      const bottomMsg = messagesList[messagesList.length - 1];
       const { msg, peer } = await getLastMessage(peer_id);
+      let unlockUp, unlockDown;
 
-      if(!firstLocalMsg || items[0].msg.id < firstLocalMsg.id) {
-        const { items: [prevMsg] } = await vkapi('messages.getHistory', {
-          peer_id: peer_id,
-          offset: messagesList.length,
-          count: 1
+      items = items.filter((item) => {
+        if(!topMsg) unlockUp = unlockDown = true;
+        else if(item.msg.id < topMsg.id) unlockUp = true;
+        else if(item.msg.id > bottomMsg.id) unlockDown = true;
+        else return 1;
+      });
+
+      if(items.length) {
+        const { items: newMessages } = await vkapi('messages.getById', {
+          message_ids: items.map(({ msg }) => msg.id).join(',')
         });
 
-        if(prevMsg) {
-          let id = prevMsg.conversation_msg_id;
-
-          for(const { msg } of items) {
-            if(msg.conversation_msg_id-1 == id) id = msg.conversation_msg_id;
-          }
-
-          items = items.filter(({ msg }) => msg.conversation_msg_id >= id);
-          items.push({ peer: newMsgPeer, msg: prevMsg });
+        for(const msg of newMessages) {
+          store.commit('messages/insertMessage', {
+            peer_id: peer_id,
+            msg: parseMessage(msg)
+          });
         }
       }
 
-      const { items: newMessages } = await vkapi('messages.getById', {
-        message_ids: items.map(({ msg }) => msg.id).join(',')
-      });
-
-      for(const msg of newMessages) {
-        store.commit('messages/insertMessage', {
-          peer_id: peer_id,
-          msg: parseMessage(msg)
-        });
-      }
-
-      eventBus.emit('messages:load', peer_id, true);
+      eventBus.emit('messages:load', peer_id, { unlockUp, unlockDown });
 
       if(!lastLocalConv || lastLocalConv.msg.id < msg.id) {
         if(conv && !store.state.messages.peersList.includes(peer_id)) {
@@ -315,6 +303,8 @@ export default {
     parser: getMessage,
     handler({ key: peer_id, items }) {
       const conv = store.state.messages.conversations[peer_id];
+      const localMessages = store.state.messages.messages[peer_id] || [];
+      const lastLocalMsg = localMessages[localMessages.length-1];
       const lastMsg = items[items.length - 1].msg;
       const messagesWithAttachments = [];
       const peerData = {
@@ -322,11 +312,13 @@ export default {
         last_msg_id: lastMsg.id
       };
 
-      store.commit('messages/addMessages', {
-        peer_id: peer_id,
-        messages: items.map(({ msg }) => msg),
-        addNew: true
-      });
+      if(conv && lastLocalMsg && conv.peer.last_msg_id == lastLocalMsg.id) {
+        store.commit('messages/addMessages', {
+          peer_id: peer_id,
+          messages: items.map(({ msg }) => msg),
+          addNew: true
+        });
+      }
 
       for(const { msg, peer: { keyboard } } of items) {
         longpoll.emit('new_message', msg, peer_id);

@@ -53,8 +53,9 @@
       if(this.id > 2e9) loadConversationMembers(this.id, true);
     },
     activated() {
-      if(!this.peer || !this.peer.loaded) loadConversation(this.id).then(this.setInRead);
-      else {
+      if(!this.peer || !this.peer.loaded) {
+        loadConversation(this.id).then(this.setInRead);
+      } else {
         if(this.id < 2e9) loadConversation(this.id);
         this.setInRead();
       }
