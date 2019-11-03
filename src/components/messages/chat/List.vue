@@ -223,7 +223,14 @@
         if(this.messages.find((msg) => msg.id == msg_id)) {
           onLoad.call(this);
         } else {
-          this.load({ start_message_id: msg_id }).then(onLoad.bind(this));
+          this.$store.commit('messages/removeConversationMessages', peer_id);
+          
+          this.loadedUp = this.loadedDown = false;
+
+          this.load({
+            start_message_id: msg_id,
+            offset: -10
+          }).then(onLoad.bind(this));
         }
       });
 

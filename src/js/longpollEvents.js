@@ -470,23 +470,13 @@ export default {
   10: {
     // Включение уведомлений в чате (16)
     // [peer_id, flag]
-    parser(data) {
-
-    },
-    handler(data) {
-
-    }
+    parser() {}
   },
 
   12: {
     // Выключение уведомлений в чате (16)
     // [peer_id, flag]
-    parser(data) {
-
-    },
-    handler(data) {
-
-    }
+    parser() {}
   },
 
   13: {
@@ -625,12 +615,7 @@ export default {
     // Изменение состояния невидимки
     // [-user_id, state, ts, -1, 0]
     // state: 1 - включена, 0 - выключена
-    parser(data) {
-
-    },
-    handler(data) {
-
-    }
+    parser() {}
   },
 
   114: {
@@ -653,11 +638,6 @@ export default {
 
   115: {
     // Звонок
-    parser(data) {
-
-    },
-    handler(data) {
-
-    }
+    parser() {}
   }
 }
