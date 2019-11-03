@@ -151,7 +151,7 @@
         if(!this.$store.state.settings.messagesSettings.notRead) {
           await timer(0);
 
-          const messages = [].slice.call(document.querySelectorAll('.message_wrap.isUnread:not(.out)'));
+          const messages = [].slice.call(document.querySelectorAll('.service_message.isUnread, .message_wrap.isUnread:not(.out)'));
 
           let lastReadedMsg;
 

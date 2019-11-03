@@ -3,7 +3,7 @@
   import { getMessageDate } from 'js/date';
   import { capitalize } from 'js/utils';
   import { getServiceMessage } from 'js/messages';
-  
+
   import Message from './Message.vue';
 
   export default {
@@ -13,6 +13,9 @@
       peer() {
         const conv = this.$store.state.messages.conversations[this.peer_id];
         return conv && conv.peer;
+      },
+      in_read() {
+        return this.peer && (this.peer.new_in_read || this.peer.in_read);
       }
     },
 
@@ -26,9 +29,8 @@
         }
       },
       isStartUnread(msg, prevMsg) {
-        const in_read = this.peer && (this.peer.new_in_read || this.peer.in_read);
-        const isPrevUnread = prevMsg && prevMsg.id > in_read;
-        const isThisUnread = msg.id > in_read;
+        const isPrevUnread = prevMsg && prevMsg.id > this.in_read;
+        const isThisUnread = msg.id > this.in_read;
 
         return !msg.out && !isPrevUnread && isThisUnread;
       },
@@ -68,9 +70,10 @@
         if(serviceMessage) {
           children.push(
             h('div', {
-              class: 'service_message',
+              class: ['service_message', msg.id > this.in_read && 'isUnread'],
               domProps: {
-                innerHTML: serviceMessage
+                innerHTML: serviceMessage,
+                id: msg.id
               }
             })
           );
