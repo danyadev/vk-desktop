@@ -179,9 +179,7 @@
       },
 
       onInput: throttle(function(e) {
-        const { typing } = this.$store.state.settings.messagesSettings;
-
-        if(typing && e.data) {
+        if(e.data && this.$store.state.settings.messagesSettings.typing) {
           vkapi('messages.setActivity', {
             peer_id: this.id,
             type: 'typing'

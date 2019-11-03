@@ -28,8 +28,8 @@
 
 <script>
   import vkapi from 'js/vkapi';
-  import { fields, concatProfiles, endScroll, eventBus } from 'js/utils';
-  import { parseMessage } from 'js/messages';
+  import { fields, concatProfiles, endScroll, eventBus, callWithDelay, timer } from 'js/utils';
+  import { parseMessage, parseConversation } from 'js/messages';
   import longpoll from 'js/longpoll';
 
   import Scrolly from '../../UI/Scrolly.vue';
@@ -80,17 +80,18 @@
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
 
-        const { peer } = this.$store.state.messages.conversations[this.id];
         const hasMessages = this.hasMessages;
-        const { items, profiles, groups } = await vkapi('messages.getHistory', {
+        const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.id,
           extended: 1,
           fields: fields,
           ...params
         });
+        const peer = parseConversation(conversations[0]);
 
         this.lockScroll = true;
 
+        this.$store.commit('messages/updateConversation', { peer });
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
         this.$store.commit('messages/addMessages', {
           peer_id: this.id,
@@ -121,7 +122,8 @@
           this.loadedUp = !isFirstLoad && items.length < 20;
         }
 
-        this.checkScrolling(this.$el.firstChild);
+        this.checkReadMessages(messagesList);
+        this.checkScrolling(messagesList);
 
         return items;
       },
@@ -141,8 +143,36 @@
 
         this.showEndBtn = !isBottom && e.dy > 0;
 
+        this.checkReadMessages(e);
         this.checkScrolling(e);
       },
+
+      async checkReadMessages(wrap) {
+        if(!this.$store.state.settings.messagesSettings.notRead) {
+          await timer(0);
+
+          const messages = [].slice.call(document.querySelectorAll('.message_wrap.isUnread:not(.out)'));
+
+          let lastReadedMsg;
+
+          for(const el of messages) {
+            if(wrap.offsetHeight + wrap.scrollTop - el.offsetHeight >= el.offsetTop) {
+              lastReadedMsg = +el.id;
+            } else {
+              break;
+            }
+          }
+
+          if(lastReadedMsg) this.readMessages(lastReadedMsg);
+        }
+      },
+
+      readMessages: callWithDelay(function(msg_id) {
+        vkapi('messages.markAsRead', {
+          start_message_id: msg_id,
+          peer_id: this.id
+        });
+      }, 500),
 
       checkScrolling: endScroll(function({ isUp, isDown }) {
         if(isUp && !this.loadingUp && !this.loadedUp) {
@@ -166,10 +196,12 @@
       }, -1)
     },
     activated() {
+      const el = this.$el.firstChild;
+
       if(this.scrollTop != null) {
-        this.$el.firstChild.scrollTop = this.scrollTop;
+        el.scrollTop = this.scrollTop;
       } else {
-        this.checkScrolling(this.$el.firstChild);
+        this.checkScrolling(el);
       }
     },
     mounted() {
@@ -210,7 +242,7 @@
             el.scrollTop = msg.offsetTop - el.clientHeight / 2;
 
             this.$refs.scrolly.refreshScrollLayout();
-            this.checkScrolling(this.$el.firstChild);
+            this.checkScrolling(el);
 
             msg.setAttribute('active', '');
 
@@ -224,7 +256,7 @@
           onLoad.call(this);
         } else {
           this.$store.commit('messages/removeConversationMessages', peer_id);
-          
+
           this.loadedUp = this.loadedDown = false;
 
           this.load({
@@ -237,8 +269,10 @@
       longpoll.on('new_message', async ({ random_id }, peer_id) => {
         if(peer_id != this.id) return;
 
-        const { scrollTop, clientHeight, scrollHeight } = this.$el.firstChild;
+        const el = this.$el.firstChild;
+        const { scrollTop, clientHeight, scrollHeight } = el;
 
+        this.checkReadMessages(el);
         await this.$nextTick();
 
         if(this.loadingMessages.find((msg) => msg.random_id == random_id)) {

@@ -120,7 +120,7 @@ function getMessage(data) {
       text: action ? '' : data[4],
       from: from_id,
       date: data[3],
-      out: flag('outbox'),
+      out: from_id == user.id || flag('outbox'),
       editTime: data[9],
       hidden: flag('hidden'),
       action: action,

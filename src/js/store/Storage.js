@@ -30,6 +30,7 @@ export const settings = new Storage('settings', {
   window: win.getBounds(),
   langName: 'ru',
   messagesSettings: {
-    typing: true
+    typing: true,
+    notRead: true
   }
 });

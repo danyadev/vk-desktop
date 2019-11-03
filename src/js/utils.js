@@ -80,7 +80,24 @@ export function throttle(fn, delay) {
     if(now - lastCall < delay) return;
     lastCall = now;
 
-    return fn.apply(this, args);
+    fn.apply(this, args);
+  }
+}
+
+// Вызывает переданную функцию только после прохождения delay мс
+// т.е. неважно, сколько раз мы вызвали функцию
+export function callWithDelay(fn, delay) {
+  let timerId, fnArgs;
+
+  return function(...args) {
+    fnArgs = args;
+
+    if(!timerId) {
+      timerId = setTimeout(() => {
+        fn.apply(this, fnArgs);
+        timerId = null;
+      }, delay);
+    }
   }
 }
 

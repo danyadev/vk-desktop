@@ -4,6 +4,10 @@
       <Checkbox :active="messagesSettings.typing"/>
       <div class="act_menu_data">{{ l('im_send_typing') }}</div>
     </div>
+    <div class="act_menu_item" @click="click('notRead')">
+      <Checkbox :active="messagesSettings.notRead"/>
+      <div class="act_menu_data">{{ l('im_not_read_messages') }}</div>
+    </div>
   </ActionsMenu>
 </template>
 

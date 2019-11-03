@@ -4,15 +4,14 @@
       <img src="~assets/actions_icon.svg" class="act_menu_btn">
     </div>
 
-    <div :class="['act_menu', { active }]"><slot></slot></div>
+    <div :class="['act_menu', { active }]"><slot /></div>
   </div>
 </template>
 
 <script>
   export default {
     data: () => ({
-      active: false,
-      timeout: null
+      active: false
     }),
     methods: {
       openMenu() {
