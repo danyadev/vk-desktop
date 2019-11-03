@@ -23,7 +23,7 @@
           );
         } else {
           attachments.push(
-            h('div', { class: 'attach_unknown' }, `(Вложение ${type})`)
+            h('div', { class: 'attach_unknown' }, `(${type})`)
           );
         }
       }

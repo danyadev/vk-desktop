@@ -16,6 +16,7 @@
         <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
         <Attachments :msg="msg" />
+        <Forwarded :msg="msg" />
 
         <div class="message_time_wrap">
           <template v-if="msg.editTime">
@@ -36,12 +37,14 @@
 
   import Attachments from './attachments/Attachments.vue';
   import Reply from './attachments/Reply.vue';
+  import Forwarded from './attachments/Forwarded.vue';
 
   export default {
     props: ['msg', 'peer', 'peer_id', 'messageDate', 'isStartUnread', 'prevMsg'],
     components: {
       Attachments,
-      Reply
+      Reply,
+      Forwarded
     },
     computed: {
       user() {

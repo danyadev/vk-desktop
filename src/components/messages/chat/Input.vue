@@ -124,6 +124,7 @@
               out: true,
               editTime: 0,
               fwdCount: 0,
+              fwdMessages: [],
               attachments: [],
               random_id,
               isLoading: true

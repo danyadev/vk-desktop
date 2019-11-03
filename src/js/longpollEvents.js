@@ -125,6 +125,7 @@ function getMessage(data) {
       hidden: flag('hidden'),
       action: action,
       fwdCount: Number(data[5].fwd_count || (data[6].fwd ? -1 : 0)),
+      fwdMessages: [],
       isReplyMsg: isReplyMsg,
       attachments: attachments,
       conversation_msg_id: data[8],
