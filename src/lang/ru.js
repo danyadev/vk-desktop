@@ -7,6 +7,7 @@ export default {
   you2: 'Вас',
   loading: 'Загрузка...',
   send: 'Отправить',
+  retry: 'Повторить',
 
   // Время
   date_now: 'только что',
@@ -212,5 +213,8 @@ export default {
   // Автообновление
   ml_update_available: 'Доступно обновление',
   ml_update_now: 'Обновить сейчас',
-  ml_update_later: 'Обновить позже'
+  ml_update_later: 'Обновить позже',
+
+  // Internal Server Error
+  ml_error_api: 'При загрузке метода {0} произошла ошибка.'
 }

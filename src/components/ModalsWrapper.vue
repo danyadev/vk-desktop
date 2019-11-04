@@ -2,7 +2,7 @@
   <div :class="['modals_container', { active: hasModals }]" tabindex="0" @keydown.esc="onEscape">
     <TransitionGroup name="modal">
       <div v-for="modal in modals" :key="modal.name" class="modal_wrap" @click.stop="closeModal">
-        <Component :is="`modal-${modal.name}`" :name="modal.name" :data="modal.data"/>
+        <Component :is="modal.name" :name="modal.name" :data="modal.data" />
       </div>
     </TransitionGroup>
   </div>
@@ -19,11 +19,12 @@
     'Multiaccount',
     'Auth',
     'ClearHistory',
-    'UpdateAvailable'
+    'UpdateAvailable',
+    'ErrorApi'
   ];
 
   for(const name of modalNames) {
-    modalComponents[`Modal${name}`] = require(`./modals/${name}.vue`).default;
+    modalComponents[name] = require(`./modals/${name}.vue`).default;
   }
 
   export default {

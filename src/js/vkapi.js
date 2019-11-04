@@ -64,16 +64,11 @@ function vkapi(name, params) {
         break;
 
       case 10: // Internal Server Error
-      // TODO добавить модалку
-        const thisParams = methods[0].data[1] || {};
-
-        if(thisParams.ise) {
-          reject(data.error);
-        } else {
-          await timer(1000);
-          methods[0].data[1] = Object.assign(thisParams, { ise: true });
-          reject();
-        }
+        eventBus.emit('modal:open', 'error-api', {
+          method: name,
+          error: data.error,
+          retry: reject
+        });
 
         break;
 
