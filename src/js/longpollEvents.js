@@ -41,9 +41,8 @@ function hasFlag(mask, flag) {
     return arr;
   }, []);
 
-  if(longpoll.debug || newFlags.length) {
-    console.log(mask, msgFlags, newFlags);
-  }
+  if(newFlags.length) console.warn('[Новые флаги]', mask, msgFlags, newFlags);
+  else if(longpoll.debug) console.log(mask, msgFlags, newFlags);
 
   const checkFlag = (flag) => flags[flag] & mask;
 
@@ -113,7 +112,8 @@ function getMessage(data) {
     peer: {
       id: data[2],
       keyboard: keyboard && Object.assign(keyboard, { author_id: from_id }),
-      channel: from_id < 0 && data[2] > 2e9 && data[5].title === ''
+      channel: from_id < 0 && data[2] > 2e9 && data[5].title === '',
+      mentions: data[5].mentions || []
     },
     msg: {
       id: data[0],
@@ -222,8 +222,30 @@ export default {
       if(!flag('important')) return data[0];
     },
     async handler({ key: peer_id, items: msg_ids }) {
+      const conv = store.state.messages.conversations[peer_id];
       const messages = store.state.messages.messages[peer_id] || [];
       if(!messages.length) return;
+
+      if(conv) {
+        const { mentions } = conv.peer;
+        let updated = false;
+
+        for(const id of msg_ids) {
+          if(mentions.includes(id)) {
+            updated = true;
+            mentions.splice(mentions.indexOf(id), 1);
+          }
+        }
+
+        if(updated) {
+          store.commit('messages/updateConversation', {
+            peer: {
+              id: peer_id,
+              mentions
+            }
+          });
+        }
+      }
 
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
@@ -309,7 +331,8 @@ export default {
       const messagesWithAttachments = [];
       const peerData = {
         id: peer_id,
-        last_msg_id: lastMsg.id
+        last_msg_id: lastMsg.id,
+        mentions: conv && conv.peer.mentions || []
       };
 
       if(conv && lastLocalMsg && conv.peer.last_msg_id == lastLocalMsg.id) {
@@ -320,10 +343,8 @@ export default {
         });
       }
 
-      for(const { msg, peer: { keyboard } } of items) {
+      for(const { msg, peer: { keyboard, mentions } } of items) {
         longpoll.emit('new_message', msg, peer_id);
-
-        removeTyping(peer_id, msg.from);
 
         if(msg.hasAttachment) messagesWithAttachments.push(msg.id);
 
@@ -336,12 +357,18 @@ export default {
           peerData.in_read = msg.id;
           peerData.unread = 0;
         } else {
+          removeTyping(peer_id, msg.from);
+
           peerData.out_read = msg.id;
 
           if(keyboard) peerData.keyboard = keyboard;
 
           if(peerData.unread != null) peerData.unread++;
           else if(conv) peerData.unread = conv.peer.unread + 1;
+
+          if(mentions.includes(store.getters['users/user'].id)) {
+            mentions.push(msg.id);
+          }
         }
       }
 
@@ -379,18 +406,32 @@ export default {
     handler({ peer, msg }) {
       const conv = store.state.messages.conversations[peer.id];
       const isLastMsg = conv && conv.msg.id == msg.id;
+      const activeId = store.getters['users/user'].id;
 
       removeTyping(peer.id, msg.from);
 
       if(msg.hasAttachment) loadMessages(peer.id, [msg.id]);
 
-      if(isLastMsg) {
-        store.commit('messages/updateConversation', {
-          peer: { id: peer.id },
-          msg
-        });
+      const updateConvData = {
+        peer: {
+          id: peer.id,
+          mentions: conv && conv.peer.mentions || []
+        }
+      };
+
+      if(isLastMsg) updateConvData.msg = msg;
+
+      // Если упоминание удалили из сообщения
+      if(updateConvData.peer.mentions.includes(msg.id) && !peer.mentions.includes(activeId)) {
+        updateConvData.peer.mentions.slice(updateConvData.mentions.indexOf(msg.id), 1);
       }
 
+      // Если упоминание добавили в сообщение
+      if(!updateConvData.peer.mentions.includes(msg.id) && peer.mentions.includes(activeId)) {
+        updateConvData.peer.mentions.push(activeId);
+      }
+
+      store.commit('messages/updateConversation', updateConvData);
       store.commit('messages/editMessage', {
         peer_id: peer.id,
         msg
@@ -403,11 +444,23 @@ export default {
     // [peer_id, msg_id, count]
     parser: (data) => data,
     handler([peer_id, msg_id, count]) {
+      const conv = store.state.messages.conversations[peer.id];
+      const mentions = conv && conv.peer.mentions || [];
+
+      if(mentions.length) {
+        for(const id of mentions) {
+          if(msg_id >= id) {
+            mentions.splice(mentions.indexOf(id), 1);
+          }
+        }
+      }
+
       store.commit('messages/updateConversation', {
         peer: {
           id: peer_id,
           unread: count,
-          in_read: msg_id
+          in_read: msg_id,
+          mentions
         }
       });
     }

@@ -26,6 +26,7 @@ export function parseConversation(conversation) {
     in_read: conversation.in_read,
     // id последнего прочтенного исходящего сообщения
     out_read: conversation.out_read,
+    mentions: conversation.mentions || [],
     loaded: true
   };
 }
