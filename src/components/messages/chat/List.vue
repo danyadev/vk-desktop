@@ -80,7 +80,6 @@
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
 
-        const hasMessages = this.hasMessages;
         const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.id,
           extended: 1,
@@ -99,17 +98,15 @@
           addNew: isDown
         });
 
-        const messagesList = this.$el.firstChild;
-        const { scrollTop, scrollHeight } = messagesList;
+        const list = this.$el.firstChild;
+        const { scrollTop, scrollHeight } = list;
 
         await this.$nextTick();
         setTimeout(() => this.lockScroll = false, 0);
 
-        if(!hasMessages) {
-          this.scrollToEnd();
-        } else if(!isDown) {
+        if(!isDown) {
           // Остаемся на месте при добавлении контента сверху
-          messagesList.scrollTop = messagesList.scrollHeight - scrollHeight + scrollTop;
+          list.scrollTop = list.scrollHeight - scrollHeight + scrollTop;
         }
 
         if(isDown || isFirstLoad) {
@@ -122,8 +119,8 @@
           this.loadedUp = !isFirstLoad && items.length < 20;
         }
 
-        this.checkReadMessages(messagesList);
-        this.checkScrolling(messagesList);
+        this.checkReadMessages(list);
+        this.checkScrolling(list);
 
         return items;
       },
@@ -136,28 +133,29 @@
         }
       },
 
-      onScroll(e) {
-        if(!e.scrollHeight) return;
+      onScroll(list) {
+        if(!list.scrollHeight) return;
 
-        const isBottom = e.scrollTop + e.offsetHeight + 250 >= e.scrollHeight;
+        const isBottom = list.scrollTop + list.offsetHeight + 250 >= list.scrollHeight;
 
-        this.showEndBtn = !isBottom && e.dy > 0;
+        this.showEndBtn = !isBottom && list.dy > 0;
 
-        this.checkReadMessages(e);
-        this.checkScrolling(e);
+        this.checkReadMessages(list);
+        this.checkScrolling(list);
       },
 
-      async checkReadMessages(wrap) {
+      async checkReadMessages(list) {
         if(!this.$store.state.settings.messagesSettings.notRead) {
+          // Ждем, пока Vue.js отрендерит новое сообщение
           await timer(0);
 
-          const messages = [].slice.call(document.querySelectorAll('.service_message.isUnread, .message_wrap.isUnread:not(.out)'));
+          const messages = document.querySelectorAll('.service_message.isUnread, .message_wrap.isUnread:not(.out)');
 
           let lastReadedMsg;
 
-          for(const el of messages) {
-            if(wrap.offsetHeight + wrap.scrollTop - el.offsetHeight >= el.offsetTop) {
-              lastReadedMsg = +el.id;
+          for(const msg of messages) {
+            if(list.offsetHeight + list.scrollTop - msg.offsetHeight >= msg.offsetTop) {
+              lastReadedMsg = +msg.id;
             } else {
               break;
             }
@@ -196,12 +194,12 @@
       }, -1)
     },
     activated() {
-      const el = this.$el.firstChild;
+      const list = this.$el.firstChild;
 
       if(this.scrollTop != null) {
-        el.scrollTop = this.scrollTop;
+        list.scrollTop = this.scrollTop;
       } else {
-        this.checkScrolling(el);
+        this.checkScrolling(list);
       }
     },
     mounted() {
@@ -212,9 +210,9 @@
         const unreadMessages = document.querySelector('.message_unreaded_messages');
 
         if(unreadMessages) {
-          const el = this.$el.firstChild;
+          const list = this.$el.firstChild;
 
-          el.scrollTop = unreadMessages.offsetTop - el.clientHeight / 2;
+          list.scrollTop = unreadMessages.offsetTop - list.clientHeight / 2;
         }
       });
 
@@ -238,11 +236,11 @@
           const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
 
           if(msg) {
-            const el = this.$el.firstChild;
-            el.scrollTop = msg.offsetTop - el.clientHeight / 2;
+            const list = this.$el.firstChild;
+            list.scrollTop = msg.offsetTop - list.clientHeight / 2;
 
             this.$refs.scrolly.refreshScrollLayout();
-            this.checkScrolling(el);
+            this.checkScrolling(list);
 
             msg.setAttribute('active', '');
 
@@ -269,10 +267,10 @@
       longpoll.on('new_message', async ({ random_id }, peer_id) => {
         if(peer_id != this.id) return;
 
-        const el = this.$el.firstChild;
-        const { scrollTop, clientHeight, scrollHeight } = el;
+        const list = this.$el.firstChild;
+        const { scrollTop, clientHeight, scrollHeight } = list;
 
-        this.checkReadMessages(el);
+        this.checkReadMessages(list);
         await this.$nextTick();
 
         if(this.loadingMessages.find((msg) => msg.random_id == random_id)) {
