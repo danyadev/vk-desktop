@@ -367,7 +367,7 @@ export default {
           else if(conv) peerData.unread = conv.peer.unread + 1;
 
           if(mentions.includes(store.getters['users/user'].id)) {
-            mentions.push(msg.id);
+            peerData.mentions.push(msg.id);
           }
         }
       }
