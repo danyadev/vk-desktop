@@ -43,7 +43,8 @@
         const { replyMsg } = this.msg;
 
         if(replyMsg) {
-          eventBus.emit('messages:jumpTo', this.peer_id, {
+          eventBus.emit('messages:jumpTo', {
+            peer_id: this.peer_id,
             msg_id: replyMsg.id
           });
         }

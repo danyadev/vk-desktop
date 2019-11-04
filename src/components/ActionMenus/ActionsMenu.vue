@@ -11,7 +11,8 @@
 <script>
   export default {
     data: () => ({
-      active: false
+      active: false,
+      timeout: null
     }),
     methods: {
       openMenu() {

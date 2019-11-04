@@ -8,7 +8,7 @@
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loadingUp" class="loading"></div>
 
-    <MessagesList :peer_id="id" :list="messagesWithLoading" />
+    <MessagesList :peer_id="id" :peer="peer" :list="messagesWithLoading" />
 
     <div v-if="loadingDown" class="loading"></div>
 
@@ -20,7 +20,13 @@
       <Typing v-if="hasTyping" :peer_id="id" :full="true"/>
     </div>
 
+    <div :class="['im_scroll_mention_btn', { hidden: !showEndBtn || !peer || !peer.mentions.length }]" @click="scrollToMention">
+      <div>{{ peer && peer.mentions.length }}</div>
+      <Icon name="mention" color="#828a99" width="24" height="30" />
+    </div>
+
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
+      <div>{{ peer && peer.unread || '' }}</div>
       <img src="~assets/arrow_bottom.webp">
     </div>
   </Scrolly>
@@ -33,6 +39,7 @@
   import longpoll from 'js/longpoll';
 
   import Scrolly from '../../UI/Scrolly.vue';
+  import Icon from '../../UI/Icon.vue';
   import MessagesList from './MessagesList.vue';
   import Typing from '../Typing.vue';
 
@@ -40,6 +47,7 @@
     props: ['id'],
     components: {
       Scrolly,
+      Icon,
       MessagesList,
       Typing
     },
@@ -54,9 +62,17 @@
       lockScroll: false,
 
       showEndBtn: false,
-      showTopTime: false
+      showTopTime: false,
+
+      lastReadedMsg: null,
+      lastViewedMention: null
     }),
     computed: {
+      peer() {
+        const conv = this.$store.state.messages.conversations[this.id];
+
+        return conv && conv.peer;
+      },
       messages() {
         return this.$store.state.messages.messages[this.id] || [];
       },
@@ -125,14 +141,6 @@
         return items;
       },
 
-      scrollToEnd() {
-        if(this.$refs.typing) {
-          this.showEndBtn = false;
-          this.$refs.typing.scrollIntoView(false);
-          this.$refs.scrolly.refreshScrollLayout();
-        }
-      },
-
       onScroll(list) {
         if(!list.scrollHeight) return;
 
@@ -194,7 +202,25 @@
             offset: -20
           }, { isDown: true });
         }
-      }, -1)
+      }, -1),
+
+      scrollToEnd() {
+        if(this.$refs.typing) {
+          this.showEndBtn = false;
+          this.$refs.typing.scrollIntoView(false);
+          this.$refs.scrolly.refreshScrollLayout();
+        }
+      },
+
+      scrollToMention() {
+        this.lastViewedMention = this.peer.mentions.find((id) => id > this.lastViewedMention)
+                                 || this.peer.mentions[this.peer.mentions.length-1];
+
+        eventBus.emit('messages:jumpTo', {
+          peer_id: this.id,
+          msg_id: this.lastViewedMention
+        });
+      }
     },
     activated() {
       const list = this.$el.firstChild;
@@ -234,7 +260,9 @@
         }
       });
 
-      eventBus.on('messages:jumpTo', (peer_id, { msg_id }) => {
+      eventBus.on('messages:jumpTo', ({ peer_id, msg_id }) => {
+        if(peer_id != this.id) return;
+
         async function onLoad() {
           const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
 
@@ -336,7 +364,8 @@
     height: 160px;
   }
 
-  .im_scroll_end_btn {
+  .im_scroll_end_btn,
+  .im_scroll_mention_btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -359,13 +388,35 @@
     height: 24px;
   }
 
-  .im_scroll_end_btn:hover {
+  .im_scroll_end_btn:hover,
+  .im_scroll_mention_btn:hover {
     background: #f6f8fb;
   }
 
-  .im_scroll_end_btn.hidden {
+  .im_scroll_end_btn.hidden,
+  .im_scroll_mention_btn.hidden {
     transform: translateY(20px);
     opacity: 0;
     visibility: hidden;
+  }
+
+  .im_scroll_end_btn div:not(:empty),
+  .im_scroll_mention_btn div:not(:empty) {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    background-color: #5281b9;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 10px;
+    padding: 2px 5px 1px 5px;
+  }
+
+  .im_scroll_mention_btn {
+    bottom: 80px;
+  }
+
+  .im_scroll_mention_btn svg {
+    margin-top: -2px;
   }
 </style>

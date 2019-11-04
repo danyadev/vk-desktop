@@ -7,13 +7,9 @@
   import Message from './Message.vue';
 
   export default {
-    props: ['peer_id', 'list'],
+    props: ['peer_id', 'peer', 'list'],
 
     computed: {
-      peer() {
-        const conv = this.$store.state.messages.conversations[this.peer_id];
-        return conv && conv.peer;
-      },
       in_read() {
         return this.peer && (this.peer.new_in_read || this.peer.in_read);
       }
