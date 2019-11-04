@@ -46,7 +46,7 @@
 <script>
   import { remote as electron } from 'electron';
   import { getTextWithEmoji, getLastMsgId } from 'js/messages';
-  import { random, throttle, escape } from 'js/utils';
+  import { random, throttle, escape, eventBus } from 'js/utils';
   import emoji from 'js/emoji';
   import vkapi from 'js/vkapi';
 
@@ -131,7 +131,10 @@
             }
           });
 
-          this.$nextTick().then(this.$parent.$refs.chatList.scrollToEnd);
+          eventBus.emit('messages:jumpTo', {
+            bottom: true,
+            mark: false
+          });
 
           await vkapi('messages.send', {
             peer_id: this.id,

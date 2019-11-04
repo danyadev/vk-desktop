@@ -17,7 +17,7 @@
       {{ l('im_empty_dialog') }}
     </div>
     <div v-else-if="hasMessages" class="messages_typing" ref="typing">
-      <Typing v-if="hasTyping" :peer_id="id" :full="true"/>
+      <Typing v-if="hasTyping" :peer_id="id" :full="true" />
     </div>
 
     <div :class="['im_scroll_mention_btn', { hidden: !showEndBtn || !peer || !peer.mentions.length }]" @click="scrollToMention">
@@ -65,7 +65,8 @@
       showTopTime: false,
 
       lastReadedMsg: null,
-      lastViewedMention: null
+      lastViewedMention: null,
+      replyHistory: []
     }),
     computed: {
       peer() {
@@ -92,7 +93,7 @@
       }
     },
     methods: {
-      async load(params = {}, { isDown, isFirstLoad } = {}) {
+      async load(params = {}, { isDown, isFirstLoad, loadedDown } = {}) {
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
 
@@ -121,13 +122,12 @@
         setTimeout(() => this.lockScroll = false, 0);
 
         if(!isDown) {
-          // Остаемся на месте при добавлении контента сверху
           list.scrollTop = list.scrollHeight - scrollHeight + scrollTop;
         }
 
         if(isDown || isFirstLoad) {
           this.loadingDown = false;
-          this.loadedDown = !items[0] || items[0].id == peer.last_msg_id;
+          this.loadedDown = loadedDown || !items[0] || items[0].id == peer.last_msg_id;
         }
 
         if(!isDown) {
@@ -204,20 +204,85 @@
         }
       }, -1),
 
+      jumpTo({ msg_id, mark = true, bottom }) {
+        async function onLoad() {
+          const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
+
+          if(msg) {
+            const list = this.$el.firstChild;
+            const showEndBtn = list.scrollTop + list.offsetHeight + 250 < list.scrollHeight;
+
+            list.scrollTop = msg.offsetTop - list.clientHeight / 2;
+
+            if(!showEndBtn) this.showEndBtn = false;
+
+            this.$refs.scrolly.refreshScrollLayout();
+            this.checkScrolling(list);
+            this.checkReadMessages(list);
+
+            if(mark) {
+              msg.setAttribute('active', '');
+              setTimeout(() => msg.removeAttribute('active'), 2000);
+            }
+          }
+        }
+
+        if(bottom) {
+          if(this.loadedDown) {
+            const lastMsg = this.messages[this.messages.length-1];
+
+            if(lastMsg) {
+              msg_id = lastMsg.id;
+              onLoad.call(this);
+            }
+          } else {
+            this.$store.commit('messages/removeConversationMessages', this.id);
+            this.loadedUp = this.loadedDown = false;
+
+            this.load({
+              loadedDown: true
+            }).then(([lastMsg]) => {
+              msg_id = lastMsg.id;
+              onLoad.call(this);
+            });
+          }
+        } else if(this.messages.find((msg) => msg.id == msg_id)) {
+          onLoad.call(this);
+        } else {
+          this.$store.commit('messages/removeConversationMessages', this.id);
+          this.loadedUp = this.loadedDown = false;
+
+          this.load({
+            start_message_id: msg_id,
+            offset: -10
+          }).then(onLoad.bind(this));
+        }
+      },
+
       scrollToEnd() {
-        if(this.$refs.typing) {
+        if(this.replyHistory.length) {
+          // Возвращаемся на сообщение с ответом
+          this.jumpTo({
+            msg_id: this.replyHistory[this.replyHistory.length-1]
+          });
+
+          this.replyHistory.pop();
+        } else {
           this.showEndBtn = false;
-          this.$refs.typing.scrollIntoView(false);
-          this.$refs.scrolly.refreshScrollLayout();
+          // Переходим в самый низ диалога
+          this.jumpTo({
+            bottom: true,
+            mark: false
+          });
         }
       },
 
       scrollToMention() {
-        this.lastViewedMention = this.peer.mentions.find((id) => id > this.lastViewedMention)
-                                 || this.peer.mentions[this.peer.mentions.length-1];
+        const lastMention = this.peer.mentions[this.peer.mentions.length-1];
 
-        eventBus.emit('messages:jumpTo', {
-          peer_id: this.id,
+        this.lastViewedMention = this.peer.mentions.find((id) => id > this.lastViewedMention) || lastMention;
+
+        this.jumpTo({
           msg_id: this.lastViewedMention
         });
       }
@@ -227,6 +292,7 @@
 
       if(this.scrollTop != null) {
         list.scrollTop = this.scrollTop;
+        this.checkReadMessages(list);
       } else {
         this.checkScrolling(list);
       }
@@ -260,39 +326,11 @@
         }
       });
 
-      eventBus.on('messages:jumpTo', ({ peer_id, msg_id }) => {
+      eventBus.on('messages:jumpTo', ({ peer_id, reply_author, ...params }) => {
         if(peer_id != this.id) return;
+        if(reply_author) this.replyHistory.push(reply_author);
 
-        async function onLoad() {
-          const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
-
-          if(msg) {
-            const list = this.$el.firstChild;
-            list.scrollTop = msg.offsetTop - list.clientHeight / 2;
-
-            this.$refs.scrolly.refreshScrollLayout();
-            this.checkScrolling(list);
-
-            msg.setAttribute('active', '');
-
-            setTimeout(() => {
-              msg.removeAttribute('active');
-            }, 2000);
-          }
-        }
-
-        if(this.messages.find((msg) => msg.id == msg_id)) {
-          onLoad.call(this);
-        } else {
-          this.$store.commit('messages/removeConversationMessages', peer_id);
-
-          this.loadedUp = this.loadedDown = false;
-
-          this.load({
-            start_message_id: msg_id,
-            offset: -10
-          }).then(onLoad.bind(this));
-        }
+        this.jumpTo(params);
       });
 
       longpoll.on('new_message', async ({ random_id }, peer_id) => {
@@ -311,10 +349,16 @@
             random_id: random_id
           });
 
-          this.scrollToEnd();
+          this.jumpTo({
+            bottom: true,
+            mark: false
+          });
         } else if(scrollTop + clientHeight == scrollHeight) {
           // Пришло сообщение, когда ты был в конце беседы
-          this.scrollToEnd();
+          this.jumpTo({
+            bottom: true,
+            mark: false
+          });
         }
       });
     }
@@ -403,7 +447,7 @@
   .im_scroll_end_btn div:not(:empty),
   .im_scroll_mention_btn div:not(:empty) {
     position: absolute;
-    top: -3px;
+    top: -5px;
     right: -3px;
     background-color: #5281b9;
     color: #fff;

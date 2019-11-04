@@ -40,12 +40,13 @@
         else if(attach) return this.l('im_attachments', attach.type);
       },
       jump() {
-        const { replyMsg } = this.msg;
+        const { replyMsg, id } = this.msg;
 
         if(replyMsg) {
           eventBus.emit('messages:jumpTo', {
             peer_id: this.peer_id,
-            msg_id: replyMsg.id
+            msg_id: replyMsg.id,
+            reply_author: id
           });
         }
       }

@@ -2,7 +2,7 @@
   <div class="im_chat_container">
     <ChatHeader :id="id" :peer="peer" @close="closeChat"/>
     <div class="im_chat_wrap">
-      <ChatList ref="chatList" :id="id"/>
+      <ChatList :id="id"/>
       <ChatInput :id="id" :peer="peer"/>
     </div>
   </div>
