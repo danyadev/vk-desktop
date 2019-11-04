@@ -11,11 +11,14 @@
         <div class="im_peer_time">{{ time }}</div>
       </div>
       <div class="im_peer_message_wrap">
-        <Typing v-if="hasTyping" :peer_id="this.peer.id" :left="false"/>
+        <Typing v-if="hasTyping" :peer_id="peer.id" :left="false"/>
         <div v-else class="im_peer_message">
           <div class="im_peer_author">{{ authorName }}</div>
           <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted">{{ l('im_content_deleted') }}</div>
           <div v-else :class="['im_peer_text', { isAttachment }]" v-emoji.push="message"></div>
+        </div>
+        <div v-if="peer.mentions.length" class="im_peer_mentioned">
+          <Icon name="mention" width="20" height="18" />
         </div>
         <div :class="['im_peer_unread', { outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
       </div>
@@ -30,12 +33,14 @@
   import { getPhoto } from 'js/utils';
 
   import Ripple from '../UI/Ripple.vue';
+  import Icon from '../UI/Icon.vue';
   import Typing from './Typing.vue';
 
   export default {
     props: ['peer', 'msg'],
     components: {
       Ripple,
+      Icon,
       Typing
     },
     data() {
@@ -264,5 +269,13 @@
     width: 8px;
     height: 8px;
     background: #93adc8;
+  }
+
+  .im_peer_mentioned {
+    position: relative;
+    bottom: -1px;
+    margin: 0 2px;
+    border-radius: 10px;
+    background: #5181b8;
   }
 </style>

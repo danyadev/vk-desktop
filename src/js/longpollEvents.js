@@ -222,31 +222,6 @@ export default {
       if(!flag('important')) return data[0];
     },
     async handler({ key: peer_id, items: msg_ids }) {
-      const conv = store.state.messages.conversations[peer_id];
-      const messages = store.state.messages.messages[peer_id] || [];
-      if(!messages.length) return;
-
-      if(conv) {
-        const { mentions } = conv.peer;
-        let updated = false;
-
-        for(const id of msg_ids) {
-          if(mentions.includes(id)) {
-            updated = true;
-            mentions.splice(mentions.indexOf(id), 1);
-          }
-        }
-
-        if(updated) {
-          store.commit('messages/updateConversation', {
-            peer: {
-              id: peer_id,
-              mentions
-            }
-          });
-        }
-      }
-
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
       const { msg, peer } = await getLastMessage(peer_id);
@@ -421,14 +396,12 @@ export default {
 
       if(isLastMsg) updateConvData.msg = msg;
 
-      // Если упоминание удалили из сообщения
-      if(updateConvData.peer.mentions.includes(msg.id) && !peer.mentions.includes(activeId)) {
+      if(
+        msg.id > (conv && conv.peer.in_read) && // Непрочитанное сообщение
+        updateConvData.peer.mentions.includes(msg.id) && // В старом сообщении есть упоминание
+        !peer.mentions.includes(activeId) // В новом сообщении нет упоминания
+      ) {
         updateConvData.peer.mentions.slice(updateConvData.mentions.indexOf(msg.id), 1);
-      }
-
-      // Если упоминание добавили в сообщение
-      if(!updateConvData.peer.mentions.includes(msg.id) && peer.mentions.includes(activeId)) {
-        updateConvData.peer.mentions.push(activeId);
       }
 
       store.commit('messages/updateConversation', updateConvData);
@@ -444,7 +417,7 @@ export default {
     // [peer_id, msg_id, count]
     parser: (data) => data,
     handler([peer_id, msg_id, count]) {
-      const conv = store.state.messages.conversations[peer.id];
+      const conv = store.state.messages.conversations[peer_id];
       const mentions = conv && conv.peer.mentions || [];
 
       if(mentions.length) {

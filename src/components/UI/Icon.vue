@@ -7,7 +7,7 @@
     props: {
       name: {
         type: String,
-        default: '#828a99' // серый
+        required: true
       }
     }
   }
