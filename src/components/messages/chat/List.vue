@@ -166,6 +166,9 @@
       },
 
       readMessages: callWithDelay(function(msg_id) {
+        if(this.lastReadedMsg >= msg_id) return;
+        this.lastReadedMsg = msg_id;
+
         vkapi('messages.markAsRead', {
           start_message_id: msg_id,
           peer_id: this.id
