@@ -205,9 +205,9 @@
       }, -1),
 
       jumpTo({ msg_id, mark = true, bottom }) {
-        async function onLoad() {
+        function onLoad() {
           const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
-
+          
           if(msg) {
             const list = this.$el.firstChild;
             const showEndBtn = list.scrollTop + list.offsetHeight + 250 < list.scrollHeight;

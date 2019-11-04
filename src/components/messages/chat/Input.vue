@@ -131,7 +131,10 @@
             }
           });
 
+          await this.$nextTick();
+
           eventBus.emit('messages:jumpTo', {
+            peer_id: this.id,
             bottom: true,
             mark: false
           });
