@@ -115,7 +115,7 @@ function sendMultipartParts(boundary, body, data, names, req, i) {
 }
 
 async function waitConnection() {
-  let firstValue, connection;
+  let connection;
 
   while(!connection) {
     try {
@@ -124,11 +124,8 @@ async function waitConnection() {
       connection = false;
     }
 
-    if(firstValue == null) firstValue = connection;
     if(!connection) await timer(1500);
   }
-
-  return firstValue;
 }
 
 export function abortAllRequests() {
@@ -140,21 +137,17 @@ export function abortAllRequests() {
   });
 }
 
-export default function(...data) {
-  return new Promise(async (resolve, reject) => {
-    let done = false;
+export async default function(...data) {
+  let done = false;
 
-    while(!done) {
-      const { symbol, promise } = request(...data);
+  while(!done) {
+    const { symbol, promise } = request(...data);
 
-      try {
-        resolve(await promise);
-        delete requests[symbol];
-        done = true;
-      } catch(e) {
-        if(!requests[symbol]) done = true;
-        else await waitConnection();
-      }
+    try {
+      return await promise;
+    } catch(e) {
+      if(!requests[symbol]) done = true;
+      else await waitConnection();
     }
-  });
+  }
 }
