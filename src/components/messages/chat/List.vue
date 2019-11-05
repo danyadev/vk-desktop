@@ -93,12 +93,13 @@
       }
     },
     methods: {
-      async load(params = {}, { isDown, isFirstLoad, loadedUp, loadedDown } = {}) {
+      async load(params = {}, { isDown, isFirstLoad, loadedUp } = {}) {
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
 
         const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.id,
+          count: 40,
           extended: 1,
           fields: fields,
           ...params
@@ -125,16 +126,15 @@
           list.scrollTop = list.scrollHeight - scrollHeight + scrollTop;
 
           this.loadingUp = false;
-          this.loadedUp = loadedUp || !isFirstLoad && items.length < 20;
+          this.loadedUp = loadedUp || !isFirstLoad && items.length < 40;
         }
 
         if(isDown || isFirstLoad) {
           this.loadingDown = false;
-          this.loadedDown = loadedDown || !items[0] || items[0].id == peer.last_msg_id;
+          this.loadedDown = !items[0] || items[0].id == peer.last_msg_id;
         }
 
         this.checkReadMessages(list);
-        this.checkScrolling(list);
 
         return items;
       },
@@ -197,7 +197,7 @@
 
           this.load({
             start_message_id: this.messages[this.messages.length-1].id,
-            offset: -20
+            offset: -40
           }, { isDown: true });
         }
       }, -1),
@@ -241,16 +241,17 @@
             onLoad.call(this);
           } else {
             this.$store.commit('messages/removeConversationMessages', this.id);
-            this.loadedUp = this.loadedDown = false;
+            this.loadedUp = true;
+            this.loadedDown = false;
 
             this.load({
               start_message_id: 0,
-              offset: -20
+              offset: -40
             }, { loadedUp: true }).then(onLoad.bind(this));
           }
         } else if(bottom) {
           this.replyHistory.length = 0;
-          
+
           if(this.loadedDown) {
             const lastMsg = this.messages[this.messages.length-1];
 
@@ -260,9 +261,10 @@
             }
           } else {
             this.$store.commit('messages/removeConversationMessages', this.id);
-            this.loadedUp = this.loadedDown = false;
+            this.loadedUp = false;
+            this.loadedDown = true;
 
-            const [lastMsg] = await this.load({ loadedDown: true });
+            const [lastMsg] = await this.load();
 
             msg_id = lastMsg.id;
             onLoad.call(this);
@@ -275,7 +277,7 @@
 
           this.load({
             start_message_id: msg_id,
-            offset: -10
+            offset: -20
           }).then(onLoad.bind(this));
         }
       },
@@ -321,7 +323,7 @@
     mounted() {
       this.load({
         start_message_id: -1,
-        offset: -10
+        offset: -20
       }, { isFirstLoad: true }).then((items) => {
         const unreadMessages = document.querySelector('.message_unreaded_messages');
 

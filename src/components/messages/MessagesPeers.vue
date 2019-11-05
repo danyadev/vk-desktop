@@ -45,6 +45,7 @@
       async load() {
         const { items, profiles, groups } = await vkapi('messages.getConversations', {
           offset: this.conversationsList.length,
+          count: 40,
           fields: fields,
           extended: true
         });
@@ -64,7 +65,7 @@
         setTimeout(() => this.lockScroll = false, 0);
 
         this.loading = false;
-        if(items.length < 20) this.loaded = true;
+        if(items.length < 40) this.loaded = true;
       },
       onScroll: endScroll(function() {
         if(!this.loading && !this.loaded) {
