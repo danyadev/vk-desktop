@@ -401,7 +401,7 @@ export default {
         updateConvData.peer.mentions.includes(msg.id) && // В старом сообщении есть упоминание
         !peer.mentions.includes(activeId) // В новом сообщении нет упоминания
       ) {
-        updateConvData.peer.mentions.slice(updateConvData.mentions.indexOf(msg.id), 1);
+        updateConvData.peer.mentions.splice(updateConvData.peer.mentions.indexOf(msg.id), 1);
       }
 
       store.commit('messages/updateConversation', updateConvData);

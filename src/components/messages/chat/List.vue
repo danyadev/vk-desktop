@@ -27,7 +27,7 @@
 
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
       <div>{{ peer && peer.unread || '' }}</div>
-      <img src="~assets/arrow_bottom.webp">
+      <img src="~assets/dropdown.webp">
     </div>
   </Scrolly>
 </template>
@@ -93,7 +93,7 @@
       }
     },
     methods: {
-      async load(params = {}, { isDown, isFirstLoad, loadedDown } = {}) {
+      async load(params = {}, { isDown, isFirstLoad, loadedUp, loadedDown } = {}) {
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
 
@@ -123,16 +123,14 @@
 
         if(!isDown) {
           list.scrollTop = list.scrollHeight - scrollHeight + scrollTop;
+
+          this.loadingUp = false;
+          this.loadedUp = loadedUp || !isFirstLoad && items.length < 20;
         }
 
         if(isDown || isFirstLoad) {
           this.loadingDown = false;
           this.loadedDown = loadedDown || !items[0] || items[0].id == peer.last_msg_id;
-        }
-
-        if(!isDown) {
-          this.loadingUp = false;
-          this.loadedUp = !isFirstLoad && items.length < 20;
         }
 
         this.checkReadMessages(list);
@@ -144,7 +142,7 @@
       onScroll(list) {
         if(!list.scrollHeight) return;
 
-        const isBottom = list.scrollTop + list.offsetHeight + 250 >= list.scrollHeight;
+        const isBottom = this.loadedDown && (list.scrollTop + list.offsetHeight + 250 >= list.scrollHeight);
 
         this.showEndBtn = !isBottom && list.dy > 0;
 
@@ -204,17 +202,23 @@
         }
       }, -1),
 
-      jumpTo({ msg_id, mark = true, bottom }) {
-        function onLoad() {
+      async jumpTo({ msg_id, mark = true, top, bottom }) {
+        async function onLoad(sdasd) {
+          const list = this.$el.firstChild;
+
+          if(top) {
+            list.scrollTop = 0;
+
+            this.$refs.scrolly.refreshScrollLayout();
+            this.checkReadMessages(list);
+
+            return;
+          }
+
           const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
-          
+
           if(msg) {
-            const list = this.$el.firstChild;
-            const showEndBtn = list.scrollTop + list.offsetHeight + 250 < list.scrollHeight;
-
             list.scrollTop = msg.offsetTop - list.clientHeight / 2;
-
-            if(!showEndBtn) this.showEndBtn = false;
 
             this.$refs.scrolly.refreshScrollLayout();
             this.checkScrolling(list);
@@ -222,12 +226,31 @@
 
             if(mark) {
               msg.setAttribute('active', '');
-              setTimeout(() => msg.removeAttribute('active'), 2000);
+              await timer(2000);
+              msg.removeAttribute('active');
             }
           }
         }
 
-        if(bottom) {
+        this.showEndBtn = false;
+
+        if(top) {
+          this.replyHistory.length = 0;
+
+          if(this.loadedTop) {
+            onLoad.call(this);
+          } else {
+            this.$store.commit('messages/removeConversationMessages', this.id);
+            this.loadedUp = this.loadedDown = false;
+
+            this.load({
+              start_message_id: 0,
+              offset: -20
+            }, { loadedUp: true }).then(onLoad.bind(this));
+          }
+        } else if(bottom) {
+          this.replyHistory.length = 0;
+          
           if(this.loadedDown) {
             const lastMsg = this.messages[this.messages.length-1];
 
@@ -239,12 +262,10 @@
             this.$store.commit('messages/removeConversationMessages', this.id);
             this.loadedUp = this.loadedDown = false;
 
-            this.load({
-              loadedDown: true
-            }).then(([lastMsg]) => {
-              msg_id = lastMsg.id;
-              onLoad.call(this);
-            });
+            const [lastMsg] = await this.load({ loadedDown: true });
+
+            msg_id = lastMsg.id;
+            onLoad.call(this);
           }
         } else if(this.messages.find((msg) => msg.id == msg_id)) {
           onLoad.call(this);

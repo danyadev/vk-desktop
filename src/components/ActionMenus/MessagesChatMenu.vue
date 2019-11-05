@@ -1,7 +1,11 @@
 <template>
-  <ActionsMenu>
+  <ActionsMenu ref="actionsMenu">
+    <div class="act_menu_item" @click="goToFirstMsg">
+      <Icon name="arrow_up" class="act_menu_icon" />
+      <div class="act_menu_data">{{ l('im_go_to_first_msg') }}</div>
+    </div>
     <div class="act_menu_item" @click="toggleNotifications">
-      <Icon :name="'volume_' + (muted ? 'active' : 'muted')" color="#828a99" class="act_menu_icon"/>
+      <Icon :name="'volume_' + (muted ? 'active' : 'muted')" color="#828a99" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_toggle_notifications', !muted) }}</div>
     </div>
     <div class="act_menu_item" @click="clearHistory">
@@ -9,14 +13,21 @@
       <div class="act_menu_data">{{ l('im_clear_history') }}</div>
     </div>
     <div v-if="peer_id > 2e9" class="act_menu_item" @click="leftFromChat">
-      <img :src="`assets/${left ? 'forward' : 'close'}.svg`" :class="['act_menu_icon', { left_icon: !left }]">
-      <div class="act_menu_data">{{ l('im_toggle_left_state', translateID) }}</div>
+      <template v-if="left">
+        <img src="assets/forward.svg" class="act_menu_icon">
+        <div class="act_menu_data">{{ l('im_toggle_left_state', channel ? 3 : 2) }}</div>
+      </template>
+      <template v-else>
+        <img src="assets/close.svg" class="act_menu_icon left_icon">
+        <div class="act_menu_data">{{ l('im_toggle_left_state', channel ? 1 : 0) }}</div>
+      </template>
     </div>
   </ActionsMenu>
 </template>
 
 <script>
   import vkapi from 'js/vkapi';
+  import { eventBus } from 'js/utils';
   import ActionsMenu from './ActionsMenu.vue';
   import Icon from '../UI/Icon.vue';
 
@@ -41,27 +52,35 @@
       },
       channel() {
         return this.peer && this.peer.channel;
-      },
-
-      translateID() {
-        return this.channel
-          ? (this.left ? 3 : 2)
-          : (this.left ? 1 : 0);
       }
     },
     methods: {
+      goToFirstMsg() {
+        this.$refs.actionsMenu.toggleMenu();
+
+        eventBus.emit('messages:jumpTo', {
+          peer_id: this.peer_id,
+          top: true
+        });
+      },
       toggleNotifications() {
+        this.$refs.actionsMenu.toggleMenu();
+
         vkapi('account.setSilenceMode', {
           peer_id: this.peer_id,
           time: this.muted ? 0 : -1
         });
       },
       clearHistory() {
+        this.$refs.actionsMenu.toggleMenu();
+
         this.$modals.open('clear-history', {
           peer_id: this.peer_id
         });
       },
       leftFromChat() {
+        this.$refs.actionsMenu.toggleMenu();
+        
         const { id: user_id } = this.$store.getters['users/user'];
         const chat_id = this.peer_id - 2e9;
         const method = `messages.${this.left ? 'addChatUser' : 'removeChatUser'}`;

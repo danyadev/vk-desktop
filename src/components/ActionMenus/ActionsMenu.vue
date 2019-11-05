@@ -1,6 +1,6 @@
 <template>
   <div class="act_menu_wrap">
-    <div class="act_menu_btn_wrap" @click="openMenu">
+    <div class="act_menu_btn_wrap" @click="toggleMenu">
       <img src="~assets/actions_icon.svg" class="act_menu_btn">
     </div>
 
@@ -15,7 +15,7 @@
       timeout: null
     }),
     methods: {
-      openMenu() {
+      toggleMenu() {
         if(this.active) removeEventListener('mousemove', this.onMouseMove);
         else addEventListener('mousemove', this.onMouseMove);
 
@@ -29,7 +29,7 @@
 
         if(close) {
           if(!this.timeout) {
-            this.timeout = setTimeout(this.openMenu, 500);
+            this.timeout = setTimeout(this.toggleMenu, 500);
           }
         } else {
           clearTimeout(this.timeout);
