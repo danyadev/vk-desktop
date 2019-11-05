@@ -137,7 +137,7 @@ export function abortAllRequests() {
   });
 }
 
-export async default function(...data) {
+export default async function(...data) {
   let done = false;
 
   while(!done) {
