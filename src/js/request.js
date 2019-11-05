@@ -149,13 +149,11 @@ export default function(...data) {
 
       try {
         resolve(await promise);
+        delete requests[symbol];
         done = true;
-      } catch(err) {
+      } catch(e) {
         if(!requests[symbol]) done = true;
-        else if(await waitConnection()) {
-          reject(err);
-          done = true;
-        } else delete requests[symbol];
+        else await waitConnection();
       }
     }
   });
