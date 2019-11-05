@@ -101,7 +101,7 @@
           peer_id: this.id,
           count: 40,
           extended: 1,
-          fields: fields,
+          fields,
           ...params
         });
         const peer = parseConversation(conversations[0]);
@@ -139,12 +139,14 @@
         return items;
       },
 
+      canShowScrollBtn(list) {
+        return !(this.loadedDown && !(list.scrollTop + list.offsetHeight + 250 < list.scrollHeight));
+      },
+
       onScroll(list) {
         if(!list.scrollHeight) return;
 
-        const isBottom = this.loadedDown && (list.scrollTop + list.offsetHeight + 250 >= list.scrollHeight);
-
-        this.showEndBtn = !isBottom && list.dy > 0;
+        this.showEndBtn = this.canShowScrollBtn(list) && list.dy > 0;
 
         this.checkReadMessages(list);
         this.checkScrolling(list);
@@ -203,6 +205,8 @@
       }, -1),
 
       async jumpTo({ msg_id, mark = true, top, bottom }) {
+        const prevShowEndBtn = this.showEndBtn;
+
         async function onLoad(sdasd) {
           const list = this.$el.firstChild;
 
@@ -223,6 +227,8 @@
             this.$refs.scrolly.refreshScrollLayout();
             this.checkScrolling(list);
             this.checkReadMessages(list);
+
+            this.showEndBtn = prevShowEndBtn && this.canShowScrollBtn(list);
 
             if(mark) {
               msg.setAttribute('active', '');
@@ -291,7 +297,6 @@
 
           this.replyHistory.pop();
         } else {
-          this.showEndBtn = false;
           // Переходим в самый низ диалога
           this.jumpTo({
             bottom: true,
