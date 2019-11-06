@@ -48,7 +48,7 @@ export default new class Longpoll extends EventEmitter {
         wait: 10,
         mode: 490,
         version: this.version
-      }));
+      }), { timeout: 11000 });
 
       if(this.started) {
         if(data.failed) await this.catchErrors(data);

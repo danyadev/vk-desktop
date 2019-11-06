@@ -24,7 +24,9 @@ function vkapi(name, params) {
       path: `/method/${name}`,
       method: 'POST',
       headers: { 'User-Agent': VKDesktopUserAgent }
-    }, querystring.stringify(params));
+    }, {
+      postData: querystring.stringify(params)
+    });
 
     const endTime = Date.now() - startTime;
 

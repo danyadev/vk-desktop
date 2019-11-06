@@ -5,15 +5,11 @@ import { timer } from './utils';
 
 const requests = {};
 
-function request(params, post) {
+function request(requestParams, params = {}) {
   const symbol = Symbol();
-  let url;
-
-  if(params && params.url) url = params.url;
-  else url = params;
 
   const promise = new Promise((resolve, reject) => {
-    const req = https.request(url, (res) => {
+    const req = https.request(requestParams, (res) => {
       const chunks = [];
       const MB = 1048576;
       const contentLength = +res.headers['content-length'];
@@ -57,8 +53,9 @@ function request(params, post) {
     requests[symbol] = req;
 
     req.on('error', reject);
+    if(params.timeout) req.setTimeout(params.timeout, reject);
 
-    if(params.method == 'POST' && params.multipart) {
+    if(params.multipart) {
       const data = params.multipart;
       const names = Object.keys(data);
       const boundary = Math.random().toString(16);
@@ -76,7 +73,9 @@ function request(params, post) {
       req.setHeader('Content-Type', `multipart/form-data; boundary="${boundary}"`);
       req.setHeader('Content-Length', length + (16 * (names.length - 1)) + 8 + Buffer.byteLength(boundary));
       sendMultipartParts(boundary, body, data, names, req, 0);
-    } else req.end(post || '');
+    } else {
+      req.end(params.postData || '');
+    }
   });
 
   return { symbol, promise };
@@ -106,12 +105,16 @@ function sendMultipartParts(boundary, body, data, names, req, i) {
     if(names.length-2 >= i) {
       req.write(`\r\n--${boundary}`);
       sendMultipartParts(boundary, body, data, names, req, i+1);
-    } else req.end(`\r\n--${boundary}--`);
+    } else {
+      req.end(`\r\n--${boundary}--`);
+    }
   }
 
   if(data[names[i]].value) {
     data[names[i]].value.on('end', write).pipe(req, { end: false });
-  } else write();
+  } else {
+    write();
+  }
 }
 
 async function waitConnection() {

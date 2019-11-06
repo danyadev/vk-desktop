@@ -51,8 +51,7 @@ bridge.listen(async (data, resolve) => {
     const { headers } = await request(data.src);
     const stream = fs.createWriteStream(data.dst);
 
-    await request({
-      url: headers.location,
+    await request(headers.location, {
       pipe: stream,
       progress({ progress }) {
         // Что-то делать с прогрессом
