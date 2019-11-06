@@ -140,13 +140,13 @@
       },
 
       canShowScrollBtn(list) {
-        return !(this.loadedDown && !(list.scrollTop + list.offsetHeight + 250 < list.scrollHeight));
+        return !(this.loadedDown && !(list.scrollTop + list.offsetHeight + 100 < list.scrollHeight));
       },
 
       onScroll(list) {
         if(!list.scrollHeight) return;
 
-        this.showEndBtn = this.canShowScrollBtn(list) && list.dy > 0;
+        this.showEndBtn = this.canShowScrollBtn(list) && (this.peer && this.peer.unread || list.dy > 0);
 
         this.checkReadMessages(list);
         this.checkScrolling(list);
@@ -205,8 +205,6 @@
       }, -1),
 
       async jumpTo({ msg_id, mark = true, top, bottom }) {
-        const prevShowEndBtn = this.showEndBtn;
-
         async function onLoad(sdasd) {
           const list = this.$el.firstChild;
 
@@ -228,7 +226,7 @@
             this.checkScrolling(list);
             this.checkReadMessages(list);
 
-            this.showEndBtn = prevShowEndBtn && this.canShowScrollBtn(list);
+            this.showEndBtn = this.canShowScrollBtn(list);
 
             if(mark) {
               msg.setAttribute('active', '');
@@ -331,10 +329,11 @@
         offset: -20
       }, { isFirstLoad: true }).then((items) => {
         const unreadMessages = document.querySelector('.message_unreaded_messages');
+        const list = this.$el.firstChild;
+
+        this.showEndBtn = this.canShowScrollBtn(list);
 
         if(unreadMessages) {
-          const list = this.$el.firstChild;
-
           list.scrollTop = unreadMessages.offsetTop - list.clientHeight / 2;
         }
       });
