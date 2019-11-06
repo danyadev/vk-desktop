@@ -3,12 +3,8 @@ import https from 'https';
 import fs from 'fs';
 import { timer } from './utils';
 
-const requests = {};
-
 function request(requestParams, params = {}) {
-  const symbol = Symbol();
-
-  const promise = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const req = https.request(requestParams, (res) => {
       const chunks = [];
       const MB = 1048576;
@@ -40,8 +36,6 @@ function request(requestParams, params = {}) {
         try { data = JSON.parse(data) }
         catch(e) {}
 
-        delete requests[symbol];
-
         resolve({
           data,
           headers: res.headers,
@@ -50,10 +44,8 @@ function request(requestParams, params = {}) {
       });
     });
 
-    requests[symbol] = req;
-
     req.on('error', reject);
-    if(params.timeout) req.setTimeout(params.timeout, reject);
+    if(params.timeout) req.setTimeout(params.timeout, req.abort);
 
     if(params.multipart) {
       const data = params.multipart;
@@ -77,8 +69,6 @@ function request(requestParams, params = {}) {
       req.end(params.postData || '');
     }
   });
-
-  return { symbol, promise };
 }
 
 function renderMultipartBody(names, data, boundary) {
@@ -123,34 +113,18 @@ async function waitConnection() {
   while(!connection) {
     try {
       connection = !!(await dns.lookup('google.com'));
-    } catch(e) {
-      connection = false;
-    }
+    } catch(e) {}
 
-    if(!connection) await timer(1500);
+    if(!connection) await timer(5000);
   }
 }
 
-export function abortAllRequests() {
-  const symbols = Object.getOwnPropertySymbols(requests);
-
-  symbols.forEach((symbol) => {
-    requests[symbol].abort();
-    delete requests[symbol];
-  });
-}
-
 export default async function(...data) {
-  let done = false;
-
-  while(!done) {
-    const { symbol, promise } = request(...data);
-
+  while(true) {
     try {
-      return await promise;
+      return await request(...data);
     } catch(e) {
-      if(!requests[symbol]) done = true;
-      else await waitConnection();
+      await waitConnection();
     }
   }
 }

@@ -25,7 +25,6 @@
 
 <script>
   import { mapState } from 'vuex';
-  import { clearUserSession } from 'js/utils';
 
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
@@ -44,12 +43,13 @@
         else return this.l('ml_multiacc_active_account');
       },
       async setAccount(id) {
-        if(this.activeUser == id) return;
+        const prevUser = this.activeUser;
 
-        this.$store.commit('users/setActiveUser', null);
-        clearUserSession();
-        await this.$nextTick();
+        if(prevUser == id) return;
+
         this.$store.commit('users/setActiveUser', id);
+
+        if(prevUser) location.reload();
       },
       removeAccount(id) {
         this.$store.commit('users/removeUser', id);

@@ -15,8 +15,6 @@
 </template>
 
 <script>
-  import { clearUserSession } from 'js/utils';
-
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
 

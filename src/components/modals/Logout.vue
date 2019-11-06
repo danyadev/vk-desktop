@@ -10,8 +10,6 @@
 </template>
 
 <script>
-  import { clearUserSession } from 'js/utils';
-
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
 
@@ -27,8 +25,7 @@
         this.$store.commit('users/setActiveUser', null);
         this.$store.commit('users/removeUser', activeUser);
 
-        this.closeModal();
-        clearUserSession();
+        location.reload();
       },
       closeModal() {
         this.$modals.close(this.$attrs.name);

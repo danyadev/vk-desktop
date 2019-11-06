@@ -2,7 +2,7 @@ import { VKDesktopUserAgent } from './utils';
 import querystring from 'querystring';
 import request from './request';
 import store from './store/';
-import { eventBus, timer } from './utils';
+import { eventBus } from './utils';
 
 export const version = '5.113';
 
@@ -16,8 +16,6 @@ function vkapi(name, params) {
       lang: 'ru',
       v: version
     }, params);
-
-    delete params.ise;
 
     const { data } = await request({
       host: 'api.vk.com',
@@ -99,13 +97,8 @@ function vkapi(name, params) {
 const methods = [];
 let inWork = false;
 
-export function clearMethodsList() {
-  methods.length = 0;
-  inWork = false;
-}
-
 async function executeMethod() {
-  const { data, resolve, reject } = methods[0];
+  const [{ data, resolve, reject }] = methods;
   let shift = true;
 
   inWork = true;
@@ -126,6 +119,7 @@ async function executeMethod() {
 export default function(...data) {
   return new Promise((resolve, reject) => {
     methods.push({ data, resolve, reject });
+
     if(methods.length == 1 && !inWork) executeMethod();
   });
 }
