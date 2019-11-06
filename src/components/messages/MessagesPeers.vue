@@ -10,7 +10,7 @@
              :lock="lockScroll"
              @scroll="onScroll"
     >
-      <MessagesPeer v-for="{ peer, msg } of conversationsList" :key="peer.id" :peer="peer" :msg="msg"/>
+      <MessagesPeer v-for="{ peer, msg } of conversationsList" :key="peer.id" :peer="peer" :msg="msg" :activeChat="activeChat"/>
     </Scrolly>
   </div>
 </template>
@@ -27,6 +27,7 @@
   import MessagesPeer from './MessagesPeer.vue';
 
   export default {
+    props: ['activeChat'],
     components: {
       Scrolly,
       MessagesListMenu,

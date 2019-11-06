@@ -30,14 +30,14 @@
   import { mapState } from 'vuex';
   import { getServiceMessage, loadConversationMembers } from 'js/messages';
   import { getShortDate } from 'js/date';
-  import { getPhoto } from 'js/utils';
+  import { getPhoto, eventBus } from 'js/utils';
 
   import Ripple from '../UI/Ripple.vue';
   import Icon from '../UI/Icon.vue';
   import Typing from './Typing.vue';
 
   export default {
-    props: ['peer', 'msg'],
+    props: ['peer', 'msg', 'activeChat'],
     components: {
       Ripple,
       Icon,
@@ -112,6 +112,12 @@
     },
     methods: {
       openChat() {
+        if(this.activeChat == this.peer.id) return;
+        
+        if(this.activeChat) {
+          eventBus.emit('messages:closeChat', this.activeChat);
+        }
+
         this.$router.replace(`/messages/${this.peer.id}`);
       }
     }
