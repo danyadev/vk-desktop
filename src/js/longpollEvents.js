@@ -419,6 +419,7 @@ export default {
     handler([peer_id, msg_id, count]) {
       const conv = store.state.messages.conversations[peer_id];
       const mentions = conv && conv.peer.mentions || [];
+      const isMyDialog = peer_id == store.getters['users/user'].id;
 
       if(mentions.length) {
         for(const id of mentions) {
@@ -433,6 +434,7 @@ export default {
           id: peer_id,
           unread: count,
           in_read: msg_id,
+          ...(isMyDialog ? { out_read: msg_id } : {}),
           mentions
         }
       });
