@@ -1,13 +1,13 @@
 <template>
   <div class="photos_container">
     <div class="header">
-      <HeaderButton :back="album" @back="album = null"/>
+      <HeaderButton :back="album" @back="album = null" />
       <div class="header_name">{{ title }}</div>
     </div>
     <div class="photos_wrapper">
       <KeepAlive>
-        <Albums v-if="!album" @open="openAlbum"/>
-        <AlbumPhotos v-else :key="album.id" :id="album.id"/>
+        <Albums v-if="!album" @open="openAlbum" />
+        <AlbumPhotos v-else :key="album.id" :id="album.id" />
       </KeepAlive>
     </div>
   </div>

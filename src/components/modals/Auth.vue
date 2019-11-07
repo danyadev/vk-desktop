@@ -2,7 +2,7 @@
   <div class="modal">
     <ModalHeader>{{ l('ml_auth_header') }}</ModalHeader>
     <div class="modal_content">
-      <Auth :isModal="true"/>
+      <Auth :isModal="true" />
     </div>
   </div>
 </template>

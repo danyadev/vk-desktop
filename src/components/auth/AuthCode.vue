@@ -2,7 +2,7 @@
   <div class="auth" @keydown.enter="auth">
     <div class="auth_code_header">{{ l('security_check') }}</div>
     <div class="auth_code_descr">{{ l('code_sent_to', isAppCode, [data.phone_mask]) }}</div>
-    <input class="input" ref="input" :placeholder="l('enter_code')" v-model="code"/>
+    <input class="input" ref="input" :placeholder="l('enter_code')" v-model="code">
     <div class="auth_code_buttons">
       <Button light @click="cancel" :disabled="load">{{ l('cancel') }}</Button>
       <Button @click="auth" :disabled="load || !code.trim()">{{ l('login') }}</Button>

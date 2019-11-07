@@ -24,7 +24,7 @@
         </div>
         <img class="send_btn" src="~assets/im_send.svg" @click="sendMessage()">
       </div>
-      <Keyboard v-if="hasKeyboard && showKeyboard" :keyboard="keyboard" @click="sendMessage"/>
+      <Keyboard v-if="hasKeyboard && showKeyboard" :keyboard="keyboard" @click="sendMessage" />
     </template>
     <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#e1e5f0" @click="toggleNotifications">
       <template v-if="peer.left">

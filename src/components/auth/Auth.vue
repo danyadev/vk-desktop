@@ -1,6 +1,6 @@
 <template>
-  <AuthForm v-if="!error" :isModal="isModal" @auth="auth"/>
-  <AuthCode v-else :data="error" @auth="auth"/>
+  <AuthForm v-if="!error" :isModal="isModal" @auth="auth" />
+  <AuthCode v-else :data="error" @auth="auth" />
 </template>
 
 <script>

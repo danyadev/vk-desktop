@@ -1,16 +1,20 @@
 <template>
   <div class="im_peers_container">
     <div class="header">
-      <HeaderButton/>
+      <HeaderButton />
       <div class="header_name">{{ l('im_header_title') }}</div>
-      <MessagesListMenu/>
+      <MessagesListMenu />
     </div>
     <Scrolly class="im_peers_wrap"
              :vclass="{ loading }"
              :lock="lockScroll"
              @scroll="onScroll"
     >
-      <MessagesPeer v-for="{ peer, msg } of conversationsList" :key="peer.id" :peer="peer" :msg="msg" :activeChat="activeChat"/>
+      <MessagesPeer v-for="{ peer, msg } of conversationsList" :key="peer.id"
+                    :peer="peer"
+                    :msg="msg"
+                    :activeChat="activeChat"
+      />
     </Scrolly>
   </div>
 </template>

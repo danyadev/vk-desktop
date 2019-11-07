@@ -1,7 +1,7 @@
 <template>
   <div :class="['messages_container', { hasChat }]" @keydown.esc="closeChat" tabindex="0">
-    <MessagesPeers :activeChat="$route.params.id"/>
-    <KeepAlive><RouterView :key="$route.params.id"/></KeepAlive>
+    <MessagesPeers :activeChat="$route.params.id" />
+    <KeepAlive><RouterView :key="$route.params.id" /></KeepAlive>
   </div>
 </template>
 

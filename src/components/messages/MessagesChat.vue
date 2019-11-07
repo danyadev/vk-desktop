@@ -1,9 +1,9 @@
 <template>
   <div class="im_chat_container">
-    <ChatHeader :id="id" :peer="peer" @close="closeChat"/>
+    <ChatHeader :id="id" :peer="peer" @close="closeChat" />
     <div class="im_chat_wrap">
-      <ChatList :id="id"/>
-      <ChatInput :id="id" :peer="peer"/>
+      <ChatList :id="id" />
+      <ChatInput :id="id" :peer="peer" />
     </div>
   </div>
 </template>

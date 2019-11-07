@@ -11,7 +11,7 @@
        @keydown="onKeyDown"
        tabindex="1"
   >
-    <div :class="['scrolly-viewport', vclass]" ref="viewport"><slot></slot></div>
+    <div :class="['scrolly-viewport', vclass]" ref="viewport"><slot /></div>
     <div class="scrolly-bar-wrap axis-x"><div class="scrolly-bar" ref="barX"></div></div>
     <div class="scrolly-bar-wrap axis-y"><div class="scrolly-bar" ref="barY"></div></div>
   </div>

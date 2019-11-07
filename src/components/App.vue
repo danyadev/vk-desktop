@@ -1,11 +1,11 @@
 <template>
   <div class="root" :theme="theme">
-    <Titlebar/>
+    <Titlebar />
     <div class="app">
-      <MainMenu v-if="activeUser"/>
-      <KeepAlive v-if="activeUser"><RouterView/></KeepAlive>
-      <Auth v-else/>
-      <ModalsWrapper/>
+      <MainMenu v-if="activeUser" />
+      <KeepAlive v-if="activeUser"><RouterView /></KeepAlive>
+      <Auth v-else />
+      <ModalsWrapper />
     </div>
   </div>
 </template>

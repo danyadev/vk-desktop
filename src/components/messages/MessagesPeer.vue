@@ -11,7 +11,7 @@
         <div class="im_peer_time">{{ time }}</div>
       </div>
       <div class="im_peer_message_wrap">
-        <Typing v-if="hasTyping" :peer_id="peer.id" :left="false"/>
+        <Typing v-if="hasTyping" :peer_id="peer.id" :left="false" />
         <div v-else class="im_peer_message">
           <div class="im_peer_author">{{ authorName }}</div>
           <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted">{{ l('im_content_deleted') }}</div>

@@ -3,7 +3,7 @@
           :class="['button', { light: isLight, disabled }]"
           v-on="$listeners"
   >
-    <slot></slot>
+    <slot />
   </Ripple>
 </template>
 

@@ -1,12 +1,12 @@
 <template>
   <div class="modal_header" :closable="closable">
-    <div class="modal_header_title"><slot></slot></div>
+    <div class="modal_header_title"><slot /></div>
     <Ripple v-if="closable"
             color="rgba(255, 255, 255, .2)"
             class="ripple_fast modal_header_close"
             @click.stop="close"
     >
-      <Icon name="close" color="#fff"/>
+      <Icon name="close" color="#fff" />
     </Ripple>
   </div>
 </template>

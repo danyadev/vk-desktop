@@ -21,7 +21,7 @@
                 :class="['menu_item', { active }]"
                 @click.stop="openPage(`/${route}`)"
         >
-          <Icon :name="`menu/${route}`" :color="active ? '#648fc1' : '#a6a6a6'" width="26" height="26"/>
+          <Icon :name="`menu/${route}`" :color="active ? '#648fc1' : '#a6a6a6'" width="26" height="26" />
           <div class="menu_item_name">{{ l('menu', route) }}</div>
           <div class="menu_item_counter">{{ menuCounters[route] || '' }}</div>
         </Ripple>

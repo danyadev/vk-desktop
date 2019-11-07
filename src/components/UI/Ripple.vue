@@ -12,7 +12,7 @@
            }"
       ></div>
     </TransitionGroup>
-    <slot v-if="$slots.default"></slot>
+    <slot v-if="$slots.default" />
     <span v-else v-html="text"></span>
   </div>
 </template>
