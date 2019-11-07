@@ -104,7 +104,8 @@ export function getServiceMessage(action, author, isFull) {
     case 'chat_title_update':
       return getTranslate('im_chat_title_update', g(0), [name(0), e(action.text)]);
     case 'chat_pin_message':
-      return getTranslate('im_chat_pin_message', g(1), [name(1), e(action.message || '')]);
+      if(action.message) return getTranslate('im_chat_pin_message', g(1), [name(1), e(action.message)]);
+      else return getTranslate('im_chat_pin_empty_message', g(1), [name(1)]);
     case 'chat_unpin_message':
       return getTranslate('im_chat_unpin_message', g(1), [name(1)]);
     case 'chat_invite_user_by_link':
