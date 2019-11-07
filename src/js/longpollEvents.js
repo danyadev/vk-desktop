@@ -550,10 +550,23 @@ export default {
       if([7, 8].includes(type)) removeTyping(peer_id, info, isMe);
 
       switch(type) {
+        case 1: // Изменение названии беседы (обрабатывается в 4 событии)
+          break;
+
         case 2: // Изменилась аватарка беседы
           loadConversation(peer_id);
-
           break;
+
+        case 3: // Назначен новый администратор
+          break;
+
+        // А где же 4 событие???
+
+        case 5: // Закрепление или открепление сообщения
+          if(info) loadConversation(peer_id);
+          else peer.pinnedMsg = null;
+          break;
+
         case 6: // Пользователь присоединился к беседе
           if(peer.members != null) peer.members++;
 
@@ -566,13 +579,13 @@ export default {
               loadConversationMembers(peer.id, true);
             }
           }
-
           break;
+
         case 7: // Пользователь покинул беседу
           if(peer.members != null) peer.members--;
           if(isMe) peer.left = true;
-
           break;
+
         case 8: // Пользователя исключили из беседы
           if(peer.members != null) peer.members--;
 
@@ -580,7 +593,13 @@ export default {
             peer.left = true;
             peer.canWrite = false;
           }
+          break;
 
+        case 9: // Разжалован администратор
+          break;
+
+        default:
+          console.warn('[lp] Неизвестное действие в 52 событии:', ...arguments);
           break;
       }
 

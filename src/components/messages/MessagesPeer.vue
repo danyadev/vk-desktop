@@ -104,7 +104,7 @@
         return Object.keys(typing).length;
       },
       isAttachment() {
-        return !this.msg.text && this.msg.hasAttachment;
+        return !this.msg.text && !this.msg.action && this.msg.hasAttachment;
       },
       outread() {
         return this.peer.out_read != this.peer.last_msg_id;
@@ -113,7 +113,7 @@
     methods: {
       openChat() {
         if(this.activeChat == this.peer.id) return;
-        
+
         if(this.activeChat) {
           eventBus.emit('messages:closeChat', this.activeChat);
         }

@@ -7,18 +7,18 @@ import vkapi from './vkapi';
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
   const isChannel = isChat && conversation.chat_settings.is_group_channel;
-  const { push_settings } = conversation;
+  const { push_settings, chat_settings } = conversation;
 
   return {
     id: conversation.peer.id,
     channel: isChannel,
-    members: isChat && conversation.chat_settings.members_count,
-    left: isChat ? ['left', 'kicked'].includes(conversation.chat_settings.state) : false,
-    owner: isChannel ? conversation.chat_settings.owner_id : conversation.peer.id,
+    members: isChat && chat_settings.members_count,
+    left: isChat && ['left', 'kicked'].includes(chat_settings.state),
+    owner: isChannel ? chat_settings.owner_id : conversation.peer.id,
     muted: push_settings && push_settings.disabled_forever,
     unread: conversation.unread_count || 0,
-    photo: isChat && getPhoto(conversation.chat_settings.photo),
-    title: isChat && escape(conversation.chat_settings.title).replace(/\n/g, ' '),
+    photo: isChat && getPhoto(chat_settings.photo),
+    title: isChat && escape(chat_settings.title).replace(/\n/g, ' '),
     canWrite: conversation.can_write.allowed,
     keyboard: conversation.current_keyboard,
     last_msg_id: conversation.last_message_id,
@@ -27,6 +27,7 @@ export function parseConversation(conversation) {
     // id последнего прочтенного исходящего сообщения
     out_read: conversation.out_read,
     mentions: conversation.mentions || [],
+    pinnedMsg: isChat && chat_settings.pinned_message && parseMessage(chat_settings.pinned_message),
     loaded: true
   };
 }
@@ -35,7 +36,8 @@ export function parseMessage(message) {
   if(message.geo) message.attachments.push({ type: 'geo' });
 
   const fwdCount = message.fwd_messages ? message.fwd_messages.length : 0;
-  const hasAttachment = fwdCount || message.reply_message || message.attachments.length;
+  const isReplyMsg = !!message.reply_message;
+  const hasAttachment = fwdCount || isReplyMsg || message.attachments.length;
 
   return {
     id: message.id,
@@ -47,9 +49,9 @@ export function parseMessage(message) {
     hidden: message.is_hidden,
     action: message.action,
     fwdCount: fwdCount,
-    isReplyMsg: !!message.reply_message,
     fwdMessages: message.fwd_messages || [],
-    replyMsg: message.reply_message,
+    isReplyMsg: isReplyMsg,
+    replyMsg: isReplyMsg && parseMessage(message.reply_message),
     attachments: message.attachments,
     conversation_msg_id: message.conversation_message_id,
     random_id: message.random_id,

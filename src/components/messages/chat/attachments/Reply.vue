@@ -12,7 +12,6 @@
 </template>
 
 <script>
-  import { parseMessage } from 'js/messages';
   import { getPhotoFromSizes, eventBus } from 'js/utils';
 
   export default {
@@ -53,18 +52,19 @@
     },
     computed: {
       reply() {
-        if(!this.msg.replyMsg) return {};
+        const { replyMsg } = this.msg;
 
-        const msg = parseMessage(this.msg.replyMsg);
+        if(!replyMsg) return {};
+
         const user = this.$store.state.profiles[msg.from];
-        const text = this.getText(msg);
+        const text = this.getText(replyMsg);
 
         return {
-          photo: this.getPhoto(msg),
+          photo: this.getPhoto(replyMsg),
           name: user && (user.name || `${user.first_name} ${user.last_name}`),
           text: text,
-          isContentDeleted: msg.isContentDeleted,
-          isAttachment: !msg.text && msg.hasAttachment
+          isContentDeleted: replyMsg.isContentDeleted,
+          isAttachment: !replyMsg.text && replyMsg.hasAttachment
         }
       }
     }
