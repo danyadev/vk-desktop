@@ -56,7 +56,7 @@
 
         if(!replyMsg) return {};
 
-        const user = this.$store.state.profiles[msg.from];
+        const user = this.$store.state.profiles[replyMsg.from];
         const text = this.getText(replyMsg);
 
         return {
