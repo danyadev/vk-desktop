@@ -60,6 +60,7 @@ export default {
   im_msg_edited: 'ред',
 
   im_go_to_first_msg: 'Перейти в начало беседы',
+  im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],
   im_toggle_notifications: ['Включить уведомления', 'Отключить уведомления'],
   im_clear_history: 'Удалить историю',
   im_toggle_left_state: [

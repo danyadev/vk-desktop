@@ -4,6 +4,10 @@
       <Icon name="arrow_up" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_go_to_first_msg') }}</div>
     </div>
+    <div class="act_menu_item" @click="togglePinnedMsg">
+      <Icon :name="showPinnedMsg ? 'unpin' : 'pin'" class="act_menu_icon" />
+      <div class="act_menu_data">{{ l('im_toggle_pinned_msg', showPinnedMsg) }}</div>
+    </div>
     <div class="act_menu_item" @click="toggleNotifications">
       <Icon :name="'volume_' + (muted ? 'active' : 'muted')" color="#828a99" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_toggle_notifications', !muted) }}</div>
@@ -32,18 +36,12 @@
   import Icon from '../UI/Icon.vue';
 
   export default {
-    props: ['peer_id'],
+    props: ['peer_id', 'peer'],
     components: {
       ActionsMenu,
       Icon
     },
     computed: {
-      peer() {
-        const conv = this.$store.state.messages.conversations[this.peer_id];
-
-        return conv && conv.peer;
-      },
-
       muted() {
         return this.peer && this.peer.muted;
       },
@@ -52,6 +50,9 @@
       },
       channel() {
         return this.peer && this.peer.channel;
+      },
+      showPinnedMsg() {
+        return !this.$store.state.settings.messagesSettings.hiddenPinnedMessages[this.peer_id];
       }
     },
     methods: {
@@ -61,6 +62,22 @@
         eventBus.emit('messages:jumpTo', {
           peer_id: this.peer_id,
           top: true
+        });
+      },
+      togglePinnedMsg() {
+        this.$refs.actionsMenu.toggleMenu();
+
+        const list = { ...this.$store.state.settings.messagesSettings.hiddenPinnedMessages };
+
+        if(this.showPinnedMsg) {
+          list[this.peer_id] = true;
+        } else {
+          delete list[this.peer_id];
+        }
+
+        this.$store.commit('settings/updateMessagesSettings', {
+          key: 'hiddenPinnedMessages',
+          value: list
         });
       },
       toggleNotifications() {
@@ -80,7 +97,7 @@
       },
       leftFromChat() {
         this.$refs.actionsMenu.toggleMenu();
-        
+
         const { id: user_id } = this.$store.getters['users/user'];
         const chat_id = this.peer_id - 2e9;
         const method = `messages.${this.left ? 'addChatUser' : 'removeChatUser'}`;

@@ -31,6 +31,7 @@ export const settings = new Storage('settings', {
   langName: 'ru',
   messagesSettings: {
     typing: true,
-    notRead: true
+    notRead: true,
+    hiddenPinnedMessages: {}
   }
 });

@@ -13,6 +13,7 @@
 
 <script>
   import { getPhotoFromSizes, eventBus } from 'js/utils';
+  import { getMessagePreview } from 'js/messages';
 
   export default {
     props: ['msg', 'peer_id'],
@@ -27,16 +28,6 @@
         if(sticker) url = sticker.sticker.images[1].url;
 
         return url;
-      },
-      getText(msg) {
-        if(msg.text) return msg.text;
-
-        const { isReplyMsg, fwdCount, attachments } = msg;
-        const [attach] = attachments;
-
-        if(isReplyMsg) return this.l('im_replied');
-        else if(fwdCount) return this.l('im_forwarded', [fwdCount], fwdCount);
-        else if(attach) return this.l('im_attachments', attach.type);
       },
       jump() {
         const { replyMsg, id } = this.msg;
@@ -53,19 +44,17 @@
     computed: {
       reply() {
         const { replyMsg } = this.msg;
-
         if(!replyMsg) return {};
 
         const user = this.$store.state.profiles[replyMsg.from];
-        const text = this.getText(replyMsg);
 
         return {
           photo: this.getPhoto(replyMsg),
           name: user && (user.name || `${user.first_name} ${user.last_name}`),
-          text: text,
+          text: getMessagePreview(replyMsg),
           isContentDeleted: replyMsg.isContentDeleted,
           isAttachment: !replyMsg.text && replyMsg.hasAttachment
-        }
+        };
       }
     }
   }

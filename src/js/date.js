@@ -10,6 +10,7 @@ import {
   differenceInCalendarYears
 } from 'date-fns';
 
+// TODO: сделать геттер, чтобы получать точный перевод, если сменится язык
 const at = getTranslate('date_at');
 
 // Возвращает дату в виде час:минута
@@ -34,6 +35,25 @@ export function getMessageDate(date) {
     return `${day} ${date.getFullYear()}`;
   } else {
     return day;
+  }
+}
+
+// Возвращает дату в виде:
+// 1) Сегодня в 12:43
+// 2) Вчера в 13:22
+// 3) 13 сент. в 17:24
+// 4) 18 мая 2018 в 16:54
+export function getFullMessageDate(date) {
+  const now = new Date();
+
+  if(isSameDay(date, now)) {
+    return `${getTranslate('today')} ${at} ${getTime(date)}`;
+  } else if(isYesterday(date)) {
+    return `${getTranslate('yesterday')} ${at} ${getTime(date)}`;
+  } else if(!differenceInCalendarYears(now, date)) {
+    return format(date, `d MMM ${at} p`, { locale: ru });
+  } else {
+    return format(date, `d MMM y ${at} p`, { locale: ru });
   }
 }
 

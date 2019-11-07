@@ -44,7 +44,7 @@
 </template>
 
 <script>
-  import { remote as electron } from 'electron';
+  import electron from 'electron';
   import { getTextWithEmoji, getLastMsgId } from 'js/messages';
   import { random, throttle, escape, eventBus } from 'js/utils';
   import emoji from 'js/emoji';
@@ -54,10 +54,8 @@
   import Ripple from '../../UI/Ripple.vue';
   import Keyboard from './Keyboard.vue';
 
-  const { clipboard } = electron;
-
   export default {
-    props: ['id', 'peer'],
+    props: ['peer_id', 'peer'],
     components: {
       Icon,
       Ripple,
@@ -94,12 +92,12 @@
         if(action) {
           const { screen_name } = this.$store.state.profiles[author_id];
 
-          text = this.id > 2e9 ? `@${screen_name} ${action.label}` : action.label;
+          text = this.peer_id > 2e9 ? `@${screen_name} ${action.label}` : action.label;
 
           if(this.keyboard.one_time) {
             this.$store.commit('messages/updateConversation', {
               peer: {
-                id: this.id,
+                id: this.peer_id,
                 keyboard: {}
               }
             });
@@ -115,7 +113,7 @@
 
         try {
           this.$store.commit('messages/addLoadingMessage', {
-            peer_id: this.id,
+            peer_id: this.peer_id,
             msg: {
               id: getLastMsgId() + this.counter*1e5,
               text,
@@ -134,20 +132,20 @@
           await this.$nextTick();
 
           eventBus.emit('messages:jumpTo', {
-            peer_id: this.id,
+            peer_id: this.peer_id,
             bottom: true,
             mark: false
           });
 
           await vkapi('messages.send', {
-            peer_id: this.id,
+            peer_id: this.peer_id,
             message: text,
             random_id,
             payload: action && action.payload
           });
         } catch(e) {
           this.$store.commit('messages/editLoadingMessage', {
-            peer_id: this.id,
+            peer_id: this.peer_id,
             random_id,
             isLoadingFailed: true
           });
@@ -157,7 +155,7 @@
           if([900, 902].includes(e.error_code)) {
             this.$store.commit('messages/updateConversation', {
               peer: {
-                id: this.id,
+                id: this.peer_id,
                 canWrite: false
               }
             });
@@ -168,26 +166,27 @@
       toggleNotifications() {
         if(this.peer.left) {
           vkapi('messages.addChatUser', {
-            chat_id: this.peer.id - 2e9,
+            chat_id: this.peer_id - 2e9,
             user_id: this.$store.getters['users/user'].id
           });
         } else {
           vkapi('account.setSilenceMode', {
-            peer_id: this.peer.id,
+            peer_id: this.peer_id,
             time: this.peer.muted ? 0 : -1
           });
         }
       },
 
       paste() {
-        const text = escape(clipboard.readText()).replace(/\n/g, '<br>');
+        const text = escape(electron.remote.clipboard.readText()).replace(/\n/g, '<br>');
+
         document.execCommand('insertHTML', false, emoji(text));
       },
 
       onInput: throttle(function(e) {
         if(e.data && this.$store.state.settings.messagesSettings.typing) {
           vkapi('messages.setActivity', {
-            peer_id: this.id,
+            peer_id: this.peer_id,
             type: 'typing'
           });
         }

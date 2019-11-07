@@ -124,6 +124,21 @@ export function getServiceMessage(action, author, isFull) {
   }
 }
 
+export function getMessagePreview(msg, author) {
+  if(msg.action) {
+    return getServiceMessage(msg.action, author || { id: msg.from });
+  } else if(msg.text) {
+    return msg.text;
+  } else if(msg.hasAttachment) {
+    const { isReplyMsg, fwdCount, attachments } = msg;
+
+    if(isReplyMsg) return getTranslate('im_replied');
+    else if(fwdCount < 0) return getTranslate('im_forwarded_some');
+    else if(fwdCount) return getTranslate('im_forwarded', [fwdCount], fwdCount);
+    else return getTranslate('im_attachments', attachments[0].type);
+  }
+}
+
 export function getTextWithEmoji(nodes) {
   const emojis = {};
   let text = '';

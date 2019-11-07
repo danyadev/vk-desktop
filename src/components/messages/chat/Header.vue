@@ -1,18 +1,21 @@
 <template>
-  <div class="header">
-    <Ripple color="rgba(255, 255, 255, .2)" class="ripple_fast im_header_back" @click="$emit('close')">
-      <img src="~assets/im_back.webp">
-    </Ripple>
-    <img class="im_header_photo" :src="photo">
-    <div class="im_header_center">
-      <div class="im_header_name_wrap">
-        <div class="im_header_name" v-emoji="title"></div>
-        <div v-if="owner && owner.verified" class="verified white"></div>
-        <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="im_header_muted"/>
+  <div class="header_wrap">
+    <div class="header">
+      <Ripple color="rgba(255, 255, 255, .2)" class="ripple_fast im_header_back" @click="$emit('close')">
+        <img src="~assets/im_back.webp">
+      </Ripple>
+      <img class="im_header_photo" :src="photo">
+      <div class="im_header_center">
+        <div class="im_header_name_wrap">
+          <div class="im_header_name" v-emoji="title"></div>
+          <div v-if="owner && owner.verified" class="verified white"></div>
+          <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="im_header_muted" />
+        </div>
+        <div class="im_header_online">{{ online }}</div>
       </div>
-      <div class="im_header_online">{{ online }}</div>
+      <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
     </div>
-    <MessagesChatMenu :peer_id="id"/>
+    <PinnedMessage v-if="peer && peer.pinnedMsg" :msg="peer.pinnedMsg" :peer_id="peer_id" />
   </div>
 </template>
 
@@ -23,36 +26,38 @@
   import Icon from '../../UI/Icon.vue';
   import Ripple from '../../UI/Ripple.vue';
   import MessagesChatMenu from '../../ActionMenus/MessagesChatMenu.vue';
+  import PinnedMessage from './PinnedMessage.vue';
 
   export default {
-    props: ['id', 'peer'],
+    props: ['peer_id', 'peer'],
     components: {
       Icon,
       Ripple,
-      MessagesChatMenu
+      MessagesChatMenu,
+      PinnedMessage
     },
     computed: {
       owner() {
         return this.peer && this.$store.state.profiles[this.peer.owner];
       },
       photo() {
-        if(!this.peer || this.peer.id > 2e9) {
+        if(this.peer_id > 2e9) {
           return this.peer && !this.peer.left && this.peer.photo || 'assets/im_chat_photo.png';
         } else {
           return getPhoto(this.owner) || 'assets/blank.gif';
         }
       },
       title() {
-        if(this.id > 2e9) {
+        if(this.peer_id > 2e9) {
           return this.peer && this.peer.title || '...';
         } else if(this.owner) {
           return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         } else return '...';
       },
       online() {
-        if(!this.peer || !this.peer.left && this.id > 2e9 && this.peer.members == null) return this.l('loading');
-        else if(this.id < 0) return this.l('im_chat_group');
-        else if(this.id > 2e9) {
+        if(!this.peer || !this.peer.left && this.peer_id > 2e9 && this.peer.members == null) return this.l('loading');
+        else if(this.peer_id < 0) return this.l('im_chat_group');
+        else if(this.peer_id > 2e9) {
           const { canWrite, members, channel, left } = this.peer;
 
           if(!canWrite && !channel) return this.l('im_chat_kicked');

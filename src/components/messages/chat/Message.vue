@@ -60,9 +60,7 @@
         return this.peer && this.peer.channel;
       },
       name() {
-        return this.user
-          ? this.user.name || `${this.user.first_name} ${this.user.last_name}`
-          : '...';
+        return this.user ? this.user.name || `${this.user.first_name} ${this.user.last_name}` : '...';
       },
       time() {
         return getTime(new Date(this.msg.date * 1000));

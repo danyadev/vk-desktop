@@ -8,7 +8,7 @@
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loadingUp" class="loading"></div>
 
-    <MessagesList :peer_id="id" :peer="peer" :list="messagesWithLoading" />
+    <MessagesList :peer_id="peer_id" :peer="peer" :list="messagesWithLoading" />
 
     <div v-if="loadingDown" class="loading"></div>
 
@@ -17,7 +17,7 @@
       {{ l('im_empty_dialog') }}
     </div>
     <div v-else-if="hasMessages" class="messages_typing" ref="typing">
-      <Typing v-if="hasTyping" :peer_id="id" :full="true" />
+      <Typing v-if="hasTyping" :peer_id="peer_id" :full="true" />
     </div>
 
     <div :class="['im_scroll_mention_btn', { hidden: !showEndBtn || !peer || !peer.mentions.length }]" @click="scrollToMention">
@@ -44,7 +44,7 @@
   import Typing from '../Typing.vue';
 
   export default {
-    props: ['id'],
+    props: ['peer_id', 'peer'],
     components: {
       Scrolly,
       Icon,
@@ -69,13 +69,8 @@
       replyHistory: []
     }),
     computed: {
-      peer() {
-        const conv = this.$store.state.messages.conversations[this.id];
-
-        return conv && conv.peer;
-      },
       messages() {
-        return this.$store.state.messages.messages[this.id] || [];
+        return this.$store.state.messages.messages[this.peer_id] || [];
       },
       messagesWithLoading() {
         return this.messages.concat(this.loadingMessages);
@@ -84,12 +79,12 @@
         return this.messagesWithLoading.length;
       },
       hasTyping() {
-        const typing = this.$store.state.messages.typing[this.id] || {};
+        const typing = this.$store.state.messages.typing[this.peer_id] || {};
 
         return Object.keys(typing).length;
       },
       loadingMessages() {
-        return this.$store.state.messages.loadingMessages[this.id] || [];
+        return this.$store.state.messages.loadingMessages[this.peer_id] || [];
       }
     },
     methods: {
@@ -98,7 +93,7 @@
         else this.loadingUp = true;
 
         const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
-          peer_id: this.id,
+          peer_id: this.peer_id,
           count: 40,
           extended: 1,
           fields,
@@ -111,7 +106,7 @@
         this.$store.commit('messages/updateConversation', { peer });
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
         this.$store.commit('messages/addMessages', {
-          peer_id: this.id,
+          peer_id: this.peer_id,
           messages: items.map(parseMessage).reverse(),
           addNew: isDown
         });
@@ -179,7 +174,7 @@
 
         vkapi('messages.markAsRead', {
           start_message_id: msg_id,
-          peer_id: this.id
+          peer_id: this.peer_id
         });
       }, 500),
 
@@ -244,7 +239,7 @@
           if(this.loadedTop) {
             onLoad.call(this);
           } else {
-            this.$store.commit('messages/removeConversationMessages', this.id);
+            this.$store.commit('messages/removeConversationMessages', this.peer_id);
             this.loadedUp = true;
             this.loadedDown = false;
 
@@ -264,7 +259,7 @@
               onLoad.call(this);
             }
           } else {
-            this.$store.commit('messages/removeConversationMessages', this.id);
+            this.$store.commit('messages/removeConversationMessages', this.peer_id);
             this.loadedUp = false;
             this.loadedDown = true;
 
@@ -276,7 +271,7 @@
         } else if(this.messages.find((msg) => msg.id == msg_id)) {
           onLoad.call(this);
         } else {
-          this.$store.commit('messages/removeConversationMessages', this.id);
+          this.$store.commit('messages/removeConversationMessages', this.peer_id);
           this.loadedUp = this.loadedDown = false;
 
           this.load({
@@ -339,13 +334,13 @@
       });
 
       eventBus.on('messages:closeChat', (peer_id) => {
-        if(this.id == peer_id) {
+        if(this.peer_id == peer_id) {
           this.scrollTop = this.$el.firstChild.scrollTop;
         }
       });
 
       eventBus.on('messages:load', (peer_id, { unlockUp, unlockDown } = {}) => {
-        if(this.id == peer_id) {
+        if(this.peer_id == peer_id) {
           if(unlockUp) this.loadedUp = false;
           if(unlockDown) this.loadedDown = false;
 
@@ -354,14 +349,14 @@
       });
 
       eventBus.on('messages:jumpTo', ({ peer_id, reply_author, ...params }) => {
-        if(peer_id != this.id) return;
+        if(peer_id != this.peer_id) return;
         if(reply_author) this.replyHistory.push(reply_author);
 
         this.jumpTo(params);
       });
 
       longpoll.on('new_message', async ({ random_id }, peer_id) => {
-        if(peer_id != this.id) return;
+        if(peer_id != this.peer_id) return;
 
         const list = this.$el.firstChild;
         const { scrollTop, clientHeight, scrollHeight } = list;
@@ -372,7 +367,7 @@
         if(this.loadingMessages.find((msg) => msg.random_id == random_id)) {
           // Пришло мое сообщение
           this.$store.commit('messages/removeLoadingMessage', {
-            peer_id: this.id,
+            peer_id: this.peer_id,
             random_id: random_id
           });
 

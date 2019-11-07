@@ -28,7 +28,7 @@
 
 <script>
   import { mapState } from 'vuex';
-  import { getServiceMessage, loadConversationMembers } from 'js/messages';
+  import { getMessagePreview, loadConversationMembers } from 'js/messages';
   import { getShortDate } from 'js/date';
   import { getPhoto, eventBus } from 'js/utils';
 
@@ -88,15 +88,7 @@
         else return loadConversationMembers(this.peer.id), '...:';
       },
       message() {
-        if(this.msg.action) return getServiceMessage(this.msg.action, this.author || { id: this.msg.from });
-        else if(this.isAttachment) {
-          const { isReplyMsg, fwdCount, attachments } = this.msg;
-
-          if(isReplyMsg) return this.l('im_replied');
-          else if(fwdCount < 0) return this.l('im_forwarded_some');
-          else if(fwdCount) return this.l('im_forwarded', [fwdCount], fwdCount);
-          else return this.l('im_attachments', attachments[0].type);
-        } else return this.msg.text;
+        return getMessagePreview(this.msg, this.author);
       },
       hasTyping() {
         const typing = this.$store.state.messages.typing[this.peer.id] || {};
