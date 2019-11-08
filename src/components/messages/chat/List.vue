@@ -240,7 +240,7 @@
         if(top) {
           this.replyHistory.length = 0;
 
-          if(this.loadedTop) {
+          if(this.loadedUp) {
             onLoad.call(this);
           } else {
             this.$store.commit('messages/removeConversationMessages', this.peer_id);
