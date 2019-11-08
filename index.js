@@ -38,7 +38,10 @@ app.once('ready', () => {
     globalShortcut.unregisterAll();
   });
 
-  require('./main/updater').init();
+  // Автообновление на macOS трубует подпись у приложения
+  if(process.platform != 'darwin') {
+    require('./main/updater').init();
+  }
 
   win.webContents.once('dom-ready', async () => {
     const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
