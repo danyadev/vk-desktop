@@ -7,7 +7,7 @@
         <div class="im_pinned_msg_name">{{ name }}</div>
         <div class="im_pinned_msg_time">{{ time }}</div>
       </div>
-      <div :class="['im_pinned_msg_text', { isAttachment }]">{{ text }}</div>
+      <div :class="['im_pinned_msg_text', { isAttachment }]" v-emoji.push="text"></div>
     </div>
 
     <img class="im_pinned_msg_close" src="~assets/close.svg" @click.stop="hide">
