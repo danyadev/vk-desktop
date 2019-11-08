@@ -4,14 +4,9 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const fs = require('fs');
-const isDev = process.argv.includes('dev-mode');
 
 app.once('ready', () => {
   const { screen } = require('electron');
-
-  if(isDev) {
-    BrowserWindow.addDevToolsExtension(require('vue-devtools'));
-  }
 
   const win = new BrowserWindow({
     minWidth: 400,
@@ -68,7 +63,7 @@ app.once('ready', () => {
   else win.removeMenu();
 
   win.loadURL(
-    isDev
+    process.argv.includes('dev-mode')
       ? 'http://localhost:8080/dist/'
       : `file://${__dirname}/dist/index.html`
   );
