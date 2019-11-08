@@ -200,7 +200,7 @@
       }, -1),
 
       async jumpTo({ msg_id, mark = true, top, bottom }) {
-        async function onLoad(sdasd) {
+        const onLoad = async (sdasd) => {
           const list = this.$el.firstChild;
 
           if(top) {
@@ -241,7 +241,7 @@
           this.replyHistory.length = 0;
 
           if(this.loadedUp) {
-            onLoad.call(this);
+            onLoad();
           } else {
             this.$store.commit('messages/removeConversationMessages', this.peer_id);
             this.loadedUp = true;
@@ -250,7 +250,7 @@
             this.load({
               start_message_id: 0,
               offset: -40
-            }, { loadedUp: true }).then(onLoad.bind(this));
+            }, { loadedUp: true }).then(onLoad);
           }
         } else if(bottom) {
           this.replyHistory.length = 0;
@@ -260,7 +260,7 @@
 
             if(lastMsg) {
               msg_id = lastMsg.id;
-              onLoad.call(this);
+              onLoad();
             }
           } else {
             this.$store.commit('messages/removeConversationMessages', this.peer_id);
@@ -270,10 +270,10 @@
             const [lastMsg] = await this.load();
 
             msg_id = lastMsg.id;
-            onLoad.call(this);
+            onLoad();
           }
         } else if(this.messages.find((msg) => msg.id == msg_id)) {
-          onLoad.call(this);
+          onLoad();
         } else {
           this.$store.commit('messages/removeConversationMessages', this.peer_id);
           this.loadedUp = this.loadedDown = false;
@@ -281,7 +281,7 @@
           this.load({
             start_message_id: msg_id,
             offset: -20
-          }).then(onLoad.bind(this));
+          }).then(onLoad);
         }
       },
 

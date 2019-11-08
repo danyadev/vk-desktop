@@ -71,16 +71,16 @@ export function getServiceMessage(action, author, isFull) {
     const user = type ? actUser : author;
 
     if(user.id == id) return 0;
-    else if(user.sex == 1) return 2;
-    else return 1;
+    if(user.sex == 1) return 2;
+    return 1;
   }
 
   function e(text) {
-    text = escape(String(text).replace(/<br>/g, ' '));
+    const escapedText = escape(String(text).replace(/<br>/g, ' '));
 
-    if(isFull) text = emoji(text);
-
-    return text;
+    // Эмодзи добавляются только для самого чата потому что
+    // MessagesPeer сам добавляет эмодзи в текст
+    return isFull ? emoji(escapedText) : escapedText;
   }
 
   function name(type, isAccCase) {
@@ -112,12 +112,12 @@ export function getServiceMessage(action, author, isFull) {
       return getTranslate('im_chat_invite_user_by_link', g(0), [name(0)]);
     case 'chat_invite_user':
       if(isAuthor) return getTranslate('im_chat_returned_user', g(0), [name(0)]);
-      else if(isFull) return getTranslate('im_chat_invite_user', g(0), [name(0), name(1, 1)]);
-      else return getTranslate('im_chat_invite_user_short', g(1), [name(1, 1)]);
+      if(isFull) return getTranslate('im_chat_invite_user', g(0), [name(0), name(1, 1)]);
+      return getTranslate('im_chat_invite_user_short', g(1), [name(1, 1)]);
     case 'chat_kick_user':
       if(isAuthor) return getTranslate('im_chat_left_user', g(0), [name(0)]);
-      else if(isFull) return getTranslate('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
-      else return getTranslate('im_chat_kick_user_short', g(1), [name(1, 1)]);
+      if(isFull) return getTranslate('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
+      return getTranslate('im_chat_kick_user_short', g(1), [name(1, 1)]);
     default:
       console.warn('[messages] Неизвестное действие:', action.type);
       return action.type;
@@ -133,9 +133,9 @@ export function getMessagePreview(msg, author) {
     const { isReplyMsg, fwdCount, attachments } = msg;
 
     if(isReplyMsg) return getTranslate('im_replied');
-    else if(fwdCount < 0) return getTranslate('im_forwarded_some');
-    else if(fwdCount) return getTranslate('im_forwarded', [fwdCount], fwdCount);
-    else return getTranslate('im_attachments', attachments[0].type);
+    if(fwdCount < 0) return getTranslate('im_forwarded_some');
+    if(fwdCount) return getTranslate('im_forwarded', [fwdCount], fwdCount);
+    return getTranslate('im_attachments', attachments[0].type);
   }
 }
 
@@ -189,7 +189,7 @@ const loadedConvMembers = {};
 
 export async function loadConversationMembers(id, force) {
   if(!force && loadedConvMembers[id]) return;
-  else loadedConvMembers[id] = 1;
+  loadedConvMembers[id] = 1;
 
   if(id < 2e9) return loadProfile(id);
 
