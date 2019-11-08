@@ -4,7 +4,7 @@
       <Icon name="arrow_up" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_go_to_first_msg') }}</div>
     </div>
-    <div class="act_menu_item" @click="togglePinnedMsg">
+    <div v-if="peer && peer.pinnedMsg" class="act_menu_item" @click="togglePinnedMsg">
       <Icon :name="showPinnedMsg ? 'unpin' : 'pin'" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_toggle_pinned_msg', showPinnedMsg) }}</div>
     </div>
@@ -51,8 +51,11 @@
       channel() {
         return this.peer && this.peer.channel;
       },
+      hiddenPinnedMessages() {
+        return { ...this.$store.state.settings.messagesSettings.hiddenPinnedMessages };
+      },
       showPinnedMsg() {
-        return !this.$store.state.settings.messagesSettings.hiddenPinnedMessages[this.peer_id];
+        return !this.hiddenPinnedMessages[this.peer_id];
       }
     },
     methods: {
@@ -67,7 +70,7 @@
       togglePinnedMsg() {
         this.$refs.actionsMenu.toggleMenu();
 
-        const list = { ...this.$store.state.settings.messagesSettings.hiddenPinnedMessages };
+        const list = this.hiddenPinnedMessages;
 
         if(this.showPinnedMsg) {
           list[this.peer_id] = true;
