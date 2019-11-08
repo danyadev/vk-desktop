@@ -120,6 +120,7 @@
   .im_peer {
     display: flex;
     position: relative;
+    user-select: none;
     transition: background-color .3s;
   }
 
