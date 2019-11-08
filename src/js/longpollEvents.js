@@ -1,4 +1,5 @@
 import { parseMessage, parseConversation, loadConversation, loadConversationMembers } from './messages';
+import availableAttachments from '../components/messages/chat/attachments/attachments';
 import longpoll from 'js/longpoll';
 import store from './store/';
 import vkapi from './vkapi';
@@ -157,11 +158,28 @@ async function loadMessages(peer_id, msg_ids) {
   });
 
   for(const msg of items) {
+    const parsedMsg = parseMessage(msg);
+
     store.commit('messages/editMessage', {
       peer_id,
-      msg: parseMessage(msg)
+      msg: parsedMsg
     });
+
+    if(parsedMsg.fwdCount < 0) {
+      // Пересланные сообщения -> n пересланных сообщений
+      // Пока не пофиксят отображение кол-ва пересланных сообщений в лп
+      store.commit('messages/updateConversation', {
+        peer: {
+          id: peer_id
+        },
+        msg: parsedMsg
+      });
+    }
   }
+}
+
+function hasSupportedAttachments(msg) {
+  return msg.isReplyMsg || msg.attachments.find(({ type }) => availableAttachments[type]);
 }
 
 async function watchTyping(peer_id, user_id) {
@@ -321,7 +339,9 @@ export default {
       for(const { msg, peer: { keyboard, mentions } } of items) {
         longpoll.emit('new_message', msg, peer_id);
 
-        if(msg.hasAttachment) messagesWithAttachments.push(msg.id);
+        if(hasSupportedAttachments(msg)) {
+          messagesWithAttachments.push(msg.id);
+        }
 
         if(msg.action && msg.action.type == 'chat_title_update') {
           peerData.title = msg.action.text;
@@ -385,7 +405,9 @@ export default {
 
       removeTyping(peer.id, msg.from);
 
-      if(msg.hasAttachment) loadMessages(peer.id, [msg.id]);
+      if(hasSupportedAttachments(msg)) {
+        loadMessages(peer.id, [msg.id]);
+      }
 
       const updateConvData = {
         peer: {

@@ -1,13 +1,10 @@
 <script>
-  import Sticker from './Sticker.vue';
+  import components from './attachments';
 
   export default {
     props: ['msg'],
     render(h) {
       const attachments = [];
-      const components = {
-        sticker: Sticker
-      };
 
       for(const attachment of this.msg.attachments) {
         const { type } = attachment;
