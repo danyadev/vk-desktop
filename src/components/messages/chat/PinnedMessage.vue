@@ -7,7 +7,7 @@
         <div class="im_pinned_msg_name">{{ name }}</div>
         <div class="im_pinned_msg_time">{{ time }}</div>
       </div>
-      <div class="im_pinned_msg_text">{{ text }}</div>
+      <div :class="['im_pinned_msg_text', { isAttachment }]">{{ text }}</div>
     </div>
 
     <img class="im_pinned_msg_close" src="~assets/close.svg" @click.stop="hide">
@@ -40,6 +40,9 @@
       },
       text() {
         return getMessagePreview(this.msg);
+      },
+      isAttachment() {
+        return this.msg.hasAttachment && !this.msg.text && !this.msg.action;
       }
     },
     methods: {
@@ -119,6 +122,10 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  .im_pinned_msg_text.isAttachment {
+    color: #254f79;
   }
 
   .im_pinned_msg_close {
