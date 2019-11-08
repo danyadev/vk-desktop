@@ -215,7 +215,11 @@
           const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
 
           if(msg) {
-            list.scrollTop = msg.offsetTop - list.clientHeight / 2;
+            if(msg.clientHeight > list.clientHeight) {
+              list.scrollTop = msg.offsetTop - list.clientHeight / 4;
+            } else {
+              list.scrollTop = msg.offsetTop + msg.clientHeight / 2 - list.clientHeight / 2;
+            }
 
             this.$refs.scrolly.refreshScrollLayout();
             this.checkScrolling(list);
