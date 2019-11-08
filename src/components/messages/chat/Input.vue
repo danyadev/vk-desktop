@@ -190,7 +190,7 @@
             type: 'typing'
           });
         }
-      }, 1500)
+      }, 4000)
     },
     activated() {
       if(this.$refs.input) this.$refs.input.focus();
