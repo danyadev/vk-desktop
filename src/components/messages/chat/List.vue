@@ -206,6 +206,7 @@
           if(top) {
             list.scrollTop = 0;
 
+            this.showEndBtn = this.canShowScrollBtn(list);
             this.$refs.scrolly.refreshScrollLayout();
             this.checkReadMessages(list);
 
@@ -221,11 +222,10 @@
               list.scrollTop = msg.offsetTop + msg.clientHeight / 2 - list.clientHeight / 2;
             }
 
+            this.showEndBtn = this.canShowScrollBtn(list);
             this.$refs.scrolly.refreshScrollLayout();
             this.checkScrolling(list);
             this.checkReadMessages(list);
-
-            this.showEndBtn = this.canShowScrollBtn(list);
 
             if(mark) {
               msg.setAttribute('active', '');
@@ -285,6 +285,25 @@
         }
       },
 
+      async jumpToStartUnread() {
+        this.$store.commit('messages/removeConversationMessages', this.peer_id);
+        this.loadedUp = this.loadedDown = false;
+
+        await this.load({
+          start_message_id: -1,
+          offset: -20
+        }, { isFirstLoad: true });
+
+        const unreadMessages = document.querySelector('.message_unreaded_messages');
+        const list = this.$el.firstChild;
+
+        this.showEndBtn = this.canShowScrollBtn(list);
+
+        if(unreadMessages) {
+          list.scrollTop = unreadMessages.offsetTop - list.clientHeight / 2;
+        }
+      },
+
       scrollToEnd() {
         if(this.replyHistory.length) {
           // Возвращаемся на сообщение с ответом
@@ -293,6 +312,23 @@
           });
 
           this.replyHistory.pop();
+        } else if(this.peer && this.peer.unread) {
+          const unread = document.querySelector('.message_unreaded_messages');
+
+          if(unread) {
+            const list = this.$el.firstChild;
+
+            if(list.offsetHeight + list.scrollTop - unread.offsetHeight / 2 < unread.offsetTop) {
+              list.scrollTop = unread.offsetTop - list.clientHeight / 2;
+            } else {
+              this.jumpTo({
+                bottom: true,
+                mark: false
+              });
+            }
+          } else {
+            this.jumpToStartUnread();
+          }
         } else {
           // Переходим в самый низ диалога
           this.jumpTo({
@@ -323,19 +359,7 @@
       }
     },
     mounted() {
-      this.load({
-        start_message_id: -1,
-        offset: -20
-      }, { isFirstLoad: true }).then((items) => {
-        const unreadMessages = document.querySelector('.message_unreaded_messages');
-        const list = this.$el.firstChild;
-
-        this.showEndBtn = this.canShowScrollBtn(list);
-
-        if(unreadMessages) {
-          list.scrollTop = unreadMessages.offsetTop - list.clientHeight / 2;
-        }
-      });
+      this.jumpToStartUnread();
 
       eventBus.on('messages:closeChat', (peer_id) => {
         if(this.peer_id == peer_id) {
@@ -344,12 +368,11 @@
       });
 
       eventBus.on('messages:load', (peer_id, { unlockUp, unlockDown } = {}) => {
-        if(this.peer_id == peer_id) {
-          if(unlockUp) this.loadedUp = false;
-          if(unlockDown) this.loadedDown = false;
+        if(this.peer_id != peer_id) return;
+        if(unlockUp) this.loadedUp = false;
+        if(unlockDown) this.loadedDown = false;
 
-          this.checkScrolling(this.$el.firstChild);
-        }
+        this.checkScrolling(this.$el.firstChild);
       });
 
       eventBus.on('messages:jumpTo', ({ peer_id, reply_author, ...params }) => {
