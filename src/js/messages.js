@@ -4,6 +4,8 @@ import store from './store';
 import emoji, { getEmojiCode } from './emoji';
 import vkapi from './vkapi';
 
+const loadedConvMembers = {};
+
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
   const isChannel = isChat && conversation.chat_settings.is_group_channel;
@@ -61,7 +63,7 @@ export function parseMessage(message) {
   };
 }
 
-export function getServiceMessage(action, author, isFull) {
+export function getServiceMessage(action, author, peer_id, isFull) {
   const actID = action.member_id || action.mid;
   const actUser = store.state.profiles[actID] || { id: actID };
   const { id } = store.getters['users/user'];
@@ -91,7 +93,17 @@ export function getServiceMessage(action, author, isFull) {
     else if(user.first_name) {
       if(isAccCase) return `${user.first_name_acc} ${user.last_name_acc}`;
       else return `${user.first_name} ${user.last_name}`;
-    } else return loadProfile(user.id), '...';
+    } else {
+      if(!loadedConvMembers[peer_id]) {
+        // В случае, когда юзеры в беседе не загружены
+        loadConversationMembers(peer_id);
+      } else {
+        // При добавлении нового юзера в беседу
+        loadProfile(user.id);
+      }
+
+      return '...';
+    }
   }
 
   switch(action.type) {
@@ -124,9 +136,9 @@ export function getServiceMessage(action, author, isFull) {
   }
 }
 
-export function getMessagePreview(msg, author) {
+export function getMessagePreview(msg, peer_id, author) {
   if(msg.action) {
-    return getServiceMessage(msg.action, author || { id: msg.from });
+    return getServiceMessage(msg.action, author || { id: msg.from }, peer_id);
   } else if(msg.text) {
     return msg.text;
   } else if(msg.hasAttachment) {
@@ -140,30 +152,25 @@ export function getMessagePreview(msg, author) {
 }
 
 export function getTextWithEmoji(nodes) {
-  const emojis = {};
   let text = '';
 
   for(const node of nodes || []) {
     switch(node.nodeName) {
       case 'IMG':
-        const code = getEmojiCode(node.alt);
-
-        emojis[code] = (emojis[code] || 0) + 1;
         text += node.alt;
         break;
+
       case 'BR':
         text += '<br>';
         break;
+
       default:
         text += node.data || node.innerText || '';
         break;
     }
   }
 
-  return {
-    text: text.replace(/\n/g, '').trim(),
-    emojis: emojis
-  };
+  return text.replace(/\n/g, '').trim();
 }
 
 export function getLastMsgId() {
@@ -185,8 +192,6 @@ export async function loadConversation(id) {
   });
 }
 
-const loadedConvMembers = {};
-
 export async function loadConversationMembers(id, force) {
   if(!force && loadedConvMembers[id]) return;
   loadedConvMembers[id] = 1;
@@ -200,7 +205,11 @@ export async function loadConversationMembers(id, force) {
     });
 
     store.commit('addProfiles', concatProfiles(profiles, groups));
-  } catch(e) {
-    delete loadedConvMembers[id];
+  } catch(err) {
+    // Пользователь исключен/вышел из беседы, но т.к. юзер может вернуться,
+    // здесь удаляется пометка беседы как загруженная для возможности повторить попытку
+    if(err.error_code == 917) {
+      delete loadedConvMembers[id];
+    }
   }
 }

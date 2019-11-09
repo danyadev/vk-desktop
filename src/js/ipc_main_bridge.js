@@ -1,4 +1,4 @@
-const ipc = require('electron').ipcRenderer;
+import { ipcRenderer } from 'electron';
 
 const CALL = 0;
 const REPLY = 1;
@@ -10,7 +10,7 @@ class IPCMainBridge {
     this.promises = {};
     this.key = 'updater_worker';
 
-    ipc.on(this.key, this.listener.bind(this));
+    ipcRenderer.on(this.key, this.listener.bind(this));
   }
 
   listen(listener) {

@@ -10,9 +10,6 @@ import {
   differenceInCalendarYears
 } from 'date-fns';
 
-// TODO: сделать геттер, чтобы получать точный перевод, если сменится язык
-const at = getTranslate('date_at');
-
 // Возвращает дату в виде час:минута
 export function getTime(date) {
   return format(date, 'HH:mm', { locale: ru });
@@ -44,6 +41,7 @@ export function getMessageDate(date) {
 // 3) 13 сент. в 17:24
 // 4) 18 мая 2018 в 16:54
 export function getFullMessageDate(date) {
+  const at = getTranslate('date_at');
   const now = new Date();
 
   if(isSameDay(date, now)) {
@@ -83,6 +81,7 @@ export function getShortDate(date) {
 // 4) Был в сети 13 июня в 17:24
 // 5) Был в сети 18 июня 2018 в 16:54
 export function getLastOnlineDate(date, sex) {
+  const at = getTranslate('date_at');
   const now = new Date();
   let time;
 

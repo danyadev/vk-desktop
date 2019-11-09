@@ -39,7 +39,7 @@
         return getFullMessageDate(new Date(this.msg.date * 1000));
       },
       text() {
-        return getMessagePreview(this.msg);
+        return getMessagePreview(this.msg, this.peer_id);
       },
       isAttachment() {
         return this.msg.hasAttachment && !this.msg.text && !this.msg.action;

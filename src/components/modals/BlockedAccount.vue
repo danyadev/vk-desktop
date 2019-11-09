@@ -10,8 +10,7 @@
 </template>
 
 <script>
-  import { remote as electron } from 'electron';
-  import { resetAppState } from 'js/store/';
+  import electron from 'electron';
 
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
@@ -24,7 +23,7 @@
     },
     methods: {
       closeApp() {
-        electron.app.exit();
+        electron.remote.app.exit();
       },
       exit() {
         const { activeUser } = this.$store.state.users;
@@ -32,8 +31,7 @@
         this.$store.commit('users/setActiveUser', null);
         this.$store.commit('users/removeUser', activeUser);
 
-        this.$modals.close(this.$attrs.name);
-        resetAppState();
+        location.reload();
       }
     }
   }

@@ -11,8 +11,8 @@
 </template>
 
 <script>
-  import { remote as electron } from 'electron';
-  const win = electron.getCurrentWindow();
+  import electron from 'electron';
+  const win = electron.remote.getCurrentWindow();
 
   export default {
     data: () => ({

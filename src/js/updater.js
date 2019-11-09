@@ -28,7 +28,6 @@ ipcRenderer.on('update', (event, data) => {
         name: data.update.name,
         notes: data.update.notes
       });
-
       break;
   }
 });

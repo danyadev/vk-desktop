@@ -1,5 +1,5 @@
-import { remote as electron } from 'electron';
-const win = electron.getCurrentWindow();
+import electron from 'electron';
+const win = electron.remote.getCurrentWindow();
 
 class Storage {
   constructor(name, defaults) {

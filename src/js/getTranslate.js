@@ -14,6 +14,10 @@ function caseOfNumber(count) {
   return 2;
 }
 
+// name - ключ в файлах переводов
+// key - если значение перевода это массив, то это индекс перевода
+// replaces - массив данных, которые выделяются в переводе как {n}
+// number - число, которое надо использовать вместо key для caseOfNumber
 export default function(name, key, replaces, number) {
   if(Array.isArray(key)) {
     number = replaces;

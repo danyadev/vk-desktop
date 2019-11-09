@@ -4,6 +4,7 @@ import { regexp, eventBus } from './utils';
 import getTranslate from './getTranslate';
 
 Vue.config.productionTip = false;
+Vue.config.devtools = false;
 
 Vue.directive('emoji', (el, { value = '', modifiers }) => {
   value = String(value);

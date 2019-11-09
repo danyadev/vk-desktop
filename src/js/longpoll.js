@@ -68,10 +68,12 @@ export default new class Longpoll extends EventEmitter {
         await this.getHistory();
         this.ts = data.ts;
         break;
+
       case 2:
         const { key } = await this.getServer();
         this.key = key;
         break;
+
       case 3:
         await this.getHistory();
 
@@ -101,7 +103,7 @@ export default new class Longpoll extends EventEmitter {
     }, {});
 
     const messages = history.messages.items.reduce((msgs, msg) => {
-      msgs[msg.id] = parseMessage(msg, peers[msg.peer_id]);
+      msgs[msg.id] = parseMessage(msg);
       return msgs;
     }, {});
 
@@ -111,11 +113,14 @@ export default new class Longpoll extends EventEmitter {
       if([3, 4, 5, 18].includes(item[0])) {
         if(item[0] == 3 && !item[4]) continue;
 
-        events.push([item[0], {
-          peer: peers[item[3]],
-          msg: messages[item[1]]
-        }, 'fake', item[3]]);
-      } else events.push(item);
+        events.push([
+          item[0], // id события в лп
+          { peer: peers[item[3]], msg: messages[item[1]] },
+          item[3] // peer_id
+        ]);
+      } else {
+        events.push(item);
+      }
     }
 
     this.emitHistory(events);
@@ -137,7 +142,7 @@ export default new class Longpoll extends EventEmitter {
       if(!event) {
         console.warn('[longpoll] Неизвестное событие', [id, ...item]);
       } else {
-        const data = event.parser(item[1] == 'fake' ? item[0] : item);
+        const data = event.parser(typeof item[0] == 'object' ? item[0] : item);
         if(!data) continue;
 
         if(event.pack) {
@@ -151,13 +156,13 @@ export default new class Longpoll extends EventEmitter {
       }
     }
 
-    for(const item of events) {
-      const { handler } = longpollEvents[item[0]];
+    for(const [id, data, peer_id] of events) {
+      const { handler } = longpollEvents[id];
 
-      if(item[2]) {
-        handler({ key: Number(item[2]), items: item[1] });
+      if(peer_id) {
+        handler({ key: +peer_id, items: data });
       } else {
-        handler(item[1]);
+        handler(data);
       }
     }
   }

@@ -25,16 +25,4 @@ store.subscribe(({ type }, store) => {
   if(/^users\//.test(type)) users.update(store.users);
 });
 
-export function resetAppState() {
-  store.commit('resetState');
-
-  for(const name of moduleNames) {
-    const mod = modules[name];
-
-    if(mod.mutations && mod.mutations.resetState) {
-      store.commit(`${name}/resetState`);
-    }
-  }
-}
-
 export default store;

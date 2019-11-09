@@ -317,6 +317,11 @@ export default {
     pack: true,
     parser: getMessage,
     handler({ key: peer_id, items }) {
+      // lastMsg.id: cannot read property 'id' of undefined....
+      if(!items[items.length - 1].msg) {
+        return console.warn('[lp 4e] broken msg', items.slice());
+      }
+
       const conv = store.state.messages.conversations[peer_id];
       const localMessages = store.state.messages.messages[peer_id] || [];
       const lastLocalMsg = localMessages[localMessages.length-1];
@@ -689,11 +694,11 @@ export default {
 
   114: {
     // Изменеие настроек пуш-уведомлений в беседе
-    // [{ peer_id, sound, disabled_until }]
+    // { peer_id, sound, disabled_until }
     // disabled_until: -1 - выключены; 0 - включены; * - время их включения
     // При значении > 0 нужно самому следить за временем, ибо событие при включении не приходит.
     parser: (data) => data,
-    handler([{ peer_id, disabled_until }]) {
+    handler({ peer_id, disabled_until }) {
       if(!store.state.messages.conversations[peer_id]) return;
 
       store.commit('messages/updateConversation', {

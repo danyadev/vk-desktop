@@ -51,7 +51,7 @@
         return {
           photo: this.getPhoto(replyMsg),
           name: user && (user.name || `${user.first_name} ${user.last_name}`),
-          text: getMessagePreview(replyMsg),
+          text: getMessagePreview(replyMsg, this.peer_id),
           isContentDeleted: replyMsg.isContentDeleted,
           isAttachment: !replyMsg.text && replyMsg.hasAttachment
         };

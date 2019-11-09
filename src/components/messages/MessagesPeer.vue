@@ -88,7 +88,7 @@
         else return loadConversationMembers(this.peer.id), '...:';
       },
       message() {
-        return getMessagePreview(this.msg, this.author);
+        return getMessagePreview(this.msg, this.peer.id, this.author);
       },
       hasTyping() {
         const typing = this.$store.state.messages.typing[this.peer.id] || {};

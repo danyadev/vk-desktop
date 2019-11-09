@@ -103,7 +103,7 @@
             });
           }
         } else {
-          text = getTextWithEmoji(this.$refs.input.childNodes).text;
+          text = getTextWithEmoji(this.$refs.input.childNodes);
         }
 
         if(!text) return;
