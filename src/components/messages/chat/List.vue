@@ -199,6 +199,13 @@
         }
       }, -1),
 
+      afterUpdateScrollTop(list) {
+        this.showEndBtn = this.canShowScrollBtn(list);
+        this.$refs.scrolly.refreshScrollLayout();
+        this.checkScrolling(list);
+        this.checkReadMessages(list);
+      },
+
       async jumpTo({ msg_id, mark = true, top, bottom }) {
         const onLoad = async (sdasd) => {
           const list = this.$el.firstChild;
@@ -206,11 +213,7 @@
           if(top) {
             list.scrollTop = 0;
 
-            this.showEndBtn = this.canShowScrollBtn(list);
-            this.$refs.scrolly.refreshScrollLayout();
-            this.checkReadMessages(list);
-
-            return;
+            return this.afterUpdateScrollTop(list);
           }
 
           const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
@@ -222,10 +225,7 @@
               list.scrollTop = msg.offsetTop + msg.clientHeight / 2 - list.clientHeight / 2;
             }
 
-            this.showEndBtn = this.canShowScrollBtn(list);
-            this.$refs.scrolly.refreshScrollLayout();
-            this.checkScrolling(list);
-            this.checkReadMessages(list);
+            this.afterUpdateScrollTop(list);
 
             if(mark) {
               msg.setAttribute('active', '');
@@ -288,6 +288,7 @@
       async jumpToStartUnread() {
         this.$store.commit('messages/removeConversationMessages', this.peer_id);
         this.loadedUp = this.loadedDown = false;
+        this.showEndBtn = false;
 
         await this.load({
           start_message_id: -1,
@@ -295,12 +296,12 @@
         }, { isFirstLoad: true });
 
         const unreadMessages = document.querySelector('.message_unreaded_messages');
-        const list = this.$el.firstChild;
-
-        this.showEndBtn = this.canShowScrollBtn(list);
 
         if(unreadMessages) {
+          const list = this.$el.firstChild;
+
           list.scrollTop = unreadMessages.offsetTop - list.clientHeight / 2;
+          this.afterUpdateScrollTop(list);
         }
       },
 
@@ -320,6 +321,8 @@
 
             if(list.offsetHeight + list.scrollTop - unread.offsetHeight / 2 < unread.offsetTop) {
               list.scrollTop = unread.offsetTop - list.clientHeight / 2;
+
+              this.afterUpdateScrollTop(list);
             } else {
               this.jumpTo({
                 bottom: true,
