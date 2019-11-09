@@ -42,13 +42,12 @@
         if(this.activeUser != user.id) return '@' + user.screen_name;
         else return this.l('ml_multiacc_active_account');
       },
-      async setAccount(id) {
+      setAccount(id) {
         const prevUser = this.activeUser;
-
         if(prevUser == id) return;
 
         this.$store.commit('users/setActiveUser', id);
-
+        
         if(prevUser) location.reload();
       },
       removeAccount(id) {

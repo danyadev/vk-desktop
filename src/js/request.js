@@ -107,15 +107,25 @@ function sendMultipartParts(boundary, body, data, names, req, i) {
   }
 }
 
+// Промис сохраняется для того, чтобы при дальнейших вызовах request
+// не создавался новый промис, а ожидалось завершение созданного ранее
+let waitConnectionPromise;
+
 async function waitConnection() {
-  let connection;
-
-  while(!connection) {
+  while(true) {
     try {
-      connection = !!(await dns.lookup('google.com'));
-    } catch(e) {}
-
-    if(!connection) await timer(5000);
+      await dns.lookup('api.vk.com');
+      waitConnectionPromise = null;
+      return;
+    } catch(e) {
+      if(!navigator.onLine) {
+        await new Promise((resolve) => {
+          window.addEventListener('online', resolve, { once: true });
+        });
+      } else {
+        await timer(5000);
+      }
+    }
   }
 }
 
@@ -124,7 +134,11 @@ export default async function(...data) {
     try {
       return await request(...data);
     } catch(e) {
-      await waitConnection();
+      if(!waitConnectionPromise) {
+        waitConnectionPromise = waitConnection();
+      }
+
+      await waitConnectionPromise;
     }
   }
 }

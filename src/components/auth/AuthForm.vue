@@ -70,7 +70,9 @@
             password: this.password,
             ...data
           });
-        } else this.$emit('auth', data);
+        } else {
+          this.$emit('auth', data);
+        }
       },
       openMultiacc() {
         this.$modals.open('multiaccount');

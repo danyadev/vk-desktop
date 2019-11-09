@@ -43,7 +43,9 @@
         if(data.error == 'invalid_request') {
           this.load = false;
           this.error = true;
-        } else this.$emit('auth', data);
+        } else {
+          this.$emit('auth', data);
+        }
       }
     },
     mounted() {

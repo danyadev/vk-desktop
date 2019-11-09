@@ -36,6 +36,11 @@ function vkapi(name, params) {
 
     switch(data.error.error_code) {
       case 5: // Завершение сессии
+        // Если был использован не свой токен
+        if(!user || ![user.access_token, user.android_token].includes(params.access_token)) {
+          return reject(data.error);
+        }
+
         let id = 0;
 
         switch(data.error.error_msg.slice(27)) {

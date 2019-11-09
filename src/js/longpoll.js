@@ -16,8 +16,8 @@ export default new class Longpoll extends EventEmitter {
     this.version = 9;
   }
 
-  async getServer() {
-    return await vkapi('messages.getLongPollServer', {
+  getServer() {
+    return vkapi('messages.getLongPollServer', {
       lp_version: this.version,
       need_pts: 1
     });
