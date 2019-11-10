@@ -1,6 +1,7 @@
 export default {
   // Частые переводы
   cancel: 'Отмена',
+  close: 'Закрыть',
   and: 'и',
   yes: 'Да',
   you: 'Вы',
@@ -224,5 +225,8 @@ export default {
   ml_update_later: 'Обновить позже',
 
   // Internal Server Error
-  ml_error_api: 'При загрузке метода {0} произошла ошибка.'
+  ml_error_api: 'При загрузке метода {0} произошла ошибка.',
+
+  // Просмотр сообщения
+  ml_msg_viewer_header: 'Просмотр сообщения'
 }

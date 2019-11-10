@@ -29,15 +29,39 @@
 
         return url;
       },
-      jump() {
+      async jump() {
         const { replyMsg, id } = this.msg;
 
-        if(replyMsg) {
+        const openMessageViewer = () => {
+          this.$modals.open('message-viewer', {
+            msg: replyMsg,
+            peer_id: this.peer_id
+          });
+        }
+
+        const jumpToMsg = () => {
           eventBus.emit('messages:jumpTo', {
             peer_id: this.peer_id,
             msg_id: replyMsg.id,
             reply_author: id
           });
+        }
+
+        if(replyMsg) {
+          if(!replyMsg.id) {
+            openMessageViewer();
+          } else if(replyMsg.out) {
+            // При удалении для всех своих сообщений id в ответах на сообщения не удаляются,
+            // а обьект сообщения приходит, но с deleted = true
+            const { items: [msg] } = await vkapi('messages.getById', {
+              message_ids: replyMsg.id
+            });
+
+            if(msg.deleted) openMessageViewer();
+            else jumpToMsg();
+          } else {
+            jumpToMsg();
+          }
         }
       }
     },

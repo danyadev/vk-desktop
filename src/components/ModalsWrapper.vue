@@ -13,14 +13,15 @@
 
   const modalComponents = {};
   const modalNames = [
-    'Captcha',
-    'Logout',
-    'BlockedAccount',
-    'Multiaccount',
     'Auth',
+    'BlockedAccount',
+    'Captcha',
     'ClearHistory',
-    'UpdateAvailable',
-    'ErrorApi'
+    'ErrorApi',
+    'Logout',
+    'MessageViewer',
+    'Multiaccount',
+    'UpdateAvailable'
   ];
 
   for(const name of modalNames) {
@@ -29,7 +30,7 @@
 
   export default {
     components: modalComponents,
-    
+
     data: () => ({
       modals: {}
     }),

@@ -47,10 +47,17 @@
     },
     methods: {
       open() {
-        eventBus.emit('messages:jumpTo', {
-          peer_id: this.peer_id,
-          msg_id: this.msg.id
-        });
+        if(this.msg.id) {
+          eventBus.emit('messages:jumpTo', {
+            peer_id: this.peer_id,
+            msg_id: this.msg.id
+          });
+        } else {
+          this.$modals.open('message-viewer', {
+            msg: this.msg,
+            peer_id: this.peer_id
+          });
+        }
       },
       hide() {
         const list = { ...this.$store.state.settings.messagesSettings.hiddenPinnedMessages };
