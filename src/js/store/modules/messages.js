@@ -17,6 +17,9 @@ export default {
     // Списки сообщений у бесед
     // { peer_id: [message] }
     messages: {},
+    // Беседы, которые были открыты в приложении
+    // [peer_id]
+    openedChats: [],
     // Отправленные, но еще не полученные сообщения
     // { peer_id: [{ random_id, text, date, error, hasAttachment }] }
     loadingMessages: {},
@@ -30,12 +33,18 @@ export default {
       if(remove) {
         const index = state.peersList.indexOf(id);
         if(index != -1) state.peersList.splice(index, 1);
-      } else state.peersList.push(id);
+      } else {
+        state.peersList.push(id);
+      }
     },
 
-    addConversations(state, conversations) {
+    addConversations(state, conversations, sadsa) {
       for(const conversation of conversations) {
-        Vue.set(state.conversations, conversation.peer.id, conversation);
+        if(!state.conversations[conversation.peer.id]) {
+          Vue.set(state.conversations, conversation.peer.id, conversation);
+        } else {
+          this.commit('messages/updateConversation', conversation);
+        }
 
         if(!state.peersList.includes(conversation.peer.id)) {
           state.peersList.push(conversation.peer.id);
@@ -51,8 +60,8 @@ export default {
       Vue.set(state.conversations, peer.id, conv);
     },
 
-    removeConversationMessages(state, id) {
-      Vue.set(state.messages, id, []);
+    removeConversationMessages(state, peer_id) {
+      Vue.set(state.messages, peer_id, []);
     },
 
     moveConversation(state, { peer_id, newMsg, restoreMsg }) {
@@ -165,6 +174,10 @@ export default {
         messages.splice(index, 1);
         Vue.set(state.loadingMessages, peer_id, messages);
       }
+    },
+
+    addOpenedChat(state, peer_id) {
+      state.openedChats.push(peer_id);
     },
 
     addUserTyping(state, { peer_id, user_id, type, time = 5 }) {

@@ -55,6 +55,8 @@
     },
     mounted() {
       if(this.peer_id > 2e9) loadConversationMembers(this.peer_id, true);
+
+      this.$store.commit('messages/addOpenedChat', +this.peer_id);
     },
     activated() {
       if(!this.peer || !this.peer.loaded) {
