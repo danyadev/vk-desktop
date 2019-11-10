@@ -69,32 +69,37 @@ export default {
       if(index == -1) return;
 
       if(newMsg) {
-        moveArrItem(state.peersList, index, 0);
-      } else {
-        const peers = this.getters['messages/conversationsList'];
-        const { id } = peers[index].msg;
-        let newIndex = index;
+        return moveArrItem(state.peersList, index, 0);
+      }
 
-        if(restoreMsg) {
-          if(index == 0) return;
+      const peers = this.getters['messages/conversationsList'];
+      const { id } = peers[index].msg;
+      let newIndex = index;
 
-          for(let i=0; i<index; i++) {
-            if(peers[i].msg.id < id) {
-              newIndex = i;
-              break;
-            }
+      if(restoreMsg) {
+        if(index == 0) return;
+
+        for(let i = 0; i<index; i++) {
+          if(peers[i].msg.id < id) {
+            newIndex = i;
+            break;
           }
-        } else if(index != peers.length-1) {
-          for(let i=peers.length-1; i>index; i--) {
-            if(peers[i].msg.id > id) {
-              newIndex = i;
-              break;
-            }
-          }
-        } else {
-          return Vue.delete(state.peersList, index);
         }
+      } else if(index != peers.length-1) {
+        for(let i = peers.length-1; i>index; i--) {
+          if(peers[i].msg.id > id) {
+            newIndex = i;
+            break;
+          }
+        }
+      } else {
+        return Vue.delete(state.peersList, index);
+      }
 
+      // Последний элемент в списке
+      if(newIndex == state.peersList.length-1) {
+        Vue.delete(state.peersList, index);
+      } else {
         moveArrItem(state.peersList, index, newIndex);
       }
     },

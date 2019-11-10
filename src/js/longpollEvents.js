@@ -242,7 +242,7 @@ export default {
     async handler({ key: peer_id, items: msg_ids }) {
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
-      const { msg, peer } = await getLastMessage(peer_id);
+      const { msg } = await getLastMessage(peer_id);
 
       if(!msg) {
         store.commit('messages/updatePeersList', {
