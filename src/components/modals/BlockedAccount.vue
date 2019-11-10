@@ -1,10 +1,10 @@
 <template>
   <div class="modal">
-    <ModalHeader :closable="false">{{ l('ml_blocked_account_title', data) }}</ModalHeader>
-    <div class="modal_content" v-html="l('ml_blocked_account_content', data)"></div>
+    <ModalHeader :closable="false">{{ l('ml_blocked_account_title', id) }}</ModalHeader>
+    <div class="modal_content" v-html="l('ml_blocked_account_content', id)"></div>
     <div class="modal_footer">
       <Button class="right" @click="exit">{{ l('ml_blocked_account_logout') }}</Button>
-      <Button v-if="data == 1" class="right" @click="closeApp">{{ l('ml_blocked_account_close_app') }}</Button>
+      <Button v-if="id == 1" class="right" @click="closeApp">{{ l('ml_blocked_account_close_app') }}</Button>
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@
   import Button from '../UI/Button.vue';
 
   export default {
-    props: ['data'],
+    props: ['id'],
     components: {
       ModalHeader,
       Button

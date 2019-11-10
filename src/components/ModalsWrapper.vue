@@ -2,7 +2,7 @@
   <div :class="['modals_container', { active: hasModals }]" tabindex="0" @keydown.esc="onEscape">
     <TransitionGroup name="modal">
       <div v-for="modal in modals" :key="modal.name" class="modal_wrap" @click.stop="closeModal">
-        <Component :is="modal.name" :name="modal.name" :data="modal.data" />
+        <Component :is="modal.name" :name="modal.name" v-bind="modal.data" />
       </div>
     </TransitionGroup>
   </div>
@@ -29,14 +29,17 @@
 
   export default {
     components: modalComponents,
+    
     data: () => ({
       modals: {}
     }),
+
     computed: {
       hasModals() {
         return !!Object.keys(this.modals).length;
       }
     },
+
     methods: {
       closeModal({ path, target }) {
         if(!target.matches('.modal_wrap')) return;
@@ -53,6 +56,7 @@
         if(keys.length) eventBus.emit('modal:close', keys[keys.length-1]);
       }
     },
+
     mounted() {
       eventBus.on('modal:open', (name, data) => {
         this.$set(this.modals, name, { name, data });

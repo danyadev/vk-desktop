@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
-    <ModalHeader>{{ l('ml_update_available') }} {{ data.name }}</ModalHeader>
-    <Scrolly vclass="modal_content">{{ data.notes }}</Scrolly>
+    <ModalHeader>{{ l('ml_update_available') }} {{ name }}</ModalHeader>
+    <Scrolly vclass="modal_content">{{ notes }}</Scrolly>
     <div class="modal_footer">
       <Button class="left" @click="update">{{ l('ml_update_now') }}</Button>
       <Button class="left" light @click="close">{{ l('ml_update_later') }}</Button>
@@ -15,7 +15,7 @@
   import Scrolly from '../UI/Scrolly.vue';
 
   export default {
-    props: ['data'],
+    props: ['name', 'notes', 'quitAndInstall'],
     components: {
       ModalHeader,
       Button,
@@ -23,7 +23,7 @@
     },
     methods: {
       update() {
-        this.data.quitAndInstall();
+        this.quitAndInstall();
       },
       close() {
         this.$modals.close(this.$attrs.name);

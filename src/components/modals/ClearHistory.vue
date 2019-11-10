@@ -16,7 +16,7 @@
   import Button from '../UI/Button.vue';
 
   export default {
-    props: ['data'],
+    props: ['peer_id'],
     components: {
       ModalHeader,
       Button
@@ -24,7 +24,7 @@
     methods: {
       clear() {
         vkapi('messages.deleteConversation', {
-          peer_id: this.data.peer_id
+          peer_id: this.peer_id
         }).then(this.close);
       },
       close() {

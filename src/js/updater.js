@@ -24,9 +24,9 @@ ipcRenderer.on('update', (event, data) => {
 
     case 'downloaded':
       eventBus.emit('modal:open', 'update-available', {
-        quitAndInstall: updater.quitAndInstall,
         name: data.update.name,
-        notes: data.update.notes
+        notes: data.update.notes,
+        quitAndInstall: updater.quitAndInstall
       });
       break;
   }

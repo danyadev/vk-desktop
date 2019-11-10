@@ -56,7 +56,7 @@ function vkapi(name, params) {
             break;
         }
 
-        eventBus.emit('modal:open', 'blocked-account', id);
+        eventBus.emit('modal:open', 'blocked-account', { id });
 
         methods.length = 0;
         reject();

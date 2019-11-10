@@ -3,12 +3,12 @@
     <ModalHeader :closable="false">{{ l('ml_captcha_header') }}</ModalHeader>
     <div class="modal_content">
       <div class="captcha_img">
-        <img :src="data.src" @click="updatePic">
+        <img :src="src" @click="updatePic">
       </div>
       <div class="captcha_key">
         <input class="input"
                :placeholder="l('ml_captcha_write')"
-               v-model="text"
+               v-model="code"
                @keydown.enter="sendCode"
         >
       </div>
@@ -24,27 +24,27 @@
   import Button from '../UI/Button.vue';
 
   export default {
-    props: ['data'],
+    props: ['src', 'send'],
     components: {
       ModalHeader,
       Button
     },
     data: () => ({
-      text: ''
+      code: ''
     }),
     computed: {
       disabled() {
-        return !this.text.trim();
+        return !this.code.trim();
       }
     },
     methods: {
       updatePic() {
-        this.data.src += this.data.src.indexOf('&s=1') != -1 ? '1' : '&s=1';
+        this.src += this.src.indexOf('&s=1') != -1 ? '1' : '&s=1';
       },
       sendCode() {
         if(this.disabled) return;
 
-        this.data.send(this.text.trim());
+        this.send(this.code.trim());
         this.$modals.close(this.$attrs.name);
       }
     }

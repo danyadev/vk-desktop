@@ -2,8 +2,8 @@
   <div class="modal">
     <ModalHeader :closable="false">Internal Server Error</ModalHeader>
     <div class="modal_content">
-      {{ l('ml_error_api', [data.method]) }}<br>
-      {{ data.error.error_msg }}<br>
+      {{ l('ml_error_api', [method]) }}<br>
+      {{ error.error_msg }}<br>
       Request params:
       {{ params || 'nothing' }}
 
@@ -19,14 +19,14 @@
   import Button from '../UI/Button.vue';
 
   export default {
-    props: ['data'],
+    props: ['method', 'error', 'retry'],
     components: {
       ModalHeader,
       Button
     },
     computed: {
       params() {
-        const params = (this.data.error.request_params || []).reduce((obj, data) => {
+        const params = (this.error.request_params || []).reduce((obj, data) => {
           obj[data.key] = data.value;
           return obj;
         }, {});
@@ -40,7 +40,7 @@
     },
     methods: {
       retry() {
-        this.data.retry();
+        this.retry();
         this.$modals.close(this.$attrs.name);
       }
     }
