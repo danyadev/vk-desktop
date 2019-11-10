@@ -114,8 +114,9 @@ export default new class Longpoll extends EventEmitter {
         if(item[0] == 3 && !item[4]) continue;
 
         events.push([
-          item[0], // id события в лп
+          item[0], // id события
           { peer: peers[item[3]], msg: messages[item[1]] },
+          'fromHistory',
           item[3] // peer_id
         ]);
       } else {
@@ -140,30 +141,28 @@ export default new class Longpoll extends EventEmitter {
       const event = longpollEvents[id];
 
       if(!event) {
-        console.warn('[longpoll] Неизвестное событие', [id, ...item]);
+        return console.warn('[longpoll] Неизвестное событие', [id, ...item]);
+      }
+
+      const data = event.parser(item[1] == 'fromHistory' ? item[0] : item);
+      if(!data) continue;
+
+      // Собираем все события с одинаковым peer_id идущие подряд в одно событие
+      if(event.pack) {
+        const prev = events[events.length - 1];
+
+        if(prev && prev[2] == item[2]) prev[1].push(data);
+        else events.push([id, [data], item[2]]);
       } else {
-        const data = event.parser(typeof item[0] == 'object' ? item[0] : item);
-        if(!data) continue;
-
-        if(event.pack) {
-          const prev = events[events.length - 1];
-
-          if(prev && prev[2] == item[2]) prev[1].push(data);
-          else events.push([id, [data], item[2]]);
-        } else {
-          events.push([id, data]);
-        }
+        events.push([id, data]);
       }
     }
 
     for(const [id, data, peer_id] of events) {
       const { handler } = longpollEvents[id];
 
-      if(peer_id) {
-        handler({ key: +peer_id, items: data });
-      } else {
-        handler(data);
-      }
+      if(peer_id) handler({ key: +peer_id, items: data });
+      else handler(data);
     }
   }
 }

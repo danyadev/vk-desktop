@@ -6,31 +6,26 @@ function moveArrItem(arr, from, to) {
   return arr;
 }
 
-const getState = () => ({
-  // Все беседы, которые были загружены в приложение
-  // { peer_id: { peer, msg } }
-  conversations: {},
-  // Беседы, которые отображаются в списке бесед
-  // [peer_id]
-  peersList: [],
-  // Списки сообщений у бесед
-  // { peer_id: [message] }
-  messages: {},
-  // Отправленные, но еще не полученные сообщения
-  // { peer_id: [{ random_id, text, date, error, hasAttachment }] }
-  loadingMessages: {},
-  // Список юзеров, которые печатают в различных беседах
-  // { peer_id: { user_id: { time, type } } }
-  typing: {}
-});
-
 export default {
-  state: getState(),
-  mutations: {
-    resetState(state) {
-      Object.assign(state, getState());
-    },
+  state: {
+    // Все беседы, которые были загружены в приложение
+    // { peer_id: { peer, msg } }
+    conversations: {},
+    // Беседы, которые отображаются в списке бесед
+    // [peer_id]
+    peersList: [],
+    // Списки сообщений у бесед
+    // { peer_id: [message] }
+    messages: {},
+    // Отправленные, но еще не полученные сообщения
+    // { peer_id: [{ random_id, text, date, error, hasAttachment }] }
+    loadingMessages: {},
+    // Список юзеров, которые печатают в различных беседах
+    // { peer_id: { user_id: { time, type } } }
+    typing: {}
+  },
 
+  mutations: {
     updatePeersList(state, { id, remove }) {
       if(remove) {
         const index = state.peersList.indexOf(id);

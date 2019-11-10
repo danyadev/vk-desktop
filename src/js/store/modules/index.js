@@ -1,17 +1,13 @@
 import Vue from 'vue';
 
-const getState = () => ({
-  menuState: false,
-  menuCounters: {},
-  profiles: {}
-});
-
 export default {
-  state: getState(),
+  state: {
+    menuState: false,
+    menuCounters: {},
+    profiles: {}
+  },
+
   mutations: {
-    resetState(state) {
-      Object.assign(state, getState());
-    },
     setMenuState(state, value) {
       state.menuState = value;
     },

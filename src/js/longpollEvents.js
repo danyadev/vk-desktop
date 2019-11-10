@@ -694,11 +694,11 @@ export default {
 
   114: {
     // Изменеие настроек пуш-уведомлений в беседе
-    // { peer_id, sound, disabled_until }
+    // [{ peer_id, sound, disabled_until }]
     // disabled_until: -1 - выключены; 0 - включены; * - время их включения
     // При значении > 0 нужно самому следить за временем, ибо событие при включении не приходит.
     parser: (data) => data,
-    handler({ peer_id, disabled_until }) {
+    handler([{ peer_id, disabled_until }]) {
       if(!store.state.messages.conversations[peer_id]) return;
 
       store.commit('messages/updateConversation', {
