@@ -32,13 +32,14 @@ jobs:
       with:
         node-version: 12.11.1
     - uses: warrenbuckley/Setup-MSBuild@v1
-    - name: Install dependencies
+    - name: Preinstall dependencies
       run: |
         npm config set python python2.7
-
         npm i -g node-gyp
-        npm i
-        npm run rebuild
+    - name: Install dependencies
+      run: npm i
+    - name: Rebuild winutils
+      run: npm run rebuild
     - name: Build Electron app
       run: npm run build
     - name: Create installer
