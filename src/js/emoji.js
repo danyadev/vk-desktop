@@ -44,9 +44,10 @@ export function generateEmojiImage(emoji) {
 
   if(local) {
     const [id, x, y, posX, posY] = parseLocalEmoji(local);
-    let style = `background: url('assets/emoji_sprites/sprite_${id}.webp') -${x}px -${y}px`;
-
-    if(devicePixelRatio >= 2) style += ` / ${posX}px ${posY}px`;
+    const isRetina = devicePixelRatio > 1;
+    const x2 = isRetina ? '_2x' : '';
+    const pos = isRetina ? `/ ${posX}px ${posY}px` : '';
+    const style = `background: url('assets/emoji_sprites/sprite_${id}${x2}.webp') -${x}px -${y}px ${pos}`;
 
     return `<img class="emoji" src="assets/blank.gif" style="${style}" alt="${emoji}">`;
   } else {
