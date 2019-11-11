@@ -35,6 +35,7 @@ jobs:
       run: |
         npm config set python python2.7
         npm config set msvs_version 2015
+        set path=%path%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
 
         npm i -g node-gyp
         npm i
