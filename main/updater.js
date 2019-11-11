@@ -8,14 +8,15 @@ const autoUpdater = useVKUpdater
   ? require('./windows-linux-updater')
   : require('electron').autoUpdater;
 
-function getPlatform() {
+function getPlatform(forceWin) {
   const x64 = process.arch == 'x64';
 
   if(process.platform == 'darwin') {
     return 'mac';
   }
 
-  if(process.platform == 'win32') {
+  // forceWin нужен для того, чтобы update.electronjs.org работал и для Linux
+  if(process.platform == 'win32' || forceWin && process.platform == 'linux') {
     return x64 ? 'win32-x64' : 'win32-ia32';
   }
 
@@ -27,7 +28,7 @@ function getPlatform() {
 }
 
 function getCheckURL() {
-  const platform = getPlatform();
+  const platform = getPlatform(true);
   const { version } = require('../package.json');
 
   return `https://update.electronjs.org/danyadev/vk-desktop/${platform}/${version}/`;

@@ -11,7 +11,6 @@ const { EventEmitter } = require('events');
 const child_process = require('child_process');
 const extractZip = require('extract-zip');
 const win = require('./win');
-const winutils = require('winutils');
 
 let noAsarValue = false;
 
@@ -84,6 +83,7 @@ class Updater extends EventEmitter {
 
 class WindowsUpdater extends Updater {
   async quitAndInstall() {
+    const winutils = require('winutils');
     const exeName = 'VK Desktop.exe';
     const installDstDir = path.dirname(process.execPath);
     const writable = await isWritable(path.join(path.dirname(installDstDir), randstr()));
@@ -93,13 +93,20 @@ class WindowsUpdater extends Updater {
       '--ewu-install',
       installDstDir,
       exeName,
-      require('winutils').isUserAdmin() ? 1 : 0,
+      winutils.isUserAdmin() ? 1 : 0,
       process.argv.includes('--disable-gpu') ? 1 : 0,
       writable ? 0 : 1
     ];
 
-    if(writable) run(cmd, args);
-    else runElevated(cmd, args);
+    if(writable) {
+      run(cmd, args);
+    } else {
+      const cmdLine = args.map((arg) => winutils.escapeShellArg(String(arg))).join(' ');
+
+      if(!winutils.elevate(cmd, cmdLine)) {
+        run(cmd, args);
+      }
+    }
 
     app.exit();
   }
@@ -171,14 +178,6 @@ function run(path, args) {
     detached: true,
     stdio: ['ignore', 'ignore', 'ignore']
   }).unref();
-}
-
-function runElevated(path, args) {
-  const cmdLine = args.map((arg) => require('winutils').escapeShellArg(String(arg))).join(' ');
-
-  if(!require('winutils').elevate(path, cmdLine)) {
-    run(path, args);
-  }
 }
 
 function randstr() {
