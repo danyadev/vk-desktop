@@ -15,10 +15,7 @@
 ``` bash
 $ npm i -g windows-build-tools # Установка необходимых инструментов для сборки
 $ npm i # Установка всех зависимостей в проекте
-$ npm run rebuild # Сборка winutils для Electron
-
 $ npm run build # Сборка VK Desktop
-
 # Здесь можно указать 32, 64 или ничего, чтобы собрать под все разрядности
 $ npm run win-setup[32|64] # Сборка установщика
 ```
