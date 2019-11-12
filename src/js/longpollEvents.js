@@ -94,7 +94,6 @@ function getAttachments(data) {
 function getMessage(data) {
   // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
   const user = store.getters['users/user'];
-  const flag = hasFlag(data[1]);
 
   // Если данные получены через messages.getLongPollHistory
   if(!Array.isArray(data)) return data;
@@ -102,6 +101,7 @@ function getMessage(data) {
   // Или юзер уже вышел из аккаунта
   if(!data[3] || !user) return;
 
+  const flag = hasFlag(data[1]);
   const action = getServiceMessage(data[5]);
   const from_id = flag('outbox') ? user.id : Number(data[5].from || data[2]);
   const { keyboard } = data[5];
