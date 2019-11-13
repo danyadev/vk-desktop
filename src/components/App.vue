@@ -127,7 +127,7 @@
   .input::-webkit-input-placeholder { color: #a0a0a0 }
 
   .emoji {
-    margin: 0 1px -3px 1px;
+    margin: 0 1px -2px 1px;
     width: 16px;
     height: 16px;
   }

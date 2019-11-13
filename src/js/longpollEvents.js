@@ -319,6 +319,7 @@ export default {
     handler({ key: peer_id, items }) {
       // lastMsg.id: cannot read property 'id' of undefined....
       if(!items[items.length - 1].msg) {
+        debugger;
         return console.warn('[lp 4e] broken msg', items.slice());
       }
 
@@ -449,11 +450,9 @@ export default {
       const mentions = conv && conv.peer.mentions || [];
       const isMyDialog = peer_id == store.getters['users/user'].id;
 
-      if(mentions.length) {
-        for(const id of mentions) {
-          if(msg_id >= id) {
-            mentions.splice(mentions.indexOf(id), 1);
-          }
+      for(const id of mentions) {
+        if(msg_id >= id) {
+          mentions.splice(mentions.indexOf(id), 1);
         }
       }
 

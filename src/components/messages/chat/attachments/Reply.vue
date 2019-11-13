@@ -32,35 +32,41 @@
       async jump() {
         const { replyMsg, id } = this.msg;
 
-        const openMessageViewer = () => {
-          this.$modals.open('message-viewer', {
-            msg: replyMsg,
-            peer_id: this.peer_id
-          });
-        }
-
-        const jumpToMsg = () => {
-          eventBus.emit('messages:jumpTo', {
-            peer_id: this.peer_id,
-            msg_id: replyMsg.id,
-            reply_author: id
-          });
-        }
-
         if(replyMsg) {
+          const openMessageViewer = () => {
+            this.$modals.open('message-viewer', {
+              msg: replyMsg,
+              peer_id: this.peer_id
+            });
+          }
+
+          const jumpToMsg = () => {
+            eventBus.emit('messages:jumpTo', {
+              peer_id: this.peer_id,
+              msg_id: replyMsg.id,
+              reply_author: id
+            });
+          }
+
           if(!replyMsg.id) {
             openMessageViewer();
-          } else if(replyMsg.out) {
-            // При удалении для всех своих сообщений id в ответах на сообщения не удаляются,
-            // а обьект сообщения приходит, но с deleted = true
-            const { items: [msg] } = await vkapi('messages.getById', {
-              message_ids: replyMsg.id
-            });
-
-            if(msg.deleted) openMessageViewer();
-            else jumpToMsg();
           } else {
-            jumpToMsg();
+            const messages = this.$store.state.messages.messages[this.peer_id] || [];
+
+            if(messages.find(({ id }) => id == replyMsg.id)) {
+              jumpToMsg();
+            } else {
+              // При удалении для всех своих сообщений id в ответах на сообщения не удаляются,
+              // а обьект сообщения приходит, но с deleted = true.
+              // Также юзер может удалить сообщение, на которое был произведен ответ,
+              // поэтому нужно в любом случае проверить наличие сообщения
+              const { items: [msg] } = await vkapi('messages.getById', {
+                message_ids: replyMsg.id
+              });
+
+              if(!msg || msg.deleted) openMessageViewer();
+              else jumpToMsg();
+            }
           }
         }
       }

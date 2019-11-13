@@ -235,6 +235,8 @@
 
       refreshScrollLayout(dx = 0, dy = 0, mousemove) {
         const { viewport, barX, barY } = this.$refs;
+        if(!viewport) return;
+        
         const {
           scrollTop: prevScrollTop,
           scrollLeft: prevScrollLeft

@@ -207,12 +207,11 @@
       },
 
       async jumpTo({ msg_id, mark = true, top, bottom }) {
-        const onLoad = async (sdasd) => {
+        const onLoad = async () => {
           const list = this.$el.firstChild;
 
           if(top) {
             list.scrollTop = 0;
-
             return this.afterUpdateScrollTop(list);
           }
 
@@ -220,8 +219,10 @@
 
           if(msg) {
             if(msg.clientHeight > list.clientHeight) {
+              // Сообщение начинается на расстоянии 1/4 от начала экрана
               list.scrollTop = msg.offsetTop - list.clientHeight / 4;
             } else {
+              // Сообщение по центру экрана
               list.scrollTop = msg.offsetTop + msg.clientHeight / 2 - list.clientHeight / 2;
             }
 
