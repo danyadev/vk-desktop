@@ -90,9 +90,9 @@
         let text;
 
         if(action) {
-          const { screen_name } = this.$store.state.profiles[author_id];
+          const { domain } = this.$store.state.profiles[author_id];
 
-          text = this.peer_id > 2e9 ? `@${screen_name} ${action.label}` : action.label;
+          text = this.peer_id > 2e9 ? `@${domain} ${action.label}` : action.label;
 
           if(this.keyboard.one_time) {
             this.$store.commit('messages/updateConversation', {

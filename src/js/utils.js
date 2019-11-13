@@ -3,7 +3,7 @@ import vkapi from './vkapi';
 import store from './store/';
 import { version } from 'package-json';
 
-export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,screen_name';
+export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
 export const regexp = {
   push: /\[(club|id)(\d+)\|(.+?)\]/g

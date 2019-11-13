@@ -39,7 +39,7 @@
     },
     methods: {
       getUserDescription(user) {
-        if(this.activeUser != user.id) return '@' + user.screen_name;
+        if(this.activeUser != user.id) return '@' + user.domain;
         else return this.l('ml_multiacc_active_account');
       },
       setAccount(id) {
@@ -47,7 +47,7 @@
         if(prevUser == id) return;
 
         this.$store.commit('users/setActiveUser', id);
-        
+
         if(prevUser) location.reload();
       },
       removeAccount(id) {

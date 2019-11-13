@@ -587,8 +587,6 @@ export default {
         case 3: // Назначен новый администратор
           break;
 
-        // А где же 4 событие???
-
         case 5: // Закрепление или открепление сообщения
           if(info) loadConversation(peer_id);
           else peer.pinnedMsg = null;
@@ -623,6 +621,9 @@ export default {
           break;
 
         case 9: // Разжалован администратор
+          break;
+
+        case 11: // Открытие/закрытие клавиатуры
           break;
 
         default:
