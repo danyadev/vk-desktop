@@ -57,10 +57,6 @@ function vkapi(name, params) {
         }
 
         eventBus.emit('modal:open', 'blocked-account', { id });
-
-        methods.length = 0;
-        reject();
-
         break;
 
       case 6: // Много запросов в секунду
@@ -74,7 +70,6 @@ function vkapi(name, params) {
           error: data.error,
           retry: reject
         });
-
         break;
 
       case 14: // Captcha
@@ -84,12 +79,10 @@ function vkapi(name, params) {
             params.captcha_sid = data.error.captcha_sid;
             params.captcha_key = code;
 
-            if(name == 'captcha.force') methods.shift();
-
-            reject();
+            if(name == 'captcha.force') resolve(1);
+            else reject();
           }
         });
-
         break;
 
       default: // Все остальные ошибки

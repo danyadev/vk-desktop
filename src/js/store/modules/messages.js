@@ -20,6 +20,9 @@ export default {
     // Беседы, которые были открыты в приложении
     // [peer_id]
     openedChats: [],
+    // Список бесед, которые сейчас загружаются
+    // т.к. реактивность нам не нужна, мы можем использовать Set
+    loadingPeers: new Set(),
     // Отправленные, но еще не полученные сообщения
     // { peer_id: [{ random_id, text, date, error, hasAttachment }] }
     loadingMessages: {},

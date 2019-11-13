@@ -88,9 +88,13 @@
       }
     },
     methods: {
-      async load(params = {}, { isDown, isFirstLoad, loadedUp } = {}) {
+      async load(params = {}, { isDown, isFirstLoad, loadedUp, loadedDown } = {}) {
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
+
+        const { loadingPeers } = this.$store.state.messages;
+
+        loadingPeers.add(this.peer_id);
 
         const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.peer_id,
@@ -99,6 +103,7 @@
           fields,
           ...params
         });
+
         const peer = parseConversation(conversations[0]);
 
         this.lockScroll = true;
@@ -126,8 +131,10 @@
 
         if(isDown || isFirstLoad) {
           this.loadingDown = false;
-          this.loadedDown = !items[0] || items[0].id == peer.last_msg_id;
+          this.loadedDown = loadedDown || !items[0] || items[0].id == peer.last_msg_id;
         }
+
+        loadingPeers.delete(this.peer_id);
 
         this.checkReadMessages(list);
 
@@ -245,8 +252,7 @@
             onLoad();
           } else {
             this.$store.commit('messages/removeConversationMessages', this.peer_id);
-            this.loadedUp = true;
-            this.loadedDown = false;
+            this.loadedUp = this.loadedDown = false;
 
             this.load({
               start_message_id: 0,
@@ -265,10 +271,12 @@
             }
           } else {
             this.$store.commit('messages/removeConversationMessages', this.peer_id);
-            this.loadedUp = false;
-            this.loadedDown = true;
+            this.loadedUp = this.loadedDown = false;
 
-            const [lastMsg] = await this.load();
+            const [lastMsg] = await this.load({}, {
+              isDown: true,
+              loadedDown: true
+            });
 
             msg_id = lastMsg.id;
             onLoad();

@@ -9,7 +9,7 @@
 
     </div>
     <div class="modal_footer">
-      <Button class="right" @click="retry">{{ l('retry') }}</Button>
+      <Button class="right" @click="click">{{ l('retry') }}</Button>
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@
       }
     },
     methods: {
-      retry() {
+      click() {
         this.retry();
         this.$modals.close(this.$attrs.name);
       }

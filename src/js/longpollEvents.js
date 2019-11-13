@@ -323,6 +323,7 @@ export default {
         return console.warn('[lp 4e] broken msg', items.slice());
       }
 
+      const { loadingPeers } = store.state.messages;
       const isLoadedChat = store.state.messages.openedChats.includes(peer_id);
       const conv = store.state.messages.conversations[peer_id];
       const localMessages = store.state.messages.messages[peer_id] || [];
@@ -335,7 +336,12 @@ export default {
         mentions: conv && conv.peer.mentions || []
       };
 
-      if(isLoadedChat && (!lastLocalMsg || conv.peer.last_msg_id == lastLocalMsg.id)) {
+      if(
+        isLoadedChat && (
+          !lastLocalMsg && !loadingPeers.has(peer_id) ||
+          conv.peer.last_msg_id == lastLocalMsg.id
+        )
+      ) {
         store.commit('messages/addMessages', {
           peer_id: peer_id,
           messages: items.map(({ msg }) => msg),
