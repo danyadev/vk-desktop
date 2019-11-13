@@ -1,5 +1,5 @@
 <template>
-  <div :class="['titlebar', { maximized, mac }]">
+  <div :class="['titlebar', { maximized }]">
     <div class="titlebar_drag" ref="drag">VK Desktop</div>
     <div class="titlebar_buttons">
       <div v-for="button of buttons" :key="button"
@@ -65,7 +65,9 @@
     margin: 0;
   }
 
-  .titlebar_buttons { display: flex }
+  .titlebar_buttons {
+    display: flex;
+  }
 
   .titlebar_button {
     display: flex;
@@ -82,11 +84,9 @@
   .titlebar.maximized .titlebar_button.maximize { display: none }
   .titlebar:not(.maximized) .titlebar_button.restore { display: none }
 
-  .titlebar.mac { height: 22px }
-  .titlebar.mac + .app { height: calc(100vh - 22px) }
-  .titlebar.mac .titlebar_buttons { display: none }
-
-  .titlebar.mac .titlebar_drag {
+  .mac .titlebar { height: 22px }
+  .mac .titlebar .titlebar_buttons { display: none }
+  .mac .titlebar .titlebar_drag {
     text-align: center;
     line-height: 14px;
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="root" :theme="theme">
+  <div :class="['root', { mac }]">
     <Titlebar />
     <div class="app">
       <MainMenu v-if="activeUser" />
@@ -22,7 +22,9 @@
   import ModalsWrapper from './ModalsWrapper.vue';
 
   export default {
-    name: 'App',
+    data: () => ({
+      mac: process.platform == 'darwin'
+    }),
     components: {
       Titlebar,
       MainMenu,
@@ -30,8 +32,7 @@
       ModalsWrapper
     },
     computed: {
-      ...mapState('users', ['activeUser']),
-      ...mapState('settings', ['theme'])
+      ...mapState('users', ['activeUser'])
     },
     methods: {
       async initUser() {
@@ -64,9 +65,13 @@
 </script>
 
 <style>
-  *, *::before, *::after { box-sizing: border-box }
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
 
-  :focus { outline: none }
+  :focus {
+    outline: none;
+  }
 
   @font-face {
     font-family: Roboto;
@@ -90,6 +95,7 @@
     height: 100vh;
     -webkit-rtl-ordering: visual;
     text-rendering: optimizeSpeed;
+    background: #fff;
   }
 
   a, .link {
@@ -99,7 +105,9 @@
     transition: color .3s;
   }
 
-  a:hover, .link:hover { text-decoration: underline }
+  a:hover, .link:hover {
+    text-decoration: underline;
+  }
 
   img:not(.emoji) {
     -webkit-user-drag: none;
@@ -107,6 +115,7 @@
   }
 
   .app { height: calc(100vh - 32px) }
+  .mac .app { height: calc(100vh - 22px) }
 
   .input {
     width: 250px;
