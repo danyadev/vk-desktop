@@ -36,10 +36,10 @@
     },
     methods: {
       async initUser() {
-        if(longpoll.started) longpoll.stop();
-
         if(this.activeUser) {
-          if(this.$router.currentRoute.path != '/messages') this.$router.replace('/messages');
+          if(this.$router.currentRoute.path != '/messages') {
+            this.$router.replace('/messages');
+          }
 
           const { lp, counters, user } = await vkapi('execute.init', {
             lp_version: longpoll.version,
@@ -55,6 +55,7 @@
     },
     watch: {
       activeUser() {
+        // При входе в аккаунт
         this.initUser();
       }
     },

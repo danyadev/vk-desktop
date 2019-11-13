@@ -12,7 +12,6 @@ export default new class Longpoll extends EventEmitter {
     super();
 
     this.debug = false;
-    this.started = false;
     this.version = 9;
   }
 
@@ -31,16 +30,11 @@ export default new class Longpoll extends EventEmitter {
     this.pts = data.pts;
     this.ts = data.ts;
 
-    this.started = true;
     this.loop();
   }
 
-  stop() {
-    this.started = false;
-  }
-
   async loop() {
-    while(this.started) {
+    while(true) {
       const { data } = await request(`https://${this.server}?` + querystring.stringify({
         act: 'a_check',
         key: this.key,
@@ -50,13 +44,11 @@ export default new class Longpoll extends EventEmitter {
         version: this.version
       }), { timeout: 11000 });
 
-      if(this.started) {
-        if(data.failed) await this.catchErrors(data);
-        if(data.ts) this.ts = data.ts;
-        if(data.pts) this.pts = data.pts;
+      if(data.failed) await this.catchErrors(data);
+      if(data.ts) this.ts = data.ts;
+      if(data.pts) this.pts = data.pts;
 
-        this.emitHistory(data.updates);
-      }
+      this.emitHistory(data.updates);
     }
   }
 
