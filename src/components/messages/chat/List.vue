@@ -13,7 +13,7 @@
 
     <div v-if="loadingDown" class="loading"></div>
 
-    <div v-if="!hasMessages && !loadingUp" class="messages_empty_dialog">
+    <div v-if="!hasMessages && !loadingUp && !loadingDown" class="messages_empty_dialog">
       <img src="~assets/placeholder_empty_messages.webp">
       {{ l('im_empty_dialog') }}
     </div>
@@ -276,6 +276,7 @@
         }
 
         this.showEndBtn = false;
+        this.showTopTime = false;
 
         if(top) {
           this.replyHistory.length = 0;
@@ -480,7 +481,7 @@
     border: solid 1px #cfd9e1;
     border-radius: 15px;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
-    padding: 3px 12px;
+    padding: 4px 14px;
     color: #828282;
     user-select: none;
     pointer-events: none;
