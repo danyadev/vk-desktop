@@ -5,6 +5,7 @@
            @scroll="onScroll"
            ref="scrolly"
   >
+    <div :class="['im_top_time', { active: showTopTime }]">{{ topTime }}</div>
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loadingUp" class="loading"></div>
 
@@ -33,10 +34,10 @@
 </template>
 
 <script>
-  import vkapi from 'js/vkapi';
-  import { fields, concatProfiles, endScroll, eventBus, callWithDelay, timer } from 'js/utils';
+  import { fields, concatProfiles, endScroll, eventBus, callWithDelay, timer, debounce } from 'js/utils';
   import { parseMessage, parseConversation } from 'js/messages';
   import longpoll from 'js/longpoll';
+  import vkapi from 'js/vkapi';
 
   import Scrolly from '../../UI/Scrolly.vue';
   import Icon from '../../UI/Icon.vue';
@@ -64,6 +65,7 @@
       showEndBtn: false,
       showTopTime: false,
 
+      topTime: null,
       lastReadedMsg: null,
       lastViewedMention: null,
       replyHistory: []
@@ -137,21 +139,30 @@
         loadingPeers.delete(this.peer_id);
 
         this.checkReadMessages(list);
+        this.checkTopTime(list);
 
         return items;
-      },
-
-      canShowScrollBtn(list) {
-        return !(this.loadedDown && !(list.scrollTop + list.offsetHeight + 100 < list.scrollHeight));
       },
 
       onScroll(list) {
         if(!list.scrollHeight) return;
 
         this.showEndBtn = this.canShowScrollBtn(list) && (this.peer && this.peer.unread || list.dy > 0);
-
         this.checkReadMessages(list);
         this.checkScrolling(list);
+        this.checkTopTime(list);
+      },
+
+      afterUpdateScrollTop(list) {
+        this.showEndBtn = this.canShowScrollBtn(list);
+        this.$refs.scrolly.refreshScrollLayout();
+        this.checkScrolling(list);
+        this.checkReadMessages(list);
+        this.checkTopTime(list);
+      },
+
+      canShowScrollBtn(list) {
+        return !(this.loadedDown && !(list.scrollTop + list.offsetHeight + 100 < list.scrollHeight));
       },
 
       async checkReadMessages(list) {
@@ -174,6 +185,34 @@
           if(lastReadedMsg) this.readMessages(lastReadedMsg);
         }
       },
+
+      checkTopTime(list) {
+        const dates = document.querySelectorAll('.message_date');
+        let value;
+
+        for(const index in dates) {
+          const el = dates[index];
+          const nextEl = dates[+index + 1];
+
+          if(el.offsetTop <= list.scrollTop && (!nextEl || nextEl.offsetTop > list.scrollTop)) {
+            value = el.innerText;
+            break;
+          }
+        }
+
+        if(value) {
+          this.topTime = value;
+          this.showTopTime = true;
+          this.hideTopTime();
+        } else {
+          // Если прописать topTime = null, то при скрытии элемента будет виден пустой элемент
+          this.showTopTime = false;
+        }
+      },
+
+      hideTopTime: debounce(function() {
+        this.showTopTime = false;
+      }, 2000),
 
       readMessages: callWithDelay(function(msg_id) {
         if(this.lastReadedMsg >= msg_id) return;
@@ -205,13 +244,6 @@
           }, { isDown: true });
         }
       }, -1),
-
-      afterUpdateScrollTop(list) {
-        this.showEndBtn = this.canShowScrollBtn(list);
-        this.$refs.scrolly.refreshScrollLayout();
-        this.checkScrolling(list);
-        this.checkReadMessages(list);
-      },
 
       async jumpTo({ msg_id, mark = true, top, bottom }) {
         const onLoad = async () => {
@@ -434,6 +466,30 @@
 
   .messages_list_wrap {
     height: 100%;
+  }
+
+  .im_top_time {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    right: 0;
+    width: fit-content;
+    margin: 0 auto;
+    z-index: 1;
+    background-color: #fff;
+    border: solid 1px #cfd9e1;
+    border-radius: 15px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
+    padding: 3px 12px;
+    color: #828282;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .4s;
+  }
+
+  .im_top_time.active {
+    opacity: 1;
   }
 
   .messages_typing {
