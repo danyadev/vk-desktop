@@ -7,7 +7,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 
-module.exports = (env, { mode }) => {
+module.exports = function(env, { mode }) {
   const isDev = mode == 'development';
 
   return {
@@ -56,10 +56,13 @@ module.exports = (env, { mode }) => {
       rules: [
         {
           test: /\.css$/,
-          use: [
-            isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+          use: isDev ? [
+            'vue-style-loader',
+            'css-loader'
+          ] : [
+            MiniCssExtractPlugin.loader,
             'css-loader',
-            ...(isDev ? [] : ['clean-css-loader?level=2'])
+            'clean-css-loader?level=2'
           ]
         },
         {
@@ -82,9 +85,11 @@ module.exports = (env, { mode }) => {
     },
     plugins: [
       new VueLoaderPlugin(),
-      new MiniCssExtractPlugin({ filename: 'bundle.css' }),
+      isDev && new MiniCssExtractPlugin({ filename: 'bundle.css' }),
       new CopyWebpackPlugin([
-        { from: 'index.html', to: 'index.html' },
+        isDev
+          ? { from: 'index-dev.html', to: 'index-dev.html' }
+          : { from: 'index.html', to: 'index.html' },
         { from: 'src/assets', to: 'assets' }
       ])
     ],
