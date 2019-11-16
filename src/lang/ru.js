@@ -9,6 +9,7 @@ export default {
   loading: 'Загрузка...',
   send: 'Отправить',
   retry: 'Повторить',
+  not_supported: 'Не поддерживается',
 
   // Время
   date_now: 'только что',
@@ -59,6 +60,7 @@ export default {
   im_empty_dialog: 'Ваш список сообщений пуст',
   im_unread_messages: 'Новые сообщения',
   im_msg_edited: 'ред',
+  im_keyboard_pay_with: 'Оплатить через',
 
   im_go_to_first_msg: 'Перейти в начало беседы',
   im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],

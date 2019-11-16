@@ -2,11 +2,21 @@
     <Scrolly vclass="keyboard">
       <div v-for="line of buttons" class="keyboard_line">
         <Ripple v-for="({ action, color }, i) of line" :key="i"
-                :text="action.type == 'text' ? emoji(action.label) : 'Не поддерживается'"
-                :color="color == 'default' ? '#ced7e0' : 'rgba(0, 0, 0, .2)'"
-                :class="['keyboard_button', color]"
+                :color="color == 'default' && action.type != 'vkpay' ? '#ced7e0' : 'rgba(0, 0, 0, .2)'"
+                :class="['keyboard_button', action.type == 'vkpay' ? 'primary' : color]"
                 @click="click(action)"
-        />
+        >
+          <div v-if="action.type == 'text'" v-emoji.br="action.label"></div>
+          <template v-else-if="action.type == 'open_app'">
+            <img src="~assets/services.svg">
+            {{ action.label }}
+          </template>
+          <template v-else-if="action.type == 'vkpay'">
+            {{ l('im_keyboard_pay_with') }}
+            <img src="~assets/vk_pay.svg">
+          </template>
+          <div v-else>{{ l('not_supported') }}</div>
+        </Ripple>
       </div>
     </Scrolly>
 </template>
@@ -15,6 +25,9 @@
   import Scrolly from '../../UI/Scrolly.vue';
   import Ripple from '../../UI/Ripple.vue';
   import emoji from 'js/emoji';
+  import electron from 'electron';
+
+  const { shell } = electron.remote;
 
   export default {
     props: ['keyboard'],
@@ -28,11 +41,20 @@
       }
     },
     methods: {
-      emoji: emoji,
+      emoji,
       click(action) {
         switch(action.type) {
           case 'text':
             this.$emit('click', action, this.keyboard.author_id);
+            break;
+
+          case 'open_app':
+            const hash = action.hash ? `#${action.hash}` : '';
+            shell.openExternal(`https://vk.com/app${action.app_id}${hash}`);
+            break;
+
+          case 'vkpay':
+            shell.openExternal(`https://vk.com/app6217559#${action.hash}`);
             break;
         }
       }
@@ -55,16 +77,18 @@
   }
 
   .keyboard_button {
-    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
     margin: 0 4px;
-    padding: 10px 8px;
+    padding: 0 8px;
+    height: 38px;
     border-radius: 6px;
     text-align: center;
     color: #fff;
     cursor: pointer;
     user-select: none;
-
-    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
@@ -84,5 +108,9 @@
 
   .keyboard_button.negative {
     background: #e64646;
+  }
+
+  .keyboard_button img {
+    height: 24px;
   }
 </style>
