@@ -7,11 +7,11 @@
       <img class="im_header_photo" :src="photo">
       <div class="im_header_center">
         <div class="im_header_name_wrap">
-          <div class="im_header_name" v-emoji="title"></div>
+          <div class="im_header_name text-shadow" v-emoji="title"></div>
           <div v-if="owner && owner.verified" class="verified white"></div>
           <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="im_header_muted" />
         </div>
-        <div class="im_header_online">{{ online }}</div>
+        <div class="im_header_online text-shadow">{{ online }}</div>
       </div>
       <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
     </div>
@@ -141,13 +141,11 @@
   .im_header_name {
     color: #fff;
     line-height: 14px;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   }
 
   .im_header_online {
     color: rgba(255, 255, 255, .75);
     font-size: 13px;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
     text-align: center;
     margin-top: 2px;
   }
