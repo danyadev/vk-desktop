@@ -9,8 +9,9 @@ export const regexp = {
   push: /\[(club|id)(\d+)\|(.+?)\]/g
 };
 
-export const VKDesktopUserAgent = `VKDesktop/${version}`;
-export const AndroidUserAgent = 'VKAndroidApp/5.48-4286';
+const deviceInfo = '(1; 1; 1; 1; 1; 1)';
+export const VKDesktopUserAgent = `VKDesktop/${version} ${deviceInfo}`;
+export const AndroidUserAgent = `VKAndroidApp/5.48.2-4296 ${deviceInfo}`;
 
 export function escape(text) {
   if(text == null) return '';
