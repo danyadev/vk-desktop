@@ -6,7 +6,7 @@
        @mousemove="activateScrollBars($event, true)"
        @touchstart="onTouchStart"
        @touchmove.passive="onTouchMove"
-       @touchend="onTouchEnd"
+       @touchend="hideScrollBars"
        @wheel.passive="onWheel"
        @keydown="onKeyDown"
        tabindex="1"
@@ -33,10 +33,7 @@
   }
 
   function normalize(num, max) {
-    if(num < 0) num = 0;
-    if(num > max) num = max;
-
-    return num;
+    return Math.max(0, Math.min(num, max));
   }
 
   function toPercent(n) {
@@ -56,14 +53,7 @@
   }
 
   export default {
-    props: {
-      vclass: {
-        default: ''
-      },
-      lock: {
-        default: false
-      }
-    },
+    props: ['vclass', 'lock'],
 
     data: () => ({
       isScrolling: false,
@@ -72,14 +62,12 @@
 
     mounted() {
       this.observer = new MutationObserver((records) => {
-        // 1) Если вызов произошел из-за ripple-анимации
-        // 2) Если вызов произошел от перерендера элементов
-        // Возможно будет исправлено в новых версиях Vue
-        if(records.every(({ target, addedNodes: a, removedNodes: r }) => {
+        if(!records.every(({ target, addedNodes: a, removedNodes: r }) => {
+          // 1) Если вызов произошел из-за ripple-анимации
+          // 2) Если вызов произошел от перерендера элементов
+          // Возможно будет исправлено в новых версиях Vue
           return target.matches && target.matches('.ripples') || isNodesEqual(a, r);
-        })) return;
-
-        this.refreshScrollLayout();
+        })) this.refreshScrollLayout();
       });
 
       this.observer.observe(this.$refs.viewport, {
@@ -94,7 +82,7 @@
     },
 
     methods: {
-      onTouchStart ({ touches: [touch] }) {
+      onTouchStart({ touches: [touch] }) {
         this.touchX = touch.pageX;
         this.touchY = touch.pageY;
 
@@ -102,8 +90,8 @@
       },
 
       onTouchMove({ touches: [touch] }) {
-        const dx = -(touch.pageX - this.touchX);
-        const dy = -(touch.pageY - this.touchY);
+        const dx = this.touchX - touch.pageX;
+        const dy = this.touchY - touch.pageY;
 
         this.touchX = touch.pageX;
         this.touchY = touch.pageY;
@@ -111,21 +99,16 @@
         this.refreshScrollLayout(dx, dy);
       },
 
-      onTouchEnd() {
-        this.hideScrollBars();
-      },
-
       onMouseDown({ target, pageX: initialPageX, pageY: initialPageY }) {
         if(!target.closest('.scrolly-bar-wrap')) return;
         this.isScrolling = true;
 
-        const self = this;
         const { viewport } = this.$refs;
         const bar = target.matches('.scrolly-bar') ? target : target.firstChild;
         const initialBarTop = bar.offsetTop;
         const initialBarLeft = bar.offsetLeft;
 
-        function moveScrollBar({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
+        const moveScrollBar = ({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) => {
           const isMoveToPoint = isMouseUp && target.matches('.scrolly-bar-wrap');
           const { scrollWidth, scrollHeight, offsetWidth, offsetHeight } = viewport;
           let dx = 0, dy = 0;
@@ -156,14 +139,14 @@
             viewport.scrollTop = scrollTop;
           }
 
-          self.refreshScrollLayout.call(self, dx, dy, true);
-          clearTimeout(timers[self._uid]);
-          timers[self._uid] = null;
+          this.refreshScrollLayout(dx, dy, true);
+          clearTimeout(timers[this._uid]);
+          timers[this._uid] = null;
         }
 
-        function onMouseUp(e) {
-          self.isScrolling = false;
-          self.hideScrollBars();
+        const onMouseUp = (e) => {
+          this.isScrolling = false;
+          this.hideScrollBars();
 
           removeEventListener('mousemove', moveScrollBar);
           removeEventListener('mouseup', onMouseUp);
@@ -236,7 +219,7 @@
       refreshScrollLayout(dx = 0, dy = 0, mousemove) {
         const { viewport, barX, barY } = this.$refs;
         if(!viewport) return;
-        
+
         const {
           scrollTop: prevScrollTop,
           scrollLeft: prevScrollLeft
