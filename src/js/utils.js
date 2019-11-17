@@ -91,6 +91,22 @@ export function timer(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+function isObject(obj) {
+  return obj && !Array.isArray(obj) && typeof obj == 'object';
+}
+
+export function deepAssign(obj1, obj2) {
+  for(const key in obj2) {
+    if(isObject(obj1[key]) && isObject(obj2[key])) {
+      obj1[key] = deepAssign(obj1[key], obj2[key]);
+    } else {
+      obj1[key] = obj2[key];
+    }
+  }
+
+  return obj1;
+}
+
 // Собирает массивы профилей и групп в единый массив, где у групп отрицательный id
 export function concatProfiles(profiles = [], groups = []) {
   return profiles.concat(

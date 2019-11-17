@@ -1,11 +1,13 @@
 import electron from 'electron';
+import { deepAssign } from 'js/utils';
+
 const win = electron.remote.getCurrentWindow();
 
 class Storage {
   constructor(name, defaults) {
     const storageData = JSON.parse(localStorage.getItem(name) || '{}');
 
-    this.data = Object.assign({}, defaults, storageData);
+    this.data = deepAssign(defaults, storageData);
     this.name = name;
     this.save();
   }
