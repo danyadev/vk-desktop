@@ -85,7 +85,7 @@ module.exports = function(env, { mode }) {
     },
     plugins: [
       new VueLoaderPlugin(),
-      isDev && new MiniCssExtractPlugin({ filename: 'bundle.css' }),
+      ...(isDev ? [] : [new MiniCssExtractPlugin({ filename: 'bundle.css' })]),
       new CopyWebpackPlugin([
         isDev
           ? { from: 'index-dev.html', to: 'index-dev.html' }
