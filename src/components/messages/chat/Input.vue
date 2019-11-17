@@ -12,7 +12,7 @@
                @input="onInput"
                @drop.prevent
                @paste.prevent="paste"
-               @keydown.enter.exact.prevent="sendMessage()"
+               @keydown.enter.exact.prevent="send"
           ></div>
           <Icon v-if="hasKeyboard"
                 name="keyboard"
@@ -22,9 +22,9 @@
           />
           <img class="emoji_btn" src="~assets/emoji_icon.svg">
         </div>
-        <img class="send_btn" src="~assets/im_send.svg" @click="sendMessage()">
+        <img class="send_btn" src="~assets/im_send.svg" @click="send">
       </div>
-      <Keyboard v-if="hasKeyboard && showKeyboard" :keyboard="keyboard" @click="sendMessage" />
+      <Keyboard v-if="hasKeyboard && showKeyboard" :peer_id="peer_id" :keyboard="keyboard" />
     </template>
     <Ripple v-else-if="canWrite.channel" class="chat_input_error channel" color="#e1e5f0" @click="toggleNotifications">
       <template v-if="peer.left">
@@ -45,8 +45,8 @@
 
 <script>
   import electron from 'electron';
-  import { getTextWithEmoji, getLastMsgId } from 'js/messages';
-  import { random, throttle, escape, eventBus } from 'js/utils';
+  import { throttle, escape } from 'js/utils';
+  import sendMessage from 'js/sendMessage';
   import emoji from 'js/emoji';
   import vkapi from 'js/vkapi';
 
@@ -85,82 +85,11 @@
       }
     },
     methods: {
-      async sendMessage(action, author_id) {
-        const random_id = random(-2e9, 2e9);
-        let text;
-
-        if(action) {
-          const { domain } = this.$store.state.profiles[author_id];
-
-          text = this.peer_id > 2e9 ? `@${domain} ${action.label}` : action.label;
-
-          if(this.keyboard.one_time) {
-            this.$store.commit('messages/updateConversation', {
-              peer: {
-                id: this.peer_id,
-                keyboard: {}
-              }
-            });
-          }
-        } else {
-          text = getTextWithEmoji(this.$refs.input.childNodes);
-        }
-
-        if(!text) return;
-
-        this.$refs.input.innerHTML = '';
-        this.counter++;
-
-        try {
-          this.$store.commit('messages/addLoadingMessage', {
-            peer_id: this.peer_id,
-            msg: {
-              id: getLastMsgId() + this.counter*1e5,
-              text,
-              from: this.$store.getters['users/user'].id,
-              date: (Date.now() / 1000).toFixed(),
-              out: true,
-              editTime: 0,
-              fwdCount: 0,
-              fwdMessages: [],
-              attachments: [],
-              random_id,
-              isLoading: true
-            }
-          });
-
-          await this.$nextTick();
-
-          eventBus.emit('messages:jumpTo', {
-            peer_id: this.peer_id,
-            bottom: true,
-            mark: false
-          });
-
-          await vkapi('messages.send', {
-            peer_id: this.peer_id,
-            message: text,
-            random_id,
-            payload: action && action.payload
-          });
-        } catch(e) {
-          this.$store.commit('messages/editLoadingMessage', {
-            peer_id: this.peer_id,
-            random_id,
-            isLoadingFailed: true
-          });
-
-          // 900 = Нельзя отправить пользователю из черного списка
-          // 902 = Нельзя отправить сообщение из-за настроек приватности собеседника
-          if([900, 902].includes(e.error_code)) {
-            this.$store.commit('messages/updateConversation', {
-              peer: {
-                id: this.peer_id,
-                canWrite: false
-              }
-            });
-          }
-        }
+      send() {
+        sendMessage({
+          peer_id: this.peer_id,
+          input: this.$refs.input
+        });
       },
 
       toggleNotifications() {

@@ -7,7 +7,7 @@ import { timer, eventBus } from './utils';
 
 function hasFlag(mask, flag) {
   const flags = {
-    unread:         1 << 0,  // Приходит всегда
+    unread:         1,       // Приходит всегда
     outbox:         1 << 1,  // Сообщение от тебя
     important:      1 << 3,  // Важное сообщение
     chat:           1 << 4,  // Отправка сообщения в беседу через (m.)vk.com
@@ -109,10 +109,12 @@ function getMessage(data) {
   const isReplyMsg = flag('reply_msg');
   const hasAttachment = isReplyMsg || data[6].fwd || attachments.length;
 
+  if(keyboard) keyboard.author_id = from_id;
+
   return {
     peer: {
       id: data[2],
-      keyboard: keyboard && Object.assign(keyboard, { author_id: from_id }),
+      keyboard: keyboard && !keyboard.inline && keyboard,
       channel: from_id < 0 && data[2] > 2e9 && data[5].title === '',
       mentions: data[5].mentions || []
     },
@@ -133,7 +135,8 @@ function getMessage(data) {
       random_id: data[7],
       was_listened: false,
       hasAttachment: hasAttachment,
-      isContentDeleted: !data[4] && !action && !hasAttachment
+      isContentDeleted: !data[4] && !action && !hasAttachment,
+      keyboard: keyboard && keyboard.inline && keyboard
     }
   };
 }

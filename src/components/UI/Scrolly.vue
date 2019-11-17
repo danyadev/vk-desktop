@@ -307,8 +307,8 @@
     transition: opacity .3s ease;
   }
 
-  .scrolly.isScrolling .scrolly-bar,
-  .scrolly.isActive .scrolly-bar {
+  .scrolly.isScrolling > .scrolly-bar-wrap .scrolly-bar,
+  .scrolly.isActive > .scrolly-bar-wrap .scrolly-bar {
     opacity: 1;
   }
 
@@ -323,7 +323,7 @@
   }
 
   .scrolly-bar:hover:before,
-  .scrolly.isScrolling .scrolly-bar:before {
+  .scrolly.isScrolling > .scrolly-bar-wrap .scrolly-bar:before {
     background: rgba(0, 0, 0, .4);
   }
 

@@ -9,23 +9,27 @@
       <img v-if="showUserData" class="message_photo" :src="photo">
       <div v-else-if="isChat && !msg.out && !isChannel" class="message_photo"></div>
 
-      <div class="message_bubble">
-        <Reply :msg="msg" :peer_id="peer_id" />
+      <div class="message_bubble_wrap">
+        <div class="message_bubble">
+          <Reply :msg="msg" :peer_id="peer_id" />
 
-        <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
-        <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
+          <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
+          <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
-        <Attachments :msg="msg" />
-        <Forwarded :msg="msg" />
+          <Attachments :msg="msg" />
+          <Forwarded :msg="msg" />
 
-        <div class="message_time_wrap">
-          <template v-if="msg.editTime">
-            <div class="message_edited">{{ l('im_msg_edited') }}</div>
-            <div class="dot"></div>
-          </template>
+          <div class="message_time_wrap">
+            <template v-if="msg.editTime">
+              <div class="message_edited">{{ l('im_msg_edited') }}</div>
+              <div class="dot"></div>
+            </template>
 
-          <div class="message_time">{{ time }}</div>
+            <div class="message_time">{{ time }}</div>
+          </div>
         </div>
+
+        <Keyboard v-if="msg.keyboard" :peer_id="peer_id" :keyboard="msg.keyboard" />
       </div>
     </div>
   </div>
@@ -38,13 +42,15 @@
   import Attachments from './attachments/Attachments.vue';
   import Reply from './attachments/Reply.vue';
   import Forwarded from './attachments/Forwarded.vue';
+  import Keyboard from './Keyboard.vue';
 
   export default {
     props: ['msg', 'peer', 'peer_id', 'messageDate', 'isStartUnread', 'prevMsg'],
     components: {
       Attachments,
       Reply,
-      Forwarded
+      Forwarded,
+      Keyboard
     },
     computed: {
       user() {
@@ -69,7 +75,7 @@
         return this.peer && (
           this.msg.id > this.peer.out_read || // непрочитано собеседником
           this.msg.id > this.peer.in_read // непрочитано мной
-        );
+        ) || this.msg.isLoading;
       },
       showUserData() {
         return !this.msg.out && this.isChat && !this.isChannel && (
@@ -135,9 +141,11 @@
     margin-right: 10px;
   }
 
-  .message_bubble {
+  .message_bubble_wrap {
     position: relative;
     max-width: 75%;
+    display: flex;
+    flex-direction: column;
   }
 
   .message_wrap:not(.hideBubble) .message_bubble {

@@ -476,7 +476,7 @@
     right: 0;
     width: fit-content;
     margin: 0 auto;
-    z-index: 1;
+    z-index: 2;
     background-color: #fff;
     border: solid 1px #cfd9e1;
     border-radius: 15px;

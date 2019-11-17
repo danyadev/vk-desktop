@@ -1,7 +1,7 @@
 import { escape, getPhoto, fields, loadProfile, concatProfiles } from './utils';
 import getTranslate from './getTranslate';
 import store from './store';
-import emoji, { getEmojiCode } from './emoji';
+import emoji from './emoji';
 import vkapi from './vkapi';
 
 const loadedConvMembers = {};
@@ -59,7 +59,8 @@ export function parseMessage(message) {
     random_id: message.random_id,
     was_listened: !!message.was_listened,
     hasAttachment: hasAttachment,
-    isContentDeleted: !message.text && !message.action && !hasAttachment
+    isContentDeleted: !message.text && !message.action && !hasAttachment,
+    keyboard: message.keyboard
   };
 }
 
@@ -149,28 +150,6 @@ export function getMessagePreview(msg, peer_id, author) {
     if(fwdCount) return getTranslate('im_forwarded', [fwdCount], fwdCount);
     return getTranslate('im_attachments', attachments[0].type);
   }
-}
-
-export function getTextWithEmoji(nodes) {
-  let text = '';
-
-  for(const node of nodes || []) {
-    switch(node.nodeName) {
-      case 'IMG':
-        text += node.alt;
-        break;
-
-      case 'BR':
-        text += '<br>';
-        break;
-
-      default:
-        text += node.data || node.innerText || '';
-        break;
-    }
-  }
-
-  return text.replace(/\n/g, '').trim();
 }
 
 export function getLastMsgId() {
