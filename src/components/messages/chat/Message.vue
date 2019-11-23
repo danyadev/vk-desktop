@@ -1,5 +1,5 @@
 <template>
-  <div :class="['message_wrap', { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading, isSticker, hideBubble }]" :id="msg.id">
+  <div :class="['message_wrap', ...attachClasses, { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading }]" :id="msg.id">
     <div v-if="showUserData" class="message_name">
       {{ name }}
       <div v-if="user && user.verified" class="verified"></div>
@@ -11,13 +11,13 @@
 
       <div class="message_bubble_wrap">
         <div class="message_bubble">
-          <Reply :msg="msg" :peer_id="peer_id" />
+          <Reply v-if="msg.isReplyMsg" :msg="msg" :peer_id="peer_id" />
 
           <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
           <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
-          <Attachments :msg="msg" />
-          <Forwarded :msg="msg" />
+          <Attachments :msg="msg" :peer_id="peer_id" />
+          <Forwarded v-if="msg.fwdCount" :msg="msg" />
 
           <div class="message_time_wrap">
             <template v-if="msg.editTime">
@@ -86,17 +86,51 @@
           this.messageDate
         );
       },
-      isSticker() {
-        return this.msg.attachments.find(({ type }) => type == 'sticker');
-      },
-      hideBubble() {
-        return this.isSticker && !this.msg.isReplyMsg;
+      attachClasses() {
+        const classes = [];
+        const { text, attachments, isReplyMsg, fwdCount } = this.msg;
+        const isSticker = !!attachments.sticker;
+        const isPhoto = !!attachments.photo;
+        const attachNames = Object.keys(attachments);
+        const onlyPhotos = !isReplyMsg && !fwdCount &&
+              isPhoto && attachNames.length == 1;
+        let flyTime = false;
+
+        if(isSticker) classes.push('isSticker');
+        if(attachNames[0] == 'photo') classes.push('isStartPhoto');
+        if(onlyPhotos) classes.push('onlyPhotos');
+        if(isSticker || onlyPhotos) flyTime = true;
+
+        if(onlyPhotos && !text) {
+          // Уменьшаем отступы со всех сторон
+          classes.push('removeMargin');
+          flyTime = true;
+        } else if(!text && !isReplyMsg && isPhoto) {
+          // Уменьшаем отступы сверху
+          classes.push('removeTopMargin');
+        } else if(attachNames[attachNames.length-1] == 'photo' && !fwdCount) {
+          // Уменьшаем отступы слева, снизу и справа
+          classes.push('removeBottomMargin');
+          flyTime = true;
+        }
+
+        if(
+          isSticker && !isReplyMsg ||
+          !text && onlyPhotos && attachments.photo.length == 1
+        ) {
+          classes.push('hideBubble');
+          flyTime = true;
+        }
+
+        if(flyTime) classes.push('flyTime');
+
+        return classes;
       }
     }
   }
 </script>
 
-<style scoped>
+<style>
   .message_wrap {
     padding: 8px 14px 4px 14px;
     background-color: #fff;
@@ -178,12 +212,12 @@
     pointer-events: none;
   }
 
-  .message_wrap:not(.isSticker) .message_time_wrap {
+  .message_wrap:not(.hideBubble) .message_time_wrap {
     bottom: -4px;
     margin: 6px 0 0 6px;
   }
 
-  .message_wrap.isSticker .message_time_wrap {
+  .message_wrap.flyTime .message_time_wrap {
     position: absolute;
     bottom: 0;
     right: 0;
@@ -244,5 +278,66 @@
     left: -20px;
     bottom: 7px;
     background: url(~assets/recent.svg) center / contain;
+  }
+
+  /* Фотографии */
+
+  .message_wrap.flyTime:not(.isSticker) .message_time_wrap {
+    background: #00000094;
+    color: #f5f5f5;
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .message_wrap.flyTime:not(.isSticker) .dot {
+    background: #f5f5f5;
+  }
+
+  .message_wrap.isStartPhoto .message_text:not(:empty) {
+    margin: 0 0 5px 5px;
+    float: left;
+  }
+
+  .message_wrap.removeMargin .attach_photos > img:first-child,
+  .message_wrap.removeTopMargin .attach_photos > img:first-child {
+    border-top-left-radius: 14px;
+  }
+
+  .message_wrap.removeMargin .attach_photos img.lastColumn:first-child,
+  .message_wrap.removeTopMargin .attach_photos img.lastColumn:first-child {
+    border-top-right-radius: 14px;
+  }
+
+  .message_wrap.removeMargin .attach_photos img.lastRow:first-child,
+  .message_wrap.removeMargin .attach_photos br + img.lastRow,
+  .message_wrap.removeBottomMargin .attach_photos img.lastRow:first-child {
+    border-bottom-left-radius: 14px;
+  }
+
+  .message_wrap.removeMargin .attach_photos img.lastRow.lastColumn,
+  .message_wrap.removeBottomMargin .attach_photos img.lastRow.lastColumn {
+    border-bottom-right-radius: 14px;
+  }
+
+
+  .message_wrap.removeMargin .message_bubble {
+    padding: 6px;
+  }
+
+  .message_wrap.removeTopMargin .message_bubble {
+    padding: 6px 6px 8px 6px;
+  }
+
+  .message_wrap.removeBottomMargin .message_bubble {
+    padding: 8px 6px 6px 6px;
+  }
+
+  .message_wrap.removeOnlyBottomMargin .message_bubble {
+    padding-bottom: 6px;
+  }
+
+  .message_wrap.removeTopMargin:not(.flyTime) .message_time_wrap,
+  .message_wrap.removeBottomMargin:not(.flyTime) .message_time_wrap {
+    margin-right: 6px;
   }
 </style>

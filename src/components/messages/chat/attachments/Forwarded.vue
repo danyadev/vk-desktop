@@ -1,5 +1,5 @@
 <template>
-  <div v-if="msg.fwdCount" class="attach_unknown">
+  <div class="im_attach_unknown">
     (forwarded)
   </div>
 </template>
@@ -9,9 +9,3 @@
     props: ['msg']
   }
 </script>
-
-<style scoped>
-  .attach_unknown {
-    color: #696969;
-  }
-</style>

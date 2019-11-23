@@ -7,15 +7,19 @@
     props: ['attach'],
     computed: {
       src() {
-        const index = devicePixelRatio > 1 ? 2 : 1;
+        if(this.attach[0]) {
+          const index = devicePixelRatio > 1 ? 2 : 1;
 
-        return this.attach ? this.attach.images[index].url : 'assets/blank.gif';
+          return this.attach[0].images[index].url;
+        } else {
+          return 'assets/blank.gif';
+        }
       }
     }
   }
 </script>
 
-<style scoped>
+<style>
   .attach_sticker {
     height: 128px;
     width: 128px;

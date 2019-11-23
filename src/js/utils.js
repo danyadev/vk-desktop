@@ -160,6 +160,7 @@ export async function loadProfile(id) {
   const profiles = loadingProfiles.slice();
   const newProfiles = await vkapi('execute.getProfiles', {
     profile_ids: profiles.join(','),
+    func_v: 2,
     fields
   });
 

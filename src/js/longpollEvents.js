@@ -1,5 +1,5 @@
 import { parseMessage, parseConversation, loadConversation, loadConversationMembers } from './messages';
-import availableAttachments from '../components/messages/chat/attachments/attachments';
+import { supportedAttachments } from '../components/messages/chat/attachments/attachments';
 import longpoll from 'js/longpoll';
 import store from './store/';
 import vkapi from './vkapi';
@@ -69,9 +69,9 @@ function getServiceMessage(data) {
 }
 
 function getAttachments(data) {
-  const attachs = [];
+  const attachments = {};
 
-  if(data.geo) attachs.push({ type: 'geo' });
+  if(data.geo) attachments.geo = [];
 
   for(const key in data) {
     const match = key.match(/attach(\d+)$/);
@@ -84,11 +84,11 @@ function getAttachments(data) {
       if(kind == 'audiomsg') type = 'audio_message';
       if(kind == 'graffiti') type = 'graffiti';
 
-      attachs.push({ type });
+      if(!attachments[type]) attachments[type] = [];
     }
   }
 
-  return attachs;
+  return attachments;
 }
 
 function getMessage(data) {
@@ -107,7 +107,7 @@ function getMessage(data) {
   const { keyboard } = data[5];
   const attachments = getAttachments(data[6]);
   const isReplyMsg = flag('reply_msg');
-  const hasAttachment = isReplyMsg || data[6].fwd || attachments.length;
+  const hasAttachment = isReplyMsg || data[6].fwd || Object.keys(attachments).length;
 
   if(keyboard) keyboard.author_id = from_id;
 
@@ -182,7 +182,12 @@ async function loadMessages(peer_id, msg_ids) {
 }
 
 function hasSupportedAttachments(msg) {
-  return msg.isReplyMsg || msg.attachments.find(({ type }) => availableAttachments[type]);
+  // Добавить пересланные сообщения, когда будет готово
+  if(msg.isReplyMsg) return true;
+
+  for(const type in msg.attachments) {
+    if(supportedAttachments.has(type)) return true;
+  }
 }
 
 async function watchTyping(peer_id, user_id) {
@@ -327,7 +332,7 @@ export default {
       }
 
       const { loadingPeers } = store.state.messages;
-      const isLoadedChat = store.state.messages.openedChats.includes(peer_id);
+      const isChatOpened = store.state.messages.openedChats.includes(peer_id);
       const conv = store.state.messages.conversations[peer_id];
       const localMessages = store.state.messages.messages[peer_id] || [];
       const lastLocalMsg = localMessages[localMessages.length-1];
@@ -339,12 +344,12 @@ export default {
         mentions: conv && conv.peer.mentions || []
       };
 
-      if(
-        isLoadedChat && (
-          !lastLocalMsg && !loadingPeers.has(peer_id) ||
-          conv.peer.last_msg_id == lastLocalMsg.id
-        )
-      ) {
+      const isChatLoadedBottom = isChatOpened && (
+        !lastLocalMsg && !loadingPeers.has(peer_id) ||
+        conv.peer.last_msg_id == lastLocalMsg.id
+      );
+
+      if(isChatLoadedBottom) {
         store.commit('messages/addMessages', {
           peer_id: peer_id,
           messages: items.map(({ msg }) => msg),
@@ -355,7 +360,7 @@ export default {
       for(const { msg, peer: { keyboard, mentions } } of items) {
         longpoll.emit('new_message', msg, peer_id);
 
-        if(hasSupportedAttachments(msg)) {
+        if(hasSupportedAttachments(msg) && isChatLoadedBottom) {
           messagesWithAttachments.push(msg.id);
         }
 
@@ -416,12 +421,13 @@ export default {
     parser: getMessage,
     handler({ peer, msg }) {
       const conv = store.state.messages.conversations[peer.id];
+      const messages = store.state.messages.messages[peer.id] || [];
       const isLastMsg = conv && conv.msg.id == msg.id;
       const activeId = store.getters['users/user'].id;
 
       removeTyping(peer.id, msg.from);
 
-      if(hasSupportedAttachments(msg)) {
+      if(hasSupportedAttachments(msg) && messages.find((message) => message.id == msg.id)) {
         loadMessages(peer.id, [msg.id]);
       }
 
@@ -532,13 +538,13 @@ export default {
   },
 
   10: {
-    // Включение уведомлений в чате (16)
+    // ??? (16, 1024, 16384)
     // [peer_id, flag]
     parser() {}
   },
 
   12: {
-    // Выключение уведомлений в чате (16)
+    // ??? (16, 1024, 16384)
     // [peer_id, flag]
     parser() {}
   },
@@ -560,8 +566,8 @@ export default {
     // Добавление сниппета к сообщению (если сообщение с ссылкой)
     // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
     parser: getMessage,
-    handler({ peer: { id: peer_id }, msg }) {
-      store.commit('messages/editMessage', { peer_id, msg });
+    handler({ peer, msg }) {
+      store.commit('messages/editMessage', { peer_id: peer.id, msg });
     }
   },
 

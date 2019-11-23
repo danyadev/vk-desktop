@@ -4,7 +4,7 @@ import store from './store';
 import emoji from './emoji';
 import vkapi from './vkapi';
 
-const loadedConvMembers = {};
+const loadedConvMembers = new Set();
 
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
@@ -35,11 +35,19 @@ export function parseConversation(conversation) {
 }
 
 export function parseMessage(message) {
-  if(message.geo) message.attachments.push({ type: 'geo' });
+  if(message.geo) message.attachments.push({ type: 'geo', geo: message.geo });
 
   const fwdCount = message.fwd_messages ? message.fwd_messages.length : 0;
   const isReplyMsg = !!message.reply_message;
   const hasAttachment = fwdCount || isReplyMsg || message.attachments.length;
+  const attachments = {};
+
+  for(const attach of message.attachments) {
+    const { type } = attach;
+
+    if(attachments[type]) attachments[type].push(attach[type]);
+    else attachments[type] = [attach[type]];
+  }
 
   return {
     id: message.id,
@@ -54,7 +62,7 @@ export function parseMessage(message) {
     fwdMessages: message.fwd_messages || [],
     isReplyMsg: isReplyMsg,
     replyMsg: isReplyMsg && parseMessage(message.reply_message),
-    attachments: message.attachments,
+    attachments: attachments,
     conversation_msg_id: message.conversation_message_id,
     random_id: message.random_id,
     was_listened: !!message.was_listened,
@@ -95,7 +103,7 @@ export function getServiceMessage(action, author, peer_id, isFull) {
       if(isAccCase) return `${user.first_name_acc} ${user.last_name_acc}`;
       else return `${user.first_name} ${user.last_name}`;
     } else {
-      if(!loadedConvMembers[peer_id]) {
+      if(!loadedConvMembers.has(peer_id)) {
         // В случае, когда юзеры в беседе не загружены
         loadConversationMembers(peer_id);
       } else {
@@ -148,7 +156,8 @@ export function getMessagePreview(msg, peer_id, author) {
     if(isReplyMsg) return getTranslate('im_replied');
     if(fwdCount < 0) return getTranslate('im_forwarded_some');
     if(fwdCount) return getTranslate('im_forwarded', [fwdCount], fwdCount);
-    return getTranslate('im_attachments', attachments[0].type);
+
+    return getTranslate('im_attachments', Object.keys(attachments)[0]);
   }
 }
 
@@ -172,8 +181,8 @@ export async function loadConversation(id) {
 }
 
 export async function loadConversationMembers(id, force) {
-  if(!force && loadedConvMembers[id]) return;
-  loadedConvMembers[id] = 1;
+  if(!force && loadedConvMembers.has(id)) return;
+  loadedConvMembers.add(id);
 
   if(id < 2e9) return loadProfile(id);
 
@@ -188,7 +197,7 @@ export async function loadConversationMembers(id, force) {
     // Пользователь исключен/вышел из беседы, но т.к. юзер может вернуться,
     // здесь удаляется пометка беседы как загруженная для возможности повторить попытку
     if(err.error_code == 917) {
-      delete loadedConvMembers[id];
+      loadedConvMembers.delete(id);
     }
   }
 }

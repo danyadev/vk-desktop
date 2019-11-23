@@ -2,25 +2,25 @@
   import components from './attachments';
 
   export default {
-    props: ['msg'],
+    props: ['peer_id', 'msg'],
     render(h) {
       const attachments = [];
 
-      for(const attachment of this.msg.attachments) {
-        const { type } = attachment;
+      for(const type in this.msg.attachments) {
         const component = components[type];
 
         if(component) {
           attachments.push(
             h(component, {
               props: {
-                attach: attachment[type]
+                attach: this.msg.attachments[type],
+                peer_id: this.peer_id
               }
             })
           );
         } else {
           attachments.push(
-            h('div', { class: 'attach_unknown' }, `(${type})`)
+            h('div', { class: 'im_attach_unknown' }, `(${type})`)
           );
         }
       }
@@ -32,13 +32,13 @@
   }
 </script>
 
-<style scoped>
+<style>
   .im_attachments {
     display: flex;
     flex-direction: column;
   }
 
-  .attach_unknown {
+  .im_attach_unknown {
     color: #696969;
   }
 </style>

@@ -198,7 +198,7 @@
     color: #265b96;
   }
 
-  .verified {
+  .im_peer_name_wrap .verified {
     flex: none;
     margin: 1px 0 0 4px;
   }

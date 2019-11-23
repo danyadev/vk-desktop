@@ -1,5 +1,5 @@
 <template>
-  <div v-if="msg.isReplyMsg" class="attach_reply" @click="jump">
+  <div class="attach_reply" @click="jump">
     <img v-if="reply.photo" class="attach_reply_photo" :src="reply.photo">
 
     <div class="attach_reply_content">
@@ -21,11 +21,10 @@
       getPhoto(msg) {
         let url;
 
-        const photo = msg.attachments.find((attach) => attach.type == 'photo');
-        const sticker = msg.attachments.find((attach) => attach.type == 'sticker');
+        const { photo, sticker } = msg.attachments;
 
-        if(photo) url = getPhotoFromSizes(photo.photo.sizes, 'o').url;
-        if(sticker) url = sticker.sticker.images[1].url;
+        if(photo) url = getPhotoFromSizes(photo[0].sizes, 'o').url;
+        if(sticker) url = sticker[0].images[1].url;
 
         return url;
       },
@@ -90,7 +89,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .attach_reply {
     display: flex;
     position: relative;

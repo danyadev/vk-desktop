@@ -102,9 +102,11 @@ export default new class Longpoll extends EventEmitter {
     const events = [];
 
     for(const item of history.history) {
-      if([3, 4, 5, 18].includes(item[0])) {
-        if(item[0] == 3 && !item[4]) continue;
+      // 1. Прочтение сообщения или отмена пометки как важное
+      // 2. 18 событие не имеет смысла, т.к. в обьекте сообщения уже есть сниппет
+      if(item[0] == 3 && !item[4] || item[0] == 18) continue;
 
+      if([3, 4, 5].includes(item[0])) {
         events.push([
           item[0], // id события
           { peer: peers[item[3]], msg: messages[item[1]] },
