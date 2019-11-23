@@ -33,12 +33,11 @@
 </script>
 
 <style>
-  .im_attachments {
-    display: flex;
-    flex-direction: column;
-  }
-
   .im_attach_unknown {
     color: #696969;
+  }
+
+  .im_attachments > div:not(:first-child) {
+    padding-top: 5px;
   }
 </style>

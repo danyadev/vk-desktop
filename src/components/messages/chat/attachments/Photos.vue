@@ -101,12 +101,20 @@
         if(props.lastColumn && !props.lastRow) children.push(h('br'));
       }
 
-      return h('div', { class: 'attach_photos' }, children);
+      return h('div', { class: 'attach_photos_wrap' }, [
+        h('div', { class: 'attach_photos' }, children)
+      ]);
     }
   }
 </script>
 
 <style>
+  .attach_photos_wrap {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+  }
+
   .attach_photos {
     width: fit-content;
     margin: 0 auto;
@@ -118,8 +126,6 @@
   }
 
   .attach_photo {
-    /* Фикс отступа в 3px ниже картинки */
-    vertical-align: middle;
     object-fit: cover;
     border-radius: 10px;
     float: left;

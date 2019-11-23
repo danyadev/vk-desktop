@@ -106,7 +106,7 @@
           classes.push('removeMargin');
           flyTime = true;
         } else if(!text && !isReplyMsg && isPhoto) {
-          // Уменьшаем отступы сверху
+          // Уменьшаем отступы сверху, справа и слева
           classes.push('removeTopMargin');
         } else if(attachNames[attachNames.length-1] == 'photo' && !fwdCount) {
           // Уменьшаем отступы слева, снизу и справа

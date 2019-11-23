@@ -23,5 +23,6 @@
   .attach_sticker {
     height: 128px;
     width: 128px;
+    vertical-align: middle;
   }
 </style>
