@@ -254,7 +254,7 @@
             return this.afterUpdateScrollTop(list);
           }
 
-          const msg = document.querySelector(`.message_wrap[id="${msg_id}"]`);
+          const msg = document.querySelector(`.message_list [id="${msg_id}"]`);
 
           if(msg) {
             if(msg.clientHeight > list.clientHeight) {

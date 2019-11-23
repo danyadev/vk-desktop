@@ -12,11 +12,11 @@
     },
     methods: {
       calcParentWidth() {
-        const list = document.querySelector('.messages_list_wrap');
+        const list = this.$parent.$parent.$parent.$parent.$el;
         return list ? (list.clientWidth * .75 - 14*2 - 12*2) : 0;
       },
       calcParentHeight() {
-        const list = document.querySelector('.messages_list_wrap');
+        const list = this.$parent.$parent.$parent.$parent.$el;
         return list ? (list.scrollHeight * .70) : 0;
       }
     },
@@ -129,6 +129,7 @@
     object-fit: cover;
     border-radius: 10px;
     float: left;
+    max-width: 100%;
   }
 
   .attach_photo:not(.lastColumn) {

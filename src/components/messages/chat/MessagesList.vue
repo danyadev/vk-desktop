@@ -1,7 +1,7 @@
 <script>
   import { isSameDay } from 'date-fns';
   import { getMessageDate } from 'js/date';
-  import { capitalize } from 'js/utils';
+  import { capitalize, getPhotoFromSizes } from 'js/utils';
   import { getServiceMessage } from 'js/messages';
 
   import Message from './Message.vue';
@@ -64,14 +64,33 @@
         }
 
         if(serviceMessage) {
+          let photo;
+
+          if(msg.attachments.photo) {
+            const [attach] = msg.attachments.photo;
+
+            photo = h('img', {
+              class: 'service_message_photo',
+              domProps: {
+                src: attach ? getPhotoFromSizes(attach.sizes, 'q').url : 'assets/blank.gif'
+              }
+            })
+          }
+
           children.push(
             h('div', {
               class: ['service_message', msg.id > this.in_read && 'isUnread'],
               domProps: {
-                innerHTML: serviceMessage,
                 id: msg.id
               }
-            })
+            }, [
+              h('span', {
+                domProps: {
+                  innerHTML: serviceMessage
+                }
+              }),
+              photo
+            ])
           );
 
           continue;
@@ -125,12 +144,23 @@
   }
 
   .service_message {
-    padding: 5px 14px 5px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    padding: 5px 14px 5px 14px;
     color: #5d6165;
   }
 
   .service_message >>> b {
     font-weight: 500;
+  }
+
+  .service_message img {
+    width: 100px;
+    height: 100px;
+    margin-top: 10px;
+    border-radius: 50%;
+    object-fit: contain;
   }
 </style>
