@@ -226,9 +226,10 @@
     padding: 2px 6px;
   }
 
-  .message_wrap.isSticker:not(.hideBubble) .message_time_wrap {
-    right: 3px;
-    bottom: 3px;
+  .message_wrap.isSticker:not(.hideBubble) .message_time_wrap,
+  .message_wrap.flyTime.hideBubble:not(.isSticker) .message_time_wrap {
+    right: 4px;
+    bottom: 4px;
   }
 
   .message_wrap.isSticker:not(.hideBubble).out .message_time_wrap {
@@ -319,8 +320,7 @@
     border-bottom-right-radius: 14px;
   }
 
-
-  .message_wrap.removeMargin .message_bubble {
+  .message_wrap.removeMargin:not(.hideBubble) .message_bubble {
     padding: 6px;
   }
 
