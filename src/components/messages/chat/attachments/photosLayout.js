@@ -23,7 +23,7 @@ function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
 // thumbs = [{ width, height, ...rest }]: массив фоток
 // margin: расстояние между фотками
 // parentWidth, parentHeight: максимальные размеры родителя
-module.exports = function processThumbnails({ thumbs, margin, parentWidth, parentHeight }) {
+export default function processThumbnails({ thumbs, margin, parentWidth, parentHeight }) {
   // Копируем массив для предотвращения мутации оригинального массива
   thumbs = thumbs.map((thumb) => Object.assign({}, thumb));
 
@@ -160,6 +160,8 @@ module.exports = function processThumbnails({ thumbs, margin, parentWidth, paren
     let minHeightDiff = 0;
 
     for(const key in photosLayoutVariants) {
+      if(key.split(',').find((count) => count > 4)) continue;
+      
       const photosHeight = photosLayoutVariants[key];
       let heightDiff = Math.abs(margin * (photosHeight.length - 1) + getArraySum(photosHeight) - parentHeight);
 

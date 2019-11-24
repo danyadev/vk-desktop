@@ -1,12 +1,18 @@
+import PhotosLayout from './PhotosLayout.vue';
 import Sticker from './Sticker.vue';
-import Photos from './Photos.vue';
+import Documents from './Documents.vue';
 
 export const supportedAttachments = new Set([
   'sticker',
-  'photo'
+  'photo',
+  'doc',
+  'video'
 ]);
 
 export default {
+  _preload: new Set(['photo', 'doc', 'video']),
+  photosLayout: PhotosLayout,
+
   sticker: Sticker,
-  photo: Photos
+  doc: Documents
 }
