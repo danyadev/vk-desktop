@@ -312,24 +312,24 @@
     float: left;
   }
 
-  .message_wrap.removeMargin .attach_photos > img:first-child,
-  .message_wrap.removeTopMargin .attach_photos > img:first-child {
+  .message_wrap.removeMargin .attach_photos > .attach_photo_wrap:first-child > img,
+  .message_wrap.removeTopMargin .attach_photos > .attach_photo_wrap:first-child > img {
     border-top-left-radius: 14px;
   }
 
-  .message_wrap.removeMargin .attach_photos img.lastColumn:first-child,
-  .message_wrap.removeTopMargin .attach_photos img.lastColumn:first-child {
+  .message_wrap.removeMargin .attach_photo_wrap.endFirstRow img,
+  .message_wrap.removeTopMargin .attach_photo_wrap.endFirstRow img {
     border-top-right-radius: 14px;
   }
 
-  .message_wrap.removeMargin .attach_photos img.lastRow:first-child,
-  .message_wrap.removeMargin .attach_photos br + img.lastRow,
-  .message_wrap.removeBottomMargin .attach_photos img.lastRow:first-child {
+  .message_wrap.removeMargin .attach_photo_wrap.lastRow:first-child img,
+  .message_wrap.removeMargin br + .attach_photo_wrap.lastRow img,
+  .message_wrap.removeBottomMargin .attach_photo_wrap.lastRow:first-child img {
     border-bottom-left-radius: 14px;
   }
 
-  .message_wrap.removeMargin .attach_photos img.lastRow.lastColumn,
-  .message_wrap.removeBottomMargin .attach_photos img.lastRow.lastColumn {
+  .message_wrap.removeMargin .attach_photo_wrap.lastRow.lastColumn img,
+  .message_wrap.removeBottomMargin .attach_photo_wrap.lastRow.lastColumn img {
     border-bottom-right-radius: 14px;
   }
 

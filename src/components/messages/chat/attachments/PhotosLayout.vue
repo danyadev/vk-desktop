@@ -80,6 +80,7 @@
       const children = [];
       let generatedColumn = false;
       let height = 0;
+      let isFirstRow = false;
 
       function prepareStyle({ width, height }) {
         return {
@@ -95,14 +96,14 @@
           class: ['attach_photo_wrap', {
             isVideo: props.isVideo,
             lastColumn: props.lastColumn,
-            lastRow: props.lastRow
+            lastRow: props.lastRow,
+            endFirstRow: props.endFirstRow
           }],
           style: prepareStyle(props)
         }, [
           beforeEl && h('div', { class: 'attach_photo_type' }, props.isVideo ? props.duration : props.ext.toUpperCase()),
           h('img', {
             class: ['attach_photo'],
-            style: prepareStyle(props),
             domProps: {
               src: props.url || props.src
             }
@@ -115,6 +116,11 @@
         const nextProps = this.photos[+index+1];
 
         if(generatedColumn && props.columnItem) continue;
+
+        if(props.lastColumn && !isFirstRow) {
+          props.endFirstRow = true;
+          isFirstRow = true;
+        }
 
         if(props.columnItem) {
           generatedColumn = true;
@@ -232,6 +238,8 @@
     object-fit: cover;
     border-radius: 10px;
     max-width: 100%;
+    width: 100%;
+    height: 100%;
   }
 
   .attach_photo_wrap:not(.lastColumn) {
