@@ -102,7 +102,7 @@
               lastAttach == 'doc' && doc[doc.length-1].preview;
         let flyTime = false;
 
-        if(attachNames.length) classes.push('hasAttachment');
+        if(attachNames.length || fwdCount) classes.push('hasAttachment');
         if(isStartPhoto) classes.push('isStartPhoto');
         if(sticker) classes.push('isSticker');
         if(onlyPhotos) classes.push('onlyPhotos');
@@ -307,13 +307,18 @@
     background: #f5f5f5;
   }
 
-  .message_wrap.isStartPhoto .message_text:not(:empty) {
-    margin: 0 0 5px 5px;
+  .message_wrap.hasAttachment .message_text:not(:empty) {
+    margin-bottom: 5px;
     float: left;
   }
 
-  .message_wrap.removeMargin .attach_photos > .attach_photo_wrap:first-child > img,
-  .message_wrap.removeTopMargin .attach_photos > .attach_photo_wrap:first-child > img {
+  .message_wrap.isStartPhoto .message_text:not(:empty) {
+    margin: 0 5px 5px 5px;
+    float: left;
+  }
+
+  .message_wrap.removeMargin .attach_photos > .attach_photo_wrap:first-child img,
+  .message_wrap.removeTopMargin .attach_photos > .attach_photo_wrap:first-child img {
     border-top-left-radius: 14px;
   }
 

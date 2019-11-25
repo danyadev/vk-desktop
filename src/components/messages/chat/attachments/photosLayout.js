@@ -92,20 +92,20 @@ export default function processThumbnails({ thumbs, margin, parentWidth, parentH
     }
   } else if(thumbs.length == 4) {
     if(photoRatioTypes == 'wwww') {
-      const widthModifier = (parentWidth - 2 * margin) / (photoRatios[1] + photoRatios[2] + photoRatios[3]);
+      const widthModifier = (parentWidth - margin * 2) / (photoRatios[1] + photoRatios[2] + photoRatios[3]);
       const width1 = parentWidth;
       const width2 = widthModifier * photoRatios[1];
       const width3 = widthModifier * photoRatios[2];
       const width4 = widthModifier * photoRatios[3];
       const height1 = Math.min(width1 / photoRatios[0], (parentHeight - margin) * .66);
-      const height2 = Math.min(parentHeight - height1 - margin, widthModifier);
+      const height2 = Math.min(parentHeight - height1 - margin, Math.max(widthModifier, 60));
 
       updateThumb(thumbs[0], width1, height1, true, false);
-      updateThumb(thumbs[1], width2, height2, false, false);
-      updateThumb(thumbs[2], width3, height2, false, false);
-      updateThumb(thumbs[3], width4, height2, false, false);
+      updateThumb(thumbs[1], width2, height2, false, true);
+      updateThumb(thumbs[2], width3, height2, false, true);
+      updateThumb(thumbs[3], width4, height2, true, true);
     } else {
-      const heightModifier = (parentHeight - 2 * margin) / (1 / photoRatios[1] + 1 / photoRatios[2] + 1 / photoRatios[3]);
+      const heightModifier = (parentHeight - margin * 2) / (1 / photoRatios[1] + 1 / photoRatios[2] + 1 / photoRatios[3]);
       const height1 = parentHeight;
       const height2 = heightModifier / photoRatios[1];
       const height3 = heightModifier / photoRatios[2];
@@ -161,7 +161,7 @@ export default function processThumbnails({ thumbs, margin, parentWidth, parentH
 
     for(const key in photosLayoutVariants) {
       if(key.split(',').find((count) => count > 4)) continue;
-      
+
       const photosHeight = photosLayoutVariants[key];
       let heightDiff = Math.abs(margin * (photosHeight.length - 1) + getArraySum(photosHeight) - parentHeight);
 
