@@ -29,7 +29,4 @@ $ npm run build # Сборка VK Desktop и установщика
 
 ### Linux
 
-```bash
-$ npm i # Установка всех зависимостей в проекте
-$ npm run build # Сборка VK Desktop
-```
+TODO
