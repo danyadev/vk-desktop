@@ -1,4 +1,4 @@
-import { random, eventBus } from './utils';
+import { random, eventBus, createModalWindow } from './utils';
 import store from './store';
 import vkapi from './vkapi';
 import Vue from 'vue';
@@ -85,12 +85,17 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
     // 900 = Нельзя отправить пользователю из черного списка
     // 902 = Нельзя отправить сообщение из-за настроек приватности собеседника
     if([900, 902].includes(e.error_code)) {
-      store.commit('messages/updateConversation', {
+      return store.commit('messages/updateConversation', {
         peer: {
           id: peer_id,
           canWrite: false
         }
       });
+    }
+
+    // Требуется активировать аккаунт
+    if(e.error_code == 17) {
+      createModalWindow(e.redirect_uri);
     }
   }
 }

@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import electron from 'electron';
 import vkapi from './vkapi';
 import store from './store/';
 import { version } from 'package-json';
@@ -170,4 +171,18 @@ export async function loadProfile(id) {
   isLoadingProfiles = false;
 
   if(loadingProfiles.length) loadProfile();
+}
+
+export function createModalWindow(url) {
+  const { BrowserWindow, getCurrentWindow } = electron.remote;
+  const win = new BrowserWindow({
+    parent: getCurrentWindow(),
+    modal: true,
+    width: 450,
+    height: 650
+  });
+
+  win.loadURL(url);
+
+  return win;
 }
