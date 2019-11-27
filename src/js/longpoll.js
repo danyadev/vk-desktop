@@ -48,7 +48,7 @@ export default new class Longpoll extends EventEmitter {
       if(data.ts) this.ts = data.ts;
       if(data.pts) this.pts = data.pts;
 
-      this.emitHistory(data.updates);
+      await this.emitHistory(data.updates);
     }
   }
 
@@ -123,7 +123,7 @@ export default new class Longpoll extends EventEmitter {
     if(history.more) await this.getHistory();
   }
 
-  emitHistory(history = []) {
+  async emitHistory(history = []) {
     if(!history.length) return;
 
     const events = [];
@@ -141,7 +141,7 @@ export default new class Longpoll extends EventEmitter {
       const data = event.parser(item[1] == 'fromHistory' ? item[0] : item);
       if(!data) continue;
 
-      // Собираем все события с одинаковым peer_id идущие подряд в одно событие
+      // Собираем все события идущие подряд с одинаковым peer_id в одно событие
       if(event.pack) {
         const prev = events[events.length - 1];
 
@@ -153,10 +153,13 @@ export default new class Longpoll extends EventEmitter {
     }
 
     for(const [id, data, peer_id] of events) {
-      const { handler } = longpollEvents[id];
+      const { handler, preload } = longpollEvents[id];
+      const isPreload = preload && preload(data);
+      const promise = peer_id
+        ? handler({ key: +peer_id, items: data }, isPreload)
+        : handler(data, isPreload);
 
-      if(peer_id) handler({ key: +peer_id, items: data });
-      else handler(data);
+      if(isPreload) await promise;
     }
   }
 }

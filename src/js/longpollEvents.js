@@ -1,5 +1,5 @@
 import { parseMessage, parseConversation, loadConversation, loadConversationMembers } from './messages';
-import { supportedAttachments } from '../components/messages/chat/attachments/attachments';
+import { supportedAttachments, preloadAttachments } from '../components/messages/chat/attachments/attachments';
 import longpoll from 'js/longpoll';
 import store from './store/';
 import vkapi from './vkapi';
@@ -91,7 +91,7 @@ function getAttachments(data) {
   return attachments;
 }
 
-function getMessage(data) {
+function parseLongPollMessage(data) {
   // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
   const user = store.getters['users/user'];
 
@@ -155,30 +155,27 @@ async function getLastMessage(peer_id) {
   return { msg, peer };
 }
 
-async function loadMessages(peer_id, msg_ids) {
+async function loadMessages(peer_id, msg_ids, isPreload) {
   const { items } = await vkapi('messages.getById', {
     message_ids: msg_ids.join(',')
   });
 
+  const messages = [];
+
   for(const msg of items) {
     const parsedMsg = parseMessage(msg);
 
-    store.commit('messages/editMessage', {
-      peer_id,
-      msg: parsedMsg
-    });
-
-    if(parsedMsg.fwdCount < 0) {
-      // Пересланные сообщения -> n пересланных сообщений
-      // Пока не пофиксят отображение кол-ва пересланных сообщений в лп
-      store.commit('messages/updateConversation', {
-        peer: {
-          id: peer_id
-        },
+    if(isPreload) {
+      messages.push(parsedMsg);
+    } else {
+      store.commit('messages/editMessage', {
+        peer_id,
         msg: parsedMsg
       });
     }
   }
+
+  return messages;
 }
 
 function hasSupportedAttachments(msg) {
@@ -218,6 +215,14 @@ function removeTyping(peer_id, user_id, clearChat) {
       peer_id: peer_id,
       user_id: !clearChat && user_id
     });
+  }
+}
+
+function hasPreloadMessages(messages) {
+  for(const { msg } of messages) {
+    for(const type in msg.attachments) {
+      if(preloadAttachments.has(type)) return true;
+    }
   }
 }
 
@@ -273,7 +278,8 @@ export default {
     // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
     // [msg_id, flags, peer_id] (пункты 1 и 2)
     pack: true,
-    parser: getMessage,
+    parser: parseLongPollMessage,
+    preload: hasPreloadMessages,
     async handler({ key: peer_id, items }) {
       const conv = store.state.messages.conversations[peer_id];
       const convList = store.getters['messages/conversationsList'];
@@ -323,8 +329,9 @@ export default {
     // Новое сообщение
     // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
     pack: true,
-    parser: getMessage,
-    handler({ key: peer_id, items }) {
+    parser: parseLongPollMessage,
+    preload: hasPreloadMessages,
+    async handler({ key: peer_id, items }, isPreload) {
       // lastMsg.id: cannot read property 'id' of undefined....
       if(!items[items.length - 1].msg) {
         debugger;
@@ -336,7 +343,7 @@ export default {
       const conv = store.state.messages.conversations[peer_id];
       const localMessages = store.state.messages.messages[peer_id] || [];
       const lastLocalMsg = localMessages[localMessages.length-1];
-      const lastMsg = items[items.length - 1].msg;
+      let lastMsg = items[items.length - 1].msg;
       const messagesWithAttachments = [];
       const peerData = {
         id: peer_id,
@@ -351,15 +358,15 @@ export default {
 
       if(isChatLoadedBottom) {
         store.commit('messages/addMessages', {
-          peer_id: peer_id,
-          messages: items.map(({ msg }) => msg),
+          peer_id,
+          messages: items
+            .filter((msg) => !hasPreloadMessages([msg]))
+            .map(({ msg }) => msg),
           addNew: true
         });
       }
 
       for(const { msg, peer: { keyboard, mentions } } of items) {
-        longpoll.emit('new_message', msg, peer_id);
-
         if(hasSupportedAttachments(msg) && isChatLoadedBottom) {
           messagesWithAttachments.push(msg.id);
         }
@@ -389,8 +396,22 @@ export default {
       }
 
       if(messagesWithAttachments.length) {
-        loadMessages(peer_id, messagesWithAttachments);
+        if(isPreload) {
+          const messages = await loadMessages(peer_id, messagesWithAttachments, true);
+
+          store.commit('messages/addMessages', {
+            peer_id,
+            messages,
+            addNew: true
+          });
+
+          lastMsg = messages[messages.length-1];
+        } else {
+          loadMessages(peer_id, messagesWithAttachments);
+        }
       }
+
+      for(const { msg } of items) longpoll.emit('new_message', msg, peer_id);
 
       if(lastMsg.hidden) return;
 
@@ -418,8 +439,9 @@ export default {
   5: {
     // Редактирование сообщения
     // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser: getMessage,
-    handler({ peer, msg }) {
+    parser: parseLongPollMessage,
+    preload: (data) => hasPreloadMessages([data]),
+    async handler({ peer, msg }, isPreload) {
       const conv = store.state.messages.conversations[peer.id];
       const messages = store.state.messages.messages[peer.id] || [];
       const isLastMsg = conv && conv.msg.id == msg.id;
@@ -428,7 +450,11 @@ export default {
       removeTyping(peer.id, msg.from);
 
       if(hasSupportedAttachments(msg) && messages.find((message) => message.id == msg.id)) {
-        loadMessages(peer.id, [msg.id]);
+        if(isPreload) {
+          msg = (await loadMessages(peer.id, [msg.id], true))[0];
+        } else {
+          loadMessages(peer.id, [msg.id]);
+        }
       }
 
       const updateConvData = {
@@ -565,8 +591,13 @@ export default {
   18: {
     // Добавление сниппета к сообщению (если сообщение с ссылкой)
     // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
-    parser: getMessage,
-    handler({ peer, msg }) {
+    parser: parseLongPollMessage,
+    preload: (data) => hasPreloadMessages([data]),
+    async handler({ peer, msg }, isPreload) {
+      if(isPreload) {
+        msg = (await loadMessages(peer.id, [msg.id], true))[0];
+      }
+
       store.commit('messages/editMessage', { peer_id: peer.id, msg });
     }
   },

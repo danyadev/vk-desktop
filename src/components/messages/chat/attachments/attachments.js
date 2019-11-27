@@ -9,10 +9,14 @@ export const supportedAttachments = new Set([
   'video'
 ]);
 
-export default {
-  _preload: new Set(['photo', 'doc', 'video']),
-  photosLayout: PhotosLayout,
+export const preloadAttachments = new Set([
+  'photo',
+  'doc',
+  'video'
+]);
 
+export default {
+  photosLayout: PhotosLayout,
   sticker: Sticker,
   doc: Documents
 }
