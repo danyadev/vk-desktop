@@ -27,14 +27,14 @@
     </div>
 
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
-      <div>{{ peer && peer.unread || '' }}</div>
+      <div>{{ peer && convertCount(peer.unread) || '' }}</div>
       <img src="~assets/dropdown.webp">
     </div>
   </Scrolly>
 </template>
 
 <script>
-  import { fields, concatProfiles, endScroll, eventBus, callWithDelay, timer, debounce } from 'js/utils';
+  import { fields, concatProfiles, endScroll, eventBus, callWithDelay, timer, debounce, convertCount } from 'js/utils';
   import { parseMessage, parseConversation } from 'js/messages';
   import longpoll from 'js/longpoll';
   import vkapi from 'js/vkapi';
@@ -90,6 +90,8 @@
       }
     },
     methods: {
+      convertCount,
+      
       async load(params = {}, { isDown, isFirstLoad, loadedUp, loadedDown } = {}) {
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;

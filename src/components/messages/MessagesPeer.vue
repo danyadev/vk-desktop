@@ -20,7 +20,9 @@
         <div v-if="peer.mentions.length" class="im_peer_mentioned">
           <Icon name="mention" width="20" height="18" />
         </div>
-        <div :class="['im_peer_unread', { outread, muted: peer.muted }]">{{ peer.unread || '' }}</div>
+        <div :class="['im_peer_unread', { outread, muted: peer.muted }]"
+             :title="peer.unread"
+        >{{ convertCount(peer.unread || '') }}</div>
       </div>
     </div>
   </Ripple>
@@ -30,7 +32,7 @@
   import { mapState } from 'vuex';
   import { getMessagePreview, loadConversationMembers } from 'js/messages';
   import { getShortDate } from 'js/date';
-  import { getPhoto, eventBus } from 'js/utils';
+  import { getPhoto, eventBus, convertCount } from 'js/utils';
 
   import Ripple from '../UI/Ripple.vue';
   import Icon from '../UI/Icon.vue';
@@ -103,6 +105,7 @@
       }
     },
     methods: {
+      convertCount,
       openChat() {
         if(this.activeChat == this.peer.id) return;
 

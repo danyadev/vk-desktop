@@ -4,6 +4,8 @@ import vkapi from './vkapi';
 import store from './store/';
 import { version } from 'package-json';
 
+const { BrowserWindow, getCurrentWindow } = electron.remote;
+
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
 export const regexp = {
@@ -174,7 +176,6 @@ export async function loadProfile(id) {
 }
 
 export function createModalWindow(url) {
-  const { BrowserWindow, getCurrentWindow } = electron.remote;
   const win = new BrowserWindow({
     parent: getCurrentWindow(),
     modal: true,
@@ -185,4 +186,13 @@ export function createModalWindow(url) {
   win.loadURL(url);
 
   return win;
+}
+
+// 125 -> 125
+// 12.732 -> 12K
+// 5.324.267 -> 5M
+export function convertCount(count) {
+  if(count >= 1e6) return Math.floor(count / 1e6) + 'M';
+  if(count >= 1e3) return Math.floor(count / 1e3) + 'K';
+  return count;
 }
