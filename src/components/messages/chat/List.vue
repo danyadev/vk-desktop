@@ -91,7 +91,7 @@
     },
     methods: {
       convertCount,
-      
+
       async load(params = {}, { isDown, isFirstLoad, loadedUp, loadedDown } = {}) {
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
@@ -429,7 +429,7 @@
         this.jumpTo(params);
       });
 
-      longpoll.on('new_message', async ({ random_id }, peer_id) => {
+      eventBus.on('messages:new', async ({ random_id }, peer_id) => {
         if(peer_id != this.peer_id) return;
 
         const list = this.$el.firstChild;

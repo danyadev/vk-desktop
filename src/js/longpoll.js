@@ -1,4 +1,3 @@
-import { EventEmitter } from 'events';
 import querystring from 'querystring';
 import request from './request';
 import vkapi from './vkapi';
@@ -7,10 +6,8 @@ import { parseConversation, parseMessage, getLastMsgId } from './messages';
 import store from './store/';
 import longpollEvents from './longpollEvents';
 
-export default new class Longpoll extends EventEmitter {
+export default new class Longpoll {
   constructor() {
-    super();
-
     this.debug = false;
     this.version = 9;
   }

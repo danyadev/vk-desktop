@@ -411,7 +411,7 @@ export default {
         }
       }
 
-      for(const { msg } of items) longpoll.emit('new_message', msg, peer_id);
+      for(const { msg } of items) eventBus.emit('messages:new', msg, peer_id);
 
       if(lastMsg.hidden) return;
 
