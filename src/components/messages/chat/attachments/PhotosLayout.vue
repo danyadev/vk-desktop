@@ -82,13 +82,6 @@
       let height = 0;
       let isFirstRow = false;
 
-      function prepareStyle({ width, height }) {
-        return {
-          width: `${width}px`,
-          height: `${height}px`
-        };
-      }
-
       function generateImg(props) {
         const beforeEl = props.isVideo || props.isDoc;
 
@@ -99,13 +92,19 @@
             lastRow: props.lastRow,
             endFirstRow: props.endFirstRow
           }],
-          style: prepareStyle(props)
+          style: {
+            width: `${props.width}px`,
+            height: `${props.height}px`
+          }
         }, [
           beforeEl && h('div', { class: 'attach_photo_type' }, props.isVideo ? props.duration : props.ext.toUpperCase()),
           h('img', {
             class: ['attach_photo'],
             domProps: {
-              src: props.url || props.src
+              src: props.url || props.src,
+              loading: 'lazy',
+              width: props.width,
+              height: props.height
             }
           })
         ]);

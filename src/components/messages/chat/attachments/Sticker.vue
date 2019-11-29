@@ -1,5 +1,5 @@
 <template>
-  <img class="attach_sticker" :src="src">
+  <img class="attach_sticker" :src="src" loading="lazy" width="128" height="128">
 </template>
 
 <script>
@@ -21,8 +21,6 @@
 
 <style>
   .attach_sticker {
-    height: 128px;
-    width: 128px;
     vertical-align: middle;
   }
 </style>

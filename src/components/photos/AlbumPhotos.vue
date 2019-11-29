@@ -2,7 +2,7 @@
   <Scrolly :vclass="{ loading }" :lock="lockScroll" @scroll="onScroll">
     <div class="album">
       <div v-for="photo of photos" class="photo">
-        <img :src="getPhotoFromSizes(photo.sizes, 'q').url">
+        <img :src="getPhotoFromSizes(photo.sizes, 'q').url" loading="lazy" width="150" height="150">
       </div>
     </div>
   </Scrolly>
@@ -83,8 +83,6 @@
 
   .photo img {
     object-fit: cover;
-    width: 150px;
-    height: 150px;
     margin: 0 0 0 5px;
   }
 </style>

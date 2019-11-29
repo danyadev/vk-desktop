@@ -6,7 +6,7 @@
     </div>
 
     <div class="message">
-      <img v-if="showUserData" class="message_photo" :src="photo">
+      <img v-if="showUserData" class="message_photo" :src="photo" loading="lazy" width="35" height="35">
       <div v-else-if="isChat && !msg.out && !isChannel" class="message_photo"></div>
 
       <div class="message_bubble_wrap">

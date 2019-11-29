@@ -14,7 +14,7 @@ function calculateMultiThumbsHeight(ratios, width, margin) {
 
 function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
   thumb.width = width;
-  thumb.height = height;
+  thumb.height = Math.max(height, 60);
   if(lastColumn) thumb.lastColumn = lastColumn;
   if(lastRow) thumb.lastRow = lastRow;
   if(columnItem) thumb.columnItem = columnItem;
@@ -98,7 +98,7 @@ export default function processThumbnails({ thumbs, margin, parentWidth, parentH
       const width3 = widthModifier * photoRatios[2];
       const width4 = widthModifier * photoRatios[3];
       const height1 = Math.min(width1 / photoRatios[0], (parentHeight - margin) * .66);
-      const height2 = Math.min(parentHeight - height1 - margin, Math.max(widthModifier, 60));
+      const height2 = Math.min(parentHeight - height1 - margin, widthModifier);
 
       updateThumb(thumbs[0], width1, height1, true, false);
       updateThumb(thumbs[1], width2, height2, false, true);

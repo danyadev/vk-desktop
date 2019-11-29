@@ -1,6 +1,6 @@
 <template>
   <div class="attach_reply" @click="jump">
-    <img v-if="reply.photo" class="attach_reply_photo" :src="reply.photo">
+    <img v-if="reply.photo" class="attach_reply_photo" :src="reply.photo" loading="lazy" width="37" height="37">
 
     <div class="attach_reply_content">
       <div class="attach_reply_name">{{ reply.name || '...' }}</div>
@@ -116,8 +116,6 @@
 
   .attach_reply_photo {
     flex: none;
-    width: 37px;
-    height: 37px;
     margin: 4px -4px 0 7px;
     border-radius: 4px;
     object-fit: cover;

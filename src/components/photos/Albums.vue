@@ -2,7 +2,10 @@
   <Scrolly>
     <div class="albums_list">
       <div v-for="album of albums" class="album">
-        <img :src="getPhotoFromSizes(album.sizes, 'q').src" @click="$emit('open', album)">
+        <img :src="getPhotoFromSizes(album.sizes, 'q').src"
+             loading="lazy" width="250" height="170"
+             @click="$emit('open', album)"
+        >
         <div class="album_name">{{ album.title }}</div>
         <div class="album_count">{{ album.size }}</div>
       </div>
@@ -51,7 +54,7 @@
     margin: 0 10px 50px 10px;
   }
 
-  .album, .album img {
+  .album {
     width: 250px;
     height: 170px;
   }

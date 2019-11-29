@@ -1,6 +1,8 @@
 <template>
   <Ripple color="#e6ebf2" class="im_peer" @click="openChat">
-    <div :class="['im_peer_photo', online]"><img :src="photo"></div>
+    <div :class="['im_peer_photo', online]">
+      <img :src="photo" loading="lazy" width="50" height="50">
+    </div>
     <div class="im_peer_content">
       <div class="im_peer_title">
         <div class="im_peer_name_wrap">
@@ -163,8 +165,6 @@
   }
 
   .im_peer_photo img {
-    width: 50px;
-    height: 50px;
     border-radius: 50%;
   }
 
