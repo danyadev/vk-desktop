@@ -23,7 +23,7 @@
           <Icon name="mention" width="20" height="18" />
         </div>
         <div :class="['im_peer_unread', { outread, muted: peer.muted }]"
-             :title="peer.unread"
+             :title="peer.unread || ''"
         >{{ convertCount(peer.unread || '') }}</div>
       </div>
     </div>

@@ -21,10 +21,14 @@
       getPhoto(msg) {
         let url;
 
-        const { photo, sticker } = msg.attachments;
+        const { photo, sticker, doc, video } = msg.attachments;
+        const photoDoc = doc && doc.find((doc) => doc.preview);
+        const videoImages = video && video[0].image;
 
         if(photo) url = getPhotoFromSizes(photo[0].sizes, 'o').url;
-        if(sticker) url = sticker[0].images[1].url;
+        else if(sticker) url = sticker[0].images[1].url;
+        else if(photoDoc) url = getPhotoFromSizes(photoDoc.preview.photo.sizes, 'm').src;
+        else if(video) url = (videoImages[6] || videoImages[videoImages.length-1]).url;
 
         return url;
       },

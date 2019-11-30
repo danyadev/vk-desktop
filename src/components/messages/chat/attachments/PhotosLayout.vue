@@ -46,7 +46,7 @@
 
           photos.push(
             ...video.map((video) => {
-              return Object.assign(video.image[video.image.length-2], {
+              return Object.assign(video.image[6] || video.image[video.image.length-1], {
                 isVideo: true,
                 duration: parseDuration(video.duration)
               });
@@ -57,7 +57,7 @@
         if(doc) {
           photos.push(
             ...doc.map((doc) => {
-              return Object.assign(getPhotoFromSizes(doc.preview.photo.sizes, 'o'), {
+              return Object.assign(getPhotoFromSizes(doc.preview.photo.sizes, 'y'), {
                 isDoc: true,
                 ext: doc.ext
               });

@@ -45,6 +45,7 @@
 <style>
   .act_menu_wrap {
     position: relative;
+    z-index: 3;
   }
 
   .act_menu_btn_wrap {
