@@ -184,6 +184,10 @@
     cursor: text;
   }
 
+  .chat_input_area b { font-weight: normal }
+  .chat_input_area i { font-style: normal }
+  .chat_input_area u { text-decoration: none }
+
   .chat_input.hasKeyboard .chat_input_area {
     padding-right: 68px;
   }

@@ -10,8 +10,9 @@ function parseInputText(nodes) {
 
   for(const node of nodes || []) {
     if(node.nodeName == '#text') text += node.data;
-    if(node.nodeName == 'BR') text += '<br>';
-    if(node.nodeName == 'IMG') text += node.alt;
+    else if(node.nodeName == 'BR') text += '<br>';
+    else if(node.nodeName == 'IMG') text += node.alt;
+    else text += node.innerText;
   }
 
   return text.replace(/\n/g, '').replace(/<br>/g, '\n').trim().replace(/\n/g, '<br>');
