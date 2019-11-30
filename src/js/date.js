@@ -76,10 +76,11 @@ export function getShortDate(date) {
 
 // Возвращает дату в виде:
 // 1) Был в сети только что
-// 2) Был в сети 2 часа назад
-// 3) Был в сети сегодня в 12:43
-// 4) Был в сети 13 июня в 17:24
-// 5) Был в сети 18 июня 2018 в 16:54
+// 2) Был в сети час назад
+// 3) Был в сети 2 часа назад
+// 4) Был в сети сегодня в 12:43
+// 5) Был в сети 13 июня в 17:24
+// 6) Был в сети 18 июня 2018 в 16:54
 export function getLastOnlineDate(date, sex) {
   const at = getTranslate('date_at');
   const now = new Date();
@@ -88,7 +89,7 @@ export function getLastOnlineDate(date, sex) {
   if(differenceInSeconds(now, date) < 30) {
     time = getTranslate('date_now');
   } else if(differenceInHours(now, date) < 4) {
-    time = formatDistanceStrict(date, now, { locale: ru, addSuffix: true });
+    time = formatDistanceStrict(date, now, { locale: ru, addSuffix: true }).replace(/1 /, '');
   } else if(isSameDay(date, now)) {
     time = `${getTranslate('today')} ${at} ` + getTime(date);
   } else if(!differenceInCalendarYears(now, date)) {
