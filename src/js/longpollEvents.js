@@ -411,7 +411,9 @@ export default {
         }
       }
 
-      for(const { msg } of items) eventBus.emit('messages:new', msg, peer_id);
+      for(let i=0; i<items.length; i++) {
+        eventBus.emit('messages:new', items[i].msg, peer_id, !i);
+      }
 
       if(lastMsg.hidden) return;
 

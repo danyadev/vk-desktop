@@ -429,7 +429,7 @@
         this.jumpTo(params);
       });
 
-      eventBus.on('messages:new', async ({ random_id }, peer_id) => {
+      eventBus.on('messages:new', async ({ random_id }, peer_id, isFirstMsg) => {
         if(peer_id != this.peer_id) return;
 
         const list = this.$el.firstChild;
@@ -449,8 +449,9 @@
             bottom: true,
             mark: false
           });
-        } else if(scrollTop + clientHeight == scrollHeight) {
+        } else if(scrollTop + clientHeight == scrollHeight && isFirstMsg) {
           // Пришло сообщение, когда ты был в конце беседы
+          // и это сообщение первое в списке новых сообщений longpoll
           this.jumpTo({
             bottom: true,
             mark: false
