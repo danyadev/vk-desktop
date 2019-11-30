@@ -9,3 +9,9 @@
     props: ['msg']
   }
 </script>
+
+<style>
+  .im_attachments + .im_attach_unknown {
+    margin-top: 5px;
+  }
+</style>

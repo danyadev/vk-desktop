@@ -102,6 +102,14 @@
     width: 128px;
   }
 
+  .message_wrap.removeBottomMargin .attach_reply {
+    margin-left: 5px;
+  }
+
+  .message_wrap.hasPhoto .attach_reply {
+    margin-bottom: 8px;
+  }
+
   .attach_reply::before {
     content: '';
     position: absolute;

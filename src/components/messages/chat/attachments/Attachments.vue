@@ -42,7 +42,7 @@
       }
 
       if(Object.keys(layoutAttachs).length) {
-        attachments.push(
+        attachments.unshift(
           h(components.photosLayout, {
             props: {
               attachments: layoutAttachs,

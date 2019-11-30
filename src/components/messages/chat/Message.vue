@@ -90,32 +90,28 @@
         const classes = [];
         const { text, attachments, isReplyMsg, fwdCount } = this.msg;
         const { photo, video, doc, sticker } = attachments;
-        const isPhotoDoc = doc && doc.every((doc) => doc.preview);
         const attachNames = Object.keys(attachments);
         const lastAttach = attachNames[attachNames.length-1];
-        const onlyPhotos = !isReplyMsg && !fwdCount && (photo || video || isPhotoDoc) &&
-              attachNames.every((attach) => ['photo', 'video', 'doc'].includes(attach)) &&
-              (!doc || isPhotoDoc);
-        const isStartPhoto = ['photo', 'video'].includes(attachNames[0]) ||
-              attachNames[0] == 'doc' && doc.find((doc) => doc.preview);
-        const isEndPhoto = ['photo', 'video'].includes(lastAttach) ||
-              lastAttach == 'doc' && doc[doc.length-1].preview;
+        const onlyPhotoAttachs = (photo || video || doc) && (!doc || doc.every((doc) => doc.preview)) &&
+              attachNames.every((attach) => ['photo', 'video', 'doc'].includes(attach));
+        const onlyPhotos = onlyPhotoAttachs && !isReplyMsg && !fwdCount;
+        const hasPhoto = attachNames.find((attach) => ['photo', 'video'].includes(attach)) ||
+              doc && doc.find((doc) => doc.preview);
         let flyTime = false;
 
         if(attachNames.length || fwdCount) classes.push('hasAttachment');
-        if(isStartPhoto) classes.push('isStartPhoto');
+        if(hasPhoto) classes.push('hasPhoto');
         if(sticker) classes.push('isSticker');
-        if(onlyPhotos) classes.push('onlyPhotos');
         if(sticker || onlyPhotos) flyTime = true;
 
         if(onlyPhotos && !text) {
           // Уменьшаем отступы со всех сторон
           classes.push('removeMargin');
           flyTime = true;
-        } else if(!text && !isReplyMsg && isStartPhoto) {
+        } else if(!text && !isReplyMsg && hasPhoto) {
           // Уменьшаем отступы сверху, справа и слева
           classes.push('removeTopMargin');
-        } else if(isEndPhoto && !fwdCount) {
+        } else if(onlyPhotoAttachs && !fwdCount) {
           // Уменьшаем отступы слева, снизу и справа
           classes.push('removeBottomMargin');
           flyTime = true;
@@ -205,8 +201,8 @@
     display: inline;
   }
 
-  .message_wrap.hasAttachment .message_text {
-    width: 100%;
+  .message_wrap.hasAttachment .message_text:not(:empty) {
+    display: inline-block;
   }
 
   .message_text.isContentDeleted {
@@ -226,7 +222,7 @@
 
   .message_wrap:not(.hideBubble) .message_time_wrap {
     bottom: -4px;
-    margin: 6px 0 0 6px;
+    margin: 5px 0 0 6px;
   }
 
   .message_wrap.flyTime .message_time_wrap {
@@ -309,12 +305,10 @@
 
   .message_wrap.hasAttachment .message_text:not(:empty) {
     margin-bottom: 5px;
-    float: left;
   }
 
-  .message_wrap.isStartPhoto .message_text:not(:empty) {
+  .message_wrap.hasPhoto .message_text:not(:empty) {
     margin: 0 5px 5px 5px;
-    float: left;
   }
 
   .message_wrap.removeMargin .attach_photos > .attach_photo_wrap:first-child img,

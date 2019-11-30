@@ -64,34 +64,40 @@
         }
 
         if(serviceMessage) {
-          let photo;
-
           if(msg.attachments.photo) {
             const [attach] = msg.attachments.photo;
 
-            photo = h('img', {
-              class: 'service_message_photo',
-              domProps: {
-                src: attach ? getPhotoFromSizes(attach.sizes, 'q').url : 'assets/blank.gif'
-              }
-            })
-          }
-
-          children.push(
-            h('div', {
-              class: ['service_message', msg.id > this.in_read && 'isUnread'],
-              domProps: {
-                id: msg.id
-              }
-            }, [
-              h('span', {
+            children.push(
+              h('div', {
+                class: ['service_message', 'hasPhoto', msg.id > this.in_read && 'isUnread'],
                 domProps: {
+                  id: msg.id
+                }
+              }, [
+                h('span', {
+                  domProps: {
+                    innerHTML: serviceMessage
+                  }
+                }),
+                h('img', {
+                  class: 'service_message_photo',
+                  domProps: {
+                    src: attach ? getPhotoFromSizes(attach.sizes, 'q').url : 'assets/blank.gif'
+                  }
+                })
+              ])
+            );
+          } else {
+            children.push(
+              h('div', {
+                class: ['service_message', msg.id > this.in_read && 'isUnread'],
+                domProps: {
+                  id: msg.id,
                   innerHTML: serviceMessage
                 }
-              }),
-              photo
-            ])
-          );
+              })
+            );
+          }
 
           continue;
         }
@@ -144,12 +150,15 @@
   }
 
   .service_message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     text-align: center;
     padding: 5px 14px 5px 14px;
     color: #5d6165;
+  }
+
+  .service_message.hasPhoto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .service_message >>> b {
