@@ -107,10 +107,9 @@
   }
 
   a, .link {
-    display: inline-block;
-    color: #254f79;
+    color: #306aab;
     cursor: pointer;
-    transition: color .3s;
+    user-select: none;
   }
 
   a:hover, .link:hover {

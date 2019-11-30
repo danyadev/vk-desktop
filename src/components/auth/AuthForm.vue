@@ -55,6 +55,8 @@
     },
     methods: {
       async auth() {
+        if(this.disableBtn) return;
+
         this.progress = true;
         this.hasError = false;
 
@@ -65,6 +67,8 @@
           this.hasError = true;
           this.progress = false;
         } else if(data.error == 'need_validation') {
+          this.progress = false;
+
           this.$emit('auth', {
             login: this.login,
             password: this.password,
