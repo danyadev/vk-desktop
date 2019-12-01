@@ -43,7 +43,7 @@
     display: flex;
     position: relative;
     height: 32px;
-    z-index: 4;
+    z-index: 5;
     background: #5281b9;
   }
 

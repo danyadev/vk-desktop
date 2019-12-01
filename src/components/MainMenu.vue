@@ -91,7 +91,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 3;
+    z-index: 4;
     background: #fff0;
     visibility: hidden;
   }
