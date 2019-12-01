@@ -75,7 +75,7 @@
         return this.$store.state.messages.messages[this.peer_id] || [];
       },
       messagesWithLoading() {
-        return this.messages.concat(this.loadingMessages);
+        return this.loadingDown ? this.messages : this.messages.concat(this.loadingMessages);
       },
       hasMessages() {
         return this.messagesWithLoading.length;
@@ -448,7 +448,7 @@
             peer_id: this.peer_id,
             random_id: random_id
           });
-          
+
           this.jumpTo({
             bottom: true,
             mark: false
