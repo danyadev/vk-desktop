@@ -130,7 +130,7 @@
           list.scrollTop = list.scrollHeight - scrollHeight + scrollTop;
 
           this.loadingUp = false;
-          this.loadedUp = loadedUp || !isFirstLoad && items.length < 40;
+          this.loadedUp = loadedUp || items.length < (isFirstLoad ? 20 : 40);
         }
 
         if(isDown || isFirstLoad) {
@@ -192,9 +192,9 @@
         const dates = document.querySelectorAll('.message_date');
         let value;
 
-        for(const index in dates) {
-          const el = dates[index];
-          const nextEl = dates[+index + 1];
+        for(let i=0; i<dates.length; i++) {
+          const el = dates[i];
+          const nextEl = dates[i+1];
 
           if(el.offsetTop <= list.scrollTop && (!nextEl || nextEl.offsetTop > list.scrollTop)) {
             value = el.innerText;
@@ -448,14 +448,15 @@
             peer_id: this.peer_id,
             random_id: random_id
           });
-
+          
           this.jumpTo({
             bottom: true,
             mark: false
           });
-        } else if(scrollTop + clientHeight == scrollHeight && isFirstMsg) {
+        } else if(scrollHeight && scrollTop + clientHeight == scrollHeight && isFirstMsg) {
           // Пришло сообщение, когда ты был в конце беседы
-          // и это сообщение первое в списке новых сообщений longpoll
+          // и беседа в это время открыта
+          // и это сообщение первое в списке новых сообщений из longpoll
           this.jumpTo({
             bottom: true,
             mark: false
