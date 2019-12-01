@@ -386,8 +386,11 @@ export default {
 
           if(keyboard) peerData.keyboard = keyboard;
 
-          if(peerData.unread != null) peerData.unread++;
-          else if(conv) peerData.unread = conv.peer.unread + 1;
+          if(peerData.unread != null) {
+            peerData.unread++;
+          } else if(conv) {
+            peerData.unread = (conv.peer.unread || 0) + 1;
+          }
 
           if(mentions.includes(store.getters['users/user'].id)) {
             peerData.mentions.push(msg.id);
