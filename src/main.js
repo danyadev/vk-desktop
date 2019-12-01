@@ -27,3 +27,8 @@ shortcut(['Ctrl+Shift+I', 'F12'], () => {
 window.addEventListener('resize', debounce(() => {
   store.commit('settings/setWindowBounds', win.getBounds());
 }, 2000));
+
+window.addEventListener('copy', () => {
+  event.preventDefault();
+  electron.clipboard.writeText(window.getSelection().toString());
+});
