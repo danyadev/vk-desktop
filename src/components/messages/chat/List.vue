@@ -298,11 +298,15 @@
           this.replyHistory.length = 0;
 
           if(this.loadedDown) {
-            const lastMsg = this.messages[this.messages.length-1];
-
-            if(lastMsg) {
-              msg_id = lastMsg.id;
+            if(msg_id) {
               onLoad();
+            } else {
+              const lastMsg = this.messages[this.messages.length-1];
+
+              if(lastMsg) {
+                msg_id = lastMsg.id;
+                onLoad();
+              }
             }
           } else {
             this.$store.commit('messages/removeConversationMessages', this.peer_id);

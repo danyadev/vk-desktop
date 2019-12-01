@@ -113,6 +113,10 @@
     margin: 0;
   }
 
+  .keyboard.inline .keyboard_button:not(:last-child) {
+    margin-right: 6px;
+  }
+
   .keyboard_button.default {
     background: #e5ebf1;
     color: #55677d;

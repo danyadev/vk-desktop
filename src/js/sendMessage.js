@@ -45,10 +45,12 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
   if(input) input.innerHTML = '';
 
   try {
+    const msg_id = 'loading' + counter++;
+
     store.commit('messages/addLoadingMessage', {
       peer_id,
       msg: {
-        id: 'loading' + counter++, // используется только как key для Vue
+        id: msg_id,
         text: message,
         from: store.getters['users/user'].id,
         date: (Date.now() / 1000).toFixed(),
@@ -65,6 +67,7 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
     await Vue.nextTick();
 
     eventBus.emit('messages:jumpTo', {
+      msg_id,
       peer_id,
       bottom: true,
       mark: false
