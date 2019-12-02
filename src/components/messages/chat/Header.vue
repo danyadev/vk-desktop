@@ -65,15 +65,22 @@
           else return this.l('im_chat_members', [members], members);
         } else {
           if(!this.owner) return this.l('loading');
-          else if(this.owner.deactivated) return this.l('im_user_deleted');
+          if(this.owner.deactivated) return this.l('im_user_deleted');
 
-          const { online, online_mobile, online_info: info, last_seen } = this.owner;
-          const isGirl = this.owner.sex == 1;
+          const { online, online_mobile, online_app, online_info: info, last_seen } = this.owner;
 
-          if(online_mobile) return this.l('im_chat_online', 1);
-          else if(online) return this.l('im_chat_online', 0);
-          else if(!info.visible) return this.l(`im_chat_online_${info.status}`, isGirl);
-          else return getLastOnlineDate(new Date(last_seen.time * 1000), isGirl);
+          if(online) {
+            const appName = online_app > 0 && this.l('online_app_names', online_app);
+
+            if(appName) return this.l('im_chat_online', 2, [appName]);
+            else return this.l('im_chat_online', online_mobile ? 1 : 0);
+          } else {
+            const isGirl = this.owner.sex == 1;
+
+            if(!info.visible) return this.l(`im_chat_online_${info.status}`, isGirl);
+            else if(last_seen) return getLastOnlineDate(new Date(last_seen.time * 1000), isGirl);
+            else return ''; // У @id333 не приходит last_seen
+          }
         }
       }
     }

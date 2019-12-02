@@ -531,39 +531,36 @@ export default {
 
   8: {
     // Юзер появился в сети
-    // [-user_id, platform, timestamp]
+    // [-user_id, platform, timestamp, app_id]
     // platform: 1: любое приложение, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
     parser: (data) => data,
-    handler([id, platform, timestamp]) {
+    handler([id, platform, time, app_id]) {
       if(!store.state.profiles[-id]) return;
 
       store.commit('updateProfile', {
         id: -id,
         online: true,
         online_mobile: ![6, 7].includes(platform),
-        last_seen: {
-          time: timestamp,
-          platform: platform
-        }
+        online_app: app_id,
+        last_seen: { time, platform }
       });
     }
   },
 
   9: {
     // Юзер вышел из сети
-    // [-user_id, flag, timestamp]
+    // [-user_id, flag, timestamp, app_id]
     // flag: 0 - вышел с сайта, 1 - по таймауту
     parser: (data) => data,
-    handler([id, flag, timestamp]) {
+    handler([id, flag, time, app_id]) {
       if(!store.state.profiles[-id]) return;
 
       store.commit('updateProfile', {
         id: -id,
         online: false,
         online_mobile: false,
-        last_seen: {
-          time: timestamp
-        }
+        online_app: app_id,
+        last_seen: { time }
       });
     }
   },

@@ -45,12 +45,6 @@ export default {
   im_choose_chat_1: 'Выберите диалог или',
   im_choose_chat_2: 'создайте новый',
   im_chat_members: ['{0} участник', '{0} участника', '{0} участников'],
-  im_chat_online: ['Онлайн', 'Онлайн с телефона', 'Онлайн с {0}'],
-  im_chat_was_online: ['Был в сети {0}', 'Была в сети {0}'],
-  im_chat_online_recently: ['Был в сети недавно', 'Была в сети недавно'],
-  im_chat_online_last_week: ['Был в сети на этой неделе', 'Была в сети на этой неделе'],
-  im_chat_online_last_month: ['Был в сети в этом месяце', 'Была в сети в этом месяце'],
-  im_chat_online_long_ago: ['Был в сети давно', 'Была в сети давно'],
   im_chat_group: 'Сообщество',
   im_chat_cant_write: 'Отправка сообщений ограничена',
   im_chat_left: 'Вы вышли из беседы',
@@ -62,6 +56,27 @@ export default {
   im_unread_messages: 'Новые сообщения',
   im_msg_edited: 'ред',
   im_keyboard_pay_with: 'Оплатить через',
+
+  im_chat_online: ['Онлайн', 'Онлайн с телефона', 'Онлайн с {0}'],
+  im_chat_was_online: ['Был в сети {0}', 'Была в сети {0}'],
+  im_chat_online_recently: ['Был в сети недавно', 'Была в сети недавно'],
+  im_chat_online_last_week: ['Был в сети на этой неделе', 'Была в сети на этой неделе'],
+  im_chat_online_last_month: ['Был в сети в этом месяце', 'Была в сети в этом месяце'],
+  im_chat_online_long_ago: ['Был в сети давно', 'Была в сети давно'],
+  online_app_names: {
+    2274003: 'Android',
+    3140623: 'iPhone',
+    3087106: 'iPhone dev',
+    3682744: 'iPad',
+    6146827: 'VK Me', // Android
+    6482950: 'VK Me', // iOS
+    6481715: 'VK Me dev', // iOS
+    3502561: 'Windows Phone',
+    5027722: 'VK Messenger',
+    2685278: 'Kate Mobile',
+    6717234: 'VK Desktop',
+    6614620: 'Laney'
+  },
 
   im_go_to_first_msg: 'Перейти в начало беседы',
   im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],

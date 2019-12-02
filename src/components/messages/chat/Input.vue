@@ -112,12 +112,14 @@
         document.execCommand('insertHTML', false, emoji(text));
       },
 
-      onInput: throttle(function(e) {
+      onInput: throttle(async function(e) {
         if(e.data && this.$store.state.settings.messagesSettings.typing && this.peer_id != 100) {
-          vkapi('messages.setActivity', {
-            peer_id: this.peer_id,
-            type: 'typing'
-          });
+          try {
+            await vkapi('messages.setActivity', {
+              peer_id: this.peer_id,
+              type: 'typing'
+            });
+          } catch(e) {}
         }
       }, 4000)
     },
