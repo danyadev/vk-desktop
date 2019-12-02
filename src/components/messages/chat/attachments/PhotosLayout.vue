@@ -7,19 +7,26 @@
 
     data() {
       return {
-        parentWidth: this.calcParentWidth(),
-        parentHeight: this.calcParentHeight()
+        parentWidth: 0,
+        parentHeight: 0,
+        isModal: false
       }
     },
 
     methods: {
       calcParentWidth() {
-        const list = this.$parent.$parent.$parent.$parent.$el;
-        return list ? (list.clientWidth * .75 - 14*2 - 12*2) : 0;
+        if(this.isModal) {
+          return this.$el.closest('.modal_wrap').clientWidth * .92 * .7;
+        } else {
+          return this.$el.closest('.scrolly').clientWidth * .75 - 52;
+        }
       },
       calcParentHeight() {
-        const list = this.$parent.$parent.$parent.$parent.$el;
-        return list ? (list.scrollHeight * .70) : 0;
+        if(this.isModal) {
+          return this.$el.closest('.modal_wrap').scrollHeight * .92 - 130;
+        } else {
+          return this.$el.closest('.scrolly').scrollHeight * .7;
+        }
       }
     },
 
@@ -79,8 +86,8 @@
     render(h) {
       const children = [];
       let generatedColumn = false;
+      let isEndFirstRow = false;
       let height = 0;
-      let isFirstRow = false;
 
       function generateImg(props) {
         const beforeEl = props.isVideo || props.isDoc;
@@ -116,9 +123,9 @@
 
         if(generatedColumn && props.columnItem) continue;
 
-        if(props.lastColumn && !isFirstRow) {
+        if(props.lastColumn && !isEndFirstRow) {
           props.endFirstRow = true;
-          isFirstRow = true;
+          isEndFirstRow = true;
         }
 
         if(props.columnItem) {
@@ -153,20 +160,24 @@
     mounted() {
       let prevWidth, prevHeight;
 
-      eventBus.on('resize', ({ width, height }) => {
+      window.addEventListener('resize', ({ target: { innerWidth, innerHeight } }) => {
         const { name, params } = this.$router.currentRoute;
         if(name != 'chat' || params.id != this.peer_id) return;
 
-        if(width != prevWidth) {
+        if(innerWidth != prevWidth) {
           this.parentWidth = this.calcParentWidth();
-          prevWidth = width;
+          prevWidth = innerWidth;
         }
 
-        if(height != prevHeight) {
+        if(innerHeight != prevHeight) {
           this.parentHeight = this.calcParentHeight();
-          prevHeight = height;
+          prevHeight = innerHeight;
         }
       });
+
+      this.isModal = !!this.$el.closest('.modal');
+      this.parentWidth = this.calcParentWidth();
+      this.parentHeight = this.calcParentHeight();
     },
 
     activated() {

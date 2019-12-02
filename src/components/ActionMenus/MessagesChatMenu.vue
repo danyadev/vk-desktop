@@ -101,11 +101,10 @@
       leftFromChat() {
         this.$refs.actionsMenu.toggleMenu();
 
-        const { id: user_id } = this.$store.getters['users/user'];
-        const chat_id = this.peer_id - 2e9;
-        const method = `messages.${this.left ? 'addChatUser' : 'removeChatUser'}`;
-
-        vkapi(method, { chat_id, user_id });
+        vkapi(this.left ? 'messages.addChatUser' : 'messages.removeChatUser', {
+          chat_id: this.peer_id - 2e9,
+          user_id: this.$store.getters['users/user'].id
+        });
       }
     }
   }

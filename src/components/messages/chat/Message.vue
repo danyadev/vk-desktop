@@ -186,6 +186,10 @@
     flex-direction: column;
   }
 
+  .modal[name=message-viewer] .message_bubble_wrap {
+    max-width: 100%;
+  }
+
   .message_wrap:not(.hideBubble) .message_bubble {
     background-color: #dfe6ea;
     padding: 8px 12px;

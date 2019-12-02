@@ -12,7 +12,7 @@
 
 <script>
   import longpoll from 'js/longpoll';
-  import { fields, eventBus } from 'js/utils';
+  import { fields } from 'js/utils';
   import { mapState } from 'vuex';
   import vkapi from 'js/vkapi';
 
@@ -61,13 +61,6 @@
     },
     created() {
       this.initUser();
-
-      window.addEventListener('resize', (e) => {
-        eventBus.emit('resize', {
-          width: e.target.innerWidth,
-          height: e.target.innerHeight
-        });
-      });
     }
   }
 </script>
