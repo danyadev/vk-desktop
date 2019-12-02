@@ -152,12 +152,13 @@ export function getMessagePreview(msg, peer_id, author) {
     return msg.text;
   } else if(msg.hasAttachment) {
     const { isReplyMsg, fwdCount, attachments } = msg;
+    const [attachName] = Object.keys(attachments);
 
+    if(attachName) return getTranslate('im_attachments', attachName);
     if(isReplyMsg) return getTranslate('im_replied');
     if(fwdCount < 0) return getTranslate('im_forwarded_some');
-    if(fwdCount) return getTranslate('im_forwarded', [fwdCount], fwdCount);
 
-    return getTranslate('im_attachments', Object.keys(attachments)[0]);
+    return getTranslate('im_forwarded', [fwdCount], fwdCount);
   }
 }
 
