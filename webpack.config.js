@@ -78,7 +78,8 @@ module.exports = function(env, { mode }) {
           options: {
             publicPath: 'assets/',
             name: '[name].[ext]',
-            emitFile: false
+            emitFile: false,
+            esModule: false
           }
         }
       ]

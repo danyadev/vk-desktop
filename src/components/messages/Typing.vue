@@ -83,11 +83,13 @@
   .typing_wrap {
     display: flex;
     color: #254f79;
+    width: 100%;
   }
 
   .typing {
     margin: 0 6px;
     user-select: none;
+    flex: none;
   }
 
   .typing_text {
