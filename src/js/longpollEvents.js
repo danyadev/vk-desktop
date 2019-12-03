@@ -3,7 +3,7 @@ import { supportedAttachments, preloadAttachments } from '../components/messages
 import longpoll from 'js/longpoll';
 import store from './store/';
 import vkapi from './vkapi';
-import { timer, eventBus } from './utils';
+import { timer, eventBus, isObject } from './utils';
 
 function hasFlag(mask, flag) {
   const flags = {
@@ -96,7 +96,7 @@ function parseLongPollMessage(data) {
   const user = store.getters['users/user'];
 
   // Если данные получены через messages.getLongPollHistory
-  if(!Array.isArray(data)) return data;
+  if(isObject(data)) return data;
   // Если это 2 событие прочтения сообщения или пометки его важным
   // Или юзер уже вышел из аккаунта
   if(!data[3] || !user) return;

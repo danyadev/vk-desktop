@@ -94,7 +94,7 @@ export function timer(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-function isObject(obj) {
+export function isObject(obj) {
   return obj && !Array.isArray(obj) && typeof obj == 'object';
 }
 
