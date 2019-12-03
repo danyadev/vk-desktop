@@ -21,7 +21,7 @@
 
 <script>
   import { getLastOnlineDate } from 'js/date';
-  import { getPhoto } from 'js/utils';
+  import { getPhoto, getAppName } from 'js/utils';
 
   import Icon from '../../UI/Icon.vue';
   import Ripple from '../../UI/Ripple.vue';
@@ -70,7 +70,7 @@
           const { online, online_mobile, online_app, online_info: info, last_seen } = this.owner;
 
           if(online) {
-            const appName = online_app > 0 && this.l('online_app_names', online_app);
+            const appName = online_app > 0 && getAppName(online_app);
 
             if(appName) return this.l('im_chat_online', 2, [appName]);
             else return this.l('im_chat_online', online_mobile ? 1 : 0);

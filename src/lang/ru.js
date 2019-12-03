@@ -63,20 +63,6 @@ export default {
   im_chat_online_last_week: ['Был в сети на этой неделе', 'Была в сети на этой неделе'],
   im_chat_online_last_month: ['Был в сети в этом месяце', 'Была в сети в этом месяце'],
   im_chat_online_long_ago: ['Был в сети давно', 'Была в сети давно'],
-  online_app_names: {
-    2274003: 'Android',
-    3140623: 'iPhone',
-    3087106: 'iPhone dev',
-    3682744: 'iPad',
-    6146827: 'VK Me', // Android
-    6482950: 'VK Me', // iOS
-    6481715: 'VK Me dev', // iOS
-    3502561: 'Windows Phone',
-    5027722: 'VK Messenger',
-    2685278: 'Kate Mobile',
-    6717234: 'VK Desktop',
-    6614620: 'Laney'
-  },
 
   im_go_to_first_msg: 'Перейти в начало беседы',
   im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],
