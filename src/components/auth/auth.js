@@ -1,6 +1,6 @@
 import querystring from 'querystring';
 import { AndroidUserAgent, VKDesktopUserAgent } from 'js/utils';
-import vkapi, { version } from 'js/vkapi';
+import { version } from 'js/vkapi';
 import request from 'js/request';
 import { eventBus } from 'js/utils';
 import store from 'js/store/';

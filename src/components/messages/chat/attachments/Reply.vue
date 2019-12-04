@@ -14,6 +14,7 @@
 <script>
   import { getPhotoFromSizes, eventBus } from 'js/utils';
   import { getMessagePreview } from 'js/messages';
+  import vkapi from 'js/vkapi';
 
   export default {
     props: ['msg', 'peer_id'],
