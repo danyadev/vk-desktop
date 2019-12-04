@@ -465,6 +465,8 @@
             bottom: true,
             mark: false
           });
+        } else {
+          this.showEndBtn = true;
         }
       });
     }

@@ -114,6 +114,10 @@
     margin-bottom: 8px;
   }
 
+  .message_wrap.hasPhoto .attach_reply + .message_text:not(:empty) {
+    margin-top: -4px;
+  }
+
   .attach_reply::before {
     content: '';
     position: absolute;

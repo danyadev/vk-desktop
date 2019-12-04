@@ -206,7 +206,7 @@
   }
 
   .message_wrap.hasAttachment .message_text:not(:empty) {
-    display: inline-block;
+    display: block;
   }
 
   .message_text.isContentDeleted {

@@ -493,11 +493,12 @@ export default {
     handler([peer_id, msg_id, count]) {
       const conv = store.state.messages.conversations[peer_id];
       const mentions = conv && conv.peer.mentions || [];
+      const newMentions = mentions.slice();
       const isMyDialog = peer_id == store.getters['users/user'].id;
 
       for(const id of mentions) {
         if(msg_id >= id) {
-          mentions.splice(mentions.indexOf(id), 1);
+          newMentions.splice(newMentions.indexOf(id), 1);
         }
       }
 
@@ -507,7 +508,7 @@ export default {
           unread: count,
           in_read: msg_id,
           ...(isMyDialog ? { out_read: msg_id } : {}),
-          mentions
+          mentions: newMentions
         }
       });
     }
