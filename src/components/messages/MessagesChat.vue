@@ -24,7 +24,7 @@
     },
     data() {
       return {
-        peer_id: this.$route.params.id
+        peer_id: +this.$route.params.id
       };
     },
     computed: {
@@ -43,14 +43,6 @@
       closeChat() {
         eventBus.emit('messages:closeChat', this.peer_id);
         this.$router.replace('/messages');
-      },
-      setInRead() {
-        this.$store.commit('messages/updateConversation', {
-          peer: {
-            id: this.peer_id,
-            new_in_read: this.peer.in_read
-          }
-        });
       }
     },
     mounted() {
@@ -59,11 +51,8 @@
       this.$store.commit('messages/addOpenedChat', +this.peer_id);
     },
     activated() {
-      if(!this.peer || !this.peer.loaded) {
-        loadConversation(this.peer_id).then(this.setInRead);
-      } else {
-        if(this.peer_id < 2e9) loadConversation(this.peer_id);
-        this.setInRead();
+      if(!this.peer || !this.peer.loaded || this.peer_id < 2e9) {
+        loadConversation(this.peer_id);
       }
     }
   }

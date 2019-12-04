@@ -9,7 +9,7 @@
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loadingUp" class="loading"></div>
 
-    <MessagesList :peer_id="peer_id" :peer="peer" :list="messagesWithLoading" />
+    <MessagesList :peer_id="peer_id" :peer="peer" :list="messagesWithLoading" :showStartUnread="showStartUnread" />
 
     <div v-if="loadingDown" class="loading"></div>
 
@@ -68,7 +68,8 @@
       topTime: null,
       lastReadedMsg: null,
       lastViewedMention: null,
-      replyHistory: []
+      replyHistory: [],
+      showStartUnread: true
     }),
     computed: {
       messages() {
@@ -414,6 +415,7 @@
 
       eventBus.on('messages:closeChat', (peer_id) => {
         if(this.peer_id == peer_id) {
+          this.showStartUnread = true;
           this.scrollTop = this.$el.firstChild.scrollTop;
         }
       });
@@ -453,6 +455,8 @@
             bottom: true,
             mark: false
           });
+
+          this.showStartUnread = false;
         } else if(scrollHeight && scrollTop + clientHeight == scrollHeight && isFirstMsg) {
           // Пришло сообщение, когда ты был в конце беседы
           // и беседа в это время открыта

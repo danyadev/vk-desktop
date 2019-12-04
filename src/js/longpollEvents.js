@@ -376,7 +376,6 @@ export default {
         }
 
         if(msg.out) {
-          peerData.new_in_read = msg.id;
           peerData.in_read = msg.id;
           peerData.unread = 0;
         } else {

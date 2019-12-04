@@ -7,11 +7,11 @@
   import Message from './Message.vue';
 
   export default {
-    props: ['peer_id', 'peer', 'list'],
+    props: ['peer_id', 'peer', 'list', 'showStartUnread'],
 
     computed: {
       in_read() {
-        return this.peer && (this.peer.new_in_read || this.peer.in_read);
+        return this.peer && this.peer.in_read;
       }
     },
 
@@ -28,7 +28,7 @@
         const isPrevUnread = prevMsg && prevMsg.id > this.in_read;
         const isThisUnread = msg.id > this.in_read;
 
-        return !msg.out && !isPrevUnread && isThisUnread;
+        return this.showStartUnread && !msg.out && !isPrevUnread && isThisUnread;
       },
       serviceMessage(msg) {
         if(msg.action) {
