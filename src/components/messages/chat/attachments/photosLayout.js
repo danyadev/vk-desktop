@@ -14,7 +14,7 @@ function calculateMultiThumbsHeight(ratios, width, margin) {
 
 function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
   thumb.width = width;
-  thumb.height = Math.max(height, 60);
+  thumb.height = columnItem ? height : Math.max(height, 60);
   if(lastColumn) thumb.lastColumn = lastColumn;
   if(lastRow) thumb.lastRow = lastRow;
   if(columnItem) thumb.columnItem = columnItem;
@@ -36,7 +36,7 @@ export default function processThumbnails({ thumbs, margin, parentWidth, parentH
 
     photoRatioTypes += ratio > 1.2 ? 'w' : (ratio < .8 ? 'n' : 'q');
     photoRatioSum += ratio;
-    photoRatios.push(ratio);
+    photoRatios.push(Math.max(ratio, .30));
   }
 
   const ratioAverage = photoRatioSum / photoRatios.length;
