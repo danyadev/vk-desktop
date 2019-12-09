@@ -220,6 +220,8 @@ function removeTyping(peer_id, user_id, clearChat) {
 
 function hasPreloadMessages(messages) {
   for(const { msg } of messages) {
+    if(!msg) continue;
+
     for(const type in msg.attachments) {
       if(preloadAttachments.has(type)) return true;
     }
