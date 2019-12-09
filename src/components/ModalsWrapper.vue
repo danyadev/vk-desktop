@@ -95,12 +95,11 @@
 
   .modal_wrap {
     position: absolute;
-    top: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: calc(100% - 32px);
+    height: 100%;
     background: rgba(0, 0, 0, .4);
     z-index: 1;
   }
@@ -115,8 +114,8 @@
   }
 
   .modal_content {
-    /* <modal-max-height> - <titlebar> - <modal-header> - <modal-footer> */
-    max-height: calc(92vh - 32px - 48px - 56px);
+    /* <modal-max-height> - <modal-header> - <modal-footer> */
+    max-height: calc(92vh - 48px - 56px);
   }
 
   .modal_footer {

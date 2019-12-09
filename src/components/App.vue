@@ -114,9 +114,19 @@
     user-select: none;
   }
 
-  .app { height: calc(100vh - 32px) }
-  .mac .app { height: calc(100vh - 22px) }
+  .root {
+    --titlebar-height: 32px;
+  }
 
+  .root.mac {
+    --titlebar-height: 22px;
+  }
+
+  .app {
+    height: calc(100vh - var(--titlebar-height));
+    position: relative;
+  }
+  
   .input {
     width: 250px;
     outline: none;

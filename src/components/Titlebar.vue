@@ -42,7 +42,7 @@
   .titlebar {
     display: flex;
     position: relative;
-    height: 32px;
+    height: var(--titlebar-height);
     z-index: 5;
     background: #5281b9;
   }
@@ -83,7 +83,6 @@
   .titlebar.maximized .titlebar_button.maximize { display: none }
   .titlebar:not(.maximized) .titlebar_button.restore { display: none }
 
-  .mac .titlebar { height: 22px }
   .mac .titlebar .titlebar_buttons { display: none }
   .mac .titlebar .titlebar_drag {
     text-align: center;
