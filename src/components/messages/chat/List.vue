@@ -445,7 +445,6 @@
         await this.$nextTick();
 
         if(this.loadingMessages.find((msg) => msg.random_id == random_id)) {
-          // Пришло мое сообщение
           this.$store.commit('messages/removeLoadingMessage', {
             peer_id: this.peer_id,
             random_id: random_id
@@ -457,16 +456,15 @@
           });
 
           this.showStartUnread = false;
-        } else if(scrollHeight && scrollTop + clientHeight == scrollHeight && isFirstMsg) {
-          // Пришло сообщение, когда ты был в конце беседы
-          // и беседа в это время открыта
-          // и это сообщение первое в списке новых сообщений из longpoll
+        } else if(
+          scrollHeight && scrollTop + clientHeight == scrollHeight && // Доскроллено до конца
+          isFirstMsg && // Первое сообщение в списке новых сообщений, пришедших из лп
+          !(this.loadingUp || this.loadingDown) // В данный момент не загружаются новые сообщения
+        ) {
           this.jumpTo({
             bottom: true,
             mark: false
           });
-        } else {
-          this.showEndBtn = true;
         }
       });
     }
