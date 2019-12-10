@@ -142,7 +142,8 @@ export default new class Longpoll {
       if(event.pack) {
         const prev = events[events.length - 1];
 
-        if(prev && prev[2] == item[2]) prev[1].push(data);
+        // совпадает ид события и ид беседы, в которой произошло событие
+        if(prev && prev[0] == item[0] && prev[2] == item[2]) prev[1].push(data);
         else events.push([id, [data], item[2]]);
       } else {
         events.push([id, data]);

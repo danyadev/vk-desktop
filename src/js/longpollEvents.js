@@ -334,12 +334,6 @@ export default {
     parser: parseLongPollMessage,
     preload: hasPreloadMessages,
     async handler({ key: peer_id, items }, isPreload) {
-      // lastMsg.id: cannot read property 'id' of undefined....
-      if(!items[items.length - 1].msg) {
-        debugger;
-        return console.warn('[lp 4e] broken msg', items.slice());
-      }
-
       const { loadingPeers } = store.state.messages;
       const isChatOpened = store.state.messages.openedChats.includes(peer_id);
       const conv = store.state.messages.conversations[peer_id];
