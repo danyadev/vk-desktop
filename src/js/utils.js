@@ -14,7 +14,7 @@ export const regexp = {
 
 const deviceInfo = '(1; 1; 1; 1; 1; 1)';
 export const VKDesktopUserAgent = `VKDesktop/${version} ${deviceInfo}`;
-export const AndroidUserAgent = `VKAndroidApp/5.48.2-4296 ${deviceInfo}`;
+export const AndroidUserAgent = `VKAndroidApp/5.50-4431 ${deviceInfo}`;
 
 export function escape(text) {
   if(text == null) return '';

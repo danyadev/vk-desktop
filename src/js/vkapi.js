@@ -1,4 +1,4 @@
-import { VKDesktopUserAgent } from './utils';
+import { VKDesktopUserAgent, AndroidUserAgent } from './utils';
 import querystring from 'querystring';
 import request from './request';
 import store from './store/';
@@ -6,13 +6,13 @@ import { eventBus } from './utils';
 
 export const version = '5.113';
 
-function vkapi(name, params) {
+function vkapi(name, params, useAndroidToken) {
   return new Promise(async (resolve, reject) => {
     const startTime = Date.now();
     const user = store.getters['users/user'];
 
     params = Object.assign({
-      access_token: user && user.access_token,
+      access_token: user && (useAndroidToken ? user.android_token : user.access_token),
       lang: 'ru',
       v: version
     }, params);
@@ -21,7 +21,7 @@ function vkapi(name, params) {
       host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST',
-      headers: { 'User-Agent': VKDesktopUserAgent }
+      headers: { 'User-Agent': useAndroidToken ? AndroidUserAgent : VKDesktopUserAgent }
     }, {
       postData: querystring.stringify(params)
     });
@@ -29,7 +29,14 @@ function vkapi(name, params) {
     const endTime = Date.now() - startTime;
 
     if(data.response !== undefined) {
-      console.log(`[API] ${name} ${endTime}ms`);
+      const logParams = Object.assign({}, params);
+
+      delete logParams.access_token;
+      delete logParams.lang;
+      delete logParams.v;
+      delete logParams.fields;
+
+      console.log(`[API] ${name} ${endTime}ms`, logParams);
 
       return resolve(data.response);
     }
