@@ -2,8 +2,9 @@
     <Scrolly :vclass="['keyboard', { inline: keyboard.inline }]">
       <div v-for="line of buttons" class="keyboard_line">
         <Ripple v-for="({ action, color }, i) of line" :key="i"
-                :color="color == 'default' && action.type != 'vkpay' ? '#ced7e0' : 'rgba(0, 0, 0, .2)'"
+                :color="color == 'default' && action.type == 'vkpay' ? 'rgba(0, 0, 0, .2)' : '#ced7e0'"
                 :class="['keyboard_button', action.type == 'vkpay' ? 'primary' : color]"
+                :style="{ width: `${100/line.length}%` }"
                 @click="click(action)"
         >
           <div v-if="action.type == 'text'" v-emoji.br="action.label"></div>
@@ -96,7 +97,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-grow: 1;
     margin: 0 4px;
     padding: 0 8px;
     height: 38px;
@@ -105,6 +105,10 @@
     color: #fff;
     cursor: pointer;
     user-select: none;
+  }
+
+  .keyboard_button, .keyboard_button div {
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }

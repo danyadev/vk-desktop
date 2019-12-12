@@ -553,6 +553,7 @@
     border-radius: 50%;
     opacity: 1;
     cursor: pointer;
+    z-index: 1;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
     transition: background-color .3s, transform .2s, opacity .2s, visibility .2s;
   }
