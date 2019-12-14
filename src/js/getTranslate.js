@@ -14,10 +14,32 @@ function caseOfNumber(count) {
   return 2;
 }
 
-// name - ключ в файлах переводов
-// key - если значение перевода это массив, то это индекс перевода
-// replaces - массив данных, которые выделяются в переводе как {n}
-// number - число, которое надо использовать вместо key для caseOfNumber
+// name<string>: название перевода
+// key?<string|number|boolean>: ключ перевода
+// replaces?<array>: массив данных, которые вставляются в тексте вместо {index}
+// number?<number>: число, передающееся в caseOfNumber, результатом которого является ключ перевода
+//
+// Список переводов:
+// text: 'текст'
+// dynamicText: 'текст {0} и {1}'
+// array: ['текст 1', 'текст 2']
+// dymanicArray: ['текст {0}', 'число {0}']
+// caseOfNumber: ['яблоко', '{0} яблока', '{0} яблок']
+// object: { a: 'а {0}', b: 'б {0}' }
+// objectAndArray: { apple: ['яблоко', '{0} яблока', '{0} яблок'] }
+//
+// Примеры:
+// 1) fn('text'): 'текст'
+// 2) fn('dynamicText', [12, 34]): 'текст 12 и 34'
+// 3) fn('array', 1): 'текст 2'
+// 4) fn('dymanicArray', 0, [1]): 'текст 1'
+// 5) fn('array', false): 'текст 1'
+// 6) fn('array', true): 'текст 2'
+// 7) fn('caseOfNumber', [1], 1): 'яблоко'
+// 8) fn('caseOfNumber', [2], 2): '2 яблока'
+// 9) fn('caseOfNumber', [5], 5): '5 яблок'
+// 10) fn('object', 'b', ['тест']): 'б тест'
+// 11) fn('objectAndArray', 'apple', [3], 3): '3 яблока'
 export default function(name, key, replaces, number) {
   if(Array.isArray(key)) {
     number = replaces;
@@ -25,17 +47,17 @@ export default function(name, key, replaces, number) {
     key = null;
   }
 
-  if(number != null) key = caseOfNumber(number);
-  else if(typeof key == 'boolean') key = key ? 1 : 0;
-
   let data = store.getters['settings/lang'][name];
+
+  if(typeof key == 'boolean') key = key ? 1 : 0;
   if(key != null) data = data[key];
+  if(number != null) data = data[caseOfNumber(number)];
 
   if(Array.isArray(replaces)) {
-    for(const i in replaces) {
-      const regexp = new RegExp(`\\{${i}\\}`, 'g');
+    data = String(data);
 
-      data = String(data).replace(regexp, replaces[i]);
+    for(let i=0; i<replaces.length; i++) {
+      data = data.replace(new RegExp(`\\{${i}\\}`, 'g'), replaces[i]);
     }
   }
 

@@ -71,7 +71,7 @@ function getServiceMessage(data) {
 function getAttachments(data) {
   const attachments = {};
 
-  if(data.geo) attachments.geo = [];
+  if(data.geo) attachments.geo = [null];
 
   for(const key in data) {
     const match = key.match(/attach(\d+)$/);
@@ -84,7 +84,8 @@ function getAttachments(data) {
       if(kind == 'audiomsg') type = 'audio_message';
       if(kind == 'graffiti') type = 'graffiti';
 
-      if(!attachments[type]) attachments[type] = [];
+      if(!attachments[type]) attachments[type] = [null];
+      else attachments[type].push(null);
     }
   }
 

@@ -154,7 +154,11 @@ export function getMessagePreview(msg, peer_id, author) {
     const { isReplyMsg, fwdCount, attachments } = msg;
     const [attachName] = Object.keys(attachments);
 
-    if(attachName) return getTranslate('im_attachments', attachName);
+    if(attachName) {
+      const count = attachments[attachName].length;
+      return getTranslate('im_attachments', attachName, [count], count);
+    }
+
     if(isReplyMsg) return getTranslate('im_replied');
     if(fwdCount < 0) return getTranslate('im_forwarded_some');
 
