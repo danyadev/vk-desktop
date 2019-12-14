@@ -35,10 +35,21 @@ export function getPhoto(user) {
 }
 
 // Возвращает фотографию нужного размера из обьекта фотографий
-export function getPhotoFromSizes(sizes, size) {
-  const photo = sizes.find((photo) => photo.type == size);
+export function getPhotoFromSizes(sizes, size, isDoc) {
+  const find = (size) => sizes.find((photo) => photo.type == size);
+  const optionalTypes = isDoc ? ['z', 'y', 'x', 'm', 's'] : ['w', 'z', 'y'];
+  const index = optionalTypes.indexOf(size);
 
-  return photo || sizes[sizes.length-1];
+  if(~index) {
+    for(let i = index; i < optionalTypes.length; i++) {
+      const photo = find(optionalTypes[i]);
+      if(photo) return photo;
+    }
+
+    return isDoc ? find('o') : find('x');
+  } else {
+    return find(size);
+  }
 }
 
 export function capitalize(str) {

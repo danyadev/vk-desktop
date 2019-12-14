@@ -1,13 +1,16 @@
 <template>
   <div class="modal_header" :closable="closable">
     <div class="modal_header_title"><slot /></div>
-    <Ripple v-if="closable"
-            color="rgba(255, 255, 255, .2)"
-            class="ripple_fast modal_header_close"
-            @click.stop="close"
-    >
-      <Icon name="close" color="#fff" />
-    </Ripple>
+    <div class="modal_header_buttons">
+      <slot name="icons" />
+      <Ripple v-if="closable"
+              color="rgba(255, 255, 255, .2)"
+              class="ripple_fast modal_header_close"
+              @click.stop="close"
+      >
+        <Icon name="close" color="#fff" />
+      </Ripple>
+    </div>
   </div>
 </template>
 
@@ -42,7 +45,6 @@
     background: #5281b9;
     height: 48px;
     padding: 0 10px 0 25px;
-    border-radius: 5px 5px 0 0;
   }
 
   .modal_header_title {
@@ -50,10 +52,15 @@
     color: #f3f3f3;
   }
 
+  .modal_header_buttons {
+    display: flex;
+    align-items: center;
+  }
+
   .modal_header_close {
-    width: 32px;
-    height: 32px;
-    padding: 8px;
+    width: 40px;
+    height: 40px;
+    padding: 12px;
     border-radius: 50%;
     cursor: pointer;
     opacity: .7;

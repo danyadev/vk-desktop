@@ -1,19 +1,28 @@
 <template>
   <div class="act_menu_wrap">
-    <div class="act_menu_btn_wrap" @click="toggleMenu">
+    <Ripple class="ripple_fast act_menu_btn_wrap"
+            color="rgba(255, 255, 255, .2)"
+            @click="toggleMenu">
       <img src="~assets/actions_icon.svg" class="act_menu_btn">
-    </div>
+    </Ripple>
 
     <div :class="['act_menu', { active }]"><slot /></div>
   </div>
 </template>
 
 <script>
+  import Ripple from '../UI/Ripple.vue';
+
   export default {
+    components: {
+      Ripple
+    },
+
     data: () => ({
       active: false,
       timeout: null
     }),
+
     methods: {
       toggleMenu() {
         if(this.active) removeEventListener('mousemove', this.onMouseMove);
@@ -24,6 +33,7 @@
 
         this.active = !this.active;
       },
+
       onMouseMove(event) {
         const close = !event.path.find((el) => el == this.$el);
 
@@ -50,6 +60,7 @@
 
   .act_menu_btn_wrap {
     height: 40px;
+    border-radius: 50%;
   }
 
   .act_menu_btn {

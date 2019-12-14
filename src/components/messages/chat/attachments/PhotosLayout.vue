@@ -37,7 +37,10 @@
 
         if(photo) {
           photos.push(
-            ...photo.map(({ sizes }) => getPhotoFromSizes(sizes, 'x'))
+            ...photo.map((attach) => ({
+              ...getPhotoFromSizes(attach.sizes, 'x'),
+              attach
+            }))
           );
         }
 
@@ -55,7 +58,8 @@
             ...video.map((video) => {
               return Object.assign(video.image[6] || video.image[video.image.length-1], {
                 isVideo: true,
-                duration: parseDuration(video.duration)
+                duration: parseDuration(video.duration),
+                attach: video
               });
             })
           );
@@ -64,9 +68,10 @@
         if(doc) {
           photos.push(
             ...doc.map((doc) => {
-              return Object.assign(getPhotoFromSizes(doc.preview.photo.sizes, 'y'), {
+              return Object.assign(getPhotoFromSizes(doc.preview.photo.sizes, 'y', true), {
                 isDoc: true,
-                ext: doc.ext
+                ext: doc.ext,
+                attach: doc
               });
             })
           );
@@ -102,6 +107,11 @@
           style: {
             width: `${props.width}px`,
             height: `${props.height}px`
+          },
+          on: {
+            click() {
+              eventBus.emit('modal:open', 'media-viewer', { attach: props.attach });
+            }
           }
         }, [
           beforeEl && h('div', { class: 'attach_photo_type' }, props.isVideo ? props.duration : props.ext.toUpperCase()),
@@ -181,7 +191,6 @@
     },
 
     activated() {
-      // За время отсутствия в текущей беседе высота и ширина окна могла измениться
       this.parentWidth = this.calcParentWidth();
       this.parentHeight = this.calcParentHeight();
     }
@@ -210,6 +219,7 @@
     position: relative;
     float: left;
     max-width: 100%;
+    cursor: pointer;
   }
 
   .attach_photo_type {

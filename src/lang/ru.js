@@ -183,18 +183,14 @@ export default {
     '<b>{0}</b> исключили из беседы'
   ],
 
-  // Раздел фотографий
   photos_albums: 'Мои альбомы',
 
-  // Капча
   ml_captcha_header: 'Введите капчу',
   ml_captcha_write: 'Введите код с картинки',
 
-  // Выход из аккаунта
   ml_logout_header: 'Выход из аккаунта',
   ml_logout_sure: 'Вы действительно хотите выйти из аккаунта?',
 
-  // Проблемы с токеном
   ml_blocked_account_title: [
     'Сессия недействительна',
     'Страница удалена',
@@ -211,26 +207,22 @@ export default {
   ml_blocked_account_logout: 'Выйти из аккаунта',
   ml_blocked_account_close_app: 'Закрыть приложение',
 
-  // Мультиаккаунт
   ml_multiacc_header: 'Выберите аккаунт',
   ml_multiacc_add_account: 'Добавить аккаунт',
   ml_multiacc_active_account: 'Активный аккаунт',
 
-  // Модалка авторизации
   ml_auth_header: 'Авторизация',
 
-  // Удаление истории сообщений
   ml_clear_history_header: 'Удалить все сообщения',
   ml_clear_history_text: 'Вы действительно хотите удалить всю переписку в этой беседе?',
 
-  // Автообновление
   ml_update_available: 'Доступно обновление',
   ml_update_now: 'Обновить сейчас',
   ml_update_later: 'Обновить позже',
 
-  // Internal Server Error
   ml_error_api: 'При загрузке метода {0} произошла ошибка.',
 
-  // Просмотр сообщения
-  ml_msg_viewer_header: 'Просмотр сообщения'
+  ml_msg_viewer_header: 'Просмотр сообщения',
+
+  ml_media_viewer_header: 'Просмотр документа'
 }

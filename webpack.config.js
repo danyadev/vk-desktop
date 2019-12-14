@@ -51,7 +51,7 @@ module.exports = function(env, { mode }) {
         });
       }
     },
-    devtool: isDev ? 'eval-sourcemap' : false,
+    devtool: isDev ? 'eval-source-map' : false,
     module: {
       rules: [
         {

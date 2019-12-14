@@ -19,6 +19,7 @@
     'ClearHistory',
     'ErrorApi',
     'Logout',
+    'MediaViewer',
     'MessageViewer',
     'Multiaccount',
     'UpdateAvailable'
@@ -46,10 +47,11 @@
         if(!target.matches('.modal_wrap')) return;
 
         const [modal] = target.children;
-        const name = modal.getAttribute('name');
-        const closable = modal.querySelector('.modal_header').getAttribute('closable');
+        const header = modal.querySelector('.modal_header');
 
-        if(closable) eventBus.emit('modal:close', name);
+        if(!header || header.getAttribute('closable')) {
+          eventBus.emit('modal:close', modal.getAttribute('name'));
+        }
       },
       onEscape() {
         const keys = Object.keys(this.modals);
@@ -106,23 +108,23 @@
 
   .modal {
     position: absolute;
+    overflow: hidden;
     max-width: 92vw;
     max-height: 92vh;
     border-radius: 7px;
-    background: #fff;
     box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
   }
 
   .modal_content {
     /* <modal-max-height> - <modal-header> - <modal-footer> */
     max-height: calc(92vh - 48px - 56px);
+    background: #fff;
   }
 
   .modal_footer {
     height: 56px;
     border-top: 1px solid #e7e8ec;
     background: #f7f8fa;
-    border-radius: 0 0 5px 5px;
   }
 
   .modal_footer .button {

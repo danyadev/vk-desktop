@@ -7,7 +7,7 @@ function request(requestParams, params = {}) {
   return new Promise((resolve, reject) => {
     const req = https.request(requestParams, (res) => {
       const chunks = [];
-      const MB = 1048576;
+      const MB = 1 << 20;
       const contentLength = +res.headers['content-length'];
       let loadedLength = 0;
 

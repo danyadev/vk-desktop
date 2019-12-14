@@ -349,7 +349,7 @@ export default {
 
       const isChatLoadedBottom = isChatOpened && (
         !lastLocalMsg && !loadingPeers.has(peer_id) ||
-        conv.peer.last_msg_id == lastLocalMsg.id
+        lastLocalMsg && conv.peer.last_msg_id == lastLocalMsg.id
       );
 
       if(isChatLoadedBottom) {

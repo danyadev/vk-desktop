@@ -73,11 +73,13 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
       mark: false
     });
 
+    const payload = keyboard && keyboard.action.payload;
+
     await vkapi('messages.send', {
       peer_id,
       message,
       random_id,
-      payload: keyboard && keyboard.action.payload
+      ...(payload ? { payload } : {})
     });
   } catch(e) {
     store.commit('messages/editLoadingMessage', {
