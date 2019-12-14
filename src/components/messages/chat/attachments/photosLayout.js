@@ -12,6 +12,30 @@ function calculateMultiThumbsHeight(ratios, width, margin) {
   return (width - (ratios.length - 1) * margin) / getArraySum(ratios);
 }
 
+function setMaxRatioDiff(ratios, max) {
+  let minRatio = ratios[0],
+      maxRatio = 0,
+      index = 0;
+
+  for(let i = 0; i < ratios.length; i++) {
+    const ratio = ratios[i];
+
+    if(ratio < minRatio) {
+      minRatio = ratio;
+    }
+
+    if(ratio > maxRatio) {
+      maxRatio = ratio;
+      index = i;
+    }
+  }
+
+  if(maxRatio / minRatio > max) {
+    ratios[index] = max * minRatio;
+    setMaxRatioDiff(ratios, max);
+  }
+}
+
 function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
   thumb.width = width;
   thumb.height = columnItem ? height : Math.max(height, 60);
@@ -23,7 +47,7 @@ function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
 // thumbs = [{ width, height, ...rest }]: массив фоток
 // margin: расстояние между фотками
 // parentWidth, parentHeight: максимальные размеры родителя
-export default function processThumbnails({ thumbs, margin, parentWidth, parentHeight }) {
+export default function({ thumbs, margin, parentWidth, parentHeight }) {
   // Копируем массив для предотвращения мутации оригинального массива
   thumbs = thumbs.map((thumb) => Object.assign({}, thumb));
 
@@ -41,6 +65,10 @@ export default function processThumbnails({ thumbs, margin, parentWidth, parentH
 
   const ratioAverage = photoRatioSum / photoRatios.length;
   const parentRatio = parentWidth / parentHeight;
+
+  if(thumbs.length > 1 && thumbs.length < 5) {
+    setMaxRatioDiff(photoRatios, 4);
+  }
 
   if(thumbs.length == 1) {
     if(photoRatios[0] > .8) {
@@ -136,18 +164,22 @@ export default function processThumbnails({ thumbs, margin, parentWidth, parentH
     };
 
     for(let i = 1; i < thumbs.length; i++) {
+      setMaxRatioDiff(croppedPhotoRatios, (i == 4 || thumbs.length-i == 4) ? 2 : 4);
+
       photosLayoutVariants[`${i},${thumbs.length-i}`] = [
         calculateMultiThumbsHeight(croppedPhotoRatios.slice(0, i), parentWidth, margin),
-        calculateMultiThumbsHeight(croppedPhotoRatios.slice(i, croppedPhotoRatios.length), parentWidth, margin)
+        calculateMultiThumbsHeight(croppedPhotoRatios.slice(i, thumbs.length), parentWidth, margin)
       ];
     }
 
     for(let i = 1; i < thumbs.length - 1; i++) {
       for(let j = 1; j < thumbs.length - i; j++) {
+        setMaxRatioDiff(croppedPhotoRatios, (i == 4 || j == 4 || thumbs.length-i-j == 4) ? 2 : 4);
+
         photosLayoutVariants[`${i},${j},${thumbs.length-i-j}`] = [
           calculateMultiThumbsHeight(croppedPhotoRatios.slice(0, i), parentWidth, margin),
           calculateMultiThumbsHeight(croppedPhotoRatios.slice(i, i + j), parentWidth, margin),
-          calculateMultiThumbsHeight(croppedPhotoRatios.slice(i + j, croppedPhotoRatios.length), parentWidth, margin)
+          calculateMultiThumbsHeight(croppedPhotoRatios.slice(i + j, thumbs.length), parentWidth, margin)
         ];
       }
     }
@@ -163,15 +195,7 @@ export default function processThumbnails({ thumbs, margin, parentWidth, parentH
       if(key.split(',').find((count) => count > 4)) continue;
 
       const photosHeight = photosLayoutVariants[key];
-      let heightDiff = Math.abs(margin * (photosHeight.length - 1) + getArraySum(photosHeight) - parentHeight);
-
-      if(key.indexOf(',') != -1) {
-        const itemsInRow = key.split(',');
-
-        if(itemsInRow[0] > itemsInRow[1] || itemsInRow.length > 2 && itemsInRow[1] > itemsInRow[2]) {
-          heightDiff *= 1.1;
-        }
-      }
+      const heightDiff = Math.abs(margin * (photosHeight.length - 1) + getArraySum(photosHeight) - parentHeight);
 
       if(!optimalPhotosLayout || heightDiff < minHeightDiff) {
         optimalPhotosLayout = key;

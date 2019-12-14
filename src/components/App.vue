@@ -126,7 +126,7 @@
     height: calc(100vh - var(--titlebar-height));
     position: relative;
   }
-  
+
   .input {
     width: 250px;
     outline: none;
