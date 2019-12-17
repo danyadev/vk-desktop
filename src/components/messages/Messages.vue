@@ -21,7 +21,10 @@
     methods: {
       closeChat() {
         if(this.hasChat) {
-          eventBus.emit('messages:closeChat', this.$route.params.id);
+          eventBus.emit('messages:event', 'close_chat', {
+            peer_id: this.$route.params.id
+          });
+
           this.$router.replace('/messages');
         }
       }

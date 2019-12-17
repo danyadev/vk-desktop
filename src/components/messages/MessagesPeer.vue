@@ -112,7 +112,9 @@
         if(this.activeChat == this.peer.id) return;
 
         if(this.activeChat) {
-          eventBus.emit('messages:closeChat', this.activeChat);
+          eventBus.emit('messages:event', 'close_chat', {
+            peer_id: this.activeChat
+          });
         }
 
         this.$router.replace(`/messages/${this.peer.id}`);

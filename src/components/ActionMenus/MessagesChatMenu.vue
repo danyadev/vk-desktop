@@ -62,7 +62,7 @@
       goToFirstMsg() {
         this.$refs.actionsMenu.toggleMenu();
 
-        eventBus.emit('messages:jumpTo', {
+        eventBus.emit('messages:event', 'jump', {
           peer_id: this.peer_id,
           top: true
         });

@@ -45,7 +45,7 @@
           }
 
           const jumpToMsg = () => {
-            eventBus.emit('messages:jumpTo', {
+            eventBus.emit('messages:event', 'jump', {
               peer_id: this.peer_id,
               msg_id: replyMsg.id,
               reply_author: id

@@ -95,7 +95,6 @@ function getAttachments(data) {
 function parseLongPollMessage(data) {
   // [msg_id, flags, peer_id, timestamp, text, {from, action, keyboard}, {attachs}, random_id, conv_msg_id, edit_time]
   const user = store.getters['users/user'];
-
   // Если данные получены через messages.getLongPollHistory
   if(isObject(data)) return data;
   // Если это 2 событие прочтения сообщения или пометки его важным
@@ -221,8 +220,6 @@ function removeTyping(peer_id, user_id, clearChat) {
 
 function hasPreloadMessages(messages) {
   for(const { msg } of messages) {
-    if(!msg) continue;
-
     for(const type in msg.attachments) {
       if(preloadAttachments.has(type)) return true;
     }
@@ -267,8 +264,7 @@ export default {
         });
       } else {
         store.commit('messages/moveConversation', { peer_id });
-
-        eventBus.emit('messages:load', peer_id);
+        eventBus.emit('messages:event', 'check_scrolling', { peer_id });
       }
     }
   },
@@ -313,7 +309,11 @@ export default {
         }
       }
 
-      eventBus.emit('messages:load', peer_id, { unlockUp, unlockDown });
+      eventBus.emit('messages:event', 'check_scrolling', {
+        peer_id,
+        unlockUp,
+        unlockDown
+      });
 
       if(!lastLocalConv || lastLocalConv.msg.id < msg.id) {
         if(conv && !store.state.messages.peersList.includes(peer_id)) {
@@ -411,7 +411,11 @@ export default {
       }
 
       for(let i=0; i<items.length; i++) {
-        eventBus.emit('messages:new', items[i].msg, peer_id, !i);
+        eventBus.emit('messages:event', 'new', {
+          peer_id,
+          random_id: items[i].msg.random_id,
+          isFirstMsg: !i
+        });
       }
 
       if(lastMsg.hidden) return;

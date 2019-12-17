@@ -66,7 +66,7 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
 
     await Vue.nextTick();
 
-    eventBus.emit('messages:jumpTo', {
+    eventBus.emit('messages:event', 'jump', {
       msg_id,
       peer_id,
       bottom: true,

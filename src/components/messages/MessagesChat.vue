@@ -41,7 +41,10 @@
     },
     methods: {
       closeChat() {
-        eventBus.emit('messages:closeChat', this.peer_id);
+        eventBus.emit('messages:event', 'close_chat', {
+          peer_id: this.peer_id
+        });
+
         this.$router.replace('/messages');
       }
     },

@@ -46,12 +46,14 @@
 
   export default {
     props: ['peer_id', 'peer'],
+
     components: {
       Scrolly,
       Icon,
       MessagesList,
       Typing
     },
+
     data: () => ({
       loadingUp: false,
       loadedUp: false,
@@ -71,35 +73,35 @@
       replyHistory: [],
       showStartUnread: true
     }),
+
     computed: {
       messages() {
         return this.$store.state.messages.messages[this.peer_id] || [];
       },
       messagesWithLoading() {
-        return this.loadingDown ? this.messages : this.messages.concat(this.loadingMessages);
-      },
-      hasMessages() {
-        return this.messagesWithLoading.length;
-      },
-      hasTyping() {
-        const typing = this.$store.state.messages.typing[this.peer_id] || {};
-
-        return Object.keys(typing).length;
+        return this.messages.concat(this.loadedDown ? this.loadingMessages : []);
       },
       loadingMessages() {
         return this.$store.state.messages.loadingMessages[this.peer_id] || [];
+      },
+      hasMessages() {
+        return !!this.messagesWithLoading.length;
+      },
+      hasTyping() {
+        const typing = this.$store.state.messages.typing[this.peer_id] || {};
+        return !!Object.keys(typing).length;
       }
     },
+
     methods: {
       convertCount,
 
       async load(params = {}, { isDown, isFirstLoad, loadedUp, loadedDown } = {}) {
+        const { loadingPeers } = this.$store.state.messages;
+        loadingPeers.add(this.peer_id);
+
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
-
-        const { loadingPeers } = this.$store.state.messages;
-
-        loadingPeers.add(this.peer_id);
 
         const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
           peer_id: this.peer_id,
@@ -112,7 +114,6 @@
         const peer = parseConversation(conversations[0]);
 
         this.lockScroll = true;
-
         this.$store.commit('messages/updateConversation', { peer });
         this.$store.commit('addProfiles', concatProfiles(profiles, groups));
         this.$store.commit('messages/addMessages', {
@@ -170,11 +171,9 @@
 
       async checkReadMessages(list) {
         if(!this.$store.state.settings.messagesSettings.notRead) {
-          // Ждем, пока Vue.js отрендерит новое сообщение
           await timer(0);
 
           const messages = document.querySelectorAll('.service_message.isUnread, .message_wrap.isUnread:not(.out)');
-
           let lastReadedMsg;
 
           for(const msg of messages) {
@@ -230,9 +229,7 @@
       checkScrolling: endScroll(function({ isUp, isDown }) {
         if(isUp && !this.loadingUp && !this.loadedUp) {
           const [msg] = this.messages;
-
           this.loadingUp = true;
-
           this.load({
             start_message_id: msg ? msg.id : -1
           });
@@ -358,10 +355,8 @@
         if(this.replyHistory.length) {
           // Возвращаемся на сообщение с ответом
           this.jumpTo({
-            msg_id: this.replyHistory[this.replyHistory.length-1]
+            msg_id: this.replyHistory.pop()
           });
-
-          this.replyHistory.pop();
         } else if(this.peer && this.peer.unread) {
           const unread = document.querySelector('.message_unreaded_messages');
 
@@ -370,7 +365,6 @@
 
             if(list.offsetHeight + list.scrollTop - unread.offsetHeight / 2 < unread.offsetTop) {
               list.scrollTop = unread.offsetTop - list.clientHeight / 2;
-
               this.afterUpdateScrollTop(list);
             } else {
               this.jumpTo({
@@ -391,15 +385,65 @@
       },
 
       scrollToMention() {
-        const lastMention = this.peer.mentions[this.peer.mentions.length-1];
-
-        this.lastViewedMention = this.peer.mentions.find((id) => id > this.lastViewedMention) || lastMention;
+        this.lastViewedMention = this.peer.mentions.find((id) => id > this.lastViewedMention)
+                              || this.peer.mentions[this.peer.mentions.length-1];
 
         this.jumpTo({
           msg_id: this.lastViewedMention
         });
+      },
+
+      async onMessageEvent(type, { peer_id, ...data }) {
+        if(peer_id != this.peer_id) return;
+
+        const list = this.$el.firstChild;
+        const { scrollTop, clientHeight, scrollHeight } = list;
+
+        switch(type) {
+          case 'close_chat':
+            this.showStartUnread = true;
+            this.scrollTop = scrollTop;
+            break;
+
+          case 'check_scrolling':
+            if(data.unlockUp) this.loadedUp = false;
+            if(data.unlockDown) this.loadedDown = false;
+            this.checkScrolling(list);
+            break;
+
+          case 'jump':
+            if(data.reply_author) this.replyHistory.push(data.reply_author);
+            this.jumpTo(data);
+            break;
+
+          case 'new':
+            this.checkReadMessages(list);
+            await this.$nextTick();
+
+            if(this.loadingMessages.find((msg) => msg.random_id == data.random_id)) {
+              this.$store.commit('messages/removeLoadingMessage', {
+                peer_id,
+                random_id: data.random_id
+              });
+
+              this.jumpTo({ bottom: true, mark: false });
+              this.showStartUnread = false;
+            } else if(
+              scrollHeight && scrollTop + clientHeight == scrollHeight && // Доскроллено до конца
+              data.isFirstMsg && // Первое сообщение в списке новых сообщений, пришедших из лп
+              !(this.loadingUp || this.loadingDown) // В данный момент не загружаются новые сообщения
+            ) {
+              this.jumpTo({ bottom: true, mark: false });
+            }
+            break;
+        }
       }
     },
+
+    mounted() {
+      this.jumpToStartUnread();
+    },
+
     activated() {
       const list = this.$el.firstChild;
 
@@ -409,64 +453,12 @@
       } else {
         this.checkScrolling(list);
       }
+
+      eventBus.on('messages:event', this.onMessageEvent);
     },
-    mounted() {
-      this.jumpToStartUnread();
 
-      eventBus.on('messages:closeChat', (peer_id) => {
-        if(this.peer_id == peer_id) {
-          this.showStartUnread = true;
-          this.scrollTop = this.$el.firstChild.scrollTop;
-        }
-      });
-
-      eventBus.on('messages:load', (peer_id, { unlockUp, unlockDown } = {}) => {
-        if(this.peer_id != peer_id) return;
-        if(unlockUp) this.loadedUp = false;
-        if(unlockDown) this.loadedDown = false;
-
-        this.checkScrolling(this.$el.firstChild);
-      });
-
-      eventBus.on('messages:jumpTo', ({ peer_id, reply_author, ...params }) => {
-        if(peer_id != this.peer_id) return;
-        if(reply_author) this.replyHistory.push(reply_author);
-
-        this.jumpTo(params);
-      });
-
-      eventBus.on('messages:new', async ({ random_id }, peer_id, isFirstMsg) => {
-        if(peer_id != this.peer_id) return;
-
-        const list = this.$el.firstChild;
-        const { scrollTop, clientHeight, scrollHeight } = list;
-
-        this.checkReadMessages(list);
-        await this.$nextTick();
-
-        if(this.loadingMessages.find((msg) => msg.random_id == random_id)) {
-          this.$store.commit('messages/removeLoadingMessage', {
-            peer_id: this.peer_id,
-            random_id: random_id
-          });
-
-          this.jumpTo({
-            bottom: true,
-            mark: false
-          });
-
-          this.showStartUnread = false;
-        } else if(
-          scrollHeight && scrollTop + clientHeight == scrollHeight && // Доскроллено до конца
-          isFirstMsg && // Первое сообщение в списке новых сообщений, пришедших из лп
-          !(this.loadingUp || this.loadingDown) // В данный момент не загружаются новые сообщения
-        ) {
-          this.jumpTo({
-            bottom: true,
-            mark: false
-          });
-        }
-      });
+    deactivated() {
+      eventBus.removeListener('messages:event', this.onMessageEvent);
     }
   }
 </script>
