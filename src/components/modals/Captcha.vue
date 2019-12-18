@@ -39,7 +39,7 @@
     },
     methods: {
       updatePic() {
-        this.src += this.src.indexOf('&s=1') != -1 ? '1' : '&s=1';
+        this.src += ~this.src.indexOf('&s=1') ? '1' : '&s=1';
       },
       sendCode() {
         if(this.disabled) return;

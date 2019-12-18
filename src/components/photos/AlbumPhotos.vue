@@ -2,7 +2,10 @@
   <Scrolly :vclass="{ loading }" :lock="lockScroll" @scroll="onScroll">
     <div class="album">
       <div v-for="photo of photos" class="photo">
-        <img :src="getPhotoFromSizes(photo.sizes, 'q').url" loading="lazy" width="150" height="150">
+        <img :src="getPhotoFromSizes(photo.sizes, 'q').url"
+             loading="lazy" width="150" height="150"
+             @click="open(photo)"
+        >
       </div>
     </div>
   </Scrolly>
@@ -56,7 +59,6 @@
         }
 
         this.lockScroll = true;
-
         this.photos = this.photos.concat(items);
         this.offset += 50;
 
@@ -65,6 +67,9 @@
 
         this.loading = false;
         if(items.length < 50) this.loaded = true;
+      },
+      open(attach) {
+        this.$modals.open('media-viewer', { attach });
       }
     },
     mounted() {
@@ -84,5 +89,6 @@
   .photo img {
     object-fit: cover;
     margin: 0 0 0 5px;
+    cursor: pointer;
   }
 </style>

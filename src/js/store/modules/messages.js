@@ -35,7 +35,7 @@ export default {
     updatePeersList(state, { id, remove }) {
       if(remove) {
         const index = state.peersList.indexOf(id);
-        if(index != -1) state.peersList.splice(index, 1);
+        if(~index) state.peersList.splice(index, 1);
       } else {
         state.peersList.push(id);
       }
@@ -69,7 +69,7 @@ export default {
 
     moveConversation(state, { peer_id, newMsg, restoreMsg }) {
       const index = state.peersList.indexOf(peer_id);
-      if(index == -1) return;
+      if(!~index) return;
 
       if(newMsg) {
         return moveArrItem(state.peersList, index, 0);
@@ -140,7 +140,7 @@ export default {
     editMessage(state, { peer_id, msg }) {
       const list = [...state.messages[peer_id] || []];
       const index = list.findIndex(({ id }) => id == msg.id);
-      if(index == -1) return;
+      if(!~index) return;
 
       list[index] = { ...list[index], ...msg };
 
@@ -168,7 +168,7 @@ export default {
       const messages = [...state.loadingMessages[peer_id] || []];
       const index = messages.findIndex((msg) => msg.random_id == random_id);
 
-      if(index != -1) {
+      if(~index) {
         Object.assign(messages[index], { error });
         Vue.set(state.loadingMessages, peer_id, messages);
       }
@@ -178,7 +178,7 @@ export default {
       const messages = [...state.loadingMessages[peer_id] || []];
       const index = messages.findIndex((msg) => msg.random_id == random_id);
 
-      if(index != -1) {
+      if(~index) {
         messages.splice(index, 1);
         Vue.set(state.loadingMessages, peer_id, messages);
       }

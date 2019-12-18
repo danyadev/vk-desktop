@@ -47,6 +47,11 @@ export function getPhotoFromSizes(sizes, size, isDoc) {
     }
 
     return isDoc ? find('o') : find('x');
+  } else if(Array.isArray(size)) {
+    for(let i = 0; i < size.length; i++) {
+      const photo = find(size[i]);
+      if(photo) return photo;
+    }
   } else {
     return find(size);
   }
