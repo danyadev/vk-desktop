@@ -109,6 +109,8 @@
         const initialBarLeft = bar.offsetLeft;
 
         const moveScrollBar = ({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) => {
+          if(this.lock) return;
+
           const isMoveToPoint = isMouseUp && target.matches('.scrolly-bar-wrap');
           const { scrollWidth, scrollHeight, offsetWidth, offsetHeight } = viewport;
           let dx = 0, dy = 0;
@@ -163,8 +165,6 @@
       },
 
       onWheel({ altKey, deltaX, deltaY }) {
-        if(this.lock) return;
-
         if(altKey) { // Возможность скролла по горизонтали при нажатой клавише Alt
           deltaX = deltaY > 0 ? 100 : -100;
           deltaY = 0;
@@ -220,22 +220,24 @@
         const { viewport, barX, barY } = this.$refs;
         if(!viewport) return;
 
-        const {
-          scrollTop: prevScrollTop,
-          scrollLeft: prevScrollLeft
-        } = viewport;
-
         if(mousemove) {
           return this.$emit('scroll', Object.assign(viewport, { dx, dy }));
         }
 
-        viewport.scrollLeft += dx;
-        viewport.scrollTop += dy;
+        if(!this.lock) {
+          const {
+            scrollTop: prevScrollTop,
+            scrollLeft: prevScrollLeft
+          } = viewport;
 
-        if(
-          dy && prevScrollTop == viewport.scrollTop ||
-          dx && prevScrollLeft == viewport.scrollLeft
-        ) return;
+          viewport.scrollLeft += dx;
+          viewport.scrollTop += dy;
+
+          if(
+            dy && prevScrollTop == viewport.scrollTop ||
+            dx && prevScrollLeft == viewport.scrollLeft
+          ) return;
+        }
 
         const {
           scrollLeft, scrollWidth, offsetWidth,

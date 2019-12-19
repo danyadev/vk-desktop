@@ -15,7 +15,9 @@ app.once('ready', () => {
     frame: false,
     titleBarStyle: 'hidden',
     webPreferences: {
-      nodeIntegration: true
+      webSecurity: false,
+      nodeIntegration: true,
+      webgl: false
     }
   });
 
