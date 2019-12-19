@@ -80,16 +80,16 @@ export default {
       let newIndex = index;
 
       if(restoreMsg) {
-        if(index == 0) return;
+        if(!index) return;
 
-        for(let i = 0; i<index; i++) {
+        for(let i = 0; i < index; i++) {
           if(peers[i].msg.id < id) {
             newIndex = i;
             break;
           }
         }
       } else if(index != peers.length-1) {
-        for(let i = peers.length-1; i>index; i--) {
+        for(let i = peers.length-1; i > index; i--) {
           if(peers[i].msg.id > id) {
             newIndex = i;
             break;
@@ -112,7 +112,6 @@ export default {
       const newMsgs = messages.filter(({ id }) => {
         return oldMsgs.findIndex((msg) => msg.id == id) == -1
       });
-
       const newList = addNew ? [...oldMsgs, ...newMsgs] : [...newMsgs, ...oldMsgs];
 
       Vue.set(state.messages, peer_id, newList);
@@ -126,7 +125,7 @@ export default {
       } else if(msg.id < list[0].id) {
         list.unshift(msg);
       } else {
-        for(let i=list.length-1; i>=0; i--) {
+        for(let i = list.length-1; i >= 0; i--) {
           if(list[i].id < msg.id) {
             list.splice(i+1, 0, msg);
             break;

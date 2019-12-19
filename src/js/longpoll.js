@@ -9,7 +9,7 @@ import longpollEvents from './longpollEvents';
 export default new class Longpoll {
   constructor() {
     this.debug = false;
-    this.version = 9;
+    this.version = 10;
   }
 
   getServer() {
@@ -142,9 +142,15 @@ export default new class Longpoll {
       if(event.pack) {
         const prev = events[events.length - 1];
 
-        // совпадает ид события и ид беседы, в которой произошло событие
-        if(prev && prev[0] == item[0] && prev[2] == item[2]) prev[1].push(data);
-        else events.push([id, [data], item[2]]);
+        if(
+          prev && // Есть предыдущее событие
+          prev[0] == id && // id события совпадает
+          (id == 2 || prev[2] == item[2]) // 2 эвент или совпадает peer_id
+        ) {
+          prev[1].push(data);
+        } else {
+          events.push([id, [data], item[2]]);
+        }
       } else {
         events.push([id, data]);
       }

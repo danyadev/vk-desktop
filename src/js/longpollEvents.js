@@ -566,23 +566,11 @@ export default {
     }
   },
 
-  10: {
-    // ??? (16, 1024, 16384)
-    // [peer_id, flag]
-    parser() {}
-  },
-
-  12: {
-    // ??? (16, 1024, 16384)
-    // [peer_id, flag]
-    parser() {}
-  },
-
   13: {
     // Удаление диалога
     // [peer_id, msg_id]
     parser: (data) => data,
-    handler([peer_id, msg_id]) {
+    handler([peer_id]) {
       store.commit('messages/removeConversationMessages', peer_id);
       store.commit('messages/updatePeersList', {
         id: peer_id,
@@ -626,7 +614,7 @@ export default {
       if([7, 8].includes(type)) removeTyping(peer_id, info, isMe);
 
       switch(type) {
-        case 1: // Изменение названии беседы (обрабатывается в 4 событии)
+        case 1: // Изменилось название беседы (обрабатывается в 4 событии)
           break;
 
         case 2: // Изменилась аватарка беседы
