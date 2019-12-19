@@ -82,7 +82,12 @@
                 h('img', {
                   class: 'service_message_photo',
                   domProps: {
-                    src: attach ? getPhotoFromSizes(attach.sizes, 'q').url : 'assets/blank.gif'
+                    src: getPhotoFromSizes(attach.sizes, 'q').url
+                  },
+                  on: {
+                    click: () => {
+                      this.$modals.open('media-viewer', { attach });
+                    }
                   }
                 })
               ])
@@ -171,5 +176,6 @@
     margin-top: 10px;
     border-radius: 50%;
     object-fit: contain;
+    cursor: pointer;
   }
 </style>
