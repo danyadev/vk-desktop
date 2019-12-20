@@ -37,8 +37,7 @@ function hasFlag(mask, flag) {
   }
 
   const newFlags = newMask.toString(2).split('').reverse().reduce((arr, item, index) => {
-    if(item == 1) arr.push(1 << index);
-
+    if(+item) arr.push(1 << index);
     return arr;
   }, []);
 
@@ -46,7 +45,6 @@ function hasFlag(mask, flag) {
   else if(longpoll.debug) console.log(mask, msgFlags, newFlags);
 
   const checkFlag = (flag) => flags[flag] & mask;
-
   return flag ? checkFlag(flag) : checkFlag;
 }
 
@@ -57,10 +55,7 @@ function getServiceMessage(data) {
     const match = item.match(/source_(.+)/);
 
     if(match) {
-      let key = match[1];
-
-      if(key == 'act') key = 'type';
-
+      const key = match[1] == 'act' ? 'type' : match[1];
       source[key] = data[item];
     }
   }
@@ -564,6 +559,21 @@ export default {
         last_seen: { time }
       });
     }
+  },
+
+  10: {
+    // Упоминание просмотрено
+    // Приходят только флаги 1024 и 16384 (17408)
+    // [peer_id, flag]
+    parser() {}
+  },
+
+  12: {
+    // Пришло упоминание
+    // 1) Флаги 1024 и 16384 (17408) - пушнули/ответили на сообщение в беседе peer_id
+    // 2) Флаг 32 - пользователь peer_id (id юзера) упомянул тебя в каком-то посте
+    // [peer_id, flag]
+    parser() {}
   },
 
   13: {
