@@ -403,11 +403,13 @@
 
         const list = this.$el.firstChild;
         const { scrollTop, clientHeight, scrollHeight } = list;
+        const isScrolledDown = scrollHeight && scrollTop + clientHeight == scrollHeight;
 
         switch(type) {
           case 'close_chat':
             this.showStartUnread = true;
             this.scrollTop = scrollTop;
+            this.isScrolledDown = isScrolledDown;
             break;
 
           case 'check_scrolling':
@@ -434,7 +436,7 @@
               this.jumpTo({ bottom: true, mark: false });
               this.showStartUnread = false;
             } else if(
-              scrollHeight && scrollTop + clientHeight == scrollHeight && // Доскроллено до конца
+              isScrolledDown && // Доскроллено до конца
               data.isFirstMsg && // Первое сообщение в списке новых сообщений, пришедших из лп
               !(this.loadingUp || this.loadingDown) && // В данный момент не загружаются новые сообщения
               isFocused() // Окно активно
@@ -454,7 +456,14 @@
       const list = this.$el.firstChild;
 
       if(this.scrollTop != null) {
-        list.scrollTop = this.scrollTop;
+        const unread = document.querySelector('.message_unreaded_messages');
+
+        if(this.isScrolledDown && unread) {
+          list.scrollTop = unread.offsetTop - list.clientHeight / 4;
+        } else {
+          list.scrollTop = this.scrollTop;
+        }
+
         this.checkReadMessages(list);
       } else {
         this.checkScrolling(list);
