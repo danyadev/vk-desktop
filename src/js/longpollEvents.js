@@ -405,7 +405,7 @@ export default {
         }
       }
 
-      for(let i=0; i<items.length; i++) {
+      for(let i = 0; i < items.length; i++) {
         eventBus.emit('messages:event', 'new', {
           peer_id,
           random_id: items[i].msg.random_id,

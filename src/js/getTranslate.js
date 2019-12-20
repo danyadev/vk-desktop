@@ -56,7 +56,7 @@ export default function(name, key, replaces, number) {
   if(Array.isArray(replaces)) {
     data = String(data);
 
-    for(let i=0; i<replaces.length; i++) {
+    for(let i = 0; i < replaces.length; i++) {
       data = data.replace(new RegExp(`\\{${i}\\}`, 'g'), replaces[i]);
     }
   }

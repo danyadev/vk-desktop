@@ -38,11 +38,16 @@
   import { parseMessage, parseConversation } from 'js/messages';
   import longpoll from 'js/longpoll';
   import vkapi from 'js/vkapi';
+  import electron from 'electron';
 
   import Scrolly from '../../UI/Scrolly.vue';
   import Icon from '../../UI/Icon.vue';
   import MessagesList from './MessagesList.vue';
   import Typing from '../Typing.vue';
+
+  function isFocused() {
+    return electron.remote.getCurrentWindow().isFocused();
+  }
 
   export default {
     props: ['peer_id', 'peer'],
@@ -170,7 +175,7 @@
       },
 
       async checkReadMessages(list) {
-        if(!this.$store.state.settings.messagesSettings.notRead) {
+        if(!this.$store.state.settings.messagesSettings.notRead && isFocused()) {
           await timer(0);
 
           const messages = document.querySelectorAll('.service_message.isUnread, .message_wrap.isUnread:not(.out)');
@@ -192,7 +197,7 @@
         const dates = document.querySelectorAll('.message_date');
         let value;
 
-        for(let i=0; i<dates.length; i++) {
+        for(let i = 0; i < dates.length; i++) {
           const el = dates[i];
           const nextEl = dates[i+1];
 
@@ -431,7 +436,8 @@
             } else if(
               scrollHeight && scrollTop + clientHeight == scrollHeight && // Доскроллено до конца
               data.isFirstMsg && // Первое сообщение в списке новых сообщений, пришедших из лп
-              !(this.loadingUp || this.loadingDown) // В данный момент не загружаются новые сообщения
+              !(this.loadingUp || this.loadingDown) && // В данный момент не загружаются новые сообщения
+              isFocused() // Окно активно
             ) {
               this.jumpTo({ bottom: true, mark: false });
             }
