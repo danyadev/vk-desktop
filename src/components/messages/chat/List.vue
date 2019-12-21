@@ -175,7 +175,7 @@
       },
 
       async checkReadMessages(list) {
-        if(!this.$store.state.settings.messagesSettings.notRead && isFocused()) {
+        if(!this.$store.getters['settings/settings'].notRead && isFocused()) {
           await timer(0);
 
           const messages = document.querySelectorAll('.service_message.isUnread, .message_wrap.isUnread:not(.out)');

@@ -27,7 +27,7 @@
     },
     computed: {
       isHidden() {
-        return this.$store.state.settings.messagesSettings.hiddenPinnedMessages[this.peer_id];
+        return this.$store.getters['settings/settings'].hiddenPinnedMessages[this.peer_id];
       },
       user() {
         return this.$store.state.profiles[this.msg.from];
@@ -60,7 +60,7 @@
         }
       },
       hide() {
-        const list = { ...this.$store.state.settings.messagesSettings.hiddenPinnedMessages };
+        const list = { ...this.$store.getters['settings/settings'].hiddenPinnedMessages };
 
         list[this.peer_id] = true;
 

@@ -1,5 +1,4 @@
 import electron from 'electron';
-import { deepAssign } from 'js/utils';
 
 const win = electron.remote.getCurrentWindow();
 
@@ -7,7 +6,7 @@ class Storage {
   constructor(name, defaults) {
     const storageData = JSON.parse(localStorage.getItem(name) || '{}');
 
-    this.data = deepAssign(defaults, storageData);
+    this.data = Object.assign(defaults, storageData);
     this.name = name;
     this.save();
   }
@@ -31,9 +30,11 @@ export const users = new Storage('users', {
 export const settings = new Storage('settings', {
   window: win.getBounds(),
   langName: 'ru',
-  messagesSettings: {
-    typing: true,
-    notRead: true,
-    hiddenPinnedMessages: {}
-  }
+  userSettings: {}
 });
+
+export const messagesDefaultSettings = {
+  typing: true,
+  notRead: true,
+  hiddenPinnedMessages: {}
+};

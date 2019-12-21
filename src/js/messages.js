@@ -54,7 +54,7 @@ export function parseMessage(message) {
     text: escape(message.text).replace(/\n/g, '<br>'),
     from: message.from_id,
     date: message.date,
-    out: message.from_id == store.getters['users/user'].id,
+    out: message.from_id == store.state.users.activeUser,
     editTime: message.update_time || 0,
     hidden: message.is_hidden,
     action: message.action,
@@ -75,7 +75,7 @@ export function parseMessage(message) {
 export function getServiceMessage(action, author, peer_id, isFull) {
   const actID = action.member_id || action.mid;
   const actUser = store.state.profiles[actID] || { id: actID };
-  const { id } = store.getters['users/user'];
+  const { activeUser: id } = store.state.users;
   const isAuthor = actID == author.id;
 
   function g(type) {

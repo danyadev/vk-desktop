@@ -48,9 +48,8 @@
       } else if(attach.image) {
         if(!cachedVideos.has(attach.id)) {
           const { items: [video] } = await vkapi('video.get', {
-            videos: `${attach.owner_id}_${attach.id}_${attach.access_key}`,
-            access_token: this.$store.getters['users/user'].android_token
-          });
+            videos: `${attach.owner_id}_${attach.id}_${attach.access_key}`
+          }, true);
 
           const files = Object.values(video.files);
           cachedVideos.set(video.id, files[files.length-2]);

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { settings } from '../Storage';
+import { settings, messagesDefaultSettings } from '../Storage';
 
 function getLangFile(name) {
   const lang = require(`js/../lang/${name}.js`).default;
@@ -14,13 +14,22 @@ export default {
     setWindowBounds(state, bounds) {
       state.window = bounds;
     },
+    setDefaultMessagesSettings(state, id) {
+      Vue.set(state.userSettings, id, messagesDefaultSettings);
+    },
     updateMessagesSettings(state, { key, value }) {
-      Vue.set(state.messagesSettings, key, value);
+      const id = this.state.users.activeUser;
+      const data = { ...state.userSettings[id], [key]: value };
+
+      Vue.set(state.userSettings, id, data);
     }
   },
   getters: {
     lang({ langName }) {
       return getLangFile(langName);
+    },
+    settings(state, getters, { users }) {
+      return state.userSettings[users.activeUser];
     }
   }
 }

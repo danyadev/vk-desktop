@@ -383,7 +383,7 @@ export default {
             peerData.unread = (conv.peer.unread || 0) + 1;
           }
 
-          if(mentions.includes(store.getters['users/user'].id)) {
+          if(mentions.includes(store.state.users.activeUser)) {
             peerData.mentions.push(msg.id);
           }
         }
@@ -445,7 +445,7 @@ export default {
       const conv = store.state.messages.conversations[peer.id];
       const messages = store.state.messages.messages[peer.id] || [];
       const isLastMsg = conv && conv.msg.id == msg.id;
-      const activeId = store.getters['users/user'].id;
+      const activeId = store.state.users.activeUser;
 
       removeTyping(peer.id, msg.from);
 
@@ -490,7 +490,7 @@ export default {
       const conv = store.state.messages.conversations[peer_id];
       const mentions = conv && conv.peer.mentions || [];
       const newMentions = mentions.slice();
-      const isMyDialog = peer_id == store.getters['users/user'].id;
+      const isMyDialog = peer_id == store.state.users.activeUser;
 
       for(const id of mentions) {
         if(msg_id >= id) {
@@ -616,7 +616,7 @@ export default {
     // https://vk.com/dev/using_longpoll_2?f=3.2.+Дополнительные+поля+чатов
     parser: (data) => data,
     handler([type, peer_id, info]) {
-      const isMe = info == store.getters['users/user'].id;
+      const isMe = info == store.state.users.activeUser;
       const conv = store.state.messages.conversations[peer_id];
       const peer = conv && conv.peer;
 
@@ -688,7 +688,7 @@ export default {
     parser: (data) => data,
     handler([peer_id, ids]) {
       for(const id of ids) {
-        if(id == store.getters['users/user'].id) continue;
+        if(id == store.state.users.activeUser) continue;
 
         store.commit('messages/addUserTyping', {
           peer_id: peer_id,
@@ -707,7 +707,7 @@ export default {
     parser: (data) => data,
     handler([peer_id, ids]) {
       for(const id of ids) {
-        if(id == store.getters['users/user'].id) continue;
+        if(id == store.state.users.activeUser) continue;
 
         store.commit('messages/addUserTyping', {
           peer_id: peer_id,

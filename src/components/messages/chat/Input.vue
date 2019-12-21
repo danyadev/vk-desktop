@@ -96,7 +96,7 @@
         if(this.peer.left) {
           vkapi('messages.addChatUser', {
             chat_id: this.peer_id - 2e9,
-            user_id: this.$store.getters['users/user'].id
+            user_id: this.$store.state.users.activeUser
           });
         } else {
           vkapi('account.setSilenceMode', {
@@ -113,7 +113,7 @@
       },
 
       onInput: throttle(async function(e) {
-        if(e.data && this.$store.state.settings.messagesSettings.typing && this.peer_id != 100) {
+        if(e.data && this.$store.getters['settings/settings'].typing && this.peer_id != 100) {
           try {
             await vkapi('messages.setActivity', {
               peer_id: this.peer_id,

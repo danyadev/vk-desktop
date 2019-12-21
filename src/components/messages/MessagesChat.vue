@@ -34,7 +34,7 @@
         return conv && conv.peer;
       },
       pinnedMsg() {
-        const showPinnedMsg = !this.$store.state.settings.messagesSettings.hiddenPinnedMessages[this.peer_id];
+        const showPinnedMsg = !this.$store.getters['settings/settings'].hiddenPinnedMessages[this.peer_id];
 
         return this.peer && this.peer.pinnedMsg && showPinnedMsg;
       }

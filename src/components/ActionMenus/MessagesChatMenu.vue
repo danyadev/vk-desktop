@@ -52,7 +52,7 @@
         return this.peer && this.peer.channel;
       },
       hiddenPinnedMessages() {
-        return { ...this.$store.state.settings.messagesSettings.hiddenPinnedMessages };
+        return { ...this.$store.getters['settings/settings'].hiddenPinnedMessages };
       },
       showPinnedMsg() {
         return !this.hiddenPinnedMessages[this.peer_id];
@@ -103,7 +103,7 @@
 
         vkapi(this.left ? 'messages.addChatUser' : 'messages.removeChatUser', {
           chat_id: this.peer_id - 2e9,
-          user_id: this.$store.getters['users/user'].id
+          user_id: this.$store.state.users.activeUser
         });
       }
     }

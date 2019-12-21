@@ -52,7 +52,7 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
       msg: {
         id: msg_id,
         text: message,
-        from: store.getters['users/user'].id,
+        from: store.state.users.activeUser,
         date: (Date.now() / 1000).toFixed(),
         out: true,
         editTime: 0,
