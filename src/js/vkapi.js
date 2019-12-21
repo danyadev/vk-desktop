@@ -92,6 +92,47 @@ function vkapi(name, params, useAndroidToken) {
         });
         break;
 
+      case 17: // Необходима активация аккаунта (добавить номер телефона)
+        const { data: redirectPage } = await request(data.error.redirect_uri);
+        const goCaptchaLink = 'https://m.vk.com' + redirectPage.match(/<a href="(.+?)" rel="noopener">Пропустить ввод номера/)[1];
+        const { data: firstCaptchaPage } = await request(goCaptchaLink);
+        let success = false;
+        let captchaPage = firstCaptchaPage;
+
+        while(!success) {
+          const sendUrl = captchaPage.match(/<form action="(.+?)" method="post">/)[1];
+          const captchaSid = captchaPage.match(/name="captcha_sid" value="(.+?)">/)[1];
+
+          await new Promise((resolve) => {
+            eventBus.emit('modal:open', 'captcha', {
+              src: `https://m.vk.com/captcha.php?sid=${captchaSid}`,
+              async send(code) {
+                const res = await request({
+                  host: 'm.vk.com',
+                	path: sendUrl,
+                	method: 'POST'
+                }, {
+                  postData: querystring.stringify({
+                		captcha_sid: captchaSid,
+                		captcha_key: code
+                  })
+                });
+
+                if(res.statusCode == 302) {
+                  success = true;
+                  // Режект в основной функции для повтора вызова метода
+                  reject();
+                } else {
+                  captchaPage = res.data;
+                }
+
+                resolve();
+              }
+            });
+          });
+        }
+        break;
+
       default: // Все остальные ошибки
         reject(data.error);
         break;

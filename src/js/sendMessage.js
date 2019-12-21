@@ -1,4 +1,4 @@
-import { random, eventBus, createModalWindow } from './utils';
+import { random, eventBus } from './utils';
 import store from './store';
 import vkapi from './vkapi';
 import Vue from 'vue';
@@ -97,11 +97,6 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
           canWrite: false
         }
       });
-    }
-
-    // Требуется активировать аккаунт
-    if(e.error_code == 17) {
-      createModalWindow(e.redirect_uri);
     }
   }
 }

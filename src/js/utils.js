@@ -1,10 +1,7 @@
 import { EventEmitter } from 'events';
-import electron from 'electron';
 import vkapi from './vkapi';
 import store from './store/';
 import { version } from 'package-json';
-
-const { BrowserWindow, getCurrentWindow } = electron.remote;
 
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
@@ -177,19 +174,6 @@ export async function loadProfile(id) {
   isLoadingProfiles = false;
 
   if(loadingProfiles.length) loadProfile();
-}
-
-export function createModalWindow(url) {
-  const win = new BrowserWindow({
-    parent: getCurrentWindow(),
-    modal: true,
-    width: 450,
-    height: 650
-  });
-
-  win.loadURL(url);
-
-  return win;
 }
 
 // 125 -> 125

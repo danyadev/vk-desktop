@@ -3,7 +3,7 @@
     <ModalHeader :closable="false">{{ l('ml_captcha_header') }}</ModalHeader>
     <div class="modal_content">
       <div class="captcha_img">
-        <img :src="src" @click="updatePic">
+        <img :src="imgSrc" @click="updatePic">
       </div>
       <div class="captcha_key">
         <input class="input"
@@ -30,6 +30,7 @@
       Button
     },
     data: () => ({
+      imgSrc: '',
       code: ''
     }),
     computed: {
@@ -39,7 +40,7 @@
     },
     methods: {
       updatePic() {
-        this.src += ~this.src.indexOf('&s=1') ? '1' : '&s=1';
+        this.imgSrc += ~this.imgSrc.indexOf('&s=1') ? '1' : '&s=1';
       },
       sendCode() {
         if(this.disabled) return;
@@ -47,6 +48,9 @@
         this.send(this.code.trim());
         this.$modals.close(this.$attrs.name);
       }
+    },
+    mounted() {
+      this.imgSrc = this.src;
     }
   }
 </script>
