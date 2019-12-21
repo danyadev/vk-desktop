@@ -1,5 +1,7 @@
 <template>
-  <div :class="['message_wrap', ...attachClasses, { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading }]" :id="msg.id">
+  <div :class="['message_wrap', ...attachClasses, { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading }]"
+       :id="msg.id"
+  >
     <div v-if="showUserData" class="message_name">
       {{ name }}
       <div v-if="user && user.verified" class="verified"></div>
@@ -10,6 +12,8 @@
       <div v-else-if="isChat && !msg.out && !isChannel" class="message_photo"></div>
 
       <div class="message_bubble_wrap">
+        <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
+
         <div class="message_bubble">
           <Reply v-if="msg.isReplyMsg" :msg="msg" :peer_id="peer_id" />
 
@@ -43,6 +47,7 @@
   import Reply from './attachments/Reply.vue';
   import Forwarded from './attachments/Forwarded.vue';
   import Keyboard from './Keyboard.vue';
+  import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 
   export default {
     props: ['msg', 'peer', 'peer_id', 'messageDate', 'isStartUnread', 'prevMsg'],
@@ -50,7 +55,8 @@
       Attachments,
       Reply,
       Forwarded,
-      Keyboard
+      Keyboard,
+      SendMsgErrorMenu
     },
     computed: {
       user() {
@@ -277,21 +283,12 @@
 
   .message_wrap:not(.isLoading).isUnread.out .message_bubble::before {
     content: '';
-    left: -15px;
+    left: -16px;
   }
 
   .message_wrap.isUnread:not(.out) .message_bubble::after {
     content: '';
-    right: -15px;
-  }
-
-  .message_wrap.isLoading .message_bubble::before {
-    content: '';
-    width: 18px;
-    height: 18px;
-    left: -20px;
-    bottom: 7px;
-    background: url(~assets/recent.svg) center / contain;
+    right: -16px;
   }
 
   /* Фотографии */

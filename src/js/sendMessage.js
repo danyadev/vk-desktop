@@ -46,6 +46,13 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
 
   try {
     const msg_id = 'loading' + counter++;
+    const payload = keyboard && keyboard.action.payload;
+    const params = {
+      peer_id,
+      message,
+      random_id,
+      ...(payload ? { payload } : {})
+    };
 
     store.commit('messages/addLoadingMessage', {
       peer_id,
@@ -60,7 +67,8 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
         fwdMessages: [],
         attachments: [],
         random_id,
-        isLoading: true
+        isLoading: true,
+        params
       }
     });
 
@@ -73,25 +81,18 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
       mark: false
     });
 
-    const payload = keyboard && keyboard.action.payload;
-
-    await vkapi('messages.send', {
-      peer_id,
-      message,
-      random_id,
-      ...(payload ? { payload } : {})
-    });
+    await vkapi('messages.send', params);
   } catch(e) {
     store.commit('messages/editLoadingMessage', {
       peer_id,
       random_id,
-      isLoadingFailed: true
+      error: true
     });
 
     // 900 = Нельзя отправить пользователю из черного списка
     // 902 = Нельзя отправить сообщение из-за настроек приватности собеседника
     if([900, 902].includes(e.error_code)) {
-      return store.commit('messages/updateConversation', {
+      store.commit('messages/updateConversation', {
         peer: {
           id: peer_id,
           canWrite: false

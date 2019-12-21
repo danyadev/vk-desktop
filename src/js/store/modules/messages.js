@@ -168,7 +168,7 @@ export default {
       const index = messages.findIndex((msg) => msg.random_id == random_id);
 
       if(~index) {
-        Object.assign(messages[index], { error });
+        Vue.set(messages, index, { ...messages[index], error });
         Vue.set(state.loadingMessages, peer_id, messages);
       }
     },

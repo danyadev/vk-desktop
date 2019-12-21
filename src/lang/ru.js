@@ -75,6 +75,9 @@ export default {
     'Подписаться на канал'
   ],
 
+  im_retry_send: 'Повторить отправку',
+  im_delete_message: 'Удалить сообщение',
+
   im_send_typing: 'Отправлять тайпинг',
   im_not_read_messages: 'Нечиталка сообщений',
 
