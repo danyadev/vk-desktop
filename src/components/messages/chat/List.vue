@@ -9,7 +9,11 @@
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loadingUp" class="loading"></div>
 
-    <MessagesList :peer_id="peer_id" :peer="peer" :list="messagesWithLoading" :showStartUnread="showStartUnread" />
+    <MessagesList :peer_id="peer_id" :peer="peer"
+                  :list="messagesWithLoading"
+                  :showStartUnread="showStartUnread"
+                  :startInRead="startInRead"
+    />
 
     <div v-if="loadingDown" class="loading"></div>
 
@@ -76,6 +80,8 @@
       lastReadedMsg: null,
       lastViewedMention: null,
       replyHistory: [],
+
+      startInRead: 0,
       showStartUnread: true
     }),
 
@@ -454,6 +460,8 @@
 
     activated() {
       const list = this.$el.firstChild;
+
+      this.startInRead = this.peer.in_read;
 
       if(this.scrollTop != null) {
         const unread = document.querySelector('.message_unreaded_messages');

@@ -7,13 +7,7 @@
   import Message from './Message.vue';
 
   export default {
-    props: ['peer_id', 'peer', 'list', 'showStartUnread'],
-
-    computed: {
-      in_read() {
-        return this.peer && this.peer.in_read;
-      }
-    },
+    props: ['peer_id', 'peer', 'list', 'showStartUnread', 'startInRead'],
 
     methods: {
       messageDate(msg, prevMsg) {
@@ -25,8 +19,8 @@
         }
       },
       isStartUnread(msg, prevMsg) {
-        const isPrevUnread = prevMsg && prevMsg.id > this.in_read;
-        const isThisUnread = msg.id > this.in_read;
+        const isPrevUnread = prevMsg && prevMsg.id > this.startInRead;
+        const isThisUnread = msg.id > this.startInRead;
 
         return this.showStartUnread && !msg.out && !isPrevUnread && isThisUnread;
       },
@@ -64,12 +58,14 @@
         }
 
         if(serviceMessage) {
+          const isUnread = msg.id > this.peer.in_read && 'isUnread';
+
           if(msg.attachments.photo) {
             const [attach] = msg.attachments.photo;
 
             children.push(
               h('div', {
-                class: ['service_message', 'hasPhoto', msg.id > this.in_read && 'isUnread'],
+                class: ['service_message', 'hasPhoto', isUnread],
                 domProps: {
                   id: msg.id
                 }
@@ -95,7 +91,7 @@
           } else {
             children.push(
               h('div', {
-                class: ['service_message', msg.id > this.in_read && 'isUnread'],
+                class: ['service_message', isUnread],
                 domProps: {
                   id: msg.id,
                   innerHTML: serviceMessage
