@@ -63,6 +63,7 @@ export default {
   im_chat_online_last_week: ['Был в сети на этой неделе', 'Была в сети на этой неделе'],
   im_chat_online_last_month: ['Был в сети в этом месяце', 'Была в сети в этом месяце'],
   im_chat_online_long_ago: ['Был в сети давно', 'Была в сети давно'],
+  im_chat_online_not_show: ['Был в сети давно', 'Была в сети давно'],
 
   im_go_to_first_msg: 'Перейти в начало беседы',
   im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],

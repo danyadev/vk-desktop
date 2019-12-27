@@ -461,7 +461,7 @@
     activated() {
       const list = this.$el.firstChild;
 
-      this.startInRead = this.peer.in_read;
+      this.startInRead = this.peer && this.peer.in_read;
 
       if(this.scrollTop != null) {
         const unread = document.querySelector('.message_unreaded_messages');
