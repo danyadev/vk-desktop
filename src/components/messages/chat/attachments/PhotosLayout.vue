@@ -7,6 +7,8 @@
 
     data() {
       return {
+        prevWidth: 0,
+        prevHeight: 0,
         parentWidth: 0,
         parentHeight: 0,
         isModal: false
@@ -14,6 +16,18 @@
     },
 
     methods: {
+      onResize({ target: { innerWidth, innerHeight } }) {
+        if(innerWidth != this.prevWidth) {
+          this.parentWidth = this.calcParentWidth();
+          this.prevWidth = innerWidth;
+        }
+
+        if(innerHeight != this.prevHeight) {
+          this.parentHeight = this.calcParentHeight();
+          this.prevHeight = innerHeight;
+        }
+      },
+
       calcParentWidth() {
         if(this.isModal) {
           return this.$el.closest('.modal_wrap').clientWidth * .92 * .7;
@@ -21,6 +35,7 @@
           return this.$el.closest('.scrolly').clientWidth * .75 - 52;
         }
       },
+
       calcParentHeight() {
         if(this.isModal) {
           return this.$el.closest('.modal_wrap').scrollHeight * .92 - 130;
@@ -168,22 +183,7 @@
     },
 
     mounted() {
-      let prevWidth, prevHeight;
-
-      window.addEventListener('resize', ({ target: { innerWidth, innerHeight } }) => {
-        const { name, params } = this.$router.currentRoute;
-        if(name != 'chat' || params.id != this.peer_id) return;
-
-        if(innerWidth != prevWidth) {
-          this.parentWidth = this.calcParentWidth();
-          prevWidth = innerWidth;
-        }
-
-        if(innerHeight != prevHeight) {
-          this.parentHeight = this.calcParentHeight();
-          prevHeight = innerHeight;
-        }
-      });
+      window.addEventListener('resize', this.onResize);
 
       this.isModal = !!this.$el.closest('.modal');
       this.parentWidth = this.calcParentWidth();
@@ -191,8 +191,18 @@
     },
 
     activated() {
+      window.addEventListener('resize', this.onResize);
+
       this.parentWidth = this.calcParentWidth();
       this.parentHeight = this.calcParentHeight();
+    },
+
+    destroyed() {
+      window.removeEventListener('resize', this.onResize);
+    },
+
+    deactivated() {
+      window.removeEventListener('resize', this.onResize);
     }
   }
 </script>
