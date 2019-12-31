@@ -1,6 +1,6 @@
 <template>
   <ActionsMenu ref="actionsMenu">
-    <div class="act_menu_item" @click="act(0)">
+    <div v-if="!isYoutube" class="act_menu_item" @click="act(0)">
       <img class="act_menu_icon" src="~assets/download.svg">
       <div class="act_menu_data">Сохранить на устройстве</div>
     </div>
@@ -26,7 +26,7 @@
   const { dialog, clipboard } = electron.remote;
 
   export default {
-    props: ['src', 'attach', 'isPhoto'],
+    props: ['src', 'attach', 'isPhoto', 'isYoutube'],
     components: {
       ActionsMenu
     },

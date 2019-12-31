@@ -3,7 +3,7 @@
     <ModalHeader>
       {{ l('ml_media_viewer_header') }}
       <template v-slot:icons>
-        <PhotoMenu v-if="type" :isPhoto="type == 'photo'" :src="src" :attach="attach" />
+        <PhotoMenu v-if="type" :isPhoto="type == 'photo'" :isYoutube="type == 'player'" :src="src" :attach="attach" />
       </template>
     </ModalHeader>
     <div :class="['modal_content', { loading: loading || !type }]">
