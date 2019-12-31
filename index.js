@@ -2,7 +2,7 @@
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
-const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
+const { app, BrowserWindow, ipcMain, globalShortcut, shell } = require('electron');
 const fs = require('fs');
 
 app.once('ready', () => {
@@ -59,6 +59,11 @@ app.once('ready', () => {
     }
 
     win.show();
+  });
+
+  win.webContents.on('new-window', (event, url) => {
+    event.preventDefault();
+    shell.openExternal(url);
   });
 
   if(process.platform == 'darwin') require('./main/menu')(win);
