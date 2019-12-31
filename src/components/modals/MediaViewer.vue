@@ -10,6 +10,7 @@
       <video v-if="type == 'video'" :src="src" controls autoplay></video>
       <video v-else-if="type == 'gif'" :src="src" autoplay loop></video>
       <img v-else-if="type == 'photo'" :src="src" @load.once="loading = false">
+      <iframe v-else-if="type == 'player'" :src="src"></iframe>
     </div>
   </div>
 </template>
@@ -52,11 +53,17 @@
           }, true);
 
           const files = Object.values(video.files);
-          cachedVideos.set(video.id, files[files.length-2]);
+          const isPlayer = files.length == 1;
+
+          cachedVideos.set(video.id, {
+            player: isPlayer,
+            src: isPlayer ? video.player : files[files.length-2]
+          });
         }
 
-        this.src = cachedVideos.get(attach.id);
-        this.type = 'video';
+        const video = cachedVideos.get(attach.id);
+        this.type = video.player ? 'player' : 'video';
+        this.src = video.src;
       } else {
         const size = getPhotoFromSizes(attach.sizes, 'z');
 
@@ -89,5 +96,14 @@
     max-height: inherit;
     vertical-align: middle;
     z-index: 1;
+  }
+
+  .modal[name=media-viewer] .modal_content iframe {
+    border: none;
+    min-width: 368px;
+    width: 92vw;
+    max-width: 720px;
+    height: calc(92vh - 48px - 56px);
+    max-height: 480px;
   }
 </style>
