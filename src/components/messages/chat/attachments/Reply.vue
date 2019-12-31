@@ -20,18 +20,15 @@
     props: ['msg', 'peer_id'],
     methods: {
       getPhoto(msg) {
-        let url;
-
-        const { photo, sticker, doc, video } = msg.attachments;
+        const { photo, sticker, doc, video, story } = msg.attachments;
         const photoDoc = doc && doc.find((doc) => doc.preview);
         const videoImages = video && video[0].image;
 
-        if(photo) url = getPhotoFromSizes(photo[0].sizes, 'o').url;
-        else if(sticker) url = sticker[0].images[1].url;
-        else if(photoDoc) url = getPhotoFromSizes(photoDoc.preview.photo.sizes, 'm').src;
-        else if(video) url = (videoImages[6] || videoImages[videoImages.length-1]).url;
-
-        return url;
+        if(photo) return getPhotoFromSizes(photo[0].sizes, 'o').url;
+        if(sticker) return sticker[0].images[1].url;
+        if(photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'm').src;
+        if(video) return (videoImages[6] || videoImages[videoImages.length-1]).url;
+        if(story) return getPhotoFromSizes(story[0].photo.sizes, ['o', 'j', 'm', 'x']).url;
       },
       async jump() {
         const { replyMsg, id } = this.msg;
