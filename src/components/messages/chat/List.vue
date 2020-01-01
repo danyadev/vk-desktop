@@ -65,9 +65,8 @@
 
     data: () => ({
       loadingUp: false,
-      loadedUp: false,
-
       loadingDown: false,
+      loadedUp: false,
       loadedDown: false,
 
       scrollTop: null,
@@ -81,6 +80,7 @@
       lastViewedMention: null,
       replyHistory: [],
 
+      hasOldUnread: false,
       startInRead: 0,
       showStartUnread: true
     }),
@@ -416,6 +416,7 @@
             this.showStartUnread = true;
             this.scrollTop = scrollTop;
             this.isScrolledDown = isScrolledDown;
+            this.hasOldUnread = this.peer.last_msg_id > this.peer.in_read;
             break;
 
           case 'check_scrolling':
@@ -466,8 +467,8 @@
       if(this.scrollTop != null) {
         const unread = document.querySelector('.message_unreaded_messages');
 
-        if(this.isScrolledDown && unread) {
-          list.scrollTop = unread.offsetTop - list.clientHeight / 4;
+        if(this.isScrolledDown && !this.hasOldUnread && unread) {
+          list.scrollTop = this.scrollTop + list.clientHeight / 2;
         } else {
           list.scrollTop = this.scrollTop;
         }
