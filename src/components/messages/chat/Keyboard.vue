@@ -2,7 +2,7 @@
     <Scrolly :vclass="['keyboard', { inline: keyboard.inline }]">
       <div v-for="line of buttons" class="keyboard_line">
         <Ripple v-for="({ action, color }, i) of line" :key="i"
-                :color="color == 'default' && action.type == 'vkpay' ? 'rgba(0, 0, 0, .2)' : '#ced7e0'"
+                :color="color == 'default' && action.type != 'vkpay' ? '#ced7e0' : 'rgba(0, 0, 0, .2)'"
                 :class="['keyboard_button', action.type == 'vkpay' ? 'primary' : color]"
                 :style="{ width: `${100/line.length}%` }"
                 @click="click(action)"
