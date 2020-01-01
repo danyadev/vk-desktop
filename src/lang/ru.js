@@ -10,6 +10,8 @@ export default {
   send: 'Отправить',
   retry: 'Повторить',
   not_supported: 'Не поддерживается',
+  download: 'Скачать',
+  downloaded: 'Скачано',
 
   // Время
   date_now: 'только что',

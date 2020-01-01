@@ -1,4 +1,8 @@
+import fs from 'fs';
+import path from 'path';
+import request from 'js/request';
 import { EventEmitter } from 'events';
+import electron from 'electron';
 import vkapi from './vkapi';
 import store from './store/';
 import { version } from 'package-json';
@@ -216,5 +220,25 @@ export function getAppName(app_id) {
     case 6328868:
     case 6820516:
       return 'VK mp3 mod';
+  }
+}
+
+export async function downloadFile(src, withRedirect, progress) {
+  const files = electron.remote.dialog.showOpenDialogSync({
+    properties: ['openDirectory']
+  });
+
+  if(files) {
+    if(withRedirect) {
+      const { headers: { location } } = await request(src);
+      src = location;
+    }
+
+    const [name] = (new URL(src)).pathname.split('/').reverse();
+
+    await request(src, {
+      pipe: fs.createWriteStream(path.join(files[0], name)),
+      progress
+    });
   }
 }

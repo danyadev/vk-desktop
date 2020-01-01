@@ -16,14 +16,9 @@
 </template>
 
 <script>
-  import electron from 'electron';
-  import fs from 'fs';
-  import path from 'path';
-  import request from 'js/request';
-
+  import vkapi from 'js/vkapi';
+  import { downloadFile } from 'js/utils';
   import ActionsMenu from './ActionsMenu.vue';
-
-  const { dialog, clipboard } = electron.remote;
 
   export default {
     props: ['src', 'attach', 'isPhoto', 'isYoutube'],
@@ -36,18 +31,7 @@
 
         switch(id) {
           case 0:
-            const files = dialog.showOpenDialogSync({
-              properties: ['openDirectory']
-            });
-
-            if(files) {
-              const [name] = (new URL(this.src)).pathname.split('/').reverse();
-
-              request(this.src, {
-                pipe: fs.createWriteStream(path.join(files[0], name))
-              });
-            }
-
+            downloadFile(this.src);
             break;
 
           case 1:
@@ -58,12 +42,10 @@
               photo_id,
               access_key
             });
-
             break;
 
           case 2:
-            clipboard.writeText(this.src);
-
+            electron.remote.clipboard.writeText(this.src);
             break;
         }
       }
