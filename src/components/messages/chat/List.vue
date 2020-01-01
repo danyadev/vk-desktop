@@ -21,9 +21,6 @@
       <img src="~assets/placeholder_empty_messages.webp">
       {{ l('im_empty_dialog') }}
     </div>
-    <div v-else-if="hasMessages" class="messages_typing" ref="typing">
-      <Typing v-if="hasTyping" :peer_id="peer_id" :full="true" />
-    </div>
 
     <div :class="['im_scroll_mention_btn', { hidden: !showEndBtn || !peer || !peer.mentions.length }]" @click="scrollToMention">
       <div>{{ peer && peer.mentions.length }}</div>
@@ -47,7 +44,6 @@
   import Scrolly from '../../UI/Scrolly.vue';
   import Icon from '../../UI/Icon.vue';
   import MessagesList from './MessagesList.vue';
-  import Typing from '../Typing.vue';
 
   function isFocused() {
     return electron.remote.getCurrentWindow().isFocused();
@@ -59,8 +55,7 @@
     components: {
       Scrolly,
       Icon,
-      MessagesList,
-      Typing
+      MessagesList
     },
 
     data: () => ({
@@ -97,10 +92,6 @@
       },
       hasMessages() {
         return !!this.messagesWithLoading.length;
-      },
-      hasTyping() {
-        const typing = this.$store.state.messages.typing[this.peer_id] || {};
-        return !!Object.keys(typing).length;
       }
     },
 
@@ -495,6 +486,10 @@
 
   .messages_list_wrap {
     height: 100%;
+  }
+
+  .messages_list {
+    padding-bottom: 25px;
   }
 
   .im_top_time {

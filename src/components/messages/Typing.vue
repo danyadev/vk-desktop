@@ -1,12 +1,11 @@
 <template>
-  <div class="typing_wrap">
-    <div v-if="!left" class="typing_text">{{ text }}</div>
+  <div :class="['typing_wrap', { isChat, 'text-shadow': isChat }]">
+    <div class="typing_text">{{ text }}</div>
     <div class="typing">
       <div class="typing_item"></div>
       <div class="typing_item"></div>
       <div class="typing_item"></div>
     </div>
-    <div v-if="left" class="typing_text">{{ text }}</div>
   </div>
 </template>
 
@@ -15,22 +14,7 @@
   import getTranslate from 'js/getTranslate';
 
   export default {
-    props: {
-      // Слева ли должны находиться три точки
-      left: {
-        type: Boolean,
-        default: true
-      },
-      // Полностью ли отображать фамилию
-      full: {
-        type: Boolean,
-        default: false
-      },
-      peer_id: {
-        type: [String, Number],
-        required: true
-      }
-    },
+    props: ['peer_id', 'isChat'],
     computed: {
       text() {
         const typing = this.$store.state.messages.typing[this.peer_id];
@@ -50,9 +34,7 @@
           if(!user) return loadConversationMembers(id), '...';
           if(user.name) return user.name;
 
-          const lastName = this.full ? user.last_name : user.last_name[0] + '.';
-
-          return `${user.first_name} ${lastName}`;
+          return `${user.first_name} ${user.last_name[0] + '.'}`;
         }
 
         function getText(type, data) {
@@ -83,7 +65,13 @@
   .typing_wrap {
     display: flex;
     color: #254f79;
-    width: 100%;
+  }
+
+  .typing_wrap.isChat {
+    color: rgba(255, 255, 255, .75);
+    font-size: 13px;
+    margin-top: 2px;
+    justify-content: center;
   }
 
   .typing {
@@ -112,6 +100,11 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
+  }
+
+  .typing_wrap.isChat .typing_item {
+    background: rgba(255, 255, 255, .75);
+    margin-bottom: 1px;
   }
 
   .typing_item:nth-child(2) { animation-delay: .37s }
