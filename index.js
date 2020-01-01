@@ -2,7 +2,7 @@
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
-const { app, BrowserWindow, ipcMain, globalShortcut, shell } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 const fs = require('fs');
 
 app.once('ready', () => {
@@ -22,18 +22,6 @@ app.once('ready', () => {
   });
 
   require('./main/win').setWindow(win);
-
-  ipcMain.on('addShortcut', (event, data) => {
-    globalShortcut.registerAll(data.accelerators, () => {
-      if(win.isFocused()) {
-        event.sender.send('emitShortcut', data.id);
-      }
-    });
-  });
-
-  ipcMain.on('removeAllShortcuts', () => {
-    globalShortcut.unregisterAll();
-  });
 
   // Автообновление на macOS трубует подпись у приложения
   if(process.platform != 'darwin') {

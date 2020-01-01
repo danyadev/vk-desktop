@@ -1,36 +1,34 @@
-import { ipcRenderer } from 'electron';
+const pressedKeys = new Set();
+// Предполагается, что одно и тоже сочетание клавиш будет обрабатываться один раз
+const callbacks = new Map();
 
-const callbacks = [];
-const buttons = [];
+function getKeyName({ key, code }) {
+  if(/^Key/.test(code)) return code.slice(3);
+  else return key;
+}
 
-ipcRenderer.on('emitShortcut', (e, id) => callbacks[id]());
+window.addEventListener('keydown', () => {
+  pressedKeys.add(getKeyName(event));
 
-// При перезагрузке страницы или выходе из приложения
-window.addEventListener('beforeunload', () => {
-  ipcRenderer.send('removeAllShortcuts');
+  for(const [accelerator, callback] of callbacks) {
+    if(accelerator.split('+').every((key) => pressedKeys.has(key))) {
+      callback();
+    }
+  }
 });
 
-window.addEventListener('keydown', (e) => {
-  for(const button of buttons) {
-    if(button.key == e.key) callbacks[button.id]();
-  }
+window.addEventListener('keyup', () => {
+  pressedKeys.delete(getKeyName(event));
 });
 
 export default function(accelerators, callback) {
-  callbacks.push(callback);
-
-  if(!Array.isArray(accelerators)) accelerators = [accelerators];
-
-  const id = callbacks.length-1;
-
-  for(let i in accelerators) {
-    const item = accelerators[i];
-
-    if(!/\+/.test(item)) {
-      buttons.push({ key: item, id });
-      accelerators.splice(i, 1);
-    }
+  for(const accelerator of accelerators) {
+    callbacks.set(accelerator, callback);
   }
 
-  ipcRenderer.send('addShortcut', { accelerators, id });
+  return function() {
+    for(const accelerator of accelerators) {
+      callbacks.delete(accelerator);
+    }
+  };
 }
