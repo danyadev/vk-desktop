@@ -443,7 +443,8 @@
               isScrolledDown && // Доскроллено до конца
               data.isFirstMsg && // Первое сообщение в списке новых сообщений, пришедших из лп
               !(this.loadingUp || this.loadingDown) && // В данный момент не загружаются новые сообщения
-              isFocused() // Окно активно
+              isFocused() && // Окно активно
+              !this.$modals.hasModals // Нет открытых модалок
             ) {
               this.jumpTo({ bottom: true, mark: false });
             }

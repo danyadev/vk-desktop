@@ -53,11 +53,17 @@
           eventBus.emit('modal:close', modal.getAttribute('name'));
         }
       },
-      
+
       onEscape() {
         const keys = Object.keys(this.modals);
 
         if(keys.length) eventBus.emit('modal:close', keys[keys.length-1]);
+      }
+    },
+
+    watch: {
+      hasModals(value) {
+        this.$modals.hasModals = value;
       }
     },
 
