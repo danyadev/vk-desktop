@@ -21,9 +21,11 @@
       ActionsMenu,
       Checkbox
     },
+
     computed: {
       ...mapGetters('settings', ['settings'])
     },
+    
     methods: {
       click(name) {
         this.$store.commit('settings/updateMessagesSettings', {

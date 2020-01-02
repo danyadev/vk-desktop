@@ -18,6 +18,24 @@
 
   export default {
     props: ['msg', 'peer_id'],
+
+    computed: {
+      reply() {
+        const { replyMsg } = this.msg;
+        if(!replyMsg) return {};
+
+        const user = this.$store.state.profiles[replyMsg.from];
+
+        return {
+          photo: this.getPhoto(replyMsg),
+          name: user && (user.name || `${user.first_name} ${user.last_name}`),
+          text: getMessagePreview(replyMsg, this.peer_id),
+          isContentDeleted: replyMsg.isContentDeleted,
+          isAttachment: !replyMsg.text && replyMsg.hasAttachment
+        };
+      }
+    },
+
     methods: {
       getPhoto(msg) {
         const { photo, sticker, doc, video, story } = msg.attachments;
@@ -30,6 +48,7 @@
         if(video) return (videoImages[6] || videoImages[videoImages.length-1]).url;
         if(story) return getPhotoFromSizes(story[0].photo.sizes, ['o', 'j', 'm', 'x']).url;
       },
+
       async jump() {
         const { replyMsg, id } = this.msg;
 
@@ -70,22 +89,6 @@
             }
           }
         }
-      }
-    },
-    computed: {
-      reply() {
-        const { replyMsg } = this.msg;
-        if(!replyMsg) return {};
-
-        const user = this.$store.state.profiles[replyMsg.from];
-
-        return {
-          photo: this.getPhoto(replyMsg),
-          name: user && (user.name || `${user.first_name} ${user.last_name}`),
-          text: getMessagePreview(replyMsg, this.peer_id),
-          isContentDeleted: replyMsg.isContentDeleted,
-          isAttachment: !replyMsg.text && replyMsg.hasAttachment
-        };
       }
     }
   }

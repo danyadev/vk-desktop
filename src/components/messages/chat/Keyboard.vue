@@ -33,15 +33,18 @@
 
   export default {
     props: ['peer_id', 'keyboard'],
+
     components: {
       Scrolly,
       Ripple
     },
+
     computed: {
       buttons() {
         return this.keyboard.buttons || [];
       }
     },
+    
     methods: {
       click(action) {
         const hash = action.hash ? `#${action.hash}` : '';

@@ -51,6 +51,7 @@
 
   export default {
     props: ['msg', 'peer', 'peer_id', 'messageDate', 'isStartUnread', 'prevMsg'],
+
     components: {
       Attachments,
       Reply,
@@ -58,6 +59,7 @@
       Keyboard,
       SendMsgErrorMenu
     },
+    
     computed: {
       user() {
         return this.$store.state.profiles[this.msg.from];

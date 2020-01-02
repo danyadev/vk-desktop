@@ -37,10 +37,12 @@
 
   export default {
     props: ['peer_id', 'peer'],
+
     components: {
       ActionsMenu,
       Icon
     },
+
     computed: {
       muted() {
         return this.peer && this.peer.muted;
@@ -58,6 +60,7 @@
         return !this.hiddenPinnedMessages[this.peer_id];
       }
     },
+
     methods: {
       goToFirstMsg() {
         this.$refs.actionsMenu.toggleMenu();
@@ -67,6 +70,7 @@
           top: true
         });
       },
+
       togglePinnedMsg() {
         this.$refs.actionsMenu.toggleMenu();
 
@@ -83,6 +87,7 @@
           value: list
         });
       },
+
       toggleNotifications() {
         this.$refs.actionsMenu.toggleMenu();
 
@@ -91,6 +96,7 @@
           time: this.muted ? 0 : -1
         });
       },
+
       clearHistory() {
         this.$refs.actionsMenu.toggleMenu();
 
@@ -98,6 +104,7 @@
           peer_id: this.peer_id
         });
       },
+      
       leftFromChat() {
         this.$refs.actionsMenu.toggleMenu();
 

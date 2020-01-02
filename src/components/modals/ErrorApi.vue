@@ -20,10 +20,12 @@
 
   export default {
     props: ['method', 'error', 'retry'],
+
     components: {
       ModalHeader,
       Button
     },
+
     computed: {
       params() {
         const params = (this.error.request_params || []).reduce((obj, data) => {
@@ -38,6 +40,7 @@
         return Object.keys(params).map((key) => `${key}: ${params[key]}`).join('\n');
       }
     },
+
     methods: {
       click() {
         this.retry();

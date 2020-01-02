@@ -53,6 +53,7 @@
           eventBus.emit('modal:close', modal.getAttribute('name'));
         }
       },
+      
       onEscape() {
         const keys = Object.keys(this.modals);
 

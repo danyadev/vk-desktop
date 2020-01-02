@@ -23,12 +23,15 @@
     components: {
       Scrolly
     },
+
     data: () => ({
       albums: []
     }),
+
     methods: {
       getPhotoFromSizes
     },
+    
     async mounted() {
       const { items } = await vkapi('photos.getAlbums', {
         need_system: 1,

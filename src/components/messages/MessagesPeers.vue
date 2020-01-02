@@ -32,20 +32,24 @@
 
   export default {
     props: ['activeChat'],
+
     components: {
       Scrolly,
       MessagesListMenu,
       HeaderButton,
       MessagesPeer
     },
+
     data: () => ({
       loading: true,
       loaded: false,
       lockScroll: false
     }),
+
     computed: {
       ...mapGetters('messages', ['conversationsList'])
     },
+
     methods: {
       async load() {
         const { items, profiles, groups } = await vkapi('messages.getConversations', {
@@ -72,6 +76,7 @@
         this.loading = false;
         if(items.length < 40) this.loaded = true;
       },
+      
       onScroll: endScroll(function() {
         if(!this.loading && !this.loaded) {
           this.loading = true;
@@ -79,6 +84,7 @@
         }
       })
     },
+
     mounted() {
       this.load();
     }

@@ -22,18 +22,21 @@
   import ModalsWrapper from './ModalsWrapper.vue';
 
   export default {
-    data: () => ({
-      mac: process.platform == 'darwin'
-    }),
     components: {
       Titlebar,
       MainMenu,
       Auth,
       ModalsWrapper
     },
+
+    data: () => ({
+      mac: process.platform == 'darwin'
+    }),
+
     computed: {
       ...mapState('users', ['activeUser'])
     },
+
     methods: {
       async initUser() {
         if(this.activeUser) {
@@ -53,12 +56,14 @@
         }
       }
     },
+
     watch: {
       activeUser() {
         // При входе в аккаунт
         this.initUser();
       }
     },
+
     created() {
       this.initUser();
     }
@@ -135,7 +140,8 @@
     font-size: 15px;
     color: #3c3c3c;
     line-height: 32px;
-    padding: 0 30px 0 9px;
+    height: 34px;
+    padding: 0 9px;
     user-select: none;
     transition: border-color .3s;
   }

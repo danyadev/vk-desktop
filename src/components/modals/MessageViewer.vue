@@ -18,12 +18,14 @@
 
   export default {
     props: ['msg', 'peer_id'],
+
     components: {
       ModalHeader,
       MessagesList,
       Scrolly,
       Button
     },
+    
     methods: {
       close() {
         this.$modals.close(this.$attrs.name);

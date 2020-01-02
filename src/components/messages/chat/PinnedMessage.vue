@@ -22,9 +22,11 @@
 
   export default {
     props: ['msg', 'peer_id'],
+
     components: {
       Icon
     },
+
     computed: {
       isHidden() {
         return this.$store.getters['settings/settings'].hiddenPinnedMessages[this.peer_id];
@@ -45,6 +47,7 @@
         return this.msg.hasAttachment && !this.msg.text && !this.msg.action;
       }
     },
+
     methods: {
       open() {
         if(this.msg.id) {
@@ -59,6 +62,7 @@
           });
         }
       },
+      
       hide() {
         const list = { ...this.$store.getters['settings/settings'].hiddenPinnedMessages };
 

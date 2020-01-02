@@ -19,28 +19,25 @@
 
   export default {
     props: ['data'],
+
     components: {
       Button
     },
+
     data: () => ({
       code: '',
       load: false,
       error: false,
       forcedSms: false
     }),
+
     computed: {
       isAppCode() {
         return this.data.validation_type == '2fa_app';
       }
     },
-    methods: {
-      cancel() {
-        this.$emit('auth', { error: 'cancel_enter_code' });
 
-        this.code = '';
-        this.error = false;
-        this.forcedSms = false;
-      },
+    methods: {
       async auth(force_sms) {
         if(!force_sms && !this.code.trim() || this.load) return;
 
@@ -75,8 +72,17 @@
         } else {
           this.$emit('auth', data);
         }
+      },
+
+      cancel() {
+        this.$emit('auth', { error: 'cancel_enter_code' });
+
+        this.code = '';
+        this.error = false;
+        this.forcedSms = false;
       }
     },
+    
     mounted() {
       this.$refs.input.focus();
     }

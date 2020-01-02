@@ -22,11 +22,13 @@
       List,
       Input
     },
+
     data() {
       return {
         peer_id: +this.$route.params.id
       };
     },
+
     computed: {
       peer() {
         const conv = this.$store.state.messages.conversations[this.peer_id];
@@ -39,6 +41,7 @@
         return this.peer && this.peer.pinnedMsg && showPinnedMsg;
       }
     },
+
     methods: {
       closeChat() {
         eventBus.emit('messages:event', 'close_chat', {
@@ -48,11 +51,16 @@
         this.$router.replace('/messages');
       }
     },
+
     mounted() {
       if(this.peer_id > 2e9) loadConversationMembers(this.peer_id, true);
 
-      this.$store.commit('messages/addOpenedChat', +this.peer_id);
+      this.$store.commit('messages/updatePeerConfig', {
+        peer_id: this.peer_id,
+        opened: true
+      });
     },
+    
     activated() {
       if(!this.peer || !this.peer.loaded || this.peer_id < 2e9) {
         loadConversation(this.peer_id);

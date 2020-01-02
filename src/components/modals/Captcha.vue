@@ -25,19 +25,23 @@
 
   export default {
     props: ['src', 'send'],
+
     components: {
       ModalHeader,
       Button
     },
+
     data: () => ({
       imgSrc: '',
       code: ''
     }),
+
     computed: {
       disabled() {
         return !this.code.trim();
       }
     },
+
     methods: {
       updatePic() {
         this.imgSrc += ~this.imgSrc.indexOf('&s=1') ? '1' : '&s=1';
@@ -49,6 +53,7 @@
         this.$modals.close(this.$attrs.name);
       }
     },
+    
     mounted() {
       this.imgSrc = this.src;
     }

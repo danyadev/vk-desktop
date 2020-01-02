@@ -34,14 +34,17 @@
       ModalHeader,
       Button
     },
+
     computed: {
       ...mapState('users', ['users', 'activeUser'])
     },
+
     methods: {
       getUserDescription(user) {
         if(this.activeUser != user.id) return '@' + user.domain;
         else return this.l('ml_multiacc_active_account');
       },
+
       setAccount(id) {
         const prevUser = this.activeUser;
         if(prevUser == id) return;
@@ -50,9 +53,11 @@
 
         if(prevUser) location.reload();
       },
+
       removeAccount(id) {
         this.$store.commit('users/removeUser', id);
       },
+      
       openAuthModal() {
         this.$modals.open('auth');
       }

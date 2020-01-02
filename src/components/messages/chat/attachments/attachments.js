@@ -1,6 +1,6 @@
 import PhotosLayout from './PhotosLayout.vue';
 import Sticker from './Sticker.vue';
-import Documents from './Documents.vue';
+import DocumentAttach from './Document.vue';
 
 export const supportedAttachments = new Set([
   'sticker',
@@ -18,5 +18,5 @@ export const preloadAttachments = new Set([
 export default {
   photosLayout: PhotosLayout,
   sticker: Sticker,
-  doc: Documents
+  doc: DocumentAttach
 }

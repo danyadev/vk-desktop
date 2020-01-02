@@ -42,16 +42,19 @@
 
   export default {
     props: ['peer', 'msg', 'activeChat'],
+
     components: {
       Ripple,
       Icon,
       Typing
     },
+
     data() {
       return {
         isChat: this.peer.id > 2e9
       }
     },
+
     computed: {
       ...mapState(['profiles']),
       owner() {
@@ -106,8 +109,10 @@
         return this.peer.out_read != this.peer.last_msg_id;
       }
     },
+
     methods: {
       convertCount,
+
       openChat() {
         if(this.activeChat == this.peer.id) return;
 

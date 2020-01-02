@@ -330,8 +330,7 @@ export default {
     parser: parseLongPollMessage,
     preload: hasPreloadMessages,
     async handler({ key: peer_id, items }, isPreload) {
-      const { loadingPeers } = store.state.messages;
-      const isChatOpened = store.state.messages.openedChats.includes(peer_id);
+      const { opened, loading } = store.state.messages.peersConfig[peer_id] || {};
       const conv = store.state.messages.conversations[peer_id];
       const localMessages = store.state.messages.messages[peer_id] || [];
       const lastLocalMsg = localMessages[localMessages.length-1];
@@ -343,8 +342,8 @@ export default {
         mentions: conv && conv.peer.mentions || []
       };
 
-      const isChatLoadedBottom = isChatOpened && (
-        !lastLocalMsg && !loadingPeers.has(peer_id) ||
+      const isChatLoadedBottom = opened && (
+        !lastLocalMsg && !loading ||
         lastLocalMsg && conv.peer.last_msg_id == lastLocalMsg.id
       );
 

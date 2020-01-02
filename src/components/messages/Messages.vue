@@ -13,11 +13,13 @@
     components: {
       MessagesPeers
     },
+
     computed: {
       hasChat() {
         return this.$route.name == 'chat';
       }
     },
+    
     methods: {
       closeChat() {
         if(this.hasChat) {

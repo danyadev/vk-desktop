@@ -12,9 +12,11 @@
 
   export default {
     props: ['light', 'disabled'],
+
     components: {
       Ripple
     },
+    
     computed: {
       isLight() {
         return this.light != null;

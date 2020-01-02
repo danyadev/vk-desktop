@@ -17,10 +17,12 @@
 
   export default {
     props: ['id'],
+
     components: {
       ModalHeader,
       Button
     },
+
     methods: {
       closeApp() {
         electron.remote.app.exit();

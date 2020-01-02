@@ -48,6 +48,7 @@
       Ripple,
       Icon
     },
+
     computed: {
       ...mapState(['menuState', 'menuCounters']),
       ...mapGetters('users', ['user']),
@@ -58,6 +59,7 @@
         }));
       }
     },
+
     methods: {
       toggleMenu(event) {
         let state;
@@ -67,14 +69,17 @@
 
         this.$store.commit('setMenuState', state);
       },
+
       isActiveRoute(route) {
         return new RegExp(`${route}($|/)`).test(this.$route.path);
       },
+
       openPage(route) {
         this.toggleMenu(false);
 
         if(!this.isActiveRoute(route)) this.$router.replace(route);
       },
+      
       openModal(name) {
         this.toggleMenu(false);
 

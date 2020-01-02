@@ -17,10 +17,12 @@
 
   export default {
     props: ['peer_id'],
+
     components: {
       ModalHeader,
       Button
     },
+    
     methods: {
       clear() {
         vkapi('messages.deleteConversation', {

@@ -56,15 +56,18 @@
 
   export default {
     props: ['peer_id', 'peer'],
+
     components: {
       Icon,
       Ripple,
       Keyboard
     },
+
     data: () => ({
       showKeyboard: true,
       counter: 0
     }),
+
     computed: {
       canWrite() {
         if(this.peer && this.peer.canWrite) {
@@ -77,13 +80,16 @@
           };
         }
       },
+
       keyboard() {
         return this.peer && this.peer.keyboard || {};
       },
+
       hasKeyboard() {
         return (this.keyboard.buttons || []).length;
       }
     },
+
     methods: {
       send() {
         sendMessage({
@@ -123,6 +129,7 @@
         }
       }, 4000)
     },
+    
     activated() {
       if(this.$refs.input) this.$refs.input.focus();
     }

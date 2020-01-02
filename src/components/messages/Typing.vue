@@ -15,6 +15,7 @@
 
   export default {
     props: ['peer_id', 'isChat'],
+
     computed: {
       text() {
         const typing = this.$store.state.messages.typing[this.peer_id];

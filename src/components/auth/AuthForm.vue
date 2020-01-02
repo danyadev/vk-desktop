@@ -23,9 +23,11 @@
 
   export default {
     props: ['isModal'],
+
     components: {
       Button
     },
+
     data: () => ({
       login: '',
       password: '',
@@ -36,6 +38,7 @@
       progress: false,
       hidePassword: true
     }),
+
     computed: {
       disableBtn() {
         return this.progress || !(this.login.trim() && this.password.trim());
@@ -53,6 +56,7 @@
         return !this.isModal && Object.keys(this.$store.state.users.users).length;
       }
     },
+
     methods: {
       async auth() {
         if(this.disableBtn) return;
@@ -78,6 +82,7 @@
           this.$emit('auth', data);
         }
       },
+      
       openMultiacc() {
         this.$modals.open('multiaccount');
       }
@@ -98,6 +103,10 @@
 
   .auth_password_wrap {
     position: relative;
+  }
+
+  .auth_password_wrap input {
+    padding-right: 30px;
   }
 
   .auth_password_switch {

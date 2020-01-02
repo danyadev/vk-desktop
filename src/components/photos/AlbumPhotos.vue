@@ -19,9 +19,11 @@
 
   export default {
     props: ['id'],
+
     components: {
       Scrolly
     },
+
     data: () => ({
       photos: [],
       offset: 0,
@@ -29,14 +31,17 @@
       loaded: false,
       lockScroll: false
     }),
+
     methods: {
       getPhotoFromSizes,
+
       onScroll: endScroll(function() {
         if(!this.loading && !this.loaded) {
           this.loading = true;
           this.load();
         }
       }),
+
       async load() {
         let items;
 
@@ -68,10 +73,12 @@
         this.loading = false;
         if(items.length < 50) this.loaded = true;
       },
+      
       open(attach) {
         this.$modals.open('media-viewer', { attach });
       }
     },
+
     mounted() {
       this.load();
     }

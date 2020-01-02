@@ -99,8 +99,14 @@
       convertCount,
 
       async load(params = {}, { isDown, isFirstLoad, loadedUp, loadedDown } = {}) {
-        const { loadingPeers } = this.$store.state.messages;
-        loadingPeers.add(this.peer_id);
+        const setPeerLoading = (loading) => {
+          this.$store.commit('messages/updatePeerConfig', {
+            peer_id: this.peer_id,
+            loading
+          });
+        }
+
+        setPeerLoading(true);
 
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
@@ -142,7 +148,7 @@
           this.loadedDown = loadedDown || !items[0] || items[0].id == peer.last_msg_id;
         }
 
-        loadingPeers.delete(this.peer_id);
+        setPeerLoading(false);
 
         this.checkReadMessages(list);
         this.checkTopTime(list);

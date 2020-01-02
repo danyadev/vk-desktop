@@ -24,14 +24,17 @@
       Albums,
       AlbumPhotos
     },
+
     data: () => ({
       album: null
     }),
+
     computed: {
       title() {
         return this.album ? this.album.title : this.l('photos_albums');
       }
     },
+    
     methods: {
       openAlbum(album) {
         this.album = album;

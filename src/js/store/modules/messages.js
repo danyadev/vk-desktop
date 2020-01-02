@@ -8,21 +8,18 @@ function moveArrItem(arr, from, to) {
 
 export default {
   state: {
-    // Все беседы, которые были загружены в приложение
-    // { peer_id: { peer, msg } }
-    conversations: {},
     // Беседы, которые отображаются в списке бесед
     // [peer_id]
     peersList: [],
+    // Все беседы, которые были загружены в приложение
+    // { peer_id: { peer, msg } }
+    conversations: {},
+    // Дополнительные необходимые данные бесед
+    // { peer_id: { opened, loading } }
+    peersConfig: {},
     // Списки сообщений у бесед
     // { peer_id: [message] }
     messages: {},
-    // Беседы, которые были открыты в приложении
-    // [peer_id]
-    openedChats: [],
-    // Список бесед, которые сейчас загружаются
-    // т.к. реактивность нам не нужна, мы можем использовать Set
-    loadingPeers: new Set(),
     // Отправленные, но еще не полученные сообщения
     // { peer_id: [{ random_id, text, date, error, hasAttachment }] }
     loadingMessages: {},
@@ -183,10 +180,6 @@ export default {
       }
     },
 
-    addOpenedChat(state, peer_id) {
-      state.openedChats.push(peer_id);
-    },
-
     addUserTyping(state, { peer_id, user_id, type, time = 5 }) {
       const users = { ...state.typing[peer_id] || {} };
 
@@ -199,6 +192,11 @@ export default {
 
       delete users[user_id];
       Vue.set(state.typing, peer_id, user_id ? users : {});
+    },
+
+    updatePeerConfig(state, { peer_id, ...data }) {
+      const config = { ...state.peersConfig[peer_id] || {}, ...data };
+      Vue.set(state.peersConfig, peer_id, config);
     }
   },
   getters: {

@@ -15,13 +15,16 @@
 
   export default {
     props: ['isModal'],
+
     components: {
       AuthForm,
       AuthCode
     },
+
     data: () => ({
       error: null
     }),
+
     methods: {
       async auth(data) {
         if(data.error == 'need_validation') this.error = data;

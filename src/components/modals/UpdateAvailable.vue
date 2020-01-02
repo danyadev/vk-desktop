@@ -16,11 +16,13 @@
 
   export default {
     props: ['name', 'notes', 'quitAndInstall'],
+
     components: {
       ModalHeader,
       Button,
       Scrolly
     },
+    
     methods: {
       update() {
         this.quitAndInstall();

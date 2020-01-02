@@ -16,15 +16,18 @@
 
   export default {
     data: () => ({
-      mac: process.platform == 'darwin',
       maximized: win.isMaximized(),
       buttons: ['minimize', 'maximize', 'restore', 'close']
     }),
+
     methods: {
-      click: (button) => win[button]()
+      click(button) {
+        win[button]();
+      }
     },
+
     mounted() {
-      if(this.mac) {
+      if(process.platform == 'darwin') {
         this.$refs.drag.addEventListener('dblclick', () => {
           if(win.isFullScreen()) return;
           else if(win.isMaximized()) win.emit('unmaximize');

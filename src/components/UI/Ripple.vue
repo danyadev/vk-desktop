@@ -28,9 +28,11 @@
         default: ''
       }
     },
+
     data: () => ({
       ripples: []
     }),
+
     methods: {
       addRipple(e) {
         const { left, top } = this.$el.getBoundingClientRect();
@@ -46,15 +48,18 @@
           id: Date.now()
         });
       },
+
       purgeRipples() {
         this.ripples = [];
       }
     },
+
     mounted() {
-      addEventListener('mouseup', this.purgeRipples);
+      window.addEventListener('mouseup', this.purgeRipples);
     },
+
     beforeDestroy() {
-      removeEventListener('mouseup', this.purgeRipples);
+      window.removeEventListener('mouseup', this.purgeRipples);
     }
   }
 </script>

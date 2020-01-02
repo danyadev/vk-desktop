@@ -22,9 +22,11 @@
 
   export default {
     props: ['src', 'attach', 'isPhoto', 'isYoutube'],
+
     components: {
       ActionsMenu
     },
+
     methods: {
       act(id) {
         this.$refs.actionsMenu.toggleMenu();
