@@ -447,6 +447,7 @@
     },
 
     mounted() {
+      eventBus.on('messages:event', this.onMessageEvent);
       this.jumpToStartUnread();
     },
 
@@ -468,13 +469,11 @@
       } else {
         this.checkScrolling(list);
       }
-
-      eventBus.on('messages:event', this.onMessageEvent);
-    },
-
-    deactivated() {
-      eventBus.removeListener('messages:event', this.onMessageEvent);
     }
+
+    // TODO: В будущем, когда будет производиться переход на Vue 3.0
+    // и будет исправлена проблема с вызовом destroyed при превышении лимита
+    // компонентов у KeepAlive, добавить removeListener для messages:event.
   }
 </script>
 
