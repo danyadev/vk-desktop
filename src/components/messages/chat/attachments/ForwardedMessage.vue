@@ -111,6 +111,12 @@
     margin-top: 5px;
   }
 
+  .attach_fwd_msg_text + .im_attachments,
+  .attach_fwd_msg_text + .link,
+  .attach_fwd_msg_text + .attach_forwarded {
+    margin-top: 5px;
+  }
+
   .attach_fwd_msg .link {
     color: #0e4788;
   }
