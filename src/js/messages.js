@@ -59,7 +59,7 @@ export function parseMessage(message) {
     hidden: message.is_hidden,
     action: message.action,
     fwdCount: fwdCount,
-    fwdMessages: message.fwd_messages || [],
+    fwdMessages: (message.fwd_messages || []).map(parseMessage),
     isReplyMsg: isReplyMsg,
     replyMsg: isReplyMsg && parseMessage(message.reply_message),
     attachments: attachments,

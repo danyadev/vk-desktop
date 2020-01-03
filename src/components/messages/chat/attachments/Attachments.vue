@@ -2,7 +2,8 @@
   import components from './attachments';
 
   export default {
-    props: ['peer_id', 'msg'],
+    props: ['peer_id', 'msg', 'fwdDepth'],
+
     render(h) {
       const attachments = [];
       const layoutAttachs = {};
@@ -46,7 +47,8 @@
           h(components.photosLayout, {
             props: {
               attachments: layoutAttachs,
-              peer_id: this.peer_id
+              peer_id: this.peer_id,
+              fwdDepth: this.fwdDepth || 0
             }
           })
         );
@@ -76,5 +78,16 @@
 
   .im_attachments > div:not(:first-child) {
     padding-top: 5px;
+  }
+
+  .attach_left_border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 2px;
+    border-radius: 1px;
+    background-color: #5281b9;
   }
 </style>

@@ -3,7 +3,7 @@
   import photosLayout from './photosLayout';
 
   export default {
-    props: ['peer_id', 'attachments'],
+    props: ['peer_id', 'attachments', 'fwdDepth'],
 
     data() {
       return {
@@ -30,9 +30,9 @@
 
       calcParentWidth() {
         if(this.isModal) {
-          return this.$el.closest('.modal_wrap').clientWidth * .92 * .7;
+          return this.$el.closest('.modal_wrap').clientWidth * .92 * .7 - 10 * (this.fwdDepth - 5);
         } else {
-          return this.$el.closest('.scrolly').clientWidth * .75 - 52;
+          return this.$el.closest('.scrolly').clientWidth * .75 - 52 - 10 * this.fwdDepth;
         }
       },
 

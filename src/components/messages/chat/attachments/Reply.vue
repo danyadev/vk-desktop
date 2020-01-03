@@ -1,5 +1,5 @@
 <template>
-  <div class="attach_reply" @click="jump">
+  <div class="attach_reply attach_left_border" @click="jump">
     <img v-if="reply.photo" class="attach_reply_photo" :src="reply.photo" loading="lazy" width="37" height="37">
 
     <div class="attach_reply_content">
@@ -17,7 +17,7 @@
   import vkapi from 'js/vkapi';
 
   export default {
-    props: ['msg', 'peer_id'],
+    props: ['msg', 'peer_id', 'isFwdMsg'],
 
     computed: {
       reply() {
@@ -54,9 +54,9 @@
 
         if(replyMsg) {
           const openMessageViewer = () => {
-            this.$modals.open('message-viewer', {
-              msg: replyMsg,
-              peer_id: this.peer_id
+            this.$modals.open('messages-viewer', {
+              peer_id: this.peer_id,
+              messages: [replyMsg]
             });
           }
 
@@ -68,7 +68,7 @@
             });
           }
 
-          if(!replyMsg.id) {
+          if(!replyMsg.id || this.isFwdMsg) {
             openMessageViewer();
           } else {
             const messages = this.$store.state.messages.messages[this.peer_id] || [];
@@ -103,6 +103,10 @@
     cursor: pointer;
   }
 
+  .attach_reply::before {
+    top: 3px;
+  }
+
   .message_wrap:not(.hideBubble).isSticker .attach_reply {
     width: 128px;
   }
@@ -117,18 +121,6 @@
 
   .message_wrap.hasPhoto .attach_reply + .message_text:not(:empty) {
     margin-top: -4px;
-  }
-
-  .attach_reply::before {
-    content: '';
-    position: absolute;
-    top: 3px;
-    bottom: 0;
-    left: 0;
-    width: 2px;
-    border-radius: 1px;
-    background-color: #5281b9;
-    transition: background-color .2s;
   }
 
   .attach_reply_photo {

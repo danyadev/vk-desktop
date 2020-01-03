@@ -20,7 +20,7 @@
     'ErrorApi',
     'Logout',
     'MediaViewer',
-    'MessageViewer',
+    'MessagesViewer',
     'Multiaccount',
     'UpdateAvailable'
   ];

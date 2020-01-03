@@ -174,11 +174,20 @@ async function loadMessages(peer_id, msg_ids, isPreload) {
 }
 
 function hasSupportedAttachments(msg) {
-  // Добавить пересланные сообщения, когда будет готово
-  if(msg.isReplyMsg) return true;
+  if(msg.isReplyMsg || msg.fwdCount) return true;
 
-  for(const type in msg.attachments) {
-    if(supportedAttachments.has(type)) return true;
+  for(const attach in msg.attachments) {
+    if(supportedAttachments.has(attach)) return true;
+  }
+}
+
+function hasPreloadMessages(messages) {
+  for(const { msg } of messages) {
+    if(msg.fwdCount) return true;
+
+    for(const attach in msg.attachments) {
+      if(preloadAttachments.has(attach)) return true;
+    }
   }
 }
 
@@ -210,14 +219,6 @@ function removeTyping(peer_id, user_id, clearChat) {
       peer_id: peer_id,
       user_id: !clearChat && user_id
     });
-  }
-}
-
-function hasPreloadMessages(messages) {
-  for(const { msg } of messages) {
-    for(const type in msg.attachments) {
-      if(preloadAttachments.has(type)) return true;
-    }
   }
 }
 

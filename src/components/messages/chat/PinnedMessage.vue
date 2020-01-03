@@ -56,13 +56,13 @@
             msg_id: this.msg.id
           });
         } else {
-          this.$modals.open('message-viewer', {
-            msg: this.msg,
-            peer_id: this.peer_id
+          this.$modals.open('messages-viewer', {
+            peer_id: this.peer_id,
+            messages: [this.msg]
           });
         }
       },
-      
+
       hide() {
         const list = { ...this.$store.getters['settings/settings'].hiddenPinnedMessages };
 

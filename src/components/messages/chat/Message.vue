@@ -15,13 +15,13 @@
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div class="message_bubble">
-          <Reply v-if="msg.isReplyMsg" :msg="msg" :peer_id="peer_id" />
+          <Reply v-if="msg.isReplyMsg" :peer_id="peer_id" :msg="msg" />
 
           <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
           <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
           <Attachments :msg="msg" :peer_id="peer_id" />
-          <Forwarded v-if="msg.fwdCount" :msg="msg" />
+          <Forwarded v-if="msg.fwdCount" :peer_id="peer_id" :msg="msg" :fwdDepth="1" />
 
           <div class="message_time_wrap">
             <template v-if="msg.editTime">
@@ -49,7 +49,7 @@
   import Keyboard from './Keyboard.vue';
   import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 
-  export default {
+  export default {    
     props: ['msg', 'peer', 'peer_id', 'messageDate', 'isStartUnread', 'prevMsg'],
 
     components: {
@@ -59,7 +59,7 @@
       Keyboard,
       SendMsgErrorMenu
     },
-    
+
     computed: {
       user() {
         return this.$store.state.profiles[this.msg.from];
@@ -194,7 +194,7 @@
     flex-direction: column;
   }
 
-  .modal[name=message-viewer] .message_bubble_wrap {
+  .modal[name=messages-viewer] .message_bubble_wrap {
     max-width: 100%;
   }
 
