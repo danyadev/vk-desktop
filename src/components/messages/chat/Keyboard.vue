@@ -9,12 +9,16 @@
         >
           <div v-if="action.type == 'text'" v-emoji.br="action.label"></div>
           <template v-else-if="action.type == 'open_app'">
-            <img src="~assets/services.svg">
-            {{ action.label }}
+            <img class="keyboard_services_icon" src="~assets/services.svg">
+            <div class="keyboard_service_key" v-emoji.br="action.label"></div>
           </template>
           <template v-else-if="action.type == 'vkpay'">
             {{ l('im_keyboard_pay_with') }}
             <img src="~assets/vk_pay.svg">
+          </template>
+          <template v-else-if="action.type == 'open_link'">
+            <div class="keyboard_service_key" v-emoji.br="action.label"></div>
+            <img src="~assets/link.svg" class="keyboard_link_icon">
           </template>
           <div v-else>{{ l('not_supported') }}</div>
         </Ripple>
@@ -44,7 +48,7 @@
         return this.keyboard.buttons || [];
       }
     },
-    
+
     methods: {
       click(action) {
         const hash = action.hash ? `#${action.hash}` : '';
@@ -67,6 +71,10 @@
 
           case 'vkpay':
             shell.openExternal(`https://vk.com/app6217559${hash}`);
+            break;
+
+          case 'open_link':
+            shell.openExternal(action.link);
             break;
         }
       }
@@ -126,7 +134,7 @@
 
   .keyboard_button.default {
     background: #e5ebf1;
-    color: #55677d;
+    color: #45586f;
   }
 
   .keyboard_button.primary {
@@ -143,5 +151,18 @@
 
   .keyboard_button img:not(.emoji) {
     height: 24px;
+  }
+
+  .keyboard_service_key {
+    color: #0f5cb3;
+  }
+
+  .keyboard_services_icon {
+    margin-right: 5px;
+  }
+
+  .keyboard_link_icon {
+    margin-left: 1px;
+    width: 20px;
   }
 </style>
