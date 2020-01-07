@@ -99,7 +99,9 @@
         this.touchX = touch.pageX;
         this.touchY = touch.pageY;
 
-        this.refreshScrollLayout(dx, dy);
+        requestAnimationFrame(() => {
+          this.refreshScrollLayout(dx, dy);
+        });
       },
 
       onKeyDown() {
@@ -215,10 +217,12 @@
           viewport.scrollLeft += dx;
           viewport.scrollTop += dy;
 
-          if(
-            dx && prevScrollLeft == viewport.scrollLeft ||
-            dy && prevScrollTop == viewport.scrollTop
-          ) return false;
+          const noX = dx && prevScrollLeft == viewport.scrollLeft;
+          const noY = dy && prevScrollTop == viewport.scrollTop;
+
+          // Здесь не нужна проверка на !dx && !dy, потому что
+          // такой кейс появляется только когда метод вызван вручную
+          if(noX && noY || noX && !dy || noY && !dx) return false;
         }
 
         const {
