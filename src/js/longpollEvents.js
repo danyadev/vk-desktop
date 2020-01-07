@@ -6,6 +6,7 @@ import vkapi from './vkapi';
 import { timer, eventBus, isObject } from './utils';
 
 function hasFlag(mask, flag) {
+  const checkFlag = (flag) => flags[flag] & mask;
   const flags = {
     unread:         1,       // Приходит всегда
     outbox:         1 << 1,  // Сообщение от тебя
@@ -24,27 +25,6 @@ function hasFlag(mask, flag) {
     reply_msg:      1 << 21  // Ответ на сообщение
   };
 
-  let newMask = mask;
-  const msgFlags = [];
-
-  for(const name in flags) {
-    const flag = flags[name];
-
-    if(flag & mask) {
-      newMask -= flag;
-      msgFlags.push(name);
-    }
-  }
-
-  const newFlags = newMask.toString(2).split('').reverse().reduce((arr, item, index) => {
-    if(+item) arr.push(1 << index);
-    return arr;
-  }, []);
-
-  if(newFlags.length) console.warn('[Новые флаги]', mask, msgFlags, newFlags);
-  else if(longpoll.debug) console.log(mask, msgFlags, newFlags);
-
-  const checkFlag = (flag) => flags[flag] & mask;
   return flag ? checkFlag(flag) : checkFlag;
 }
 
@@ -60,7 +40,7 @@ function getServiceMessage(data) {
     }
   }
 
-  return Object.keys(source).length ? source : null;
+  return Object.keys(source).length && source;
 }
 
 function getAttachments(data) {
@@ -253,14 +233,14 @@ export default {
 
       const { msg } = await getLastMessage(peer_id);
 
-      if(!msg) {
+      if(msg) {
+        store.commit('messages/moveConversation', { peer_id });
+        eventBus.emit('messages:event', 'check_scrolling', { peer_id });
+      } else {
         store.commit('messages/updatePeersList', {
           id: peer_id,
           remove: true
         });
-      } else {
-        store.commit('messages/moveConversation', { peer_id });
-        eventBus.emit('messages:event', 'check_scrolling', { peer_id });
       }
     }
   },
@@ -451,7 +431,7 @@ export default {
 
       if(hasSupportedAttachments(msg) && messages.find((message) => message.id == msg.id)) {
         if(isPreload) {
-          msg = (await loadMessages(peer.id, [msg.id], true))[0];
+          [msg] = await loadMessages(peer.id, [msg.id], true);
         } else {
           loadMessages(peer.id, [msg.id]);
         }
@@ -596,7 +576,7 @@ export default {
     preload: (data) => hasPreloadMessages([data]),
     async handler({ peer, msg }, isPreload) {
       if(isPreload) {
-        msg = (await loadMessages(peer.id, [msg.id], true))[0];
+        [msg] = await loadMessages(peer.id, [msg.id], true);
       }
 
       store.commit('messages/editMessage', { peer_id: peer.id, msg });
@@ -613,7 +593,6 @@ export default {
   52: {
     // Изменение данных чата
     // [type, peer_id, info]
-    // https://vk.com/dev/using_longpoll_2?f=3.2.+Дополнительные+поля+чатов
     parser: (data) => data,
     handler([type, peer_id, info]) {
       const isMe = info == store.state.users.activeUser;

@@ -37,7 +37,7 @@ export default new class Longpoll {
         key: this.key,
         ts: this.ts,
         wait: 10,
-        mode: 490,
+        mode: 2 | 8 | 32 | 64 | 128,
         version: this.version
       }), { timeout: 11000 });
 
@@ -99,7 +99,7 @@ export default new class Longpoll {
     const events = [];
 
     for(const item of history.history) {
-      // 1. Прочтение сообщения или отмена пометки как важное
+      // 1. Прочтение или отмена пометки сообщения как важное
       // 2. 18 событие не имеет смысла, т.к. в обьекте сообщения уже есть сниппет
       if(item[0] == 3 && !item[4] || item[0] == 18) continue;
 
@@ -143,8 +143,7 @@ export default new class Longpoll {
         const prev = events[events.length - 1];
 
         if(
-          prev && // Есть предыдущее событие
-          prev[0] == id && // id события совпадает
+          prev && prev[0] == id && // id события совпадает с предыдущим событием
           (id == 2 || prev[2] == item[2]) // 2 эвент или совпадает peer_id
         ) {
           prev[1].push(data);
