@@ -15,6 +15,7 @@
   import { fields } from 'js/utils';
   import { mapState } from 'vuex';
   import vkapi from 'js/vkapi';
+  import { addNotificationsTimer } from 'js/messages';
 
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
@@ -44,15 +45,19 @@
             this.$router.replace('/messages');
           }
 
-          const { lp, counters, user } = await vkapi('execute.init', {
+          const { lp, counters, user, temporarilyDisabledNotifications } = await vkapi('execute.init', {
             lp_version: longpoll.version,
-            fields: fields
+            fields
           });
 
           this.$store.commit('users/updateUser', user);
           this.$store.commit('setMenuCounters', counters);
 
           longpoll.start(lp);
+
+          for(const peer of temporarilyDisabledNotifications) {
+            addNotificationsTimer(peer);
+          }
         }
       }
     },

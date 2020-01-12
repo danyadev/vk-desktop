@@ -206,3 +206,27 @@ export async function loadConversationMembers(id, force) {
     }
   }
 }
+
+const activeNotificationsTimers = new Map();
+
+export function addNotificationsTimer({ peer_id, disabled_until }, remove) {
+  if(remove) {
+    clearTimeout(activeNotificationsTimers.get(peer_id));
+    return activeNotificationsTimers.delete(peer_id);
+  }
+
+  if(activeNotificationsTimers.has(peer_id)) {
+    clearTimeout(activeNotificationsTimers.get(peer_id));
+  }
+
+  activeNotificationsTimers.set(peer_id, setTimeout(() => {
+    activeNotificationsTimers.delete(peer_id);
+
+    store.commit('messages/updateConversation', {
+      peer: {
+        id: peer_id,
+        muted: false
+      }
+    });
+  }, disabled_until * 1000 - Date.now()));
+}

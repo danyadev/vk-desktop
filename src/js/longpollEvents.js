@@ -1,4 +1,4 @@
-import { parseMessage, parseConversation, loadConversation, loadConversationMembers } from './messages';
+import { parseMessage, parseConversation, loadConversation, loadConversationMembers, addNotificationsTimer } from './messages';
 import { supportedAttachments, preloadAttachments } from '../components/messages/chat/attachments/attachments';
 import longpoll from 'js/longpoll';
 import store from './store/';
@@ -723,7 +723,6 @@ export default {
     // Изменеие настроек пуш-уведомлений в беседе
     // [{ peer_id, sound, disabled_until }]
     // disabled_until: -1 - выключены; 0 - включены; * - время их включения
-    // При значении > 0 нужно самому следить за временем, ибо событие при включении не приходит.
     parser: (data) => data,
     handler([{ peer_id, disabled_until }]) {
       if(!store.state.messages.conversations[peer_id]) return;
@@ -734,6 +733,8 @@ export default {
           muted: !!disabled_until
         }
       });
+
+      addNotificationsTimer({ peer_id, disabled_until }, disabled_until <= 0);
     }
   },
 
