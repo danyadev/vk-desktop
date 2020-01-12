@@ -4,6 +4,8 @@
        @touchstart="onTouchStart"
        @touchmove.passive="onTouchMove"
        @touchend="hideScrollBars"
+       @keydown="onKeyDown"
+       tabindex="1"
   >
     <div :class="['scrolly-viewport', vclass]" ref="viewport"><slot /></div>
 
@@ -60,6 +62,11 @@
     return true;
   }
 
+  // Использование функции уменьшит итоговое кол-во кода в бандле
+  function promisedAnimationFrame() {
+    return new Promise(requestAnimationFrame);
+  }
+
   export default {
     props: ['vclass', 'lock', 'horizontalScroll'],
 
@@ -92,16 +99,16 @@
         this.activateScrollBars({ enter: 1 });
       },
 
-      onTouchMove({ touches: [touch] }) {
+      async onTouchMove({ touches: [touch] }) {
+        await promisedAnimationFrame();
+
         const dx = this.touchX - touch.pageX;
         const dy = this.touchY - touch.pageY;
 
         this.touchX = touch.pageX;
         this.touchY = touch.pageY;
 
-        requestAnimationFrame(() => {
-          this.refreshScrollLayout(dx, dy);
-        });
+        this.refreshScrollLayout(dx, dy);
       },
 
       onKeyDown() {
@@ -138,7 +145,7 @@
           const { scrollWidth, offsetWidth, scrollHeight, offsetHeight } = viewport;
           let dx = 0, dy = 0;
 
-          await new Promise(requestAnimationFrame);
+          await promisedAnimationFrame();
 
           if(bar.parentElement.matches('.axis-x')) {
             const maxBarLeft = offsetWidth - bar.offsetWidth;
