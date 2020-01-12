@@ -4,7 +4,13 @@
       <img class="attach_fwd_msg_photo" :src="photo">
       <div class="attach_fwd_msg_info">
         <div class="attach_fwd_msg_name">{{ name }}</div>
-        <div class="attach_fwd_msg_date">{{ date }}</div>
+        <div class="attach_fwd_msg_date">
+          {{ date }}
+          <template v-if="msg.editTime">
+            <div class="attach_fwd_msg_dot"></div>
+            {{ l('im_msg_edited') }}.
+          </template>
+        </div>
       </div>
     </div>
     <div class="attach_fwd_msg_content">
@@ -103,8 +109,17 @@
   }
 
   .attach_fwd_msg_date {
+    display: flex;
     color: #3e4854;
     margin-top: 1px;
+  }
+
+  .attach_fwd_msg_dot {
+    width: 2px;
+    height: 2px;
+    margin: 8px 4px 0 4px;
+    border-radius: 50%;
+    background-color: #3e4854;
   }
 
   .attach_fwd_msg_content {

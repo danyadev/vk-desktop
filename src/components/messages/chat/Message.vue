@@ -26,7 +26,7 @@
           <div class="message_time_wrap">
             <template v-if="msg.editTime">
               <div class="message_edited">{{ l('im_msg_edited') }}</div>
-              <div class="dot"></div>
+              <div class="message_dot"></div>
             </template>
 
             <div class="message_time">{{ time }}</div>
@@ -49,7 +49,7 @@
   import Keyboard from './Keyboard.vue';
   import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 
-  export default {    
+  export default {
     props: ['msg', 'peer', 'peer_id', 'messageDate', 'isStartUnread', 'prevMsg'],
 
     components: {
@@ -265,7 +265,7 @@
     margin-top: -1px;
   }
 
-  .dot {
+  .message_dot {
     width: 2px;
     height: 2px;
     margin: 6px 3px 0 3px;
@@ -302,7 +302,7 @@
     bottom: 10px;
   }
 
-  .message_wrap.flyTime:not(.isSticker) .dot {
+  .message_wrap.flyTime:not(.isSticker) .message_dot {
     background: #f5f5f5;
   }
 
