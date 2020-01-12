@@ -5,7 +5,7 @@
     <div class="attach_reply_content">
       <div class="attach_reply_name">{{ reply.name || '...' }}</div>
 
-      <div v-if="reply.isContentDeleted" class="attach_reply_text isContentDeleted">{{ l('im_content_deleted') }}</div>
+      <div v-if="reply.isContentDeleted" class="attach_reply_text isContentDeleted">{{ l('im_attachment_deleted') }}</div>
       <div v-else :class="['attach_reply_text', { isAttachment: reply.isAttachment }]" v-emoji.push="reply.text || '...'"></div>
     </div>
   </div>

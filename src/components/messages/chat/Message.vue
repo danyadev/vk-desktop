@@ -17,7 +17,7 @@
         <div class="message_bubble">
           <Reply v-if="msg.isReplyMsg" :peer_id="peer_id" :msg="msg" />
 
-          <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_content_deleted') }}</div>
+          <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_attachment_deleted') }}</div>
           <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
           <Attachments :msg="msg" :peer_id="peer_id" />

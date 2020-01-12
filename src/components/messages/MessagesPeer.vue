@@ -16,8 +16,10 @@
         <Typing v-if="hasTyping" :peer_id="peer.id" />
         <div v-else class="im_peer_message">
           <div class="im_peer_author">{{ authorName }}</div>
-          <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted">{{ l('im_content_deleted') }}</div>
-          <div v-else :class="['im_peer_text', { isAttachment }]" v-emoji.push="message"></div>
+          <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted" :key="msg.id">
+            {{ l('im_attachment_deleted') }}
+          </div>
+          <div v-else :class="['im_peer_text', { isAttachment }]" v-emoji.push="message" :key="msg.id"></div>
         </div>
         <div v-if="peer.mentions.length" class="im_peer_mentioned">
           <Icon name="mention" width="20" height="18" />
@@ -255,7 +257,7 @@
   .im_peer_text { display: inline }
   .im_peer_text b { font-weight: 500 }
   .im_peer_text.isAttachment { color: #254f79 }
-  .im_peer_text.isContentDeleted { color: #696969 }
+  .im_peer_text.isContentDeleted { color: #717171 }
 
   .im_peer_unread {
     padding: 0 6px;
