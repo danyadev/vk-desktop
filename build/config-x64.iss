@@ -1,7 +1,7 @@
 [Setup]
-AppId={{F4610ED6-22AB-45BE-AB54-A2C47B5B1899}
+AppId=VKDesktop
 AppName=VK Desktop
-AppVersion=0.1.3
+AppVersion=0.2.0-beta.2
 AppPublisher=danyadev
 AppPublisherURL=https://vk.com/danyadev
 AppSupportURL=https://vk.com/vk_desktop_app
@@ -16,6 +16,7 @@ UninstallDisplayIcon={app}\VK Desktop.exe
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
+PrivilegesRequired=lowest
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
