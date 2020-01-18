@@ -4,7 +4,7 @@ import fs from 'fs';
 import { timer } from './utils';
 
 function request(requestParams, params = {}) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const req = https.request(requestParams, (res) => {
       const chunks = [];
       const MB = 1 << 20;
@@ -47,64 +47,44 @@ function request(requestParams, params = {}) {
     req.on('error', reject);
     if(params.timeout) req.setTimeout(params.timeout, req.abort);
 
+    // multipart: {
+    //   photo: {
+    //     value: fs.createReadStream(pathToFile),
+    //     filename: 'photo.png',
+    //     contentType: 'image/png'
+    //   }
+    // }
     if(params.multipart) {
-      const data = params.multipart;
-      const names = Object.keys(data);
+      const files = params.multipart;
+      const names = Object.keys(files);
       const boundary = Math.random().toString(16);
-      const body = renderMultipartBody(names, data, boundary);
-      let length = 0;
-
-      body.forEach((part) => length += Buffer.byteLength(part));
-
-      names.forEach((name) => {
-        if(data[name].value) {
-          length += fs.statSync(data[name].value.path).size;
-        }
-      });
 
       req.setHeader('Content-Type', `multipart/form-data; boundary="${boundary}"`);
-      req.setHeader('Content-Length', length + (16 * (names.length - 1)) + 8 + Buffer.byteLength(boundary));
-      sendMultipartParts(boundary, body, data, names, req, 0);
+
+      for(let i = 0; i < names.length; i++) {
+        const name = names[i];
+        const file = files[name];
+        const body =
+            `--${boundary}\r\n` +
+            `Content-Type: ${file.contentType}\r\n` +
+            `Content-Disposition: form-data; name="${name}"; filename="${file.filename}"\r\n` +
+            'Content-Transfer-Encoding: binary\r\n\r\n';
+
+        req.write(`\r\n${body}`);
+
+        await new Promise((resolve) => {
+          file.value.on('end', () => {
+            if(i != names.length-1) req.write(`\r\n--${boundary}`);
+            else req.end(`\r\n--${boundary}--`);
+
+            resolve();
+          }).pipe(req, { end: false });
+        });
+      }
     } else {
       req.end(params.postData || '');
     }
   });
-}
-
-function renderMultipartBody(names, data, boundary) {
-  const body = [];
-
-  names.forEach((name, i) => {
-    if(data[name].value) {
-      body[i] = `--${boundary}\r\n` +
-                `Content-Type: ${data[name].contentType}\r\n` +
-                `Content-Disposition: form-data; name="${name}"; filename="${data[name].filename}"\r\n` +
-                'Content-Transfer-Encoding: binary\r\n\r\n'
-    } else {
-      body[i] = `--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${data[name]}`;
-    }
-  });
-
-  return body;
-}
-
-function sendMultipartParts(boundary, body, data, names, req, i) {
-  req.write(`\r\n${body[i]}`);
-
-  function write() {
-    if(names.length-2 >= i) {
-      req.write(`\r\n--${boundary}`);
-      sendMultipartParts(boundary, body, data, names, req, i+1);
-    } else {
-      req.end(`\r\n--${boundary}--`);
-    }
-  }
-
-  if(data[names[i]].value) {
-    data[names[i]].value.on('end', write).pipe(req, { end: false });
-  } else {
-    write();
-  }
 }
 
 // Промис сохраняется для того, чтобы при дальнейших вызовах request
