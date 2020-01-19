@@ -6,7 +6,6 @@ import store from 'js/store/';
 import Vue from 'vue';
 
 import 'js/settingVue.js';
-import 'js/updater.js';
 
 import App from './components/App.vue';
 

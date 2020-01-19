@@ -4,7 +4,6 @@
   "description": "Клиент ВКонтакте",
   "main": "index.js",
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
     "dev": "webpack-dev-server --mode development --hot",
     "build": "npm run dist && npm run pack",
     "dist": "webpack --mode production",
@@ -37,13 +36,5 @@
     "webpack": "4.41.5",
     "webpack-cli": "3.3.10",
     "webpack-dev-server": "3.10.1"
-  },
-  "dependencies": {
-    "extract-zip": "1.6.7",
-    "fs-extra": "8.1.0",
-    "temp": "0.9.1"
-  },
-  "optionalDependencies": {
-    "winutils": "https://github.com/danyadev/winutils"
   }
 }

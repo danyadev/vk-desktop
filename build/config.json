@@ -7,7 +7,7 @@
   "directories": {
     "output": "out"
   },
-  "files": ["dist/**", "main/**", "index.js"],
+  "files": ["dist/**", "menu.js", "index.js"],
   "win": {
     "target": [{
       "target": "zip",

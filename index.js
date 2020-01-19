@@ -21,13 +21,6 @@ app.once('ready', () => {
     }
   });
 
-  require('./main/win').setWindow(win);
-
-  // Автообновление на macOS трубует подпись у приложения
-  if(process.platform != 'darwin') {
-    require('./main/updater').init();
-  }
-
   win.webContents.once('dom-ready', async () => {
     const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
@@ -54,7 +47,7 @@ app.once('ready', () => {
     shell.openExternal(url);
   });
 
-  if(process.platform == 'darwin') require('./main/menu')(win);
+  if(process.platform == 'darwin') require('./menu')(win);
   else win.removeMenu();
 
   win.loadURL(

@@ -47,8 +47,11 @@ module.exports = function(env, { mode }) {
       overlay: true,
       before(app, { middleware }) {
         middleware.waitUntilValid(() => {
-          spawn(electron, [path.join(__dirname, './index.js'), 'dev-mode'], { stdio: 'inherit' })
-            .on('close', process.exit);
+          spawn(
+            electron,
+            [path.join(__dirname, './index.js'), 'dev-mode'],
+            { stdio: 'inherit' }
+          ).on('close', process.exit);
         });
       }
     },
