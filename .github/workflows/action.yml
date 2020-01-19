@@ -5,13 +5,13 @@ on:
     types: [published]
 
 jobs:
-  build_on_mac:
+  build-mac:
     runs-on: macOS-latest
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
       with:
-        node-version: 12.11.1
+        node-version: 12.14.1
     - name: Install dependencies
       run: npm i
     - name: Package electron app and create installer
@@ -24,31 +24,45 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build_on_win:
+  build-win:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
       with:
-        node-version: 12.11.1
-    - uses: warrenbuckley/Setup-MSBuild@v1
-    - name: Preinstall dependencies
-      run: |
-        npm config set python python2.7
-        npm i -g node-gyp
+        node-version: 12.14.1
     - name: Install dependencies
       run: npm i
     - name: Build Electron app
       run: npm run build
     - name: Create installer
       run: npm run win-setup
-
     - name: Upload release files
       uses: danyadev/upload-to-release@master
       with:
         files: |
           [./out/VK-Desktop-Setup-x64.exe, VK-Desktop-Setup-x64.exe, application/octet-stream]
           [./out/VK-Desktop-Setup-x32.exe, VK-Desktop-Setup-x32.exe, application/octet-stream]
+          [./out/VK-Desktop-Setup-x64.zip, VK-Desktop-Setup-x64.zip, application/zip]
+          [./out/VK-Desktop-Setup-ia32.zip, VK-Desktop-Setup-x32.zip, application/zip]
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-nix:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: 12.14.1
+    - name: Install dependencies
+      run: npm i
+    - name: Build Electron app
+      run: npm run build
+    - name: Upload release files
+      uses: danyadev/upload-to-release@master
+      with:
+        files: |
           [./out/VK-Desktop-Setup-x64.zip, VK-Desktop-Setup-x64.zip, application/zip]
           [./out/VK-Desktop-Setup-ia32.zip, VK-Desktop-Setup-x32.zip, application/zip]
       env:
