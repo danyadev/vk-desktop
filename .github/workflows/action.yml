@@ -20,7 +20,7 @@ jobs:
       uses: danyadev/upload-to-release@master
       with:
         files: |
-          [./out/VK-Desktop-Setup.dmg, VK-Desktop-Setup.dmg, application/octet-stream]
+          [./out/VK-Desktop-mac.dmg, VK-Desktop-Setup.dmg, application/octet-stream]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -43,8 +43,8 @@ jobs:
         files: |
           [./out/VK-Desktop-Setup-x64.exe, VK-Desktop-Setup-x64.exe, application/octet-stream]
           [./out/VK-Desktop-Setup-x32.exe, VK-Desktop-Setup-x32.exe, application/octet-stream]
-          [./out/VK-Desktop-Setup-x64.zip, VK-Desktop-Setup-x64.zip, application/zip]
-          [./out/VK-Desktop-Setup-ia32.zip, VK-Desktop-Setup-x32.zip, application/zip]
+          [./out/VK-Desktop-win-x64.zip, VK-Desktop-win-x64.zip, application/zip]
+          [./out/VK-Desktop-win-ia32.zip, VK-Desktop-win-x32.zip, application/zip]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -63,7 +63,7 @@ jobs:
       uses: danyadev/upload-to-release@master
       with:
         files: |
-          [./out/VK-Desktop-Setup-x64.zip, VK-Desktop-Setup-x64.zip, application/zip]
-          [./out/VK-Desktop-Setup-ia32.zip, VK-Desktop-Setup-x32.zip, application/zip]
+          [./out/VK-Desktop-linux-x64.zip, VK-Desktop-linux-x64.zip, application/zip]
+          [./out/VK-Desktop-linux-ia32.zip, VK-Desktop-linux-x32.zip, application/zip]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
