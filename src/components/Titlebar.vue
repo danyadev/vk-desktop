@@ -47,16 +47,17 @@
     position: relative;
     height: var(--titlebar-height);
     z-index: 5;
-    background: #5281b9;
+    background: #fff;
   }
 
   .titlebar_drag {
     -webkit-app-region: drag;
     user-select: none;
     flex-grow: 1;
+    font-size: 13px;
     margin: 4px 0 0 4px;
     padding-left: 4px;
-    color: #fff;
+    color: #000;
     line-height: 24px;
     overflow: hidden;
     white-space: nowrap;

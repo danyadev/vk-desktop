@@ -2,7 +2,7 @@
   <div class="header_wrap">
     <div class="header">
       <Ripple color="rgba(255, 255, 255, .2)" class="ripple_fast im_header_back" @click="$emit('close')">
-        <img src="~assets/im_back.webp">
+        <img src="~assets/im_back.svg">
       </Ripple>
       <img class="im_header_photo" :src="photo">
       <div class="im_header_center">
@@ -158,12 +158,12 @@
   }
 
   .im_header_name {
-    color: #fff;
+    color: #000;
     line-height: 14px;
   }
 
   .im_header_online {
-    color: rgba(255, 255, 255, .75);
+    color: rgba(0, 0, 0, .75);
     font-size: 13px;
     text-align: center;
     margin-top: 2px;

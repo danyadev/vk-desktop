@@ -165,19 +165,16 @@
   .header {
     display: flex;
     align-items: center;
-    background: #5281b9;
+    background: #ffffff;
+    border-bottom: #eee 1px solid;
     width: 100%;
     height: 45px;
   }
 
   .header_name {
-    color: #fff;
+    color: #000;
+    font-size: 16px;
     padding-left: 10px;
-  }
-
-  .root:not(.mac) .header_name,
-  .root:not(.mac) .text-shadow {
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   }
 
   @keyframes spinner {

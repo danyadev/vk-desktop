@@ -30,10 +30,10 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     cursor: pointer;
     opacity: .7;
     transition: opacity .3s;
+    filter:invert(1);
   }
 
   .open_menu_btn:hover { opacity: 1 }

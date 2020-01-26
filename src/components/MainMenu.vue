@@ -2,7 +2,6 @@
   <div :class="['menu_wrap', { active: menuState }]" @click="toggleMenu">
     <div class="menu">
       <div class="menu_account_block">
-        <img class="menu_account_background" :src="user.photo_100">
         <Ripple color="rgba(0, 0, 0, .2)"
                 class="ripple_fast menu_account_multiaccount"
                 @click.stop="openModal('multiaccount')"
@@ -102,11 +101,13 @@
   }
 
   .menu_wrap {
-    transition: background-color .15s, visibility .15s;
+    transition: background-color .4s, visibility .4s;
+    transition-timing-function: ease;
   }
 
   .menu_wrap.active .menu {
     transform: translateZ(0);
+    transition-timing-function: ease;
   }
 
   .menu_wrap.active {
@@ -122,10 +123,12 @@
     overflow: hidden;
     background: #fff;
     box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
+    transition-timing-function: ease;
   }
 
   .menu {
     transition: transform .35s;
+    transition-timing-function: ease;
   }
 
   /* панелька профиля */
@@ -135,7 +138,6 @@
     overflow: hidden;
     height: 125px;
     padding: 8px 10px 10px 12px;
-    background: rgba(38, 37, 37, .5);
   }
 
   .menu_account_background {
@@ -169,24 +171,21 @@
     height: 56px;
     border-radius: 50%;
     background-size: 100%;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
   }
 
   .menu_account_name, .menu_account_status {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
   }
 
   .menu_account_name {
-    margin: 12px 0 2px 0;
-    color: #fff;
+    color: #000;
   }
 
   .menu_account_status {
     font-size: 13px;
-    color: #d9d9d9;
+    color: #262626;
   }
 
   /* остальные кнопки меню */
@@ -197,15 +196,11 @@
     height: calc(100% - 125px);
   }
 
-  .menu_items .menu_item:not(:last-child) {
-    margin-bottom: 10px;
-  }
-
   .menu_item {
     height: 44px;
     display: flex;
     align-items: center;
-    padding-left: 20px;
+    padding-left: 16px;
     cursor: pointer;
     color: #808080;
   }
@@ -231,8 +226,8 @@
   .menu_item_counter:not(:empty) {
     color: #475769;
     background: #d2dfea;
-    padding: 3px 5px 1px 5px;
-    border-radius: 4px;
+    padding: 2px 6px 1px 6px;
+    border-radius: 10px;
     margin-right: 8px;
     font-size: 14px;
   }

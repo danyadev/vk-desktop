@@ -65,7 +65,10 @@
   .album img {
     object-fit: cover;
     border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, .28);
+    box-shadow:
+            0 0.5px 1.3px rgba(0, 0, 0, 0.028),
+            0 1.6px 4.5px rgba(0, 0, 0, 0.042),
+            0 7px 20px rgba(0, 0, 0, 0.07);
     cursor: pointer;
   }
 
