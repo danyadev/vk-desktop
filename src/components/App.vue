@@ -168,7 +168,7 @@
     background: #ffffff;
     border-bottom: #eee 1px solid;
     width: 100%;
-    height: 45px;
+    height: 46px;
   }
 
   .header_name {
