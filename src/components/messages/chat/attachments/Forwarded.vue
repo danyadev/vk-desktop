@@ -8,16 +8,8 @@
 </template>
 
 <script>
-  import ForwardedMessage from './ForwardedMessage.vue';
-
   export default {
-    name: 'forwarded',
-
-    props: ['peer_id', 'msg', 'fwdDepth'],
-
-    components: {
-      ForwardedMessage
-    }
+    props: ['peer_id', 'msg', 'fwdDepth']
   }
 </script>
 

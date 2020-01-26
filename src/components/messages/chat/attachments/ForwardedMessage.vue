@@ -31,17 +31,13 @@
 
   import Reply from './Reply.vue';
   import Attachments from './Attachments.vue';
-  import Forwarded from './Forwarded.vue';
 
   export default {
-    name: 'forwarded-message',
-
     props: ['peer_id', 'messages', 'msg', 'fwdDepth'],
 
     components: {
       Reply,
-      Attachments,
-      Forwarded
+      Attachments
     },
 
     data: () => ({

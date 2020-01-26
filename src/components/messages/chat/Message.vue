@@ -45,7 +45,6 @@
 
   import Attachments from './attachments/Attachments.vue';
   import Reply from './attachments/Reply.vue';
-  import Forwarded from './attachments/Forwarded.vue';
   import Keyboard from './Keyboard.vue';
   import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 
@@ -55,7 +54,6 @@
     components: {
       Attachments,
       Reply,
-      Forwarded,
       Keyboard,
       SendMsgErrorMenu
     },
@@ -195,7 +193,12 @@
   }
 
   .modal[name=messages-viewer] .message_bubble_wrap {
-    max-width: 100%;
+    max-width: none;
+    padding-right: 25px;
+  }
+
+  .message_bubble {
+    position: relative;
   }
 
   .message_wrap:not(.hideBubble) .message_bubble {

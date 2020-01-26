@@ -8,8 +8,12 @@ import Vue from 'vue';
 import 'js/settingVue.js';
 
 import App from './components/App.vue';
+import Forwarded from './components/messages/chat/attachments/Forwarded.vue';
+import ForwardedMessage from './components/messages/chat/attachments/ForwardedMessage.vue';
 
-const win = electron.remote.getCurrentWindow();
+// Временный костыль для работы рекурсивных компонентов
+Vue.component('Forwarded', Forwarded);
+Vue.component('ForwardedMessage', ForwardedMessage);
 
 const app = new Vue({
   el: '#app',
@@ -17,6 +21,8 @@ const app = new Vue({
   router,
   render: (h) => h(App)
 });
+
+const win = electron.remote.getCurrentWindow();
 
 shortcut(['Control+Shift+I', 'F12'], () => {
   if(win.isDevToolsOpened()) win.closeDevTools();
