@@ -9,7 +9,7 @@
 У вас должен быть установлен [Node.js](http://nodejs.org) **версии минимум 10.13.0** и [Git](https://git-scm.com/downloads).
 
 ```bash
-$ git clone https://github.com/danyadev/vk-desktop.git # Клонирование репозитория
+$ git clone https://github.com/danyadev/vk-desktop.git && cd vk-desktop # Клонирование репозитория
 $ npm i # Установка всех зависимостей в проекте
 $ npm run build # Сборка клиента
 # ТОЛЬКО ДЛЯ WINDOWS
