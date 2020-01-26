@@ -41,12 +41,13 @@
         const { photo, sticker, doc, video, story } = msg.attachments;
         const photoDoc = doc && doc.find((doc) => doc.preview);
         const videoImages = video && video[0].image;
+        const storyPhotos = story && story[0].photo;
 
         if(photo) return getPhotoFromSizes(photo[0].sizes, 'o').url;
         if(sticker) return sticker[0].images[1].url;
         if(photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'm').src;
         if(video) return (videoImages[6] || videoImages[videoImages.length-1]).url;
-        if(story) return getPhotoFromSizes(story[0].photo.sizes, ['o', 'j', 'm', 'x']).url;
+        if(storyPhotos) return getPhotoFromSizes(storyPhotos.sizes, ['o', 'j', 'm', 'x']).url;
       },
 
       async jump() {
