@@ -15,7 +15,7 @@
     </div>
     <div class="attach_fwd_msg_content">
       <Reply v-if="msg.isReplyMsg" :msg="msg" :peer_id="peer_id" :isFwdMsg="true" />
-      <div class="attach_fwd_msg_text" v-emoji="msg.text"></div>
+      <div class="attach_fwd_msg_text" v-emoji.br="msg.text"></div>
       <Attachments :msg="msg" :peer_id="peer_id" :fwdDepth="fwdDepth" />
       <div v-if="msg.fwdCount && fwdDepth == 5 && !isModal" class="link" @click="openMessagesViewer">
         {{ l('im_forwarded_some') }}
