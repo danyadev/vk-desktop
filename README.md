@@ -10,6 +10,7 @@
 
 ```bash
 $ git clone https://github.com/danyadev/vk-desktop.git # Клонирование репозитория
+$ cd vk-desktop # Переход в папку приложения
 $ npm i # Установка всех зависимостей в проекте
 $ npm run build # Сборка клиента
 # ТОЛЬКО ДЛЯ WINDOWS
