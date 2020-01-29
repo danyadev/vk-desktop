@@ -15,7 +15,10 @@
     </div>
     <div class="attach_fwd_msg_content">
       <Reply v-if="msg.isReplyMsg" :msg="msg" :peer_id="peer_id" :isFwdMsg="true" />
-      <div class="attach_fwd_msg_text" v-emoji.br="msg.text"></div>
+
+      <div v-if="msg.isContentDeleted" class="attach_fwd_msg_text isContentDeleted">{{ l('im_attachment_deleted') }}</div>
+      <div v-else class="attach_fwd_msg_text" v-emoji.push.br="msg.text"></div>
+
       <Attachments :msg="msg" :peer_id="peer_id" :fwdDepth="fwdDepth" />
       <div v-if="msg.fwdCount && fwdDepth == 5 && !isModal" class="link" @click="openMessagesViewer">
         {{ l('im_forwarded_some') }}
@@ -120,6 +123,10 @@
 
   .attach_fwd_msg_content {
     margin-top: 5px;
+  }
+
+  .attach_fwd_msg_text.isContentDeleted {
+    color: #696969;
   }
 
   .attach_fwd_msg_text + .im_attachments,
