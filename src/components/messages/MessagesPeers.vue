@@ -76,7 +76,7 @@
         this.loading = false;
         if(items.length < 40) this.loaded = true;
       },
-      
+
       onScroll: endScroll(function() {
         if(!this.loading && !this.loaded) {
           this.loading = true;

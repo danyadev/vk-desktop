@@ -22,7 +22,7 @@
       Button,
       Scrolly
     },
-    
+
     methods: {
       update() {
         this.quitAndInstall();

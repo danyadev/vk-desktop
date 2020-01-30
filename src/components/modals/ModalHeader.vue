@@ -30,7 +30,7 @@
       Ripple,
       Icon
     },
-    
+
     methods: {
       close() {
         this.$modals.close(this.$parent.$attrs.name);

@@ -129,7 +129,7 @@
         }
       }, 4000)
     },
-    
+
     activated() {
       if(this.$refs.input) this.$refs.input.focus();
     }

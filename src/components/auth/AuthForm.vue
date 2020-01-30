@@ -82,7 +82,7 @@
           this.$emit('auth', data);
         }
       },
-      
+
       openMultiacc() {
         this.$modals.open('multiaccount');
       }

@@ -14,8 +14,8 @@
 </template>
 
 <script>
-  import vkapi from 'js/vkapi';
   import { getPhotoFromSizes } from 'js/utils';
+  import vkapi from 'js/vkapi';
 
   import Scrolly from '../UI/Scrolly.vue';
 
@@ -31,7 +31,7 @@
     methods: {
       getPhotoFromSizes
     },
-    
+
     async mounted() {
       const { items } = await vkapi('photos.getAlbums', {
         need_system: 1,

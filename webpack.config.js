@@ -100,9 +100,9 @@ module.exports = function(env, { mode }) {
     ],
     resolve: {
       alias: {
-        'package-json': path.resolve(__dirname, 'package.json'),
         js: path.resolve(__dirname, 'src/js/'),
-        assets: path.resolve(__dirname, 'src/assets/')
+        assets: path.resolve(__dirname, 'src/assets/'),
+        'package-json': path.resolve(__dirname, 'package.json')
       }
     }
   };

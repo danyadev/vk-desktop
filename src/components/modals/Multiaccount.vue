@@ -57,7 +57,7 @@
       removeAccount(id) {
         this.$store.commit('users/removeUser', id);
       },
-      
+
       openAuthModal() {
         this.$modals.open('auth');
       }

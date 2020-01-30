@@ -12,9 +12,9 @@
 </template>
 
 <script>
-  import vkapi from 'js/vkapi';
   import { endScroll, getPhotoFromSizes } from 'js/utils';
-
+  import vkapi from 'js/vkapi';
+  
   import Scrolly from '../UI/Scrolly.vue';
 
   export default {
@@ -73,7 +73,7 @@
         this.loading = false;
         if(items.length < 50) this.loaded = true;
       },
-      
+
       open(attach) {
         this.$modals.open('media-viewer', { attach });
       }

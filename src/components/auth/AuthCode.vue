@@ -82,7 +82,7 @@
         this.forcedSms = false;
       }
     },
-    
+
     mounted() {
       this.$refs.input.focus();
     }

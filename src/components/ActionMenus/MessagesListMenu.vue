@@ -13,6 +13,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
+  
   import ActionsMenu from './ActionsMenu.vue';
   import Checkbox from '../UI/Checkbox.vue';
 
@@ -25,7 +26,7 @@
     computed: {
       ...mapGetters('settings', ['settings'])
     },
-    
+
     methods: {
       click(name) {
         this.$store.commit('settings/updateMessagesSettings', {

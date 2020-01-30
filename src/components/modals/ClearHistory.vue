@@ -22,7 +22,7 @@
       ModalHeader,
       Button
     },
-    
+
     methods: {
       clear() {
         vkapi('messages.deleteConversation', {

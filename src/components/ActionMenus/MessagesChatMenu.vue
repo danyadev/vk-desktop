@@ -32,6 +32,7 @@
 <script>
   import vkapi from 'js/vkapi';
   import { eventBus } from 'js/utils';
+  
   import ActionsMenu from './ActionsMenu.vue';
   import Icon from '../UI/Icon.vue';
 
@@ -104,7 +105,7 @@
           peer_id: this.peer_id
         });
       },
-      
+
       leftFromChat() {
         this.$refs.actionsMenu.toggleMenu();
 

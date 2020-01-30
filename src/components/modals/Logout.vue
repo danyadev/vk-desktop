@@ -18,7 +18,7 @@
       ModalHeader,
       Button
     },
-    
+
     methods: {
       logout() {
         const { activeUser } = this.$store.state.users;

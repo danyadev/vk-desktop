@@ -16,8 +16,8 @@
 </template>
 
 <script>
-  import vkapi from 'js/vkapi';
   import { getPhotoFromSizes } from 'js/utils';
+  import vkapi from 'js/vkapi';
 
   import ModalHeader from './ModalHeader.vue';
   import PhotoMenu from '../ActionMenus/PhotoMenu.vue';

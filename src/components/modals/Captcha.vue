@@ -53,7 +53,7 @@
         this.$modals.close(this.$attrs.name);
       }
     },
-    
+
     mounted() {
       this.imgSrc = this.src;
     }
