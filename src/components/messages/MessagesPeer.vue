@@ -60,7 +60,7 @@
     computed: {
       ...mapState(['profiles']),
       owner() {
-        return this.profiles[this.peer.owner];
+        return this.profiles[this.peer.id];
       },
       author() {
         return this.profiles[this.msg.from];

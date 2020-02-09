@@ -8,15 +8,13 @@ const loadedConvMembers = new Set();
 
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
-  const isChannel = isChat && conversation.chat_settings.is_group_channel;
   const { push_settings, chat_settings } = conversation;
 
   return {
     id: conversation.peer.id,
-    channel: isChannel,
+    channel: isChat && chat_settings.is_group_channel,
     members: isChat && chat_settings.members_count,
     left: isChat && ['left', 'kicked'].includes(chat_settings.state),
-    owner: isChannel ? chat_settings.owner_id : conversation.peer.id,
     muted: push_settings && push_settings.disabled_forever,
     unread: conversation.unread_count || 0,
     photo: isChat && getPhoto(chat_settings.photo),

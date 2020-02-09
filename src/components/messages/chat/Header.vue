@@ -43,7 +43,7 @@
 
     computed: {
       owner() {
-        return this.peer && this.$store.state.profiles[this.peer.owner];
+        return this.$store.state.profiles[this.peer_id];
       },
 
       photo() {
