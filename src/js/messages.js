@@ -40,11 +40,28 @@ export function parseMessage(message) {
   const hasAttachment = fwdCount || isReplyMsg || message.attachments.length;
   const attachments = {};
 
-  for(const attach of message.attachments) {
-    const { type } = attach;
+  for(const attachDescription of message.attachments) {
+    let { type } = attachDescription;
+    const attach = attachDescription[type];
 
-    if(attachments[type]) attachments[type].push(attach[type]);
-    else attachments[type] = [attach[type]];
+    if(type == 'link') {
+      const playlistRE = /https:\/\/m\.vk\.com\/audio\?act=audio_playlist(\d+)_(\d+)/;
+      const artistRE = /https:\/\/m\.vk\.com\/artist\/(.+?)\?/;
+      const articleRE = /https:\/\/m\.vk\.com\/@/;
+
+      // TODO переписать структуру вложений
+      if(playlistRE.test(attach.url)) {
+        type = 'audio_playlist';
+      } else if(artistRE.test(attach.url)) {
+        type = 'artist';
+      } else if(articleRE.test(attach.url)) {
+        // articles.getByLink с ссылкой в поле links
+        type = 'article';
+      }
+    }
+
+    if(attachments[type]) attachments[type].push(attach);
+    else attachments[type] = [attach];
   }
 
   return {

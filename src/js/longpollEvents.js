@@ -58,6 +58,7 @@ function getAttachments(data) {
 
       if(kind == 'audiomsg') type = 'audio_message';
       if(kind == 'graffiti') type = 'graffiti';
+      if(type == 'group') type = 'event';
 
       if(!attachments[type]) attachments[type] = [null];
       else attachments[type].push(null);
