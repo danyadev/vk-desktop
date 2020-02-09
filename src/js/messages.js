@@ -1,4 +1,4 @@
-import { escape, getPhoto, fields, loadProfile, concatProfiles } from './utils';
+import { escape, getPhoto, fields, loadProfile, concatProfiles, capitalize } from './utils';
 import getTranslate from './getTranslate';
 import store from './store';
 import emoji from './emoji';
@@ -154,7 +154,14 @@ export function getMessagePreview(msg, peer_id, author) {
 
     if(attachName) {
       const count = attachments[attachName].length;
-      return getTranslate('im_attachments', attachName, [count], count);
+      const translate = getTranslate('im_attachments', attachName, [count], count);
+
+      if(!translate) {
+        console.warn('[im] Неизвестное вложение:', attachName);
+        return capitalize(attachName);
+      }
+
+      return translate;
     }
 
     if(isReplyMsg) return getTranslate('im_replied');

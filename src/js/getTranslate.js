@@ -51,7 +51,8 @@ export default function(name, key, replaces, number) {
 
   if(typeof key == 'boolean') key = key ? 1 : 0;
   if(key != null) data = data[key];
-  if(number != null) data = data[caseOfNumber(number)];
+  if(number != null && data) data = data[caseOfNumber(number)];
+  if(!data) return data;
 
   if(Array.isArray(replaces)) {
     data = String(data);
