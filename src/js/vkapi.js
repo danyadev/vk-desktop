@@ -94,7 +94,7 @@ function vkapi(name, params, useAndroidToken) {
 
       case 17: // Необходима активация аккаунта (добавить номер телефона)
         const { data: redirectPage } = await request(data.error.redirect_uri);
-        const goCaptchaLink = 'https://m.vk.com' + redirectPage.match(/<a href="(.+?)" rel="noopener">Пропустить ввод номера/)[1];
+        const goCaptchaLink = 'https://m.vk.com' + redirectPage.match(/<div class="fi_row"><a href="(.+?)" rel="noopener">/)[1];
         const { data: firstCaptchaPage } = await request(goCaptchaLink);
         let success = false;
         let captchaPage = firstCaptchaPage;
