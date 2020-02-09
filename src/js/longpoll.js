@@ -50,7 +50,7 @@ export default new class Longpoll {
   }
 
   async catchErrors(data) {
-    console.warn('[longpoll] Error:', data);
+    console.warn('[lp] Error:', data);
 
     switch(data.failed) {
       case 1:
@@ -99,11 +99,7 @@ export default new class Longpoll {
     const events = [];
 
     for(const item of history.history) {
-      // 1. Прочтение или отмена пометки сообщения как важное
-      // 2. 18 событие не имеет смысла, т.к. в обьекте сообщения уже есть сниппет
-      if(item[0] == 3 && !item[4] || item[0] == 18) continue;
-
-      if([3, 4, 5].includes(item[0])) {
+      if([3, 4, 5, 18].includes(item[0])) {
         events.push([
           item[0], // id события
           { peer: peers[item[3]], msg: messages[item[1]] },
@@ -126,38 +122,43 @@ export default new class Longpoll {
     const events = [];
 
     for(const item of history) {
-      if(this.debug && ![8, 9].includes(item[0])) console.log('[lp]', item.slice());
+      if(this.debug && ![8, 9, 63, 64].includes(item[0])) {
+        console.log('[lp]', item.slice());
+      }
 
       const [id] = item.splice(0, 1);
       const event = longpollEvents[id];
 
       if(!event) {
-        return console.warn('[longpoll] Неизвестное событие', [id, ...item]);
+        console.warn('[lp] Неизвестное событие', [id, ...item]);
+        continue;
       }
+      if(!event.handler) continue;
 
-      const data = event.parser(item[1] == 'fromHistory' ? item[0] : item);
+      const fromHistory = item[1] == 'fromHistory';
+      const rawData = fromHistory ? item[0] : item;
+      const data = event.parser ? event.parser(rawData) : rawData;
       if(!data) continue;
 
-      // Собираем все события идущие подряд с одинаковым peer_id в одно событие
       if(event.pack) {
         const prev = events[events.length - 1];
 
         if(
-          prev && prev[0] == id && // id события совпадает с предыдущим событием
-          (id == 2 || prev[2] == item[2]) // 2 эвент или совпадает peer_id
+          prev && prev[0] == id && // совпадают id событий
+          prev[2] == item[2] // и peer_id
         ) {
           prev[1].push(data);
         } else {
-          events.push([id, [data], item[2]]);
+          events.push([id, [data], item[2], fromHistory]);
         }
       } else {
-        events.push([id, data]);
+        events.push([id, data, null, fromHistory]);
       }
     }
 
-    for(const [id, data, peer_id] of events) {
+    for(const [id, data, peer_id, fromHistory] of events) {
       const { handler, preload } = longpollEvents[id];
-      const isPreload = preload && preload(data);
+      const isPreload = !fromHistory && preload && preload(data);
       const promise = peer_id
         ? handler({ key: +peer_id, items: data }, isPreload)
         : handler(data, isPreload);

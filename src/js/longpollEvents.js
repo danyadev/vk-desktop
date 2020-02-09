@@ -1,4 +1,10 @@
-import { parseMessage, parseConversation, loadConversation, loadConversationMembers, addNotificationsTimer } from './messages';
+import {
+  parseMessage,
+  parseConversation,
+  loadConversation,
+  loadConversationMembers,
+  addNotificationsTimer
+} from './messages';
 import { supportedAttachments, preloadAttachments } from '../components/messages/chat/attachments/attachments';
 import longpoll from 'js/longpoll';
 import store from './store/';
@@ -8,20 +14,20 @@ import { timer, eventBus, isObject } from './utils';
 function hasFlag(mask, flag) {
   const checkFlag = (flag) => flags[flag] & mask;
   const flags = {
-    unread:         1,       // Приходит всегда
-    outbox:         1 << 1,  // Сообщение от тебя
+    unread:         1,       // Непрочитанное сообщение
+    outbox:         1 << 1,  // Исходящее сообщение
     important:      1 << 3,  // Важное сообщение
-    chat:           1 << 4,  // Отправка сообщения в беседу через (m.)vk.com
-    friends:        1 << 5,  // Отправлено тобой либо другом в лс
+    chat:           1 << 4,  // Отправка сообщения в беседу через vk.com
+    friends:        1 << 5,  // Исходящее; входящее от друга в лс
     spam:           1 << 6,  // Пометка сообщения как спам
-    deleted:        1 << 7,  // Удаление сообщения
+    deleted:        1 << 7,  // Удаление сообщения локально
     audio_listened: 1 << 12, // Прослушано голосовое сообщение
     chat2:          1 << 13, // Отправка в беседу через клиенты
     cancel_spam:    1 << 15, // Отмена пометки как спам
     hidden:         1 << 16, // Приветственное сообщение от группы
     deleted_all:    1 << 17, // Удаление сообщения для всех
     chat_in:        1 << 19, // Входящее сообщение в беседе
-    fuckin_flag:    1 << 20, // Приходит в не связанных между собой событиях
+    noname_flag:    1 << 20, // Неизвестный флаг
     reply_msg:      1 << 21  // Ответ на сообщение
   };
 
@@ -464,9 +470,8 @@ export default {
   },
 
   6: {
-    // Ты прочитал сообщения до msg_id
+    // Прочтение входящих сообщений до msg_id
     // [peer_id, msg_id, count]
-    parser: (data) => data,
     handler([peer_id, msg_id, count]) {
       const conv = store.state.messages.conversations[peer_id];
       const mentions = conv && conv.peer.mentions || [];
@@ -492,9 +497,8 @@ export default {
   },
 
   7: {
-    // Собеседник прочитал твои сообщения до msg_id
+    // Прочтение исходящих сообщений до msg_id
     // [peer_id, msg_id, count]
-    parser: (data) => data,
     handler([peer_id, msg_id]) {
       store.commit('messages/updateConversation', {
         peer: {
@@ -507,10 +511,9 @@ export default {
   },
 
   8: {
-    // Юзер появился в сети
+    // Друг появился в сети
     // [-user_id, platform, timestamp, app_id]
     // platform: 1: любое приложение, 2: iphone, 3: ipad, 4: android, 5: wphone, 6: windows, 7: web
-    parser: (data) => data,
     handler([id, platform, time, app_id]) {
       if(!store.state.profiles[-id]) return;
 
@@ -525,11 +528,10 @@ export default {
   },
 
   9: {
-    // Юзер вышел из сети
-    // [-user_id, flag, timestamp, app_id]
-    // flag: 0 - вышел с сайта, 1 - по таймауту
-    parser: (data) => data,
-    handler([id, flag, time, app_id]) {
+    // Друг вышел из сети
+    // [-user_id, isTimeout, timestamp, app_id]
+    // isTimeout: 1 - вышел по таймауту, 0 - вышел из vk.com
+    handler([id, isTimeout, time, app_id]) {
       if(!store.state.profiles[-id]) return;
 
       store.commit('updateProfile', {
@@ -543,24 +545,18 @@ export default {
   },
 
   10: {
-    // Упоминание просмотрено
-    // Приходят только флаги 1024 и 16384 (17408)
+    // Упоминание в беседе peer_id просмотрено
     // [peer_id, flag]
-    parser() {}
   },
 
   12: {
-    // Пришло упоминание
-    // 1) Флаги 1024 и 16384 (17408) - пушнули/ответили на сообщение в беседе peer_id
-    // 2) Флаг 32 - пользователь peer_id (id юзера) упомянул тебя в каком-то посте
+    // Появилось упоминание (пуш или ответ на сообщение) в беседе peer_id
     // [peer_id, flag]
-    parser() {}
   },
 
   13: {
-    // Удаление диалога
-    // [peer_id, msg_id]
-    parser: (data) => data,
+    // Удаление всех сообщений в диалоге
+    // [peer_id, last_msg_id]
     handler([peer_id]) {
       store.commit('messages/removeConversationMessages', peer_id);
       store.commit('messages/updatePeersList', {
@@ -588,20 +584,18 @@ export default {
     // Изменение данных чата
     // [chat_id]
     // Событие не используется, так как событие 52 полностью его заменяет
-    parser() {}
   },
 
   52: {
     // Изменение данных чата
-    // [type, peer_id, info]
-    parser: (data) => data,
-    handler([type, peer_id, info]) {
-      const isMe = info == store.state.users.activeUser;
+    // [type, peer_id, extra]
+    handler([type, peer_id, extra]) {
+      const isMe = extra == store.state.users.activeUser;
       const conv = store.state.messages.conversations[peer_id];
       const peer = conv && conv.peer;
 
       if(!peer) return;
-      if([7, 8].includes(type)) removeTyping(peer_id, info, isMe);
+      if([7, 8].includes(type)) removeTyping(peer_id, extra, isMe);
 
       switch(type) {
         case 1: // Изменилось название беседы (обрабатывается в 4 событии)
@@ -614,12 +608,22 @@ export default {
         case 3: // Назначен новый администратор
           break;
 
+        case 4: // Изменение прав в беседе; extra = маска прав:
+          /*
+            1  - Приглашать участников в беседу могут только администраторы
+            2  - Неизвестно
+            4  - Менять закрепленное сообщение могут только администраторы
+            8  - Редактировать информацию беседы (фото, имя) могут только администраторы
+            16 - Добавлять администраторов кроме создателя могут и другие администраторы
+          */
+          break;
+
         case 5: // Закрепление или открепление сообщения
-          if(info) loadConversation(peer_id);
+          if(extra) loadConversation(peer_id);
           else peer.pinnedMsg = null;
           break;
 
-        case 6: // Пользователь присоединился к беседе
+        case 6: // Пользователь присоединился к беседе (по ссылке, приглашение или возвращение в беседу)
           if(peer.members != null) peer.members++;
 
           if(isMe) {
@@ -663,9 +667,8 @@ export default {
   },
 
   63: {
-    // Написание сообщения
+    // Статус набора сообщения
     // [peer_id, [from_ids], ids_length, timestamp]
-    parser: (data) => data,
     handler([peer_id, ids]) {
       for(const id of ids) {
         if(id == store.state.users.activeUser) continue;
@@ -682,9 +685,8 @@ export default {
   },
 
   64: {
-    // Запись голосового сообщения
+    // Статус записи голосового сообщения
     // [peer_id, [from_ids], ids_length, timestamp]
-    parser: (data) => data,
     handler([peer_id, ids]) {
       for(const id of ids) {
         if(id == store.state.users.activeUser) continue;
@@ -704,8 +706,7 @@ export default {
     // Изменение количества непрочитанных диалогов
     // [count, count_with_notifications, 0, 0]
     // count_with_notifications: кол-во непрочитанных диалогов, в которых включены уведомления
-    parser: ([count]) => count,
-    handler(count) {
+    handler([count]) {
       store.commit('updateMenuCounters', {
         name: 'messages',
         value: count
@@ -714,17 +715,15 @@ export default {
   },
 
   81: {
-    // Изменение состояния невидимки
+    // Изменение состояния невидимки друга
     // [-user_id, state, ts, -1, 0]
     // state: 1 - включена, 0 - выключена
-    parser() {}
   },
 
   114: {
     // Изменеие настроек пуш-уведомлений в беседе
     // [{ peer_id, sound, disabled_until }]
     // disabled_until: -1 - выключены; 0 - включены; * - время их включения
-    parser: (data) => data,
     handler([{ peer_id, disabled_until }]) {
       if(!store.state.messages.conversations[peer_id]) return;
 
@@ -741,6 +740,5 @@ export default {
 
   115: {
     // Звонок
-    parser() {}
   }
 }

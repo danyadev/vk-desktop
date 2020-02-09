@@ -155,7 +155,7 @@ export function getServiceMessage(action, author, peer_id, isFull) {
       if(isFull) return getTranslate('im_chat_kick_user', g(0), [name(0), name(1, 1)]);
       return getTranslate('im_chat_kick_user_short', g(1), [name(1, 1)]);
     default:
-      console.warn('[messages] Неизвестное действие:', action.type);
+      console.warn('[im] Неизвестное действие:', action.type);
       return action.type;
   }
 }
@@ -232,13 +232,12 @@ export async function loadConversationMembers(id, force) {
 const activeNotificationsTimers = new Map();
 
 export function addNotificationsTimer({ peer_id, disabled_until }, remove) {
-  if(remove) {
-    clearTimeout(activeNotificationsTimers.get(peer_id));
-    return activeNotificationsTimers.delete(peer_id);
-  }
-
   if(activeNotificationsTimers.has(peer_id)) {
     clearTimeout(activeNotificationsTimers.get(peer_id));
+  }
+
+  if(remove) {
+    return activeNotificationsTimers.delete(peer_id);
   }
 
   activeNotificationsTimers.set(peer_id, setTimeout(() => {

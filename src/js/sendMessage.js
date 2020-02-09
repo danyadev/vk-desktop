@@ -15,7 +15,7 @@ function parseInputText(nodes) {
     else text += node.innerText;
   }
 
-  return text.replace(/\n/g, '').replace(/<br>/g, '\n').trim().replace(/\n/g, '<br>');
+  return text.replace(/<br>/g, '\n').trim().replace(/\n/g, '<br>');
 }
 
 export default async function sendMessage({ peer_id, input, keyboard }) {
