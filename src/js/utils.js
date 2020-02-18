@@ -22,10 +22,10 @@ export function escape(text) {
   if(text == null) return '';
 
   return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
     .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/&/, '&amp;')
-    .replace(/"/g, '&quot;');
+    .replace(/>/g, '&gt;');
 }
 
 export function random(min, max) {
