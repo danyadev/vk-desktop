@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import { getPhoto, capitalize } from 'js/utils';
+  import { getPhoto, capitalize, loadProfile } from 'js/utils';
   import { getFullMessageDate } from 'js/date';
 
   import Reply from './Reply.vue';
@@ -49,10 +49,12 @@
 
     computed: {
       user() {
-        return this.$store.state.profiles[this.msg.from];
+        return this.$store.state.profiles[this.msg.from] || (loadProfile(this.msg.from), null);
       },
       name() {
-        return this.user ? this.user.name || `${this.user.first_name} ${this.user.last_name}` : '...';
+        return this.user
+          ? this.user.name || `${this.user.first_name} ${this.user.last_name}`
+          : '...';
       },
       photo() {
         return getPhoto(this.user) || 'assets/blank.gif';
