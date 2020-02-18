@@ -21,13 +21,13 @@ class Storage {
   }
 }
 
-export const users = new Storage('users', {
+export const usersStorage = new Storage('users', {
   activeUser: null,
   trustedHashes: {},
   users: {}
 });
 
-export const settings = new Storage('settings', {
+export const settingsStorage = new Storage('settings', {
   window: win.getBounds(),
   langName: 'ru',
   userSettings: {}

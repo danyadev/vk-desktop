@@ -5,6 +5,7 @@ import { EventEmitter } from 'events';
 import electron from 'electron';
 import vkapi from './vkapi';
 import store from './store/';
+import { usersStorage } from './store/Storage';
 import { version } from 'package-json';
 
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
@@ -241,4 +242,16 @@ export async function downloadFile(src, withRedirect, progress) {
       progress
     });
   }
+}
+
+export function logout() {
+  const { activeUser } = store.state.users;
+  const usersData = Object.assign({}, usersStorage.data);
+
+  usersData.activeUser = null;
+  delete usersData.users[activeUser];
+
+  usersStorage.update(usersData);
+
+  location.reload();
 }

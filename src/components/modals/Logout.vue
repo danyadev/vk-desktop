@@ -10,6 +10,8 @@
 </template>
 
 <script>
+  import { logout } from 'js/utils';
+
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
 
@@ -20,14 +22,8 @@
     },
 
     methods: {
-      logout() {
-        const { activeUser } = this.$store.state.users;
+      logout,
 
-        this.$store.commit('users/setActiveUser', null);
-        this.$store.commit('users/removeUser', activeUser);
-
-        location.reload();
-      },
       closeModal() {
         this.$modals.close(this.$attrs.name);
       }

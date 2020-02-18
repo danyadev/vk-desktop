@@ -199,6 +199,7 @@ export default {
       Vue.set(state.peersConfig, peer_id, config);
     }
   },
+  
   getters: {
     conversationsList(state) {
       return state.peersList.map((id) => state.conversations[id]);

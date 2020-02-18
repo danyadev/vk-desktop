@@ -40,31 +40,32 @@
 
     methods: {
       async initUser() {
-        if(this.activeUser) {
-          if(this.$router.currentRoute.path != '/messages') {
-            this.$router.replace('/messages');
-          }
+        if(!this.activeUser) return;
 
-          const { lp, counters, user, temporarilyDisabledNotifications } = await vkapi('execute.init', {
-            lp_version: longpoll.version,
-            fields
-          });
+        if(this.$router.currentRoute.path != '/messages') {
+          this.$router.replace('/messages');
+        }
 
-          this.$store.commit('users/updateUser', user);
-          this.$store.commit('setMenuCounters', counters);
+        const { lp, counters, user, temporarilyDisabledNotifications } = await vkapi('execute.init', {
+          lp_version: longpoll.version,
+          fields
+        });
 
-          longpoll.start(lp);
+        this.$store.commit('users/updateUser', user);
+        this.$store.commit('setMenuCounters', counters);
 
-          for(const peer of temporarilyDisabledNotifications) {
-            addNotificationsTimer(peer);
-          }
+        longpoll.start(lp);
+
+        for(const peer of temporarilyDisabledNotifications) {
+          addNotificationsTimer(peer);
         }
       }
     },
 
     watch: {
+      // Может измениться только при авторизации, т.к. при
+      // выходе из аккаунта данные обновляются сразу в localStorage
       activeUser() {
-        // При входе в аккаунт
         this.initUser();
       }
     },
