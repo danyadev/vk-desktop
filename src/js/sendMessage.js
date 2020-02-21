@@ -9,13 +9,13 @@ function parseInputText(nodes) {
   let text = '';
 
   for(const node of nodes || []) {
-    if(node.nodeName == '#text') text += node.data;
-    else if(node.nodeName == 'BR') text += '<br>';
+    if(node.nodeName == '#text') text += node.data.replace(/\n/g, '');
+    else if(node.nodeName == 'BR') text += '\n';
     else if(node.nodeName == 'IMG') text += node.alt;
     else text += node.innerText;
   }
 
-  return text.replace(/<br>/g, '\n').trim().replace(/\n/g, '<br>');
+  return text.trim().replace(/\n/g, '<br>');
 }
 
 export default async function sendMessage({ peer_id, input, keyboard }) {
