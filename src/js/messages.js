@@ -83,7 +83,8 @@ export function parseMessage(message) {
     was_listened: !!message.was_listened,
     hasAttachment: hasAttachment,
     isContentDeleted: !message.text && !message.action && !hasAttachment,
-    keyboard: message.keyboard
+    keyboard: message.keyboard,
+    template: message.template
   };
 }
 

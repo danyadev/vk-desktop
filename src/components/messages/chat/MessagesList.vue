@@ -5,6 +5,7 @@
   import { getServiceMessage } from 'js/messages';
 
   import Message from './Message.vue';
+  import Carousel from './Carousel.vue';
 
   export default {
     props: ['peer_id', 'peer', 'list', 'showStartUnread', 'startInRead'],
@@ -116,6 +117,18 @@
             }
           })
         );
+
+        if(msg.template && msg.template.type == 'carousel') {
+          children.push(
+            h(Carousel, {
+              props: {
+                peer_id: this.peer_id,
+                author_id: msg.from,
+                template: msg.template
+              }
+            })
+          );
+        }
       }
 
       return h('div', children);

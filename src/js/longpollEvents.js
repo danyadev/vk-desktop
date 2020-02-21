@@ -118,7 +118,9 @@ function parseLongPollMessage(data) {
       was_listened: false,
       hasAttachment: hasAttachment,
       isContentDeleted: !data[4] && !action && !hasAttachment,
-      keyboard: keyboard && keyboard.inline && keyboard
+      keyboard: keyboard && keyboard.inline && keyboard,
+      // Нужно только для пометки сообщения как обязательное для переполучения через апи
+      hasTemplate: data[5].has_template
     }
   };
 }
@@ -161,7 +163,7 @@ async function loadMessages(peer_id, msg_ids, isPreload) {
 }
 
 function hasSupportedAttachments(msg) {
-  if(msg.isReplyMsg || msg.fwdCount) return true;
+  if(msg.isReplyMsg || msg.fwdCount || msg.hasTemplate) return true;
 
   for(const attach in msg.attachments) {
     if(supportedAttachments.has(attach)) return true;
@@ -170,7 +172,7 @@ function hasSupportedAttachments(msg) {
 
 function hasPreloadMessages(messages) {
   for(const { msg } of messages) {
-    if(msg.fwdCount) return true;
+    if(msg.fwdCount || msg.hasTemplate) return true;
 
     for(const attach in msg.attachments) {
       if(preloadAttachments.has(attach)) return true;
