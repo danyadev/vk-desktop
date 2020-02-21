@@ -139,7 +139,7 @@ async function getLastMessage(peer_id) {
   return { msg, peer };
 }
 
-async function loadMessages(peer_id, msg_ids, isPreload) {
+async function loadMessages(peer_id, msg_ids, onlyReturnMessages) {
   const { items } = await vkapi('messages.getById', {
     message_ids: msg_ids.join(',')
   });
@@ -149,7 +149,7 @@ async function loadMessages(peer_id, msg_ids, isPreload) {
   for(const msg of items) {
     const parsedMsg = parseMessage(msg);
 
-    if(isPreload) {
+    if(onlyReturnMessages) {
       messages.push(parsedMsg);
     } else {
       store.commit('messages/editMessage', {
@@ -579,6 +579,25 @@ export default {
       }
 
       store.commit('messages/editMessage', { peer_id: peer.id, msg });
+    }
+  },
+
+  19: {
+    // Сброс кеша сообщения
+    // [msg_id]
+    // Необходимо переполучить сообщение через апи
+    handler(msg_id) {
+      const conversations = store.state.messages.messages;
+
+      for(const peer_id in conversations) {
+        const messages = conversations[peer_id];
+
+        for(const { id } of messages) {
+          if(id == msg_id) {
+            return loadMessages(peer_id, [id]);
+          }
+        }
+      }
     }
   },
 
