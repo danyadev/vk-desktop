@@ -10,7 +10,7 @@
   "files": ["dist/**", "menu.js", "index.js"],
   "win": {
     "target": [{
-      "target": "zip",
+      "target": "dir",
       "arch": ["x64", "ia32"]
     }]
   },

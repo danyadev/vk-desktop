@@ -43,8 +43,6 @@ jobs:
         files: |
           [./out/VK-Desktop-Setup-x64.exe, VK-Desktop-Setup-x64.exe, application/octet-stream]
           [./out/VK-Desktop-Setup-x32.exe, VK-Desktop-Setup-x32.exe, application/octet-stream]
-          [./out/VK-Desktop-win-x64.zip, VK-Desktop-win-x64.zip, application/zip]
-          [./out/VK-Desktop-win-ia32.zip, VK-Desktop-win-x32.zip, application/zip]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
