@@ -137,7 +137,7 @@
         }
 
         if(
-          sticker && !isReplyMsg ||
+          sticker && !isReplyMsg && !text ||
           !text && onlyPhotos && attachNames.length == 1 &&
           (photo && photo.length == 1 || video && video.length == 1 || doc && doc.length == 1)
         ) {
@@ -284,6 +284,11 @@
 
   .message_wrap.isSticker:not(.hideBubble):not(.out) .message_time_wrap {
     background-color: #dfe6eadf;
+  }
+
+  .message_wrap:not(.hideBubble).isSticker .attach_reply,
+  .message_wrap:not(.hideBubble).isSticker .message_text {
+    width: 128px;
   }
 
   .message_edited {

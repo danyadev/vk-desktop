@@ -108,10 +108,6 @@
     top: 3px;
   }
 
-  .message_wrap:not(.hideBubble).isSticker .attach_reply {
-    width: 128px;
-  }
-
   .message_wrap.removeBottomMargin .attach_reply {
     margin-left: 5px;
   }
