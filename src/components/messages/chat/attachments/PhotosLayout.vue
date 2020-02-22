@@ -3,7 +3,7 @@
   import photosLayout from './photosLayout';
 
   export default {
-    props: ['peer_id', 'attachments', 'fwdDepth'],
+    props: ['peer_id', 'attachments', 'fwdDepth', 'showUserAvatar', 'hideBubble'],
 
     data() {
       return {
@@ -32,7 +32,17 @@
         if(this.isModal) {
           return this.$el.closest('.modal_wrap').clientWidth * .92 * .7 - 10 * (this.fwdDepth - 5);
         } else {
-          return this.$el.closest('.scrolly').clientWidth * .75 - 52 - 10 * this.fwdDepth;
+          const messagesListWidth = this.$el.closest('.scrolly').clientWidth;
+          const avatarWidth = this.showUserAvatar ? 45 : 0;
+          const internalMessagePadding = this.hideBubble ? 0 : 12;
+
+          // 1. Отнимает внешний отступ сообщения (14 + 14)
+          // 2. Максимальный размер сообщения - 75% от свободного места
+          // 3. Иногда у сообщения имеется еще и аватарка отправителя
+          // 4. В сообщениях с несколькими фотками есть внутренний отступ (6 + 6),
+          //    а с одной - нет (0)
+          // 5. Фотография может находиться внутри пересланного сообщения
+          return (messagesListWidth - 28) * .75 - avatarWidth - internalMessagePadding - 10 * this.fwdDepth;
         }
       },
 

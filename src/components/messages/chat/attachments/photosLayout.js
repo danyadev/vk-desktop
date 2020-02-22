@@ -37,8 +37,8 @@ function setMaxRatioDiff(ratios, max) {
 }
 
 function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
-  thumb.width = width;
-  thumb.height = columnItem ? height : Math.max(height, 60);
+  thumb.width = Math.floor(width);
+  thumb.height = Math.floor(columnItem ? height : Math.max(height, 60));
   if(lastColumn) thumb.lastColumn = lastColumn;
   if(lastRow) thumb.lastRow = lastRow;
   if(columnItem) thumb.columnItem = columnItem;

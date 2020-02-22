@@ -2,7 +2,7 @@
   import components from './attachments';
 
   export default {
-    props: ['peer_id', 'msg', 'fwdDepth'],
+    props: ['peer_id', 'msg', 'fwdDepth', 'showUserAvatar', 'hideBubble'],
 
     render(h) {
       const attachments = [];
@@ -48,7 +48,9 @@
             props: {
               attachments: layoutAttachs,
               peer_id: this.peer_id,
-              fwdDepth: this.fwdDepth || 0
+              fwdDepth: this.fwdDepth || 0,
+              showUserAvatar: this.showUserAvatar,
+              hideBubble: this.hideBubble
             }
           })
         );
