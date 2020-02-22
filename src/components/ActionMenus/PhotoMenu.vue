@@ -18,6 +18,8 @@
 <script>
   import vkapi from 'js/vkapi';
   import { downloadFile } from 'js/utils';
+  import electron from 'electron';
+  
   import ActionsMenu from './ActionsMenu.vue';
 
   export default {
