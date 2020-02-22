@@ -7,12 +7,12 @@
       <img class="im_header_photo" :src="photo">
       <div class="im_header_center">
         <div class="im_header_name_wrap">
-          <div class="im_header_name text-shadow" v-emoji="title"></div>
+          <div class="im_header_name" v-emoji="title"></div>
           <div v-if="owner && owner.verified" class="verified white"></div>
           <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="im_header_muted" />
         </div>
         <Typing v-if="hasTyping" :peer_id="peer_id" :isChat="true" />
-        <div v-else class="im_header_online text-shadow">{{ online }}</div>
+        <div v-else class="im_header_online">{{ online }}</div>
       </div>
       <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
     </div>

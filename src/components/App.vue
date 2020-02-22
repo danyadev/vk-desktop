@@ -176,11 +176,6 @@
     padding-left: 10px;
   }
 
-  .root:not(.mac) .header_name,
-  .root:not(.mac) .text-shadow {
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-  }
-
   @keyframes spinner {
     from { transform: rotate(0deg) }
     to { transform: rotate(360deg) }

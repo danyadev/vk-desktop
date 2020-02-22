@@ -79,7 +79,7 @@
 
         if(!this.isActiveRoute(route)) this.$router.replace(route);
       },
-      
+
       openModal(name) {
         this.toggleMenu(false);
 
