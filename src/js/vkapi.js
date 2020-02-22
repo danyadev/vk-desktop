@@ -4,7 +4,7 @@ import request from './request';
 import store from './store/';
 import { eventBus } from './utils';
 
-export const version = '5.113';
+export const version = '5.118';
 
 function vkapi(name, params, useAndroidToken) {
   return new Promise(async (resolve, reject) => {
