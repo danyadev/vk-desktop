@@ -56,8 +56,12 @@
 
       onEscape() {
         const keys = Object.keys(this.modals);
+        const name = keys[keys.length - 1];
+        const header = document.querySelector(`.modal[name="${name}"] .modal_header`);
 
-        if(keys.length) eventBus.emit('modal:close', keys[keys.length-1]);
+        if(header.getAttribute('closable')) {
+          eventBus.emit('modal:close', name);
+        }
       }
     },
 
