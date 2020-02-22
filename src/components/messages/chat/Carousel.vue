@@ -44,7 +44,6 @@
     display: flex;
     margin-top: 2px;
     padding-left: 15px;
-    user-select: none;
   }
 
   .im_carousel_item {

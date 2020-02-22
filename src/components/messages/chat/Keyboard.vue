@@ -119,7 +119,6 @@
     text-align: center;
     color: #fff;
     cursor: pointer;
-    user-select: none;
   }
 
   .keyboard_button, .keyboard_button div {

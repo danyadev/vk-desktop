@@ -16,7 +16,7 @@
     components: {
       Ripple
     },
-    
+
     computed: {
       isLight() {
         return this.light != null;
@@ -30,7 +30,6 @@
     display: inline-block;
     padding: 9px;
     border-radius: 5px;
-    user-select: none;
     text-align: center;
     transition: opacity .3s, background-color .3s;
   }

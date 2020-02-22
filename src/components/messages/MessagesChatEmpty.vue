@@ -29,10 +29,6 @@
     color: #38383a;
   }
 
-  .im_chat_empty span {
-    user-select: none;
-  }
-
   .im_chat_empty img {
     margin-bottom: 15px;
     width: 128px;

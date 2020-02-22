@@ -52,7 +52,6 @@
 
   .titlebar_drag {
     -webkit-app-region: drag;
-    user-select: none;
     flex-grow: 1;
     margin: 4px 0 0 4px;
     padding-left: 4px;

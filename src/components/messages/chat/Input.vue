@@ -232,7 +232,6 @@
 
   .chat_input_error.channel {
     color: #3f70a7;
-    user-select: none;
     cursor: pointer;
     transition: background-color .2s;
   }

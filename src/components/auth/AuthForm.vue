@@ -136,7 +136,6 @@
     position: absolute;
     bottom: 10px;
     color: #306aab;
-    user-select: none;
     cursor: pointer;
   }
 </style>

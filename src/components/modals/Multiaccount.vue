@@ -71,7 +71,6 @@
   .item {
     display: flex;
     cursor: pointer;
-    user-select: none;
     padding: 0 15px;
   }
 

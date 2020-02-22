@@ -290,7 +290,6 @@
 
   .scrolly.isScrolling {
     -webkit-user-drag: none;
-    user-select: none;
   }
 
   .scrolly-viewport {

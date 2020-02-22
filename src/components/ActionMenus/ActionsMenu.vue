@@ -103,7 +103,6 @@
     align-items: center;
     padding: 10px 12px;
     cursor: pointer;
-    user-select: none;
     transition: background-color .3s;
   }
 

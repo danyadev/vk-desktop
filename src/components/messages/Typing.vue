@@ -77,7 +77,6 @@
 
   .typing {
     margin: 0 6px;
-    user-select: none;
     flex: none;
   }
 

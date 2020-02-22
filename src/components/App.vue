@@ -79,6 +79,7 @@
 <style>
   *, *::before, *::after {
     box-sizing: border-box;
+    user-select: none;
   }
 
   :focus {
@@ -113,7 +114,6 @@
   a, .link {
     color: #306aab;
     cursor: pointer;
-    user-select: none;
   }
 
   a:hover, .link:hover {
@@ -122,7 +122,6 @@
 
   img:not(.emoji) {
     -webkit-user-drag: none;
-    user-select: none;
   }
 
   .root {
@@ -148,7 +147,6 @@
     line-height: 32px;
     height: 34px;
     padding: 0 9px;
-    user-select: none;
     transition: border-color .3s;
   }
 

@@ -236,6 +236,7 @@
 
   .message_text {
     display: inline;
+    user-select: text;
   }
 
   .message_wrap.hasAttachment .message_text:not(:empty) {
@@ -253,7 +254,6 @@
     color: #696969;
     font-weight: 500;
     font-size: 11px;
-    user-select: none;
     pointer-events: none;
   }
 

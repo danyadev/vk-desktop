@@ -86,7 +86,6 @@
     height: 52px;
     border-bottom: 1px solid #d8dade;
     background: #fff;
-    user-select: none;
     cursor: pointer;
   }
 

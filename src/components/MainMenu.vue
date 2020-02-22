@@ -225,7 +225,6 @@
   .menu_item_name {
     flex-grow: 1;
     margin-left: 10px;
-    user-select: none;
   }
 
   .menu_item_counter:not(:empty) {
