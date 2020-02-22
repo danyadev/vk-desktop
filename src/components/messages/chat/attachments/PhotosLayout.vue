@@ -9,8 +9,8 @@
       return {
         prevWidth: 0,
         prevHeight: 0,
-        parentWidth: 0,
-        parentHeight: 0,
+        maxWidth: 0,
+        maxHeight: 0,
         isModal: false
       }
     },
@@ -18,39 +18,46 @@
     methods: {
       onResize({ target: { innerWidth, innerHeight } }) {
         if(innerWidth != this.prevWidth) {
-          this.parentWidth = this.calcParentWidth();
+          this.maxWidth = this.calcMaxWidth();
           this.prevWidth = innerWidth;
         }
 
         if(innerHeight != this.prevHeight) {
-          this.parentHeight = this.calcParentHeight();
+          this.maxHeight = this.calcMaxHeight();
           this.prevHeight = innerHeight;
         }
       },
 
-      calcParentWidth() {
-        if(this.isModal) {
-          return this.$el.closest('.modal_wrap').clientWidth * .92 * .7 - 10 * (this.fwdDepth - 5);
-        } else {
-          const messagesListWidth = this.$el.closest('.scrolly').clientWidth;
-          const avatarWidth = this.showUserAvatar ? 45 : 0;
-          const internalMessagePadding = this.hideBubble ? 0 : 12;
-
-          // 1. Отнимает внешний отступ сообщения (14 + 14)
-          // 2. Максимальный размер сообщения - 75% от свободного места
-          // 3. Иногда у сообщения имеется еще и аватарка отправителя
-          // 4. В сообщениях с несколькими фотками есть внутренний отступ (6 + 6),
-          //    а с одной - нет (0)
-          // 5. Фотография может находиться внутри пересланного сообщения
-          return (messagesListWidth - 28) * .75 - avatarWidth - internalMessagePadding - 10 * this.fwdDepth;
-        }
+      getComputedStyleProperty(selector, prop) {
+        return +getComputedStyle(this.$el.closest(selector))[prop].slice(0, -2);
       },
 
-      calcParentHeight() {
+      calcMaxWidth() {
+        const messagesListWidth = this.getComputedStyleProperty(
+          this.isModal ? '.modal_wrap' : '.scrolly',
+          'width'
+        );
+        const avatarWidth = this.showUserAvatar ? 45 : 0;
+        const internalMessagePadding = this.hideBubble
+                                        ? 0
+                                        // У пересланных сообщений нет уменьшения отступов
+                                        // для основного сообщения
+                                        : (this.fwdDepth ? 24 : 12);
+
+        // 1. Отнимает внешний отступ сообщения (14 + 14)
+        // 2. Максимальный размер сообщения - 75% от свободного места
+        // 3. Иногда у сообщения имеется еще и аватарка отправителя
+        // 4. В сообщениях с несколькими фотками внутренний отступ 6 + 6
+        //    (или 12 + 12, если пересланное сообщение), а с одной - 0
+        // 5. Фотография может находиться внутри пересланного сообщения
+        return (messagesListWidth - 28) * .75 - avatarWidth - internalMessagePadding - 10 * this.fwdDepth;
+      },
+
+      calcMaxHeight() {
         if(this.isModal) {
-          return this.$el.closest('.modal_wrap').scrollHeight * .92 - 130;
+          return this.getComputedStyleProperty('.modal_wrap', 'height') * .92 - 130;
         } else {
-          return this.$el.closest('.scrolly').scrollHeight * .7;
+          return this.getComputedStyleProperty('.scrolly', 'height') * .7;
         }
       }
     },
@@ -102,13 +109,15 @@
           );
         }
 
-        if(!photos.length) return [];
+        const maxWidth = Math.min(this.maxWidth, this.maxHeight);
+
+        if(!photos.length || !maxWidth) return [];
 
         return photosLayout({
           thumbs: photos,
           margin: 5,
-          parentWidth: Math.min(this.parentWidth, this.parentHeight),
-          parentHeight: this.parentHeight
+          maxWidth: maxWidth,
+          maxHeight: this.maxHeight
         });
       }
     },
@@ -196,15 +205,15 @@
       window.addEventListener('resize', this.onResize);
 
       this.isModal = !!this.$el.closest('.modal');
-      this.parentWidth = this.calcParentWidth();
-      this.parentHeight = this.calcParentHeight();
+      this.maxWidth = this.calcMaxWidth();
+      this.maxHeight = this.calcMaxHeight();
     },
 
     activated() {
       window.addEventListener('resize', this.onResize);
 
-      this.parentWidth = this.calcParentWidth();
-      this.parentHeight = this.calcParentHeight();
+      this.maxWidth = this.calcMaxWidth();
+      this.maxHeight = this.calcMaxHeight();
     },
 
     destroyed() {

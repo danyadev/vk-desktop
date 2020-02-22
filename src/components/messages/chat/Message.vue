@@ -138,7 +138,8 @@
 
         if(
           sticker && !isReplyMsg ||
-          !text && onlyPhotos && attachNames.length == 1
+          !text && onlyPhotos && attachNames.length == 1 &&
+          (photo && photo.length == 1 || video && video.length == 1 || doc && doc.length == 1)
         ) {
           classes.push('hideBubble');
           flyTime = true;
@@ -169,6 +170,12 @@
 
   .message_wrap[active].out {
     background-color: #e9f3ff;
+  }
+
+  .modal[name=messages-viewer] .message_wrap {
+    /* Сдвигает сообщение влево, но зато дает */
+    /* возможность скроллить по горизонтали */
+    width: max-content;
   }
 
   .message_name {
@@ -206,6 +213,9 @@
 
   .modal[name=messages-viewer] .message_bubble_wrap {
     max-width: none;
+  }
+
+  .modal[name=messages-viewer] .message_wrap:not(.out) .message_bubble_wrap {
     padding-right: 25px;
   }
 

@@ -17,7 +17,7 @@
   import Button from '../UI/Button.vue';
 
   export default {
-    props: ['messages', 'peer_id'],
+    props: ['peer_id', 'messages'],
 
     components: {
       ModalHeader,
