@@ -6,7 +6,7 @@ AppPublisher=danyadev
 AppPublisherURL=https://vk.com/danyadev
 AppSupportURL=https://vk.com/vk_desktop_app
 AppUpdatesURL=https://github.com/danyadev/vk-desktop/releases
-DefaultDirName={pf}\VK Desktop
+DefaultDirName={localappdata}\VK Desktop
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir=..\out
@@ -16,7 +16,7 @@ UninstallDisplayIcon={app}\VK Desktop.exe
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
-PrivilegesRequired=lowest
+PrivilegesRequired=none
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
