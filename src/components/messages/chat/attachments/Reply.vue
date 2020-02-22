@@ -116,6 +116,10 @@
     margin-left: 5px;
   }
 
+  .message_wrap.removeMiddleMargin .attach_reply {
+    margin-left: 5px;
+  }
+
   .message_wrap.hasPhoto .attach_reply {
     margin-bottom: 8px;
   }

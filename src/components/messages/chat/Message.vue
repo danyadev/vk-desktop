@@ -20,7 +20,11 @@
           <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_attachment_deleted') }}</div>
           <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
-          <Attachments :msg="msg" :peer_id="peer_id" />
+          <Attachments :msg="msg"
+                       :peer_id="peer_id"
+                       :showUserAvatar="showUserData || isChat && !msg.out && !isChannel"
+                       :hideBubble="attachClasses.includes('hideBubble')"
+          />
           <Forwarded v-if="msg.fwdCount" :peer_id="peer_id" :msg="msg" :fwdDepth="1" />
 
           <div class="message_time_wrap">
@@ -111,22 +115,30 @@
         if(sticker || onlyPhotos) flyTime = true;
 
         if(onlyPhotos && !text) {
+          // Только фотографии.
           // Уменьшаем отступы со всех сторон
           classes.push('removeMargin');
           flyTime = true;
         } else if(!text && !isReplyMsg && hasPhoto) {
+          // С фото, но без текста и ответа на сообщение (без контента над фотками).
           // Уменьшаем отступы сверху, справа и слева
           classes.push('removeTopMargin');
         } else if(onlyPhotoAttachs && !fwdCount) {
+          // Фотографии находятся в самом верху сообщения, значит
+          // отступы можно уменьшить только когда в сообщении есть
+          // только фотографии (+ текст или ответ на сообщение).
           // Уменьшаем отступы слева, снизу и справа
           classes.push('removeBottomMargin');
           flyTime = true;
+        } else if(hasPhoto) {
+          // возможно текст сверху и остальные вложения снизу
+          // Уменьшаем отступы слева и справа
+          classes.push('removeMiddleMargin');
         }
 
         if(
           sticker && !isReplyMsg ||
-          !text && onlyPhotos && attachNames.length == 1 &&
-          (photo && photo.length == 1 || video && video.length == 1 || doc && doc.length == 1)
+          !text && onlyPhotos && attachNames.length == 1
         ) {
           classes.push('hideBubble');
           flyTime = true;
@@ -147,16 +159,16 @@
     transition: background-color 1s;
   }
 
+  .message_wrap:not(.showUserData) {
+    padding: 4px 14px;
+  }
+
   .message_wrap[active] {
     background-color: #ebf1f5;
   }
 
   .message_wrap[active].out {
     background-color: #e9f3ff;
-  }
-
-  .message_wrap:not(.showUserData) {
-    padding: 4px 14px;
   }
 
   .message_name {
@@ -329,7 +341,7 @@
 
   .message_wrap.removeMargin .attach_photo_wrap.lastRow:first-child img,
   .message_wrap.removeMargin br + .attach_photo_wrap.lastRow img,
-  .message_wrap.removeBottomMargin .attach_photo_wrap.lastRow:first-child img {
+  .message_wrap.removeBottomMargin br + .attach_photo_wrap.lastRow img {
     border-bottom-left-radius: 14px;
   }
 
@@ -350,12 +362,13 @@
     padding: 8px 6px 6px 6px;
   }
 
-  .message_wrap.removeOnlyBottomMargin .message_bubble {
-    padding-bottom: 6px;
+  .message_wrap.removeMiddleMargin .message_bubble {
+    padding: 8px 6px;
   }
 
   .message_wrap.removeTopMargin:not(.flyTime) .message_time_wrap,
-  .message_wrap.removeBottomMargin:not(.flyTime) .message_time_wrap {
+  .message_wrap.removeBottomMargin:not(.flyTime) .message_time_wrap,
+  .message_wrap.removeMiddleMargin:not(.flyTime) .message_time_wrap {
     margin-right: 6px;
   }
 </style>
