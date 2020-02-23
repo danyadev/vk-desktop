@@ -175,7 +175,7 @@ export function getMessagePreview(msg, peer_id, author) {
       const translate = getTranslate('im_attachments', attachName, [count], count);
 
       if(!translate) {
-        console.warn('[im] Неизвестное вложение:', attachName);
+        console.warn('[im] Неизвестное вложение:', attachName, `(${count})`);
         return capitalize(attachName);
       }
 

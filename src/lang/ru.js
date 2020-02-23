@@ -107,7 +107,7 @@ export default {
     event: ['Мероприятие'],
     market: ['Товар'],
     artist: ['Музыкант'],
-    sticker: ['Стикер'],
+    sticker: ['Стикер', 'Стикер', 'Стикер'],
     article: ['Статья'],
     podcast: ['Подкаст'],
     graffiti: ['Граффити'],
