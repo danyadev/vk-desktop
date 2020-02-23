@@ -116,7 +116,13 @@
       convertCount,
 
       openChat() {
-        if(this.activeChat == this.peer.id) return;
+        if(this.activeChat == this.peer.id) {
+          return eventBus.emit('messages:event', 'jump', {
+            peer_id: this.activeChat,
+            bottom: true,
+            mark: false
+          });
+        }
 
         if(this.activeChat) {
           eventBus.emit('messages:event', 'closeChat', {
