@@ -10,33 +10,35 @@
       <img v-if="showUserData" class="message_photo" :src="photo" loading="lazy" width="35" height="35">
       <div v-else-if="isChat && !msg.out && !isChannel" class="message_photo"></div>
 
-      <div class="message_bubble_wrap">
-        <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
+      <div class="message_bubble_pre_wrap">
+        <div class="message_bubble_wrap">
+          <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
-        <div class="message_bubble">
-          <Reply v-if="msg.isReplyMsg" :peer_id="peer_id" :msg="msg" />
+          <div class="message_bubble">
+            <Reply v-if="msg.isReplyMsg" :peer_id="peer_id" :msg="msg" />
 
-          <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_attachment_deleted') }}</div>
-          <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
+            <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">{{ l('im_attachment_deleted') }}</div>
+            <div v-else class="message_text" v-emoji.push.br="msg.text"></div>
 
-          <Attachments :msg="msg"
-                       :peer_id="peer_id"
-                       :showUserAvatar="showUserData || isChat && !msg.out && !isChannel"
-                       :hideBubble="attachClasses.includes('hideBubble')"
-          />
-          <Forwarded v-if="msg.fwdCount" :peer_id="peer_id" :msg="msg" :fwdDepth="1" />
+            <Attachments :msg="msg"
+                         :peer_id="peer_id"
+                         :showUserAvatar="showUserData || isChat && !msg.out && !isChannel"
+                         :hideBubble="attachClasses.includes('hideBubble')"
+            />
+            <Forwarded v-if="msg.fwdCount" :peer_id="peer_id" :msg="msg" :fwdDepth="1" />
 
-          <div class="message_time_wrap">
-            <template v-if="msg.editTime">
-              <div class="message_edited">{{ l('im_msg_edited') }}</div>
-              <div class="message_dot"></div>
-            </template>
+            <div class="message_time_wrap">
+              <template v-if="msg.editTime">
+                <div class="message_edited">{{ l('im_msg_edited') }}</div>
+                <div class="message_dot"></div>
+              </template>
 
-            <div class="message_time">{{ time }}</div>
+              <div class="message_time">{{ time }}</div>
+            </div>
           </div>
-        </div>
 
-        <Keyboard v-if="msg.keyboard" :peer_id="peer_id" :keyboard="msg.keyboard" />
+          <Keyboard v-if="msg.keyboard" :peer_id="peer_id" :keyboard="msg.keyboard" />
+        </div>
       </div>
     </div>
   </div>
@@ -203,9 +205,13 @@
     margin-right: 10px;
   }
 
+  .message_bubble_pre_wrap {
+    max-width: 75%;
+  }
+
   .message_bubble_wrap {
     position: relative;
-    max-width: 75%;
+    max-width: 600px;
     display: flex;
     flex-direction: column;
   }

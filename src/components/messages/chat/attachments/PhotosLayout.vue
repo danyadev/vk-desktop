@@ -45,12 +45,13 @@
                                         : (this.fwdDepth ? 24 : 12);
 
         // 1. Отнимает внешний отступ сообщения (14 + 14)
-        // 2. Максимальный размер сообщения - 75% от свободного места
+        // 2. Максимальный размер сообщения - 75% от свободного места или 600px
+        const messageOuterWidth = Math.min((messagesListWidth - 28) * .75, 600);
         // 3. Иногда у сообщения имеется еще и аватарка отправителя
         // 4. В сообщениях с несколькими фотками внутренний отступ 6 + 6
         //    (или 12 + 12, если пересланное сообщение), а с одной - 0
         // 5. Фотография может находиться внутри пересланного сообщения
-        return (messagesListWidth - 28) * .75 - avatarWidth - internalMessagePadding - 10 * this.fwdDepth;
+        return messageOuterWidth - avatarWidth - internalMessagePadding - 10 * this.fwdDepth;
       },
 
       calcMaxHeight() {
@@ -109,14 +110,12 @@
           );
         }
 
-        const maxWidth = Math.min(this.maxWidth, this.maxHeight);
-
-        if(!photos.length || !maxWidth) return [];
+        if(!photos.length || !this.maxWidth) return [];
 
         return photosLayout({
           thumbs: photos,
           margin: 5,
-          maxWidth: maxWidth,
+          maxWidth: this.maxWidth,
           maxHeight: this.maxHeight
         });
       }

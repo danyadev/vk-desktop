@@ -50,7 +50,7 @@ function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
 export default function({ thumbs, margin, maxWidth, maxHeight }) {
   // Копируем массив для предотвращения мутации оригинального массива
   thumbs = thumbs.map((thumb) => Object.assign({}, thumb));
-  maxHeight = Math.min(maxHeight * .95, 500);
+  maxHeight = Math.min(maxHeight * .92, 500);
 
   const photoRatios = [];
   let photoRatioTypes = '';
