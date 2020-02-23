@@ -255,3 +255,28 @@ export function logout() {
 
   location.reload();
 }
+
+export function createQueueManager(fn) {
+  const queue = [];
+  let isExecuting = false;
+
+  async function executeQueue() {
+    const { args, resolve, context } = queue.shift();
+
+    resolve(await fn.call(context, ...args));
+
+    if(queue.length) executeQueue();
+    else isExecuting = false;
+  }
+
+  return function(...args) {
+    return new Promise((resolve) => {
+      queue.push({ args, resolve, context: this });
+
+      if(queue.length == 1 && !isExecuting) {
+        isExecuting = true;
+        executeQueue();
+      }
+    });
+  }
+}

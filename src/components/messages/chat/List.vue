@@ -35,7 +35,17 @@
 </template>
 
 <script>
-  import { fields, concatProfiles, endScroll, eventBus, callWithDelay, timer, debounce, convertCount } from 'js/utils';
+  import {
+    fields,
+    concatProfiles,
+    endScroll,
+    eventBus,
+    callWithDelay,
+    timer,
+    debounce,
+    convertCount,
+    createQueueManager
+  } from 'js/utils';
   import { parseMessage, parseConversation } from 'js/messages';
   import longpoll from 'js/longpoll';
   import vkapi from 'js/vkapi';
@@ -98,7 +108,10 @@
     methods: {
       convertCount,
 
-      async load(params = {}, { isDown, isFirstLoad, loadedUp, loadedDown } = {}) {
+      load: createQueueManager(async function(
+        params = {},
+        { isDown, isFirstLoad, loadedUp, loadedDown, beforeLoad } = {}
+      ) {
         const setPeerLoading = (loading) => {
           this.$store.commit('messages/updatePeerConfig', {
             peer_id: this.peer_id,
@@ -107,6 +120,7 @@
         }
 
         setPeerLoading(true);
+        beforeLoad && beforeLoad();
 
         if(isDown) this.loadingDown = true;
         else this.loadingUp = true;
@@ -154,7 +168,7 @@
         this.checkTopTime(list);
 
         return items;
-      },
+      }),
 
       onScroll(list) {
         if(!list.scrollHeight) return;
@@ -281,7 +295,12 @@
               msg.removeAttribute('active');
             }
           }
-        }
+        };
+
+        const beforeLoad = () => {
+          this.$store.commit('messages/removeConversationMessages', this.peer_id);
+          this.loadedUp = this.loadedDown = false;
+        };
 
         this.showEndBtn = false;
         this.showTopTime = false;
@@ -292,13 +311,13 @@
           if(this.loadedUp) {
             onLoad();
           } else {
-            this.$store.commit('messages/removeConversationMessages', this.peer_id);
-            this.loadedUp = this.loadedDown = false;
-
             this.load({
               start_message_id: 0,
               offset: -40
-            }, { loadedUp: true }).then(onLoad);
+            }, {
+              loadedUp: true,
+              beforeLoad
+            }).then(onLoad);
           }
         } else if(bottom) {
           this.replyHistory.length = 0;
@@ -315,12 +334,10 @@
               }
             }
           } else {
-            this.$store.commit('messages/removeConversationMessages', this.peer_id);
-            this.loadedUp = this.loadedDown = false;
-
             const [lastMsg] = await this.load({}, {
               isDown: true,
-              loadedDown: true
+              loadedDown: true,
+              beforeLoad
             });
 
             msg_id = lastMsg.id;
@@ -329,12 +346,10 @@
         } else if(this.messages.find((msg) => msg.id == msg_id)) {
           onLoad();
         } else {
-          this.$store.commit('messages/removeConversationMessages', this.peer_id);
-          this.loadedUp = this.loadedDown = false;
-
           this.load({
             start_message_id: msg_id,
-            offset: -20
+            offset: -20,
+            beforeLoad
           }).then(onLoad);
         }
       },
@@ -409,14 +424,14 @@
         const isScrolledDown = scrollHeight && scrollTop + clientHeight == scrollHeight;
 
         switch(type) {
-          case 'close_chat':
+          case 'closeChat':
             this.showStartUnread = true;
             this.scrollTop = scrollTop;
             this.isScrolledDown = isScrolledDown;
             this.hasOldUnread = this.peer.last_msg_id > this.peer.in_read;
             break;
 
-          case 'check_scrolling':
+          case 'checkScrolling':
             if(data.unlockUp) this.loadedUp = false;
             if(data.unlockDown) this.loadedDown = false;
             this.checkScrolling(list);

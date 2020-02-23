@@ -19,11 +19,11 @@
         return this.$route.name == 'chat';
       }
     },
-    
+
     methods: {
       closeChat() {
         if(this.hasChat) {
-          eventBus.emit('messages:event', 'close_chat', {
+          eventBus.emit('messages:event', 'closeChat', {
             peer_id: this.$route.params.id
           });
 

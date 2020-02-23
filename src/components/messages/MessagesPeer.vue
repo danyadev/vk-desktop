@@ -119,7 +119,7 @@
         if(this.activeChat == this.peer.id) return;
 
         if(this.activeChat) {
-          eventBus.emit('messages:event', 'close_chat', {
+          eventBus.emit('messages:event', 'closeChat', {
             peer_id: this.activeChat
           });
         }

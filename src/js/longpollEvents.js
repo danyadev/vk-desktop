@@ -244,7 +244,7 @@ export default {
 
       if(msg) {
         store.commit('messages/moveConversation', { peer_id });
-        eventBus.emit('messages:event', 'check_scrolling', { peer_id });
+        eventBus.emit('messages:event', 'checkScrolling', { peer_id });
       } else {
         store.commit('messages/updatePeersList', {
           id: peer_id,
@@ -294,7 +294,7 @@ export default {
         }
       }
 
-      eventBus.emit('messages:event', 'check_scrolling', {
+      eventBus.emit('messages:event', 'checkScrolling', {
         peer_id,
         unlockUp,
         unlockDown

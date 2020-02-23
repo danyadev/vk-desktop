@@ -118,14 +118,12 @@
         document.execCommand('insertHTML', false, emoji(text));
       },
 
-      onInput: throttle(async function(e) {
+      onInput: throttle(function(e) {
         if(e.data && this.$store.getters['settings/settings'].typing && this.peer_id != 100) {
-          try {
-            await vkapi('messages.setActivity', {
+            vkapi('messages.setActivity', {
               peer_id: this.peer_id,
               type: 'typing'
-            });
-          } catch(e) {}
+            }).catch(() => {});
         }
       }, 4000)
     },

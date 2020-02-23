@@ -44,7 +44,7 @@
 
     methods: {
       closeChat() {
-        eventBus.emit('messages:event', 'close_chat', {
+        eventBus.emit('messages:event', 'closeChat', {
           peer_id: this.peer_id
         });
 
@@ -60,7 +60,7 @@
         opened: true
       });
     },
-    
+
     activated() {
       if(!this.peer || !this.peer.loaded || this.peer_id < 2e9) {
         loadConversation(this.peer_id);
