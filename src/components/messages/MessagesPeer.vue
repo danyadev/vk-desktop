@@ -211,7 +211,7 @@
 
   .im_peer_name_wrap .verified {
     flex: none;
-    margin: 1px 0 0 4px;
+    margin: 2px 0 0 4px;
   }
 
   .im_peer_muted {

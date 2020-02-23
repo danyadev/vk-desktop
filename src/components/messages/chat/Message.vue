@@ -4,7 +4,6 @@
   >
     <div v-if="showUserData" class="message_name">
       {{ name }}
-      <div v-if="user && user.verified" class="verified"></div>
     </div>
 
     <div class="message">
