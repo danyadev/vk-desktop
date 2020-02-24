@@ -109,6 +109,14 @@
       leftFromChat() {
         this.$refs.actionsMenu.toggleMenu();
 
+        if(this.channel) {
+          eventBus.emit('messages:event', 'changeLoadedState', {
+            peer_id: this.peer_id,
+            loadedUp: !this.left,
+            loadedDown: !this.left
+          });
+        }
+
         vkapi(this.left ? 'messages.addChatUser' : 'messages.removeChatUser', {
           chat_id: this.peer_id - 2e9,
           user_id: this.$store.state.users.activeUser

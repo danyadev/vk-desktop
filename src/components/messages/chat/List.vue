@@ -440,6 +440,11 @@
             this.checkScrolling(list);
             break;
 
+          case 'changeLoadedState':
+            if(data.loadedUp) this.loadedUp = true;
+            if(data.loadedDown) this.loadedDown = true;
+            break;
+
           case 'jump':
             if(data.reply_author) this.replyHistory.push(data.reply_author);
             this.jumpTo(data);
