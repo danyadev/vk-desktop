@@ -108,12 +108,17 @@
         const onlyPhotos = onlyPhotoAttachs && !isReplyMsg && !fwdCount;
         const hasPhoto = attachNames.find((attach) => ['photo', 'video'].includes(attach)) ||
               doc && doc.find((doc) => doc.preview);
+        const oneAttach = attachNames.length == 1;
         let flyTime = false;
 
         if(attachNames.length || fwdCount) classes.push('hasAttachment');
         if(hasPhoto) classes.push('hasPhoto');
-        if(sticker) classes.push('isSticker');
-        if(sticker || onlyPhotos) flyTime = true;
+        if(onlyPhotos) flyTime = true;
+
+        if(sticker && oneAttach) {
+          classes.push('isSticker');
+          flyTime = true;
+        }
 
         if(onlyPhotos && !text) {
           // Только фотографии.
@@ -138,8 +143,8 @@
         }
 
         if(
-          sticker && !isReplyMsg && !text ||
-          !text && onlyPhotos && attachNames.length == 1 &&
+          sticker && !isReplyMsg && !text && oneAttach ||
+          !text && onlyPhotos && oneAttach &&
           (photo && photo.length == 1 || video && video.length == 1 || doc && doc.length == 1)
         ) {
           classes.push('hideBubble');
