@@ -82,7 +82,7 @@
     justify-content: center;
     background: #1e1e1e;
     min-width: 368px;
-    max-width: 1000px;
+    max-width: 92vw;
     min-height: 150px;
   }
 
@@ -92,7 +92,7 @@
   }
 
   .modal[name=media-viewer] .modal_content > * {
-    max-width: 92vw;
+    max-width: inherit;
     max-height: inherit;
     vertical-align: middle;
     z-index: 1;
