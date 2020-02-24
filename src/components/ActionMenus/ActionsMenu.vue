@@ -6,7 +6,7 @@
       <img src="~assets/actions_icon.svg" class="act_menu_btn">
     </Ripple>
 
-    <div :class="['act_menu', { active }]"><slot /></div>
+    <div :class="['act_menu', { active }]"><slot v-if="!hideList" /></div>
   </div>
 </template>
 
@@ -14,6 +14,8 @@
   import Ripple from '../UI/Ripple.vue';
 
   export default {
+    props: ['hideList'],
+
     components: {
       Ripple
     },
@@ -79,6 +81,7 @@
   .act_menu {
     position: absolute;
     width: 250px;
+    min-height: 50px;
     right: 0;
     padding: 4px 0;
     margin: -6px 6px 6px 6px;

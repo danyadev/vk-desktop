@@ -1,5 +1,5 @@
 <template>
-  <ActionsMenu ref="actionsMenu">
+  <ActionsMenu :hideList="!peer" ref="actionsMenu">
     <div class="act_menu_item" @click="goToFirstMsg">
       <Icon name="arrow_up" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_go_to_first_msg') }}</div>
@@ -12,7 +12,7 @@
       <Icon :name="'volume_' + (muted ? 'active' : 'muted')" color="#828a99" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_toggle_notifications', !muted) }}</div>
     </div>
-    <div class="act_menu_item" @click="clearHistory">
+    <div v-if="!channel" class="act_menu_item" @click="clearHistory">
       <img src="assets/trash.svg" class="act_menu_icon">
       <div class="act_menu_data">{{ l('im_clear_history') }}</div>
     </div>
@@ -32,7 +32,7 @@
 <script>
   import vkapi from 'js/vkapi';
   import { eventBus } from 'js/utils';
-  
+
   import ActionsMenu from './ActionsMenu.vue';
   import Icon from '../UI/Icon.vue';
 
