@@ -87,6 +87,7 @@
 
         if(!info.visible) return this.l(`im_chat_online_${info.status}`, isGirl);
         if(last_seen) return getLastOnlineDate(new Date(last_seen.time * 1000), isGirl);
+
         // У @id333 не приходит last_seen
         return '';
       },

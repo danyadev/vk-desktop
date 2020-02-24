@@ -89,7 +89,7 @@ export function getLastOnlineDate(date, sex) {
   if(differenceInSeconds(now, date) < 30) {
     time = getTranslate('date_now');
   } else if(differenceInHours(now, date) < 4) {
-    time = formatDistanceStrict(date, now, { locale: ru, addSuffix: true }).replace(/1 /, '');
+    time = formatDistanceStrict(date, now, { locale: ru, addSuffix: true }).replace(/^1 /, '');
   } else if(isSameDay(date, now)) {
     time = `${getTranslate('today')} ${at} ` + getTime(date);
   } else if(!differenceInCalendarYears(now, date)) {
