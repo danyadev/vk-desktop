@@ -35,8 +35,23 @@
         });
       }
 
-      win.on('maximize', () => this.maximized = true);
-      win.on('unmaximize', () => this.maximized = false);
+      const onMaximize = () => this.maximized = true;
+      const onUnmaximize = () => this.maximized = false;
+
+      win.on('maximize', onMaximize);
+      win.on('unmaximize', onUnmaximize);
+
+      // Фикс сообщения об ошибке в консоли Electron
+      // "Attempting to call a function in a renderer window that has been closed or released."
+      // Возникает при перезагрузке страницы и вызове эвентов maximize или unmaximize,
+      // которые находятся выше.
+      // Ошибка возникает из-за того, что win - это элемент из main процесса,
+      // и при перезагрузке страницы все его листенеры не сбрасываются,
+      // но при этом все колбэки из renderer процесса он теряет.
+      window.addEventListener('beforeunload', () => {
+        win.removeListener('maximize', onMaximize);
+        win.removeListener('unmaximize', onUnmaximize);
+      });
     }
   }
 </script>
