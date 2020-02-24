@@ -325,9 +325,13 @@
             if(msg_id) {
               onLoad();
             } else {
+              const lastLoadingMsg = this.loadingMessages[this.loadingMessages.length-1];
               const lastMsg = this.messages[this.messages.length-1];
 
-              if(lastMsg) {
+              if(lastLoadingMsg) {
+                msg_id = lastLoadingMsg.id;
+                onLoad();
+              } else if(lastMsg) {
                 msg_id = lastMsg.id;
                 onLoad();
               }
@@ -450,10 +454,9 @@
                 peer_id,
                 random_id: data.random_id
               });
+            }
 
-              this.jumpTo({ bottom: true, mark: false });
-              this.showStartUnread = false;
-            } else if(
+            if(
               isScrolledDown && // Доскроллено до конца
               data.isFirstMsg && // Первое сообщение в списке новых сообщений, пришедших из лп
               !(this.loadingUp || this.loadingDown) && // В данный момент не загружаются новые сообщения
