@@ -10,6 +10,7 @@
                :placeholder="l('ml_captcha_write')"
                v-model="code"
                @keydown.enter="sendCode"
+               ref="input"
         >
       </div>
     </div>
@@ -20,6 +21,8 @@
 </template>
 
 <script>
+  import { timer } from 'js/utils';
+
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
 
@@ -54,8 +57,14 @@
       }
     },
 
-    mounted() {
+    async mounted() {
       this.imgSrc = this.src;
+
+      // Без этих таймаутов фокус не хочет работать
+      await timer(0);
+      await timer(0);
+
+      this.$refs.input.focus();
     }
   }
 </script>

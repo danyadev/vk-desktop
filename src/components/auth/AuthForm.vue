@@ -2,7 +2,7 @@
   <div class="auth" @keydown.enter="auth">
     <img src="~assets/logo.webp" class="auth_logo">
     <div class="auth_name">VK Desktop</div>
-    <input class="input" type="text" :placeholder="l('enter_login')" v-model="login">
+    <input class="input" type="text" :placeholder="l('enter_login')" v-model="login" ref="loginInput">
     <div class="auth_password_wrap">
       <input class="input" :type="inputType" :placeholder="l('enter_password')" v-model="password">
       <div :class="['auth_password_switch', { hidden: hidePassword }]"
@@ -86,6 +86,10 @@
       openMultiacc() {
         this.$modals.open('multiaccount');
       }
+    },
+
+    mounted() {
+      this.$refs.loginInput.focus();
     }
   }
 </script>
