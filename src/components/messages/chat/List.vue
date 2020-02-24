@@ -47,7 +47,6 @@
     createQueueManager
   } from 'js/utils';
   import { parseMessage, parseConversation } from 'js/messages';
-  import longpoll from 'js/longpoll';
   import vkapi from 'js/vkapi';
   import electron from 'electron';
 
@@ -267,7 +266,7 @@
         }
       }, -1),
 
-      async jumpTo({ msg_id, mark = true, top, bottom }) {
+      jumpTo: createQueueManager(async function({ msg_id, mark = true, top, bottom }) {
         const onLoad = async () => {
           const list = this.$el.firstChild;
 
@@ -352,7 +351,7 @@
             beforeLoad
           }).then(onLoad);
         }
-      },
+      }),
 
       async jumpToStartUnread() {
         this.$store.commit('messages/removeConversationMessages', this.peer_id);
