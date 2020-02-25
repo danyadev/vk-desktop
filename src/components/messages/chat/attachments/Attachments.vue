@@ -5,6 +5,8 @@
     props: ['peer_id', 'msg', 'fwdDepth', 'showUserAvatar', 'hideBubble'],
 
     render(h) {
+      const attachNames = Object.keys(this.msg.attachments);
+      const hasStickerOrGift = attachNames.includes('sticker') || attachNames.includes('gift');
       const attachments = [];
       const layoutAttachs = {};
       const documentAttachs = [];
@@ -13,7 +15,9 @@
         const attach = this.msg.attachments[type];
         const component = components[type];
 
-        if(['photo', 'video', 'doc'].includes(type)) {
+        if(hasStickerOrGift && type != 'sticker' && type != 'gift') {
+          continue;
+        } else if(['photo', 'video', 'doc'].includes(type)) {
           if(type == 'doc') {
             const photoDocs = [];
 

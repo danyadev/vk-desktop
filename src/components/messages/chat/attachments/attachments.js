@@ -1,12 +1,14 @@
 import PhotosLayout from './PhotosLayout.vue';
 import Sticker from './Sticker.vue';
-import DocumentAttach from './Document.vue';
+import Doc from './Document.vue';
+import Gift from './Gift.vue';
 
 export const supportedAttachments = new Set([
   'sticker',
   'photo',
   'doc',
-  'video'
+  'video',
+  'gift'
 ]);
 
 export const preloadAttachments = new Set([
@@ -18,5 +20,6 @@ export const preloadAttachments = new Set([
 export default {
   photosLayout: PhotosLayout,
   sticker: Sticker,
-  doc: DocumentAttach
+  doc: Doc,
+  gift: Gift
 }

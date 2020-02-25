@@ -100,19 +100,21 @@
       attachClasses() {
         const classes = [];
         const { text, attachments, isReplyMsg, fwdCount } = this.msg;
-        const { photo, video, doc, sticker } = attachments;
+        const { photo, video, doc, sticker, gift } = attachments;
         const attachNames = Object.keys(attachments);
         const lastAttach = attachNames[attachNames.length-1];
         const onlyPhotoAttachs = (photo || video || doc) && (!doc || doc.every((doc) => doc.preview)) &&
               attachNames.every((attach) => ['photo', 'video', 'doc'].includes(attach));
         const onlyPhotos = onlyPhotoAttachs && !isReplyMsg && !fwdCount;
         const hasPhoto = attachNames.find((attach) => ['photo', 'video'].includes(attach)) ||
-              doc && doc.find((doc) => doc.preview);
+                         doc && doc.find((doc) => doc.preview) ||
+                         gift;
         const oneAttach = attachNames.length == 1;
         let flyTime = false;
 
         if(attachNames.length || fwdCount) classes.push('hasAttachment');
         if(hasPhoto) classes.push('hasPhoto');
+        if(gift) classes.push('isGift');
         if(onlyPhotos) flyTime = true;
 
         if(sticker && oneAttach) {
@@ -244,6 +246,11 @@
     background-color: #c7dff9;
   }
 
+  .message_wrap.isGift .message_bubble {
+    background-color: #f1ead5 !important;
+    color: #5c533d;
+  }
+
   .message_text {
     display: inline;
     user-select: text;
@@ -299,6 +306,11 @@
   .message_wrap:not(.hideBubble).isSticker .attach_reply,
   .message_wrap:not(.hideBubble).isSticker .message_text {
     width: 128px;
+  }
+
+  .message_wrap:not(.hideBubble).isGift .message_text {
+    /* 6px * 2 = отступ текста */
+    width: calc(256px - 12px);
   }
 
   .message_edited {
