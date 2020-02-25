@@ -83,11 +83,12 @@ function vkapi(name, params, useAndroidToken) {
         eventBus.emit('modal:open', 'captcha', {
           src: data.error.captcha_img,
           send(code) {
+            if(name == 'captcha.force') return resolve(1);
+
             params.captcha_sid = data.error.captcha_sid;
             params.captcha_key = code;
 
-            if(name == 'captcha.force') resolve(1);
-            else reject();
+            reject();
           }
         });
         break;

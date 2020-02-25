@@ -10,10 +10,6 @@ import { version } from 'package-json';
 
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
-export const regexp = {
-  push: /\[(club|id)(\d+)\|(.+?)\]/g
-};
-
 const deviceInfo = '(1; 1; 1; 1; 1; 1)';
 export const VKDesktopUserAgent = `VKDesktop/${version} ${deviceInfo}`;
 export const AndroidUserAgent = `VKAndroidApp/5.50-4431 ${deviceInfo}`;
