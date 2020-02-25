@@ -115,12 +115,8 @@
         if(attachNames.length || fwdCount) classes.push('hasAttachment');
         if(hasPhoto) classes.push('hasPhoto');
         if(gift) classes.push('isGift');
-        if(onlyPhotos) flyTime = true;
-
-        if(sticker && oneAttach) {
-          classes.push('isSticker');
-          flyTime = true;
-        }
+        if(sticker) classes.push('isSticker');
+        if(onlyPhotos || sticker) flyTime = true;
 
         if(onlyPhotos && !text) {
           // Только фотографии.
