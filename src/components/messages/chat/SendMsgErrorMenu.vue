@@ -124,7 +124,7 @@
 
   .message_loading_menu_item {
     color: #2664a6;
-    padding: 8px 12px;
+    padding: 10px 12px;
     cursor: pointer;
     transition: background-color .3s;
   }
