@@ -116,7 +116,7 @@
 
   .im_pinned_msg_name {
     display: inline;
-    color: var(--im-peer-text-attachment);
+    color: var(--im-text-name);
     font-weight: 500;
   }
 

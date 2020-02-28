@@ -62,7 +62,7 @@
     position: relative;
     height: var(--titlebar-height);
     z-index: 5;
-    background: #5281b9;
+    background: var(--header-background);
   }
 
   .titlebar_drag {
@@ -70,7 +70,7 @@
     flex-grow: 1;
     margin: 4px 0 0 4px;
     padding-left: 4px;
-    color: #fff;
+    color: var(--header-text);
     line-height: 24px;
     overflow: hidden;
     white-space: nowrap;

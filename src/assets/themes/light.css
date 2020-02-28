@@ -1,37 +1,36 @@
 .root {
 	--background-content: #ffffff;
-	--background-highlighted: rgba(0, 0, 0, 0.08);
-	--header-background: #ffffff;
-	--header-icon: #000000;
-	--button-primary-background: #4986cc;
-	--button-primary-background-hover: #5A97DD;
+	--background-highlighted: rgba(0, 0, 0, .08);
+	--header-background: #5181b8;
+	--header-text: #ffffff;
+	--header-icon: #ffffff;
+	--button-primary-background: #5181b8;
+	--button-primary-background-hover: #5C8CC3;
 	--button-primary-foreground: #ffffff;
-	--button-light-background: rgba(0, 29, 61, 0.05);
-	--button-light-background-hover: rgba(0, 29, 61, 0.5);
-	--button-light-foreground: #3f8ae0;
-	--counter-primary-background: #3f8ae0;
+	--button-light-background: rgba(0, 57, 115, .1);
+	--button-light-background-hover: rgba(0, 57, 115, .5);
+	--button-light-foreground: #45678f;
+	--counter-primary-background: #528bcc;
   --counter-primary-text: #ffffff;
-  --counter-secondary-background: #aeb7c2;
+  --counter-secondary-background: #aaaeb3;
   --counter-secondary-text: #ffffff;
-	--im-bubble-incoming: #dfe6ea;
-	--im-bubble-incoming-highlighted: #ebf1f5;
+	--im-bubble-incoming: #ebedf0;
+	--im-bubble-incoming-highlighted: #d7d8d9;
 	--im-bubble-outcoming: #cce4ff;
-	--im-bubble-outgoing-highlighted: #e9f3ff;
+	--im-bubble-outgoing-highlighted: #add3ff;
 	--im-bubble-gift-background: #f4e4be;
 	--im-bubble-gift-text: #7a6c4f;
 	--im-bubble-gift-time: #9e8d6b;
 	--im-text-name: #254f79;
-	--im-peer-text-attachment: #4986cc;
+	--im-peer-text-attachment: #5181b8;
 	--input-border: #e1e3e6;
 	--text-primary: #000000;
-	--text-secondary: #818c99;
+	--text-secondary: #909499;
 	--text-author: #777a7d;
 	--text-message: #4c4d50;
 	--text-link: #4986cc;
 	--blue: #3f8ae0;
 	--green: #4bb34b;
 }
-
-.root[theme="light"]  .modal_header { border-bottom: 1px solid var(--input-border); }
 
 .root[theme="light"] .im_peer:not(:last-child) .im_peer_content { border-bottom: 1px solid var(--input-border); }

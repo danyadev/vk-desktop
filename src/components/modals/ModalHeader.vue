@@ -51,7 +51,7 @@
 
   .modal_header_title {
     font-size: 15px;
-    color: var(--text-primary);
+    color: var(--header-text);
   }
 
   .modal_header_buttons {

@@ -174,7 +174,7 @@
   }
 
   .header_name {
-    color: #fff;
+    color: var(--header-text);
     padding-left: 10px;
   }
 
