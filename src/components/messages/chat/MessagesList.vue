@@ -28,7 +28,7 @@
       serviceMessage(msg) {
         if(msg.action) {
           const user = this.$store.state.profiles[msg.from];
-          return getServiceMessage(msg.action, user || { id: msg.from }, this.peer_id, true);
+          return getServiceMessage(msg, user || { id: msg.from }, this.peer_id, true);
         }
       }
     },

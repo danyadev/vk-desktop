@@ -120,7 +120,8 @@ function parseLongPollMessage(data) {
       isContentDeleted: !data[4] && !action && !hasAttachment,
       keyboard: keyboard && keyboard.inline && keyboard,
       // Нужно только для пометки сообщения как обязательное для переполучения через апи
-      hasTemplate: data[5].has_template
+      hasTemplate: data[5].has_template,
+      fromLongPoll: true
     }
   };
 }
