@@ -27,6 +27,10 @@
 	--im-header-online: rgba(255, 255, 255, .75);
 	--im-typing-text: #254f79;
 	--im-typing-chat-text: rgba(255, 255, 255, .75);
+	--im-attachs-doc-icon: #5281B9;
+	--im-attachs-doc-dot: #222222;
+	--im-attachs-doc-link: #1a5fb1;
+	--im-attachs-doc-size: #37495f;
 	--actions-background: #ffffff;
 	--actions-background-hover: #ebedf0;
 	--actions-border: #e1e3e6; /* не используется в этой теме */

@@ -79,7 +79,7 @@
 
 <style>
   .im_attach_unknown {
-    color: #696969;
+    color: var(--text-secondary);
   }
 
   .im_attachments {
@@ -98,6 +98,6 @@
     left: 0;
     width: 2px;
     border-radius: 1px;
-    background-color: #5281b9;
+    background-color: var(--text-link);
   }
 </style>

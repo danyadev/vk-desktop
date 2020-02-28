@@ -68,7 +68,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #5281b9;
+    background: var(--im-attachs-doc-icon);
     padding: 8px;
     margin-right: 10px;
   }
@@ -84,7 +84,7 @@
   .im_attach_doc_type {
     display: flex;
     margin-top: 2px;
-    color: #37495f;
+    color: var(--im-attachs-doc-size);
   }
 
   .im_attach_doc_dot {
@@ -92,10 +92,10 @@
     height: 2px;
     margin: 8px 5px 0 6px;
     border-radius: 50%;
-    background: #222;
+    background: var(--im-attachs-doc-dot);
   }
 
   .im_attach_doc_type .link {
-    color: #1a5fb1;
+    color: var(--im-attachs-doc-link);
   }
 </style>
