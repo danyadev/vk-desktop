@@ -528,12 +528,12 @@
     width: fit-content;
     margin: 0 auto;
     z-index: 2;
-    background-color: #fff;
-    border: solid 1px #cfd9e1;
+    background-color: var(--background-content);
+    border: solid 1px var(--input-border);
     border-radius: 15px;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
     padding: 4px 14px;
-    color: #828282;
+    color: var(--text-primary);
     pointer-events: none;
     opacity: 0;
     transition: opacity .4s;
