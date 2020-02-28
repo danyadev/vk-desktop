@@ -26,6 +26,9 @@
 	--im-header-online: rgba(255, 255, 255, .75);
 	--im-typing-text: #e1e3e6;
 	--im-typing-chat-text: rgba(255, 255, 255, .75);
+	--actions-background: #2c2d2e;
+	--actions-background-hover: rgba(255, 255, 255, 0.08);
+	--actions-border: #373839;
 	--input-border: #2c2d2e;
 	--text-primary: #e1e3e6;
 	--text-secondary: #76787a;
@@ -35,3 +38,5 @@
 	--blue: #3f8ae0;
 	--green: #4bb34b;
 }
+
+.root[theme="dark"] .act_menu { border: 1px solid var(--actions-border); }

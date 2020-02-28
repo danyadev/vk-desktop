@@ -88,7 +88,7 @@
     opacity: 0;
     pointer-events: none;
     z-index: 2;
-    background: #fff;
+    background: var(--actions-background);
     border-radius: 6px;
     box-shadow: 0 0 4px rgba(0, 0, 0, .2),
                 0 4px 36px -6px rgba(0, 0, 0, .4);
@@ -110,7 +110,7 @@
   }
 
   .act_menu_item:hover {
-    background: #ebedf0;
+    background: var(--actions-background-hover);
   }
 
   .act_menu_separator {
