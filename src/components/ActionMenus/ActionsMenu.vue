@@ -83,15 +83,15 @@
     width: 250px;
     min-height: 50px;
     right: 0;
-    padding: 4px 0;
+    padding: 6px 0;
     margin: -6px 6px 6px 6px;
     opacity: 0;
     pointer-events: none;
     z-index: 2;
     background: #fff;
     border-radius: 6px;
-    border: 1px solid rgba(0, 0, 0, .12);
-    box-shadow: 0 4px 36px -6px rgba(0, 0, 0, .4);
+    box-shadow: 0 0 4px rgba(0, 0, 0, .2),
+                0 4px 36px -6px rgba(0, 0, 0, .4);
     transition: opacity .3s, margin-top .3s;
   }
 
@@ -104,13 +104,13 @@
   .act_menu_item {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
+    padding: 8px 12px;
     cursor: pointer;
     transition: background-color .3s;
   }
 
   .act_menu_item:hover {
-    background: #f1f1f3;
+    background: #ebedf0;
   }
 
   .act_menu_separator {
