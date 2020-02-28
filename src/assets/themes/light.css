@@ -24,6 +24,8 @@
 	--im-text-name: #254f79;
 	--im-peer-text-attachment: #5181b8;
 	--im-header-online: rgba(255, 255, 255, .75);
+	--im-typing-text: #254f79;
+	--im-typing-chat-text: rgba(255, 255, 255, .75);
 	--input-border: #e1e3e6;
 	--text-primary: #000000;
 	--text-secondary: #909499;

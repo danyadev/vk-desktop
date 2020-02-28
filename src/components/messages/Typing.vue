@@ -65,11 +65,11 @@
 <style>
   .typing_wrap {
     display: flex;
-    color: var(--text-primary);
+    color: var(--im-typing-text);
   }
 
   .typing_wrap.isChat {
-    color: rgba(255, 255, 255, .75);
+    color: var(--im-typing-chat-text);
     font-size: 13px;
     margin-top: 2px;
     justify-content: center;
@@ -94,7 +94,7 @@
 
   .typing_item {
     display: inline-block;
-    background: var(--text-primary);
+    background: var(--im-typing-text);
     margin-bottom: 2px;
     animation: 1.1s linear 0s infinite typing;
     width: 5px;
@@ -103,7 +103,7 @@
   }
 
   .typing_wrap.isChat .typing_item {
-    background: var(--background-highlighted);
+    background: var(--im-typing-chat-text);
     margin-bottom: 1px;
   }
 
