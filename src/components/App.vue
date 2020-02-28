@@ -79,7 +79,6 @@
 <style>
   *, *::before, *::after {
     box-sizing: border-box;
-    user-select: none;
   }
 
   :focus {
@@ -109,6 +108,7 @@
     -webkit-rtl-ordering: visual;
     text-rendering: optimizeSpeed;
     background: #fff;
+    user-select: none;
   }
 
   a, .link {
@@ -122,6 +122,7 @@
 
   img:not(.emoji) {
     -webkit-user-drag: none;
+    user-select: none;
   }
 
   .root {

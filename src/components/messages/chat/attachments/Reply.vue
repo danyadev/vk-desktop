@@ -102,6 +102,7 @@
     height: 40px;
     margin-bottom: 4px;
     cursor: pointer;
+    user-select: none;
   }
 
   .attach_reply::before {

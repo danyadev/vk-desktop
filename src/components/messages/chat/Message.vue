@@ -162,6 +162,10 @@
     padding: 8px 14px 4px 14px;
     background-color: #fff;
     transition: background-color 1s;
+    /* .message_wrap покрывает абсолютно все свободное пространство списка сообщений, */
+    /* поэтому чтобы можно было начинать выделять сообщение с какой-то точки в списке, */
+    /* нужно включить выделение именно здесь, выключить в самом сообщении и включить в тексте */
+    user-select: text;
   }
 
   .message_wrap:not(.showUserData) {
@@ -177,8 +181,7 @@
   }
 
   .modal[name=messages-viewer] .message_wrap {
-    /* Сдвигает сообщение влево, но зато дает */
-    /* возможность скроллить по горизонтали */
+    /* Сдвигает сообщение влево, но зато дает возможность скроллить по горизонтали */
     width: max-content;
   }
 
@@ -187,6 +190,7 @@
     font-weight: 500;
     margin-left: 50px;
     margin-bottom: 2px;
+    user-select: none;
   }
 
   .message_name .verified {
@@ -268,6 +272,7 @@
     font-weight: 500;
     font-size: 11px;
     pointer-events: none;
+    user-select: none;
   }
 
   .message_wrap:not(.hideBubble) .message_time_wrap {

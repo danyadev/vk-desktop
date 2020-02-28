@@ -90,6 +90,7 @@
     height: 18px;
     left: -20px;
     bottom: 7px;
+    user-select: none;
   }
 
   .message_loading.error {

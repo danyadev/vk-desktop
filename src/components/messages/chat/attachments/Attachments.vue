@@ -82,6 +82,10 @@
     color: #696969;
   }
 
+  .im_attachments {
+    user-select: none;
+  }
+
   .im_attachments > div:not(:first-child) {
     padding-top: 5px;
   }
