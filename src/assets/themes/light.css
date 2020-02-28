@@ -4,11 +4,12 @@
 	--header-background: #5181b8;
 	--header-text: #ffffff;
 	--header-icon: #ffffff;
+	--header-footer: #f7f8fa;
 	--button-primary-background: #5181b8;
 	--button-primary-background-hover: #5C8CC3;
 	--button-primary-foreground: #ffffff;
 	--button-light-background: rgba(0, 57, 115, .1);
-	--button-light-background-hover: rgba(0, 57, 115, .5);
+	--button-light-background-hover: rgba(0, 57, 115, .15);
 	--button-light-foreground: #45678f;
 	--counter-primary-background: #528bcc;
   --counter-primary-text: #ffffff;
