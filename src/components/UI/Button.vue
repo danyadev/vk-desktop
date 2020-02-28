@@ -1,5 +1,5 @@
 <template>
-  <Ripple :color="isLight ? '#ced7e0' : 'rgba(0, 0, 0, .15)'"
+  <Ripple :color="isLight ? 'var(--button-light-background)' : 'var(--button-primary-background)'"
           :class="['button', { light: isLight, disabled }]"
           v-on="$listeners"
   >
