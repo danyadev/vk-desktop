@@ -19,6 +19,4 @@ body {
 	--green: #4bb34b;
 }
 
-body[theme="light"] .modal_header {
-	border-bottom: 1px solid var(--input-border);
-}
+body .modal_header { border-bottom: 1px solid var(--input-border); }
