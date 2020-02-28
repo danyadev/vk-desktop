@@ -159,12 +159,12 @@
   }
 
   .im_header_name {
-    color: #fff;
+    color: var(--header-text);
     line-height: 14px;
   }
 
   .im_header_online {
-    color: rgba(255, 255, 255, .75);
+    color: var(--im-header-online);
     font-size: 13px;
     text-align: center;
     margin-top: 2px;
