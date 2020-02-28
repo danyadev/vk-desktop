@@ -96,7 +96,7 @@
     width: 100%;
     /* 45px - постоянная высота у .header */
     height: calc(100% - 45px);
-    border-right: 1px solid #e7e8ec;
+    border-right: 1px solid var(--input-border);
   }
 
   .im_peers_container .header_name {
