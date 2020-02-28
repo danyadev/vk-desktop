@@ -32,6 +32,9 @@
 	--im-attachs-doc-dot: #222222;
 	--im-attachs-doc-link: #1a5fb1;
 	--im-attachs-doc-size: #37495f;
+	--im-input-background: #fbfbfb;
+	--im-input-el-background: #ffffff;
+	--im-input-text: #222222;
 	--actions-background: #ffffff;
 	--actions-background-hover: #ebedf0;
 	--actions-border: #e1e3e6; /* не используется в этой теме */

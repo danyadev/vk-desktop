@@ -32,7 +32,7 @@
         {{ l('im_toggle_left_state', 3) }}
       </template>
       <template v-else>
-        <img :src="`assets/volume_${peer.muted ? 'active' : 'muted'}.svg`">
+        <Icon :name="`volume_${peer.muted ? 'active' : 'muted'}`" />
         {{ l('im_toggle_notifications', !peer.muted) }}
       </template>
     </Ripple>
@@ -139,8 +139,8 @@
     display: flex;
     flex-direction: column;
     flex: none;
-    border-top: 1px solid #d8dade;
-    background: #fbfbfb;
+    border-top: 1px solid var(--input-border);
+    background: var(--im-input-background);
   }
 
   .chat_input_wrap {
@@ -167,13 +167,13 @@
     position: relative;
     width: calc(100% - 108px);
     margin: 6px 0;
-    background: #fff;
-    border: 1px solid #d2d8dc;
+    background: var(--im-input-el-background);
+    border: 1px solid var(--input-border);
     border-radius: 20px;
   }
 
   .chat_input_area {
-    color: #222;
+    color: var(--im-input-text);
     min-height: 18px;
     max-height: 180px;
     line-height: 18px;
@@ -187,7 +187,7 @@
 
   .chat_input_area:empty::before {
     content: attr(placeholder);
-    color: #828282;
+    color: var(--text-secondary);
     cursor: text;
   }
 
@@ -225,16 +225,16 @@
     justify-content: center;
     width: 100%;
     height: 50px;
-    color: #3e3f40;
+    color: var(--text-secondary);
   }
 
   .chat_input_error.channel {
-    color: #3f70a7;
+    color: var(--text-link);
     cursor: pointer;
     transition: background-color .2s;
   }
 
-  .chat_input_error.channel img {
+  .chat_input_error.channel svg {
     margin-right: 8px;
   }
 
