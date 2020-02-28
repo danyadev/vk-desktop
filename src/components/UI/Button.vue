@@ -44,15 +44,15 @@
   }
 
   .button {
-    background: #5789c5;
-    color: #f3f3f3;
+    background: var(--button-primary-background);
+    color: var(--button-primary-foreground);
   }
 
   .button.light {
-    background: #e4eaf0;
-    color: #55677d;
+    background: var(--button-light-background);
+    color: var(--button-light-foreground);
   }
 
-  .button:not(.disabled):hover { background: #547fb3 }
-  .button.light:not(.disabled):hover { background: #dbe3eb }
+  .button:not(.disabled):hover { background: var(--button-primary-background-hover) }
+  .button.light:not(.disabled):hover { background: var(--button-light-background-hover) }
 </style>

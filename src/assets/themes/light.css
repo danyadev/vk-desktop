@@ -1,0 +1,24 @@
+body {
+	--background-content: #ffffff;
+	--background-highlighted: rgba(0, 0, 0, 0.08);
+	--header-background: #ffffff;
+	--header-icon: #000000;
+	--button-primary-background: #4986cc;
+	--button-primary-background-hover: #5A97DD;
+	--button-primary-foreground: #ffffff;
+	--button-light-background: rgba(0, 29, 61, 0.05);
+	--button-light-background-hover: rgba(0, 29, 61, 0.5);
+	--button-light-foreground: #3f8ae0;
+	--input-border: #e1e3e6;
+	--text-primary: #000000;
+	--text-secondary: #818c99;
+	--text-author: #58595A;
+	--text-message: #6d7885;
+	--text-link: #4986cc;
+	--blue: #3f8ae0;
+	--green: #4bb34b;
+}
+
+body[theme="light"] .modal_header {
+	border-bottom: 1px solid var(--input-border);
+}

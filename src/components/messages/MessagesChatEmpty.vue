@@ -26,7 +26,7 @@
     align-items: center;
     height: 100%;
     margin-top: -65px;
-    color: #38383a;
+    color: var(--text-primary);
   }
 
   .im_chat_empty img {

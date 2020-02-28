@@ -77,6 +77,9 @@
 </script>
 
 <style>
+  @import '~assets/themes/light.css';
+  @import '~assets/themes/dark.css';
+
   *, *::before, *::after {
     box-sizing: border-box;
     user-select: none;
@@ -108,11 +111,12 @@
     height: 100vh;
     -webkit-rtl-ordering: visual;
     text-rendering: optimizeSpeed;
-    background: #fff;
+    background: var(--background-content);
+    color: var(--text-primary);
   }
 
   a, .link {
-    color: #306aab;
+    color: var(--text-link);
     cursor: pointer;
   }
 
@@ -150,8 +154,8 @@
     transition: border-color .3s;
   }
 
-  .input:disabled { color: #999 }
-  .input:hover { border: 1px solid #a2a5a8 }
+  .input:disabled { opacity: 0.6 }
+  .input:hover:not(:disabled) { border: 1px solid #a2a5a8 }
   .input:focus { border: 1px solid #7e7f7f }
   .input::-webkit-input-placeholder { color: #a0a0a0 }
 

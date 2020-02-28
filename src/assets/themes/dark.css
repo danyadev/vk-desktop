@@ -1,0 +1,20 @@
+body[theme="dark"] {
+	--background-content: #19191a;
+	--background-highlighted: rgba(255, 255, 255, 0.08);
+	--header-background: #2c2d2e;
+	--header-icon: #ffffff;
+	--button-primary-background: #e1e3e6;
+	--button-primary-background-hover: #F1F3F6;
+	--button-primary-foreground: #19191a;
+	--button-light-background: #454647;
+	--button-light-background-hover: #4F5051;
+	--button-light-foreground: #e1e3e6;
+	--input-border: #2c2d2e;
+	--text-primary: #e1e3e6;
+	--text-secondary: #76787a;
+	--text-author: #76787a;
+	--text-message: #909499;
+	--text-link: #71aaeb;
+	--blue: #3f8ae0;
+	--green: #4bb34b;
+}

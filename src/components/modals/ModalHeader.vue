@@ -8,7 +8,7 @@
               class="ripple_fast modal_header_close"
               @click.stop="close"
       >
-        <Icon name="close" color="#fff" />
+        <Icon name="close" color="var(--header-icon)" />
       </Ripple>
     </div>
   </div>
@@ -44,14 +44,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #5281b9;
+    background: var(--header-background);
     height: 48px;
     padding: 0 10px 0 25px;
   }
 
   .modal_header_title {
     font-size: 15px;
-    color: #f3f3f3;
+    color: var(--text-primary);
   }
 
   .modal_header_buttons {

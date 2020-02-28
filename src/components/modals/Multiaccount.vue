@@ -87,7 +87,7 @@
   }
 
   .item:not(:last-child) .item_data {
-    border-bottom: 1px solid #e7e8ec;
+    border-bottom: 1px solid var(--input-border);
   }
 
   .item_name_wrap {
@@ -98,7 +98,7 @@
   .item_name { flex-grow: 1 }
 
   .item_description {
-    color: #3e70a9;
+    color: var(--text-link);
     margin-top: 4px;
   }
 
