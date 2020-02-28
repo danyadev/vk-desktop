@@ -37,6 +37,13 @@
 	--im-input-text: #222222;
 	--im-scroll-background: #ffffff;
 	--im-scroll-hover: #f6f8fb;
+	--im-kb-text: #ffffff;
+	--im-kb-primary-text: #ffffff;
+	--im-kb-secondary-text: #45586f;
+	--im-kb-primary-background: #5181b8;
+	--im-kb-secondary-background: #0039731a;
+	--im-kb-positive-background: #4bb34b;
+	--im-kb-negative-background: #e64646;
 	--actions-background: #ffffff;
 	--actions-background-hover: #ebedf0;
 	--actions-border: #e1e3e6; /* не используется в этой теме */

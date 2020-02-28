@@ -37,6 +37,13 @@
 	--im-input-text: #e1e3e6;
 	--im-scroll-background: rgba(255, 255, 255, 0.08);
 	--im-scroll-hover: rgba(255, 255, 255, 0.1);
+	--im-kb-text: #ffffff;
+	--im-kb-primary-text: #19191a;
+	--im-kb-secondary-text: #e1e3e6;
+	--im-kb-primary-background: #e1e3e6;
+	--im-kb-secondary-background: #454647;
+	--im-kb-positive-background: #4bb34b;
+	--im-kb-negative-background: #e64646;
 	--actions-background: #2c2d2e;
 	--actions-background-hover: rgba(255, 255, 255, 0.08);
 	--actions-border: #373839;

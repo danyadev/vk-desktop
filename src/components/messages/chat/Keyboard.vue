@@ -118,7 +118,7 @@
     height: 38px;
     border-radius: 6px;
     text-align: center;
-    color: #fff;
+    color: var(--im-kb-text);
     cursor: pointer;
   }
 
@@ -138,20 +138,21 @@
 
   .keyboard_button.default,
   .keyboard_button.secondary {
-    background: #0039731a;
-    color: #45586f;
+    background: var(--im-kb-secondary-background);
+    color: var(--im-kb-secondary-text);
   }
 
   .keyboard_button.primary {
-    background: #5181b8;
+    color: var(--im-kb-primary-text);
+    background: var(--im-kb-primary-background);
   }
 
   .keyboard_button.positive {
-    background: #4bb34b;
+    background: var(--im-kb-positive-background);
   }
 
   .keyboard_button.negative {
-    background: #e64646;
+    background: var(--im-kb-negative-background);
   }
 
   .keyboard_button img:not(.emoji) {
@@ -159,7 +160,7 @@
   }
 
   .keyboard_service_key {
-    color: #0f5cb3;
+    color: var(--text-link);
   }
 
   .keyboard_services_icon {
