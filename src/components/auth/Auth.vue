@@ -66,8 +66,8 @@
     margin: 6px 0;
     width: 250px;
     height: 36px;
-    color: #de3f3f;
-    border: 1px solid #de3f3f;
+    color: var(--red);
+    border: 1px solid var(--red);
     border-radius: 5px;
     opacity: 0;
     transition: opacity .3s;

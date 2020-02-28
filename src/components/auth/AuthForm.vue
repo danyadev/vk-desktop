@@ -139,7 +139,7 @@
   .auth_open_multiacc {
     position: absolute;
     bottom: 10px;
-    color: #306aab;
+    color: var(--text-link);
     cursor: pointer;
   }
 </style>

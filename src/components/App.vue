@@ -146,20 +146,21 @@
   .input {
     width: 250px;
     outline: none;
-    border: 1px solid #d2d8de;
+    border: 1px solid var(--input-border);
     border-radius: 5px;
     font-size: 15px;
-    color: #3c3c3c;
+    color: var(--input-placeholder);
     line-height: 32px;
     height: 34px;
     padding: 0 9px;
     transition: border-color .3s;
+    background: var(--background-content);
   }
 
   .input:disabled { opacity: 0.6 }
-  .input:hover:not(:disabled) { border: 1px solid #a2a5a8 }
-  .input:focus { border: 1px solid #7e7f7f }
-  .input::-webkit-input-placeholder { color: #a0a0a0 }
+  .input:hover:not(:disabled) { border: 1px solid var(--input-border) }
+  .input:focus { border: 1px solid var(--input-border-active) }
+  .input::-webkit-input-placeholder { color: var(--text-secondary) }
 
   .emoji {
     margin: 0 1px -2px 1px;
