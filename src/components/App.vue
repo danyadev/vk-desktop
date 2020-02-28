@@ -110,11 +110,8 @@
     height: 100vh;
     -webkit-rtl-ordering: visual;
     text-rendering: optimizeSpeed;
-<<<<<<< HEAD
-=======
     background: #fff;
     user-select: none;
->>>>>>> 9f7edb1fa9ea05eb5529ae786e7fa7f9977411dd
   }
 
   a, .link {
