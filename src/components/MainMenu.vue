@@ -27,6 +27,14 @@
         </Ripple>
 
         <Ripple color="#e1e7ed"
+                :class="['menu_item']"
+                @click.stop="changeTheme()"
+        >
+          <div class="menu_item_name">change theme</div>
+          <div class="menu_item_counter"></div>
+        </Ripple>
+
+        <Ripple color="#e1e7ed"
                 class="menu_item logout"
                 @click.stop="openModal('logout')"
         >
@@ -86,6 +94,10 @@
         this.$el.addEventListener('transitionend', () => {
           this.$modals.open(name);
         }, { once: true });
+      },
+
+      changeTheme() {
+        document.querySelector('body').setAttribute('theme', document.querySelector('body').getAttribute('theme') === 'dark' ? 'light' : 'dark');
       }
     }
   }

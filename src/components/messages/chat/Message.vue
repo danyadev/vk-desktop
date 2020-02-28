@@ -160,7 +160,7 @@
 <style>
   .message_wrap {
     padding: 8px 14px 4px 14px;
-    background-color: #fff;
+    background-color: var(--background-content);
     transition: background-color 1s;
   }
 
@@ -169,11 +169,11 @@
   }
 
   .message_wrap[active] {
-    background-color: #ebf1f5;
+    background-color: var(--im-bubble-incoming-highlighted);
   }
 
   .message_wrap[active].out {
-    background-color: #e9f3ff;
+    background-color: var(--im-bubble-outgoing-highlighted);
   }
 
   .modal[name=messages-viewer] .message_wrap {
@@ -183,7 +183,7 @@
   }
 
   .message_name {
-    color: #254f79;
+    color: var(--im-text-name);
     font-weight: 500;
     margin-left: 50px;
     margin-bottom: 2px;
@@ -232,19 +232,23 @@
   }
 
   .message_wrap:not(.hideBubble) .message_bubble {
-    background-color: #dfe6ea;
+    background-color: var(--im-bubble-incoming);
     padding: 8px 12px;
     border-radius: 18px;
     word-break: break-word;
   }
 
   .message_wrap:not(.hideBubble).out .message_bubble {
-    background-color: #c7dff9;
+    background-color: var(--im-bubble-outcoming);
   }
 
   .message_wrap.isGift .message_bubble {
-    background-color: #f1ead5 !important;
-    color: #5c533d;
+    background-color: var(--im-bubble-gift-background) !important;
+    color: var(--im-bubble-gift-text);
+  }
+
+  .message_wrap.isGift .message_time_wrap {
+    color: var(--im-bubble-gift-time);
   }
 
   .message_text {

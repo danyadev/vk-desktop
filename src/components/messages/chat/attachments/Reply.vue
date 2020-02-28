@@ -144,7 +144,7 @@
   }
 
   .attach_reply_name {
-    color: #254f79;
+    color: var(--im-text-name);
     font-weight: 500;
     margin-top: 3px;
   }
@@ -154,7 +154,7 @@
   }
 
   .attach_reply_text.isAttachment {
-    color: #254f79;
+    color: var(--text-link);
   }
 
   .attach_reply_text.isContentDeleted {

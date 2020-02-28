@@ -65,7 +65,7 @@
 <style>
   .typing_wrap {
     display: flex;
-    color: #254f79;
+    color: var(--text-primary);
   }
 
   .typing_wrap.isChat {
@@ -94,7 +94,7 @@
 
   .typing_item {
     display: inline-block;
-    background: #5281b9;
+    background: var(--text-primary);
     margin-bottom: 2px;
     animation: 1.1s linear 0s infinite typing;
     width: 5px;
@@ -103,7 +103,7 @@
   }
 
   .typing_wrap.isChat .typing_item {
-    background: rgba(255, 255, 255, .75);
+    background: var(--background-highlighted);
     margin-bottom: 1px;
   }
 
