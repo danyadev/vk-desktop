@@ -22,11 +22,11 @@
   }
 
   .checkbox.active {
-    background: #648fc1;
+    background: var(--checkbox-active);
   }
 
   .checkbox:not(.active) {
-    border: 2px solid #bdbdbd;
+    border: 2px solid var(--text-secondary);
   }
 
   .checkbox img {

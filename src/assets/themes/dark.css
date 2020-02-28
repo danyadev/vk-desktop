@@ -57,7 +57,8 @@
 	--menu-item-hover: #29292A;
 	--menu-counter-text: #ffffff;
 	--menu-counter-background: #76787a;
-	--menu-logout: #de3f3f;
+	--menu-logout: #de3f3f;;
+	--checkbox-active: rgba(255, 255, 255, 0.08);
 	--input-border: #2c2d2e;
 	--input-border-active: #76787a;
 	--input-placeholder: #76787a;
