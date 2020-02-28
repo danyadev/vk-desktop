@@ -334,14 +334,14 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, .3);
+    background: var(--scrolly-background-first);
     border-radius: 7px;
     transition: background-color .3s;
   }
 
   .scrolly-bar:hover::before,
   .scrolly.isScrolling > .scrolly-bar-wrap .scrolly-bar::before {
-    background: rgba(0, 0, 0, .4);
+    background: var(--scrolly-background-second);
   }
 
   .scrolly-bar-wrap.axis-x .scrolly-bar {
