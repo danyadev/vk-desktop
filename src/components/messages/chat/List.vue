@@ -569,7 +569,7 @@
     align-items: center;
     flex-direction: column;
     font-size: 16px;
-    color: #47474a;
+    color: var(--text-secondary);
   }
 
   .messages_empty_dialog img {
