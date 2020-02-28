@@ -586,8 +586,8 @@
     bottom: 30px;
     width: 40px;
     height: 40px;
-    background: #fff;
-    border: solid 1px #cfd9e1;
+    background: var(--im-scroll-background);
+    border: solid 1px var(--input-border);
     border-radius: 50%;
     opacity: 1;
     cursor: pointer;
@@ -603,7 +603,7 @@
 
   .im_scroll_end_btn:hover,
   .im_scroll_mention_btn:hover {
-    background: #f6f8fb;
+    background: var(--im-scroll-hover);
   }
 
   .im_scroll_end_btn.hidden,
@@ -618,8 +618,8 @@
     position: absolute;
     top: -5px;
     right: -3px;
-    background-color: #5281b9;
-    color: #fff;
+    background-color: var(--counter-primary-background);
+    color: var(--counter-primary-text);
     font-size: 12px;
     border-radius: 10px;
     padding: 2px 5px 1px 5px;

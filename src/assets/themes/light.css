@@ -35,6 +35,8 @@
 	--im-input-background: #fbfbfb;
 	--im-input-el-background: #ffffff;
 	--im-input-text: #222222;
+	--im-scroll-background: #ffffff;
+	--im-scroll-hover: #f6f8fb;
 	--actions-background: #ffffff;
 	--actions-background-hover: #ebedf0;
 	--actions-border: #e1e3e6; /* не используется в этой теме */
