@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isHidden" class="im_pinned_msg_wrap" @click="open">
-    <img class="im_pinned_msg_icon" src="~assets/pin.svg">
+    <Icon name="pin" class="im_pinned_msg_icon" color="var(--text-secondary)" />
 
     <div class="im_pinned_msg">
       <div class="im_pinned_msg_name_wrap">
@@ -84,8 +84,8 @@
     align-items: center;
     width: 100%;
     height: 52px;
-    border-bottom: 1px solid #d8dade;
-    background: #fff;
+    border-bottom: 1px solid var(--input-border);
+    background: var(--background-content);
     cursor: pointer;
   }
 
@@ -116,14 +116,14 @@
 
   .im_pinned_msg_name {
     display: inline;
-    color: #254f79;
+    color: var(--im-peer-text-attachment);
     font-weight: 500;
   }
 
   .im_pinned_msg_time {
     display: inline;
     margin-left: 2px;
-    color: #848a96;
+    color: var(--text-secondary);
     font-size: 13px;
   }
 
@@ -135,7 +135,7 @@
   }
 
   .im_pinned_msg_text.isAttachment {
-    color: #254f79;
+    color: var(--text-secondary);
   }
 
   .im_pinned_msg_close {
