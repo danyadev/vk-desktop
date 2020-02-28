@@ -187,10 +187,6 @@
     padding: 10px 16px 10px 0;
   }
 
-  /*.im_peer:not(:last-child) .im_peer_content {
-    border-bottom: 1px solid var(--input-border);
-  }*/
-
   .im_peer_title {
     display: flex;
     margin-top: 5px;

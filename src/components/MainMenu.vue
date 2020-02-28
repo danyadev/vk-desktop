@@ -97,7 +97,7 @@
       },
 
       changeTheme() {
-        document.querySelector('body').setAttribute('theme', document.querySelector('body').getAttribute('theme') === 'dark' ? 'light' : 'dark');
+        document.querySelector('.root').setAttribute('theme', document.querySelector('.root').getAttribute('theme') === 'dark' ? 'light' : 'dark');
       }
     }
   }

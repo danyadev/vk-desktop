@@ -1,4 +1,4 @@
-body {
+.root {
 	--background-content: #ffffff;
 	--background-highlighted: rgba(0, 0, 0, 0.08);
 	--header-background: #ffffff;
@@ -32,4 +32,6 @@ body {
 	--green: #4bb34b;
 }
 
-body .modal_header { border-bottom: 1px solid var(--input-border); }
+.root[theme="light"]  .modal_header { border-bottom: 1px solid var(--input-border); }
+
+.root[theme="light"] .im_peer:not(:last-child) .im_peer_content { border-bottom: 1px solid var(--input-border); }

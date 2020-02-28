@@ -111,8 +111,6 @@
     height: 100vh;
     -webkit-rtl-ordering: visual;
     text-rendering: optimizeSpeed;
-    background: var(--background-content);
-    color: var(--text-primary);
   }
 
   a, .link {
@@ -130,6 +128,8 @@
 
   .root {
     --titlebar-height: 32px;
+    background: var(--background-content);
+    color: var(--text-primary);
   }
 
   .root.mac {
@@ -168,7 +168,7 @@
   .header {
     display: flex;
     align-items: center;
-    background: #5281b9;
+    background: var(--header-background);
     width: 100%;
     height: 45px;
   }

@@ -140,7 +140,7 @@
   .message_date, .message_unreaded_messages {
     text-align: center;
     margin: 10px 0 8px 0;
-    color: #5d6165;
+    color: var(--text-secondary);
   }
 
   .message_unreaded_messages {
@@ -149,7 +149,7 @@
 
   .message_unreaded_messages span {
     position: relative;
-    background: #fff;
+    background: var(--background-content);
     padding: 0 10px;
   }
 
@@ -160,13 +160,13 @@
     left: 0;
     height: 1px;
     width: 100%;
-    background: #d4d6da;
+    background: var(--input-border);
   }
 
   .service_message {
     text-align: center;
     padding: 5px 14px 5px 14px;
-    color: #5d6165;
+    color: var(--text-secondary);
   }
 
   .service_message.hasPhoto {
