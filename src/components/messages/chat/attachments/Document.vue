@@ -77,6 +77,10 @@
     margin-top: 1px;
   }
 
+  .im_attach_doc_name {
+    user-select: text;
+  }
+
   .im_attach_doc_type {
     display: flex;
     margin-top: 2px;

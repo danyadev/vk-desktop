@@ -86,6 +86,7 @@
 
   .attach_fwd_msg_header {
     display: flex;
+    user-select: none;
   }
 
   .attach_fwd_msg_photo {

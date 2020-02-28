@@ -1,5 +1,5 @@
 <template>
-  <div class="ripple_outer" @mousedown="addRipple" v-on="$listeners">
+  <div class="ripple_outer" @mousedown.left="addRipple" v-on="$listeners">
     <TransitionGroup class="ripples" name="ripple">
       <div v-for="ripple in ripples" :key="ripple.id"
            class="ripple"
@@ -47,19 +47,11 @@
           top: `${e.clientY - top - halfRippleWidth}px`,
           id: Date.now()
         });
-      },
 
-      purgeRipples() {
-        this.ripples = [];
+        window.addEventListener('mouseup', () => {
+          this.ripples = [];
+        }, { once: true });
       }
-    },
-
-    mounted() {
-      window.addEventListener('mouseup', this.purgeRipples);
-    },
-
-    beforeDestroy() {
-      window.removeEventListener('mouseup', this.purgeRipples);
     }
   }
 </script>

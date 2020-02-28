@@ -88,7 +88,7 @@ export function parseMessage(message) {
   };
 }
 
-export function getServiceMessage(action, author, peer_id, isFull) {
+export function getServiceMessage({ action, fromLongPoll }, author, peer_id, isFull) {
   const actID = action.member_id || action.mid;
   const actUser = store.state.profiles[actID] || { id: actID };
   const { activeUser: id } = store.state.users;
@@ -103,7 +103,8 @@ export function getServiceMessage(action, author, peer_id, isFull) {
   }
 
   function e(text) {
-    const escapedText = escape(String(text).replace(/<br>/g, ' '));
+    // В LongPoll приходят уже экранированные символы
+    const escapedText = fromLongPoll ? text : escape(text);
 
     // Эмодзи добавляются только для самого чата потому что
     // MessagesPeer сам добавляет эмодзи в текст
@@ -163,7 +164,7 @@ export function getServiceMessage(action, author, peer_id, isFull) {
 
 export function getMessagePreview(msg, peer_id, author) {
   if(msg.action) {
-    return getServiceMessage(msg.action, author || { id: msg.from }, peer_id);
+    return getServiceMessage(msg, author || { id: msg.from }, peer_id);
   } else if(msg.text) {
     return msg.text;
   } else if(msg.hasAttachment) {

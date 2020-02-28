@@ -90,6 +90,7 @@
   .keyboard {
     max-height: 40vh;
     padding: 8px 12px 12px 12px;
+    user-select: none;
   }
 
   .keyboard.inline {

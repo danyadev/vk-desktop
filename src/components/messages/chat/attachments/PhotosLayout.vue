@@ -29,7 +29,7 @@
       },
 
       getComputedStyleProperty(selector, prop) {
-        return +getComputedStyle(this.$el.closest(selector))[prop].slice(0, -2);
+        return parseFloat(getComputedStyle(this.$el.closest(selector))[prop]);
       },
 
       calcMaxWidth() {
