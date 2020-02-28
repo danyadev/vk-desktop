@@ -20,7 +20,7 @@
   }
 
   .attach_forwarded::before {
-    background: #7197c5;
+    background: var(--text-link);
   }
 
   .im_attachments + .attach_forwarded {

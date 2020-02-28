@@ -105,14 +105,14 @@
   }
 
   .attach_fwd_msg_name {
-    color: #254f79;
+    color: var(--im-text-name);
     font-weight: 500;
     margin-top: 2px;
   }
 
   .attach_fwd_msg_date {
     display: flex;
-    color: #3e4854;
+    color: var(--text-secondary);
     margin-top: 1px;
   }
 
@@ -121,7 +121,7 @@
     height: 2px;
     margin: 8px 4px 0 4px;
     border-radius: 50%;
-    background-color: #3e4854;
+    background-color: var(--text-secondary);
   }
 
   .attach_fwd_msg_content {
@@ -129,7 +129,7 @@
   }
 
   .attach_fwd_msg_text.isContentDeleted {
-    color: #696969;
+    color: var(--text-secondary);
   }
 
   .attach_fwd_msg_text + .im_attachments,
@@ -139,6 +139,6 @@
   }
 
   .attach_fwd_msg .link {
-    color: #0e4788;
+    color: var(--text-link);
   }
 </style>
