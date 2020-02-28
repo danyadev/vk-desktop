@@ -47,6 +47,17 @@
 	--actions-background: #ffffff;
 	--actions-background-hover: #ebedf0;
 	--actions-border: #e1e3e6; /* не используется в этой теме */
+	--menu-icon-active: #648fc1;
+	--menu-icon: #a6a6a6;
+	--menu-account-name: #ffffff;
+	--menu-account-status: #d9d9d9;
+	--menu-item-color: #808080;
+	--menu-item-active-background: #EFF4F9;
+	--menu-item-active-text: #3e70a9;
+	--menu-item-hover: #EFF4F9;
+	--menu-counter-text: #475769;
+	--menu-counter-background: #d2dfea;
+	--menu-logout: #de3f3f;
 	--input-border: #e1e3e6;
 	--input-border-active: #2975cc;
 	--input-placeholder: #3c3c3c;

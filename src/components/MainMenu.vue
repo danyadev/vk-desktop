@@ -17,16 +17,16 @@
 
       <div class="menu_items">
         <Ripple v-for="{ route, active } of routes" :key="route"
-                color="#e1e7ed"
+                color="var(--im-peer-ripple)"
                 :class="['menu_item', { active }]"
                 @click.stop="openPage(`/${route}`)"
         >
-          <Icon :name="`menu/${route}`" :color="active ? '#648fc1' : '#a6a6a6'" width="26" height="26" />
+          <Icon :name="`menu/${route}`" :color="active ? 'var(--menu-icon-active)' : 'var(--menu-icon)'" width="26" height="26" />
           <div class="menu_item_name">{{ l('menu', route) }}</div>
           <div class="menu_item_counter">{{ menuCounters[route] || '' }}</div>
         </Ripple>
 
-        <Ripple color="#e1e7ed"
+        <Ripple color="var(--im-peer-ripple)"
                 :class="['menu_item']"
                 @click.stop="changeTheme()"
         >
@@ -34,7 +34,7 @@
           <div class="menu_item_name">{{ l('menu', 'theme') }}</div>
         </Ripple>
 
-        <Ripple color="#e1e7ed"
+        <Ripple color="var(--im-peer-ripple)"
                 class="menu_item logout"
                 @click.stop="openModal('logout')"
         >
@@ -132,7 +132,7 @@
     width: 250px;
     height: 100%;
     overflow: hidden;
-    background: #fff;
+    background: var(--background-content);
     box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
   }
 
@@ -193,12 +193,12 @@
 
   .menu_account_name {
     margin: 12px 0 2px 0;
-    color: #fff;
+    color: var(--menu-account-name);
   }
 
   .menu_account_status {
     font-size: 13px;
-    color: #d9d9d9;
+    color: var(--menu-account-status);
   }
 
   /* остальные кнопки меню */
@@ -219,19 +219,23 @@
     align-items: center;
     padding-left: 20px;
     cursor: pointer;
-    color: #808080;
+    color: var(--menu-item-color);
   }
 
   .menu_item, .menu_item_name {
     transition: background-color .3s, color .3s;
   }
 
-  .menu_item:hover, .menu_item.active {
-    background: #eff4f9;
+  .menu_item.active {
+    background: var(--menu-item-active-background);
+  }
+
+  .menu_item:hover {
+    background: var(--menu-item-hover);
   }
 
   .menu_item.active .menu_item_name {
-    color: #3e70a9;
+    color: var(--menu-item-active-text);
   }
 
   .menu_item_name {
@@ -240,8 +244,8 @@
   }
 
   .menu_item_counter:not(:empty) {
-    color: #475769;
-    background: #d2dfea;
+    color: var(--menu-counter-text);
+    background: var(--menu-counter-background);
     padding: 3px 5px 1px 5px;
     border-radius: 4px;
     margin-right: 8px;
@@ -256,6 +260,6 @@
 
   .menu_item.logout .menu_item_name {
     font-size: 16px;
-    color: #de3f3f;
+    color: var(--menu-logout);
   }
 </style>

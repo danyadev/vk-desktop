@@ -47,6 +47,17 @@
 	--actions-background: #2c2d2e;
 	--actions-background-hover: rgba(255, 255, 255, 0.08);
 	--actions-border: #373839;
+	--menu-icon-active: #71aaeb;
+	--menu-icon: #76787a;
+	--menu-account-name: #ffffff;
+	--menu-account-status: #d9d9d9;
+	--menu-item-color: #76787a;
+	--menu-item-active-background: #23282D;
+	--menu-item-active-text: #71aaeb;
+	--menu-item-hover: #29292A;
+	--menu-counter-text: #ffffff;
+	--menu-counter-background: #76787a;
+	--menu-logout: #de3f3f;
 	--input-border: #2c2d2e;
 	--input-border-active: #76787a;
 	--input-placeholder: #76787a;
