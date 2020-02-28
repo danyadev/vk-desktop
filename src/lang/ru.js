@@ -39,7 +39,8 @@ export default {
   // Меню
   menu: {
     messages: 'Сообщения',
-    photos: 'Фотографии'
+    photos: 'Фотографии',
+    theme: 'Сменить тему'
   },
 
   // Сообщения

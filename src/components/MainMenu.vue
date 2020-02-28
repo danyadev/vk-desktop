@@ -30,8 +30,8 @@
                 :class="['menu_item']"
                 @click.stop="changeTheme()"
         >
-          <div class="menu_item_name">change theme</div>
-          <div class="menu_item_counter"></div>
+          <Icon name="menu/palette" color="#a6a6a6" width="26" height="26" />
+          <div class="menu_item_name">{{ l('menu', 'theme') }}</div>
         </Ripple>
 
         <Ripple color="#e1e7ed"
