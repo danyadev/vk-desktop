@@ -337,7 +337,7 @@
     height: 8px;
     bottom: 12px;
     border-radius: 50%;
-    background-color: #93adc8;
+    background-color: var(--im-unread);
   }
 
   .message_wrap:not(.isLoading).isUnread.out .message_bubble::before {
@@ -353,14 +353,14 @@
   /* Фотографии */
 
   .message_wrap.flyTime:not(.isSticker) .message_time_wrap {
-    background: #00000094;
-    color: #f5f5f5;
+    background: var(--im-flytime-background);
+    color: var(--im-flytime-text);
     right: 10px;
     bottom: 10px;
   }
 
   .message_wrap.flyTime:not(.isSticker) .message_dot {
-    background: #f5f5f5;
+    background: var(--im-flytime-text);
   }
 
   .message_wrap.hasAttachment .message_text:not(:empty) {

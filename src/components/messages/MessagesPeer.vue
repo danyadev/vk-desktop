@@ -6,7 +6,7 @@
     <div class="im_peer_content">
       <div class="im_peer_title">
         <div class="im_peer_name_wrap">
-          <div :class="['im_peer_name', { greenName }]" v-emoji="chatName"></div>
+          <div :class="['im_peer_name', { blueName }]" v-emoji="chatName"></div>
           <div v-if="owner && owner.verified" class="verified"></div>
           <div v-if="peer.muted" class="im_peer_muted"></div>
         </div>
@@ -22,7 +22,7 @@
           <div v-else :class="['im_peer_text', { isAttachment }]" v-emoji.push="message" :key="msg.id"></div>
         </div>
         <div v-if="peer.mentions.length" class="im_peer_mentioned">
-          <Icon name="mention" width="20" height="18" />
+          <Icon name="mention" width="20" height="18" fill="var(--counter-primary-text)" color="var(--counter-primary-text)" />
         </div>
         <div :class="['im_peer_unread', { outread, muted: peer.muted }]"
              :title="peer.unread || ''"
@@ -81,7 +81,7 @@
         else if(this.owner) return this.owner.name || `${this.owner.first_name} ${this.owner.last_name}`;
         else return '...';
       },
-      greenName() {
+      blueName() {
         return [100, 101, 333].includes(Number(this.peer.id));
       },
       time() {
@@ -207,7 +207,7 @@
     text-overflow: ellipsis;
   }
 
-  .im_peer_name.greenName {
+  .im_peer_name.blueName {
     color: var(--blue);
   }
 
@@ -227,7 +227,7 @@
   .im_peer_time {
     flex: none;
     margin-left: 5px;
-    color: #848a96;
+    color: var(--text-secondary);
     font-size: 13px;
     margin-top: 2px;
   }
@@ -258,7 +258,7 @@
   .im_peer_text { display: inline }
   .im_peer_text b { font-weight: 500 }
   .im_peer_text.isAttachment { color: var(--im-peer-text-attachment) }
-  .im_peer_text.isContentDeleted { color: #717171 }
+  .im_peer_text.isContentDeleted { color: var(--text-secondary) }
 
   .im_peer_unread {
     padding: 0 6px;
@@ -283,7 +283,7 @@
     margin: 7px 4px 0 4px;
     width: 8px;
     height: 8px;
-    background: #93adc8;
+    background: var(--counter-primary-background);
   }
 
   .im_peer_mentioned {
@@ -291,6 +291,6 @@
     bottom: -1px;
     margin: 0 2px;
     border-radius: 10px;
-    background: #5181b8;
+    background: var(--counter-primary-background);
   }
 </style>
