@@ -283,7 +283,7 @@
     margin: 7px 4px 0 4px;
     width: 8px;
     height: 8px;
-    background: var(--counter-primary-background);
+    background: var(--im-unread);
   }
 
   .im_peer_mentioned {
