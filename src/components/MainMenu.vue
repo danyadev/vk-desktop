@@ -97,6 +97,8 @@
       },
 
       changeTheme() {
+        this.toggleMenu(false);
+
         document.querySelector('.root').setAttribute('theme', document.querySelector('.root').getAttribute('theme') === 'dark' ? 'light' : 'dark');
       }
     }
