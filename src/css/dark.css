@@ -1,6 +1,6 @@
 .root[theme="dark"] {
 	--background-content: #19191a;
-	--background-highlighted: rgba(255, 255, 255, .08);
+	--background-highlighted: rgba(255, 255, 255, .04);
 	--header-background: #2c2d2e;
 	--header-text: #e1e3e6;
 	--header-icon: #ffffff;
