@@ -23,7 +23,7 @@
 	--im-bubble-gift-text: #7a6c4f;
 	--im-bubble-gift-time: #9e8d6b;
 	--im-text-name: #254f79;
-	--im-peer-text-attachment: #5181b8;
+	--im-peer-text-attachment: #254f79;
 	--im-peer-ripple: #e1e1e1;
 	--im-header-online: rgba(255, 255, 255, .75);
 	--im-typing-text: #254f79;
@@ -78,7 +78,7 @@
 	--text-secondary: #909499;
 	--text-author: #777a7d;
 	--text-message: #4c4d50;
-	--text-link: #4986cc;
+	--text-link: #254f79;
 	--blue: #3f8ae0;
 	--green: #4bb34b;
 	--red: #ff3347;
