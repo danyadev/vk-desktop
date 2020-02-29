@@ -6,6 +6,8 @@ import store from 'js/store/';
 import Vue from 'vue';
 
 import 'js/settingVue.js';
+import './css/light.css';
+import './css/dark.css';
 
 import App from './components/App.vue';
 import Forwarded from './components/messages/chat/attachments/Forwarded.vue';
