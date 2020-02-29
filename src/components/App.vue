@@ -78,8 +78,8 @@
 </script>
 
 <style>
-  @import '~assets/themes/light.css';
-  @import '~assets/themes/dark.css';
+  @import '../css/light.css';
+  @import '../css/dark.css';
 
   *, *::before, *::after {
     box-sizing: border-box;

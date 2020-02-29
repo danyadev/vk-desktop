@@ -37,7 +37,7 @@
       </template>
     </Ripple>
     <div v-else class="chat_input_error">
-      <Icon name="error" color="var(--red)" fill="var(--red)" width="30" height="30" />
+      <Icon name="error" color="var(--red)" width="30" height="30" />
       <div class="chat_input_error_text">{{ canWrite.text }}</div>
     </div>
   </div>

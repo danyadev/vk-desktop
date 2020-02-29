@@ -22,7 +22,7 @@
           <div v-else :class="['im_peer_text', { isAttachment }]" v-emoji.push="message" :key="msg.id"></div>
         </div>
         <div v-if="peer.mentions.length" class="im_peer_mentioned">
-          <Icon name="mention" width="20" height="18" fill="var(--counter-primary-text)" color="var(--counter-primary-text)" />
+          <Icon name="mention" color="var(--counter-primary-text)" width="20" height="18" />
         </div>
         <div :class="['im_peer_unread', { outread, muted: peer.muted }]"
              :title="peer.unread || ''"
