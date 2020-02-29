@@ -78,9 +78,6 @@
 </script>
 
 <style>
-  @import '../css/light.css';
-  @import '../css/dark.css';
-
   *, *::before, *::after {
     box-sizing: border-box;
   }
