@@ -44,6 +44,8 @@
 	--im-kb-secondary-background: #454647;
 	--im-kb-positive-background: #4bb34b;
 	--im-kb-negative-background: #e64646;
+	--im-reply-separator: #7f8082;
+	--im-reply-name: #ffffff;
 	--actions-background: #2c2d2e;
 	--actions-background-hover: rgba(255, 255, 255, 0.08);
 	--actions-border: #373839;
