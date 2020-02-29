@@ -1,6 +1,6 @@
 .root {
 	--background-content: #ffffff;
-	--background-highlighted: rgba(0, 0, 0, .08);
+	--background-highlighted: #f5f7fa;
 	--header-background: #5181b8;
 	--header-text: #ffffff;
 	--header-icon: #ffffff;
@@ -11,14 +11,14 @@
 	--button-light-background: rgba(0, 57, 115, .1);
 	--button-light-background-hover: rgba(0, 57, 115, .15);
 	--button-light-foreground: #45678f;
-	--counter-primary-background: #528bcc;
+	--counter-primary-background: #5181b8;
 	--counter-primary-text: #ffffff;
-	--counter-secondary-background: #aaaeb3;
+	--counter-secondary-background: #b2b7c2;
 	--counter-secondary-text: #ffffff;
 	--im-bubble-incoming: #ebedf0;
-	--im-bubble-incoming-highlighted: #d7d8d9;
+	--im-bubble-incoming-highlighted: #ebf1f5;
 	--im-bubble-outcoming: #cce4ff;
-	--im-bubble-outgoing-highlighted: #add3ff;
+	--im-bubble-outgoing-highlighted: #e9f3ff;
 	--im-bubble-gift-background: #f4e4be;
 	--im-bubble-gift-text: #7a6c4f;
 	--im-bubble-gift-time: #9e8d6b;
@@ -26,7 +26,7 @@
 	--im-peer-text-attachment: #254f79;
 	--im-peer-ripple: #e1e1e1;
 	--im-header-online: rgba(255, 255, 255, .75);
-	--im-typing-text: #5281b9;
+	--im-typing-text: #254f79;
 	--im-typing-chat-text: rgba(255, 255, 255, .75);
 	--im-attachs-doc-icon: #5281B9;
 	--im-attachs-doc-dot: #222222;
@@ -46,7 +46,7 @@
 	--im-kb-negative-background: #e64646;
 	--im-reply-separator: #5181b8;
 	--im-reply-name: #254f79;
-	--im-unread: #528bcc;
+	--im-unread: #93adc8;
 	--im-flytime-background: #00000094;
 	--im-flytime-text: #f5f5f5;
 	--im-flytime-simple-background: #ffffffdf;
@@ -85,7 +85,7 @@
 	--input-border-active: #2975cc;
 	--input-placeholder: #3c3c3c;
 	--text-primary: #000000;
-	--text-secondary: #909499;
+	--text-secondary: #848a96;
 	--text-author: #777a7d;
 	--text-message: #4c4d50;
 	--text-link: #254f79;
