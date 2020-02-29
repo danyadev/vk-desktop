@@ -24,7 +24,7 @@
 
     <div :class="['im_scroll_mention_btn', { hidden: !showEndBtn || !peer || !peer.mentions.length }]" @click="scrollToMention">
       <div>{{ peer && peer.mentions.length }}</div>
-      <Icon name="mention" color="#828a99" width="24" height="30" />
+      <Icon name="mention" color="var(--text-secondary)" width="24" height="30" />
     </div>
 
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
