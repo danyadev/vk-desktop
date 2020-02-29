@@ -80,3 +80,7 @@
 }
 
 .root[theme="dark"] .act_menu { border: 1px solid var(--actions-border); }
+
+.root[theme="dark"] img[src="assets/im_chat_photo.png"] {
+	filter: invert() grayscale();
+}
