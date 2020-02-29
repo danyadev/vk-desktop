@@ -72,7 +72,7 @@
 <style scoped>
   .modal_content {
     width: 300px;
-    background: #fcfcfc;
+    background: var(--background-content);
   }
 
   .captcha_img {
@@ -82,7 +82,7 @@
   }
 
   .captcha_img img {
-    border: 1px solid #dadada;
+    border: 1px solid var(--input-border);
     width: 132px;
     height: 52px;
   }

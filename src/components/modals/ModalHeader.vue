@@ -4,7 +4,7 @@
     <div class="modal_header_buttons">
       <slot name="icons" />
       <Ripple v-if="closable"
-              color="rgba(255, 255, 255, .2)"
+              color="var(--modal-ripple)"
               class="ripple_fast modal_header_close"
               @click.stop="close"
       >

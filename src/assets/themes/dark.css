@@ -66,6 +66,8 @@
 	--checkbox-active: rgba(255, 255, 255, 0.08);
 	--scrolly-background-first: rgba(255, 255, 255, .3);
 	--scrolly-background-second: rgba(255, 255, 255, .4);
+	--media-background: #1e1e1e;
+	--modal-ripple: rgba(255, 255, 255, .2);
 	--input-border: #2c2d2e;
 	--input-border-active: #76787a;
 	--input-placeholder: #76787a;

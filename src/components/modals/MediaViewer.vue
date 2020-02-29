@@ -80,7 +80,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #1e1e1e;
+    background: var(--media-background);
     min-width: 368px;
     max-width: 92vw;
     min-height: 150px;

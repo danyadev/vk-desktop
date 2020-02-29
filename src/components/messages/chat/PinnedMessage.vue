@@ -10,7 +10,7 @@
       <div :class="['im_pinned_msg_text', { isAttachment }]" v-emoji.push="text"></div>
     </div>
 
-    <img class="im_pinned_msg_close" src="~assets/close.svg" @click.stop="hide">
+    <Icon name="close" class="im_pinned_msg_close" @click.stop="hide" color="var(--text-secondary)" fill="var(--text-secondary)" />
   </div>
 </template>
 

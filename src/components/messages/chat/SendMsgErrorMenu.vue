@@ -109,7 +109,7 @@
     opacity: 0;
     pointer-events: none;
     padding: 6px 0;
-    background: #fff;
+    background: var(--actions-background);
     border-radius: 6px;
     box-shadow: 0 0 4px rgba(0, 0, 0, .2),
                 0 4px 36px -6px rgba(0, 0, 0, .4);
@@ -123,13 +123,13 @@
   }
 
   .message_loading_menu_item {
-    color: #2664a6;
+    color: var(--text-link);
     padding: 10px 12px;
     cursor: pointer;
     transition: background-color .3s;
   }
 
   .message_loading_menu_item:hover {
-    background: #ebedf0;
+    background: var(--actions-background-hover);
   }
 </style>
