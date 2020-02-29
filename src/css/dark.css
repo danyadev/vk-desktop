@@ -69,7 +69,7 @@
 	--menu-background: #fff0;
 	--menu-shadow: rgba(0, 0, 0, .5);
 	--menu-account-background: rgba(38, 37, 37, .5);
-	--checkbox-active: rgba(255, 255, 255, .08);
+	--checkbox-active: #454647;
 	--scrolly-background-first: rgba(255, 255, 255, .3);
 	--scrolly-background-second: rgba(255, 255, 255, .4);
 	--photos-background: #000000aa;
