@@ -276,3 +276,16 @@ export function createQueueManager(fn) {
     });
   }
 }
+
+export function onTransitionEnd(el, anyTarget) {
+  return new Promise((resolve) => {
+    function onTransitionEnd(event) {
+      if(!anyTarget && event.target != el) return;
+
+      el.removeEventListener('transitionend', onTransitionEnd);
+      resolve();
+    }
+
+    el.addEventListener('transitionend', onTransitionEnd);
+  });
+}
