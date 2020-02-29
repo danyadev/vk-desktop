@@ -94,8 +94,8 @@
     transition: .2s background-color;
   }
 
-  .titlebar_button:hover { background: rgba(0, 0, 0, .2) }
-  .titlebar_button.close:hover { background: #eb0716 }
+  .titlebar_button:hover { background: var(--titlebar-hover) }
+  .titlebar_button.close:hover { background: var(--titlebar-close) }
 
   .titlebar.maximized .titlebar_button.maximize { display: none }
   .titlebar:not(.maximized) .titlebar_button.restore { display: none }

@@ -81,10 +81,10 @@
     position: absolute;
     top: 5px;
     right: 5px;
-    background: #00000087;
+    background: var(--photos-counter-background);
     padding: 2px 6px 1px 6px;
     border-radius: 10px;
-    color: #fff;
+    color: var(--photos-counter-text);
     pointer-events: none;
   }
 </style>

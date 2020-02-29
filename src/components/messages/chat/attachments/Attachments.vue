@@ -98,6 +98,6 @@
     left: 0;
     width: 2px;
     border-radius: 1px;
-    background-color: var(--text-link);
+    background-color: var(--im-reply-separator);
   }
 </style>

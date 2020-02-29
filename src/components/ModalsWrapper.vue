@@ -113,7 +113,7 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, .4);
+    background: var(--modal-background);
     z-index: 1;
   }
 
@@ -123,7 +123,7 @@
     max-width: 92vw;
     max-height: 92vh;
     border-radius: 7px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
+    box-shadow: 0 4px 20px var(--modal-shadow);
   }
 
   .modal_content {

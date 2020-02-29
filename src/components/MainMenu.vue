@@ -111,7 +111,7 @@
     width: 100%;
     height: 100%;
     z-index: 4;
-    background: #fff0;
+    background: var(--menu-background);
     visibility: hidden;
   }
 
@@ -124,7 +124,7 @@
   }
 
   .menu_wrap.active {
-    background: rgba(0, 0, 0, .5);
+    background: var(--menu-shadow);
     visibility: visible;
   }
 
@@ -149,7 +149,7 @@
     overflow: hidden;
     height: 125px;
     padding: 8px 10px 10px 12px;
-    background: rgba(38, 37, 37, .5);
+    background: var(--menu-account-background);
   }
 
   .menu_account_background {

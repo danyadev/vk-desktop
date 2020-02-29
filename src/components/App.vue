@@ -110,7 +110,6 @@
     height: 100vh;
     -webkit-rtl-ordering: visual;
     text-rendering: optimizeSpeed;
-    background: #fff;
     user-select: none;
   }
 

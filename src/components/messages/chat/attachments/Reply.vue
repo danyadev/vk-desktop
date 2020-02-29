@@ -159,6 +159,6 @@
   }
 
   .attach_reply_text.isContentDeleted {
-    color: #696969;
+    color: var(--text-secondary);
   }
 </style>

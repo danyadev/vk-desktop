@@ -116,7 +116,7 @@
   .act_menu_separator {
     height: 1px;
     margin: 4px 0;
-    background: #e0e0e0;
+    background: var(--input-border);
   }
 
   .act_menu_icon {
