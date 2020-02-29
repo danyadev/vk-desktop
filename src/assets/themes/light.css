@@ -49,6 +49,9 @@
 	--im-unread: #528bcc;
 	--im-flytime-background: #00000094;
 	--im-flytime-text: #f5f5f5;
+	--im-flytime-simple-background: #ffffffdf;
+	--im-flytime-sticker-out: #c7dff9df;
+	--im-flytime-sticker: #dfe6eadf;
 	--actions-background: #ffffff;
 	--actions-background-hover: #ebedf0;
 	--actions-border: #e1e3e6; /* не используется в этой теме */

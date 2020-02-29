@@ -265,14 +265,14 @@
   }
 
   .message_text.isContentDeleted {
-    color: #696969;
+    color: var(--text-secondary);
   }
 
   .message_time_wrap {
     position: relative;
     display: flex;
     float: right;
-    color: #696969;
+    color: var(--text-secondary);
     font-weight: 500;
     font-size: 11px;
     pointer-events: none;
@@ -288,7 +288,7 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background-color: #ffffffdf;
+    background-color: var(--im-flytime-simple-background);
     border-radius: 9px;
     padding: 2px 6px;
     width: fit-content;
@@ -301,11 +301,11 @@
   }
 
   .message_wrap.isSticker:not(.hideBubble).out .message_time_wrap {
-    background-color: #c7dff9df;
+    background-color: var(--im-flytime-sticker-out);
   }
 
   .message_wrap.isSticker:not(.hideBubble):not(.out) .message_time_wrap {
-    background-color: #dfe6eadf;
+    background-color: var(--im-flytime-sticker);
   }
 
   .message_wrap:not(.hideBubble).isSticker .attach_reply,
@@ -327,7 +327,7 @@
     height: 2px;
     margin: 6px 3px 0 3px;
     border-radius: 50%;
-    background-color: #696969;
+    background-color: var(--text-secondary);
   }
 
   .message_wrap.isUnread .message_bubble::before,
