@@ -257,7 +257,7 @@
     top: 5px;
     left: 5px;
     background: var(--photos-background);
-    color: var(--text-primary);
+    color: var(--photos-text);
     font-size: 11px;
     border-radius: 8px;
     padding: 3px 7px 2px 5px;

@@ -73,6 +73,7 @@
 	--scrolly-background-first: rgba(255, 255, 255, .3);
 	--scrolly-background-second: rgba(255, 255, 255, .4);
 	--photos-background: #000000aa;
+	--photos-text: #e1e3e6;
 	--photos-counter-background: #00000087;
 	--photos-counter-text: #ffffff;
 	--titlebar-close: #eb0716;
