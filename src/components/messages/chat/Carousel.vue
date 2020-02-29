@@ -51,6 +51,7 @@
     width: 270px;
     border-radius: 15px;
     overflow: hidden;
+    background: var(--im-bubble-incoming);
   }
 
   .im_carousel_item:not(:first-child) {
@@ -68,11 +69,10 @@
     flex-direction: column;
     height: calc(100% - 166px);
     padding: 10px;
-    background: #eee;
   }
 
   .im_carousel_description {
-    color: #666;
+    color: var(--text-secondary);
     margin: 6px 0 25px 0;
   }
 
