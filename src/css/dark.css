@@ -3,7 +3,7 @@
 	--background-highlighted: rgba(255, 255, 255, .04);
 	--header-background: #2c2d2e;
 	--header-text: #e1e3e6;
-	--header-icon: #ffffff;
+	--header-icon: #fff;
 	--header-footer: #19191a;
 	--button-primary-background: #e1e3e6;
 	--button-primary-background-hover: #f1f3f6;
@@ -11,7 +11,7 @@
 	--button-light-background: #454647;
 	--button-light-background-hover: #4f5051;
 	--button-light-foreground: #e1e3e6;
-	--counter-primary-background: #ffffff;
+	--counter-primary-background: #fff;
 	--counter-primary-text: #19191a;
 	--counter-secondary-background: #76787a;
 	--counter-secondary-text: #19191a;
@@ -26,8 +26,10 @@
 	--im-peer-text-attachment: #e1e3e6;
 	--im-peer-ripple: #282829;
 	--im-header-online: rgba(255, 255, 255, .75);
-	--im-typing-text: #e1e3e6;
+	--im-typing-peer-text: #e1e3e6;
+	--im-typing-peer-item: #e1e3e6;
 	--im-typing-chat-text: rgba(255, 255, 255, .75);
+	--im-typing-chat-item: rgba(255, 255, 255, .75);
 	--im-attachs-doc-icon: #71aaeb;
 	--im-attachs-doc-dot: #76787a;
 	--im-attachs-doc-link: #71aaeb;
@@ -37,7 +39,7 @@
 	--im-input-text: #e1e3e6;
 	--im-scroll-background: #454647;
 	--im-scroll-hover: rgba(255, 255, 255, .1);
-	--im-kb-text: #ffffff;
+	--im-kb-text: #fff;
 	--im-kb-primary-text: #19191a;
 	--im-kb-secondary-text: #e1e3e6;
 	--im-kb-primary-background: #e1e3e6;
@@ -45,7 +47,7 @@
 	--im-kb-positive-background: #4bb34b;
 	--im-kb-negative-background: #e64646;
 	--im-reply-separator: #7f8082;
-	--im-reply-name: #ffffff;
+	--im-reply-name: #fff;
 	--im-unread: #71aaeb;
 	--im-flytime-background: #00000094;
 	--im-flytime-text: #f5f5f5;
@@ -57,13 +59,13 @@
 	--actions-border: #373839;
 	--menu-icon-active: #71aaeb;
 	--menu-icon: #76787a;
-	--menu-account-name: #ffffff;
+	--menu-account-name: #fff;
 	--menu-account-status: #d9d9d9;
 	--menu-item-color: #76787a;
 	--menu-item-active-background: #23282d;
 	--menu-item-active-text: #71aaeb;
 	--menu-item-hover: #29292a;
-	--menu-counter-text: #ffffff;
+	--menu-counter-text: #fff;
 	--menu-counter-background: #76787a;
 	--menu-logout: #de3f3f;
 	--menu-background: #fff0;
@@ -75,7 +77,7 @@
 	--photos-background: #000000aa;
 	--photos-text: #e1e3e6;
 	--photos-counter-background: #00000087;
-	--photos-counter-text: #ffffff;
+	--photos-counter-text: #fff;
 	--titlebar-close: #eb0716;
 	--titlebar-hover: rgba(0, 0, 0, .2);
 	--media-background: #1e1e1e;

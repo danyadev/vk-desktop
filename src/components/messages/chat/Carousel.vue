@@ -54,10 +54,6 @@
     background: var(--im-bubble-incoming);
   }
 
-  .im_carousel.out .im_carousel_item {
-    background: var(--im-bubble-outcoming);
-  }
-
   .im_carousel_item:not(:first-child) {
     margin-left: 5px;
   }

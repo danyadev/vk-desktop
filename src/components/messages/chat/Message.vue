@@ -391,6 +391,7 @@
   }
 
   .message_wrap.removeMargin .attach_photo_wrap.lastRow:first-child img,
+  .message_wrap.removeBottomMargin .attach_photo_wrap.lastRow:first-child img,
   .message_wrap.removeMargin br + .attach_photo_wrap.lastRow img,
   .message_wrap.removeBottomMargin br + .attach_photo_wrap.lastRow img {
     border-bottom-left-radius: 14px;
