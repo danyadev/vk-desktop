@@ -98,7 +98,10 @@
 
       toggleTheme() {
         this.$store.commit('settings/toggleTheme');
-        this.toggleMenu(false);
+
+        document.body.addEventListener('transitionend', () => {
+          this.toggleMenu(false);
+        }, { once: true });
       }
     }
   }
