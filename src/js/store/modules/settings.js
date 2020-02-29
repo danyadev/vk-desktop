@@ -26,6 +26,10 @@ export default {
       const data = { ...state.userSettings[id], [key]: value };
 
       Vue.set(state.userSettings, id, data);
+    },
+
+    toggleTheme(state) {
+      state.theme = state.theme == 'light' ? 'dark' : 'light';
     }
   },
 

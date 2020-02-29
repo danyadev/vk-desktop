@@ -27,8 +27,8 @@
         </Ripple>
 
         <Ripple color="var(--im-peer-ripple)"
-                :class="['menu_item']"
-                @click.stop="changeTheme()"
+                class="menu_item"
+                @click.stop="toggleTheme"
         >
           <Icon name="menu/palette" color="#a6a6a6" width="26" height="26" />
           <div class="menu_item_name">{{ l('menu', 'theme') }}</div>
@@ -96,10 +96,9 @@
         }, { once: true });
       },
 
-      changeTheme() {
+      toggleTheme() {
+        this.$store.commit('settings/toggleTheme');
         this.toggleMenu(false);
-
-        document.querySelector('.root').setAttribute('theme', document.querySelector('.root').getAttribute('theme') === 'dark' ? 'light' : 'dark');
       }
     }
   }
