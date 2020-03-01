@@ -6,7 +6,7 @@
         <Ripple color="rgba(0, 0, 0, .2)"
                 class="ripple_fast menu_account_multiaccount"
                 @click.stop="openModal('multiaccount')"
-        ><img :src="'assets/menu/groups.svg'"></Ripple>
+        ><img src="assets/menu/groups.svg"></Ripple>
         <img class="menu_account_photo" :src="user.photo_100">
         <div class="menu_account_name">
           {{ user.first_name }} {{ user.last_name }}
@@ -23,7 +23,15 @@
         >
           <Icon :name="`menu/${route}`" :color="active ? 'var(--menu-icon-active)' : 'var(--menu-icon)'" width="26" height="26" />
           <div class="menu_item_name">{{ l('menu', route) }}</div>
-          <div class="menu_item_counter">{{ menuCounters[route] || '' }}</div>
+          <div class="menu_item_counter">{{ menuCounters[route] }}</div>
+        </Ripple>
+
+        <Ripple color="#e1e7ed"
+                class="menu_item"
+                @click.stop="openModal('settings')"
+        >
+          <Icon name="menu/settings" color="#a6a6a6" width="26" height="26" />
+          <div class="menu_item_name">{{ l('menu', 'settings') }}</div>
         </Ripple>
 
         <Ripple color="var(--im-peer-ripple)"

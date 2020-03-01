@@ -1,5 +1,5 @@
 <template>
-  <div :class="['modals_container', { active: hasModals }]" tabindex="0" @keydown.esc="onEscape">
+  <div :class="['modals_container', { active: hasModals }]" tabindex="-1" @keydown.esc="onEscape">
     <TransitionGroup name="modal">
       <div v-for="modal in modals" :key="modal.name" class="modal_wrap" @click.stop="closeModal">
         <Component :is="modal.name" :name="modal.name" v-bind="modal.data" />
@@ -22,6 +22,7 @@
     'MediaViewer',
     'MessagesViewer',
     'Multiaccount',
+    'Settings',
     'UpdateAvailable'
   ];
 
