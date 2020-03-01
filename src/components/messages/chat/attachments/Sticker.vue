@@ -5,13 +5,17 @@
 <script>
   export default {
     props: ['attach'],
-    
+
     computed: {
       src() {
-        if(this.attach[0]) {
+        const [sticker] = this.attach;
+
+        if(sticker) {
+          const { darkTheme } = this.$store.state.settings;
+          const type = darkTheme ? 'images_with_background' : 'images';
           const index = devicePixelRatio > 1 ? 2 : 1;
 
-          return this.attach[0].images[index].url;
+          return sticker[type][index].url;
         } else {
           return 'assets/blank.gif';
         }
