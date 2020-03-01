@@ -20,7 +20,7 @@
   }
 
   .attach_forwarded::before {
-    background: var(--im-reply-separator);
+    background: var(--im-forwarded-separator);
   }
 
   .im_attachments + .attach_forwarded {

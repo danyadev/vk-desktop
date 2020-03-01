@@ -154,10 +154,6 @@
     margin-top: 1px;
   }
 
-  .attach_reply_text.isAttachment {
-    color: var(--text-link);
-  }
-
   .attach_reply_text.isContentDeleted {
     color: var(--text-secondary);
   }

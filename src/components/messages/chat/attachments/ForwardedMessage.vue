@@ -106,7 +106,6 @@
 
   .attach_fwd_msg_name {
     color: var(--im-reply-name);
-    font-weight: 500;
     margin-top: 2px;
   }
 

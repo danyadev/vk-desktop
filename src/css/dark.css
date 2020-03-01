@@ -16,9 +16,9 @@
 	--counter-secondary-background: #76787a;
 	--counter-secondary-text: #19191a;
 	--im-bubble-incoming: #2c2d2e;
-	--im-bubble-incoming-highlighted: #5d5f61;
+	--im-bubble-incoming-highlighted: #162230;
 	--im-bubble-outcoming: #454647;
-	--im-bubble-outgoing-highlighted: #76787a;
+	--im-bubble-outgoing-highlighted: #162230;
 	--im-bubble-gift-background: #9e8d6b;
 	--im-bubble-gift-text: #fffbf2;
 	--im-bubble-gift-time: #f4e4be;
@@ -46,9 +46,12 @@
 	--im-kb-secondary-background: #454647;
 	--im-kb-positive-background: #4bb34b;
 	--im-kb-negative-background: #e64646;
-	--im-reply-separator: #7f8082;
+	--im-forwarded-separator: #76787a;
+	--im-reply-separator: #71aaeb;
 	--im-reply-name: #fff;
 	--im-unread: #71aaeb;
+	--im-pinned-name: #e1e3e6;
+	--im-pinned-text: #76787a;
 	--im-flytime-background: #00000094;
 	--im-flytime-text: #f5f5f5;
 	--im-flytime-simple-background: #19191adf;
@@ -94,6 +97,7 @@
 	--text-author: #76787a;
 	--text-message: #909499;
 	--text-link: #71aaeb;
+	--accent: #71aaeb;
 	--blue: #3f8ae0;
 	--green: #4bb34b;
 	--red: #ff3347;

@@ -116,8 +116,7 @@
 
   .im_pinned_msg_name {
     display: inline;
-    color: var(--im-text-name);
-    font-weight: 500;
+    color: var(--im-pinned-name);
   }
 
   .im_pinned_msg_time {
@@ -132,10 +131,11 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    color: var(--im-pinned-text);
   }
 
   .im_pinned_msg_text.isAttachment {
-    color: var(--text-secondary);
+    color: var(--text-secondary); /* в тёмной теме не имеет смысла */
   }
 
   .im_pinned_msg_close {

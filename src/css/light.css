@@ -46,9 +46,12 @@
 	--im-kb-secondary-background: #0039731a;
 	--im-kb-positive-background: #4bb34b;
 	--im-kb-negative-background: #e64646;
+	--im-forwarded-separator: #5181b8;
 	--im-reply-separator: #5181b8;
 	--im-reply-name: #254f79;
 	--im-unread: #93adc8;
+	--im-pinned-name: #254f79;
+	--im-pinned-text: #000;
 	--im-flytime-background: #00000094;
 	--im-flytime-text: #f5f5f5;
 	--im-flytime-simple-background: #ffffffdf;
@@ -94,6 +97,7 @@
 	--text-author: #777a7d;
 	--text-message: #4c4d50;
 	--text-link: #254f79;
+	--accent: #3f8ae0;
 	--blue: #3f8ae0;
 	--green: #4bb34b;
 	--red: #ff3347;
@@ -102,4 +106,12 @@
 /* Отображаем бордер под беседой только в светлой теме */
 .root[theme="light"] .im_peer:not(:last-child) .im_peer_content {
 	border-bottom: 1px solid var(--input-border);
+}
+
+.root[theme="light"] .attach_fwd_msg_name, .root[theme="light"] .im_pinned_msg_name {
+	font-weight: 500;
+}
+
+.root[theme="light"] .attach_reply_text.isAttachment {
+	color: var(--text-link);
 }
