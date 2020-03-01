@@ -13,7 +13,7 @@
     components: {
       Ripple
     },
-    
+
     methods: {
       openMenu() {
         if(this.back) this.$emit('back');
