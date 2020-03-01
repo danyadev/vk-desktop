@@ -14,7 +14,7 @@
                   :class="['settings_left_item', { active: section.name == activeSection }]"
                   @click="activeSection = section.name"
           >
-            <Icon :name="section.icon" color="#3f8ae0" />
+            <Icon :name="section.icon" color="var(--accent)" />
             <div class="settings_left_name">{{ l('settings_sections', section.name) }}</div>
           </Ripple>
         </div>

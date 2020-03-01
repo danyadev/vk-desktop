@@ -29,11 +29,11 @@
           <div class="menu_item_counter">{{ menuCounters[route] }}</div>
         </Ripple>
 
-        <Ripple color="#e1e7ed"
+        <Ripple color="var(--im-peer-ripple)"
                 class="menu_item"
                 @click.stop="openModal('settings')"
         >
-          <Icon name="menu/settings" color="#a6a6a6" width="26" height="26" />
+          <Icon name="menu/settings" color="var(--menu-icon)" width="26" height="26" />
           <div class="menu_item_name">{{ l('menu', 'settings') }}</div>
         </Ripple>
 
