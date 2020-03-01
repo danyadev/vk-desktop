@@ -21,7 +21,10 @@
                 :class="['menu_item', { active }]"
                 @click.stop="openPage(`/${route}`)"
         >
-          <Icon :name="`menu/${route}`" :color="active ? 'var(--menu-icon-active)' : 'var(--menu-icon)'" width="26" height="26" />
+          <Icon :name="`menu/${route}`"
+                :color="active ? 'var(--menu-icon-active)' : 'var(--menu-icon)'"
+                width="26" height="26"
+          />
           <div class="menu_item_name">{{ l('menu', route) }}</div>
           <div class="menu_item_counter">{{ menuCounters[route] }}</div>
         </Ripple>
@@ -32,14 +35,6 @@
         >
           <Icon name="menu/settings" color="#a6a6a6" width="26" height="26" />
           <div class="menu_item_name">{{ l('menu', 'settings') }}</div>
-        </Ripple>
-
-        <Ripple color="var(--im-peer-ripple)"
-                class="menu_item"
-                @click.stop="toggleTheme"
-        >
-          <Icon name="menu/palette" color="#a6a6a6" width="26" height="26" />
-          <div class="menu_item_name">{{ l('menu', 'theme') }}</div>
         </Ripple>
 
         <Ripple color="var(--im-peer-ripple)"
@@ -101,12 +96,6 @@
         this.toggleMenu(false);
         await onTransitionEnd(this.$el);
         this.$modals.open(name);
-      },
-
-      async toggleTheme(event) {
-        this.$store.commit('settings/toggleTheme');
-        await onTransitionEnd(event.target);
-        this.toggleMenu(false);
       }
     }
   }

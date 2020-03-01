@@ -49,7 +49,7 @@ export default {
     about: 'О программе'
   },
 
-  settings_dark_mode: 'Темная тема',
+  settings_dark_theme: 'Темная тема',
 
   // Сообщения
   im_header_title: 'Сообщения',

@@ -30,7 +30,7 @@ export const usersStorage = new Storage('users', {
 export const settingsStorage = new Storage('settings', {
   window: win.getBounds(),
   langName: 'ru',
-  theme: 'light',
+  darkTheme: false,
   userSettings: {}
 });
 

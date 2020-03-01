@@ -1,13 +1,15 @@
 <template>
   <div>
-    <div class="settings_line clickable" @click="toggleDarkMode">
-      {{ l('settings_dark_mode') }}
-      <Checkbox :active="darkMode" />
+    <div class="settings_line clickable" @click="toggleDarkTheme">
+      {{ l('settings_dark_theme') }}
+      <Checkbox :active="darkTheme" />
     </div>
   </div>
 </template>
 
 <script>
+  import { mapState } from 'vuex';
+
   import Checkbox from '../../UI/Checkbox.vue';
 
   export default {
@@ -15,14 +17,13 @@
       Checkbox
     },
 
-    data: () => ({
-      // Временно
-      darkMode: false
-    }),
+    computed: {
+      ...mapState('settings', ['darkTheme'])
+    },
 
     methods: {
-      toggleDarkMode() {
-        this.darkMode = !this.darkMode;
+      toggleDarkTheme() {
+        this.$store.commit('settings/toggleTheme');
       }
     }
   }

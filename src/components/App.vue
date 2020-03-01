@@ -1,5 +1,5 @@
 <template>
-  <div :class="['root', { mac }]" :theme="theme">
+  <div :class="['root', { mac }]" :theme="darkTheme ? 'dark' : 'light'">
     <Titlebar />
     <div class="app">
       <MainMenu v-if="activeUser" />
@@ -36,7 +36,7 @@
 
     computed: {
       ...mapState('users', ['activeUser']),
-      ...mapState('settings', ['theme'])
+      ...mapState('settings', ['darkTheme'])
     },
 
     methods: {

@@ -29,7 +29,7 @@ export default {
     },
 
     toggleTheme(state) {
-      state.theme = state.theme == 'light' ? 'dark' : 'light';
+      state.darkTheme = !state.darkTheme;
     }
   },
 
