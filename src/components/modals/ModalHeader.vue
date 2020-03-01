@@ -3,38 +3,23 @@
     <div class="modal_header_title"><slot /></div>
     <div class="modal_header_buttons">
       <slot name="icons" />
-      <Ripple v-if="closable"
-              color="rgba(255, 255, 255, .2)"
-              class="ripple_fast modal_header_close"
-              @click.stop="close"
-      >
-        <Icon name="close" color="#fff" />
-      </Ripple>
+      <CloseModal :closable="closable" />
     </div>
   </div>
 </template>
 
 <script>
-  import Ripple from '../UI/Ripple.vue';
-  import Icon from '../UI/Icon.vue';
+  import CloseModal from './CloseModal.vue';
 
   export default {
     props: {
       closable: {
-        type: Boolean,
         default: true
       }
     },
 
     components: {
-      Ripple,
-      Icon
-    },
-
-    methods: {
-      close() {
-        this.$modals.close(this.$parent.$attrs.name);
-      }
+      CloseModal
     }
   }
 </script>
@@ -58,21 +43,4 @@
     display: flex;
     align-items: center;
   }
-
-  .modal_header_close {
-    width: 40px;
-    height: 40px;
-    padding: 12px;
-    border-radius: 50%;
-    cursor: pointer;
-    opacity: .7;
-    transition: opacity .3s;
-  }
-
-  .modal_header_close svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .modal_header_close:hover { opacity: 1 }
 </style>

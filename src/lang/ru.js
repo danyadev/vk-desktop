@@ -39,8 +39,17 @@ export default {
   // Меню
   menu: {
     messages: 'Сообщения',
-    photos: 'Фотографии'
+    photos: 'Фотографии',
+    settings: 'Настройки'
   },
+
+  // Настройки
+  settings_sections: {
+    interface: 'Интерфейс',
+    about: 'О программе'
+  },
+
+  settings_dark_mode: 'Темная тема',
 
   // Сообщения
   im_header_title: 'Сообщения',
