@@ -10,7 +10,7 @@
       <div class="settings_content">
         <div class="settings_left_panel">
           <Ripple v-for="section of sections" :key="section.name"
-                  color="#ebedf0"
+                  color="var(--settings-item-ripple)"
                   :class="['settings_left_item', { active: section.name == activeSection }]"
                   @click="activeSection = section.name"
           >
@@ -72,9 +72,9 @@
     margin: 20px;
     width: 100%;
     height: 100%;
-    background: #fff;
+    background: var(--background-content);
     border-radius: 6px;
-    box-shadow: 0 1px 10px rgba(0, 0, 0, .25);
+    box-shadow: 0 1px 10px var(--settings-shadow);
   }
 
   .settings_header {
@@ -85,7 +85,7 @@
     font-size: 18px;
     font-weight: 500;
     padding-left: 22px;
-    border-bottom: 1px solid #e1e3e6;
+    border-bottom: 1px solid var(--input-border);
   }
 
   .settings_header_text {
@@ -102,7 +102,7 @@
   }
 
   .settings_header .modal_header_close svg {
-    color: #818b98;
+    color: var(--text-secondary);
   }
 
   .settings_content {
@@ -111,7 +111,7 @@
   }
 
   .settings_left_panel {
-    border-right: 1px solid #e1e3e6;
+    border-right: 1px solid var(--input-border);
     padding: 12px;
     height: 100%;
     flex: none;
@@ -138,11 +138,11 @@
   }
 
   .settings_left_item:hover {
-    background: #f4f5f6;
+    background: var(--menu-item-hover);
   }
 
   .settings_left_item.active {
-    background: #ebedf0;
+    background: var(--menu-item-active-background);
   }
 
   .settings_right_panel {
@@ -168,7 +168,7 @@
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
-    color: #5f6677;
+    color: var(--text-secondary);
   }
 
   .settings_line.clickable {

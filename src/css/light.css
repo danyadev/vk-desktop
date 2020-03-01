@@ -71,6 +71,8 @@
 	--menu-background: #fff0;
 	--menu-shadow: rgba(0, 0, 0, .5);
 	--menu-account-background: rgba(38, 37, 37, .5);
+	--settings-shadow: rgba(0, 0, 0, .25);
+	--settings-item-ripple: #ebedf0;
 	--checkbox-active: #5181b8;
 	--scrolly-background-first: rgba(0, 0, 0, .3);
 	--scrolly-background-second: rgba(0, 0, 0, .4);
