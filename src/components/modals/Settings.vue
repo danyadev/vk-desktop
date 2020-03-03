@@ -138,7 +138,7 @@
   }
 
   .settings_left_item:hover {
-    background: var(--menu-item-hover);
+    background: var(--settings-item-hover);
   }
 
   .settings_left_item.active {
