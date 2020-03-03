@@ -242,12 +242,13 @@
   }
 
   .menu_item_counter:not(:empty) {
-    color: var(--menu-counter-text);
-    background: var(--menu-counter-background);
-    padding: 3px 5px 1px 5px;
-    border-radius: 4px;
+    color: var(--counter-secondary-text);
+    background: var(--counter-secondary-background);
+    line-height: 18px;
+    padding: 1px 5px 0 5px;
+    border-radius: 10px;
     margin-right: 8px;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   /* Выход из аккаунта */
