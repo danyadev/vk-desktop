@@ -117,6 +117,7 @@
   .im_pinned_msg_name {
     display: inline;
     color: var(--im-pinned-name);
+    font-weight: 500;
   }
 
   .im_pinned_msg_time {

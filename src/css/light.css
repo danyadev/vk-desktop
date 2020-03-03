@@ -106,7 +106,7 @@
 	border-bottom: 1px solid var(--input-border);
 }
 
-.root[theme="light"] .attach_fwd_msg_name, .root[theme="light"] .im_pinned_msg_name {
+.root[theme="light"] .attach_fwd_msg_name {
 	font-weight: 500;
 }
 
