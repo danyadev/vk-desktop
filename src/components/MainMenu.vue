@@ -17,7 +17,7 @@
 
       <div class="menu_items">
         <Ripple v-for="{ route, active } of routes" :key="route"
-                color="var(--im-peer-ripple)"
+                color="var(--menu-item-ripple)"
                 :class="['menu_item', { active }]"
                 @click.stop="openPage(`/${route}`)"
         >
@@ -29,7 +29,7 @@
           <div class="menu_item_counter">{{ menuCounters[route] }}</div>
         </Ripple>
 
-        <Ripple color="var(--im-peer-ripple)"
+        <Ripple color="var(--menu-item-ripple)"
                 class="menu_item"
                 @click.stop="openModal('settings')"
         >
@@ -37,7 +37,7 @@
           <div class="menu_item_name">{{ l('menu', 'settings') }}</div>
         </Ripple>
 
-        <Ripple color="var(--im-peer-ripple)"
+        <Ripple color="var(--menu-item-ripple)"
                 class="menu_item logout"
                 @click.stop="openModal('logout')"
         >
