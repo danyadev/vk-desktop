@@ -349,11 +349,10 @@
         } else if(this.messages.find((msg) => msg.id == msg_id)) {
           onLoad();
         } else {
-          this.load({
-            start_message_id: msg_id,
-            offset: -20,
-            beforeLoad
-          }).then(onLoad);
+          this.load(
+            { start_message_id: msg_id, offset: -20 },
+            { beforeLoad }
+          ).then(onLoad);
         }
       }),
 
