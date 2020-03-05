@@ -2,9 +2,7 @@
   <div :class="['message_wrap', ...attachClasses, { showUserData, isUnread, out: msg.out, isLoading: msg.isLoading }]"
        :id="msg.id"
   >
-    <div v-if="showUserData" class="message_name">
-      {{ name }}
-    </div>
+    <div v-if="showUserData" class="message_name">{{ name }}</div>
 
     <div class="message">
       <img v-if="showUserData" class="message_photo" :src="photo" loading="lazy" width="35" height="35">
@@ -191,10 +189,6 @@
     margin-left: 50px;
     margin-bottom: 2px;
     user-select: none;
-  }
-
-  .message_name .verified {
-    margin-top: -1px;
   }
 
   .message {

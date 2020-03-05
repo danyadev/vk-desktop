@@ -8,10 +8,7 @@
                 @click.stop="openModal('multiaccount')"
         ><img src="assets/menu/groups.svg"></Ripple>
         <img class="menu_account_photo" :src="user.photo_100">
-        <div class="menu_account_name">
-          {{ user.first_name }} {{ user.last_name }}
-          <div v-if="user.verified" class="verified"></div>
-        </div>
+        <div class="menu_account_name">{{ user.first_name }} {{ user.last_name }}</div>
         <div class="menu_account_status" v-emoji="user.status"></div>
       </div>
 
