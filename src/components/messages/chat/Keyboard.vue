@@ -7,7 +7,7 @@
                     ? 'rgba(0, 0, 0, .08)'
                     : 'rgba(0, 0, 0, .15)'
                 "
-                :class="['keyboard_button', action.type == 'vkpay' ? 'primary' : color]"
+                :class="['keyboard_button text-overflow', action.type == 'vkpay' ? 'primary' : color]"
                 :style="{ width: `${100 / line.length}%` }"
                 @click="click(action)"
         >
@@ -120,12 +120,6 @@
     text-align: center;
     color: var(--im-kb-text);
     cursor: pointer;
-  }
-
-  .keyboard_button, .keyboard_button div {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .keyboard.inline .keyboard_button {

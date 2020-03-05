@@ -6,7 +6,7 @@
     <div class="im_peer_content">
       <div class="im_peer_title">
         <div class="im_peer_name_wrap">
-          <div :class="['im_peer_name', { blueName }]" v-emoji="chatName"></div>
+          <div :class="['im_peer_name text-overflow', { blueName }]" v-emoji="chatName"></div>
           <Icon v-if="owner && owner.verified" name="verified" class="verified" />
           <div v-if="peer.muted" class="im_peer_muted"></div>
         </div>
@@ -202,9 +202,6 @@
   .im_peer_name {
     height: 20px;
     line-height: 18px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .im_peer_name.blueName {
@@ -240,9 +237,6 @@
 
   .im_peer_message_wrap > div:first-child {
     flex-grow: 1;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     margin-top: 2px;
   }
 

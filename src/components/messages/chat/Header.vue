@@ -5,14 +5,14 @@
         <img src="~assets/im_back.svg">
       </Ripple>
       <img class="im_header_photo" :src="photo">
-      <div class="im_header_center">
+      <div class="im_header_center text-overflow">
         <div class="im_header_name_wrap">
-          <div class="im_header_name" v-emoji="title"></div>
+          <div class="im_header_name text-overflow" v-emoji="title"></div>
           <Icon v-if="owner && owner.verified" name="verified" color="#fff" class="verified white" />
           <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="im_header_muted" />
         </div>
         <Typing v-if="hasTyping" :peer_id="peer_id" :isChat="true" />
-        <div v-else class="im_header_online">{{ online }}</div>
+        <div v-else class="im_header_online text-overflow">{{ online }}</div>
       </div>
       <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
     </div>
@@ -132,12 +132,6 @@
 
   .im_header_center {
     flex-grow: 1;
-  }
-
-  .im_header_center, .im_header_name, .im_header_online {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .im_header_name_wrap {

@@ -2,7 +2,7 @@
   <div class="settings_wrap">
     <div class="settings">
       <div class="settings_header">
-        <div class="settings_header_text">{{ l('menu', 'settings') }}</div>
+        <div class="settings_header_text text-overflow">{{ l('menu', 'settings') }}</div>
         <div class="settings_header_close">
           <CloseModal :closable="true" :isSettings="true" />
         </div>
@@ -86,12 +86,6 @@
     font-weight: 500;
     padding-left: 22px;
     border-bottom: 1px solid var(--input-border);
-  }
-
-  .settings_header_text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .settings_header_close {

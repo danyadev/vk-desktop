@@ -125,6 +125,14 @@
     user-select: none;
   }
 
+  .text-overflow,
+  .keyboard_button div,
+  .im_peer_message_wrap > div:first-child {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   .root {
     --titlebar-height: 32px;
     background: var(--background-content);
