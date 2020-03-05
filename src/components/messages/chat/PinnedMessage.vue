@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isHidden" class="im_pinned_msg_wrap" @click="open">
-    <Icon name="pin" class="im_pinned_msg_icon" color="var(--text-secondary)" />
+    <Icon name="pin" color="var(--text-secondary)" class="im_pinned_msg_icon" />
 
     <div class="im_pinned_msg">
       <div class="im_pinned_msg_name_wrap">

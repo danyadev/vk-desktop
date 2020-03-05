@@ -1,28 +1,28 @@
 <template>
   <ActionsMenu :hideList="!peer" ref="actionsMenu">
     <div class="act_menu_item" @click="goToFirstMsg">
-      <Icon name="arrow_up" class="act_menu_icon" color="var(--text-secondary)" />
+      <Icon name="arrow_up" color="var(--text-secondary)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_go_to_first_msg') }}</div>
     </div>
     <div v-if="peer && peer.pinnedMsg" class="act_menu_item" @click="togglePinnedMsg">
-      <Icon :name="showPinnedMsg ? 'unpin' : 'pin'" class="act_menu_icon" color="var(--text-secondary)" />
+      <Icon :name="showPinnedMsg ? 'unpin' : 'pin'" color="var(--text-secondary)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_toggle_pinned_msg', showPinnedMsg) }}</div>
     </div>
     <div class="act_menu_item" @click="toggleNotifications">
-      <Icon :name="'volume_' + (muted ? 'active' : 'muted')" class="act_menu_icon" color="var(--text-secondary)" />
+      <Icon :name="'volume_' + (muted ? 'active' : 'muted')" color="var(--text-secondary)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_toggle_notifications', !muted) }}</div>
     </div>
     <div v-if="!channel" class="act_menu_item" @click="clearHistory">
-      <Icon name="trash" class="act_menu_icon" color="var(--text-secondary)" />
+      <Icon name="trash" color="var(--text-secondary)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_clear_history') }}</div>
     </div>
     <div v-if="peer_id > 2e9" class="act_menu_item" @click="leftFromChat">
       <template v-if="left">
-        <Icon name="forward" class="act_menu_icon" color="var(--text-secondary)" />
+        <Icon name="forward" color="var(--text-secondary)" class="act_menu_icon" />
         <div class="act_menu_data">{{ l('im_toggle_left_state', channel ? 3 : 2) }}</div>
       </template>
       <template v-else>
-        <Icon name="close" class="act_menu_icon left_icon" color="var(--text-secondary)" />
+        <Icon name="close" color="var(--text-secondary)" class="act_menu_icon left_icon" />
         <div class="act_menu_data">{{ l('im_toggle_left_state', channel ? 1 : 0) }}</div>
       </template>
     </div>
