@@ -11,7 +11,7 @@
                   name="close"
                   color="var(--text-secondary)"
                   class="item_close"
-                  @click.stop="removeAccount(user.id)"
+                  @click.native.stop="removeAccount(user.id)"
             />
           </div>
           <div class="item_description">{{ getUserDescription(user) }}</div>
