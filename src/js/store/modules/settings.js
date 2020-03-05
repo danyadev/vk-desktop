@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import { settingsStorage, messagesDefaultSettings } from '../Storage';
+import { onTransitionEnd } from 'js/utils';
 
 function getLangFile(name) {
   const lang = require(`js/../lang/${name}.js`).default;
@@ -26,10 +27,16 @@ export default {
       const data = { ...state.userSettings[id], [key]: value };
 
       Vue.set(state.userSettings, id, data);
-    },
+    }
+  },
 
-    toggleTheme(state) {
+  actions: {
+    async toggleTheme({ state, rootState }) {
+      rootState.isThemeChange = true;
+      await Vue.nextTick();
       state.darkTheme = !state.darkTheme;
+      await onTransitionEnd(document.body, true);
+      rootState.isThemeChange = false;
     }
   },
 

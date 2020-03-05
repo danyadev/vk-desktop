@@ -1,5 +1,5 @@
 <template>
-  <div :class="['root', { mac }]" :theme="darkTheme ? 'dark' : 'light'">
+  <div :class="['root', { mac, isThemeChange }]" :theme="darkTheme ? 'dark' : 'light'">
     <Titlebar />
     <div class="app">
       <MainMenu v-if="activeUser" />
@@ -36,7 +36,8 @@
 
     computed: {
       ...mapState('users', ['activeUser']),
-      ...mapState('settings', ['darkTheme'])
+      ...mapState('settings', ['darkTheme']),
+      ...mapState(['isThemeChange'])
     },
 
     methods: {
@@ -141,6 +142,10 @@
 
   .root.mac {
     --titlebar-height: 22px;
+  }
+
+  .root.isThemeChange * {
+    transition: none !important;
   }
 
   .app {

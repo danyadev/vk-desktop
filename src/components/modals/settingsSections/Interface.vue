@@ -23,7 +23,7 @@
 
     methods: {
       toggleDarkTheme() {
-        this.$store.commit('settings/toggleTheme');
+        this.$store.dispatch('settings/toggleTheme');
       }
     }
   }

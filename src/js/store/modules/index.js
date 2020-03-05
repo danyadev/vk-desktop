@@ -4,7 +4,8 @@ export default {
   state: {
     menuState: false,
     menuCounters: {},
-    profiles: {}
+    profiles: {},
+    isThemeChange: false
   },
 
   mutations: {
@@ -31,7 +32,7 @@ export default {
         ...result
       };
     },
-    
+
     updateProfile(state, profile) {
       const old = state.profiles[profile.id] || {};
       const user = { ...old, ...profile };
