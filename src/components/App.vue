@@ -1,10 +1,24 @@
 <template>
-  Hello, World!
+  <div :class="['root', { mac }]">
+    <Titlebar />
+  </div>
 </template>
 
 <script>
+  import Titlebar from './Titlebar.vue';
+
+  require('electron').remote.getCurrentWindow().openDevTools();
+
   export default {
-    // TODO
+    components: {
+      Titlebar
+    },
+
+    setup() {
+      return {
+        mac: process.platform == 'darwin'
+      }
+    }
   }
 </script>
 
@@ -33,7 +47,7 @@
 
   body {
     font-family: BlinkMacSystemFont, Roboto;
-    font-size: 18px;
+    font-size: 15px;
     margin: 0;
     overflow: hidden;
     height: 100vh;
@@ -41,5 +55,13 @@
     text-rendering: optimizeSpeed;
     background: #fff;
     user-select: none;
+  }
+
+  .root {
+    --titlebar-height: 32px;
+  }
+
+  .root.mac {
+    --titlebar-height: 22px;
   }
 </style>
