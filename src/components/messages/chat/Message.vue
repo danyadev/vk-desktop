@@ -249,15 +249,6 @@
     color: var(--im-bubble-gift-time);
   }
 
-  .message_wrap.isSticker:not(.hideBubble) .message_bubble {
-    background: var(--background-content);
-    border: 1px solid var(--input-border);
-  }
-
-  .message_wrap.isSticker:not(.hideBubble) .message_time_wrap {
-    background: var(--background-content) !important;
-  }
-
   .message_text {
     display: inline;
     user-select: text;

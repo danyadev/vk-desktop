@@ -98,6 +98,6 @@
     left: 0;
     width: 2px;
     border-radius: 1px;
-    background-color: var(--im-reply-separator);
+    background-color: var(--im-message-separator);
   }
 </style>

@@ -46,17 +46,21 @@
 	--im-kb-secondary-background: #454647;
 	--im-kb-positive-background: #4bb34b;
 	--im-kb-negative-background: #e64646;
-	--im-forwarded-separator: #76787a;
-	--im-reply-separator: #71aaeb;
+	--im-kb-inline-secondary-background: #262627;
+	--im-message-separator: #71aaeb;
 	--im-reply-name: #fff;
 	--im-unread: #71aaeb;
 	--im-pinned-name: #71aaeb;
 	--im-pinned-text: #e1e3e6;
+	--im-pinned-icon: #fff;
 	--im-flytime-background: #00000094;
 	--im-flytime-text: #f5f5f5;
 	--im-flytime-simple-background: #19191adf;
 	--im-flytime-sticker-out: #c7dff9df;
 	--im-flytime-sticker: #dfe6eadf;
+	--im-empty-text: #38383a;
+	--im-counter-background: #3f8ae0;
+	--im-counter-text: #fff;
 	--actions-background: #2c2d2e;
 	--actions-background-hover: rgba(255, 255, 255, .08);
 	--actions-border: #373839;
@@ -109,4 +113,13 @@
 
 .root[theme="dark"] img[src="assets/im_chat_photo.png"] {
 	filter: invert() grayscale();
+}
+
+.root[theme="dark"] .message_wrap.isSticker:not(.hideBubble) .message_bubble {
+	background: var(--background-content);
+	border: 1px solid var(--input-border);
+}
+
+.root[theme="dark"] .message_wrap.isSticker:not(.hideBubble) .message_time_wrap {
+	background: var(--background-content) !important;
 }

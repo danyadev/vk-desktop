@@ -141,6 +141,10 @@
     background: var(--im-kb-primary-background);
   }
 
+  .keyboard.inline .keyboard_button.secondary, .keyboard.inline .keyboard_button.default {
+    background: var(--im-kb-inline-secondary-background);
+  }
+
   .keyboard_button.positive {
     background: var(--im-kb-positive-background);
   }

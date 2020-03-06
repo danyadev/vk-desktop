@@ -618,8 +618,8 @@
     position: absolute;
     top: -5px;
     right: -3px;
-    background-color: var(--counter-primary-background);
-    color: var(--counter-primary-text);
+    background-color: var(--im-counter-background);
+    color: var(--im-counter-text);
     font-size: 12px;
     border-radius: 10px;
     padding: 2px 5px 1px 5px;
