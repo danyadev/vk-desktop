@@ -1,56 +1,59 @@
 <template>
   <div :class="['titlebar', { maximized }]">
-    <div class="titlebar_drag" ref="drag">VK Desktop</div>
+    <div ref="drag" class="titlebar_drag">VK Desktop</div>
     <div class="titlebar_buttons">
-      <div v-for="button of buttons" :key="button"
-           :class="['titlebar_button', button]"
-           @click="click(button)"
-      ><img :src="`assets/titlebar/${button}.svg`"></div>
+      <div
+        v-for="button of buttons" :key="button"
+        :class="['titlebar_button', button]"
+        @click="click(button)"
+      >
+        <img :src="`assets/titlebar/${button}.svg`">
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  import { ref, onMounted } from 'vue';
-  import electron from 'electron';
+import { ref, onMounted } from 'vue';
+import electron from 'electron';
 
-  export default {
-    setup() {
-      const win = electron.remote.getCurrentWindow();
-      const maximized = ref(win.isMaximized());
-      const drag = ref(null);
+export default {
+  setup() {
+    const win = electron.remote.getCurrentWindow();
+    const maximized = ref(win.isMaximized());
+    const drag = ref(null);
 
-      onMounted(() => {
-        if(process.platform == 'darwin') {
-          drag.value.addEventListener('dblclick', () => {
-            if(!win.isFullScreen()) {
-              win.emit(maximized.value ? 'unmaximize' : 'maximize');
-            }
-          });
-        }
-
-        const onMaximize = () => maximized.value = true;
-        const onUnmaximize = () => maximized.value = false;
-
-        win.on('maximize', onMaximize);
-        win.on('unmaximize', onUnmaximize);
-
-        window.addEventListener('beforeunload', () => {
-          win.removeListener('maximize', onMaximize);
-          win.removeListener('unmaximize', onUnmaximize);
+    onMounted(() => {
+      if (process.platform === 'darwin') {
+        drag.value.addEventListener('dblclick', () => {
+          if (!win.isFullScreen()) {
+            win.emit(maximized.value ? 'unmaximize' : 'maximize');
+          }
         });
-      });
+      }
 
-      return {
-        maximized,
-        drag,
-        buttons: ['minimize', 'maximize', 'restore', 'close'],
-        click(button) {
-          win[button]();
-        }
-      };
-    }
+      const onMaximize = () => (maximized.value = true);
+      const onUnmaximize = () => (maximized.value = false);
+
+      win.on('maximize', onMaximize);
+      win.on('unmaximize', onUnmaximize);
+
+      window.addEventListener('beforeunload', () => {
+        win.removeListener('maximize', onMaximize);
+        win.removeListener('unmaximize', onUnmaximize);
+      });
+    });
+
+    return {
+      maximized,
+      drag,
+      buttons: ['minimize', 'maximize', 'restore', 'close'],
+      click(button) {
+        win[button]();
+      }
+    };
   }
+};
 </script>
 
 <style>

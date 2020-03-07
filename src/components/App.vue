@@ -5,21 +5,21 @@
 </template>
 
 <script>
-  import Titlebar from './Titlebar.vue';
+import Titlebar from './Titlebar.vue';
 
-  require('electron').remote.getCurrentWindow().openDevTools();
+require('electron').remote.getCurrentWindow().openDevTools();
 
-  export default {
-    components: {
-      Titlebar
-    },
+export default {
+  components: {
+    Titlebar
+  },
 
-    setup() {
-      return {
-        mac: process.platform == 'darwin'
-      }
-    }
+  setup() {
+    return {
+      mac: process.platform === 'darwin'
+    };
   }
+};
 </script>
 
 <style>
@@ -33,16 +33,16 @@
 
   @font-face {
     font-family: Roboto;
-  	font-weight: 400;
-  	font-display: block;
-  	src: url('~assets/Roboto.ttf');
+    font-weight: 400;
+    font-display: block;
+    src: url('~assets/Roboto.ttf');
   }
 
   @font-face {
     font-family: Roboto;
-  	font-weight: 500;
-  	font-display: block;
-  	src: url('~assets/RobotoMedium.ttf');
+    font-weight: 500;
+    font-display: block;
+    src: url('~assets/RobotoMedium.ttf');
   }
 
   body {

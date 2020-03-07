@@ -1,0 +1,40 @@
+{
+  "root": true,
+
+  "parserOptions": {
+    "sourceType": "module"
+  },
+
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2020": true
+  },
+
+  "plugins": [
+    "import"
+  ],
+
+  "settings": {
+    "import/resolver": "webpack"
+  },
+
+  "extends": [
+    "airbnb-base",
+    "plugin:vue/recommended"
+  ],
+
+  "rules": {
+    "comma-dangle": ["error", "never"],
+    "no-return-assign": ["error", "except-parens"],
+
+    "vue/max-attributes-per-line": ["error", {
+      "singleline": 4,
+      "multiline": {
+        "allowFirstLine": true,
+        "max": 2
+      }
+    }],
+    "vue/singleline-html-element-content-newline": "off"
+  }
+}
