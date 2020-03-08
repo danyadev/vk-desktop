@@ -235,12 +235,14 @@
   }
 
   .menu_item_counter:not(:empty) {
-    color: #475769;
-    background: #d2dfea;
-    padding: 3px 5px 1px 5px;
-    border-radius: 4px;
+    background: #5181b8;
+    color: #fff;
+    line-height: 18px;
+    padding: 1px 5px 0 5px;
+    border-radius: 10px;
     margin-right: 8px;
     font-size: 14px;
+    font-size: 12px;
   }
 
   /* Выход из аккаунта */
