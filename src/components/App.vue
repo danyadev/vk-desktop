@@ -5,7 +5,9 @@
       <MainMenu v-if="activeUser" />
       <KeepAlive v-if="activeUser"><RouterView /></KeepAlive>
       <Auth v-else />
+
       <ModalsWrapper />
+      <ContextMenuWrapper />
     </div>
   </div>
 </template>
@@ -21,13 +23,15 @@
   import MainMenu from './MainMenu.vue';
   import Auth from './auth/Auth.vue';
   import ModalsWrapper from './ModalsWrapper.vue';
+  import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
 
   export default {
     components: {
       Titlebar,
       MainMenu,
       Auth,
-      ModalsWrapper
+      ModalsWrapper,
+      ContextMenuWrapper
     },
 
     data: () => ({

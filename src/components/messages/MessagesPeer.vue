@@ -1,5 +1,5 @@
 <template>
-  <Ripple color="#e6ebf2" class="im_peer" @click="openChat">
+  <Ripple color="#e6ebf2" class="im_peer" @click="openChat" data-context-menu="peer" :data-peer-id="peer.id">
     <div :class="['im_peer_photo', online]">
       <img :src="photo" loading="lazy" width="50" height="50">
     </div>

@@ -4,7 +4,8 @@ export default {
   state: {
     menuState: false,
     menuCounters: {},
-    profiles: {}
+    profiles: {},
+    contextMenuEvent: null
   },
 
   mutations: {
@@ -31,12 +32,16 @@ export default {
         ...result
       };
     },
-    
+
     updateProfile(state, profile) {
       const old = state.profiles[profile.id] || {};
       const user = { ...old, ...profile };
 
       Vue.set(state.profiles, user.id, user);
+    },
+
+    setContextMenuEvent(state, event) {
+      state.contextMenuEvent = event;
     }
   }
 }
