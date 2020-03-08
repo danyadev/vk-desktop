@@ -2,11 +2,14 @@
   <div class="attach_reply attach_left_border" @click="jump">
     <img v-if="reply.photo" class="attach_reply_photo" :src="reply.photo" loading="lazy" width="37" height="37">
 
-    <div class="attach_reply_content">
-      <div class="attach_reply_name">{{ reply.name || '...' }}</div>
+    <div class="attach_reply_content text-overflow">
+      <div class="attach_reply_name text-overflow">{{ reply.name || '...' }}</div>
 
       <div v-if="reply.isContentDeleted" class="attach_reply_text isContentDeleted">{{ l('im_attachment_deleted') }}</div>
-      <div v-else :class="['attach_reply_text', { isAttachment: reply.isAttachment }]" v-emoji.push="reply.text || '...'"></div>
+      <div v-else
+        :class="['attach_reply_text text-overflow', { isAttachment: reply.isAttachment }]"
+        v-emoji.push="reply.text || '...'"
+      ></div>
     </div>
   </div>
 </template>
@@ -130,14 +133,6 @@
     margin: 4px -4px 0 7px;
     border-radius: 4px;
     object-fit: cover;
-  }
-
-  .attach_reply_content,
-  .attach_reply_name,
-  .attach_reply_text {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .attach_reply_content {

@@ -262,9 +262,6 @@
     border-radius: 8px;
     padding: 3px 7px 2px 5px;
     max-width: calc(100% - 8px);
-    white-space: nowrap;
-    overflow: hidden;
-    pointer-events: none;
   }
 
   .attach_photo_wrap:not(.isVideo) .attach_photo_type {

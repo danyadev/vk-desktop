@@ -6,7 +6,7 @@
              loading="lazy" width="250" height="170"
              @click="$emit('open', album)"
         >
-        <div class="album_name">{{ album.title }}</div>
+        <div class="album_name text-overflow">{{ album.title }}</div>
         <div class="album_count">{{ album.size }}</div>
       </div>
     </div>
@@ -72,9 +72,6 @@
   .album_name {
     width: 250px;
     padding: 3px 8px 0 8px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .album_count {

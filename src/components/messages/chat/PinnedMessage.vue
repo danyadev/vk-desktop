@@ -3,11 +3,11 @@
     <img class="im_pinned_msg_icon" src="~assets/pin.svg">
 
     <div class="im_pinned_msg">
-      <div class="im_pinned_msg_name_wrap">
+      <div class="im_pinned_msg_name_wrap text-overflow">
         <div class="im_pinned_msg_name">{{ name }}</div>
         <div class="im_pinned_msg_time">{{ time }}</div>
       </div>
-      <div :class="['im_pinned_msg_text', { isAttachment }]" v-emoji.push="text"></div>
+      <div :class="['im_pinned_msg_text text-overflow', { isAttachment }]" v-emoji.push="text"></div>
     </div>
 
     <img class="im_pinned_msg_close" src="~assets/close.svg" @click.stop="hide">
@@ -125,13 +125,6 @@
     margin-left: 2px;
     color: #848a96;
     font-size: 13px;
-  }
-
-  .im_pinned_msg_name_wrap,
-  .im_pinned_msg_text {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .im_pinned_msg_text.isAttachment {

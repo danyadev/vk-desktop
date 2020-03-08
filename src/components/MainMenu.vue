@@ -8,8 +8,8 @@
                 @click.stop="openModal('multiaccount')"
         ><img src="assets/menu/groups.svg"></Ripple>
         <img class="menu_account_photo" :src="user.photo_100">
-        <div class="menu_account_name">{{ user.first_name }} {{ user.last_name }}</div>
-        <div class="menu_account_status" v-emoji="user.status"></div>
+        <div class="menu_account_name text-overflow">{{ user.first_name }} {{ user.last_name }}</div>
+        <div class="menu_account_status text-overflow" v-emoji="user.status"></div>
       </div>
 
       <div class="menu_items">
@@ -177,9 +177,6 @@
   }
 
   .menu_account_name, .menu_account_status {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
   }
 

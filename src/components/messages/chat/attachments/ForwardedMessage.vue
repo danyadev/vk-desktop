@@ -2,9 +2,9 @@
   <div class="attach_fwd_msg">
     <div class="attach_fwd_msg_header">
       <img class="attach_fwd_msg_photo" :src="photo">
-      <div class="attach_fwd_msg_info">
-        <div class="attach_fwd_msg_name">{{ name }}</div>
-        <div class="attach_fwd_msg_date">
+      <div class="attach_fwd_msg_info text-overflow">
+        <div class="attach_fwd_msg_name text-overflow">{{ name }}</div>
+        <div class="attach_fwd_msg_date text-overflow">
           {{ date }}
           <template v-if="msg.editTime">
             <div class="attach_fwd_msg_dot"></div>
@@ -94,14 +94,6 @@
     width: 40px;
     height: 40px;
     margin-right: 10px;
-  }
-
-  .attach_fwd_msg_info,
-  .attach_fwd_msg_name,
-  .attach_fwd_msg_date {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .attach_fwd_msg_name {

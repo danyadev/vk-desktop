@@ -129,6 +129,15 @@
     user-select: none;
   }
 
+  .text-overflow,
+  .keyboard_button div,
+  .im_peer_message_wrap > div:first-child,
+  .attach_photo_type {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   .root {
     --titlebar-height: 32px;
   }

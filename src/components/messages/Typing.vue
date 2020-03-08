@@ -1,6 +1,6 @@
 <template>
   <div :class="['typing_wrap', { isChat }]">
-    <div class="typing_text">{{ text }}</div>
+    <div class="typing_text text-overflow">{{ text }}</div>
     <div class="typing">
       <div class="typing_item"></div>
       <div class="typing_item"></div>
@@ -78,12 +78,6 @@
   .typing {
     margin: 0 6px;
     flex: none;
-  }
-
-  .typing_text {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   @keyframes typing {

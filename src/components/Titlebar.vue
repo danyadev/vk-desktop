@@ -1,6 +1,6 @@
 <template>
   <div :class="['titlebar', { maximized }]">
-    <div class="titlebar_drag" ref="drag">VK Desktop</div>
+    <div class="titlebar_drag text-overflow" ref="drag">VK Desktop</div>
     <div class="titlebar_buttons">
       <div v-for="button of buttons" :key="button"
            :class="['titlebar_button', button]"
@@ -72,8 +72,6 @@
     padding-left: 4px;
     color: #fff;
     line-height: 24px;
-    overflow: hidden;
-    white-space: nowrap;
   }
 
   .titlebar.maximized .titlebar_drag {
