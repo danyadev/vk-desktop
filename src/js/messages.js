@@ -28,6 +28,9 @@ export function parseConversation(conversation) {
     out_read: conversation.out_read,
     mentions: conversation.mentions || [],
     pinnedMsg: isChat && chat_settings.pinned_message && parseMessage(chat_settings.pinned_message),
+    chatSettings: isChat && chat_settings.acl,
+    owner_id: isChat && chat_settings.owner_id,
+    admin_ids: isChat && chat_settings.admin_ids,
     loaded: true
   };
 }

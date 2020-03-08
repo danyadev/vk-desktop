@@ -6,8 +6,13 @@
     </div>
 
     <div v-if="peer && peer.pinnedMsg" class="act_menu_item" @click="togglePinnedMsg">
-      <Icon :name="showPinnedMsg ? 'unpin' : 'pin'" class="act_menu_icon" />
+      <Icon :name="showPinnedMsg ? 'hide' : 'show'" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_toggle_pinned_msg', showPinnedMsg) }}</div>
+    </div>
+
+    <div v-if="peer && peer.pinnedMsg && peer.chatSettings.can_change_pin" class="act_menu_item" @click="unpinMsg">
+      <Icon name="unpin" class="act_menu_icon" />
+      <div class="act_menu_data">{{ l('im_unpin_msg') }}</div>
     </div>
 
     <div class="act_menu_item" @click="toggleNotifications">
@@ -90,6 +95,14 @@
         this.$store.commit('settings/updateMessagesSettings', {
           key: 'hiddenPinnedMessages',
           value: list
+        });
+      },
+
+      unpinMsg() {
+        this.$refs.actionsMenu.toggleMenu();
+        
+        vkapi('messages.unpin', {
+          peer_id: this.peer_id
         });
       },
 

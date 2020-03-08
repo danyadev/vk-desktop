@@ -80,6 +80,7 @@ export default {
   im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],
   im_toggle_notifications: ['Включить уведомления', 'Отключить уведомления'],
   im_clear_history: 'Удалить историю',
+  im_unpin_msg: 'Открепить сообщение',
   im_toggle_left_state: [
     'Покинуть беседу',
     'Отписаться от канала',
