@@ -5,7 +5,7 @@
 <script>
   export default {
     props: ['attach'],
-    
+
     computed: {
       src() {
         if(this.attach[0]) {

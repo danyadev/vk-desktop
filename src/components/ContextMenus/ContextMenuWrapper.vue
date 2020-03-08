@@ -1,8 +1,6 @@
 <template>
   <div :class="['context_menu_wrap', { active: menu }]" @mousedown="closeMenu" @click="closeMenu">
-    <Transition name="context-menu">
-      <Component v-if="menu" :is="menu.name" v-bind="menu.data" />
-    </Transition>
+    <Component v-if="menu" :is="menu.name" v-bind="menu.data" />
   </div>
 </template>
 

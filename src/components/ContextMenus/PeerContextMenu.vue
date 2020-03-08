@@ -4,14 +4,17 @@
       <img src="assets/show.svg" class="act_menu_icon">
       <div class="act_menu_data">{{ l('im_mark_messages_as_read') }}</div>
     </div>
+
     <div class="act_menu_item" @click="toggleNotifications">
       <Icon :name="'volume_' + (peer.muted ? 'active' : 'muted')" color="#828a99" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_toggle_notifications', !peer.muted) }}</div>
     </div>
+
     <div v-if="!peer.channel" class="act_menu_item" @click="clearHistory">
       <img src="assets/trash.svg" class="act_menu_icon">
       <div class="act_menu_data">{{ l('im_clear_history') }}</div>
     </div>
+
     <div v-if="peerId > 2e9" class="act_menu_item" @click="leftFromChat">
       <template v-if="peer.left">
         <img src="assets/forward.svg" class="act_menu_icon">
