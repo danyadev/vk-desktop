@@ -9,7 +9,7 @@
       </div>
       <div class="settings_content">
         <div class="settings_left_panel">
-          <Ripple v-for="section of sections"
+          <Ripple v-for="section of sections" :key="section.name"
                   color="#ebedf0"
                   :class="['settings_left_item', { active: section.name == activeSection }]"
                   @click="activeSection = section.name"
