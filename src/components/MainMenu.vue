@@ -47,6 +47,7 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex';
+  import { onTransitionEnd } from 'js/utils';
 
   import Ripple from './UI/Ripple.vue';
   import Icon from './UI/Icon.vue';
@@ -88,12 +89,10 @@
         if(!this.isActiveRoute(route)) this.$router.replace(route);
       },
 
-      openModal(name) {
+      async openModal(name) {
         this.toggleMenu(false);
-
-        this.$el.addEventListener('transitionend', () => {
-          this.$modals.open(name);
-        }, { once: true });
+        await onTransitionEnd(this.$el);
+        this.$modals.open(name);
       }
     }
   }
