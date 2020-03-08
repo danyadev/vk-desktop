@@ -25,6 +25,7 @@
 
 <script>
   import { mapState } from 'vuex';
+  import { usersStorage } from 'js/store/Storage';
 
   import ModalHeader from './ModalHeader.vue';
   import Button from '../UI/Button.vue';
@@ -49,9 +50,16 @@
         const prevUser = this.activeUser;
         if(prevUser == id) return;
 
-        this.$store.commit('users/setActiveUser', id);
+        if(prevUser) {
+          const usersData = Object.assign({}, usersStorage.data);
 
-        if(prevUser) location.reload();
+          usersData.activeUser = id;
+          usersStorage.update(usersData);
+
+          location.reload();
+        } else {
+          this.$store.commit('users/setActiveUser', id);
+        }
       },
 
       removeAccount(id) {
