@@ -199,11 +199,11 @@
     width: 12px;
     height: 12px;
     vertical-align: middle;
-    background: url('~assets/verified.svg');
+    color: #5c9ce6;
   }
 
   .verified.white {
-    background: url('~assets/verified_white.svg');
     opacity: .7;
+    color: #fff;
   }
 </style>

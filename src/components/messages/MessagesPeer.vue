@@ -7,7 +7,7 @@
       <div class="im_peer_title">
         <div class="im_peer_name_wrap">
           <div :class="['im_peer_name', { greenName }]" v-emoji="chatName"></div>
-          <div v-if="owner && owner.verified" class="verified"></div>
+          <Icon v-if="owner && owner.verified" name="verified" class="verified" />
           <div v-if="peer.muted" class="im_peer_muted"></div>
         </div>
         <div class="im_peer_time">{{ time }}</div>
