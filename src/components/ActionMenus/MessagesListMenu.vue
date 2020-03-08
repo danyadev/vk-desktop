@@ -4,7 +4,7 @@
       <Checkbox :active="settings.typing" />
       <div class="act_menu_data">{{ l('im_send_typing') }}</div>
     </div>
-    
+
     <div class="act_menu_item" @click="click('notRead')">
       <Checkbox :active="settings.notRead" />
       <div class="act_menu_data">{{ l('im_not_read_messages') }}</div>
@@ -30,7 +30,7 @@
 
     methods: {
       click(name) {
-        this.$store.commit('settings/updateMessagesSettings', {
+        this.$store.commit('settings/updateUserSettings', {
           key: name,
           value: !this.settings[name]
         });

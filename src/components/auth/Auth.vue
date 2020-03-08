@@ -39,7 +39,7 @@
             android_token: data.access_token
           });
 
-          this.$store.commit('settings/setDefaultMessagesSettings', user.id);
+          this.$store.commit('settings/setDefaultUserSettings', user.id);
 
           if(this.isModal) this.$modals.close(this.$parent.$attrs.name);
           else this.$store.commit('users/setActiveUser', user.id);

@@ -31,8 +31,8 @@
       const dx = clientWidth - x;
       const dy = clientHeight - y;
 
-      if(dx < width) x = Math.max(0, x - width);
-      if(dy < height) y = Math.max(0, y - height);
+      if(dx < width) x = Math.max(10, x - width);
+      if(dy < height) y = Math.max(10, y - height);
 
       this.style = {
         left: `${x}px`,

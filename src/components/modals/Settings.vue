@@ -34,7 +34,8 @@
   import Ripple from '../UI/Ripple.vue';
 
   import Interface from './settingsSections/Interface.vue';
-  import About from './settingsSections/About.vue';
+  import Developers from './settingsSections/Developers.vue';
+  // import About from './settingsSections/About.vue';
 
   export default {
     components: {
@@ -43,14 +44,16 @@
       Ripple,
 
       Interface,
-      About
+      Developers
+      // About
     },
 
     data: () => ({
       activeSection: 'interface',
       sections: [
         { name: 'interface', icon: 'palette' },
-        { name: 'about', icon: 'info' }
+        { name: 'developers', icon: 'bug' }
+        // { name: 'about', icon: 'info' }
       ]
     })
   }
@@ -167,5 +170,9 @@
 
   .settings_line.clickable {
     cursor: pointer;
+  }
+
+  .settings_line .checkbox {
+    margin-left: 20px;
   }
 </style>

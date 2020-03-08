@@ -46,10 +46,12 @@ export default {
   // Настройки
   settings_sections: {
     interface: 'Интерфейс',
-    about: 'О программе'
+    developers: 'Для разработчиков'
+    // about: 'О программе'
   },
 
-  settings_dark_mode: 'Темная тема',
+  settings_dark_theme: 'Темная тема',
+  settings_show_peer_id: 'Отображать peer_id в контекстном меню беседы',
 
   // Сообщения
   im_header_title: 'Сообщения',

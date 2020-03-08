@@ -68,7 +68,7 @@
 
         list[this.peer_id] = true;
 
-        this.$store.commit('settings/updateMessagesSettings', {
+        this.$store.commit('settings/updateUserSettings', {
           key: 'hiddenPinnedMessages',
           value: list
         });

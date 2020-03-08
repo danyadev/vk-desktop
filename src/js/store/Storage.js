@@ -33,8 +33,9 @@ export const settingsStorage = new Storage('settings', {
   userSettings: {}
 });
 
-export const messagesDefaultSettings = {
+export const defaultUserSettings = {
+  hiddenPinnedMessages: {},
   typing: true,
   notRead: true,
-  hiddenPinnedMessages: {}
+  devShowPeerId: false
 };

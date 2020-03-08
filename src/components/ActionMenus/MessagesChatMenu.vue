@@ -92,7 +92,7 @@
           delete list[this.peer_id];
         }
 
-        this.$store.commit('settings/updateMessagesSettings', {
+        this.$store.commit('settings/updateUserSettings', {
           key: 'hiddenPinnedMessages',
           value: list
         });
@@ -100,7 +100,7 @@
 
       unpinMsg() {
         this.$refs.actionsMenu.toggleMenu();
-        
+
         vkapi('messages.unpin', {
           peer_id: this.peer_id
         });

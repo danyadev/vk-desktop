@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="settings_line clickable" @click="toggleDarkMode">
-      {{ l('settings_dark_mode') }}
-      <Checkbox :active="darkMode" />
+    <div class="settings_line">
+      {{ l('settings_dark_theme') }}
+      <Checkbox />
     </div>
   </div>
 </template>
@@ -13,17 +13,6 @@
   export default {
     components: {
       Checkbox
-    },
-
-    data: () => ({
-      // Временно
-      darkMode: false
-    }),
-
-    methods: {
-      toggleDarkMode() {
-        this.darkMode = !this.darkMode;
-      }
     }
   }
 </script>

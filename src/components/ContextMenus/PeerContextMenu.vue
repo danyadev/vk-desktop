@@ -1,5 +1,10 @@
 <template>
   <ContextMenu>
+    <div v-if="settings.devShowPeerId" class="act_menu_item">
+      <Icon class="act_menu_icon" name="bug" color="#828a99" />
+      <div class="act_menu_data">peer_id: {{ peerId }}</div>
+    </div>
+
     <div v-if="peer.unread" class="act_menu_item" @click="markAsRead">
       <img src="assets/show.svg" class="act_menu_icon">
       <div class="act_menu_data">{{ l('im_mark_messages_as_read') }}</div>
@@ -31,6 +36,7 @@
 <script>
   import vkapi from 'js/vkapi';
   import { eventBus } from 'js/utils';
+  import { mapGetters } from 'vuex';
 
   import ContextMenu from './ContextMenu.vue';
   import Icon from '../UI/Icon.vue';
@@ -44,6 +50,8 @@
     },
 
     computed: {
+      ...mapGetters('settings', ['settings']),
+
       peer() {
         return this.$store.state.messages.conversations[this.peerId].peer;
       }
