@@ -136,7 +136,7 @@
 
   .im_peers_delimiter {
     width: 100%;
-    height: 8px;
+    height: 6px;
     background: #e7e8ec;
   }
 </style>
