@@ -3,6 +3,7 @@
     <div :class="['im_peer_photo', online]">
       <img :src="photo" loading="lazy" width="50" height="50">
     </div>
+
     <div class="im_peer_content">
       <div class="im_peer_title">
         <div class="im_peer_name_wrap">
@@ -12,18 +13,24 @@
         </div>
         <div class="im_peer_time">{{ time }}</div>
       </div>
+
       <div class="im_peer_message_wrap">
         <Typing v-if="hasTyping" :peer_id="peer.id" />
-        <div v-else class="im_peer_message">
+        <div v-else-if="msg.id" class="im_peer_message">
           <div class="im_peer_author">{{ authorName }}</div>
           <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted" :key="msg.id">
             {{ l('im_attachment_deleted') }}
           </div>
           <div v-else :class="['im_peer_text', { isAttachment }]" v-emoji.push="message" :key="msg.id"></div>
         </div>
+        <div v-else class="im_peer_text isContentDeleted">
+          {{ l('im_no_messages') }}
+        </div>
+
         <div v-if="peer.mentions.length" class="im_peer_mentioned">
           <Icon name="mention" width="20" height="18" />
         </div>
+
         <div :class="['im_peer_unread', { outread, muted: peer.muted }]"
              :title="peer.unread || ''"
         >{{ convertCount(peer.unread || '') }}</div>
@@ -85,6 +92,7 @@
         return [100, 101, 333].includes(Number(this.peer.id));
       },
       time() {
+        if(!this.msg.date) return;
         return getShortDate(new Date(this.msg.date * 1000));
       },
       authorName() {

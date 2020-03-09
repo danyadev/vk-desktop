@@ -52,10 +52,10 @@ export default {
       }
     },
 
-    updateConversation(state, { peer, msg }) {
+    updateConversation(state, { peer, msg, removeMsg }) {
       const conv = { ...state.conversations[peer.id] || {} };
       conv.peer = Object.assign({}, conv.peer, peer);
-      conv.msg = Object.assign({}, conv.msg, msg);
+      conv.msg = removeMsg ? {} : Object.assign({}, conv.msg, msg);
 
       Vue.set(state.conversations, peer.id, conv);
     },

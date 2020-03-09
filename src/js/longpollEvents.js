@@ -135,7 +135,11 @@ async function getLastMessage(peer_id) {
   const msg = message && parseMessage(message);
   const peer = parseConversation(conversation);
 
-  store.commit('messages/updateConversation', { msg, peer });
+  store.commit('messages/updateConversation', {
+    removeMsg: !msg,
+    msg,
+    peer
+  });
 
   return { msg, peer };
 }

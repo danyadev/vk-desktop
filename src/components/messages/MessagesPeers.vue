@@ -11,7 +11,7 @@
       :lock="lockScroll"
       @scroll="onScroll"
     >
-      <template v-if="conversationsLists.pinned.length">
+      <template v-if="conversationsLists.pinned.length && conversationsLists.pinned[0]">
         <div>
           <MessagesPeer
             v-for="{ peer, msg } of conversationsLists.pinned"

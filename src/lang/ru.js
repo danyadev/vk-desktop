@@ -69,6 +69,7 @@ export default {
   im_unread_messages: 'Новые сообщения',
   im_msg_edited: 'ред',
   im_keyboard_pay_with: 'Оплатить через',
+  im_no_messages: 'Сообщений нет',
 
   im_chat_online: ['Онлайн', 'Онлайн с телефона', 'Онлайн с {0}'],
   im_chat_was_online: ['Был в сети {0}', 'Была в сети {0}'],

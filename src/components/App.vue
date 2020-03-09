@@ -17,7 +17,7 @@
   import { fields } from 'js/utils';
   import { mapState, mapGetters } from 'vuex';
   import vkapi from 'js/vkapi';
-  import { addNotificationsTimer } from 'js/messages';
+  import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
 
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
@@ -66,8 +66,11 @@
         this.$store.commit('users/updateUser', user);
         this.$store.commit('setMenuCounters', counters);
 
-        for(const conversation of pinnedPeers) {
-          this.$store.commit('messages/updateConversation', conversation);
+        for(const { peer, msg } of pinnedPeers) {
+          this.$store.commit('messages/updateConversation', {
+            peer: parseConversation(peer),
+            msg: msg.id ? parseMessage(msg) : {}
+          });
         }
 
         longpoll.start(lp);
