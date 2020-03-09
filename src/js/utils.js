@@ -113,7 +113,10 @@ export function isObject(obj) {
 }
 
 // Собирает массивы профилей и групп в единый массив, где у групп отрицательный id
-export function concatProfiles(profiles = [], groups = []) {
+export function concatProfiles(profiles, groups) {
+  profiles = profiles || [];
+  groups = groups || [];
+
   return profiles.concat(
     groups.reduce((list, group) => {
       group.id = -group.id;

@@ -14,7 +14,7 @@
 
 <script>
   import longpoll from 'js/longpoll';
-  import { fields } from 'js/utils';
+  import { fields, concatProfiles } from 'js/utils';
   import { mapState, mapGetters } from 'vuex';
   import vkapi from 'js/vkapi';
   import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
@@ -55,6 +55,8 @@
           user,
           counters,
           pinnedPeers,
+          profiles,
+          groups,
           lp,
           temporarilyDisabledNotifications
         } = await vkapi('execute.init', {
@@ -65,6 +67,7 @@
 
         this.$store.commit('users/updateUser', user);
         this.$store.commit('setMenuCounters', counters);
+        this.$store.commit('addProfiles', concatProfiles(profiles, groups));
 
         for(const { peer, msg } of pinnedPeers) {
           this.$store.commit('messages/updateConversation', {
