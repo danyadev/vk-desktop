@@ -31,8 +31,7 @@
     methods: {
       click(name) {
         this.$store.commit('settings/updateUserSettings', {
-          key: name,
-          value: !this.settings[name]
+          [name]: !this.settings[name]
         });
       }
     }

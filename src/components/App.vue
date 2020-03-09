@@ -15,7 +15,7 @@
 <script>
   import longpoll from 'js/longpoll';
   import { fields } from 'js/utils';
-  import { mapState } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
   import vkapi from 'js/vkapi';
   import { addNotificationsTimer } from 'js/messages';
 
@@ -39,7 +39,8 @@
     }),
 
     computed: {
-      ...mapState('users', ['activeUser'])
+      ...mapState('users', ['activeUser']),
+      ...mapGetters('settings', ['settings'])
     },
 
     methods: {
@@ -50,13 +51,24 @@
           this.$router.replace('/messages');
         }
 
-        const { lp, counters, user, temporarilyDisabledNotifications } = await vkapi('execute.init', {
+        const {
+          user,
+          counters,
+          pinnedPeers,
+          lp,
+          temporarilyDisabledNotifications
+        } = await vkapi('execute.init', {
+          pinnedPeers: this.settings.pinnedPeers.join(','),
           lp_version: longpoll.version,
           fields
         });
 
         this.$store.commit('users/updateUser', user);
         this.$store.commit('setMenuCounters', counters);
+
+        for(const conversation of pinnedPeers) {
+          this.$store.commit('messages/updateConversation', conversation);
+        }
 
         longpoll.start(lp);
 

@@ -5,15 +5,31 @@
       <div class="header_name">{{ l('im_header_title') }}</div>
       <MessagesListMenu />
     </div>
-    <Scrolly class="im_peers_wrap"
-             :vclass="{ loading }"
-             :lock="lockScroll"
-             @scroll="onScroll"
+    <Scrolly
+      class="im_peers_wrap"
+      :vclass="{ loading }"
+      :lock="lockScroll"
+      @scroll="onScroll"
     >
-      <MessagesPeer v-for="{ peer, msg } of conversationsList" :key="peer.id"
-                    :peer="peer"
-                    :msg="msg"
-                    :activeChat="activeChat"
+      <template v-if="conversationsLists.pinned.length">
+        <div>
+          <MessagesPeer
+            v-for="{ peer, msg } of conversationsLists.pinned"
+            :key="peer.id"
+            :peer="peer"
+            :msg="msg"
+            :activeChat="activeChat"
+          />
+        </div>
+        <div class="im_peers_delimiter"></div>
+      </template>
+
+      <MessagesPeer
+        v-for="{ peer, msg } of conversationsLists.unpinned"
+        :key="peer.id"
+        :peer="peer"
+        :msg="msg"
+        :activeChat="activeChat"
       />
     </Scrolly>
   </div>
@@ -47,7 +63,22 @@
     }),
 
     computed: {
-      ...mapGetters('messages', ['conversationsList'])
+      ...mapGetters('messages', ['conversationsList']),
+      ...mapGetters('settings', ['settings']),
+
+      conversationsLists() {
+        const { pinnedPeers } = this.settings;
+
+        return {
+          pinned: pinnedPeers.map((id) => {
+            return this.$store.state.messages.conversations[id];
+          }),
+
+          unpinned: this.conversationsList.filter(({ peer }) => {
+            return !pinnedPeers.includes(peer.id)
+          })
+        };
+      }
     },
 
     methods: {
@@ -101,5 +132,11 @@
 
   .im_peers_container .header_name {
     flex-grow: 1;
+  }
+
+  .im_peers_delimiter {
+    width: 100%;
+    height: 8px;
+    background: #e7e8ec;
   }
 </style>

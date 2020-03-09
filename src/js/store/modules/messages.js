@@ -38,7 +38,7 @@ export default {
       }
     },
 
-    addConversations(state, conversations, sadsa) {
+    addConversations(state, conversations) {
       for(const conversation of conversations) {
         if(!state.conversations[conversation.peer.id]) {
           Vue.set(state.conversations, conversation.peer.id, conversation);
@@ -199,7 +199,7 @@ export default {
       Vue.set(state.peersConfig, peer_id, config);
     }
   },
-  
+
   getters: {
     conversationsList(state) {
       return state.peersList.map((id) => state.conversations[id]);

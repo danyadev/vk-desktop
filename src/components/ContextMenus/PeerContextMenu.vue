@@ -5,6 +5,11 @@
       <div class="act_menu_data">peer_id: {{ peerId }}</div>
     </div>
 
+    <div v-if="settings.pinnedPeers.length < 5 || isPinnedPeer" class="act_menu_item" @click="togglePinPeer">
+      <Icon class="act_menu_icon" :name="isPinnedPeer ? 'unpin' : 'pin'" color="#828a99" />
+      <div class="act_menu_data">{{ l('im_toggle_pin_peer', isPinnedPeer) }}</div>
+    </div>
+
     <div v-if="peer.unread" class="act_menu_item" @click="markAsRead">
       <img src="assets/show.svg" class="act_menu_icon">
       <div class="act_menu_data">{{ l('im_mark_messages_as_read') }}</div>
@@ -54,10 +59,25 @@
 
       peer() {
         return this.$store.state.messages.conversations[this.peerId].peer;
+      },
+
+      isPinnedPeer() {
+        return this.settings.pinnedPeers.includes(+this.peerId);
       }
     },
 
     methods: {
+      togglePinPeer() {
+        const peers = this.settings.pinnedPeers.slice();
+
+        if(!this.isPinnedPeer) peers.push(+this.peerId);
+        else peers.splice(peers.indexOf(+this.peerId), 1);
+
+        this.$store.commit('settings/updateUserSettings', {
+          pinnedPeers: peers
+        });
+      },
+
       markAsRead() {
         vkapi('messages.markAsRead', {
           peer_id: this.peerId

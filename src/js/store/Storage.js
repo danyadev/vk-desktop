@@ -35,6 +35,7 @@ export const settingsStorage = new Storage('settings', {
 
 export const defaultUserSettings = {
   hiddenPinnedMessages: {},
+  pinnedPeers: [],
   typing: true,
   notRead: true,
   devShowPeerId: false

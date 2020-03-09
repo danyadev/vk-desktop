@@ -80,9 +80,9 @@ export default {
 
   im_go_to_first_msg: 'Перейти в начало беседы',
   im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],
+  im_unpin_msg: 'Открепить сообщение',
   im_toggle_notifications: ['Включить уведомления', 'Отключить уведомления'],
   im_clear_history: 'Удалить историю',
-  im_unpin_msg: 'Открепить сообщение',
   im_toggle_left_state: [
     'Покинуть беседу',
     'Отписаться от канала',
@@ -90,6 +90,7 @@ export default {
     'Подписаться на канал'
   ],
 
+  im_toggle_pin_peer: ['Закрепить беседу', 'Открепить беседу'],
   im_mark_messages_as_read: 'Отметить прочитанным',
 
   im_retry_send: 'Повторить отправку',

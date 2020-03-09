@@ -21,9 +21,9 @@ export default {
       Vue.set(state.userSettings, id, defaultUserSettings);
     },
 
-    updateUserSettings(state, { key, value }) {
+    updateUserSettings(state, settings) {
       const id = this.state.users.activeUser;
-      const data = { ...state.userSettings[id], [key]: value };
+      const data = { ...state.userSettings[id], ...settings };
 
       Vue.set(state.userSettings, id, data);
     }
