@@ -234,6 +234,7 @@
     padding: 8px 12px;
     border-radius: 18px;
     word-break: break-word;
+    min-height: 35px;
   }
 
   .message_wrap:not(.hideBubble).out .message_bubble {
@@ -272,7 +273,7 @@
   }
 
   .message_wrap:not(.hideBubble) .message_time_wrap {
-    bottom: -4px;
+    bottom: -5px;
     margin: 5px 0 0 6px;
   }
 
