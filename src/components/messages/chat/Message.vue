@@ -231,10 +231,9 @@
 
   .message_wrap:not(.hideBubble) .message_bubble {
     background-color: #dfe6ea;
-    padding: 8px 12px;
+    padding: 8px 12px 9px 12px;
     border-radius: 18px;
     word-break: break-word;
-    min-height: 35px;
   }
 
   .message_wrap:not(.hideBubble).out .message_bubble {
