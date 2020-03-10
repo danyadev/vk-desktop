@@ -37,6 +37,7 @@
   .modal_header_title {
     font-size: 15px;
     color: #f3f3f3;
+    line-height: 18px;
   }
 
   .modal_header_buttons {

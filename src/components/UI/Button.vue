@@ -30,6 +30,7 @@
     display: inline-block;
     padding: 9px;
     border-radius: 5px;
+    line-height: 18px;
     text-align: center;
     transition: opacity .3s, background-color .3s;
   }

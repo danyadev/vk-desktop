@@ -127,5 +127,6 @@
 
   .act_menu_data {
     margin-left: 12px;
+    line-height: 18px;
   }
 </style>

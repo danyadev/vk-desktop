@@ -92,6 +92,7 @@
   .item_data {
     flex-grow: 1;
     padding: 10px 0;
+    line-height: 18px;
   }
 
   .item:not(:last-child) .item_data {

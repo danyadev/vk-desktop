@@ -116,6 +116,7 @@
     margin: 0 4px;
     padding: 0 8px;
     height: 38px;
+    line-height: 18px;
     border-radius: 6px;
     text-align: center;
     color: #fff;

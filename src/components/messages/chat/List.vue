@@ -538,6 +538,7 @@
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
     padding: 4px 14px;
     color: #828282;
+    line-height: 18px;
     pointer-events: none;
     opacity: 0;
     transition: opacity .4s;

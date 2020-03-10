@@ -247,6 +247,7 @@
 
   .message_text {
     display: inline;
+    line-height: 18px;
     user-select: text;
   }
 
@@ -265,6 +266,7 @@
     color: #696969;
     font-weight: 500;
     font-size: 11px;
+    line-height: 13px;
     pointer-events: none;
     user-select: none;
   }

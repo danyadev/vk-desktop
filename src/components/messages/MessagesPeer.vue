@@ -267,14 +267,14 @@
   .im_peer_text.isContentDeleted { color: #717171 }
 
   .im_peer_unread {
-    padding: 0 6px;
+    padding: 1px 6px 0 6px;
     margin: 2px 0 0 3px;
     border-radius: 10px;
     background: #5181b8;
     color: #fff;
-    font-size: 11px;
-    font-weight: 500;
-    line-height: 20px;
+    font-size: 12px;
+    line-height: 16px;
+    height: 18px;
   }
 
   .im_peer_unread:not(.outread):empty { display: none }
