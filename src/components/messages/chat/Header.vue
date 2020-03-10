@@ -8,7 +8,7 @@
       <div class="im_header_center text-overflow">
         <div class="im_header_name_wrap">
           <div class="im_header_name text-overflow" v-emoji="title"></div>
-          <Icon v-if="owner && owner.verified" name="verified" color="#fff" class="verified white" />
+          <Icon v-if="owner && owner.verified" name="verified" class="verified white" />
           <Icon v-if="peer && peer.muted" name="muted" color="#fff" class="im_header_muted" />
         </div>
         <Typing v-if="hasTyping" :peer_id="peer_id" :isChat="true" />

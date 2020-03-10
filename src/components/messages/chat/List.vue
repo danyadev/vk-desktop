@@ -279,8 +279,16 @@
 
           if(msg) {
             if(msg.clientHeight > list.clientHeight) {
-              // Сообщение начинается на расстоянии 1/4 от начала экрана
-              list.scrollTop = msg.offsetTop - list.clientHeight / 4;
+              // Расстояние в 1/4 от начала viewport
+              const quarterFromViewport = msg.offsetTop - list.clientHeight / 4;
+
+              // Из-за возможных небольших несоответствий в размерах
+              // было добавлено в запас 5 пикселя.
+              if(list.scrollTop >= quarterFromViewport - 5) {
+                list.scrollTop = list.scrollHeight;
+              } else {
+                list.scrollTop = quarterFromViewport;
+              }
             } else {
               // Сообщение по центру экрана
               list.scrollTop = msg.offsetTop + msg.clientHeight / 2 - list.clientHeight / 2;
@@ -310,13 +318,10 @@
           if(this.loadedUp) {
             onLoad();
           } else {
-            this.load({
-              start_message_id: 0,
-              offset: -40
-            }, {
-              loadedUp: true,
-              beforeLoad
-            }).then(onLoad);
+            this.load(
+              { start_message_id: 0, offset: -40 },
+              { loadedUp: true, beforeLoad }
+            ).then(onLoad);
           }
         } else if(bottom) {
           this.replyHistory.length = 0;
@@ -349,11 +354,10 @@
         } else if(this.messages.find((msg) => msg.id == msg_id)) {
           onLoad();
         } else {
-          this.load({
-            start_message_id: msg_id,
-            offset: -20,
-            beforeLoad
-          }).then(onLoad);
+          this.load(
+            { start_message_id: msg_id, offset: -20 },
+            { beforeLoad }
+          ).then(onLoad);
         }
       }),
 

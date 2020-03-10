@@ -3,40 +3,46 @@
     <div class="menu">
       <div class="menu_account_block">
         <img class="menu_account_background" :src="user.photo_100">
-        <Ripple color="rgba(0, 0, 0, .2)"
-                class="ripple_fast menu_account_multiaccount"
-                @click.stop="openModal('multiaccount')"
-        ><img src="assets/menu/groups.svg"></Ripple>
+        <Ripple
+          color="rgba(0, 0, 0, .2)"
+          class="ripple_fast menu_account_multiaccount"
+          @click.stop="openModal('multiaccount')"
+        >
+          <img src="assets/menu/groups.svg">
+        </Ripple>
         <img class="menu_account_photo" :src="user.photo_100">
         <div class="menu_account_name text-overflow">{{ user.first_name }} {{ user.last_name }}</div>
         <div class="menu_account_status text-overflow" v-emoji="user.status"></div>
       </div>
 
       <div class="menu_items">
-        <Ripple v-for="{ route, active } of routes" :key="route"
-                color="var(--menu-item-ripple)"
-                :class="['menu_item', { active }]"
-                @click.stop="openPage(`/${route}`)"
+        <Ripple 
+          v-for="{ route, active } of routes" :key="route"
+          color="var(--menu-item-ripple)"
+          :class="['menu_item', { active }]"
+          @click.stop="openPage(`/${route}`)"
         >
           <Icon :name="`menu/${route}`"
                 :color="active ? 'var(--menu-icon-active)' : 'var(--menu-icon)'"
                 width="26" height="26"
           />
           <div class="menu_item_name">{{ l('menu', route) }}</div>
-          <div class="menu_item_counter">{{ menuCounters[route] }}</div>
+          <div class="menu_item_counter" :title="menuCounters[route]">{{ convertCount(menuCounters[route]) }}</div>
         </Ripple>
 
-        <Ripple color="var(--menu-item-ripple)"
-                class="menu_item"
-                @click.stop="openModal('settings')"
+        <Ripple 
+          color="var(--menu-item-ripple)"
+          class="menu_item"
+          @click.stop="openModal('settings')"
         >
           <Icon name="menu/settings" color="var(--menu-icon)" width="26" height="26" />
           <div class="menu_item_name">{{ l('menu', 'settings') }}</div>
         </Ripple>
 
-        <Ripple color="var(--menu-item-ripple)"
-                class="menu_item logout"
-                @click.stop="openModal('logout')"
+        <Ripple 
+          color="var(--menu-item-ripple)"
+          class="menu_item logout"
+          @click.stop="openModal('logout')"
         >
           <div class="menu_item_name">{{ l('logout') }}</div>
         </Ripple>
@@ -47,7 +53,7 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex';
-  import { onTransitionEnd } from 'js/utils';
+  import { onTransitionEnd, convertCount } from 'js/utils';
 
   import Ripple from './UI/Ripple.vue';
   import Icon from './UI/Icon.vue';
@@ -70,6 +76,8 @@
     },
 
     methods: {
+      convertCount,
+
       toggleMenu(event) {
         let state;
 
@@ -236,13 +244,13 @@
   }
 
   .menu_item_counter:not(:empty) {
-    color: var(--counter-secondary-text);
     background: var(--counter-secondary-background);
+    color: var(--counter-secondary-text);
     line-height: 18px;
     padding: 1px 5px 0 5px;
     border-radius: 10px;
     margin-right: 8px;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   /* Выход из аккаунта */

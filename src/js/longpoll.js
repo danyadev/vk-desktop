@@ -70,6 +70,10 @@ export default new class Longpoll {
         this.key = server.key;
         this.ts = server.ts;
         break;
+
+      case 4:
+        throw new Error('[lp] Invalid LongPoll version');
+        break;
     }
   }
 

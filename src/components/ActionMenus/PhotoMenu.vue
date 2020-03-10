@@ -4,10 +4,12 @@
       <img class="act_menu_icon" src="~assets/download.svg">
       <div class="act_menu_data">Сохранить на устройстве</div>
     </div>
+
     <div v-if="isPhoto" class="act_menu_item" @click="act(1)">
       <img class="act_menu_icon" src="~assets/plus.svg">
       <div class="act_menu_data">Сохранить в альбом</div>
     </div>
+    
     <div class="act_menu_item" @click="act(2)">
       <img class="act_menu_icon" src="~assets/copy.svg">
       <div class="act_menu_data">Скопировать ссылку</div>
@@ -19,7 +21,7 @@
   import vkapi from 'js/vkapi';
   import { downloadFile } from 'js/utils';
   import electron from 'electron';
-  
+
   import ActionsMenu from './ActionsMenu.vue';
 
   export default {

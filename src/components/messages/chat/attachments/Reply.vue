@@ -5,8 +5,11 @@
     <div class="attach_reply_content text-overflow">
       <div class="attach_reply_name text-overflow">{{ reply.name || '...' }}</div>
 
-      <div v-if="reply.isContentDeleted" class="attach_reply_text text-overflow isContentDeleted">{{ l('im_attachment_deleted') }}</div>
-      <div v-else :class="['attach_reply_text', { isAttachment: reply.isAttachment }]" v-emoji.push="reply.text || '...'"></div>
+      <div v-if="reply.isContentDeleted" class="attach_reply_text isContentDeleted">{{ l('im_attachment_deleted') }}</div>
+      <div v-else
+        :class="['attach_reply_text text-overflow', { isAttachment: reply.isAttachment }]"
+        v-emoji.push="reply.text || '...'"
+      ></div>
     </div>
   </div>
 </template>

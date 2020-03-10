@@ -18,13 +18,13 @@ export default {
       state.window = bounds;
     },
 
-    setDefaultMessagesSettings(state, id) {
-      Vue.set(state.userSettings, id, messagesDefaultSettings);
+    setDefaultUserSettings(state, id) {
+      Vue.set(state.userSettings, id, defaultUserSettings);
     },
 
-    updateMessagesSettings(state, { key, value }) {
+    updateUserSettings(state, settings) {
       const id = this.state.users.activeUser;
-      const data = { ...state.userSettings[id], [key]: value };
+      const data = { ...state.userSettings[id], ...settings };
 
       Vue.set(state.userSettings, id, data);
     }

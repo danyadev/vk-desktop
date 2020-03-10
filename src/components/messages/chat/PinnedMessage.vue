@@ -68,9 +68,8 @@
 
         list[this.peer_id] = true;
 
-        this.$store.commit('settings/updateMessagesSettings', {
-          key: 'hiddenPinnedMessages',
-          value: list
+        this.$store.commit('settings/updateUserSettings', {
+          hiddenPinnedMessages: list
         });
       }
     }
@@ -131,7 +130,7 @@
   .im_pinned_msg_text {
     color: var(--im-pinned-text);
   }
-
+  
   .im_pinned_msg_text.isAttachment {
     color: var(--text-secondary); /* в тёмной теме не имеет смысла */
   }

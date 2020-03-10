@@ -5,7 +5,9 @@
       <MainMenu v-if="activeUser" />
       <KeepAlive v-if="activeUser"><RouterView /></KeepAlive>
       <Auth v-else />
+
       <ModalsWrapper />
+      <ContextMenuWrapper />
     </div>
   </div>
 </template>
@@ -13,21 +15,23 @@
 <script>
   import longpoll from 'js/longpoll';
   import { fields } from 'js/utils';
-  import { mapState } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
   import vkapi from 'js/vkapi';
-  import { addNotificationsTimer } from 'js/messages';
+  import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
 
   import Titlebar from './Titlebar.vue';
   import MainMenu from './MainMenu.vue';
   import Auth from './auth/Auth.vue';
   import ModalsWrapper from './ModalsWrapper.vue';
+  import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
 
   export default {
     components: {
       Titlebar,
       MainMenu,
       Auth,
-      ModalsWrapper
+      ModalsWrapper,
+      ContextMenuWrapper
     },
 
     data: () => ({
@@ -36,7 +40,7 @@
 
     computed: {
       ...mapState('users', ['activeUser']),
-      ...mapState('settings', ['darkTheme']),
+      ...mapState('settings', ['settings', 'darkTheme']),
       ...mapState(['isThemeChange'])
     },
 
@@ -48,13 +52,27 @@
           this.$router.replace('/messages');
         }
 
-        const { lp, counters, user, temporarilyDisabledNotifications } = await vkapi('execute.init', {
+        const {
+          user,
+          counters,
+          pinnedPeers,
+          lp,
+          temporarilyDisabledNotifications
+        } = await vkapi('execute.init', {
+          pinnedPeers: this.settings.pinnedPeers.join(','),
           lp_version: longpoll.version,
           fields
         });
 
         this.$store.commit('users/updateUser', user);
         this.$store.commit('setMenuCounters', counters);
+
+        for(const { peer, msg } of pinnedPeers) {
+          this.$store.commit('messages/updateConversation', {
+            peer: parseConversation(peer),
+            msg: msg.id ? parseMessage(msg) : {}
+          });
+        }
 
         longpoll.start(lp);
 
@@ -128,7 +146,8 @@
 
   .text-overflow,
   .keyboard_button div,
-  .im_peer_message_wrap > div:first-child {
+  .im_peer_message_wrap > div:first-child,
+  .attach_photo_type {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

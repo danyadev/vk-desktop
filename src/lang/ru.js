@@ -46,10 +46,12 @@ export default {
   // Настройки
   settings_sections: {
     interface: 'Интерфейс',
-    about: 'О программе'
+    developers: 'Для разработчиков'
+    // about: 'О программе'
   },
 
   settings_dark_theme: 'Темная тема',
+  settings_show_peer_id: 'Отображать peer_id в контекстном меню беседы',
 
   // Сообщения
   im_header_title: 'Сообщения',
@@ -67,6 +69,7 @@ export default {
   im_unread_messages: 'Новые сообщения',
   im_msg_edited: 'ред',
   im_keyboard_pay_with: 'Оплатить через',
+  im_no_messages: 'Сообщений нет',
 
   im_chat_online: ['Онлайн', 'Онлайн с телефона', 'Онлайн с {0}'],
   im_chat_was_online: ['Был в сети {0}', 'Была в сети {0}'],
@@ -78,6 +81,7 @@ export default {
 
   im_go_to_first_msg: 'Перейти в начало беседы',
   im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],
+  im_unpin_msg: 'Открепить сообщение',
   im_toggle_notifications: ['Включить уведомления', 'Отключить уведомления'],
   im_clear_history: 'Удалить историю',
   im_toggle_left_state: [
@@ -86,6 +90,9 @@ export default {
     'Вернуться в беседу',
     'Подписаться на канал'
   ],
+
+  im_toggle_pin_peer: ['Закрепить беседу', 'Открепить беседу'],
+  im_mark_messages_as_read: 'Отметить прочитанным',
 
   im_retry_send: 'Повторить отправку',
   im_delete_message: 'Удалить сообщение',
