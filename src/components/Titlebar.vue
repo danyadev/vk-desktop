@@ -3,7 +3,8 @@
     <div ref="drag" class="titlebar_drag">VK Desktop</div>
     <div class="titlebar_buttons">
       <div
-        v-for="button of buttons" :key="button"
+        v-for="button of buttons"
+        :key="button"
         :class="['titlebar_button', button]"
         @click="click(button)"
       >
@@ -57,52 +58,59 @@ export default {
 </script>
 
 <style>
-  .titlebar {
-    display: flex;
-    position: relative;
-    height: var(--titlebar-height);
-    z-index: 5;
-    background: #5281b9;
-  }
+.titlebar {
+  display: flex;
+  position: relative;
+  height: var(--titlebar-height);
+  z-index: 5;
+  background: #5281b9;
+}
 
-  .titlebar_drag {
-    -webkit-app-region: drag;
-    flex-grow: 1;
-    margin: 4px 0 0 4px;
-    padding-left: 4px;
-    color: #fff;
-    line-height: 24px;
-    overflow: hidden;
-    white-space: nowrap;
-  }
+.titlebar_drag {
+  -webkit-app-region: drag;
+  flex-grow: 1;
+  margin: 4px 0 0 4px;
+  padding-left: 4px;
+  color: #fff;
+  line-height: 24px;
+  overflow: hidden;
+  white-space: nowrap;
+}
 
-  .titlebar.maximized .titlebar_drag {
-    padding: 4px 0 0 8px;
-    margin: 0;
-  }
+.titlebar.maximized .titlebar_drag {
+  padding: 4px 0 0 8px;
+  margin: 0;
+}
 
-  .titlebar_buttons {
-    display: flex;
-  }
+.titlebar_buttons {
+  display: flex;
+}
 
-  .titlebar_button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 48px;
-    cursor: pointer;
-    transition: .2s background-color;
-  }
+.titlebar_button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  cursor: pointer;
+  transition: .2s background-color;
+}
 
-  .titlebar_button:hover { background: rgba(0, 0, 0, .2) }
-  .titlebar_button.close:hover { background: #eb0716 }
+.titlebar_button:hover {
+  background: rgba(0, 0, 0, .2);
+}
 
-  .titlebar.maximized .titlebar_button.maximize { display: none }
-  .titlebar:not(.maximized) .titlebar_button.restore { display: none }
+.titlebar_button.close:hover {
+  background: #eb0716;
+}
 
-  .mac .titlebar .titlebar_buttons { display: none }
-  .mac .titlebar .titlebar_drag {
-    text-align: center;
-    line-height: 14px;
-  }
+.titlebar.maximized .titlebar_button.maximize,
+.titlebar:not(.maximized) .titlebar_button.restore,
+.mac .titlebar .titlebar_buttons {
+  display: none;
+}
+
+.mac .titlebar .titlebar_drag {
+  text-align: center;
+  line-height: 14px;
+}
 </style>

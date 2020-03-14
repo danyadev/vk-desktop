@@ -5,15 +5,14 @@
 Данная ветка расчитана __только__ на улучшение, рефакторинг и оптимизацию всего кода,
 а значит каких-то крутых фич для пользователей здесь реализовано не будет.
 
-- Обновить минорные версии основных зависимостей:
+- Обновить мажорные версии основных зависимостей:
   + [vue-3.0.0-alpha.x](https://github.com/vuejs/vue-next)
   + [vue-loader-next](https://github.com/vuejs/vue-loader/tree/next)
   + [vuex-next](https://github.com/kiaking/vuex3-on-vue3/tree/4.0)
   + [vue-router-next](https://github.com/vuejs/vue-router-next)
-  + [webpack-5.0.0-beta.x](https://github.com/webpack/webpack)
+  + [webpack-5.0.0-beta.x](https://github.com/webpack/webpack) (если успеет выйти)
 - Начать использовать [ESLint](https://eslint.org/)
-- Пересмотреть принцип импорта картинок, минимизировать их дубликацию в коде приложения до нуля
-- За счет всех вышеперечисленных пунктов сделать в итоге глобальный и хороший рефакторинг кода всего приложения
+- Переписать весь код
 
 ## Скачать VK Desktop
 

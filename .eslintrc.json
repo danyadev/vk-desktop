@@ -21,13 +21,50 @@
 
   "extends": [
     "airbnb-base",
-    "plugin:vue/recommended"
+    "plugin:vue/recommended",
+    "plugin:vue/vue3-recommended"
   ],
 
   "rules": {
+    "linebreak-style": "off",
+    "no-bitwise": "off",
+    "no-plusplus": "off",
+    "no-await-in-loop": "off",
+    "no-async-promise-executor": "off",
+    "consistent-return": "off",
+    "no-param-reassign": "off",
+    "no-console": "off",
+    "no-restricted-syntax": "off",
+    "guard-for-in": "off",
+    "object-curly-newline": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
+    "func-names": ["error", "never"],
+    "camelcase": ["error", {
+      "properties": "never",
+      "allow": ["_token$", "_id$"]
+    }],
+    "no-constant-condition": ["error", {
+      "checkLoops": false
+    }],
+    "space-before-function-paren": ["error", {
+      "anonymous": "never",
+      "named": "never",
+      "asyncArrow": "always"
+    }],
 
+    "import/order": ["error", {
+      "groups": [
+        "builtin",
+        "external",
+        ["internal", "parent", "sibling", "index"]
+      ]
+    }],
+
+    "vue/singleline-html-element-content-newline": "off",
+    "vue/no-multiple-template-root": "off",
+    "vue/require-prop-types": "off",
+    "vue/attribute-hyphenation": ["error", "never"],
     "vue/max-attributes-per-line": ["error", {
       "singleline": 4,
       "multiline": {
@@ -35,6 +72,21 @@
         "max": 2
       }
     }],
-    "vue/singleline-html-element-content-newline": "off"
+    "vue/order-in-components": ["error", {
+      "order": [
+        "name",
+        "props",
+        "components",
+        "data",
+        "computed",
+        "methods",
+        "watch",
+        "LIFECYCLE_HOOKS",
+        "render"
+      ]
+    }],
+    "vue/component-tags-order": ["error", {
+      "order": ["template", "script", "style"]
+    }]
   }
 }
