@@ -1,5 +1,16 @@
 export default {
-  state: {},
+  state: {
+    isMenuOpened: false,
+    menuCounters: {}
+  },
 
-  mutations: {}
+  mutations: {
+    setMenuState(state, value) {
+      state.isMenuOpened = value;
+    },
+
+    setMenuCounters(state, counters) {
+      state.menuCounters = counters;
+    }
+  }
 };

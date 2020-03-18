@@ -6,8 +6,11 @@ class Storage {
   constructor({ name, defaults, beforeSave }) {
     const storageData = JSON.parse(localStorage.getItem(name) || '{}');
 
-    this.data = Object.assign(defaults, storageData);
     this.name = name;
+    this.data = {
+      ...defaults,
+      ...storageData
+    };
 
     if (beforeSave) {
       beforeSave(this.data);
@@ -36,6 +39,7 @@ export const defaultUserSettings = {
 
 export const usersStorage = new Storage({
   name: 'users',
+
   defaults: {
     activeUser: null,
     trustedHashes: {},
@@ -45,11 +49,13 @@ export const usersStorage = new Storage({
 
 export const settingsStorage = new Storage({
   name: 'settings',
+
   defaults: {
     window: win.getBounds(),
     langName: 'ru',
     userSettings: {}
   },
+
   beforeSave({ userSettings }) {
     for (const id in userSettings) {
       userSettings[id] = {

@@ -3,31 +3,37 @@
     <img src="~assets/logo.webp" class="auth_logo">
     <div class="auth_name">VK Desktop</div>
     <input
-      v-model="state.login"
+      v-model="login"
       class="input"
       type="text"
       :placeholder="l('enter_login')"
     >
     <div class="auth_password_wrap">
       <input
-        v-model="state.password"
+        v-model="password"
         class="input"
-        :type="state.hidePassword ? 'password' : 'text'"
+        :type="hidePassword ? 'password' : 'text'"
         :placeholder="l('enter_password')"
       >
       <div
-        :class="['auth_password_switch', { hidden: state.hidePassword }]"
-        @click="state.hidePassword = !state.hidePassword"
+        :class="['auth_password_switch', { hidden: hidePassword }]"
+        @click="hidePassword = !hidePassword"
       />
     </div>
-    <Button class="auth_button" :disabled="!state.canAuth" @click="auth">{{ l('login') }}</Button>
-    <div :class="['auth_error', { active: state.hasError }]">{{ state.errorText }}</div>
+    <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
+    <div :class="['auth_error', { active: hasError }]">{{ errorText }}</div>
+
+    <div v-if="hasUsers" class="auth_open_multiacc" @click="openModal('multiaccount')">
+      {{ l('available_accounts_list') }}
+    </div>
   </div>
 </template>
 
 <script>
-import { reactive, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { reactive, computed, toRefs } from 'vue';
+import store from 'js/store';
+import router from 'js/router';
+import { openModal } from 'js/modals';
 import getTranslate from 'js/getTranslate';
 import { getAndroidToken, loadUser } from '.';
 
@@ -38,9 +44,7 @@ export default {
     Button
   },
 
-  setup() {
-    const router = useRouter();
-
+  setup(props) {
     const state = reactive({
       login: '',
       password: '',
@@ -48,7 +52,10 @@ export default {
       loading: false,
       hidePassword: true,
       hasError: false,
-      canAuth: computed(() => !state.loading && state.login && state.password)
+      canAuth: computed(() => !state.loading && state.login && state.password),
+      hasUsers: computed(() => {
+        return !props.isModal && Object.keys(store.state.users.users).length;
+      })
     });
 
     async function auth() {
@@ -60,29 +67,33 @@ export default {
       const data = await getAndroidToken(state.login, state.password);
 
       if (['invalid_client', 'account_banned'].includes(data.error)) {
+        state.loading = false;
         state.hasError = true;
         state.errorText = getTranslate('auth_errors', data.error);
       } else if (data.error === 'need_validation') {
+        state.loading = false;
+
         router.replace({
           path: '/auth/confirm',
           params: {
             params: {
               ...data,
               login: state.login,
-              password: state.password
+              password: state.password,
+              isModal: props.isModal
             }
           }
         });
       } else {
-        loadUser(data.access_token);
+        loadUser(data.access_token, props.isModal);
       }
-
-      state.loading = false;
     }
 
     return {
-      state,
-      auth
+      ...toRefs(state),
+
+      auth,
+      openModal
     };
   }
 };

@@ -3,50 +3,81 @@
     <Titlebar />
 
     <div class="app">
-      <!-- TODO (vue-router) KeepAlive -->
+      <MainMenu v-if="activeUser" />
       <RouterView />
+      <ModalsWrapper />
     </div>
   </div>
 </template>
 
 <script>
 import { computed, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import router from 'js/router';
+import store from 'js/store';
+import vkapi from 'js/vkapi';
+import { fields } from 'js/utils';
 
 import Titlebar from './Titlebar.vue';
+import MainMenu from './MainMenu.vue';
+import ModalsWrapper from './ModalsWrapper.vue';
+
+// for debug
+window.vkapi = vkapi;
 
 export default {
   components: {
-    Titlebar
+    Titlebar,
+    MainMenu,
+    ModalsWrapper
   },
 
   setup() {
-    const router = useRouter();
-    const store = useStore();
     const activeUser = computed(() => store.state.users.activeUser);
 
-    function replaceTo(path) {
-      if (router.currentRoute.value.path !== path) {
-        router.replace(path);
+    async function initUser() {
+      if (!activeUser.value) {
+        return router.replace('/auth');
       }
+
+      router.replace('/messages');
+
+      const {
+        user,
+        counters,
+        // pinnedPeers,
+        // profiles,
+        // groups,
+        // lp,
+        // temporarilyDisabledNotifications
+      } = await vkapi('execute.init', {
+        // pinnedPeers: this.settings.pinnedPeers.join(','),
+        // lp_version: longpoll.version,
+        fields
+      });
+
+      store.commit('users/updateUser', user);
+      store.commit('setMenuCounters', counters);
+      // store.commit('addProfiles', concatProfiles(profiles, groups));
+
+      // for(const { peer, msg } of pinnedPeers) {
+      //   store.commit('messages/updateConversation', {
+      //     peer: parseConversation(peer),
+      //     msg: msg.id ? parseMessage(msg) : {}
+      //   });
+      // }
+
+      // longpoll.start(lp);
+
+      // for(const peer of temporarilyDisabledNotifications) {
+      //   addNotificationsTimer(peer);
+      // }
     }
 
-    function changeRoute() {
-      if (activeUser.value) {
-        replaceTo('/messages');
-      } else {
-        replaceTo('/auth');
-      }
-    }
-
-    onMounted(() => {
-      changeRoute();
-    });
-
-    watch(activeUser, changeRoute);
+    onMounted(initUser);
+    watch(activeUser, initUser);
 
     return {
+      activeUser,
       mac: process.platform === 'darwin'
     };
   }
@@ -106,6 +137,15 @@ img:not(.emoji) {
   --titlebar-height: 22px;
 }
 
+.text-overflow {
+/* .keyboard_button div, */
+/* .im_peer_message_wrap > div:first-child, */
+/* .attach_photo_type { */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .link {
   color: #306aab;
   cursor: pointer;
@@ -142,5 +182,18 @@ img:not(.emoji) {
 
 .input::-webkit-input-placeholder {
   color: #a0a0a0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  background: #5281b9;
+  width: 100%;
+  height: 45px;
+}
+
+.header_name {
+  color: #fff;
+  padding-left: 10px;
 }
 </style>

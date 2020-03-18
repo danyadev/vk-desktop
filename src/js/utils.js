@@ -1,5 +1,8 @@
 import { EventEmitter } from 'events';
 import { version } from 'package-json';
+import store from './store';
+import { usersStorage } from './store/Storage';
+import copyObject from './copyObject';
 
 const deviceInfo = '(1; 1; 1; 1; 1; 1)';
 export const VKDesktopUserAgent = `VKDesktop/${version} ${deviceInfo}`;
@@ -27,4 +30,39 @@ export function debounce(fn, delay) {
       timerId = null;
     }, delay);
   };
+}
+
+// 125 -> 125
+// 12.732 -> 12K
+// 5.324.267 -> 5M
+export function convertCount(count) {
+  if (count >= 1e6) return Math.floor(count / 1e6) + 'M';
+  if (count >= 1e3) return Math.floor(count / 1e3) + 'K';
+
+  return count;
+}
+
+export function onTransitionEnd(el, anyTarget) {
+  return new Promise((resolve) => {
+    function onTransitionEnd(event) {
+      if (!anyTarget && event.target != el) return;
+
+      el.removeEventListener('transitionend', onTransitionEnd);
+      resolve();
+    }
+
+    el.addEventListener('transitionend', onTransitionEnd);
+  });
+}
+
+export function logout() {
+  const { activeUser } = store.state.users;
+  const usersData = copyObject(usersStorage.data);
+
+  usersData.activeUser = null;
+  delete usersData.users[activeUser];
+
+  usersStorage.update(usersData);
+
+  location.reload();
 }

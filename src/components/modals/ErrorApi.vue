@@ -1,0 +1,62 @@
+<template>
+  <div class="modal">
+    <ModalHeader :closable="false">Internal Server Error</ModalHeader>
+    <div class="modal_content">
+      {{ l('ml_error_api', [$props.method]) }}
+
+      <div class="ml_error_warn">
+        {{ l('ml_error_cancel_warn') }}
+      </div>
+
+      {{ $props.error.error_msg }}
+    </div>
+    <div class="modal_footer">
+      <Button class="right" @click="cancel">{{ l('cancel') }}</Button>
+      <Button class="right" @click="retry">{{ l('retry') }}</Button>
+    </div>
+  </div>
+</template>
+
+<script>
+import { closeModal } from 'js/modals';
+
+import ModalHeader from './ModalHeader.vue';
+import Button from '../UI/Button.vue';
+
+export default {
+  components: {
+    ModalHeader,
+    Button
+  },
+
+  setup(props) {
+    function cancel() {
+      props.retry(props.error);
+      closeModal('error-api');
+    }
+
+    function retry() {
+      props.retry();
+      closeModal('error-api');
+    }
+
+    return {
+      cancel,
+      retry
+    };
+  }
+}
+</script>
+
+<style>
+.modal[data-name=error-api] .modal_content {
+  max-width: 600px;
+  padding: 25px;
+  word-break: break-word;
+}
+
+.ml_error_warn {
+  margin: 15px 0;
+  font-weight: 500;
+}
+</style>

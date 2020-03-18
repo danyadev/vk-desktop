@@ -1,8 +1,9 @@
 import querystring from 'querystring';
-import { AndroidUserAgent, VKDesktopUserAgent, eventBus, fields } from 'js/utils';
+import { AndroidUserAgent, VKDesktopUserAgent, fields } from 'js/utils';
 import vkapi, { version } from 'js/vkapi';
 import request from 'js/request';
 import store from 'js/store';
+import { openModal, closeModal } from 'js/modals';
 
 export function getAndroidToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
@@ -36,7 +37,7 @@ export function getAndroidToken(login, password, params = {}) {
     }
 
     if (data.error === 'need_captcha') {
-      eventBus.emit('modal:open', 'captcha', {
+      openModal('captcha', {
         src: data.captcha_img,
         send(code) {
           resolve(
@@ -86,7 +87,7 @@ async function getDesktopToken(androidToken) {
   return headers.location.match(/#access_token=([a-z0-9]{85})/)[1];
 }
 
-export async function loadUser(android_token) {
+export async function loadUser(android_token, isModal) {
   const access_token = await getDesktopToken(android_token);
   const [user] = await vkapi('users.get', {
     access_token,
@@ -99,5 +100,9 @@ export async function loadUser(android_token) {
     android_token
   });
 
-  store.commit('users/setActiveUser', user.id);
+  if (isModal) {
+    closeModal('auth');
+  } else {
+    store.commit('users/setActiveUser', user.id);
+  }
 }

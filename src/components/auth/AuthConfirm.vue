@@ -1,22 +1,22 @@
 <template>
   <div class="auth auth_code" @keydown.enter="auth">
     <div class="auth_code_header">{{ l('security_check') }}</div>
-    <div class="auth_code_descr">{{ l('code_sent_to', state.isAppCode, [state.phoneMask]) }}</div>
-    <input v-model="state.code" class="input" :placeholder="l('enter_code')">
+    <div class="auth_code_descr">{{ l('code_sent_to', isAppCode, [phoneMask]) }}</div>
+    <input v-model="code" class="input" :placeholder="l('enter_code')">
     <div class="auth_code_buttons">
-      <Button :light="true" :disabled="state.loading" @click="cancel">{{ l('cancel') }}</Button>
-      <Button :disabled="!state.canAuth" @click="auth">{{ l('login') }}</Button>
+      <Button :light="true" :disabled="loading" @click="cancel">{{ l('cancel') }}</Button>
+      <Button :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
     </div>
-    <div :class="['auth_error', { active: state.wrongCode }]">{{ l('wrong_code') }}</div>
-    <div :class="['auth_use_sms link', { hidden: !state.isAppCode }]" @click="enableForceSms">
+    <div :class="['auth_error', { active: wrongCode }]">{{ l('wrong_code') }}</div>
+    <div :class="['auth_use_sms link', { hidden: !isAppCode }]" @click="enableForceSms">
       {{ l('use_force_sms') }}
     </div>
   </div>
 </template>
 
 <script>
-import { reactive, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { reactive, computed, toRefs } from 'vue';
+import router from 'js/router';
 import vkapi from 'js/vkapi';
 import { getAndroidToken, loadUser } from '.';
 
@@ -28,7 +28,6 @@ export default {
   },
 
   setup() {
-    const router = useRouter();
     const { params } = router.currentRoute.value.params;
 
     const state = reactive({
@@ -54,7 +53,7 @@ export default {
         state.loading = false;
         state.wrongCode = true;
       } else {
-        loadUser(data.access_token);
+        loadUser(data.access_token, props.isModal);
       }
     }
 
@@ -82,7 +81,7 @@ export default {
     }
 
     return {
-      state,
+      ...toRefs(state),
       auth,
       cancel,
       enableForceSms

@@ -3,7 +3,6 @@
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 const { app, BrowserWindow, shell } = require('electron');
-const fs = require('fs');
 
 app.once('ready', () => {
   const { screen } = require('electron');
@@ -25,7 +24,7 @@ app.once('ready', () => {
     const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
-    if(data) {
+    if (data) {
       const { window } = JSON.parse(data);
       const maximized = window.width >= width && window.height >= height;
 
@@ -36,7 +35,9 @@ app.once('ready', () => {
         height: maximized ? height : window.height
       });
 
-      if(maximized) win.maximize();
+      if (maximized) {
+        win.maximize();
+      }
     }
 
     win.show();
@@ -47,8 +48,11 @@ app.once('ready', () => {
     shell.openExternal(url);
   });
 
-  if(process.platform == 'darwin') require('./menu')(win);
-  else win.removeMenu();
+  if (process.platform === 'darwin') {
+    require('./menu')(win);
+  } else {
+    win.removeMenu();
+  }
 
   win.loadURL(
     process.argv.includes('dev-mode')
