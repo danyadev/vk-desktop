@@ -1,5 +1,5 @@
 function isObject(value) {
-  return value && !Array.isArray(value) && typeof value == 'object';
+  return value && !Array.isArray(value) && typeof value === 'object';
 }
 
 function processCopy(value) {
@@ -7,15 +7,15 @@ function processCopy(value) {
     return copyObject(value);
   } else if (Array.isArray(value)) {
     return copyArray(value);
-  } else {
-    return value;
   }
+
+  return value;
 }
 
 function copyArray(arr) {
   const newArr = [];
 
-  for(let i = 0; i < arr.length; i++) {
+  for (let i = 0; i < arr.length; i++) {
     newArr.push(processCopy(arr[i]));
   }
 
@@ -25,7 +25,7 @@ function copyArray(arr) {
 export default function copyObject(obj) {
   const newObj = {};
 
-  for(const key in obj) {
+  for (const key in obj) {
     newObj[key] = processCopy(obj[key]);
   }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="im_chat_container">
-    <div class="header"></div>
+    <div class="header" />
     <div class="im_chat_empty">
       <img src="~assets/im_choose_chat.png">
       {{ l('im_choose_chat') }}

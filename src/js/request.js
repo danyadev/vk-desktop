@@ -2,45 +2,6 @@ import { promises as dns } from 'dns';
 import https from 'https';
 import { timer } from './utils';
 
-// multipart: {
-//   photo: {
-//     value: fs.createReadStream(pathToFile),
-//     filename: 'photo.png',
-//     contentType: 'image/png'
-//   }
-// }
-async function sendMultipart(req, files) {
-  const names = Object.keys(files);
-  const boundary = Math.random().toString(16);
-
-  req.setHeader('Content-Type', `multipart/form-data; boundary="${boundary}"`);
-
-  for (let i = 0; i < names.length; i++) {
-    const name = names[i];
-    const file = files[name];
-    const body = `--${boundary}\r\n`
-               + `Content-Type: ${file.contentType}\r\n`
-               + `Content-Disposition: form-data; name="${name}"; filename="${file.filename}"\r\n`
-               + 'Content-Transfer-Encoding: binary\r\n\r\n';
-
-    req.write(`\r\n${body}`);
-
-    await new Promise((resolve) => {
-      file.value
-        .pipe(req, { end: false })
-        .on('end', () => {
-          if (i !== names.length - 1) {
-            req.write(`\r\n--${boundary}`);
-          } else {
-            req.end(`\r\n--${boundary}--`);
-          }
-
-          resolve();
-        });
-    });
-  }
-}
-
 function request(requestParams, params = {}) {
   return new Promise((resolve, reject) => {
     const req = https.request(requestParams, (res) => {
@@ -99,6 +60,45 @@ function request(requestParams, params = {}) {
       req.end(params.postData || '');
     }
   });
+}
+
+// multipart: {
+//   photo: {
+//     value: fs.createReadStream(pathToFile),
+//     filename: 'photo.png',
+//     contentType: 'image/png'
+//   }
+// }
+async function sendMultipart(req, files) {
+  const names = Object.keys(files);
+  const boundary = Math.random().toString(16);
+
+  req.setHeader('Content-Type', `multipart/form-data; boundary="${boundary}"`);
+
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    const file = files[name];
+    const body = `--${boundary}\r\n`
+               + `Content-Type: ${file.contentType}\r\n`
+               + `Content-Disposition: form-data; name="${name}"; filename="${file.filename}"\r\n`
+               + 'Content-Transfer-Encoding: binary\r\n\r\n';
+
+    req.write(`\r\n${body}`);
+
+    await new Promise((resolve) => {
+      file.value
+        .pipe(req, { end: false })
+        .on('end', () => {
+          if (i !== names.length - 1) {
+            req.write(`\r\n--${boundary}`);
+          } else {
+            req.end(`\r\n--${boundary}--`);
+          }
+
+          resolve();
+        });
+    });
+  }
 }
 
 // Промис сохраняется для того, чтобы при дальнейших вызовах request

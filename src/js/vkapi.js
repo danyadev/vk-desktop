@@ -9,7 +9,7 @@ export const version = '5.118';
 const errorHandlers = {};
 
 function addErrorHandler(codes, fn) {
-  for(const code of codes) {
+  for (const code of codes) {
     errorHandlers[code] = fn;
   }
 }

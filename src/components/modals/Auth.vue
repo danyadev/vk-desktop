@@ -16,7 +16,7 @@ export default {
     ModalHeader,
     Auth
   }
-}
+};
 </script>
 
 <style>

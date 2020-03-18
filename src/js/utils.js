@@ -44,14 +44,14 @@ export function convertCount(count) {
 
 export function onTransitionEnd(el, anyTarget) {
   return new Promise((resolve) => {
-    function onTransitionEnd(event) {
-      if (!anyTarget && event.target != el) return;
+    function onTransitionEndListener(event) {
+      if (!anyTarget && event.target !== el) return;
 
-      el.removeEventListener('transitionend', onTransitionEnd);
+      el.removeEventListener('transitionend', onTransitionEndListener);
       resolve();
     }
 
-    el.addEventListener('transitionend', onTransitionEnd);
+    el.addEventListener('transitionend', onTransitionEndListener);
   });
 }
 
@@ -64,5 +64,5 @@ export function logout() {
 
   usersStorage.update(usersData);
 
-  location.reload();
+  window.location.reload();
 }

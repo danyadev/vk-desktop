@@ -37,6 +37,11 @@
     "no-restricted-syntax": "off",
     "guard-for-in": "off",
     "object-curly-newline": "off",
+    "prefer-template": "off",
+    "global-require": "off",
+    "no-use-before-define": "off",
+    "default-case": "off",
+    "no-loop-func": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
     "func-names": ["error", "never"],
@@ -47,12 +52,17 @@
     "no-constant-condition": ["error", {
       "checkLoops": false
     }],
+    "no-else-return": ["error", {
+      "allowElseIf": true
+    }],
     "space-before-function-paren": ["error", {
       "anonymous": "never",
       "named": "never",
       "asyncArrow": "always"
     }],
 
+    "import/no-cycle": "off",
+    "import/no-dynamic-require": "off",
     "import/order": ["error", {
       "groups": [
         "builtin",
@@ -64,6 +74,7 @@
     "vue/singleline-html-element-content-newline": "off",
     "vue/no-multiple-template-root": "off",
     "vue/require-prop-types": "off",
+    "vue/no-v-html": "off",
     "vue/attribute-hyphenation": ["error", "never"],
     "vue/max-attributes-per-line": ["error", {
       "singleline": 4,

@@ -29,7 +29,7 @@ export default {
       closeModal(this.$props['data-name']);
     }
   }
-}
+};
 </script>
 
 <style>

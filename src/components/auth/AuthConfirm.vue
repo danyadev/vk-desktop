@@ -27,7 +27,7 @@ export default {
     Button
   },
 
-  setup() {
+  setup(props) {
     const { params } = router.currentRoute.value.params;
 
     const state = reactive({

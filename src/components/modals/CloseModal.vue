@@ -28,7 +28,7 @@ export default {
       closeModal(parent.props['data-name']);
     }
   }
-}
+};
 </script>
 
 <style>

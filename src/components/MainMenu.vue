@@ -11,7 +11,9 @@
           <img src="assets/menu/groups.svg">
         </Ripple>
         <img class="menu_account_photo" :src="user.photo_100">
-        <div class="menu_account_name text-overflow">{{ user.first_name }} {{ user.last_name }}</div>
+        <div class="menu_account_name text-overflow">
+          {{ user.first_name }} {{ user.last_name }}
+        </div>
         <div class="menu_account_status text-overflow">
           {{ user.status }}
         </div>
@@ -25,9 +27,16 @@
           :class="['menu_item', { active }]"
           @click.stop="openPage(`/${route}`)"
         >
-          <Icon :name="`menu/${route}`" :color="active ? '#648fc1' : '#a6a6a6'" width="26" height="26" />
+          <Icon
+            :name="`menu/${route}`"
+            :color="active ? '#648fc1' : '#a6a6a6'"
+            width="26"
+            height="26"
+          />
           <div class="menu_item_name">{{ l('menu', route) }}</div>
-          <div class="menu_item_counter" :title="counters[route]">{{ convertCount(counters[route]) }}</div>
+          <div class="menu_item_counter" :title="counters[route]">
+            {{ convertCount(counters[route]) }}
+          </div>
         </Ripple>
 
         <Ripple
@@ -77,12 +86,12 @@ export default {
       return new RegExp(`${route}($|/)`).test(router.currentRoute.value.path);
     }
 
-    const routes = computed(() => {
-      return ['messages'].map((route) => ({
+    const routes = computed(() => (
+      ['messages'].map((route) => ({
         route,
         active: isActiveRoute(`/${route}`)
-      }));
-    });
+      }))
+    ));
 
     function toggleMenu(arg) {
       const state = typeof arg === 'boolean'
@@ -119,7 +128,7 @@ export default {
       openModalFromMenu
     };
   }
-}
+};
 </script>
 
 <style>
@@ -130,9 +139,6 @@ export default {
   z-index: 4;
   background: #fff0;
   visibility: hidden;
-}
-
-.menu_wrap {
   transition: background-color .15s, visibility .15s;
 }
 
@@ -153,9 +159,6 @@ export default {
   overflow: hidden;
   background: #fff;
   box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
-}
-
-.menu {
   transition: transform .35s;
 }
 

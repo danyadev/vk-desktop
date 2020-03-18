@@ -4,7 +4,7 @@
       <HeaderButton />
       <div class="header_name">{{ l('im_header_title') }}</div>
     </div>
-    <div class="im_peers_wrap"></div>
+    <div class="im_peers_wrap" />
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
   components: {
     HeaderButton
   }
-}
+};
 </script>
 
 <style>

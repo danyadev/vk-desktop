@@ -45,7 +45,7 @@ export default {
       retry
     };
   }
-}
+};
 </script>
 
 <style>

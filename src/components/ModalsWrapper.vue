@@ -26,7 +26,7 @@ const modalNames = [
   'Settings'
 ];
 
-for(const name of modalNames) {
+for (const name of modalNames) {
   modalComponents[name] = require(`./modals/${name}.vue`).default;
 }
 
@@ -34,7 +34,7 @@ export default {
   components: modalComponents,
 
   setup() {
-    function onClickToBg({ path, target }) {
+    function onClickToBg({ target }) {
       if (!target.matches('.modal_wrap')) return;
 
       const [modal] = target.children;
@@ -62,7 +62,7 @@ export default {
       onEscape
     };
   }
-}
+};
 </script>
 
 <style>

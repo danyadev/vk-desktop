@@ -22,7 +22,7 @@ export default {
       openMenu
     };
   }
-}
+};
 </script>
 
 <style>
@@ -38,5 +38,7 @@ export default {
   transition: opacity .3s;
 }
 
-.open_menu_btn:hover { opacity: 1 }
+.open_menu_btn:hover {
+  opacity: 1;
+}
 </style>

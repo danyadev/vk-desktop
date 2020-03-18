@@ -11,7 +11,7 @@ export default {
   components: {
     Icon
   }
-}
+};
 </script>
 
 <style>

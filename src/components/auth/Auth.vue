@@ -53,9 +53,7 @@ export default {
       hidePassword: true,
       hasError: false,
       canAuth: computed(() => !state.loading && state.login && state.password),
-      hasUsers: computed(() => {
-        return !props.isModal && Object.keys(store.state.users.users).length;
-      })
+      hasUsers: computed(() => !props.isModal && Object.keys(store.state.users.users).length)
     });
 
     async function auth() {

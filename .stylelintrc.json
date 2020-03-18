@@ -3,10 +3,10 @@
 
   "rules": {
     "font-family-no-missing-generic-family-keyword": null,
+    "declaration-block-trailing-semicolon": null,
     "selector-list-comma-newline-after": null,
     "no-descending-specificity": null,
-    "number-leading-zero": "never",
-    "block-opening-brace-newline-after": "always",
-    "block-closing-brace-newline-before": "always"
+    "comment-empty-line-before": null,
+    "number-leading-zero": "never"
   }
 }

@@ -8,9 +8,9 @@
       <div class="captcha_key">
         <input
           ref="input"
+          v-model="code"
           class="input"
           :placeholder="l('ml_captcha_write')"
-          v-model="code"
           @keydown.enter="sendCode"
         >
       </div>
@@ -69,7 +69,7 @@ export default {
       sendCode
     };
   }
-}
+};
 </script>
 
 <style>

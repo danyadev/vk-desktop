@@ -47,7 +47,7 @@ export default {
     const users = computed(() => store.state.users.users);
 
     function getUserDescription(user) {
-      if (activeUser.value != user.id) {
+      if (activeUser.value !== user.id) {
         return '@' + user.domain;
       }
 
@@ -63,7 +63,7 @@ export default {
         usersData.activeUser = id;
         usersStorage.update(usersData);
 
-        location.reload();
+        window.location.reload();
       } else {
         store.commit('users/setActiveUser', id);
       }
@@ -83,7 +83,7 @@ export default {
       openModal
     };
   }
-}
+};
 </script>
 
 <style scoped>

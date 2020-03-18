@@ -43,7 +43,7 @@ export default {
 
       const {
         user,
-        counters,
+        counters
         // pinnedPeers,
         // profiles,
         // groups,
@@ -138,9 +138,9 @@ img:not(.emoji) {
 }
 
 .text-overflow {
-/* .keyboard_button div, */
-/* .im_peer_message_wrap > div:first-child, */
-/* .attach_photo_type { */
+  /* .keyboard_button div, */
+  /* .im_peer_message_wrap > div:first-child, */
+  /* .attach_photo_type { */
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

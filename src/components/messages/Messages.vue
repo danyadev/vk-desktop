@@ -12,7 +12,7 @@ export default {
   components: {
     MessagesPeers
   }
-}
+};
 </script>
 
 <style>
