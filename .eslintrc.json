@@ -42,6 +42,7 @@
     "no-use-before-define": "off",
     "default-case": "off",
     "no-loop-func": "off",
+    "operator-linebreak": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
     "func-names": ["error", "never"],

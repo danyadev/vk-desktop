@@ -15,7 +15,7 @@
           {{ user.first_name }} {{ user.last_name }}
         </div>
         <div class="menu_account_status text-overflow">
-          {{ user.status }}
+          <VKText>{{ user.status }}</VKText>
         </div>
       </div>
 
@@ -69,11 +69,13 @@ import { openModal } from 'js/modals';
 
 import Ripple from './UI/Ripple.vue';
 import Icon from './UI/Icon.vue';
+import VKText from './UI/VKText.vue';
 
 export default {
   components: {
     Ripple,
-    Icon
+    Icon,
+    VKText
   },
 
   setup() {
@@ -250,15 +252,12 @@ export default {
 
 .menu_item_name {
   color: var(--text-steel-gray);
+  flex-grow: 1;
+  margin-left: 10px;
 }
 
 .menu_item.active .menu_item_name {
   color: var(--blue-text);
-}
-
-.menu_item_name {
-  flex-grow: 1;
-  margin-left: 10px;
 }
 
 .menu_item_counter:not(:empty) {

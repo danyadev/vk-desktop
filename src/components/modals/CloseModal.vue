@@ -1,11 +1,11 @@
 <template>
-    <Icon
-      v-if="$props.closable"
-      name="close"
-      color="var(--blue-background-text)"
-      class="modal_header_close"
-      @click.stop="close"
-    />
+  <Icon
+    v-if="$props.closable"
+    name="close"
+    color="var(--blue-background-text)"
+    class="modal_header_close"
+    @click.stop="close"
+  />
 </template>
 
 <script>
