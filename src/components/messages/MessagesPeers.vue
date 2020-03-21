@@ -23,7 +23,7 @@ export default {
   width: 100%;
   /* 45px - постоянная высота у .header */
   height: calc(100% - 45px);
-  border-right: 1px solid #e7e8ec;
+  border-right: 1px solid var(--separator);
 }
 
 .im_peers_container .header_name {
@@ -33,6 +33,6 @@ export default {
 .im_peers_delimiter {
   width: 100%;
   height: 6px;
-  background: #e7e8ec;
+  background: /* #e7e8ec */ var(--separator);
 }
 </style>

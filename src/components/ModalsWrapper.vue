@@ -111,13 +111,13 @@ export default {
 .modal_content {
   /* <modal-max-height> - <modal-header> - <modal-footer> */
   max-height: calc(92vh - 48px - 56px);
-  background: #fff;
+  background: var(--background);
 }
 
 .modal_footer {
   height: 56px;
-  border-top: 1px solid #e7e8ec;
-  background: #f7f8fa;
+  border-top: 1px solid var(--separator);
+  background: var(--field-background);
 }
 
 .modal_footer .button {
@@ -131,10 +131,6 @@ export default {
 
 .modal_footer .button.right:last-child {
   margin-right: 9px;
-}
-
-.modal_footer .button.light {
-  background: #e4e9ef;
 }
 
 .modal_footer .button.right {

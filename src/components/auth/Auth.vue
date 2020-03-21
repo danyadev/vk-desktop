@@ -23,7 +23,7 @@
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
     <div :class="['auth_error', { active: hasError }]">{{ errorText }}</div>
 
-    <div v-if="hasUsers" class="auth_open_multiacc" @click="openModal('multiaccount')">
+    <div v-if="hasUsers" class="link auth_open_multiacc" @click="openModal('multiaccount')">
       {{ l('available_accounts_list') }}
     </div>
   </div>
@@ -116,8 +116,8 @@ export default {
   margin: 6px 0;
   width: 250px;
   height: 36px;
-  color: #de3f3f;
-  border: 1px solid #de3f3f;
+  color: var(--red);
+  border: 1px solid var(--red);
   border-radius: 5px;
   opacity: 0;
   transition: opacity .3s;
@@ -150,8 +150,8 @@ export default {
   top: 0;
   right: 0;
   opacity: .8;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   background: url('~assets/show.svg') 50% no-repeat;
   transition: opacity .3s;
 }
@@ -171,7 +171,5 @@ export default {
 .auth_open_multiacc {
   position: absolute;
   bottom: 10px;
-  color: #306aab;
-  cursor: pointer;
 }
 </style>

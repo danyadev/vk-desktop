@@ -7,12 +7,13 @@
         <div class="item_data">
           <div class="item_name_wrap">
             <div class="item_name">{{ user.first_name }} {{ user.last_name }}</div>
-            <img
+            <Icon
               v-if="user.id != activeUser"
+              name="close"
+              color="var(--icon-dark-gray)"
               class="item_close"
-              src="~assets/close.svg"
               @click.stop="removeAccount(user.id)"
-            >
+            />
           </div>
           <div class="item_description">{{ getUserDescription(user) }}</div>
         </div>
@@ -35,11 +36,13 @@ import getTranslate from 'js/getTranslate';
 
 import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';
+import Icon from '../UI/Icon.vue';
 
 export default {
   components: {
     ModalHeader,
-    Button
+    Button,
+    Icon
   },
 
   setup() {
@@ -111,7 +114,7 @@ export default {
 }
 
 .item:not(:last-child) .item_data {
-  border-bottom: 1px solid #e7e8ec;
+  border-bottom: 1px solid var(--separator);
 }
 
 .item_name_wrap {
@@ -124,7 +127,7 @@ export default {
 }
 
 .item_description {
-  color: #3e70a9;
+  color: var(--blue-text);
   margin-top: 4px;
 }
 

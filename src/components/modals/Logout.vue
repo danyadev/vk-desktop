@@ -4,7 +4,7 @@
     <div class="modal_content">{{ l('ml_logout_sure') }}</div>
     <div class="modal_footer">
       <Button class="right" @click="logout">{{ l('yes') }}</Button>
-      <Button class="right" :light="true" @click="cancel">{{ l('cancel') }}</Button>
+      <Button class="right" light @click="cancel">{{ l('cancel') }}</Button>
     </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
-  <div :class="['checkbox', { active: $props.active }]">
-    <Icon v-if="$props.active" name="done" color="#fff" />
+  <div :class="['checkbox', { active }]">
+    <Icon v-if="active" name="done" color="var(--blue-background-text)" />
   </div>
 </template>
 
@@ -8,6 +8,8 @@
 import Icon from './Icon.vue';
 
 export default {
+  props: ['active'],
+
   components: {
     Icon
   }
@@ -26,10 +28,10 @@ export default {
 }
 
 .checkbox.active {
-  background: #648fc1;
+  background: var(--icon-blue);
 }
 
 .checkbox:not(.active) {
-  border: 2px solid #bdbdbd;
+  border: 2px solid var(--icon-gray);
 }
 </style>

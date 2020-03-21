@@ -9,7 +9,7 @@ app.once('ready', () => {
 
   const win = new BrowserWindow({
     minWidth: 400,
-    minHeight: 480,
+    minHeight: 550,
     show: false,
     frame: false,
     titleBarStyle: 'hidden',

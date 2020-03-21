@@ -1,14 +1,16 @@
 <script>
-import { h } from 'vue';
+import { h, computed } from 'vue';
 import Ripple from './Ripple.vue';
 
 export default function(props, { slots }) {
+  const light = computed(() => ('light' in props) && props.light !== false);
+
   return h(
     Ripple,
     {
-      color: props.light ? '#ced7e0' : 'rgba(0, 0, 0, .15)',
+      color: light.value ? 'var(--button-light-ripple)' : 'var(--blue-background-ripple)',
       class: ['button', {
-        light: props.light,
+        light: light.value,
         disabled: props.disabled
       }]
     },
@@ -20,8 +22,8 @@ export default function(props, { slots }) {
 <style>
 .button {
   display: inline-block;
-  background: #5789c5;
-  color: #f3f3f3;
+  background: var(--blue-background);
+  color: var(--blue-background-text);
   padding: 9px;
   border-radius: 5px;
   line-height: 18px;
@@ -39,15 +41,7 @@ export default function(props, { slots }) {
 }
 
 .button.light {
-  background: #e4eaf0;
-  color: #55677d;
-}
-
-.button:not(.disabled):hover {
-  background: #547fb3;
-}
-
-.button.light:not(.disabled):hover {
-  background: #dbe3eb;
+  background: var(--button-light-background);
+  color: var(--button-light-color);
 }
 </style>

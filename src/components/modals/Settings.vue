@@ -12,11 +12,11 @@
           <Ripple
             v-for="section of sections"
             :key="section.name"
-            color="#ebedf0"
+            color="var(--hover-background-ripple)"
             :class="['settings_left_item', { active: section.name == activeSection }]"
             @click="activeSection = section.name"
           >
-            <Icon :name="section.icon" color="#3f8ae0" />
+            <Icon :name="section.icon" color="var(--accent)" />
             <div class="settings_left_name">{{ l('settings_sections', section.name) }}</div>
           </Ripple>
         </div>
@@ -73,7 +73,7 @@ export default {
 .settings {
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: var(--background);
   border-radius: 10px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, .25);
 }
@@ -86,7 +86,7 @@ export default {
   font-size: 18px;
   font-weight: 500;
   padding-left: 22px;
-  border-bottom: 1px solid #e1e3e6;
+  border-bottom: 1px solid var(--separator);
 }
 
 .settings_header_close {
@@ -96,8 +96,8 @@ export default {
   width: 64px;
 }
 
-.settings_header .modal_header_close svg {
-  color: #818b98;
+.settings_header .modal_header_close {
+  color: var(--icon-dark-gray);
 }
 
 .settings_content {
@@ -106,7 +106,7 @@ export default {
 }
 
 .settings_left_panel {
-  border-right: 1px solid #e1e3e6;
+  border-right: 1px solid var(--separator);
   padding: 12px;
   height: 100%;
   flex: none;
@@ -132,12 +132,9 @@ export default {
   padding-right: 20px;
 }
 
-.settings_left_item:hover {
-  background: #f4f5f6;
-}
-
+.settings_left_item:hover,
 .settings_left_item.active {
-  background: #ebedf0;
+  background: var(--hover-background);
 }
 
 .settings_right_panel {
@@ -164,7 +161,7 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  color: #5f6677;
+  color: var(--text-gray);
 }
 
 .settings_line.clickable {

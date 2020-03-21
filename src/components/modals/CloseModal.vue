@@ -1,23 +1,20 @@
 <template>
-  <Ripple
-    v-if="$props.closable"
-    :color="$props.isSettings ? 'rgba(0, 0, 0, .12)' : 'rgba(255, 255, 255, .2)'"
-    class="ripple_fast modal_header_close"
-    @click.stop="close"
-  >
-    <Icon name="close" />
-  </Ripple>
+    <Icon
+      v-if="$props.closable"
+      name="close"
+      color="var(--blue-background-text)"
+      class="modal_header_close"
+      @click.stop="close"
+    />
 </template>
 
 <script>
 import { closeModal } from 'js/modals';
 
-import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';
 
 export default {
   components: {
-    Ripple,
     Icon
   },
 
@@ -40,12 +37,6 @@ export default {
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;
-}
-
-.modal_header_close svg {
-  color: #fff;
-  width: 16px;
-  height: 16px;
 }
 
 .modal_header_close:hover {

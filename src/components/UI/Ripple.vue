@@ -22,11 +22,12 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 export default {
   setup(props) {
     const ripples = ref([]);
+    const color = computed(() => props.color || 'rgba(255, 255, 255, .3)');
 
     function addRipple(event) {
       const { left, top } = this.$el.getBoundingClientRect();
@@ -48,7 +49,7 @@ export default {
     }
 
     return {
-      color: props.color || 'rgba(255, 255, 255, .3)',
+      color,
       ripples,
       addRipple
     };
@@ -82,26 +83,6 @@ export default {
   opacity: 0;
 }
 
-.ripple-enter-active,
-.ripple-enter-to-active {
-  transition: all 1.5s ease-out;
-}
-
-.ripple-leave-active,
-.ripple-leave-to-active {
-  transition: all .7s ease-out;
-}
-
-.ripple_fast .ripple-enter-active,
-.ripple_fast .ripple-enter-to-active {
-  transition: all 1s ease-out;
-}
-
-.ripple_fast .ripple-leave-active,
-.ripple_fast .ripple-leave-to-active {
-  transition: all .4s ease-out;
-}
-
 .ripple-enter-from {
   transform: scale(0);
   opacity: 1;
@@ -116,5 +97,25 @@ export default {
 .ripple-leave-to {
   transform: scale(4);
   opacity: 0;
+}
+
+.ripple-enter-active,
+.ripple-enter-to-active {
+  transition: all 1.5s ease-out;
+}
+
+.ripple-leave-active,
+.ripple-leave-to-active {
+  transition: all .7s ease-out;
+}
+
+.fast-ripple .ripple-enter-active,
+.fast-ripple .ripple-enter-to-active {
+  transition: all 1s ease-out;
+}
+
+.fast-ripple .ripple-leave-active,
+.fast-ripple .ripple-leave-to-active {
+  transition: all .4s ease-out;
 }
 </style>

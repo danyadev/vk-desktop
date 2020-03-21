@@ -1,0 +1,103 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:focus {
+  outline: none;
+}
+
+@font-face {
+  font-family: Roboto;
+  font-weight: 400;
+  font-display: block;
+  src: url('~assets/Roboto.ttf');
+}
+
+@font-face {
+  font-family: Roboto;
+  font-weight: 500;
+  font-display: block;
+  src: url('~assets/RobotoMedium.ttf');
+}
+
+body {
+  font-family: BlinkMacSystemFont, Roboto;
+  font-size: 15px;
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  -webkit-rtl-ordering: visual;
+  text-rendering: optimizeSpeed;
+  user-select: none;
+}
+
+img:not(.emoji) {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.app {
+  height: calc(100vh - var(--titlebar-height));
+  position: relative;
+}
+
+.root {
+  --titlebar-height: 32px;
+
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+.root.mac {
+  --titlebar-height: 22px;
+}
+
+.link {
+  color: var(--blue-text);
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.input {
+  width: 250px;
+  outline: none;
+  border: 1px solid var(--field-border);
+  border-radius: 7px;
+  background: var(--field-background);
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 36px;
+  height: 36px;
+  padding: 0 9px;
+  transition: border-color .3s;
+}
+
+.input:focus {
+  border: 1px solid var(--accent);
+}
+
+.input::-webkit-input-placeholder {
+  color: var(--field-placeholder);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  background: var(--blue-background);
+  width: 100%;
+  height: 45px;
+}
+
+.header_name {
+  color: var(--blue-background-text);
+  padding-left: 10px;
+}
+
+.text-overflow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

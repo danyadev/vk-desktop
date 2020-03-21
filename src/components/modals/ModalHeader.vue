@@ -18,7 +18,7 @@ export default {
 
   setup(props) {
     return {
-      closable: 'closable' in props ? props.closable : true
+      closable: ('closable' in props) ? props.closable : true
     };
   }
 };
@@ -29,14 +29,14 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #5281b9;
+  background: var(--blue-background);
   height: 48px;
   padding: 0 10px 0 25px;
 }
 
 .modal_header_title {
   font-size: 15px;
-  color: #f3f3f3;
+  color: var(--blue-background-text);
   line-height: 18px;
 }
 

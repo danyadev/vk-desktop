@@ -75,7 +75,6 @@ export default {
 <style>
 .modal[data-name=captcha] .modal_content {
   width: 300px;
-  background: #fcfcfc;
 }
 
 .captcha_img {
@@ -85,7 +84,7 @@ export default {
 }
 
 .captcha_img img {
-  border: 1px solid #dadada;
+  border: 1px solid var(--separator);
   width: 132px;
   height: 52px;
 }

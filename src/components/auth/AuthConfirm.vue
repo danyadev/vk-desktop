@@ -4,7 +4,7 @@
     <div class="auth_code_descr">{{ l('code_sent_to', isAppCode, [phoneMask]) }}</div>
     <input v-model="code" class="input" :placeholder="l('enter_code')">
     <div class="auth_code_buttons">
-      <Button :light="true" :disabled="loading" @click="cancel">{{ l('cancel') }}</Button>
+      <Button light :disabled="loading" @click="cancel">{{ l('cancel') }}</Button>
       <Button :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
     </div>
     <div :class="['auth_error', { active: wrongCode }]">{{ l('wrong_code') }}</div>
@@ -104,6 +104,7 @@ export default {
 
 .auth_code_buttons .button {
   width: 123px;
+  margin: 2px;
 }
 
 .auth_code .auth_error {

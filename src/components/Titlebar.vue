@@ -63,7 +63,7 @@ export default {
   position: relative;
   height: var(--titlebar-height);
   z-index: 5;
-  background: #5281b9;
+  background: var(--blue-background);
 }
 
 .titlebar_drag {
@@ -71,7 +71,7 @@ export default {
   flex-grow: 1;
   margin: 4px 0 0 4px;
   padding-left: 4px;
-  color: #fff;
+  color: var(--blue-background-text);
   line-height: 24px;
   overflow: hidden;
   white-space: nowrap;
@@ -100,7 +100,7 @@ export default {
 }
 
 .titlebar_button.close:hover {
-  background: #eb0716;
+  background: var(--red);
 }
 
 .titlebar.maximized .titlebar_button.maximize,

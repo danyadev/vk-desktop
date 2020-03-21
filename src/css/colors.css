@@ -1,3 +1,29 @@
 .root {
-  /* TODO: all colors into variables */
+  --background: #fff;
+  --text-primary: #000;
+  --text-gray: #656565;
+  --text-steel-gray: #6d7885;
+  --accent: #528bcc; /* кликабельный / активный элемент */
+  --red: #de3f3f;
+  --separator: #d7d8d9;
+
+  --button-light-background: #0039731a;
+  --button-light-color: #55677d;
+  --button-light-ripple: #ced7e0;
+
+  --field-background: #f2f3f5;
+  --field-placeholder: #818c99;
+  --field-border: #0000001f;
+
+  --blue-background: #5181b8;
+  --blue-background-text: #fff;
+  --blue-background-ripple: rgba(0, 0, 0, .15);
+  --blue-text: #346cad;
+
+  --icon-gray: #99a2ad;
+  --icon-dark-gray: #828a99;
+  --icon-blue: #648fc1;
+
+  --hover-background: #edf2f8;
+  --hover-background-ripple: #e1ebf4;
 }

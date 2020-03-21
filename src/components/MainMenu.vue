@@ -4,8 +4,8 @@
       <div class="menu_account_block">
         <img class="menu_account_background" :src="user.photo_100">
         <Ripple
-          color="rgba(0, 0, 0, .2)"
-          class="ripple_fast menu_account_multiaccount"
+          color="var(--blue-background-ripple)"
+          class="menu_account_multiaccount fast-ripple"
           @click.stop="openModalFromMenu('multiaccount')"
         >
           <img src="assets/menu/groups.svg">
@@ -23,13 +23,13 @@
         <Ripple
           v-for="{ route, active } of routes"
           :key="route"
-          color="#e1e7ed"
+          color="var(--hover-background-ripple)"
           :class="['menu_item', { active }]"
           @click.stop="openPage(`/${route}`)"
         >
           <Icon
             :name="`menu/${route}`"
-            :color="active ? '#648fc1' : '#a6a6a6'"
+            :color="active ? 'var(--accent)' : 'var(--icon-gray)'"
             width="26"
             height="26"
           />
@@ -40,16 +40,16 @@
         </Ripple>
 
         <Ripple
-          color="#e1e7ed"
+          color="var(--hover-background-ripple)"
           class="menu_item"
           @click.stop="openModalFromMenu('settings')"
         >
-          <Icon name="menu/settings" color="#a6a6a6" width="26" height="26" />
+          <Icon name="menu/settings" color="var(--icon-gray)" width="26" height="26" />
           <div class="menu_item_name">{{ l('menu', 'settings') }}</div>
         </Ripple>
 
         <Ripple
-          color="#e1e7ed"
+          color="var(--hover-background-ripple)"
           class="menu_item logout"
           @click.stop="openModalFromMenu('logout')"
         >
@@ -157,8 +157,8 @@ export default {
   width: 250px;
   height: 100%;
   overflow: hidden;
-  background: #fff;
-  box-shadow: 4px 0 6px rgba(0, 0, 0, .2);
+  background: var(--background);
+  box-shadow: 3px 0 8px rgba(0, 0, 0, .2);
   transition: transform .35s;
 }
 
@@ -238,7 +238,6 @@ export default {
   align-items: center;
   padding-left: 20px;
   cursor: pointer;
-  color: #808080;
 }
 
 .menu_item, .menu_item_name {
@@ -246,11 +245,15 @@ export default {
 }
 
 .menu_item:hover, .menu_item.active {
-  background: #eff4f9;
+  background: var(--hover-background);
+}
+
+.menu_item_name {
+  color: var(--text-steel-gray);
 }
 
 .menu_item.active .menu_item_name {
-  color: #3e70a9;
+  color: var(--blue-text);
 }
 
 .menu_item_name {
@@ -259,8 +262,8 @@ export default {
 }
 
 .menu_item_counter:not(:empty) {
-  background: #5181b8;
-  color: #fff;
+  background: var(--blue-background);
+  color: var(--blue-background-text);
   line-height: 18px;
   padding: 1px 6px 0 6px;
   border-radius: 10px;
@@ -277,6 +280,6 @@ export default {
 
 .menu_item.logout .menu_item_name {
   font-size: 17px;
-  color: #de3f3f;
+  color: var(--red);
 }
 </style>

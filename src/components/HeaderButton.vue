@@ -1,5 +1,5 @@
 <template>
-  <Ripple color="rgba(255, 255, 255, .2)" class="ripple_fast open_menu_btn" @click="openMenu">
+  <Ripple color="var(--blue-background-ripple)" class="open_menu_btn fast-ripple" @click="openMenu">
     <img src="assets/menu.webp">
   </Ripple>
 </template>
@@ -13,14 +13,10 @@ export default {
     Ripple
   },
 
-  setup() {
-    function openMenu() {
+  methods: {
+    openMenu() {
       store.commit('setMenuState', true);
     }
-
-    return {
-      openMenu
-    };
   }
 };
 </script>
