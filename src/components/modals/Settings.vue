@@ -161,7 +161,7 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  color: var(--text-gray);
+  color: var(--text-dark-steel-gray);
 }
 
 .settings_line.clickable {

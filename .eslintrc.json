@@ -43,12 +43,17 @@
     "default-case": "off",
     "no-loop-func": "off",
     "operator-linebreak": "off",
+    "no-mixed-operators": "off",
+    "arrow-body-style": "off",
+    "no-nested-ternary": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
+    "no-cond-assign": ["error", "except-parens"],
     "func-names": ["error", "never"],
     "camelcase": ["error", {
       "properties": "never",
-      "allow": ["_token$", "_id$"]
+      "ignoreDestructuring": true,
+      "allow": ["_token$", "_id$", "_settings$", "_until$"]
     }],
     "no-constant-condition": ["error", {
       "checkLoops": false
@@ -76,6 +81,7 @@
     "vue/no-multiple-template-root": "off",
     "vue/require-prop-types": "off",
     "vue/no-v-html": "off",
+    "vue/prop-name-casing": "off",
     "vue/attribute-hyphenation": ["error", "never"],
     "vue/max-attributes-per-line": ["error", {
       "singleline": 4,
@@ -99,6 +105,15 @@
     }],
     "vue/component-tags-order": ["error", {
       "order": ["template", "script", "style"]
+    }],
+    "vue/html-self-closing": ["error", {
+      "html": {
+        "void": "never",
+        "normal": "any",
+        "component": "always"
+      },
+      "svg": "always",
+      "math": "always"
     }]
   }
 }

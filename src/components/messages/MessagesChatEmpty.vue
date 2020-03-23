@@ -1,6 +1,6 @@
 <template>
   <div class="im_chat_container">
-    <div class="header" />
+    <div class="header"></div>
     <div class="im_chat_empty">
       <img src="~assets/im_choose_chat.png">
       {{ l('im_choose_chat') }}
@@ -16,7 +16,7 @@
   align-items: center;
   height: 100%;
   margin-top: -65px;
-  color: var(--text-steel-gray);
+  color: var(--text-dark-steel-gray);
 }
 
 .im_chat_empty img {

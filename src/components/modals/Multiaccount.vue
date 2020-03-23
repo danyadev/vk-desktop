@@ -114,7 +114,7 @@ export default {
 }
 
 .item:not(:last-child) .item_data {
-  border-bottom: 1px solid var(--separator);
+  border-bottom: 1px solid var(--separator-dark);
 }
 
 .item_name_wrap {
@@ -127,7 +127,7 @@ export default {
 }
 
 .item_description {
-  color: var(--blue-text);
+  color: var(--text-blue);
   margin-top: 4px;
 }
 

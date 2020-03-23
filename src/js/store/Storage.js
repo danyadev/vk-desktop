@@ -57,7 +57,7 @@ export const settingsStorage = new Storage({
   },
 
   beforeSave({ userSettings }) {
-    for (const id in userSettings) {
+    for (const id in usersStorage.data.users) {
       userSettings[id] = {
         ...defaultUserSettings,
         ...userSettings[id]

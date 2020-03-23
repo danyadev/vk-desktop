@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
     <ModalHeader :closable="false">{{ l('ml_blocked_account_title', $props.id) }}</ModalHeader>
-    <div class="modal_content" v-html="l('ml_blocked_account_content', $props.id)" />
+    <div class="modal_content" v-html="l('ml_blocked_account_content', $props.id)"></div>
     <div class="modal_footer">
       <Button class="right" @click="logout">{{ l('ml_blocked_account_logout') }}</Button>
       <Button v-if="$props.id == 1" class="right" @click="closeApp">

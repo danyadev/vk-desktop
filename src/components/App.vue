@@ -15,7 +15,8 @@ import { computed, onMounted, watch } from 'vue';
 import router from 'js/router';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
-import { fields } from 'js/utils';
+import { fields, concatProfiles } from 'js/utils';
+import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
 
 import 'src/css/shared.css';
 import 'src/css/colors.css';
@@ -23,9 +24,6 @@ import 'src/css/colors.css';
 import Titlebar from './Titlebar.vue';
 import MainMenu from './MainMenu.vue';
 import ModalsWrapper from './ModalsWrapper.vue';
-
-// for debug
-window.vkapi = vkapi;
 
 export default {
   components: {
@@ -36,6 +34,7 @@ export default {
 
   setup() {
     const activeUser = computed(() => store.state.users.activeUser);
+    const settings = computed(() => store.getters['settings/settings']);
 
     async function initUser() {
       if (!activeUser.value) {
@@ -46,34 +45,34 @@ export default {
 
       const {
         user,
-        counters
-        // pinnedPeers,
-        // profiles,
-        // groups,
+        counters,
+        pinnedPeers,
+        profiles,
+        groups,
         // lp,
-        // temporarilyDisabledNotifications
+        temporarilyDisabledNotifications
       } = await vkapi('execute.init', {
-        // pinnedPeers: this.settings.pinnedPeers.join(','),
+        pinnedPeers: settings.value.pinnedPeers.join(','),
         // lp_version: longpoll.version,
         fields
       });
 
       store.commit('users/updateUser', user);
       store.commit('setMenuCounters', counters);
-      // store.commit('addProfiles', concatProfiles(profiles, groups));
+      store.commit('addProfiles', concatProfiles(profiles, groups));
 
-      // for(const { peer, msg } of pinnedPeers) {
-      //   store.commit('messages/updateConversation', {
-      //     peer: parseConversation(peer),
-      //     msg: msg.id ? parseMessage(msg) : {}
-      //   });
-      // }
+      for (const { peer, msg } of pinnedPeers) {
+        store.commit('messages/updateConversation', {
+          peer: parseConversation(peer),
+          msg: msg.id ? parseMessage(msg) : {}
+        });
+      }
 
       // longpoll.start(lp);
 
-      // for(const peer of temporarilyDisabledNotifications) {
-      //   addNotificationsTimer(peer);
-      // }
+      for (const peer of temporarilyDisabledNotifications) {
+        addNotificationsTimer(peer);
+      }
     }
 
     onMounted(initUser);

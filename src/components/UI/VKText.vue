@@ -4,18 +4,24 @@ import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
 import domains from 'js/json/domains.json';
 
 export default {
-  props: {
+  // TODO boolean props after vue 3.0.0-alpha.10
+  // https://github.com/vuejs/vue-next/commit/3b282e7e3c96786af0a5ff61822882d1ed3f4db3
+  props: [
     // Заменять ли <br> на пробел, чтобы получить однострочный текст
-    inline: { default: false },
+    // TODO default: true
+    'inline',
     // Парсить ли ссылки
-    link: { default: false },
+    'link',
     // Отображать ли информацию о странице при наведении на упоминание
-    mention: { default: false }
-  },
+    // + Дополнительный проп для создания "кликабельных" меншнов?
+    'mention',
+    // Вставлять ли окончательный текст как html
+    // TODO поддержка
+    'rawText'
+  ],
 
   setup(props, { slots }) {
     const [{ children: text }] = slots.default();
-    const children = [];
 
     function parseBlock(block) {
       const elements = [];
@@ -31,13 +37,17 @@ export default {
           }, [block.value])
         );
       } else if (block.type === 'mention') {
-        // TODO элемент, при наведении на который отображать информацию о юзере
-        elements.push(
-          ...block.value.reduce((blocks, mentionTextBlock) => {
+        if (props.mention) {
+          // TODO элемент, при наведении на который отображать информацию о юзере
+          const mentionContent = block.value.reduce((blocks, mentionTextBlock) => {
             blocks.push(...parseBlock(mentionTextBlock));
             return blocks;
-          }, [])
-        );
+          }, []);
+
+          elements.push(...mentionContent);
+        } else {
+          elements.push(block.raw);
+        }
       } else if (block.type === 'emoji') {
         elements.push(generateEmojiImageVNode(h, block.value));
       } else {
@@ -117,8 +127,9 @@ const mentionParser = createParser({
 
     return [{
       type: 'mention',
-      id: type === 'club' ? -id : +id,
-      value: emojiParser(text, true)
+      id: type === 'id' ? +id : -id,
+      value: emojiParser(text, true),
+      raw: mentionText
     }];
   }
 });

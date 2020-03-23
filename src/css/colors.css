@@ -1,11 +1,18 @@
 .root {
   --background: #fff;
+
   --text-primary: #000;
-  --text-gray: #656565;
   --text-steel-gray: #6d7885;
+  --text-dark-steel-gray: #5c6570;
+  --text-gray: #454647;
+  --text-blue: #346cad;
+  --text-blue-dark: #265b96;
+
   --accent: #528bcc; /* кликабельный / активный элемент */
   --red: #de3f3f;
-  --separator: #d7d8d9;
+  --green: #8ac176;
+  --separator: #e7e8ec;
+  --separator-dark: #d7d8d9;
 
   --button-light-background: #0039731a;
   --button-light-color: #55677d;
@@ -16,9 +23,10 @@
   --field-border: #0000001f;
 
   --blue-background: #5181b8;
+  --blue-background-overlight: #92b2d6;
   --blue-background-text: #fff;
-  --blue-background-ripple: rgba(0, 0, 0, .15);
-  --blue-text: #346cad;
+  --blue-background-ripple: #00000026;
+  --steel-gray-background-light: #aeb7c2;
 
   --icon-gray: #99a2ad;
   --icon-dark-gray: #828a99;
@@ -26,4 +34,7 @@
 
   --hover-background: #edf2f8;
   --hover-background-ripple: #e1ebf4;
+
+  --messages-peer-hover: #f5f7fa;
+  --messages-peer-ripple: #e6ebf2;
 }

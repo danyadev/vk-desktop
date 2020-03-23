@@ -59,7 +59,7 @@ img:not(.emoji) {
 }
 
 .link {
-  color: var(--blue-text);
+  color: var(--text-blue);
   cursor: pointer;
 }
 
@@ -102,8 +102,37 @@ img:not(.emoji) {
   padding-left: 10px;
 }
 
-.text-overflow {
+.text-overflow,
+.im_peer_message_wrap > div:first-child {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+@keyframes spinner {
+  from { transform: rotate(0deg) }
+  to { transform: rotate(360deg) }
+}
+
+.loading::after {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 10px auto;
+  animation: spinner .7s infinite linear;
+  background: url('~assets/spinner.webp') 0 / contain;
+}
+
+.verified {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  vertical-align: middle;
+  color: #5c9ce6;
+}
+
+.verified.white {
+  opacity: .7;
+  color: #fff;
 }

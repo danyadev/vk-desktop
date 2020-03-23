@@ -15,7 +15,7 @@
           {{ user.first_name }} {{ user.last_name }}
         </div>
         <div class="menu_account_status text-overflow">
-          <VKText>{{ user.status }}</VKText>
+          <VKText :inline="true">{{ user.status }}</VKText>
         </div>
       </div>
 
@@ -29,7 +29,7 @@
         >
           <Icon
             :name="`menu/${route}`"
-            :color="active ? 'var(--accent)' : 'var(--icon-gray)'"
+            :color="active ? 'var(--icon-blue)' : 'var(--icon-gray)'"
             width="26"
             height="26"
           />
@@ -88,12 +88,12 @@ export default {
       return new RegExp(`${route}($|/)`).test(router.currentRoute.value.path);
     }
 
-    const routes = computed(() => (
-      ['messages'].map((route) => ({
+    const routes = computed(() => {
+      return ['messages'].map((route) => ({
         route,
         active: isActiveRoute(`/${route}`)
-      }))
-    ));
+      }));
+    });
 
     function toggleMenu(arg) {
       const state = typeof arg === 'boolean'
@@ -257,7 +257,7 @@ export default {
 }
 
 .menu_item.active .menu_item_name {
-  color: var(--blue-text);
+  color: var(--text-blue);
 }
 
 .menu_item_counter:not(:empty) {

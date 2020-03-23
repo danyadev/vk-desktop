@@ -80,7 +80,6 @@ async function getDesktopToken(androidToken) {
     }
   }, { raw: true });
 
-  // eslint-disable-next-line
   const link = 'https://oauth.vk.com' + data.match(/(\/auth_by_token.+?)"/)[1];
   const { headers } = await request(link, { raw: true });
 

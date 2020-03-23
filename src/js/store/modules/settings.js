@@ -17,6 +17,10 @@ export default {
   },
 
   getters: {
+    settings(state, getters, { users }) {
+      return state.userSettings[users.activeUser];
+    },
+
     lang({ langName }) {
       if (langName === 'ru') {
         return ru;
