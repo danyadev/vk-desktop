@@ -1,6 +1,4 @@
-function isObject(value) {
-  return value && !Array.isArray(value) && typeof value === 'object';
-}
+import { isObject } from './utils';
 
 function processCopy(value) {
   if (isObject(value)) {

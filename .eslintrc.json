@@ -46,6 +46,7 @@
     "no-mixed-operators": "off",
     "arrow-body-style": "off",
     "no-nested-ternary": "off",
+    "no-else-return": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
     "no-cond-assign": ["error", "except-parens"],
@@ -57,9 +58,6 @@
     }],
     "no-constant-condition": ["error", {
       "checkLoops": false
-    }],
-    "no-else-return": ["error", {
-      "allowElseIf": true
     }],
     "space-before-function-paren": ["error", {
       "anonymous": "never",

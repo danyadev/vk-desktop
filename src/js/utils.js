@@ -13,7 +13,7 @@ import copyObject from './copyObject';
 
 const deviceInfo = '(1; 1; 1; 1; 1; 1)';
 export const VKDesktopUserAgent = `VKDesktop/${version} ${deviceInfo}`;
-export const AndroidUserAgent = `VKAndroidApp/5.50-4431 ${deviceInfo}`;
+export const AndroidUserAgent = `VKAndroidApp/5.56.1-4841 ${deviceInfo}`;
 
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
@@ -26,7 +26,9 @@ export function timer(time) {
 }
 
 export function escape(text) {
-  if (text == null) return '';
+  if (text == null) {
+    return '';
+  }
 
   return String(text)
     .replace(/&/g, '&amp;')
@@ -99,6 +101,7 @@ export function callWithDelay(fn, delay) {
   };
 }
 
+// Выполняет асинхронную фукнцию только когда прошлая фукнция уже была выполнена
 export function createQueueManager(fn) {
   const queue = [];
   let isExecuting = false;
@@ -106,7 +109,7 @@ export function createQueueManager(fn) {
   async function executeQueue() {
     const { args, resolve, context } = queue.shift();
 
-    resolve(await fn.call(context, ...args));
+    resolve(await fn.apply(context, args));
 
     if (queue.length) {
       executeQueue();
@@ -124,6 +127,46 @@ export function createQueueManager(fn) {
         executeQueue();
       }
     });
+  };
+}
+
+// Создает парсер текста, который делит текст на блоки с помощью регулярки.
+// parseText вызывается если кусок текста не входит в регулярку
+// parseText(value (кусок текста), ...args (параметры, переданные в экземпляр парсера)) {}
+// parseElement вызывается если кусок текста уже входит в регулярку
+// parseElement(value, match (вывод регулярки), ...args) {}
+// Эти функции должны возвращать массив, значения которого будут частью ответа парсера
+// Пример:
+// const parser = createParser({
+//   regexp: /element/g,
+//   parseText: (value, arg1) => [{ type: 'text', value }],
+//   parseElement: (value, match, arg1) => [{ type: 'element', value }]
+// });
+// const result = parser('text element', arg1);
+// result = [{ type: 'text', value: 'text ', { type: 'element', value: 'element' } }];
+export function createParser({ regexp, parseText, parseElement }) {
+  return function(text, ...args) {
+    const blocks = [];
+    let match;
+    let offset = 0;
+
+    while ((match = regexp.exec(text))) {
+      const len = match[0].length;
+
+      if (offset !== match.index) {
+        blocks.push(...parseText(text.slice(offset, match.index), ...args));
+      }
+
+      offset = match.index + len;
+
+      blocks.push(...parseElement(text.slice(match.index, offset), match, ...args));
+    }
+
+    if (offset !== text.length) {
+      blocks.push(...parseText(text.slice(offset, text.length), ...args));
+    }
+
+    return blocks;
   };
 }
 

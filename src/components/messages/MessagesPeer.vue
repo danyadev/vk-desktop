@@ -30,7 +30,13 @@
             {{ l('im_attachment_deleted') }}
           </div>
           <div v-else :key="msg.id" :class="['im_peer_text', { isAttachment }]">
-            <VKText :inline="true" :mention="true">{{ message }}</VKText>
+            <ServiceMessage
+              v-if="msg.action"
+              :msg="msg"
+              :author="author"
+              :peer_id="peer.id"
+            />
+            <VKText v-else :inline="true" :mention="true">{{ message }}</VKText>
           </div>
         </div>
         <div v-else class="im_peer_text isContentDeleted">
@@ -63,6 +69,7 @@ import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';
 import VKText from '../UI/VKText.vue';
 import Typing from './Typing.vue';
+import ServiceMessage from './ServiceMessage.vue';
 
 export default {
   props: ['peer', 'msg', 'activeChat'],
@@ -71,7 +78,8 @@ export default {
     Ripple,
     Icon,
     VKText,
-    Typing
+    Typing,
+    ServiceMessage
   },
 
   setup(props) {
@@ -81,7 +89,7 @@ export default {
       owner: computed(() => state.profiles[props.peer.id]),
       author: computed(() => state.profiles[props.msg.from]),
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),
-      message: computed(() => getMessagePreview(props.msg, props.peer.id, state.author)),
+      message: computed(() => getMessagePreview(props.msg)),
       isAttachment: computed(() => !props.msg.text && !props.msg.action && props.msg.hasAttachment),
       outread: computed(() => props.peer.out_read !== props.peer.last_msg_id),
 

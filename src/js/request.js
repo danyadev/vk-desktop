@@ -111,7 +111,7 @@ async function waitConnection() {
       await dns.lookup('api.vk.com');
       waitConnectionPromise = null;
       break;
-    } catch (e) {
+    } catch (err) {
       if (!navigator.onLine) {
         await new Promise((resolve) => {
           window.addEventListener('online', resolve, { once: true });
@@ -127,7 +127,7 @@ export default async function(...data) {
   while (true) {
     try {
       return await request(...data);
-    } catch (e) {
+    } catch (err) {
       if (!waitConnectionPromise) {
         waitConnectionPromise = waitConnection();
       }

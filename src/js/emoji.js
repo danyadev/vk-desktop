@@ -43,7 +43,7 @@ function parseLocalEmoji(data) {
   });
 }
 
-// Генерирует из эмодзи VNode элемент
+// Генерирует из эмодзи VNode img элемент
 export function generateEmojiImageVNode(createElement, emoji) {
   const validEmoji = generateValidEmoji(emoji);
   const local = localEmoji.get(validEmoji);
@@ -65,27 +65,4 @@ export function generateEmojiImageVNode(createElement, emoji) {
   }
 
   return validEmoji;
-}
-
-// Генерирует из эмодзи картинку
-export function generateEmojiImageText(emoji) {
-  const validEmoji = generateValidEmoji(emoji);
-  const local = localEmoji.get(validEmoji);
-
-  if (local) {
-    const [id, x, y, posX, posY] = parseLocalEmoji(local);
-    const isRetina = devicePixelRatio > 1;
-    const x2 = isRetina ? '_2x' : '';
-    const pos = isRetina ? `/ ${posX}px ${posY}px` : '';
-    const style = `background: url('assets/emoji_sprites/sprite_${id}${x2}.webp') -${x}px -${y}px ${pos}`;
-
-    return `<img class="emoji" src="assets/blank.gif" style="${style}" alt="${validEmoji}">`;
-  }
-
-  return validEmoji;
-}
-
-// Преобразует текст с эмодзи символами в текст с эмодзи картинками
-export default function(text = '') {
-  return text.replace(emojiRegex, generateEmojiImageText);
 }

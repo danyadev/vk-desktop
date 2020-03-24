@@ -1,11 +1,11 @@
 <script>
 import { h, Fragment } from 'vue';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
+import { createParser } from 'js/utils';
 import domains from 'js/json/domains.json';
 
 export default {
   // TODO boolean props after vue 3.0.0-alpha.10
-  // https://github.com/vuejs/vue-next/commit/3b282e7e3c96786af0a5ff61822882d1ed3f4db3
   props: [
     // Заменять ли <br> на пробел, чтобы получить однострочный текст
     // TODO default: true
@@ -71,32 +71,6 @@ export default {
 const mentionRE = /\[(club|id)(\d+)\|(.+?)\]/g;
 const linkRE =
   /(?!(\.|-))(((https?|ftps?):\/\/)?([a-zа-яё0-9.-]+\.([a-zа-яё]{2,18}))(:\d{1,5})?(\/\S*)?)(?=$|\s|[^a-zа-яё0-9])/ig;
-
-function createParser({ regexp, parseText, parseElement }) {
-  return function(text, isMention) {
-    const blocks = [];
-    let match;
-    let offset = 0;
-
-    while ((match = regexp.exec(text))) {
-      const len = match[0].length;
-
-      if (offset !== match.index) {
-        blocks.push(...parseText(text.slice(offset, match.index), isMention));
-      }
-
-      offset = match.index + len;
-
-      blocks.push(...parseElement(text.slice(match.index, offset), match, isMention));
-    }
-
-    if (offset !== text.length) {
-      blocks.push(...parseText(text.slice(offset, text.length), isMention));
-    }
-
-    return blocks;
-  };
-}
 
 const linkParser = createParser({
   regexp: linkRE,

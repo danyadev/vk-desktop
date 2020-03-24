@@ -21,18 +21,17 @@ addErrorHandler([5], ({ params, data, user, reject }) => {
     return reject(data.error);
   }
 
+  // По умолчанию: закончилось время действия токена
+  // или была принудительно завершена сессия
   let id = 0;
 
   switch (data.error.error_msg.slice(27)) {
-    case 'user revoke access for this token.':
-    case 'invalid session.':
-      id = 0;
-      break;
-
+    // Страница удалена
     case 'user is deactivated.':
       id = 1;
       break;
 
+    // Страница заблокирована
     case 'invalid access_token (2).':
       id = 2;
       break;
@@ -101,7 +100,7 @@ addErrorHandler([17], async ({ data, reject }) => {
 
           if (res.statusCode === 302) {
             success = true;
-            // Режект в основной функции для повтора вызова метода
+            // Повторяем вызов метода
             reject();
           } else {
             captchaPage = res.data;
@@ -175,8 +174,8 @@ async function executeMethod() {
     if (err) {
       reject(err);
     } else {
-      // Для того, чтобы повторить запрос, я вызываю reject без ошибки
-      // и отлавливаю его здесь, чтобы не удалять запрос из очереди.
+      // Если вызвать reject без параметров, то этот метод не будет
+      // удален из очереди и вызов метода повторится
       shift = false;
     }
   }

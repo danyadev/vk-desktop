@@ -1,10 +1,7 @@
-import { escape, getPhoto, fields, loadProfile, concatProfiles, capitalize } from './utils';
+import { escape, getPhoto, fields, concatProfiles, capitalize } from './utils';
 import getTranslate from './getTranslate';
 import store from './store';
-import emoji from './emoji';
 import vkapi from './vkapi';
-
-const loadedConvMembers = new Set();
 
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
@@ -98,111 +95,8 @@ export function parseMessage(message) {
   };
 }
 
-export function getServiceMessage({ action, fromLongPoll }, author, peer_id, isFull) {
-  const actID = action.member_id || action.mid;
-  const actUser = store.state.profiles[actID] || { id: actID };
-  const { activeUser: id } = store.state.users;
-  const isAuthor = actID === author.id;
-
-  // Возвращает индекс для массива определенного перевода
-  function type(isActionUser) {
-    const user = isActionUser ? actUser : author;
-
-    if (user.id === id) return 0;
-    if (user.sex === 1) return 2;
-
-    return 1;
-  }
-
-  function text(msgText) {
-    // В LongPoll приходят уже экранированные символы
-    const escapedText = fromLongPoll ? msgText : escape(msgText);
-
-    // Эмодзи добавляются только для самого чата потому что
-    // MessagesPeer сам добавляет эмодзи в текст
-    return isFull ? emoji(escapedText) : escapedText;
-  }
-
-  function name(isActionUser, isAccCase) {
-    const user = isActionUser ? actUser : author;
-
-    if (user.id === id) {
-      return isAccCase ? getTranslate('you2') : getTranslate('you');
-    } else if (user.name) {
-      return user.name;
-    } else if (user.first_name) {
-      if (isAccCase) {
-        return `${user.first_name_acc} ${user.last_name_acc}`;
-      }
-
-      return `${user.first_name} ${user.last_name}`;
-    }
-
-    if (!loadedConvMembers.has(peer_id)) {
-      // В случае, когда юзеры в беседе не загружены
-      loadConversationMembers(peer_id);
-    } else {
-      // При добавлении нового юзера в беседу
-      loadProfile(user.id);
-    }
-
-    return '...';
-  }
-
-  switch (action.type) {
-    case 'chat_photo_update':
-      return getTranslate('im_chat_photo_update', type(0), [name(0)]);
-
-    case 'chat_photo_remove':
-      return getTranslate('im_chat_photo_remove', type(0), [name(0)]);
-
-    case 'chat_create':
-      return getTranslate('im_chat_create', type(0), [name(0), text(action.text)]);
-
-    case 'chat_title_update':
-      return getTranslate('im_chat_title_update', type(0), [name(0), text(action.text)]);
-
-    case 'chat_pin_message':
-      if (action.message) {
-        return getTranslate('im_chat_pin_message', type(1), [name(1), text(action.message)]);
-      }
-
-      return getTranslate('im_chat_pin_empty_message', type(1), [name(1)]);
-
-    case 'chat_unpin_message':
-      return getTranslate('im_chat_unpin_message', type(1), [name(1)]);
-
-    case 'chat_invite_user_by_link':
-      return getTranslate('im_chat_invite_user_by_link', type(0), [name(0)]);
-
-    case 'chat_invite_user':
-      if (isAuthor) {
-        return getTranslate('im_chat_returned_user', type(0), [name(0)]);
-      } else if (isFull) {
-        return getTranslate('im_chat_invite_user', type(0), [name(0), name(1, 1)]);
-      }
-
-      return getTranslate('im_chat_invite_user_short', type(1), [name(1, 1)]);
-
-    case 'chat_kick_user':
-      if (isAuthor) {
-        return getTranslate('im_chat_left_user', type(0), [name(0)]);
-      } else if (isFull) {
-        return getTranslate('im_chat_kick_user', type(0), [name(0), name(1, 1)]);
-      }
-
-      return getTranslate('im_chat_kick_user_short', type(1), [name(1, 1)]);
-
-    default:
-      console.warn('[im] Неизвестное действие:', action.type);
-      return action.type;
-  }
-}
-
-export function getMessagePreview(msg, peer_id, author) {
-  if (msg.action) {
-    return getServiceMessage(msg, author || { id: msg.from }, peer_id);
-  } else if (msg.text) {
+export function getMessagePreview(msg) {
+  if (msg.text) {
     return msg.text;
   } else if (msg.hasAttachment) {
     const { isReplyMsg, fwdCount, attachments } = msg;
@@ -250,16 +144,14 @@ export async function loadConversation(id) {
   });
 }
 
+export const loadedConvMembers = new Set();
+
 export async function loadConversationMembers(id, force) {
   if (loadedConvMembers.has(id) && !force) {
     return;
   }
 
   loadedConvMembers.add(id);
-
-  if (id < 2e9) {
-    return loadProfile(id);
-  }
 
   try {
     const { profiles, groups } = await vkapi('messages.getConversationMembers', {
