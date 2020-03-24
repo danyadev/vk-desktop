@@ -315,7 +315,7 @@ export default {
 
 .im_peer_unread:not(:empty) {
   padding: 1px 6px 0 6px;
-  margin: 2px 0 0 3px;
+  margin: 1px 0 0 3px;
   border-radius: 10px;
   background: var(--blue-background);
   color: var(--blue-background-text);

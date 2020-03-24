@@ -3,13 +3,11 @@
     <div class="menu">
       <div class="menu_account_block">
         <img class="menu_account_background" :src="user.photo_100">
-        <Ripple
-          color="var(--blue-background-ripple)"
-          class="menu_account_multiaccount fast-ripple"
+        <img
+          src="assets/menu/groups.svg"
+          class="menu_account_multiaccount"
           @click.stop="openModalFromMenu('multiaccount')"
         >
-          <img src="assets/menu/groups.svg">
-        </Ripple>
         <img class="menu_account_photo" :src="user.photo_100">
         <div class="menu_account_name text-overflow">
           {{ user.first_name }} {{ user.last_name }}
@@ -170,7 +168,7 @@ export default {
   position: relative;
   overflow: hidden;
   height: 125px;
-  padding: 8px 10px 10px 12px;
+  padding: 10px;
   background: rgba(38, 37, 37, .5);
 }
 
@@ -187,17 +185,10 @@ export default {
 
 .menu_account_multiaccount {
   position: absolute;
-  right: 10px;
-  padding: 3px 0 0 3px;
-  width: 33px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.menu_account_multiaccount img {
   width: 26px;
   height: 26px;
+  right: 10px;
+  cursor: pointer;
 }
 
 .menu_account_photo {
@@ -205,6 +196,7 @@ export default {
   height: 56px;
   border-radius: 50%;
   background-size: 100%;
+  vertical-align: middle;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
 }
 
@@ -213,12 +205,13 @@ export default {
 }
 
 .menu_account_name {
-  margin: 12px 0 2px 0;
+  margin-top: 10px;
   color: #fff;
 }
 
 .menu_account_status {
   font-size: 13px;
+  line-height: 20px;
   color: #d9d9d9;
 }
 
