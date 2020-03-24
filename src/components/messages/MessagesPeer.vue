@@ -64,6 +64,7 @@ import { getMessagePreview, loadConversationMembers } from 'js/messages';
 import { getPhoto, convertCount } from 'js/utils';
 import getTranslate from 'js/getTranslate';
 import store from 'js/store';
+import { getShortDate } from 'js/date';
 
 import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';
@@ -123,7 +124,7 @@ export default {
         // Пустая закрепленная беседа
         if (!props.msg.date) return;
 
-        return 'time';
+        return getShortDate(new Date(props.msg.date * 1000));
       }),
 
       hasTyping: computed(() => {
