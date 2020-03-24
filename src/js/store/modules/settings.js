@@ -1,4 +1,4 @@
-import { settingsStorage } from '../Storage';
+import { settingsStorage, defaultUserSettings } from '../Storage';
 import ru from 'src/lang/ru';
 
 const languages = {
@@ -13,7 +13,11 @@ export default {
   mutations: {
     setWindowBounds(state, bounds) {
       state.window = bounds;
-    }
+    },
+
+    setDefaultSettings(state, id) {
+      state.userSettings[id] = defaultUserSettings;
+    },
   },
 
   getters: {

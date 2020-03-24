@@ -251,7 +251,7 @@ export default {
 }
 
 .im_peer_name.blueName {
-  color: var(--text-blue-dark);
+  color: var(--text-blue);
 }
 
 .im_peer_name_wrap .verified {
@@ -305,7 +305,7 @@ export default {
 }
 
 .im_peer_text.isAttachment {
-  color: var(--text-blue-dark);
+  color: var(--text-blue);
 }
 
 .im_peer_text.isContentDeleted {

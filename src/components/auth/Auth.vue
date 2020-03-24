@@ -3,6 +3,7 @@
     <img src="~assets/logo.webp" class="auth_logo">
     <div class="auth_name">VK Desktop</div>
     <input
+      ref="input"
       v-model="login"
       class="input"
       type="text"
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs } from 'vue';
+import { reactive, computed, toRefs, onMounted } from 'vue';
 import store from 'js/store';
 import router from 'js/router';
 import { openModal } from 'js/modals';
@@ -53,7 +54,8 @@ export default {
       hidePassword: true,
       hasError: false,
       canAuth: computed(() => !state.loading && state.login && state.password),
-      hasUsers: computed(() => !props.isModal && Object.keys(store.state.users.users).length)
+      hasUsers: computed(() => !props.isModal && Object.keys(store.state.users.users).length),
+      input: null
     });
 
     async function auth() {
@@ -86,6 +88,10 @@ export default {
         loadUser(data.access_token, props.isModal);
       }
     }
+
+    onMounted(() => {
+      state.input.focus();
+    });
 
     return {
       ...toRefs(state),

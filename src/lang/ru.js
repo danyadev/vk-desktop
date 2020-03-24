@@ -24,6 +24,7 @@ export default {
   enter_code: 'Введите код',
   wrong_code: 'Неверный код',
   use_force_sms: 'Использовать SMS-код',
+  retry_send_sms: 'Отправить смс можно через {0}',
   available_accounts_list: 'Список доступных аккаунтов',
 
   menu: {

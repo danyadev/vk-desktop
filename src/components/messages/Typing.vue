@@ -84,7 +84,7 @@ export default {
 <style>
 .typing_wrap {
   display: flex;
-  color: var(--text-blue-dark);
+  color: var(--text-blue);
 }
 
 .typing_wrap.isChat {
