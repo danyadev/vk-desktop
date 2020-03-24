@@ -37,7 +37,7 @@
 
 <script>
 import { reactive, toRefs, computed, onMounted, nextTick } from 'vue';
-import { fields, concatProfiles, timer } from 'js/utils';
+import { fields, concatProfiles, timer, endScroll } from 'js/utils';
 import { parseConversation, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -61,27 +61,26 @@ export default {
     const state = reactive({
       loading: true,
       loaded: false,
-      lockScroll: false
+      lockScroll: false,
+
+      peerIds: computed(() => store.state.messages.peerIds),
+      settings: computed(() => store.getters['settings/settings']),
+      peersList: computed(() => store.getters['messages/peersList']),
+
+      peersLists: computed(() => ({
+        pinned: state.settings.pinnedPeers.map((id) => {
+          return store.state.messages.conversations[id];
+        }),
+
+        unpinned: state.peersList.filter(({ peer }) => {
+          return !state.settings.pinnedPeers.includes(peer.id);
+        })
+      }))
     });
-
-    const peerIds = computed(() => store.state.messages.peerIds);
-
-    const settings = computed(() => store.getters['settings/settings']);
-    const peersList = computed(() => store.getters['messages/peersList']);
-
-    const peersLists = computed(() => ({
-      pinned: settings.value.pinnedPeers.map((id) => {
-        return store.state.messages.conversations[id];
-      }),
-
-      unpinned: peersList.value.filter(({ peer }) => {
-        return !settings.value.pinnedPeers.includes(peer.id);
-      })
-    }));
 
     async function load() {
       const { items, profiles, groups } = await vkapi('messages.getConversations', {
-        offset: peerIds.value.length,
+        offset: state.peerIds.length,
         count: 40,
         fields,
         extended: true
@@ -108,9 +107,12 @@ export default {
       }
     }
 
-    function onScroll() {
-      // TODO
-    }
+    const onScroll = endScroll(() => {
+      if(!state.loading && !state.loaded) {
+        state.loading = true;
+        load();
+      }
+    });
 
     onMounted(() => {
       load();
@@ -118,9 +120,7 @@ export default {
 
     return {
       ...toRefs(state),
-
-      onScroll,
-      peersLists
+      onScroll
     };
   }
 };
