@@ -44,7 +44,7 @@ export default {
     });
 
     function updateImg() {
-      state.src += ~state.src.indexOf('&s=1') ? '1' : '&s=1';
+      state.src += (state.src.indexOf('&s=1') === -1) ? '&s=1' : '1';
     }
 
     function sendCode() {

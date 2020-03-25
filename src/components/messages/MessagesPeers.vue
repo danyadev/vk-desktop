@@ -9,6 +9,7 @@
       class="im_peers_wrap"
       :vclass="{ loading }"
       :lock="lockScroll"
+      :mutationWhitelist="['.scrolly-viewport']"
       @scroll="onScroll"
     >
       <template v-if="peersLists.pinned.length && peersLists.pinned[0]">
@@ -60,7 +61,10 @@ export default {
   setup() {
     const state = reactive({
       loading: true,
-      loaded: false,
+      loaded: computed({
+        get: () => store.state.messages.isMessagesPeersLoaded,
+        set: (value) => (store.state.messages.isMessagesPeersLoaded = value)
+      }),
       lockScroll: false,
 
       peerIds: computed(() => store.state.messages.peerIds),

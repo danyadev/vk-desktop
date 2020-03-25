@@ -1,5 +1,5 @@
 <script>
-import { h, Fragment } from 'vue';
+import { h, Fragment, computed } from 'vue';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
 import { createParser } from 'js/utils';
 import domains from 'js/json/domains.json';
@@ -23,7 +23,7 @@ export default {
   },
 
   setup(props, { slots }) {
-    const [{ children: text }] = slots.default();
+    const text = computed(() => slots.default()[0].children);
 
     function parseBlock(block) {
       const elements = [];
@@ -65,7 +65,7 @@ export default {
 
     return () => h(
       Fragment,
-      mentionParser(text).map((block) => parseBlock(block)[0])
+      mentionParser(text.value).map((block) => parseBlock(block)[0])
     );
   }
 };

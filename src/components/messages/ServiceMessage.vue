@@ -53,11 +53,6 @@ function getServiceMessage(msg, author, peer_id, isFull) {
       : 1; // Мужской пол
   }
 
-  function text(msgText) {
-    // В LongPoll приходят уже экранированные символы
-    return msg.fromLongPoll ? msgText : escape(msgText);
-  }
-
   function name(isActionUser, isAccCase) {
     const user = isActionUser ? actUser : author;
 
@@ -90,14 +85,14 @@ function getServiceMessage(msg, author, peer_id, isFull) {
       return getVNode('im_chat_photo_remove', type(0), [name(0)]);
 
     case 'chat_create':
-      return getVNode('im_chat_create', type(0), [name(0), text(msg.action.text)]);
+      return getVNode('im_chat_create', type(0), [name(0), msg.action.text]);
 
     case 'chat_title_update':
-      return getVNode('im_chat_title_update', type(0), [name(0), text(msg.action.text)]);
+      return getVNode('im_chat_title_update', type(0), [name(0), msg.action.text]);
 
     case 'chat_pin_message':
       if (msg.action.message) {
-        return getVNode('im_chat_pin_message', type(1), [name(1), text(msg.action.message)]);
+        return getVNode('im_chat_pin_message', type(1), [name(1), msg.action.message]);
       } else {
         return getVNode('im_chat_pin_empty_message', type(1), [name(1)]);
       }

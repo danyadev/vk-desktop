@@ -47,14 +47,26 @@
     "arrow-body-style": "off",
     "no-nested-ternary": "off",
     "no-else-return": "off",
+    "no-case-declarations": "off",
+    "no-continue": "off",
+    "array-callback-return": "off",
+    "no-multi-assign": "off",
+    "no-shadow": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
     "no-cond-assign": ["error", "except-parens"],
     "func-names": ["error", "never"],
+    "key-spacing": ["error", {
+      "mode": "minimum",
+      "beforeColon": false
+    }],
+    "no-multi-spaces": ["error", {
+      "ignoreEOLComments": true
+    }],
     "camelcase": ["error", {
       "properties": "never",
       "ignoreDestructuring": true,
-      "allow": ["_token$", "_id$", "_settings$", "_until$"]
+      "allow": ["_token$", "_ids?$", "_settings$", "_until$"]
     }],
     "no-constant-condition": ["error", {
       "checkLoops": false

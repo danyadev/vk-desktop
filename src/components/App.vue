@@ -17,6 +17,7 @@ import store from 'js/store';
 import vkapi from 'js/vkapi';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
+import longpoll from 'js/longpoll';
 
 import 'src/css/shared.css';
 import 'src/css/colors.css';
@@ -49,11 +50,11 @@ export default {
         pinnedPeers,
         profiles,
         groups,
-        // lp,
+        lp,
         temporarilyDisabledNotifications
       } = await vkapi('execute.init', {
         pinnedPeers: settings.value.pinnedPeers.join(','),
-        // lp_version: longpoll.version,
+        lp_version: longpoll.version,
         fields
       });
 
@@ -68,7 +69,7 @@ export default {
         });
       }
 
-      // longpoll.start(lp);
+      longpoll.start(lp);
 
       for (const peer of temporarilyDisabledNotifications) {
         addNotificationsTimer(peer);

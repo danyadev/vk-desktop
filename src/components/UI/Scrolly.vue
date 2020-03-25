@@ -33,6 +33,7 @@
 
 <script>
 import { reactive, toRefs, onMounted, onBeforeUnmount } from 'vue';
+import { debounce } from 'js/utils';
 
 const waitAnimationFrame = () => new Promise(requestAnimationFrame);
 
@@ -44,24 +45,8 @@ function toPercent(n) {
   return `${normalize(n, 1) * 100}%`;
 }
 
-function isNodesEqual(a, b) {
-  let i = a.length;
-
-  if (i !== b.length) {
-    return false;
-  }
-
-  while (i--) {
-    if (!a[i].isEqualNode(b[i])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 export default {
-  props: ['vclass', 'lock', 'horizontalScroll'],
+  props: ['vclass', 'lock', 'horizontalScroll', 'mutationWhitelist'],
 
   setup(props, { emit }) {
     const state = reactive({
@@ -82,7 +67,7 @@ export default {
       timerId: null
     });
 
-    function debounce(fn) {
+    function modifiedDebounce(fn) {
       return function(...args) {
         if (state.timerId) {
           clearTimeout(state.timerId);
@@ -200,7 +185,7 @@ export default {
           bar.style.top = toPercent(barTop / offsetHeight);
         }
 
-        emit('scroll', Object.assign(viewport, { dx, dy }));
+        emit('scroll', { viewport, dx, dy });
       }
 
       function onMouseUp(event) {
@@ -234,7 +219,7 @@ export default {
       }
     }
 
-    const hideScrollBars = debounce(() => {
+    const hideScrollBars = modifiedDebounce(() => {
       if (!state.isScrolling) {
         state.isActive = false;
       }
@@ -282,23 +267,23 @@ export default {
       barY.style.top = toPercent(barTop / offsetHeight);
 
       if (dx || dy) {
-        emit('scroll', Object.assign(viewport, { dx, dy }));
+        emit('scroll', { viewport, dx, dy });
       }
     }
 
     onMounted(() => {
       state.mutationObserver = new MutationObserver((records) => {
-        if (
-          !records.every(({ target, addedNodes: a, removedNodes: r }) => {
-            const isRipple = target.matches && target.matches('.ripples');
+        const whitelist = props.mutationWhitelist;
 
-            if (!isRipple) {
-              console.log(target);
-            }
+        const isWhitelistedMutate = records.find(({ target }) => {
+          if (whitelist) {
+            return whitelist.find((selector) => target.matches && target.matches(selector));
+          } else {
+            return !target.matches || !target.matches('.ripples');
+          }
+        });
 
-            return isRipple || isNodesEqual(a, r);
-          })
-        ) {
+        if (isWhitelistedMutate) {
           refreshScrollLayout();
         }
       });
@@ -309,8 +294,13 @@ export default {
         subtree: true
       });
 
-      state.resizeObserver = new ResizeObserver(() => refreshScrollLayout());
-      state.resizeObserver.observe(state.viewport, { box: 'border-box' });
+      state.resizeObserver = new ResizeObserver(
+        debounce(() => refreshScrollLayout(), 250)
+      );
+
+      state.resizeObserver.observe(state.viewport, {
+        box: 'border-box'
+      });
     });
 
     onBeforeUnmount(() => {
