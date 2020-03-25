@@ -17,7 +17,7 @@ export default {
 
     setDefaultSettings(state, id) {
       state.userSettings[id] = defaultUserSettings;
-    },
+    }
   },
 
   getters: {

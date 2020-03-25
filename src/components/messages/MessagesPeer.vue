@@ -14,7 +14,7 @@
       <div class="im_peer_title">
         <div class="im_peer_name_wrap">
           <div :class="['im_peer_name text-overflow', { blueName }]">
-            <VKText :inline="true">{{ chatName }}</VKText>
+            <VKText>{{ chatName }}</VKText>
           </div>
           <Icon v-if="owner && owner.verified" name="verified" class="verified" />
           <div v-if="peer.muted" class="im_peer_muted"></div>
@@ -36,7 +36,7 @@
               :author="author"
               :peer_id="peer.id"
             />
-            <VKText v-else :inline="true" :mention="true">{{ message }}</VKText>
+            <VKText v-else mention>{{ message }}</VKText>
           </div>
         </div>
         <div v-else class="im_peer_text isContentDeleted">

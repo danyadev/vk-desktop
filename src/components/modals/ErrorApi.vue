@@ -2,13 +2,13 @@
   <div class="modal">
     <ModalHeader :closable="false">Internal Server Error</ModalHeader>
     <div class="modal_content">
-      {{ l('ml_error_api', [$props.method]) }}
+      {{ l('ml_error_api', [method]) }}
 
       <div class="ml_error_warn">
         {{ l('ml_error_cancel_warn') }}
       </div>
 
-      {{ $props.error.error_msg }}
+      {{ error.error_msg }}
     </div>
     <div class="modal_footer">
       <Button class="right" @click="cancel">{{ l('cancel') }}</Button>
@@ -24,6 +24,8 @@ import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';
 
 export default {
+  props: ['method', 'error', 'retry'],
+
   components: {
     ModalHeader,
     Button

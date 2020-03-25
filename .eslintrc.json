@@ -67,6 +67,7 @@
 
     "import/no-cycle": "off",
     "import/no-dynamic-require": "off",
+    "import/prefer-default-export": "off",
     "import/order": ["error", {
       "groups": [
         "builtin",

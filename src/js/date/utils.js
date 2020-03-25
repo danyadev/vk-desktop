@@ -1,7 +1,7 @@
 import getTranslate from '../getTranslate';
 
 export function format(date, mask) {
-  const addZero = (num) => num < 10 ? '0' + num : num;
+  const addZero = (num) => (num < 10 ? '0' + num : num);
   const months = getTranslate('months');
 
   const tokens = {

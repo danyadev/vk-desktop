@@ -5,20 +5,22 @@ import { createParser } from 'js/utils';
 import domains from 'js/json/domains.json';
 
 export default {
-  // TODO boolean props after vue 3.0.0-alpha.10
-  props: [
+  props: {
     // Заменять ли <br> на пробел, чтобы получить однострочный текст
-    // TODO default: true
-    'inline',
+    inline: {
+      type: Boolean,
+      default: true
+    },
     // Парсить ли ссылки
-    'link',
+    link: {
+      type: Boolean
+    },
     // Отображать ли информацию о странице при наведении на упоминание
     // + Дополнительный проп для создания "кликабельных" меншнов?
-    'mention',
-    // Вставлять ли окончательный текст как html
-    // TODO поддержка
-    'rawText'
-  ],
+    mention: {
+      type: Boolean
+    }
+  },
 
   setup(props, { slots }) {
     const [{ children: text }] = slots.default();

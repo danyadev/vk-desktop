@@ -1,6 +1,6 @@
 <template>
   <Icon
-    v-if="$props.closable"
+    v-if="closable"
     name="close"
     color="var(--blue-background-text)"
     class="modal_header_close"
@@ -14,13 +14,15 @@ import { closeModal } from 'js/modals';
 import Icon from '../UI/Icon.vue';
 
 export default {
+  props: ['closable', 'isSettings'],
+
   components: {
     Icon
   },
 
   methods: {
     close() {
-      const parent = this.$props.isSettings ? this.$parent : this.$parent.parent;
+      const parent = this.isSettings ? this.$parent : this.$parent.parent;
 
       closeModal(parent.props['data-name']);
     }

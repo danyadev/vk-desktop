@@ -18,7 +18,7 @@
             :key="peer.id"
             :peer="peer"
             :msg="msg"
-            :activeChat="$props.activeChat"
+            :activeChat="activeChat"
           />
         </div>
         <div class="im_peers_delimiter"></div>
@@ -29,7 +29,7 @@
         :key="peer.id"
         :peer="peer"
         :msg="msg"
-        :activeChat="$props.activeChat"
+        :activeChat="activeChat"
       />
     </Scrolly>
   </div>
@@ -108,7 +108,7 @@ export default {
     }
 
     const onScroll = endScroll(() => {
-      if(!state.loading && !state.loaded) {
+      if (!state.loading && !state.loaded) {
         state.loading = true;
         load();
       }

@@ -17,7 +17,7 @@
   "author": "danyadev <danyadev@mail.ru>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@vue/compiler-sfc": "3.0.0-alpha.9",
+    "@vue/compiler-sfc": "3.0.0-alpha.10",
     "copy-webpack-plugin": "5.1.1",
     "css-loader": "3.4.2",
     "electron": "7.2.1",
@@ -33,7 +33,7 @@
     "stylelint": "13.2.1",
     "stylelint-config-standard": "20.0.0",
     "terser-webpack-plugin": "2.3.5",
-    "vue": "3.0.0-alpha.9",
+    "vue": "3.0.0-alpha.10",
     "vue-loader": "16.0.0-alpha.3",
     "vue-router": "4.0.0-alpha.3",
     "vue-svg-loader": "danyadev/vue-svg-loader#next",

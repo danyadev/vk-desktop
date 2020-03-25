@@ -13,7 +13,7 @@
           {{ user.first_name }} {{ user.last_name }}
         </div>
         <div class="menu_account_status text-overflow">
-          <VKText :inline="true">{{ user.status }}</VKText>
+          <VKText>{{ user.status }}</VKText>
         </div>
       </div>
 

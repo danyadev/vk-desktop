@@ -26,7 +26,7 @@ export default {
     logout,
 
     cancel() {
-      closeModal(this.$props['data-name']);
+      closeModal('logout');
     }
   }
 };
