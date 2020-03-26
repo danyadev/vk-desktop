@@ -93,13 +93,10 @@ export default {
       let newIndex = index;
 
       if (isRestoreMsg) {
-        // Найти индекс выше уже не получится
         if (index === 0) {
           return;
         }
 
-        // Находит новое положение беседы, которое
-        // останется таким же или будет выше
         for (let i = 0; i < index; i++) {
           if (peers[i].msg.id < id) {
             newIndex = i;
@@ -107,8 +104,6 @@ export default {
           }
         }
       } else if (index !== peers.length - 1) {
-        // Находит новое положение беседы, которое
-        // останется таким же или будет ниже
         for (let i = peers.length - 1; i > index; i--) {
           if (peers[i].msg.id > id) {
             newIndex = i;
@@ -116,22 +111,15 @@ export default {
           }
         }
       } else {
-        // Беседа находится в самом низу списка бесед.
-        // Если беседы загружены не до конца, то удаляем беседу,
-        // иначе просто оставляем ее на месте.
         if (!state.isMessagesPeersLoaded) {
-          delete state.peerIds[index];
+          state.peerIds.splice(index, 1);
         }
 
         return;
       }
 
       if (newIndex === peers.length - 1 && !state.isMessagesPeersLoaded) {
-        // Если диалог находится в самом низу текущего списка бесед
-        // и беседы полностью не загружены, то удалим диалог
-        // из списка, потому что до него можно будет добраться
-        // с помощью подгрузки сообщений ниже.
-        delete state.peerIds[index];
+        state.peerIds.splice(index, 1);
       } else {
         moveArrItem(state.peerIds, index, newIndex);
       }
