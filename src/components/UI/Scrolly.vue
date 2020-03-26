@@ -46,7 +46,7 @@ function toPercent(n) {
 }
 
 export default {
-  props: ['vclass', 'lock', 'horizontalScroll', 'mutationWhitelist'],
+  props: ['vclass', 'lock', 'horizontalScroll'],
 
   setup(props, { emit }) {
     const state = reactive({
@@ -55,6 +55,7 @@ export default {
       barX: null,
       barY: null,
 
+      actualScrollHeight: 0,
       touchX: 0,
       touchY: 0,
 
@@ -101,7 +102,7 @@ export default {
       }
     }
 
-    function onKeyDown(event) {
+    async function onKeyDown(event) {
       const { clientHeight } = state.scrolly;
       const position = {
         33: [0, 10 - clientHeight], // Page Up
@@ -117,8 +118,11 @@ export default {
           event.preventDefault();
         }
 
-        activateScrollBars();
-        refreshScrollLayout(...position);
+        await waitAnimationFrame();
+
+        if (refreshScrollLayout(...position) !== false) {
+          activateScrollBars();
+        }
       }
     }
 
@@ -160,10 +164,10 @@ export default {
         if (bar.parentElement.matches('.axis-x')) {
           const maxBarLeft = offsetWidth - bar.offsetWidth;
           const barLeft = normalize(
+            maxBarLeft,
             isMoveToPoint
               ? offsetX - bar.offsetWidth / 2
-              : initialBarLeft + pageX - initialPageX,
-            maxBarLeft
+              : initialBarLeft + pageX - initialPageX
           );
           const scrollLeft = (barLeft / maxBarLeft) * (scrollWidth - offsetWidth);
 
@@ -173,10 +177,10 @@ export default {
         } else {
           const maxBarTop = offsetHeight - bar.offsetHeight;
           const barTop = normalize(
+            maxBarTop,
             isMoveToPoint
               ? offsetY - bar.offsetHeight / 2
-              : initialBarTop + pageY - initialPageY,
-            maxBarTop
+              : initialBarTop + pageY - initialPageY
           );
           const scrollTop = (barTop / maxBarTop) * (scrollHeight - offsetHeight);
 
@@ -272,18 +276,9 @@ export default {
     }
 
     onMounted(() => {
-      state.mutationObserver = new MutationObserver((records) => {
-        const whitelist = props.mutationWhitelist;
-
-        const isWhitelistedMutate = records.find(({ target }) => {
-          if (whitelist) {
-            return whitelist.find((selector) => target.matches && target.matches(selector));
-          } else {
-            return !target.matches || !target.matches('.ripples');
-          }
-        });
-
-        if (isWhitelistedMutate) {
+      state.mutationObserver = new MutationObserver(() => {
+        if (state.viewport.scrollHeight !== state.actualScrollHeight) {
+          state.actualScrollHeight = state.viewport.scrollHeight;
           refreshScrollLayout();
         }
       });

@@ -9,7 +9,6 @@
       class="im_peers_wrap"
       :vclass="{ loading }"
       :lock="lockScroll"
-      :mutationWhitelist="['.scrolly-viewport']"
       @scroll="onScroll"
     >
       <template v-if="peersLists.pinned.length && peersLists.pinned[0]">
