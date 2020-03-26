@@ -298,7 +298,7 @@ export default {
     preload: hasPreloadMessages,
     async handler({ key: peer_id, items }) {
       const conv = store.state.messages.conversations[peer_id];
-      const convList = store.getters['messages/conversationsList'];
+      const convList = store.getters['messages/peersList'];
       const lastLocalConv = convList[convList.length - 1];
       const messagesList = store.state.messages.messages[peer_id] || [];
       const [topMsg] = messagesList;

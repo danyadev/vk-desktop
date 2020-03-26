@@ -121,6 +121,9 @@ function getServiceMessage(msg, author, peer_id, isFull) {
         return getVNode('im_chat_kick_user_short', type(1), [name(1, 1)]);
       }
 
+    case 'chat_screenshot':
+      return getVNode('im_chat_screenshot', type(0), [name(0)]);
+
     default:
       console.warn('[im] Неизвестное действие:', msg.action.type);
       return msg.action.type;

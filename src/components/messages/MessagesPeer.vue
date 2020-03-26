@@ -273,7 +273,7 @@ export default {
   margin-left: 5px;
   color: var(--text-steel-gray);
   font-size: 13px;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .im_peer_message_wrap {
