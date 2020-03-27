@@ -1,11 +1,14 @@
 <template>
-  <div class="settings_line clickable" @click="active = !active">
-    Тестовый чекбокс
-    <Checkbox :active="active" />
+  <div class="settings_line clickable" @click="toggle('devShowPeerId')">
+    {{ l('settings_show_peer_id') }}
+    <Checkbox :active="settings.devShowPeerId" />
   </div>
 </template>
 
 <script>
+import { computed } from 'vue';
+import store from 'js/store';
+
 import Checkbox from '../../UI/Checkbox.vue';
 
 export default {
@@ -14,8 +17,17 @@ export default {
   },
 
   setup() {
+    const settings = computed(() => store.getters['settings/settings']);
+
+    function toggle(name) {
+      store.commit('settings/updateUserSettings', {
+        [name]: !settings.value[name]
+      });
+    }
+
     return {
-      active: false
+      settings,
+      toggle
     };
   }
 };

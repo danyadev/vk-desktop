@@ -14,7 +14,7 @@ export default function(props, { slots }) {
         disabled: props.disabled
       }]
     },
-    slots.default
+    slots
   );
 }
 </script>

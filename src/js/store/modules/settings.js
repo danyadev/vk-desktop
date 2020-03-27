@@ -17,6 +17,13 @@ export default {
 
     setDefaultSettings(state, id) {
       state.userSettings[id] = defaultUserSettings;
+    },
+
+    updateUserSettings(state, settings) {
+      state.userSettings[this.state.users.activeUser] = {
+        ...this.getters['settings/settings'],
+        ...settings
+      };
     }
   },
 

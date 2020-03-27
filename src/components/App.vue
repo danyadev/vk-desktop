@@ -5,13 +5,15 @@
     <div class="app">
       <MainMenu v-if="activeUser" />
       <RouterView />
+
       <ModalsWrapper />
+      <ContextMenuWrapper />
     </div>
   </div>
 </template>
 
 <script>
-import { computed, onMounted, watch } from 'vue';
+import { reactive, computed, onMounted, watch } from 'vue';
 import router from 'js/router';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
@@ -25,20 +27,30 @@ import 'src/css/colors.css';
 import Titlebar from './Titlebar.vue';
 import MainMenu from './MainMenu.vue';
 import ModalsWrapper from './ModalsWrapper.vue';
+import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
+
+// для разработки / дебага
+window.vkapi = vkapi;
+window.store = store;
+window.router = router;
+window.longpoll = longpoll;
 
 export default {
   components: {
     Titlebar,
     MainMenu,
-    ModalsWrapper
+    ModalsWrapper,
+    ContextMenuWrapper
   },
 
   setup() {
-    const activeUser = computed(() => store.state.users.activeUser);
-    const settings = computed(() => store.getters['settings/settings']);
+    const state = reactive({
+      mac: process.platform === 'darwin',
+      activeUser: computed(() => store.state.users.activeUser)
+    });
 
     async function initUser() {
-      if (!activeUser.value) {
+      if (!state.activeUser) {
         return router.replace('/auth');
       }
 
@@ -53,7 +65,6 @@ export default {
         lp,
         temporarilyDisabledNotifications
       } = await vkapi('execute.init', {
-        pinnedPeers: settings.value.pinnedPeers.join(','),
         lp_version: longpoll.version,
         fields
       });
@@ -69,6 +80,10 @@ export default {
         });
       }
 
+      store.commit('settings/updateUserSettings', {
+        pinnedPeers: pinnedPeers.map(({ peer }) => peer.peer.id)
+      });
+
       longpoll.start(lp);
 
       for (const peer of temporarilyDisabledNotifications) {
@@ -77,12 +92,9 @@ export default {
     }
 
     onMounted(initUser);
-    watch(activeUser, initUser);
+    watch(() => state.activeUser, initUser);
 
-    return {
-      activeUser,
-      mac: process.platform === 'darwin'
-    };
+    return state;
   }
 };
 </script>

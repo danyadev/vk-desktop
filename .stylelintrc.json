@@ -6,8 +6,12 @@
     "declaration-block-trailing-semicolon": null,
     "selector-list-comma-newline-after": null,
     "custom-property-empty-line-before": null,
+    "declaration-colon-newline-after": null,
     "no-descending-specificity": null,
     "comment-empty-line-before": null,
-    "number-leading-zero": "never"
+    "number-leading-zero": "never",
+    "indentation": [2, {
+      "ignore": ["value"]
+    }]
   }
 }

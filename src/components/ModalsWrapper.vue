@@ -17,7 +17,7 @@ const modalNames = [
   'Auth',
   'BlockedAccount',
   'Captcha',
-  // 'ClearHistory',
+  'ClearHistory',
   'ErrorApi',
   'Logout',
   // 'MediaViewer',

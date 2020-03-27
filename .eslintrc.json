@@ -52,6 +52,7 @@
     "array-callback-return": "off",
     "no-multi-assign": "off",
     "no-shadow": "off",
+    "no-restricted-globals": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
     "no-cond-assign": ["error", "except-parens"],

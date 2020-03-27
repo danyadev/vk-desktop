@@ -11,18 +11,15 @@
       :lock="lockScroll"
       @scroll="onScroll"
     >
-      <template v-if="peersLists.pinned.length && peersLists.pinned[0]">
-        <div>
-          <MessagesPeer
-            v-for="{ peer, msg } of peersLists.pinned"
-            :key="peer.id"
-            :peer="peer"
-            :msg="msg"
-            :activeChat="activeChat"
-          />
-        </div>
-        <div class="im_peers_delimiter"></div>
-      </template>
+      <div v-if="peersLists.pinned.length" class="im_pinned_peers">
+        <MessagesPeer
+          v-for="{ peer, msg } of peersLists.pinned"
+          :key="peer.id"
+          :peer="peer"
+          :msg="msg"
+          :activeChat="activeChat"
+        />
+      </div>
 
       <MessagesPeer
         v-for="{ peer, msg } of peersLists.unpinned"
@@ -71,9 +68,9 @@ export default {
       peersList: computed(() => store.getters['messages/peersList']),
 
       peersLists: computed(() => ({
-        pinned: state.settings.pinnedPeers.map((id) => {
-          return store.state.messages.conversations[id];
-        }),
+        pinned: state.settings.pinnedPeers
+          .map((id) => store.state.messages.conversations[id])
+          .filter(Boolean),
 
         unpinned: state.peersList.filter(({ peer }) => {
           return !state.settings.pinnedPeers.includes(peer.id);
@@ -141,9 +138,7 @@ export default {
   flex-grow: 1;
 }
 
-.im_peers_delimiter {
-  width: 100%;
-  height: 6px;
-  background: /* #e7e8ec */ var(--separator); /* -dark ? */
+.im_pinned_peers {
+  border-bottom: 6px solid var(--separator);
 }
 </style>

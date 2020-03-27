@@ -29,7 +29,7 @@ function hasFlag(mask, flag) {
     hidden:         1 << 16, // Приветственное сообщение от группы
     deleted_all:    1 << 17, // Удаление сообщения для всех
     chat_in:        1 << 19, // Входящее сообщение в беседе
-    noname_flag:    1 << 20, // Неизвестный флаг
+    slient:         1 << 20, // messages.send slient: true; выход из беседы
     reply_msg:      1 << 21  // Ответ на сообщение
   };
 
@@ -43,8 +43,15 @@ function getServiceMessage(data) {
     const match = item.match(/source_(.+)/);
 
     if (match) {
-      const key = match[1] === 'act' ? 'type' : match[1];
-      source[key] = data[item];
+      const key = match[1] === 'act'
+        ? 'type'
+        : match[1];
+
+      const value = isNaN(data[item])
+        ? data[item]
+        : +data[item];
+
+      source[key] = value;
     }
   }
 

@@ -129,10 +129,38 @@ img:not(.emoji) {
   width: 12px;
   height: 12px;
   vertical-align: middle;
-  color: #5c9ce6;
+  color: var(--accent);
 }
 
 .verified.white {
   opacity: .7;
   color: #fff;
+}
+
+.act_menu_item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color .3s;
+}
+
+.act_menu_item:hover {
+  background: var(--hover-background-gray);
+}
+
+.act_menu_icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.act_menu_close_icon {
+  padding: 1px;
+}
+
+.act_menu_data {
+  margin-left: 12px;
+  line-height: 18px;
 }

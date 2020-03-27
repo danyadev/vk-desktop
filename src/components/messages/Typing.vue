@@ -11,7 +11,7 @@
 
 <script>
 import { computed } from 'vue';
-import { loadConversationMembers } from 'js/messages';
+import { loadProfile } from 'js/utils';
 import getTranslate from 'js/getTranslate';
 import store from 'js/store';
 
@@ -27,7 +27,7 @@ export default {
       }
 
       if (!user) {
-        loadConversationMembers(id);
+        loadProfile(id);
         return '...';
       }
 

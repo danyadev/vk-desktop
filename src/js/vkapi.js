@@ -4,7 +4,7 @@ import request from './request';
 import store from './store';
 import { openModal } from './modals';
 
-export const version = '5.118';
+export const version = '5.121';
 
 const errorHandlers = {};
 
