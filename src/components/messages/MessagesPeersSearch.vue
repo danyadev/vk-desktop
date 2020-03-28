@@ -1,5 +1,5 @@
 <template>
-  <div class="im_peers_container im_peers_search_container">
+  <div ref="container" class="im_peers_container im_peers_search_container">
     <div class="header">
       <HeaderButton />
       <input v-model="text" class="im_peers_search_input" placeholder="Введите запрос...">
@@ -50,7 +50,7 @@
 
 <script>
 import { reactive, toRefs, watch, nextTick } from 'vue';
-import { debounce, endScroll, fields, concatProfiles, createQueueManager, timer } from 'js/utils';
+import { debounce, endScroll, fields, concatProfiles, createQueueManager, timer, onTransitionEnd } from 'js/utils';
 import { parseConversation, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -72,6 +72,7 @@ export default {
 
   setup(props, { emit }) {
     const state = reactive({
+      container: null,
       text: '',
 
       loading: false,
@@ -148,23 +149,27 @@ export default {
       }
     });
 
-    function restoreDefaults() {
-      state.loading = false;
+    watch(() => state.text, debounce(() => {
+      load({
+        beforeLoad() {
+          state.loaded = false;
+          state.offset = 0;
+          state.conversations = [];
+          state.messages = [];
+        }
+      });
+    }, 500));
+
+    async function close() {
+      emit('close');
+
+      await onTransitionEnd(state.container);
+
+      state.text = '';
       state.loaded = false;
-      state.lockScroll = false;
       state.offset = 0;
       state.conversations = [];
       state.messages = [];
-    }
-
-    watch(() => state.text, debounce(() => {
-      load({ beforeLoad: restoreDefaults });
-    }, 500));
-
-    function close() {
-      state.text = '';
-      restoreDefaults();
-      emit('close');
     }
 
     const onScroll = endScroll(() => {
