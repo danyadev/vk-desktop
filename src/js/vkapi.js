@@ -4,7 +4,7 @@ import request from './request';
 import store from './store';
 import { openModal } from './modals';
 
-export const version = '5.121';
+export const version = '5.122';
 
 const errorHandlers = {};
 
@@ -115,7 +115,6 @@ addErrorHandler([17], async ({ data, reject }) => {
 
 function vkapi(name, params, { android, vkme } = {}) {
   return new Promise(async (resolve, reject) => {
-    const startTime = Date.now();
     const user = store.getters['users/user'];
 
     params = {
@@ -136,18 +135,7 @@ function vkapi(name, params, { android, vkme } = {}) {
       postData: querystring.stringify(params)
     });
 
-    const endTime = Date.now() - startTime;
-
     if (data.response !== undefined) {
-      const logParams = { ...params };
-
-      delete logParams.access_token;
-      delete logParams.lang;
-      delete logParams.v;
-      delete logParams.fields;
-
-      console.log(`[API] ${name} ${endTime}ms`, logParams);
-
       return resolve(data.response);
     }
 

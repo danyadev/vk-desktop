@@ -53,6 +53,7 @@
     "no-multi-assign": "off",
     "no-shadow": "off",
     "no-restricted-globals": "off",
+    "camelcase": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
     "no-cond-assign": ["error", "except-parens"],
@@ -63,11 +64,6 @@
     }],
     "no-multi-spaces": ["error", {
       "ignoreEOLComments": true
-    }],
-    "camelcase": ["error", {
-      "properties": "never",
-      "ignoreDestructuring": true,
-      "allow": ["_token$", "_ids?$", "_settings$", "_until$"]
     }],
     "no-constant-condition": ["error", {
       "checkLoops": false

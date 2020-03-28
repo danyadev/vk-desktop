@@ -54,14 +54,45 @@ function addDays(date, count) {
   return copy;
 }
 
-export function isSameDay(date1, date2) {
-  return startOfDay(date1).getTime() === startOfDay(date2).getTime();
+function differenceInMilliseconds(d1, d2) {
+  return d1.getTime() - d2.getTime();
+}
+
+export function isSameDay(d1, d2) {
+  return startOfDay(d1).getTime() === startOfDay(d2).getTime();
 }
 
 export function isYesterday(date) {
   return isSameDay(date, addDays(Date.now(), -1));
 }
 
-export function isSameYear(date1, date2) {
-  return date1.getFullYear() === date2.getFullYear();
+export function isSameYear(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear();
+}
+
+export function differenceInSeconds(d1, d2) {
+  return Math.round(differenceInMilliseconds(d1, d2) / 1000);
+}
+
+export function differenceInHours(d1, d2) {
+  return Math.round(differenceInSeconds(d1, d2) / 3600);
+}
+
+export function differenceInYears(d1, d2) {
+  return d1.getFullYear() - d2.getFullYear();
+}
+
+// Поддерживаются минуты и часы
+export function formatDistance(d1, d2) {
+  const seconds = differenceInSeconds(d1, d2);
+
+  function getDistanceTranslate(name, value) {
+    return getTranslate(name, [value === 1 ? '' : value], value);
+  }
+
+  if (seconds < 3600) {
+    return getDistanceTranslate('minutes_ago', Math.round(seconds / 60));
+  } else {
+    return getDistanceTranslate('hours_ago', Math.round(seconds / 3600));
+  }
 }

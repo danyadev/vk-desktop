@@ -10,7 +10,12 @@ export default {
 
   setup(props) {
     const serviceMessage = computed(() => {
-      return getServiceMessage(props.msg, props.author, props.peer_id, props.isFull);
+      return getServiceMessage(
+        props.msg,
+        props.author || { id: props.msg.from },
+        props.peer_id,
+        props.isFull
+      );
     });
 
     return () => serviceMessage.value;

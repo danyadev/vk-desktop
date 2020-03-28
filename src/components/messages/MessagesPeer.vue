@@ -23,7 +23,7 @@
       </div>
 
       <div class="im_peer_message_wrap">
-        <Typing v-if="hasTyping" :peer_id="peer.id" />
+        <Typing v-if="hasTyping && !fromSearch" :peer_id="peer.id" />
         <div v-else-if="msg.id" class="im_peer_message">
           <div class="im_peer_author">{{ authorName }}</div>
           <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
@@ -43,11 +43,12 @@
           {{ l('im_no_messages') }}
         </div>
 
-        <div v-if="peer.mentions.length" class="im_peer_mentioned">
+        <div v-if="peer.mentions.length && !fromSearch" class="im_peer_mentioned">
           <Icon name="mention" color="var(--blue-background-text)" width="20" height="18" />
         </div>
 
         <div
+          v-if="!fromSearch"
           :class="['im_peer_unread', { outread, muted: peer.muted }]"
           :title="peer.unread || ''"
         >
@@ -73,7 +74,7 @@ import Typing from './Typing.vue';
 import ServiceMessage from './ServiceMessage.vue';
 
 export default {
-  props: ['peer', 'msg', 'activeChat'],
+  props: ['peer', 'msg', 'activeChat', 'fromSearch'],
 
   components: {
     Ripple,
@@ -122,14 +123,15 @@ export default {
 
       time: computed(() => {
         // Пустая закрепленная беседа
-        if (!props.msg.date) return;
+        if (!props.msg.date) {
+          return;
+        }
 
         return getShortDate(new Date(props.msg.date * 1000));
       }),
 
       hasTyping: computed(() => {
         const typing = store.state.messages.typing[props.peer.id] || {};
-
         return Object.keys(typing).length;
       }),
 
@@ -198,6 +200,11 @@ export default {
   margin: 10px 10px 10px 16px;
 }
 
+.im_peer_photo,
+.im_peer_photo img {
+  border-radius: 50%;
+}
+
 .im_peer_photo.mobile::after,
 .im_peer_photo.desktop::after {
   content: '';
@@ -219,10 +226,6 @@ export default {
   height: 8px;
   border-radius: 50%;
   background: var(--green);
-}
-
-.im_peer_photo img {
-  border-radius: 50%;
 }
 
 .im_peer_content {
@@ -255,7 +258,7 @@ export default {
   color: var(--text-blue);
 }
 
-.im_peer_name_wrap .verified {
+.im_peer_title .verified {
   flex: none;
   margin: 2px 0 0 4px;
 }

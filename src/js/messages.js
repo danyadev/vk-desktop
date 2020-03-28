@@ -1,4 +1,5 @@
-import { escape, getPhoto, fields, concatProfiles, capitalize } from './utils';
+import { escape, getPhoto, fields, concatProfiles, capitalize, getAppName } from './utils';
+import { getLastOnlineDate } from './date';
 import getTranslate from './getTranslate';
 import store from './store';
 import vkapi from './vkapi';
@@ -126,8 +127,55 @@ export function getMessagePreview(msg) {
   }
 }
 
+export function getPeerOnline(peer, owner) {
+  if (peer.id < 0) {
+    return getTranslate('im_chat_group');
+  }
+
+  if (peer.id > 2e9) {
+    const { canWrite, members, channel, left } = peer;
+
+    if (!canWrite && !channel) {
+      return getTranslate('im_chat_kicked');
+    } else if (left) {
+      return getTranslate(channel ? 'im_chat_left_channel' : 'im_chat_left');
+    } else {
+      return getTranslate('im_chat_members', [members], members);
+    }
+  }
+
+  if (owner.deactivated) {
+    return getTranslate('im_user_deleted');
+  }
+
+  const { online, online_mobile, online_app, online_info: info, last_seen } = owner;
+
+  if (online) {
+    const appName = online_app > 0 && getAppName(online_app);
+
+    if (appName) {
+      return getTranslate('im_chat_online', 2, [appName]);
+    } else {
+      return getTranslate('im_chat_online', online_mobile ? 1 : 0);
+    }
+  }
+
+  const isGirl = owner.sex === 1;
+
+  if (!info.visible) {
+    return getTranslate(`im_chat_online_${info.status}`, isGirl);
+  }
+
+  if (last_seen) {
+    return getLastOnlineDate(new Date(last_seen.time * 1000), isGirl);
+  }
+
+  // У @id333 не приходит last_seen
+  return '';
+}
+
 export function getLastMsgId() {
-  const [peer] = store.getters['messages/conversationsList'];
+  const [peer] = store.getters['messages/peersList'];
   return peer && peer.msg.id;
 }
 

@@ -3,7 +3,12 @@
     <div class="header">
       <HeaderButton />
       <div class="header_name">{{ l('im_header_title') }}</div>
-      <!-- <MessagesListMenu /> -->
+      <Icon
+        name="search"
+        color="var(--blue-background-text)"
+        class="im_peers_search_icon"
+        @click="isSearch = true"
+      />
     </div>
     <Scrolly
       class="im_peers_wrap"
@@ -30,6 +35,8 @@
       />
     </Scrolly>
   </div>
+
+  <MessagesPeersSearch :class="{ active: isSearch }" @close="isSearch = false" />
 </template>
 
 <script>
@@ -40,18 +47,20 @@ import vkapi from 'js/vkapi';
 import store from 'js/store';
 
 import HeaderButton from '../HeaderButton.vue';
-// import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
 import Scrolly from '../UI/Scrolly.vue';
 import MessagesPeer from './MessagesPeer.vue';
+import MessagesPeersSearch from './MessagesPeersSearch.vue';
+import Icon from '../UI/Icon.vue';
 
 export default {
   props: ['activeChat'],
 
   components: {
     HeaderButton,
-    // MessagesListMenu,
     Scrolly,
-    MessagesPeer
+    MessagesPeer,
+    MessagesPeersSearch,
+    Icon
   },
 
   setup() {
@@ -61,7 +70,9 @@ export default {
         get: () => store.state.messages.isMessagesPeersLoaded,
         set: (value) => (store.state.messages.isMessagesPeersLoaded = value)
       }),
+
       lockScroll: false,
+      isSearch: false,
 
       peerIds: computed(() => store.state.messages.peerIds),
       settings: computed(() => store.getters['settings/settings']),
@@ -129,8 +140,8 @@ export default {
 <style>
 .im_peers_wrap {
   width: 100%;
-  /* 45px - постоянная высота у .header */
-  height: calc(100% - 45px);
+  /* 50px - постоянная высота у .header */
+  height: calc(100% - 50px);
   border-right: 1px solid var(--separator);
 }
 
@@ -140,5 +151,18 @@ export default {
 
 .im_pinned_peers {
   border-bottom: 6px solid var(--separator);
+}
+
+.im_peers_search_icon {
+  width: 45px;
+  height: 45px;
+  padding: 11px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .3s;
+}
+
+.im_peers_search_icon:hover {
+  opacity: 1;
 }
 </style>
