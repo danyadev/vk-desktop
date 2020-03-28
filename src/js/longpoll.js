@@ -91,7 +91,7 @@ class Longpoll {
     store.commit('addProfiles', concatProfiles(history.profiles, history.groups));
     this.pts = history.new_pts;
 
-    const peers = history.conversations.reduce((conversation, conversations) => {
+    const peers = history.conversations.reduce((conversations, conversation) => {
       conversations[conversation.peer.id] = parseConversation(conversation);
       return conversations;
     }, {});

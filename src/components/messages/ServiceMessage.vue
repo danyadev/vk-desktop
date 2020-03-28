@@ -24,9 +24,7 @@ export default {
 
 const translateParser = createParser({
   regexp: /{(\d)}/g,
-  parseText(value) {
-    return [value];
-  },
+  parseText: (value) => [value],
   parseElement(value, match, replaces) {
     const id = match[1];
     return [h('b', replaces[id])];

@@ -1,7 +1,7 @@
 <script>
 import { h, Fragment, computed } from 'vue';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
-import { createParser } from 'js/utils';
+import { createParser, unescape } from 'js/utils';
 import domains from 'js/json/domains.json';
 
 export default {
@@ -52,11 +52,9 @@ export default {
         }
       } else if (block.type === 'emoji') {
         elements.push(generateEmojiImageVNode(h, block.value));
+      } else if (block.type === 'br') {
+        elements.push(props.inline ? ' ' : h('br'));
       } else {
-        if (props.inline) {
-          block.value = block.value.replace(/<br>/g, ' ');
-        }
-
         elements.push(h(Fragment, [block.value]));
       }
 
@@ -74,9 +72,15 @@ const mentionRE = /\[(club|id)(\d+)\|(.+?)\]/g;
 const linkRE =
   /(?!(\.|-))(((https?|ftps?):\/\/)?([a-zа-яё0-9.-]+\.([a-zа-яё]{2,18}))(:\d{1,5})?(\/\S*)?)(?=$|\s|[^a-zа-яё0-9])/ig;
 
+const textParser = createParser({
+  regexp: /<br>/g,
+  parseText: (value) => [{ type: 'text', value: unescape(value) }],
+  parseElement: () => [{ type: 'br' }]
+});
+
 const linkParser = createParser({
   regexp: linkRE,
-  parseText: (value) => [{ type: 'text', value }],
+  parseText: textParser,
   parseElement(value, match, isMention) {
     const domain = match[6];
     const isValidDomain = domains.includes(domain);

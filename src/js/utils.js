@@ -37,6 +37,18 @@ export function escape(text) {
     .replace(/>/g, '&gt;');
 }
 
+export function unescape(text) {
+  if (text == null) {
+    return '';
+  }
+
+  return String(text)
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
 export function random(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -135,15 +147,15 @@ export function createQueueManager(fn) {
 // parseText(value (кусок текста), ...args (параметры, переданные в экземпляр парсера)) {}
 // parseElement вызывается если кусок текста уже входит в регулярку
 // parseElement(value, match (вывод регулярки), ...args) {}
-// Эти функции должны возвращать массив, значения которого будут частью ответа парсера
+// Эти функции обязательны и должны вернуть массив, который затем добавится к ответу
 // Пример:
 // const parser = createParser({
 //   regexp: /element/g,
-//   parseText: (value, arg1) => [{ type: 'text', value }],
-//   parseElement: (value, match, arg1) => [{ type: 'element', value }]
+//   parseText: (value, customType) => [{ type: 'text', value }],
+//   parseElement: (value, match, customType) => [{ type: customType, value }]
 // });
-// const result = parser('text element', arg1);
-// result = [{ type: 'text', value: 'text ', { type: 'element', value: 'element' } }];
+// const result = parser('text element', 'myType');
+// result = [{ type: 'text', value: 'text ' }, { type: 'myType', value: 'element' }];
 export function createParser({ regexp, parseText, parseElement }) {
   return function(text, ...args) {
     const blocks = [];
