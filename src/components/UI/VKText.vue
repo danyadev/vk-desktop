@@ -55,7 +55,7 @@ export default {
       } else if (block.type === 'br') {
         elements.push(props.inline ? ' ' : h('br'));
       } else {
-        elements.push(h(Fragment, [block.value]));
+        elements.push(block.value);
       }
 
       return elements;
@@ -63,7 +63,10 @@ export default {
 
     return () => h(
       Fragment,
-      mentionParser(text.value).map((block) => parseBlock(block)[0])
+      mentionParser(text.value).reduce((blocks, block) => {
+        blocks.push(...parseBlock(block));
+        return blocks;
+      }, [])
     );
   }
 };
@@ -72,15 +75,9 @@ const mentionRE = /\[(club|id)(\d+)\|(.+?)\]/g;
 const linkRE =
   /(?!(\.|-))(((https?|ftps?):\/\/)?([a-zа-яё0-9.-]+\.([a-zа-яё]{2,18}))(:\d{1,5})?(\/\S*)?)(?=$|\s|[^a-zа-яё0-9])/ig;
 
-const textParser = createParser({
-  regexp: /<br>/g,
-  parseText: (value) => [{ type: 'text', value: unescape(value) }],
-  parseElement: () => [{ type: 'br' }]
-});
-
 const linkParser = createParser({
   regexp: linkRE,
-  parseText: textParser,
+  parseText: (value) => [{ type: 'text', value: unescape(value) }],
   parseElement(value, match, isMention) {
     const domain = match[6];
     const isValidDomain = domains.includes(domain);
@@ -93,9 +90,15 @@ const linkParser = createParser({
   }
 });
 
+const textParser = createParser({
+  regexp: /<br>/g,
+  parseText: linkParser,
+  parseElement: () => [{ type: 'br' }]
+});
+
 const emojiParser = createParser({
   regexp: emojiRegex,
-  parseText: linkParser,
+  parseText: textParser,
   parseElement: (value) => [{ type: 'emoji', value }]
 });
 
