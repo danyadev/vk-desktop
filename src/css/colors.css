@@ -6,6 +6,7 @@
   --text-dark-steel-gray: #5c6570;
   --text-gray: #454647;
   --text-blue: #2a5989;
+  --text-blue-light: #3f70a7;
 
   --accent: #528bcc; /* кликабельный / активный элемент */
   --red: #de3f3f;
@@ -20,12 +21,15 @@
   --field-background: #f2f3f5;
   --field-placeholder: #818c99;
   --field-border: #0000001f;
+  --field-color: #222;
 
   --blue-background: #5181b8;
   --blue-background-overlight: #92b2d6;
   --blue-background-text: #fff;
+  --blue-background-text-alpha: rgba(255, 255, 255, .75);
   --blue-background-ripple: #00000026;
   --steel-gray-background-light: #aeb7c2;
+  --gray-background-overlight: #fbfbfb;
 
   --icon-gray: #99a2ad;
   --icon-dark-gray: #828a99;

@@ -127,12 +127,16 @@ export function getMessagePreview(msg) {
   }
 }
 
-export function getPeerOnline(peer, owner) {
-  if (peer.id < 0) {
+export function getPeerOnline(peer_id, peer, owner) {
+  if (!peer || !peer.left && peer_id > 2e9 && peer.members == null) {
+    return getTranslate('loading');
+  }
+
+  if (peer_id < 0) {
     return getTranslate('im_chat_group');
   }
 
-  if (peer.id > 2e9) {
+  if (peer_id > 2e9) {
     const { canWrite, members, channel, left } = peer;
 
     if (!canWrite && !channel) {
@@ -142,6 +146,10 @@ export function getPeerOnline(peer, owner) {
     } else {
       return getTranslate('im_chat_members', [members], members);
     }
+  }
+
+  if (!owner) {
+    return getTranslate('loading');
   }
 
   if (owner.deactivated) {
@@ -172,6 +180,24 @@ export function getPeerOnline(peer, owner) {
 
   // У @id333 не приходит last_seen
   return '';
+}
+
+export function getPeerAvatar(peer_id, peer, owner) {
+  if (peer_id > 2e9) {
+    return peer && !peer.left && peer.photo || 'assets/im_chat_photo.png';
+  } else {
+    return getPhoto(owner) || 'assets/blank.gif';
+  }
+}
+
+export function getPeerTitle(peer_id, peer, owner) {
+  if (peer_id > 2e9) {
+    return peer && peer.title || '...';
+  } else if (owner) {
+    return owner.name || `${owner.first_name} ${owner.last_name}`;
+  }
+
+  return '...';
 }
 
 export function getLastMsgId() {

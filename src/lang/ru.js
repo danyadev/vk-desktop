@@ -6,6 +6,7 @@ export default {
   retry: 'Повторить',
   you: 'Вы',
   you2: 'Вас',
+  loading: 'Загрузка...',
 
   date_now: 'только что',
   date_at: 'в',

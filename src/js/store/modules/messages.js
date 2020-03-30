@@ -191,7 +191,7 @@ export default {
     removeMessages(state, { peer_id, msg_ids }) {
       const messages = [...state.messages[peer_id] || []];
       state.messages[peer_id] = messages.filter(({ id }) => !msg_ids.includes(id));
-    }
+    },
 
     // addLoadingMessage(state, { peer_id, msg }) {
     //   const messages = [...state.loadingMessages[peer_id] || [], msg];
@@ -218,11 +218,13 @@ export default {
     //     Vue.set(state.loadingMessages, peer_id, messages);
     //   }
     // },
-    //
-    // updatePeerConfig(state, { peer_id, ...data }) {
-    //   const config = { ...state.peersConfig[peer_id] || {}, ...data };
-    //   Vue.set(state.peersConfig, peer_id, config);
-    // }
+
+    updatePeerConfig(state, { peer_id, ...data }) {
+      state.peersConfig[peer_id] = {
+        ...state.peersConfig[peer_id],
+        ...data
+      };
+    }
   },
 
   getters: {

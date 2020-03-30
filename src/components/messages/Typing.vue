@@ -88,7 +88,7 @@ export default {
 }
 
 .typing_wrap.isChat {
-  color: rgba(255, 255, 255, .75);
+  color: var(--blue-background-text-alpha);
   font-size: 13px;
   margin-top: 2px;
   justify-content: center;
@@ -120,7 +120,7 @@ export default {
 }
 
 .typing_wrap.isChat .typing_item {
-  background: rgba(255, 255, 255, .75);
+  background: var(--blue-background-text-alpha);
   margin-bottom: 1px;
 }
 

@@ -1,13 +1,18 @@
 <template>
-  <div ref="container" class="im_peers_container im_peers_search_container">
+  <div class="im_peers_container im_peers_search_container">
     <div class="header">
       <HeaderButton />
-      <input v-model="text" class="im_peers_search_input" placeholder="Введите запрос...">
+      <input
+        ref="input"
+        v-model="text"
+        class="im_peers_search_input"
+        placeholder="Введите запрос..."
+      >
       <Icon
         name="cancel"
         color="var(--blue-background-text)"
         class="im_peers_search_cancel"
-        @click="close"
+        @click="$emit('close')"
       />
     </div>
     <Scrolly
@@ -49,8 +54,8 @@
 </template>
 
 <script>
-import { reactive, toRefs, watch, nextTick } from 'vue';
-import { debounce, endScroll, fields, concatProfiles, createQueueManager, timer, onTransitionEnd } from 'js/utils';
+import { reactive, toRefs, watch, nextTick, onMounted } from 'vue';
+import { debounce, endScroll, fields, concatProfiles, createQueueManager, timer } from 'js/utils';
 import { parseConversation, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -70,9 +75,9 @@ export default {
     MessagesProfile
   },
 
-  setup(props, { emit }) {
+  setup() {
     const state = reactive({
-      container: null,
+      input: null,
       text: '',
 
       loading: false,
@@ -160,17 +165,9 @@ export default {
       });
     }, 500));
 
-    async function close() {
-      emit('close');
-
-      await onTransitionEnd(state.container);
-
-      state.text = '';
-      state.loaded = false;
-      state.offset = 0;
-      state.conversations = [];
-      state.messages = [];
-    }
+    onMounted(() => {
+      state.input.focus();
+    });
 
     const onScroll = endScroll(() => {
       if (!state.loading && !state.loaded) {
@@ -180,8 +177,6 @@ export default {
 
     return {
       ...toRefs(state),
-
-      close,
       onScroll
     };
   }
@@ -189,22 +184,23 @@ export default {
 </script>
 
 <style>
+.im-peers-search-enter-active, .im-peers-search-leave-active {
+  transition: opacity .3s;
+}
+
+.im-peers-search-enter-from, .im-peers-search-leave-to {
+  opacity: 0;
+}
+
 .im_peers_search_container {
   position: absolute;
   height: 100%;
   background: var(--background);
   z-index: 1;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity .3s, visibility .3s;
-}
-
-.im_peers_search_container.active {
-  opacity: 1;
-  visibility: visible;
 }
 
 .im_peers_search_input {
+  color: var(--field-color);
   border: none;
   border-radius: 24px;
   height: 36px;
@@ -216,7 +212,7 @@ export default {
 }
 
 .im_peers_search_input::-webkit-input-placeholder {
-  color: var(--field-placeholder)
+  color: var(--field-placeholder);
 }
 
 .im_peers_search_input:focus {

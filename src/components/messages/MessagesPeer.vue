@@ -17,7 +17,7 @@
             <VKText>{{ chatName }}</VKText>
           </div>
           <Icon v-if="owner && owner.verified" name="verified" class="verified" />
-          <div v-if="peer.muted" class="im_peer_muted"></div>
+          <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
         </div>
         <div class="im_peer_time">{{ time }}</div>
       </div>
@@ -61,11 +61,12 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { getMessagePreview, loadConversationMembers } from 'js/messages';
-import { getPhoto, convertCount } from 'js/utils';
+import { getMessagePreview, loadConversationMembers, getPeerAvatar, getPeerTitle } from 'js/messages';
+import { convertCount } from 'js/utils';
+import { getShortDate } from 'js/date';
 import getTranslate from 'js/getTranslate';
 import store from 'js/store';
-import { getShortDate } from 'js/date';
+import router from 'js/router';
 
 import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';
@@ -94,40 +95,20 @@ export default {
       message: computed(() => getMessagePreview(props.msg)),
       isAttachment: computed(() => !props.msg.text && !props.msg.action && props.msg.hasAttachment),
       outread: computed(() => props.peer.out_read !== props.peer.last_msg_id),
-
-      photo: computed(() => {
-        if (state.isChat) {
-          return !props.peer.left && props.peer.photo || 'assets/im_chat_photo.png';
-        }
-
-        return getPhoto(state.owner) || 'assets/blank.gif';
-      }),
+      photo: computed(() => getPeerAvatar(props.peer.id, props.peer, state.owner)),
+      chatName: computed(() => getPeerTitle(props.peer.id, props.peer, state.owner)),
 
       online: computed(() => {
-        if (state.isChat || props.peer.id < 0 || !state.owner || !state.owner.online) {
-          return;
+        if (state.owner && state.owner.online) {
+          return state.owner.online_mobile ? 'mobile' : 'desktop';
         }
-
-        return state.owner.online_mobile ? 'mobile' : 'desktop';
-      }),
-
-      chatName: computed(() => {
-        if (state.isChat) {
-          return props.peer.title || '...';
-        } else if (state.owner) {
-          return state.owner.name || `${state.owner.first_name} ${state.owner.last_name}`;
-        }
-
-        return '...';
       }),
 
       time: computed(() => {
-        // Пустая закрепленная беседа
-        if (!props.msg.date) {
-          return;
+        // Даты может не быть если нет сообщения и беседа закреплена
+        if (props.msg.date) {
+          return getShortDate(new Date(props.msg.date * 1000));
         }
-
-        return getShortDate(new Date(props.msg.date * 1000));
       }),
 
       hasTyping: computed(() => {
@@ -167,8 +148,8 @@ export default {
       //     peer_id: props.activeChat
       //   });
       // }
-      //
-      // router.replace(`/messages/${props.peer.id}`);
+
+      router.replace(`/messages/${props.peer.id}`);
     }
 
     return {
@@ -267,8 +248,7 @@ export default {
   flex: none;
   width: 13px;
   height: 13px;
-  margin: 3px 0 0 4px;
-  background: url('~assets/muted.svg') 0 / 13px;
+  margin: 3px 0 0 3px;
 }
 
 .im_peer_time {

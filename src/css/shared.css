@@ -74,7 +74,7 @@ img:not(.emoji) {
   border-radius: 7px;
   background: var(--field-background);
   font-size: 15px;
-  color: var(--text-primary);
+  color: var(--field-color);
   line-height: 36px;
   height: 36px;
   padding: 0 9px;

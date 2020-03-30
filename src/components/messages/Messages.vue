@@ -1,16 +1,37 @@
 <template>
-  <div class="messages_container" tabindex="-1">
-    <MessagesPeers />
+  <div :class="['messages_container', { hasChat }]" tabindex="-1" @keydown.esc="closeChat">
+    <MessagesPeers :activeChat="peer_id" />
+    <!-- TODO(vue-router) :key + KeepAlive -->
     <RouterView />
   </div>
 </template>
 
 <script>
+import { reactive, computed, toRefs } from 'vue';
+import router from 'js/router';
+
 import MessagesPeers from './MessagesPeers.vue';
 
 export default {
   components: {
     MessagesPeers
+  },
+
+  setup() {
+    const state = reactive({
+      route: computed(() => router.currentRoute.value),
+      peer_id: computed(() => state.route.params.id),
+      hasChat: computed(() => state.route.name === 'chat')
+    });
+
+    function closeChat() {
+      router.replace('/messages');
+    }
+
+    return {
+      ...toRefs(state),
+      closeChat
+    };
   }
 };
 </script>

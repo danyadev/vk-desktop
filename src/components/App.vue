@@ -91,7 +91,7 @@ export default {
       }
     }
 
-    onMounted(initUser);
+    onMounted(() => router.isReady().then(initUser));
     watch(() => state.activeUser, initUser);
 
     return state;

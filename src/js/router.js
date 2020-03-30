@@ -5,7 +5,7 @@ import AuthConfirm from '../components/auth/AuthConfirm.vue';
 
 import Messages from '../components/messages/Messages.vue';
 import MessagesChatEmpty from '../components/messages/MessagesChatEmpty.vue';
-// import MessagesChat from '../components/messages/MessagesChat.vue';
+import MessagesChat from '../components/messages/MessagesChat.vue';
 
 export default createRouter({
   history: createMemoryHistory(),
@@ -27,12 +27,12 @@ export default createRouter({
           name: 'messages',
           path: '',
           component: MessagesChatEmpty
+        },
+        {
+          name: 'chat',
+          path: ':id',
+          component: MessagesChat
         }
-        // {
-        //   name: 'chat',
-        //   path: ':id',
-        //   component: MessagesChat
-        // }
       ]
     }
   ]

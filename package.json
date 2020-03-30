@@ -35,7 +35,7 @@
     "terser-webpack-plugin": "2.3.5",
     "vue": "3.0.0-alpha.10",
     "vue-loader": "16.0.0-alpha.3",
-    "vue-router": "4.0.0-alpha.3",
+    "vue-router": "4.0.0-alpha.4",
     "vue-svg-loader": "danyadev/vue-svg-loader#next",
     "vuex": "4.0.0-alpha.1",
     "webpack": "4.42.1",

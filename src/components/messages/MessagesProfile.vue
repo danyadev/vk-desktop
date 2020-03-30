@@ -1,5 +1,5 @@
 <template>
-  <Ripple color="var(--messages-peer-ripple)" class="im_peer im_peer_profile">
+  <Ripple color="var(--messages-peer-ripple)" class="im_peer im_peer_profile" @click="openChat">
     <img
       :src="photo"
       class="im_peer_photo"
@@ -21,10 +21,10 @@
 </template>
 
 <script>
-import { reactive, computed } from 'vue';
-import { getPhoto } from 'js/utils';
-import { getPeerOnline } from 'js/messages';
+import { reactive, computed, toRefs } from 'vue';
+import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/messages';
 import store from 'js/store';
+import router from 'js/router';
 
 import VKText from '../UI/VKText.vue';
 import Ripple from '../UI/Ripple.vue';
@@ -45,28 +45,20 @@ export default {
       profiles: computed(() => store.state.profiles),
       owner: computed(() => state.profiles[props.peer.id]),
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),
-
-      photo: computed(() => {
-        if (state.isChat) {
-          return !props.peer.left && props.peer.photo || 'assets/im_chat_photo.png';
-        } else {
-          return getPhoto(state.owner) || 'assets/blank.gif';
-        }
-      }),
-
-      chatName: computed(() => {
-        if (state.isChat) {
-          return props.peer.title;
-        } else {
-          return state.owner.name || `${state.owner.first_name} ${state.owner.last_name}`;
-        }
-      }),
-
-      isOnline: computed(() => state.owner && state.owner.online),
-      onlineText: computed(() => getPeerOnline(props.peer, state.owner))
+      photo: computed(() => getPeerAvatar(props.peer.id, props.peer, state.owner)),
+      chatName: computed(() => getPeerTitle(props.peer.id, props.peer, state.owner)),
+      onlineText: computed(() => getPeerOnline(props.peer.id, props.peer, state.owner)),
+      isOnline: computed(() => state.owner && state.owner.online)
     });
 
-    return state;
+    function openChat() {
+      router.replace(`/messages/${props.peer.id}`);
+    }
+
+    return {
+      ...toRefs(state),
+      openChat
+    };
   }
 };
 </script>

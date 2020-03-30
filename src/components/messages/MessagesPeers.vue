@@ -36,7 +36,9 @@
     </Scrolly>
   </div>
 
-  <MessagesPeersSearch :class="{ active: isSearch }" @close="isSearch = false" />
+  <Transition name="im-peers-search">
+    <MessagesPeersSearch v-if="isSearch" @close="isSearch = false" />
+  </Transition>
 </template>
 
 <script>
