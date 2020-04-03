@@ -20,9 +20,9 @@ export default {
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 20px;
-  height: 20px;
-  margin: 10px;
+  width: 40px;
+  height: 50px;
+  padding: 15px 10px;
   border-radius: 50%;
   cursor: pointer;
   opacity: .7;

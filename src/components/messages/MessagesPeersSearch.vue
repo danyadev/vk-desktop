@@ -215,10 +215,6 @@ export default {
   color: var(--field-placeholder);
 }
 
-.im_peers_search_input:focus {
-  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, .3);
-}
-
 .im_peers_search_cancel {
   padding: 1px;
   margin-right: 8px;

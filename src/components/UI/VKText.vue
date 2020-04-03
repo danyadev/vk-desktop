@@ -1,4 +1,5 @@
 <script>
+import electron from 'electron';
 import { h, Fragment, computed } from 'vue';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
 import { createParser, unescape } from 'js/utils';
@@ -32,10 +33,7 @@ export default {
         elements.push(
           h('div', {
             class: 'link',
-            onClick(event) {
-              console.log('click', event);
-              console.log('link: ' + block.value);
-            }
+            onClick: () => electron.shell.openItem(block.link)
           }, [block.value])
         );
       } else if (block.type === 'mention') {
@@ -63,7 +61,7 @@ export default {
 
     return () => h(
       Fragment,
-      mentionParser(text.value).reduce((blocks, block) => {
+      mentionParser(unescape(text.value)).reduce((blocks, block) => {
         blocks.push(...parseBlock(block));
         return blocks;
       }, [])
@@ -73,24 +71,31 @@ export default {
 
 const mentionRE = /\[(club|id)(\d+)\|(.+?)\]/g;
 const linkRE =
-  /(?!(\.|-))(((https?|ftps?):\/\/)?([a-zа-яё0-9.-]+\.([a-zа-яё]{2,18}))(:\d{1,5})?(\/\S*)?)(?=$|\s|[^a-zа-яё0-9])/ig;
+  /(?!\.|-)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*(?<!\))[^.,!?();\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig;
 
 const linkParser = createParser({
   regexp: linkRE,
-  parseText: (value) => [{ type: 'text', value: unescape(value) }],
+  parseText: (value) => [{ type: 'text', value }],
   parseElement(value, match, isMention) {
-    const domain = match[6];
-    const isValidDomain = domains.includes(domain);
+    const { localhost, port, ip } = match.groups;
+    const isValidIP = !ip || !ip.split('.').find((v) => v > 255);
+    const isValidPort = !port || port.slice(1) <= 65535;
+    const domain = match[4] && match[4].toLowerCase();
+    const isValidDomain = isValidIP && isValidPort && (ip || localhost || domains.includes(domain));
 
-    if (isMention || !isValidDomain) {
+    if (isMention || !isValidDomain || match[3] && match[3].includes('@')) {
       return [{ type: 'text', value }];
     }
 
-    return [{ type: 'link', value }];
+    return [{
+      type: 'link',
+      value: decodeURI(value).replace(/(.{55}).+/, '$1..'),
+      link: (match[2] ? '' : 'http://') + value
+    }];
   }
 });
 
-const textParser = createParser({
+const brParser = createParser({
   regexp: /<br>/g,
   parseText: linkParser,
   parseElement: () => [{ type: 'br' }]
@@ -98,7 +103,7 @@ const textParser = createParser({
 
 const emojiParser = createParser({
   regexp: emojiRegex,
-  parseText: textParser,
+  parseText: brParser,
   parseElement: (value) => [{ type: 'emoji', value }]
 });
 
