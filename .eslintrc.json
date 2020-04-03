@@ -73,10 +73,14 @@
       "named": "never",
       "asyncArrow": "always"
     }],
+    "no-unused-expressions": ["error", {
+      "allowShortCircuit": true
+    }],
 
     "import/no-cycle": "off",
     "import/no-dynamic-require": "off",
     "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": "off",
     "import/order": ["error", {
       "groups": [
         "builtin",

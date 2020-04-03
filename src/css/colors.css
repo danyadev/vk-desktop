@@ -41,4 +41,7 @@
 
   --messages-peer-hover: #f5f7fa;
   --messages-peer-ripple: #e6ebf2;
+
+  --message-bubble-background: #dfe6ea;
+  --message-out-bubble-background: #c7dff9;
 }

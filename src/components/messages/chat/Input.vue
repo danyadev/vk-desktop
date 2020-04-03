@@ -3,6 +3,7 @@
     <template v-if="canWrite.allowed">
       <div class="chat_input_wrap">
         <img class="attachments_btn" src="~assets/attachments_icon.svg">
+
         <div :class="['chat_input', { hasKeyboard }]">
           <div
             ref="input"
@@ -15,8 +16,10 @@
             @paste.prevent="paste"
             @keydown.enter.exact.prevent="send"
           ></div>
+
           <img class="emoji_btn" src="~assets/emoji_icon.svg">
         </div>
+
         <img class="send_btn" src="~assets/im_send.svg" @click="send">
       </div>
     </template>

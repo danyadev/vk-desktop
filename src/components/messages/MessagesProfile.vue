@@ -74,6 +74,6 @@ export default {
 }
 
 .im_peer_profile .im_peer_online.active {
-  color: var(--blue-background);
+  color: var(--text-blue-light);
 }
 </style>

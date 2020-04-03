@@ -1,18 +1,11 @@
 <template>
-  <Ripple color="var(--blue-background-ripple)" class="open_menu_btn fast-ripple" @click="openMenu">
-    <img src="assets/menu.webp">
-  </Ripple>
+  <img src="assets/menu.webp" class="open_menu_btn" @click="openMenu">
 </template>
 
 <script>
 import store from 'js/store';
-import Ripple from './UI/Ripple.vue';
 
 export default {
-  components: {
-    Ripple
-  },
-
   methods: {
     openMenu() {
       store.commit('setMenuState', true);
@@ -27,8 +20,9 @@ export default {
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
+  margin: 10px;
   border-radius: 50%;
   cursor: pointer;
   opacity: .7;
