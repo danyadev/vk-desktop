@@ -3,10 +3,13 @@
     <ModalHeader :closable="false">{{ l('ml_blocked_account_title', id) }}</ModalHeader>
     <div class="modal_content" v-html="l('ml_blocked_account_content', id)"></div>
     <div class="modal_footer">
-      <Button class="right" @click="logout">{{ l('ml_blocked_account_logout') }}</Button>
-      <Button v-if="id == 1" class="right" @click="closeApp">
-        {{ l('ml_blocked_account_close_app') }}
-      </Button>
+      <Button v-if="fromAuth" right @click="close">{{ l('close') }}</Button>
+      <template v-else>
+        <Button class="right" @click="logout">{{ l('ml_blocked_account_logout') }}</Button>
+        <Button v-if="id == 1" class="right" @click="closeApp">
+          {{ l('ml_blocked_account_close_app') }}
+        </Button>
+      </template>
     </div>
   </div>
 </template>
@@ -14,12 +17,13 @@
 <script>
 import electron from 'electron';
 import { logout } from 'js/utils';
+import { closeModal } from 'js/modals';
 
 import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';
 
 export default {
-  props: ['id'],
+  props: ['id', 'fromAuth'],
 
   components: {
     ModalHeader,
@@ -31,6 +35,10 @@ export default {
 
     closeApp() {
       electron.remote.app.exit();
+    },
+
+    close() {
+      closeModal('blocked-account');
     }
   }
 };

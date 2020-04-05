@@ -31,7 +31,7 @@
 import { computed } from 'vue';
 import store from 'js/store';
 import { usersStorage } from 'js/store/Storage';
-import { openModal } from 'js/modals';
+import { openModal, closeModal } from 'js/modals';
 import getTranslate from 'js/getTranslate';
 
 import ModalHeader from './ModalHeader.vue';
@@ -68,6 +68,7 @@ export default {
 
         window.location.reload();
       } else {
+        closeModal('multiaccount');
         store.commit('users/setActiveUser', id);
       }
     }

@@ -82,11 +82,15 @@ img:not(.emoji) {
 }
 
 .input:focus {
-  border: 1px solid var(--accent);
+  border-color: var(--accent);
 }
 
 .input::-webkit-input-placeholder {
   color: var(--field-placeholder);
+}
+
+.input.error {
+  border-color: var(--red);
 }
 
 .header {

@@ -12,6 +12,8 @@
 import CloseModal from './CloseModal.vue';
 
 export default {
+  props: ['closable'],
+
   components: {
     CloseModal
   },

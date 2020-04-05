@@ -51,6 +51,10 @@ export default {
       isOnline: computed(() => state.owner && state.owner.online)
     });
 
+    if (!state.onlineText) {
+      console.log(props, state);
+    }
+
     function openChat() {
       router.replace(`/messages/${props.peer.id}`);
     }

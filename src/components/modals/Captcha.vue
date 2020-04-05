@@ -30,6 +30,8 @@ import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';
 
 export default {
+  props: ['src', 'send'],
+
   components: {
     ModalHeader,
     Button
@@ -37,10 +39,10 @@ export default {
 
   setup(props) {
     const state = reactive({
-      src: props.src,
+      input: null,
       code: '',
-      disabled: computed(() => !state.code.trim()),
-      input: null
+      src: props.src,
+      disabled: computed(() => !state.code.trim())
     });
 
     function updateImg() {

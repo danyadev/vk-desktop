@@ -2,12 +2,11 @@
   <div class="auth auth_code" @keydown.enter="auth">
     <div class="auth_code_header">{{ l('security_check') }}</div>
     <div class="auth_code_descr">{{ l('code_sent_to', isAppCode, [phoneMask]) }}</div>
-    <input ref="input" v-model="code" class="input" :placeholder="l('enter_code')">
+    <input ref="input" v-model="code" :class="['input', { error }]" :placeholder="l('enter_code')">
     <div class="auth_code_buttons">
-      <Button light :disabled="loading" @click="cancel">{{ l('cancel') }}</Button>
+      <Button light :disabled="loading" @click="$emit('back')">{{ l('cancel') }}</Button>
       <Button :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
     </div>
-    <div :class="['auth_error', { active: wrongCode }]">{{ l('wrong_code') }}</div>
     <div class="auth_use_sms link" :class="{ hidden: disableForceSMS }" @click="enableForceSms">
       {{
         timeToSendSMS
@@ -20,26 +19,26 @@
 
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
-import router from 'js/router';
-import vkapi from 'js/vkapi';
+import { onTransitionEnd, timer } from 'js/utils';
 import { format } from 'js/date/utils';
+import vkapi from 'js/vkapi';
 import { getAndroidToken, loadUser } from '.';
 
 import Button from '../UI/Button.vue';
 
 export default {
+  props: ['isModal', 'params'],
+
   components: {
     Button
   },
 
-  setup(props) {
-    const { params } = router.currentRoute.value.params;
-
+  setup(props, { emit }) {
     const state = reactive({
-      isAppCode: params.validation_type === '2fa_app',
-      phoneMask: params.phone_mask,
+      isAppCode: props.params.validation_type === '2fa_app',
+      phoneMask: props.params.phone_mask,
       loading: false,
-      wrongCode: false,
+      error: false,
       code: '',
       canAuth: computed(() => !state.loading && state.code.trim()),
       timeToSendSMS: null,
@@ -70,22 +69,21 @@ export default {
       }
 
       state.loading = true;
-      state.wrongCode = false;
 
-      const data = await getAndroidToken(params.login, params.password, {
+      const data = await getAndroidToken(props.params.login, props.params.password, {
         code: state.code
       });
 
       if (data.error === 'invalid_request') {
         state.loading = false;
-        state.wrongCode = true;
+
+        state.error = true;
+        await onTransitionEnd(state.input);
+        await timer(500);
+        state.error = false;
       } else {
         loadUser(data.access_token, props.isModal);
       }
-    }
-
-    function cancel() {
-      router.replace('/auth');
     }
 
     async function enableForceSms() {
@@ -94,14 +92,13 @@ export default {
       }
 
       state.loading = true;
-      state.wrongCode = false;
 
       try {
         const data = await vkapi('auth.validatePhone', {
           client_secret: 'hHbZxrka2uZ6jB1inYsH',
           client_id: 2274003,
           api_id: 2274003,
-          sid: params.validation_sid
+          sid: props.params.validation_sid
         });
 
         state.isAppCode = false;
@@ -117,7 +114,6 @@ export default {
       ...toRefs(state),
 
       auth,
-      cancel,
       enableForceSms,
       format
     };
@@ -128,21 +124,20 @@ export default {
 <style>
 .auth_code_header {
   font-size: 24px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .auth_code_descr {
-  font-size: 14px;
   margin-bottom: 20px;
-  width: 310px;
+  width: 330px;
+}
+
+.auth_code_buttons {
+  margin-bottom: 25px;
 }
 
 .auth_code_buttons .button {
   width: 123px;
-  margin: 2px;
-}
-
-.auth_code .auth_error {
   margin: 2px;
 }
 

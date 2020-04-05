@@ -206,7 +206,7 @@ export default {
   height: 36px;
   width: 100%;
   font-size: 15px;
-  margin: 5px 10px;
+  margin: 0 5px;
   padding: 0 10px;
   transition: box-shadow .3s;
 }
@@ -216,8 +216,9 @@ export default {
 }
 
 .im_peers_search_cancel {
-  padding: 1px;
-  margin-right: 8px;
+  width: 40px;
+  height: 50px;
+  padding: 6px;
   flex: none;
   cursor: pointer;
   opacity: .7;

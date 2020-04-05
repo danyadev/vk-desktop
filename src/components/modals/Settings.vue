@@ -13,7 +13,7 @@
             v-for="section of sections"
             :key="section.name"
             color="var(--hover-background-ripple)"
-            :class="['settings_left_item', { active: section.name == activeSection }]"
+            :class="['settings_left_item', { active: section.name === activeSection }]"
             @click="activeSection = section.name"
           >
             <Icon :name="section.icon" color="var(--accent)" />

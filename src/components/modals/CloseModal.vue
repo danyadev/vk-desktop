@@ -24,7 +24,7 @@ export default {
     close() {
       const parent = this.isSettings ? this.$parent : this.$parent.parent;
 
-      closeModal(parent.props['data-name']);
+      closeModal(parent.attrs['data-name']);
     }
   }
 };

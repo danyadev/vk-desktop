@@ -21,6 +21,6 @@ export default {
 
 <style>
 .modal[data-name=auth] .modal_content {
-  padding: 25px;
+  padding: 40px;
 }
 </style>
