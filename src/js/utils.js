@@ -247,7 +247,7 @@ export function concatProfiles(profiles, groups) {
 // Возвращает функцию, которая вызывает колбэк, если юзер долистал
 // список до конца (или в начало), чтобы загрузить новую часть списка
 export function endScroll(callback, reverse) {
-  return function({ viewport: { scrollTop, scrollHeight, offsetHeight } }) {
+  return function({ scrollTop, scrollHeight, offsetHeight }) {
     // Если блок пустой либо видимая область блока = 0px, то игнорировать это событие.
     // Обычно возникает когда у блока стоит display: none или он скрыт другим способом.
     if (!scrollHeight || !offsetHeight) {

@@ -33,7 +33,7 @@ export default {
     Button
   },
 
-  setup(props, { emit }) {
+  setup(props) {
     const state = reactive({
       isAppCode: props.params.validation_type === '2fa_app',
       phoneMask: props.params.phone_mask,

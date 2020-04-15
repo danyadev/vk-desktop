@@ -101,7 +101,7 @@ export default {
 
       const conversations = items.map((item) => ({
         peer: parseConversation(item.conversation),
-        msg: parseMessage(item.last_message)
+        msg: item.last_message ? parseMessage(item.last_message) : {}
       }));
 
       state.lockScroll = true;

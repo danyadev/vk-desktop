@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { reactive, computed, toRefs } from 'vue';
 import router from 'js/router';
 import store from 'js/store';
 import { onTransitionEnd, convertCount } from 'js/utils';
@@ -77,21 +77,24 @@ export default {
   },
 
   setup() {
-    const isMenuOpened = computed(() => store.state.isMenuOpened);
-    const counters = computed(() => store.state.menuCounters);
-    const user = computed(() => store.getters['users/user']);
-    const menuRef = ref(null);
+    const state = reactive({
+      menuRef: null,
+
+      isMenuOpened: computed(() => store.state.isMenuOpened),
+      counters: computed(() => store.state.menuCounters),
+      user: computed(() => store.getters['users/user']),
+
+      routes: computed(() => {
+        return ['messages'].map((route) => ({
+          route,
+          active: isActiveRoute(`/${route}`)
+        }));
+      })
+    });
 
     function isActiveRoute(route) {
       return new RegExp(`${route}($|/)`).test(router.currentRoute.value.path);
     }
-
-    const routes = computed(() => {
-      return ['messages'].map((route) => ({
-        route,
-        active: isActiveRoute(`/${route}`)
-      }));
-    });
 
     function toggleMenu(arg) {
       const state = typeof arg === 'boolean'
@@ -111,16 +114,12 @@ export default {
 
     async function openModalFromMenu(name) {
       toggleMenu(false);
-      await onTransitionEnd(menuRef.value);
+      await onTransitionEnd(state.menuRef);
       openModal(name);
     }
 
     return {
-      isMenuOpened,
-      counters,
-      user,
-      menuRef,
-      routes,
+      ...toRefs(state),
 
       convertCount,
       toggleMenu,

@@ -182,7 +182,7 @@ export default {
     }, -1);
 
     function onScroll(scrollyEvent) {
-      if (!scrollyEvent.viewport.scrollHeight) {
+      if (!scrollyEvent.scrollHeight) {
         return;
       }
 

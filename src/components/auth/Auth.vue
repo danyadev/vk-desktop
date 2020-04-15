@@ -34,10 +34,10 @@ export default {
 
     return {
       ...toRefs(state),
-      
+
       onConfirm,
       onBack
     };
   }
-}
+};
 </script>

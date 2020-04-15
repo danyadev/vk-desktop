@@ -8,7 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 module.exports = function(env, { mode }) {
-  const isDev = mode == 'development';
+  const isDev = mode === 'development';
 
   return {
     mode,
@@ -100,4 +100,4 @@ module.exports = function(env, { mode }) {
       }
     }
   };
-}
+};

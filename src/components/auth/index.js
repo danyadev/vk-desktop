@@ -98,7 +98,7 @@ export async function loadUser(android_token, isModal) {
     access_token,
     android_token
   });
-  
+
   store.commit('settings/setDefaultSettings', user.id);
 
   if (isModal) {

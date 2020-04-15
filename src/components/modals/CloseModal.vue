@@ -22,9 +22,9 @@ export default {
 
   methods: {
     close() {
-      const parent = this.isSettings ? this.$parent : this.$parent.parent;
+      const parent = this.isSettings ? this.$parent : this.$parent.$parent;
 
-      closeModal(parent.attrs['data-name']);
+      closeModal(parent.$attrs['data-name']);
     }
   }
 };

@@ -3,13 +3,15 @@
     ref="scrolly"
     :class="['scrolly', { isActive, isScrolling }]"
     tabindex="-1"
-    @wheel.passive="onWheel"
-    @keydown="onKeyDown"
-    @touchstart="onTouchStart"
-    @touchmove.passive="onTouchMove"
-    @touchend="hideScrollBars"
+    @wheel="onWheel"
   >
-    <div ref="viewport" :class="['scrolly-viewport', vclass]"><slot /></div>
+    <div
+      ref="viewport"
+      :class="['scrolly-viewport', vclass]"
+      @scroll.passive.stop="onScroll"
+    >
+      <slot />
+    </div>
 
     <div
       class="scrolly-bar-wrap axis-x"
@@ -46,7 +48,7 @@ function toPercent(n) {
 }
 
 export default {
-  props: ['vclass', 'lock', 'horizontalScroll'],
+  props: ['vclass', 'lock'],
 
   setup(props, { emit }) {
     const state = reactive({
@@ -55,9 +57,9 @@ export default {
       barX: null,
       barY: null,
 
+      // top есть, а left нет...
+      // TODO Carousel
       actualScrollHeight: 0,
-      touchX: 0,
-      touchY: 0,
 
       isActive: false,
       isScrolling: false,
@@ -87,62 +89,14 @@ export default {
     }
 
     function onWheel(event) {
-      let { deltaX, deltaY } = event;
-
-      if (event.altKey || props.horizontalScroll) {
-        deltaX = deltaY > 0 ? 100 : -100;
-        deltaY = 0;
-      }
-
-      const isEndScroll = refreshScrollLayout(deltaX, deltaY) === false;
-
-      if (!props.lock && (!isEndScroll || isEndScroll && props.horizontalScroll)) {
-        event.stopPropagation();
-        activateScrollBars();
+      if (props.lock) {
+        event.preventDefault();
       }
     }
 
-    async function onKeyDown(event) {
-      const { clientHeight } = state.scrolly;
-      const position = {
-        33: [0, 10 - clientHeight], // Page Up
-        34: [0, clientHeight - 10], // Page Down
-        37: [-20, 0], // Left Arrow
-        38: [0, -20], // Up Arrow
-        39: [20, 0], // Right Arrow
-        40: [0, 20] // Down Arrow
-      }[event.which];
-
-      if (position) {
-        if (event.which === 33 || event.which === 34) {
-          event.preventDefault();
-        }
-
-        await waitAnimationFrame();
-
-        if (refreshScrollLayout(...position) !== false) {
-          activateScrollBars();
-        }
-      }
-    }
-
-    function onTouchStart({ touches: [touch] }) {
-      state.touchX = touch.pageX;
-      state.touchY = touch.pageY;
-
-      activateScrollBars({ enter: 1 });
-    }
-
-    async function onTouchMove({ touches: [touch] }) {
-      await waitAnimationFrame();
-
-      const dx = state.touchX - touch.pageX;
-      const dy = state.touchY - touch.pageY;
-
-      state.touchX = touch.pageX;
-      state.touchY = touch.pageY;
-
-      refreshScrollLayout(dx, dy);
+    function onScroll() {
+      refreshScrollLayout();
+      activateScrollBars();
     }
 
     function onMouseDown({ target: clickTarget, pageX: initialPageX, pageY: initialPageY }) {
@@ -152,12 +106,12 @@ export default {
       const initialBarLeft = bar.offsetLeft;
 
       async function onMouseMove({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
-        if (props.lock) return;
+        if (props.lock) {
+          return;
+        }
 
         const isMoveToPoint = isMouseUp && target.matches('.scrolly-bar-wrap');
         const { scrollWidth, offsetWidth, scrollHeight, offsetHeight } = viewport;
-        let dx = 0;
-        let dy = 0;
 
         await waitAnimationFrame();
 
@@ -171,9 +125,15 @@ export default {
           );
           const scrollLeft = (barLeft / maxBarLeft) * (scrollWidth - offsetWidth);
 
-          dx = scrollLeft - viewport.scrollLeft;
-          viewport.scrollLeft = scrollLeft;
-          bar.style.left = toPercent(barLeft / offsetWidth);
+          if (isMoveToPoint) {
+            viewport.scrollTo({
+              left: scrollLeft,
+              behavior: 'smooth'
+            });
+          } else {
+            viewport.scrollLeft = scrollLeft;
+            bar.style.left = toPercent(barLeft / offsetWidth);
+          }
         } else {
           const maxBarTop = offsetHeight - bar.offsetHeight;
           const barTop = normalize(
@@ -184,12 +144,18 @@ export default {
           );
           const scrollTop = (barTop / maxBarTop) * (scrollHeight - offsetHeight);
 
-          dy = scrollTop - viewport.scrollTop;
-          viewport.scrollTop = scrollTop;
-          bar.style.top = toPercent(barTop / offsetHeight);
+          if (isMoveToPoint) {
+            viewport.scrollTo({
+              top: scrollTop,
+              behavior: 'smooth'
+            });
+          } else {
+            viewport.scrollTop = scrollTop;
+            bar.style.top = toPercent(barTop / offsetHeight);
+          }
         }
 
-        emit('scroll', { viewport, dx, dy });
+        emit('scroll', viewport);
       }
 
       function onMouseUp(event) {
@@ -229,25 +195,11 @@ export default {
       }
     });
 
-    function refreshScrollLayout(dx = 0, dy = 0) {
+    function refreshScrollLayout() {
       const { viewport, barX, barY } = state;
-      if (!viewport) return;
 
-      if (!props.lock) {
-        const {
-          scrollLeft: prevScrollLeft,
-          scrollTop: prevScrollTop
-        } = viewport;
-
-        viewport.scrollLeft += dx;
-        viewport.scrollTop += dy;
-
-        const noX = dx && prevScrollLeft === viewport.scrollLeft;
-        const noY = dy && prevScrollTop === viewport.scrollTop;
-
-        // Здесь не нужна проверка на !dx && !dy, потому что
-        // такой кейс появляется только когда метод вызван вручную
-        if ((noX && noY) || (noX && !dy) || (noY && !dx)) return false;
+      if (!viewport) {
+        return;
       }
 
       const {
@@ -270,9 +222,7 @@ export default {
       barX.style.left = toPercent(barLeft / offsetWidth);
       barY.style.top = toPercent(barTop / offsetHeight);
 
-      if (dx || dy) {
-        emit('scroll', { viewport, dx, dy });
-      }
+      emit('scroll', viewport);
     }
 
     onMounted(() => {
@@ -290,7 +240,7 @@ export default {
       });
 
       state.resizeObserver = new ResizeObserver(
-        debounce(() => refreshScrollLayout(), 250)
+        debounce(refreshScrollLayout, 250)
       );
 
       state.resizeObserver.observe(state.viewport, {
@@ -307,9 +257,7 @@ export default {
       ...toRefs(state),
 
       onWheel,
-      onKeyDown,
-      onTouchStart,
-      onTouchMove,
+      onScroll,
       onMouseDown,
       activateScrollBars,
       hideScrollBars
@@ -328,8 +276,12 @@ export default {
 }
 
 .scrolly-viewport {
-  overflow: hidden;
+  overflow: auto;
   height: 100%;
+}
+
+.scrolly-viewport::-webkit-scrollbar {
+  display: none;
 }
 
 .scrolly-bar-wrap {

@@ -216,11 +216,11 @@ export default {
 }
 
 .im_peers_search_cancel {
-  width: 40px;
-  height: 50px;
-  padding: 6px;
-  flex: none;
+  width: 46px;
+  height: 46px;
+  padding: 10px;
   cursor: pointer;
+  flex: none;
   opacity: .7;
   transition: opacity .3s;
 }

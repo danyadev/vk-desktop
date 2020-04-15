@@ -26,7 +26,7 @@ import { ref, computed } from 'vue';
 
 export default {
   props: ['color'],
-  
+
   setup(props) {
     const ripples = ref([]);
     const color = computed(() => props.color || 'rgba(255, 255, 255, .3)');
