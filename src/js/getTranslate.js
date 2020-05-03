@@ -23,7 +23,7 @@ function caseOfNumber(count) {
 // text: 'текст'
 // dynamicText: 'текст {0} и {1}'
 // array: ['текст 1', 'текст 2']
-// dymanicArray: ['текст {0}', 'число {0}']
+// dynamicArray: ['текст {0}', 'число {0}']
 // caseOfNumber: ['яблоко', '{0} яблока', '{0} яблок']
 // object: { a: 'а {0}', b: 'б {0}' }
 // objectAndArray: { apple: ['яблоко', '{0} яблока', '{0} яблок'] }
@@ -32,7 +32,7 @@ function caseOfNumber(count) {
 // 1) fn('text'): 'текст'
 // 2) fn('dynamicText', [12, 34]): 'текст 12 и 34'
 // 3) fn('array', 1): 'текст 2'
-// 4) fn('dymanicArray', 0, [1]): 'текст 1'
+// 4) fn('dynamicArray', 0, [1]): 'текст 1'
 // 5) fn('array', false): 'текст 1'
 // 6) fn('array', true): 'текст 2'
 // 7) fn('caseOfNumber', [1], 1): 'яблоко'
@@ -55,8 +55,6 @@ export default function(name, key, replaces, number) {
   if (!data) return data;
 
   if (Array.isArray(replaces)) {
-    data = String(data);
-
     for (let i = 0; i < replaces.length; i++) {
       data = data.replace(new RegExp(`\\{${i}\\}`, 'g'), replaces[i]);
     }

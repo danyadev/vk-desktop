@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 import electron from 'electron';
-import { version } from 'package-json';
+import { version } from '../../package.json';
 import request from './request';
 import vkapi from './vkapi';
 import store from './store';
@@ -26,11 +26,7 @@ export function timer(time) {
 }
 
 export function escape(text) {
-  if (text == null) {
-    return '';
-  }
-
-  return String(text)
+  return text
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
     .replace(/</g, '&lt;')
@@ -38,11 +34,7 @@ export function escape(text) {
 }
 
 export function unescape(text) {
-  if (text == null) {
-    return '';
-  }
-
-  return String(text)
+  return text
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&lt;/g, '<')
@@ -248,7 +240,7 @@ export function concatProfiles(profiles, groups) {
 // список до конца (или в начало), чтобы загрузить новую часть списка
 export function endScroll(callback, reverse) {
   return function({ scrollTop, scrollHeight, offsetHeight }) {
-    // Если блок пустой либо видимая область блока = 0px, то игнорировать это событие.
+    // Если блок пустой либо видимая область блока = 0px.
     // Обычно возникает когда у блока стоит display: none или он скрыт другим способом.
     if (!scrollHeight || !offsetHeight) {
       return;

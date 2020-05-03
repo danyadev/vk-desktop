@@ -19,11 +19,7 @@ class Longpoll {
     });
   }
 
-  async start(data) {
-    if (!data) {
-      data = await this.getServer();
-    }
-
+  start(data) {
     this.server = data.server;
     this.key = data.key;
     this.pts = data.pts;
@@ -96,9 +92,9 @@ class Longpoll {
       return conversations;
     }, {});
 
-    const messages = history.messages.items.reduce((msgs, msg) => {
-      msgs[msg.id] = parseMessage(msg);
-      return msgs;
+    const messages = history.messages.items.reduce((messages, message) => {
+      messages[message.id] = parseMessage(message);
+      return messages;
     }, {});
 
     const events = [];
@@ -149,7 +145,7 @@ class Longpoll {
 
       const fromHistory = rawEvent[1] === 'fromHistory';
       const rawData = fromHistory ? rawEvent[0] : rawEvent;
-      const data = event.parser ? event.parser(rawData) : rawData;
+      const data = event.parser ? event.parser(rawData, fromHistory) : rawData;
 
       if (!data) {
         continue;
@@ -159,7 +155,8 @@ class Longpoll {
         const prevEvent = events[events.length - 1];
 
         if (
-          prevEvent && prevEvent[0] === id && // совпадают id событий
+          prevEvent &&
+          prevEvent[0] === id && // совпадают id событий
           prevEvent[2] === rawEvent[2] // и peer_id
         ) {
           prevEvent[1].push(data);
@@ -173,9 +170,9 @@ class Longpoll {
 
     for (const [id, data, peer_id, fromHistory] of events) {
       const { handler, preload } = longpollEvents[id];
-      const isPreload = !fromHistory && preload && preload(data);
+      const isPreload = !!(!fromHistory && preload && preload(data));
       const promise = peer_id
-        ? handler({ key: +peer_id, items: data }, isPreload)
+        ? handler({ peer_id: +peer_id, items: data }, isPreload)
         : handler(data, isPreload);
 
       if (isPreload) {

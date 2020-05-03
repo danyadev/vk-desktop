@@ -10,25 +10,25 @@ export function parseConversation(conversation) {
 
   return {
     id: conversation.peer.id,
-    channel: isChat && chat_settings.is_group_channel,
-    members: isChat && chat_settings.members_count,
+    isChannel: isChat && chat_settings.is_group_channel,
+    members: isChat ? chat_settings.members_count : null,
     left: isChat && ['left', 'kicked'].includes(chat_settings.state),
-    muted: push_settings && push_settings.disabled_forever,
+    muted: !!push_settings && push_settings.disabled_forever,
     unread: conversation.unread_count || 0,
-    photo: isChat && getPhoto(chat_settings.photo),
-    title: isChat && escape(chat_settings.title).replace(/\n/g, ' '),
-    canWrite: conversation.can_write.allowed,
-    keyboard: conversation.current_keyboard,
+    photo: isChat ? getPhoto(chat_settings.photo) : null,
+    title: isChat ? escape(chat_settings.title).replace(/\n/g, ' ') : null,
+    isWriteAllowed: conversation.can_write.allowed,
+    keyboard: conversation.current_keyboard || null,
     last_msg_id: conversation.last_message_id,
     // id последнего прочтенного входящего сообщения
     in_read: conversation.in_read,
     // id последнего прочтенного исходящего сообщения
     out_read: conversation.out_read,
     mentions: conversation.mentions || [],
-    pinnedMsg: isChat && chat_settings.pinned_message && parseMessage(chat_settings.pinned_message),
-    chatSettings: isChat && chat_settings.acl,
-    owner_id: isChat && chat_settings.owner_id,
-    admin_ids: isChat && chat_settings.admin_ids,
+    pinnedMsg: isChat && chat_settings.pinned_message ? parseMessage(chat_settings.pinned_message) : null,
+    chatSettings: isChat ? chat_settings : null,
+    owner_id: isChat ? chat_settings.owner_id : null,
+    admin_ids: isChat ? chat_settings.admin_ids : null,
     loaded: true
   };
 }
@@ -41,9 +41,10 @@ export function parseMessage(message) {
     });
   }
 
+  // Поле fwd_messages отсутствует в ответе на сообщение, пересланных сообщениях и закрепе
   const fwdCount = message.fwd_messages ? message.fwd_messages.length : 0;
-  const isReplyMsg = !!message.reply_message;
-  const hasAttachment = fwdCount || isReplyMsg || message.attachments.length;
+  const hasReplyMsg = !!message.reply_message;
+  const hasAttachment = !!(fwdCount || hasReplyMsg || message.attachments.length);
   const attachments = {};
 
   for (const attachDescription of message.attachments) {
@@ -51,15 +52,15 @@ export function parseMessage(message) {
     const attach = attachDescription[type];
 
     if (type === 'link') {
-      const playlistRE = /https:\/\/m\.vk\.com\/audio\?act=audio_playlist(\d+)_(\d+)/;
-      const artistRE = /https:\/\/m\.vk\.com\/artist\/(.+?)\?/;
-      const articleRE = /https:\/\/m\.vk\.com\/@/;
+      const playlistLink = 'https://m.vk.com/audio?act=audio_playlist';
+      const artistLink = 'https://m.vk.com/artist/';
+      const articleLink = 'https://m.vk.com/@';
 
-      if (playlistRE.test(attach.url)) {
+      if (attach.url.includes(playlistLink)) {
         type = 'audio_playlist';
-      } else if (artistRE.test(attach.url)) {
+      } else if (attach.url.includes(artistLink)) {
         type = 'artist';
-      } else if (articleRE.test(attach.url)) {
+      } else if (attach.url.includes(articleLink)) {
         // articles.getByLink с ссылкой в поле links
         type = 'article';
       }
@@ -73,26 +74,28 @@ export function parseMessage(message) {
   }
 
   return {
-    id: message.id,
-    text: escape(message.text).replace(/\n/g, '<br>'),
+    id: 'id' in message ? message.id : null,
     from: message.from_id,
-    date: message.date,
     out: message.from_id === store.state.users.activeUser,
-    editTime: message.update_time || 0,
-    hidden: message.is_hidden,
-    action: message.action,
-    fwdCount,
-    fwdMessages: (message.fwd_messages || []).map(parseMessage),
-    isReplyMsg,
-    replyMsg: isReplyMsg && parseMessage(message.reply_message),
-    attachments,
+    text: escape(message.text).replace(/\n/g, '<br>'),
+    date: message.date,
     conversation_msg_id: message.conversation_message_id,
     random_id: message.random_id,
-    was_listened: !!message.was_listened,
+    action: message.action || null,
     hasAttachment,
+    fwdCount,
+    fwdMessages: (message.fwd_messages || []).map(parseMessage),
+    attachments,
+    hasReplyMsg,
+    replyMsg: hasReplyMsg ? parseMessage(message.reply_message) : null,
+    keyboard: message.keyboard || null,
+    hasTemplate: !!message.template,
+    template: message.template || null,
+    hidden: !!message.is_hidden,
+    editTime: message.update_time || 0,
+    was_listened: !!message.was_listened,
     isContentDeleted: !message.text && !message.action && !hasAttachment,
-    keyboard: message.keyboard,
-    template: message.template
+    fromLongPoll: false
   };
 }
 
@@ -100,7 +103,7 @@ export function getMessagePreview(msg) {
   if (msg.text) {
     return msg.text;
   } else if (msg.hasAttachment) {
-    const { isReplyMsg, fwdCount, attachments } = msg;
+    const { hasReplyMsg, fwdCount, attachments } = msg;
     const [attachName] = Object.keys(attachments);
 
     if (attachName) {
@@ -115,7 +118,7 @@ export function getMessagePreview(msg) {
       return translate;
     }
 
-    if (isReplyMsg) {
+    if (hasReplyMsg) {
       return getTranslate('im_replied');
     }
 
@@ -128,7 +131,7 @@ export function getMessagePreview(msg) {
 }
 
 export function getPeerOnline(peer_id, peer, owner) {
-  if (!peer || !peer.left && peer_id > 2e9 && peer.members == null) {
+  if (!peer || !peer.left && peer_id > 2e9 && peer.members === null) {
     return getTranslate('loading');
   }
 
@@ -137,12 +140,12 @@ export function getPeerOnline(peer_id, peer, owner) {
   }
 
   if (peer_id > 2e9) {
-    const { canWrite, members, channel, left } = peer;
+    const { chatSettings, members, isChannel, left } = peer;
 
-    if (!canWrite && !channel) {
+    if (chatSettings.state === 'kicked') {
       return getTranslate('im_chat_kicked');
     } else if (left) {
-      return getTranslate(channel ? 'im_chat_left_channel' : 'im_chat_left');
+      return getTranslate(isChannel ? 'im_chat_left_channel' : 'im_chat_left');
     } else {
       return getTranslate('im_chat_members', [members], members);
     }
@@ -156,7 +159,7 @@ export function getPeerOnline(peer_id, peer, owner) {
     return getTranslate('im_user_deleted');
   }
 
-  const { online, online_mobile, online_app, online_info: info, last_seen } = owner;
+  const { online, online_mobile, online_app, online_info, last_seen, sex } = owner;
 
   if (online) {
     const appName = online_app > 0 && getAppName(online_app);
@@ -168,10 +171,10 @@ export function getPeerOnline(peer_id, peer, owner) {
     }
   }
 
-  const isGirl = owner.sex === 1;
+  const isGirl = sex === 1;
 
-  if (!info.visible) {
-    return getTranslate(`im_chat_online_${info.status}`, isGirl);
+  if (!online_info.visible) {
+    return getTranslate(`im_chat_online_${online_info.status}`, isGirl);
   }
 
   if (last_seen) {
@@ -202,11 +205,11 @@ export function getPeerTitle(peer_id, peer, owner) {
 
 export function getLastMsgId() {
   const [peer] = store.getters['messages/peersList'];
-  return peer && peer.msg.id;
+  return peer ? peer.msg.id : null;
 }
 
 export async function loadConversation(id) {
-  const { items: [conv], profiles, groups } = await vkapi('messages.getConversationsById', {
+  const { items: [conversation], profiles, groups } = await vkapi('messages.getConversationsById', {
     peer_ids: id,
     extended: 1,
     fields
@@ -214,18 +217,18 @@ export async function loadConversation(id) {
 
   store.commit('addProfiles', concatProfiles(profiles, groups));
   store.commit('messages/updateConversation', {
-    peer: parseConversation(conv)
+    peer: parseConversation(conversation)
   });
 }
 
-export const loadedConvMembers = new Set();
+export const loadedConversationMembers = new Set();
 
 export async function loadConversationMembers(id, force) {
-  if (loadedConvMembers.has(id) && !force) {
+  if (loadedConversationMembers.has(id) && !force) {
     return;
   }
 
-  loadedConvMembers.add(id);
+  loadedConversationMembers.add(id);
 
   try {
     const { profiles, groups } = await vkapi('messages.getConversationMembers', {
@@ -238,7 +241,7 @@ export async function loadConversationMembers(id, force) {
     // Пользователь исключен/вышел из беседы, но т.к. юзер может вернуться,
     // здесь удаляется пометка беседы как загруженная для возможности повторить попытку
     if (err.error_code === 917) {
-      loadedConvMembers.delete(id);
+      loadedConversationMembers.delete(id);
     }
   }
 }

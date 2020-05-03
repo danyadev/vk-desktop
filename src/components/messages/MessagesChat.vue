@@ -30,8 +30,8 @@ export default {
     const state = reactive({
       peer_id: +router.currentRoute.value.params.id,
       peer: computed(() => {
-        const conv = store.state.messages.conversations[state.peer_id];
-        return conv && conv.peer;
+        const conversation = store.state.messages.conversations[state.peer_id];
+        return conversation && conversation.peer;
       }),
 
       pinnedMsg: computed(() => {

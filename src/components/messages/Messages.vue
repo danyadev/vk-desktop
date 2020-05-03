@@ -1,7 +1,7 @@
 <template>
   <div :class="['messages_container', { hasChat }]" tabindex="-1" @keydown.esc="closeChat">
     <MessagesPeers :activeChat="peer_id" />
-    <!-- TODO(vue-router) :key + KeepAlive -->
+    <!-- TODO(vue-router) :key="peer_id" + KeepAlive -->
     <RouterView />
   </div>
 </template>

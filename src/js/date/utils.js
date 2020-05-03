@@ -5,10 +5,10 @@ export function format(date, mask) {
   const months = getTranslate('months');
 
   const tokens = {
-    // год (----)
+    // год (nnnn)
     yyyy: () => date.getFullYear(),
 
-    // месяц (полное название; которкое название; 01-12; 1-12)
+    // месяц (полное название; короткое название; 01-12; 1-12)
     MMMM: () => months[date.getMonth()],
     MMM: () => tokens.MMMM().slice(0, 3),
     MM: () => addZero(tokens.M()),

@@ -19,7 +19,7 @@ function request(requestParams, params = {}) {
           chunks.push(chunk);
         }
 
-        if (typeof params.progress === 'function') {
+        if (params.progress) {
           loadedLength += chunk.length;
 
           params.progress({
@@ -34,14 +34,10 @@ function request(requestParams, params = {}) {
       });
 
       res.on('end', () => {
-        let data = String(Buffer.concat(chunks));
-
-        if (!params.raw) {
-          data = JSON.parse(data);
-        }
+        const raw = String(Buffer.concat(chunks));
 
         resolve({
-          data,
+          data: params.raw ? raw : JSON.parse(raw),
           headers: res.headers,
           statusCode: res.statusCode
         });
@@ -89,10 +85,10 @@ async function sendMultipart(req, files) {
       file.value
         .pipe(req, { end: false })
         .on('end', () => {
-          if (i !== names.length - 1) {
-            req.write(`\r\n--${boundary}`);
-          } else {
+          if (i === names.length - 1) {
             req.end(`\r\n--${boundary}--`);
+          } else {
+            req.write(`\r\n--${boundary}`);
           }
 
           resolve();
@@ -112,12 +108,12 @@ async function waitConnection() {
       waitConnectionPromise = null;
       break;
     } catch (err) {
-      if (!navigator.onLine) {
+      if (navigator.onLine) {
+        await timer(5000);
+      } else {
         await new Promise((resolve) => {
           window.addEventListener('online', resolve, { once: true });
         });
-      } else {
-        await timer(5000);
       }
     }
   }

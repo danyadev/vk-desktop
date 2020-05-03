@@ -117,7 +117,7 @@ export default {
       }),
 
       authorName: computed(() => {
-        if (props.msg.action || props.peer.channel) {
+        if (props.msg.action || props.peer.isChannel) {
           return '';
         } else if (props.msg.out) {
           return `${getTranslate('you')}:`;

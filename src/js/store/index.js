@@ -16,9 +16,9 @@ const store = createStore({
 });
 
 store.subscribe(({ type }, state) => {
-  if (/^settings\//.test(type)) {
+  if (type.startsWith('settings/')) {
     settingsStorage.update(state.settings);
-  } else if (/^users\//.test(type)) {
+  } else if (type.startsWith('users/')) {
     usersStorage.update(state.users);
   }
 });

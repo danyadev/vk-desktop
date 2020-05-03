@@ -101,7 +101,7 @@ export default {
         addNew: config.isDown
       });
 
-      const list = state.list.$el.firstChild;
+      const list = state.list.viewport;
       const { scrollTop, scrollHeight } = list;
 
       await nextTick();
@@ -146,7 +146,7 @@ export default {
       const unreadMessages = document.querySelector('.message_unreaded_messages');
 
       if (unreadMessages) {
-        const list = state.list.$el.firstChild;
+        const list = state.list.viewport;
         list.scrollTop = unreadMessages.offsetTop - list.clientHeight / 2;
         afterUpdateScrollTop(list);
       }

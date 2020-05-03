@@ -1,5 +1,5 @@
 import { settingsStorage, defaultUserSettings } from '../Storage';
-import ru from 'src/lang/ru';
+import ru from 'lang/ru';
 
 const languages = {
   ru

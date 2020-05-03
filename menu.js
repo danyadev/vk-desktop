@@ -10,7 +10,7 @@ module.exports = function(mainWindow) {
         {
           label: 'О программе VK Desktop',
           click() {
-            shell.openExternal('https://vk.com/vk_desktop_app');
+            shell.openItem('https://vk.com/vk_desktop_app');
           }
         },
         { type: 'separator' },
@@ -19,8 +19,7 @@ module.exports = function(mainWindow) {
           enabled: false,
           accelerator: 'Command+,',
           click() {
-            // Открыть настройки в приложении
-            // (а их еще нет)
+            // TODO Настройки
             // win.send('preferences');
           }
         },
@@ -28,9 +27,8 @@ module.exports = function(mainWindow) {
           label: 'Проверить обновления',
           enabled: false,
           click() {
-            // Открыть модалку проверки обновления
-            // (а логики обновления еще нет)
-            // win.send('update', { status: 'check_clicked' });
+            // TODO Проверка обновлений
+            // win.send('updateCheck');
           }
         },
         { type: 'separator' },
@@ -107,7 +105,7 @@ module.exports = function(mainWindow) {
           label: 'Перейти в полноэкранный режим',
           accelerator: 'Ctrl+Command+F',
           click(item, focusedWindow) {
-            if(focusedWindow) {
+            if (focusedWindow) {
               focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
             }
           }
@@ -116,7 +114,9 @@ module.exports = function(mainWindow) {
           label: 'Toggle Developer Tools',
           accelerator: 'Alt+Command+I',
           click(item, focusedWindow) {
-            if(focusedWindow) focusedWindow.toggleDevTools();
+            if (focusedWindow) {
+              focusedWindow.toggleDevTools();
+            }
           }
         }
       ]
@@ -136,25 +136,32 @@ module.exports = function(mainWindow) {
           click() {
             const focusedWin = BrowserWindow.getFocusedWindow();
 
-            if(!focusedWin) return;
-            if(focusedWin != mainWindow) return focusedWin.close();
+            if (!focusedWin) {
+              return;
+            }
+
+            if (focusedWin !== mainWindow) {
+              return focusedWin.close();
+            }
 
             function closeFunc() {
               mainWindow.close();
               mainWindow.removeListener('leave-full-screen', closeFunc);
             }
 
-            if(mainWindow.isFullScreen()) {
+            if (mainWindow.isFullScreen()) {
               mainWindow.setFullScreen(false);
               mainWindow.on('leave-full-screen', closeFunc);
-            } else closeFunc();
+            } else {
+              closeFunc();
+            }
           }
         },
         { type: 'separator' },
         {
           label: 'Все окна — на передний план',
           click() {
-            if(mainWindow) {
+            if (mainWindow) {
               mainWindow.show();
               mainWindow.focus();
             }
@@ -169,7 +176,7 @@ module.exports = function(mainWindow) {
         {
           label: 'Узнать больше',
           click() {
-            shell.openExternal('https://vk.com/vk_desktop_app');
+            shell.openItem('https://vk.com/vk_desktop_app');
           }
         }
       ]

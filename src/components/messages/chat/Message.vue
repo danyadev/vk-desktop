@@ -52,8 +52,8 @@ export default {
 
       isUnread: computed(() => {
         return props.peer && (
-          props.msg.id > props.peer.out_read || // непрочитано собеседником
-          props.msg.id > props.peer.in_read // непрочитано мной
+          props.msg.id > props.peer.out_read || // не прочитано собеседником
+          props.msg.id > props.peer.in_read // не прочитано мной
         ) || props.msg.isLoading;
       })
     });

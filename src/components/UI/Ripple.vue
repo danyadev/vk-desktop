@@ -11,7 +11,7 @@
             left: ripple.left,
             width: ripple.width,
             height: ripple.height,
-            background: color
+            background
           }"
         />
       </TransitionGroup>
@@ -29,7 +29,7 @@ export default {
 
   setup(props) {
     const ripples = ref([]);
-    const color = computed(() => props.color || 'rgba(255, 255, 255, .3)');
+    const background = computed(() => props.color || 'rgba(255, 255, 255, .3)');
 
     function addRipple(event) {
       const { left, top } = this.$el.getBoundingClientRect();
@@ -51,9 +51,9 @@ export default {
     }
 
     return {
-      color,
       ripples,
-      addRipple
+      addRipple,
+      background
     };
   }
 };

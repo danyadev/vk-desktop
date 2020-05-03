@@ -1,9 +1,9 @@
 <template>
-  <div class="modal_header" :closable="closable">
+  <div class="modal_header" :closable="isClosable">
     <div class="modal_header_title"><slot /></div>
     <div class="modal_header_buttons">
       <slot name="icons" />
-      <CloseModal :closable="closable" />
+      <CloseModal :closable="isClosable" />
     </div>
   </div>
 </template>
@@ -20,7 +20,7 @@ export default {
 
   setup(props) {
     return {
-      closable: ('closable' in props) ? props.closable : true
+      isClosable: ('closable' in props) ? props.closable : true
     };
   }
 };

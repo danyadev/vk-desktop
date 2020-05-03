@@ -30,7 +30,7 @@ export function getAndroidToken(login, password, params = {}) {
     });
 
     if (data.trusted_hash) {
-      store.commit('users/setTrusredHash', {
+      store.commit('users/setTrustedHash', {
         login,
         hash: data.trusted_hash
       });

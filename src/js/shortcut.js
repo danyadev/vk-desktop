@@ -3,7 +3,7 @@ const pressedKeys = new Set();
 const callbacks = new Map();
 
 function getKeyName({ key, code }) {
-  return /^Key/.test(code) ? code.slice(3) : key;
+  return code.startsWith('Key') ? code.slice(3) : key;
 }
 
 window.addEventListener('keydown', (event) => {

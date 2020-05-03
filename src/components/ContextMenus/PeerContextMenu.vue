@@ -32,7 +32,7 @@
       <div class="act_menu_data">{{ l('im_toggle_notifications', !peer.muted) }}</div>
     </div>
 
-    <div v-if="!peer.channel" class="act_menu_item" @click="clearHistory">
+    <div v-if="!peer.isChannel" class="act_menu_item" @click="clearHistory">
       <img src="assets/trash.svg" class="act_menu_icon">
       <div class="act_menu_data">{{ l('im_clear_history') }}</div>
     </div>
@@ -40,7 +40,7 @@
     <div v-if="peerId > 2e9" class="act_menu_item" @click="leftFromChat">
       <template v-if="peer.left">
         <img src="assets/forward.svg" class="act_menu_icon">
-        <div class="act_menu_data">{{ l('im_toggle_left_state', peer.channel ? 3 : 2) }}</div>
+        <div class="act_menu_data">{{ l('im_toggle_left_state', peer.isChannel ? 3 : 2) }}</div>
       </template>
       <template v-else>
         <Icon
@@ -48,7 +48,7 @@
           color="var(--icon-dark-gray)"
           class="act_menu_icon act_menu_close_icon"
         />
-        <div class="act_menu_data">{{ l('im_toggle_left_state', peer.channel ? 1 : 0) }}</div>
+        <div class="act_menu_data">{{ l('im_toggle_left_state', peer.isChannel ? 1 : 0) }}</div>
       </template>
     </div>
   </ContextMenu>
@@ -120,7 +120,7 @@ export default {
     }
 
     function leftFromChat() {
-      if (state.peer.channel) {
+      if (state.peer.isChannel) {
         eventBus.emit('messages:event', 'changeLoadedState', {
           peer_id: this.peerId,
           loadedUp: !this.peer.left,

@@ -9,12 +9,11 @@ import {
   supportedAttachments,
   preloadAttachments
 } from '../components/messages/chat/attachments';
-import { timer, eventBus, isObject } from './utils';
+import { timer, eventBus } from './utils';
 import store from './store';
 import vkapi from './vkapi';
 
-function hasFlag(mask, flag) {
-  const checkFlag = (flag) => flags[flag] & mask;
+function hasFlag(mask) {
   const flags = {
     unread:         1,       // Непрочитанное сообщение
     outbox:         1 << 1,  // Исходящее сообщение
@@ -29,33 +28,37 @@ function hasFlag(mask, flag) {
     hidden:         1 << 16, // Приветственное сообщение от группы
     deleted_all:    1 << 17, // Удаление сообщения для всех
     chat_in:        1 << 19, // Входящее сообщение в беседе
-    slient:         1 << 20, // messages.send slient: true; выход из беседы
+    silent:         1 << 20, // messages.send silent: true; выход из беседы
     reply_msg:      1 << 21  // Ответ на сообщение
   };
 
-  return flag ? checkFlag(flag) : checkFlag;
+  return (flag) => !!(flags[flag] & mask);
 }
 
 function getServiceMessage(data) {
   const source = {};
 
+  const replaces = {
+    act: 'type',
+    mid: 'member_id',
+    chat_local_id: 'conversation_message_id'
+  };
+
   for (const item in data) {
     const match = item.match(/source_(.+)/);
 
     if (match) {
-      const key = match[1] === 'act'
-        ? 'type'
-        : match[1];
+      const key = replaces[match[1]] || match[1];
 
-      const value = isNaN(data[item])
+      source[key] = isNaN(data[item])
         ? data[item]
         : +data[item];
-
-      source[key] = value;
     }
   }
 
-  return Object.keys(source).length && source;
+  return Object.keys(source).length
+    ? source
+    : null;
 }
 
 function getAttachments(data) {
@@ -77,10 +80,10 @@ function getAttachments(data) {
       if (kind === 'graffiti') type = 'graffiti';
       if (type === 'group') type = 'event';
 
-      if (!attachments[type]) {
-        attachments[type] = [null];
-      } else {
+      if (attachments[type]) {
         attachments[type].push(null);
+      } else {
+        attachments[type] = [null];
       }
     }
   }
@@ -88,62 +91,75 @@ function getAttachments(data) {
   return attachments;
 }
 
-function parseLongPollMessage(data) {
-  // Описание объекта сообщения:
-  // https://github.com/danyadev/longpoll-doc#структура-сообщения
-  const user = store.getters['users/user'];
-
+// https://github.com/danyadev/longpoll-doc#структура-сообщения
+function parseLongPollMessage(data, fromHistory) {
   // Если данные получены через messages.getLongPollHistory
-  if (isObject(data)) {
+  if (fromHistory) {
     return data;
   }
 
   // Если это 2 событие прочтения сообщения или пометки его важным
-  // или юзер уже вышел из аккаунта
-  if (!data[3] || !user) {
+  if (!data[3]) {
     return;
   }
 
+  const user = store.getters['users/user'];
   const flag = hasFlag(data[1]);
   const action = getServiceMessage(data[5]);
   const from_id = flag('outbox') ? user.id : Number(data[5].from || data[2]);
-  const { keyboard } = data[5];
+  const { keyboard, marked_users } = data[5];
   const attachments = getAttachments(data[6]);
-  const isReplyMsg = flag('reply_msg');
-  const hasAttachment = isReplyMsg || data[6].fwd || Object.keys(attachments).length;
+  const hasReplyMsg = flag('reply_msg');
+  const hasAttachment = !!(hasReplyMsg || data[6].fwd || Object.keys(attachments).length);
+  const out = from_id === user.id;
+  let mentions = [];
 
   if (keyboard) {
     keyboard.author_id = from_id;
   }
 
+  for (const [id, users] of marked_users || []) {
+    if (id === 1) {
+      mentions = (users === 'all' ? [user.id] : users);
+    }
+
+    // type 2 = бомбочка
+  }
+
   return {
     peer: {
       id: data[2],
+      isChannel:
+        // Сообщение от повторного вступления в канал
+        !out && flag('deleted') ||
+        // Сообщение с некоторым сервисным сообщением
+        !!data[5].source_is_channel,
       keyboard: keyboard && !keyboard.inline && keyboard,
-      channel: from_id < 0 && data[2] > 2e9 && data[5].title === '',
-      mentions: data[5].mentions || []
+      mentions
     },
     msg: {
       id: data[0],
-      text: action ? '' : data[4],
       from: from_id,
-      date: data[3],
       out: from_id === user.id || flag('outbox'),
-      editTime: data[9],
-      hidden: flag('hidden'),
-      action,
-      fwdCount: Number(data[5].fwd_count || (!isReplyMsg && data[6].fwd ? -1 : 0)),
-      fwdMessages: [],
-      isReplyMsg,
-      attachments,
+      text: action ? '' : data[4],
+      date: data[3],
       conversation_msg_id: data[8],
       random_id: data[7],
-      was_listened: false,
+      action,
       hasAttachment,
+      fwdCount: !hasReplyMsg && data[6].fwd ? -1 : 0,
+      fwdMessages: [],
+      attachments,
+      hasReplyMsg,
+      replyMsg: null,
+      keyboard: keyboard && keyboard.inline ? keyboard : null,
+      hasTemplate: !!data[5].has_template,
+      template: null,
+      hidden: flag('hidden'),
+      editTime: data[9],
+      was_listened: false,
       isContentDeleted: !data[4] && !action && !hasAttachment,
-      keyboard: keyboard && keyboard.inline && keyboard,
-      // Нужно только для пометки сообщения как обязательное для переполучения через апи
-      hasTemplate: data[5].has_template,
+      // Нужно только для пометки сообщения как обязательное для получения через апи
       fromLongPoll: true
     }
   };
@@ -155,16 +171,16 @@ async function getLastMessage(peer_id) {
     func_v: 2
   });
 
-  const msg = message && parseMessage(message);
   const peer = parseConversation(conversation);
+  const msg = message && parseMessage(message);
 
   store.commit('messages/updateConversation', {
     removeMsg: !msg,
-    msg,
-    peer
+    peer,
+    msg
   });
 
-  return { msg, peer };
+  return { peer, msg };
 }
 
 async function loadMessages(peer_id, msg_ids, onlyReturnMessages) {
@@ -191,7 +207,7 @@ async function loadMessages(peer_id, msg_ids, onlyReturnMessages) {
 }
 
 function hasSupportedAttachments(msg) {
-  if (msg.isReplyMsg || msg.fwdCount || msg.hasTemplate) {
+  if (msg.hasReplyMsg || msg.fwdCount || msg.hasTemplate) {
     return true;
   }
 
@@ -200,6 +216,8 @@ function hasSupportedAttachments(msg) {
       return true;
     }
   }
+
+  return false;
 }
 
 function hasPreloadMessages(messages) {
@@ -214,6 +232,8 @@ function hasPreloadMessages(messages) {
       }
     }
   }
+
+  return false;
 }
 
 async function watchTyping(peer_id, user_id) {
@@ -276,7 +296,7 @@ export default {
         return data[0];
       }
     },
-    async handler({ key: peer_id, items: msg_ids }) {
+    async handler({ peer_id, items: msg_ids }) {
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
       const { msg } = await getLastMessage(peer_id);
@@ -303,10 +323,10 @@ export default {
     pack: true,
     parser: parseLongPollMessage,
     preload: hasPreloadMessages,
-    async handler({ key: peer_id, items }) {
-      const conv = store.state.messages.conversations[peer_id];
-      const convList = store.getters['messages/peersList'];
-      const lastLocalConv = convList[convList.length - 1];
+    async handler({ peer_id, items }) {
+      const conversation = store.state.messages.conversations[peer_id];
+      const conversationsList = store.getters['messages/peersList'];
+      const lastLocalConversation = conversationsList[conversationsList.length - 1];
       const messagesList = store.state.messages.messages[peer_id] || [];
       const [topMsg] = messagesList;
       const bottomMsg = messagesList[messagesList.length - 1];
@@ -340,8 +360,8 @@ export default {
         unlockDown
       });
 
-      if (!lastLocalConv || lastLocalConv.msg.id < msg.id) {
-        if (conv && !store.state.messages.peerIds.includes(peer_id)) {
+      if (!lastLocalConversation || lastLocalConversation.msg.id < msg.id) {
+        if (conversation && !store.state.messages.peerIds.includes(peer_id)) {
           store.commit('messages/updatePeersList', {
             id: peer_id
           });
@@ -361,9 +381,9 @@ export default {
     pack: true,
     parser: parseLongPollMessage,
     preload: hasPreloadMessages,
-    async handler({ key: peer_id, items }, isPreload) {
+    async handler({ peer_id, items }, isPreload) {
       const { opened, loading } = store.state.messages.peersConfig[peer_id] || {};
-      const conv = store.state.messages.conversations[peer_id];
+      const conversation = store.state.messages.conversations[peer_id];
       const localMessages = store.state.messages.messages[peer_id] || [];
       const lastLocalMsg = localMessages[localMessages.length - 1];
       let lastMsg = items[items.length - 1].msg;
@@ -371,12 +391,12 @@ export default {
       const peerData = {
         id: peer_id,
         last_msg_id: lastMsg.id,
-        mentions: conv && conv.peer.mentions || []
+        mentions: conversation && conversation.peer.mentions || []
       };
 
       const isChatLoadedBottom = opened && (
         !lastLocalMsg && !loading ||
-        lastLocalMsg && conv.peer.last_msg_id === lastLocalMsg.id
+        lastLocalMsg && conversation.peer.last_msg_id === lastLocalMsg.id
       );
 
       if (isChatLoadedBottom) {
@@ -385,7 +405,7 @@ export default {
           addNew: true,
           messages: items
             .filter((msg) => !hasPreloadMessages([msg]))
-            .map(({ msg }) => msg)
+            .map((peer) => peer.msg)
         });
       }
 
@@ -410,10 +430,10 @@ export default {
             peerData.keyboard = keyboard;
           }
 
-          if (peerData.unread != null) {
+          if (peerData.unread !== undefined) {
             peerData.unread++;
-          } else if (conv) {
-            peerData.unread = (conv.peer.unread || 0) + 1;
+          } else if (conversation) {
+            peerData.unread = (conversation.peer.unread || 0) + 1;
           }
 
           if (mentions.includes(store.state.users.activeUser)) {
@@ -477,9 +497,9 @@ export default {
     parser: parseLongPollMessage,
     preload: (data) => hasPreloadMessages([data]),
     async handler({ peer, msg }, isPreload) {
-      const conv = store.state.messages.conversations[peer.id];
+      const conversation = store.state.messages.conversations[peer.id];
       const messages = store.state.messages.messages[peer.id] || [];
-      const isLastMsg = conv && conv.msg.id === msg.id;
+      const isLastMsg = conversation && conversation.msg.id === msg.id;
       const activeId = store.state.users.activeUser;
 
       removeTyping(peer.id, msg.from);
@@ -492,26 +512,26 @@ export default {
         }
       }
 
-      const updateConvData = {
+      const newConversationData = {
         peer: {
           id: peer.id,
-          mentions: conv && conv.peer.mentions || []
+          mentions: conversation && conversation.peer.mentions || []
         }
       };
 
       if (isLastMsg) {
-        updateConvData.msg = msg;
+        newConversationData.msg = msg;
       }
 
       if (
-        msg.id > (conv && conv.peer.in_read) && // Непрочитанное сообщение
-        updateConvData.peer.mentions.includes(msg.id) && // В старом сообщении есть упоминание
+        msg.id > (conversation && conversation.peer.in_read) && // Непрочитанное сообщение
+        newConversationData.peer.mentions.includes(msg.id) && // В старом сообщении есть упоминание
         !peer.mentions.includes(activeId) // В новом сообщении нет упоминания
       ) {
-        updateConvData.peer.mentions.splice(updateConvData.peer.mentions.indexOf(msg.id), 1);
+        newConversationData.peer.mentions.splice(newConversationData.peer.mentions.indexOf(msg.id), 1);
       }
 
-      store.commit('messages/updateConversation', updateConvData);
+      store.commit('messages/updateConversation', newConversationData);
       store.commit('messages/editMessage', {
         peer_id: peer.id,
         msg
@@ -523,8 +543,8 @@ export default {
     // Прочтение входящих сообщений до msg_id
     // [peer_id, msg_id, count]
     handler([peer_id, msg_id, count]) {
-      const conv = store.state.messages.conversations[peer_id];
-      const mentions = conv && conv.peer.mentions || [];
+      const conversation = store.state.messages.conversations[peer_id];
+      const mentions = conversation && conversation.peer.mentions || [];
       const newMentions = mentions.slice();
       const isMyDialog = peer_id === store.state.users.activeUser;
 
@@ -649,7 +669,7 @@ export default {
 
         for (const { id } of messages) {
           if (id === msg_id) {
-            return loadMessages(peer_id, [id]);
+            return loadMessages(+peer_id, [id]);
           }
         }
       }
@@ -667,11 +687,12 @@ export default {
     // [type, peer_id, extra]
     handler([type, peer_id, extra]) {
       const isMe = extra === store.state.users.activeUser;
-      const conv = store.state.messages.conversations[peer_id];
-      const peer = conv && conv.peer;
+      const conversation = store.state.messages.conversations[peer_id];
+      const peer = conversation && conversation.peer;
 
-      // Изменение названия беседы (1) и выключение/выключение
-      // клавиатуры (11) обрабатываются в 4 событии
+      // Изменение названия беседы (1)
+      // и включение/выключение клавиатуры (11)
+      // обрабатываются в 4 событии
       if (!peer || [1, 11].includes(type)) {
         return;
       }
@@ -710,9 +731,9 @@ export default {
 
           if (isMe) {
             peer.left = false;
-            peer.canWrite = !peer.channel;
+            peer.isWriteAllowed = !peer.isChannel;
 
-            if (!peer.channel) {
+            if (!peer.isChannel) {
               loadConversation(peer_id);
               loadConversationMembers(peer.id, true);
             }
@@ -731,7 +752,7 @@ export default {
 
           if (isMe) {
             peer.left = true;
-            peer.canWrite = false;
+            peer.isWriteAllowed = false;
           }
           break;
 

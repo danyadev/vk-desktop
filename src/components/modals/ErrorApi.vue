@@ -12,7 +12,7 @@
     </div>
     <div class="modal_footer">
       <Button class="right" @click="cancel">{{ l('cancel') }}</Button>
-      <Button class="right" @click="retry">{{ l('retry') }}</Button>
+      <Button class="right" @click="retryCall">{{ l('retry') }}</Button>
     </div>
   </div>
 </template>
@@ -37,14 +37,14 @@ export default {
       closeModal('error-api');
     }
 
-    function retry() {
+    function retryCall() {
       props.retry();
       closeModal('error-api');
     }
 
     return {
       cancel,
-      retry
+      retryCall
     };
   }
 };

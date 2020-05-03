@@ -44,10 +44,10 @@ export default {
     const state = reactive({
       msg: computed(() => props.messages[0]),
       user: computed(() => store.state.profiles[state.msg.from]),
-      name: computed(() => getPeerTitle(0, 0, state.user)),
+      name: computed(() => getPeerTitle(0, null, state.user)),
       photo: computed(() => getPhoto(state.user) || 'assets/blank.gif'),
       isChat: computed(() => props.peer_id > 2e9),
-      isChannel: computed(() => props.peer && props.peer.channel),
+      isChannel: computed(() => props.peer && props.peer.isChannel),
       showUserData: computed(() => !state.msg.out && state.isChat && !state.isChannel)
     });
 

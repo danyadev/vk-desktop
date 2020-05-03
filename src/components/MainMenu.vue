@@ -259,7 +259,6 @@ export default {
   padding: 1px 6px 0 6px;
   border-radius: 10px;
   margin-right: 8px;
-  font-size: 14px;
   font-size: 12px;
 }
 

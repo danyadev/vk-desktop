@@ -2,6 +2,8 @@
 import { h, ref, onMounted } from 'vue';
 
 export default {
+  props: ['event'],
+
   setup(props, { slots }) {
     const style = ref(null);
     const menu = ref(null);

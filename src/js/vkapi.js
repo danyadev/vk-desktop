@@ -1,21 +1,20 @@
 import querystring from 'querystring';
+import electron from 'electron';
 import { VKDesktopUserAgent, AndroidUserAgent } from './utils';
 import request from './request';
 import store from './store';
 import { openModal } from './modals';
 
-export const version = '5.123';
+export const version = '5.124';
 
 const errorHandlers = {};
 
-function addErrorHandler(codes, fn) {
-  for (const code of codes) {
-    errorHandlers[code] = fn;
-  }
+function addErrorHandler(code, fn) {
+  errorHandlers[code] = fn;
 }
 
 // Сессия устарела
-addErrorHandler([5], ({ params, data, user, reject }) => {
+addErrorHandler(5, ({ params, data, user, reject }) => {
   // Был передан другой токен
   if (!user || ![user.access_token, user.android_token].includes(params.access_token)) {
     return reject(data.error);
@@ -40,13 +39,18 @@ addErrorHandler([5], ({ params, data, user, reject }) => {
   openModal('blocked-account', { id });
 });
 
-// Много запросов в секунду / Flood control
-addErrorHandler([6, 9], ({ reject }) => {
+// Много запросов в секунду
+addErrorHandler(6, ({ reject }) => {
+  setTimeout(reject, 1000);
+});
+
+// Flood control
+addErrorHandler(9, ({ reject }) => {
   setTimeout(reject, 1000);
 });
 
 // Internal Server Error
-addErrorHandler([10], ({ name, data, reject }) => {
+addErrorHandler(10, ({ name, data, reject }) => {
   openModal('error-api', {
     method: name,
     error: data.error,
@@ -55,7 +59,7 @@ addErrorHandler([10], ({ name, data, reject }) => {
 });
 
 // Капча
-addErrorHandler([14], ({ name, params, data, resolve, reject }) => {
+addErrorHandler(14, ({ name, params, data, resolve, reject }) => {
   openModal('captcha', {
     src: data.error.captcha_img,
     send(code) {
@@ -71,9 +75,24 @@ addErrorHandler([14], ({ name, params, data, resolve, reject }) => {
   });
 });
 
-addErrorHandler([17], async ({ data, reject }) => {
-  const { data: redirectPage } = await request(data.error.redirect_uri, { raw: true });
-  const goCaptchaLink = 'https://m.vk.com' + redirectPage.match(/<div class="fi_row"><a href="(.+?)" rel="noopener">/)[1];
+addErrorHandler(17, async ({ data, reject }) => {
+  const redirectUri = data.error.redirect_uri;
+  const { data: redirectPage } = await request(redirectUri, { raw: true });
+  const goCaptchaLinkMatch = redirectPage.match(/<div class="fi_row"><a href="(.+?)" rel="noopener">/);
+
+  // Это не ошибка подтверждения аккаунта, а запланированное действие, доступное только по данной ссылке
+  if (!goCaptchaLinkMatch) {
+    // Когда будет нужно можно будет переделать это в модальное окно электрона
+    // и реализовать ожидание выхода из него, чтобы продолжить уже в клиенте.
+    electron.shell.openItem(redirectUri);
+
+    return resolve({
+      type: 'redirect',
+      link: redirectUri
+    });
+  }
+
+  const goCaptchaLink = 'https://m.vk.com' + goCaptchaLinkMatch[1];
   const { data: firstCaptchaPage } = await request(goCaptchaLink, { raw: true });
   let success = false;
   let captchaPage = firstCaptchaPage;

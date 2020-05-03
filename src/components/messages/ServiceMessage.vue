@@ -1,6 +1,6 @@
 <script>
 import { h, computed, Fragment } from 'vue';
-import { loadConversationMembers, loadedConvMembers } from 'js/messages';
+import { loadConversationMembers, loadedConversationMembers } from 'js/messages';
 import { loadProfile, createParser } from 'js/utils';
 import getTranslate from 'js/getTranslate';
 import store from 'js/store';
@@ -69,26 +69,26 @@ function getServiceMessage(msg, author, peer_id, isFull) {
         : `${user.first_name} ${user.last_name}`;
     }
 
-    if (!loadedConvMembers.has(peer_id)) {
-      // В случае, когда юзеры в беседе не загружены
-      loadConversationMembers(peer_id);
-    } else {
+    if (loadedConversationMembers.has(peer_id)) {
       // При добавлении нового юзера в беседу
       loadProfile(user.id);
+    } else {
+      // В случае, когда юзеры в беседе не загружены
+      loadConversationMembers(peer_id);
     }
 
     return '...';
   }
 
   switch (msg.action.type) {
+    case 'chat_create':
+      return getVNode('im_chat_create', type(0), [name(0), msg.action.text]);
+
     case 'chat_photo_update':
       return getVNode('im_chat_photo_update', type(0), [name(0)]);
 
     case 'chat_photo_remove':
       return getVNode('im_chat_photo_remove', type(0), [name(0)]);
-
-    case 'chat_create':
-      return getVNode('im_chat_create', type(0), [name(0), msg.action.text]);
 
     case 'chat_title_update':
       return getVNode('im_chat_title_update', type(0), [name(0), msg.action.text]);
@@ -103,9 +103,6 @@ function getServiceMessage(msg, author, peer_id, isFull) {
     case 'chat_unpin_message':
       return getVNode('im_chat_unpin_message', type(1), [name(1)]);
 
-    case 'chat_invite_user_by_link':
-      return getVNode('im_chat_invite_user_by_link', type(0), [name(0)]);
-
     case 'chat_invite_user':
       if (isAuthor) {
         return getVNode('im_chat_returned_user', type(0), [name(0)]);
@@ -114,6 +111,9 @@ function getServiceMessage(msg, author, peer_id, isFull) {
       } else {
         return getVNode('im_chat_invite_user_short', type(1), [name(1, 1)]);
       }
+
+    case 'chat_invite_user_by_link':
+      return getVNode('im_chat_invite_user_by_link', type(0), [name(0)]);
 
     case 'chat_kick_user':
       if (isAuthor) {

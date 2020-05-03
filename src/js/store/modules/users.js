@@ -21,7 +21,7 @@ export default {
       delete state.users[id];
     },
 
-    setTrusredHash(state, { login, hash }) {
+    setTrustedHash(state, { login, hash }) {
       state.trustedHashes[login] = hash;
     }
   },

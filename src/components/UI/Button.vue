@@ -2,7 +2,7 @@
 import { h, computed } from 'vue';
 import Ripple from './Ripple.vue';
 
-export default function(props, { slots }) {
+export default function Button(props, { slots }) {
   const light = computed(() => ('light' in props) && props.light !== false);
 
   return h(

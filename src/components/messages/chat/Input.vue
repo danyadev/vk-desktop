@@ -24,9 +24,9 @@
       </div>
     </template>
     <Ripple
-      v-else-if="canWrite.channel"
+      v-else-if="canWrite.isChannel"
       color="var(--messages-peer-ripple)"
-      class="chat_input_error channel"
+      class="chat_input_error isChannel"
       @click="toggleNotifications"
     >
       <template v-if="peer.left">
@@ -73,14 +73,14 @@ export default {
       showKeyboard: false,
 
       canWrite: computed(() => {
-        if (props.peer && props.peer.canWrite) {
+        if (props.peer && props.peer.isWriteAllowed) {
           return { allowed: true };
         }
 
         return {
           allowed: false,
-          text: props.peer ? getTranslate('im_chat_cant_write') : getTranslate('loading'),
-          channel: props.peer && props.peer.channel
+          isChannel: props.peer && props.peer.isChannel,
+          text: props.peer ? getTranslate('im_chat_cant_write') : getTranslate('loading')
         };
       })
     });
@@ -252,13 +252,13 @@ export default {
   color: var(--text-gray);
 }
 
-.chat_input_error.channel {
+.chat_input_error.isChannel {
   color: var(--text-blue-light);
   cursor: pointer;
   transition: background-color .2s;
 }
 
-.chat_input_error.channel svg {
+.chat_input_error.isChannel svg {
   margin-right: 8px;
 }
 

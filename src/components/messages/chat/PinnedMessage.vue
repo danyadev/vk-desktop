@@ -51,7 +51,7 @@ export default {
       settings: computed(() => store.getters['settings/settings']),
       isHidden: computed(() => state.settings.hiddenPinnedMessages[props.peer_id]),
       author: computed(() => store.state.profiles[props.msg.from]),
-      name: computed(() => getPeerTitle(0, 0, state.author)),
+      name: computed(() => getPeerTitle(0, null, state.author)),
       time: computed(() => getFullDate(new Date(props.msg.date * 1000))),
       text: computed(() => getMessagePreview(props.msg)),
       isAttachment: computed(() => props.msg.hasAttachment && !props.msg.text && !props.msg.action)

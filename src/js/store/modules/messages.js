@@ -65,11 +65,11 @@ export default {
     },
 
     updateConversation(state, { peer, msg, removeMsg }) {
-      const conv = state.conversations[peer.id] || {};
+      const conversation = state.conversations[peer.id] || {};
 
       state.conversations[peer.id] = {
-        peer: { ...conv.peer, ...peer },
-        msg: removeMsg ? {} : { ...conv.msg, ...msg }
+        peer: { ...conversation.peer, ...peer },
+        msg: removeMsg ? {} : { ...conversation.msg, ...msg }
       };
     },
 

@@ -22,8 +22,8 @@ import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
 import longpoll from 'js/longpoll';
 
-import 'src/css/shared.css';
-import 'src/css/colors.css';
+import 'css/shared.css';
+import 'css/colors.css';
 
 import Titlebar from './Titlebar.vue';
 import MainMenu from './MainMenu.vue';

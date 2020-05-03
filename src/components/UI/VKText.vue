@@ -115,8 +115,8 @@ const mentionParser = createParser({
 
     return [{
       type: 'mention',
-      id: type === 'id' ? +id : -id,
       value: emojiParser(text, true),
+      id: type === 'id' ? +id : -id,
       raw: mentionText
     }];
   }
