@@ -100,6 +100,7 @@ export default {
       const peer = parseConversation(conversations[0]);
 
       state.lockScroll = true;
+
       store.commit('messages/updateConversation', { peer });
       store.commit('addProfiles', concatProfiles(profiles, groups));
       store.commit('messages/addMessages', {
@@ -111,7 +112,7 @@ export default {
       const { scrollTop, scrollHeight } = state.list;
 
       await nextTick();
-      setTimeout(() => (state.lockScroll = false));
+      requestIdleCallback(() => (state.lockScroll = false));
 
       if (!config.isDown) {
         state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;

@@ -3,11 +3,10 @@
     ref="scrolly"
     :class="['scrolly', { isActive, isScrolling }]"
     tabindex="-1"
-    @wheel="onWheel"
   >
     <div
       ref="viewport"
-      :class="['scrolly-viewport', vclass]"
+      :class="['scrolly-viewport', vclass, lock && 'lock']"
       @scroll.passive.stop="onScroll"
     >
       <slot />
@@ -86,12 +85,6 @@ export default {
     function clearTimer() {
       clearTimeout(state.timerId);
       state.timerId = null;
-    }
-
-    function onWheel(event) {
-      if (props.lock) {
-        event.preventDefault();
-      }
     }
 
     function onScroll() {
@@ -256,7 +249,6 @@ export default {
     return {
       ...toRefs(state),
 
-      onWheel,
       onScroll,
       onMouseDown,
       activateScrollBars,
@@ -278,6 +270,10 @@ export default {
 .scrolly-viewport {
   overflow: auto;
   height: 100%;
+}
+
+.scrolly-viewport.lock {
+  overflow: hidden;
 }
 
 .scrolly-viewport::-webkit-scrollbar {
