@@ -1,11 +1,13 @@
 <template>
   <Scrolly
-    ref="list"
+    ref="scrollyRef"
     class="messages_list_wrap"
     :vclass="['messages_list', { empty: !hasMessages }]"
     :lock="lockScroll"
     @scroll="onScroll"
   >
+    <div :class="['im_top_time', { active: showTopTime }]">{{ topTime }}</div>
+
     <div v-if="hasMessages" class="messages_empty_block"></div>
     <div v-if="loadingUp" class="loading"></div>
 
@@ -26,7 +28,7 @@
 
 <script>
 import { reactive, computed, onMounted, nextTick, toRefs } from 'vue';
-import { createQueueManager, concatProfiles, fields, endScroll } from 'js/utils';
+import { createQueueManager, concatProfiles, fields, endScroll, debounce } from 'js/utils';
 import { parseMessage, parseConversation } from 'js/messages';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
@@ -44,14 +46,19 @@ export default {
 
   setup(props) {
     const state = reactive({
-      list: null,
+      scrollyRef: null,
+      list: computed(() => state.scrollyRef && state.scrollyRef.viewport),
 
       loadingUp: false,
       loadingDown: false,
       loadedUp: false,
       loadedDown: false,
 
+      // scrollTop: null,
       lockScroll: false,
+
+      topTime: null,
+      showTopTime: false,
 
       messages: computed(() => store.state.messages.messages[props.peer_id] || []),
       loadingMessages: computed(() => store.state.messages.loadingMessages[props.peer_id] || []),
@@ -101,14 +108,13 @@ export default {
         addNew: config.isDown
       });
 
-      const list = state.list.viewport;
-      const { scrollTop, scrollHeight } = list;
+      const { scrollTop, scrollHeight } = state.list;
 
       await nextTick();
       setTimeout(() => (state.lockScroll = false));
 
       if (!config.isDown) {
-        list.scrollTop = list.scrollHeight - scrollHeight + scrollTop;
+        state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
 
         state.loadingUp = false;
         state.loadedUp = config.loadedUp || items.length < (config.isFirstLoad ? 20 : 40);
@@ -121,8 +127,8 @@ export default {
 
       setPeerLoading(false);
 
-      // checkReadMessages(list);
-      // checkTopTime(list);
+      // checkReadMessages();
+      checkTopTime();
 
       return items;
     });
@@ -146,14 +152,13 @@ export default {
       const unreadMessages = document.querySelector('.message_unreaded_messages');
 
       if (unreadMessages) {
-        const list = state.list.viewport;
-        list.scrollTop = unreadMessages.offsetTop - list.clientHeight / 2;
-        afterUpdateScrollTop(list);
+        state.list.scrollTop = unreadMessages.offsetTop - state.list.clientHeight / 2;
+        afterUpdateScrollTop();
       }
     }
 
-    function afterUpdateScrollTop(list) {
-      checkScrolling(list);
+    function afterUpdateScrollTop() {
+      checkScrolling(state.list);
     }
 
     const checkScrolling = endScroll(({ isUp, isDown }) => {
@@ -181,12 +186,41 @@ export default {
       }
     }, -1);
 
+    function checkTopTime() {
+      const dates = state.list.querySelectorAll('.message_date');
+      let value;
+
+      for (let i = 0; i < dates.length; i++) {
+        const el = dates[i];
+        const nextEl = dates[i + 1];
+
+        if (el.offsetTop <= state.list.scrollTop && (!nextEl || nextEl.offsetTop > state.list.scrollTop)) {
+          value = el.innerText;
+          break;
+        }
+      }
+
+      if (value) {
+        state.topTime = value;
+        state.showTopTime = true;
+        hideTopTime();
+      } else {
+        // Если прописать topTime = null, то при скрытии элемента будет виден пустой элемент
+        state.showTopTime = false;
+      }
+    }
+
+    const hideTopTime = debounce(() => {
+      state.showTopTime = false;
+    }, 1000);
+
     function onScroll(scrollyEvent) {
       if (!scrollyEvent.scrollHeight) {
         return;
       }
 
       checkScrolling(scrollyEvent);
+      checkTopTime();
     }
 
     return {
@@ -229,5 +263,29 @@ export default {
 
 .messages_empty_dialog img {
   height: 160px;
+}
+
+.im_top_time {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  right: 0;
+  width: fit-content;
+  margin: 0 auto;
+  z-index: 2;
+  background-color: var(--background);
+  border: solid 1px var(--separator-dark);
+  border-radius: 15px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
+  padding: 4px 14px;
+  color: var(--text-dark-steel-gray);
+  line-height: 18px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .4s;
+}
+
+.im_top_time.active {
+  opacity: 1;
 }
 </style>
