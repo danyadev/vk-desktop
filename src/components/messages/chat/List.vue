@@ -15,6 +15,7 @@
       :peer_id="peer_id"
       :peer="peer"
       :list="messagesWithLoading"
+      :startInRead="startInRead"
     />
 
     <div v-if="loadingDown" class="loading"></div>
@@ -23,16 +24,30 @@
       <img src="~assets/placeholder_empty_messages.webp">
       {{ l('im_empty_dialog') }}
     </div>
+
+    <div
+      :class="['im_scroll_mention_btn', { hidden: !showEndBtn || !peer || !peer.mentions.length }]"
+      @click="scrollToMention"
+    >
+      <div>{{ peer && peer.mentions.length }}</div>
+      <Icon name="mention" color="var(--icon-dark-gray)" width="24" height="30" />
+    </div>
+
+    <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
+      <div>{{ peer && convertCount(peer.unread) || '' }}</div>
+      <img src="~assets/dropdown.webp">
+    </div>
   </Scrolly>
 </template>
 
 <script>
 import { reactive, computed, onMounted, nextTick, toRefs } from 'vue';
-import { createQueueManager, concatProfiles, fields, endScroll, debounce } from 'js/utils';
+import { createQueueManager, concatProfiles, fields, endScroll, debounce, convertCount } from 'js/utils';
 import { parseMessage, parseConversation } from 'js/messages';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
 
+import Icon from '../../UI/Icon.vue';
 import Scrolly from '../../UI/Scrolly.vue';
 import MessagesList from './MessagesList.vue';
 
@@ -40,6 +55,7 @@ export default {
   props: ['peer_id', 'peer'],
 
   components: {
+    Icon,
     Scrolly,
     MessagesList
   },
@@ -60,6 +76,12 @@ export default {
       topTime: null,
       showTopTime: false,
 
+      showEndBtn: true,
+      replyHistory: [],
+      lastViewedMention: null,
+
+      startInRead: 0,
+
       messages: computed(() => store.state.messages.messages[props.peer_id] || []),
       loadingMessages: computed(() => store.state.messages.loadingMessages[props.peer_id] || []),
       messagesWithLoading: computed(() => {
@@ -70,7 +92,12 @@ export default {
 
     onMounted(() => {
       jumpToStartUnread();
+
+      // TODO onActivated
+      state.startInRead = props.peer && props.peer.in_read;
     });
+
+    // Base methods ==========================================
 
     const load = createQueueManager(async ({ params = {}, config = {} } = {}) => {
       const setPeerLoading = (loading) => {
@@ -134,6 +161,101 @@ export default {
       return items;
     });
 
+    const jumpTo = createQueueManager(async ({ msg_id, mark = true, top, bottom }) => {
+      const onLoad = async () => {
+        if (top) {
+          state.list.scrollTop = 0;
+          return afterUpdateScrollTop();
+        }
+
+        const msg = state.list.querySelector(`#id${msg_id}`);
+
+        if (msg) {
+          if (msg.clientHeight > state.list.clientHeight) {
+            // Расстояние в 1/4 от начала viewport
+            const quarterFromViewport = msg.offsetTop - state.list.clientHeight / 4;
+
+            // Из-за возможных небольших несоответствий в размерах
+            // было добавлено в запас 5 пикселей.
+            if (state.list.scrollTop >= quarterFromViewport - 5) {
+              state.list.scrollTop = state.list.scrollHeight;
+            } else {
+              state.list.scrollTop = quarterFromViewport;
+            }
+          } else {
+            // Сообщение по центру экрана
+            state.list.scrollTop = msg.offsetTop + msg.clientHeight / 2 - state.list.clientHeight / 2;
+          }
+
+          afterUpdateScrollTop();
+
+          if (mark) {
+            msg.setAttribute('active', '');
+            await timer(2000);
+            requestIdleCallback(() => msg.removeAttribute('active'));
+          }
+        }
+      };
+
+      function beforeLoad() {
+        store.commit('messages/removeConversationMessages', props.peer_id);
+        state.loadedUp = state.loadedDown = false;
+      };
+
+      state.showEndBtn = false;
+      state.showTopTime = false;
+
+      if (top) {
+        state.replyHistory.length = 0;
+
+        if (state.loadedUp) {
+          onLoad();
+        } else {
+          load({
+            params: { start_message_id: 0, offset: -40 },
+            config: { loadedUp: true, beforeLoad }
+          }).then(onLoad);
+        }
+      } else if (bottom) {
+        state.replyHistory.length = 0;
+
+        if (state.loadedDown) {
+          if (msg_id) {
+            onLoad();
+          } else {
+            const lastLoadingMsg = state.loadingMessages[state.loadingMessages.length - 1];
+            const lastMsg = state.messages[state.messages.length - 1];
+
+            if (lastLoadingMsg) {
+              msg_id = lastLoadingMsg.id;
+              onLoad();
+            } else if (lastMsg) {
+              msg_id = lastMsg.id;
+              onLoad();
+            }
+          }
+        } else {
+          const [lastMsg] = await load({
+            config: {
+              isDown: true,
+              loadedDown: true,
+              beforeLoad
+            }
+          });
+
+          msg_id = lastMsg.id;
+          onLoad();
+        }
+      } else if (state.messages.find((msg) => msg.id === msg_id)) {
+        onLoad();
+      } else {
+        load({
+          params: { start_message_id: msg_id, offset: -20 },
+          config: { beforeLoad }
+        }).then(onLoad);
+      }
+    });
+
     async function jumpToStartUnread() {
       store.commit('messages/removeConversationMessages', props.peer_id);
       state.loadedUp = false;
@@ -150,7 +272,7 @@ export default {
         }
       });
 
-      const unreadMessages = document.querySelector('.message_unreaded_messages');
+      const unreadMessages = state.list.querySelector('.message_unreaded_messages');
 
       if (unreadMessages) {
         state.list.scrollTop = unreadMessages.offsetTop - state.list.clientHeight / 2;
@@ -158,14 +280,28 @@ export default {
       }
     }
 
-    function afterUpdateScrollTop() {
-      checkScrolling(state.list);
+    // Scroll actions =====================================
+
+    function onScroll(scrollyEvent) {
+      if (!scrollyEvent.viewport.scrollHeight) {
+        return;
+      }
+
+      state.showEndBtn = canShowScrollBtn() && (state.peer && state.peer.unread || scrollyEvent.dy > 0);
+
+      checkScrolling(scrollyEvent);
+      checkTopTime();
     }
 
     const checkScrolling = endScroll(({ isUp, isDown }) => {
-      if (isUp && !state.loadingUp && !state.loadedUp) {
+      if (state.loadingUp || state.loadingDown) {
+        return;
+      }
+
+      if (isUp && !state.loadedUp) {
         const [msg] = state.messages;
         state.loadingUp = true;
+
         load({
           params: {
             start_message_id: msg ? msg.id : -1
@@ -173,8 +309,9 @@ export default {
         });
       }
 
-      if (isDown && !state.loadingUp && !state.loadingDown && !state.loadedDown) {
+      if (isDown && !state.loadedDown) {
         state.loadingDown = true;
+
         load({
           params: {
             start_message_id: state.messages[state.messages.length - 1].id,
@@ -186,6 +323,13 @@ export default {
         });
       }
     }, -1);
+
+    function afterUpdateScrollTop() {
+      state.showEndBtn = canShowScrollBtn();
+      checkScrolling({ viewport: state.list });
+    }
+
+    // Time bubble ===================================
 
     function checkTopTime() {
       const dates = state.list.querySelectorAll('.message_date');
@@ -215,18 +359,61 @@ export default {
       state.showTopTime = false;
     }, 1000);
 
-    function onScroll(scrollyEvent) {
-      if (!scrollyEvent.scrollHeight) {
-        return;
-      }
+    // Scroll to end & mention buttons =========================
 
-      checkScrolling(scrollyEvent);
-      checkTopTime();
+    function canShowScrollBtn() {
+      return !(state.loadedDown && !(state.list.scrollTop + state.list.offsetHeight + 100 < state.list.scrollHeight));
+    }
+
+    function scrollToEnd() {
+      if (state.replyHistory.length) {
+        // Возвращаемся на сообщение с ответом
+        jumpTo({
+          msg_id: state.replyHistory.pop()
+        });
+      } else if (state.peer && state.peer.unread) {
+        const unread = state.list.querySelector('.message_unreaded_messages');
+
+        if (unread) {
+          if (state.list.offsetHeight + state.list.scrollTop - unread.offsetHeight / 2 < unread.offsetTop) {
+            state.list.scrollTop = unread.offsetTop - state.list.clientHeight / 2;
+            afterUpdateScrollTop();
+          } else {
+            jumpTo({
+              bottom: true,
+              mark: false
+            });
+          }
+        } else {
+          jumpToStartUnread();
+        }
+      } else {
+        // Переходим в самый низ диалога
+        jumpTo({
+          bottom: true,
+          mark: false
+        });
+      }
+    }
+
+    function scrollToMention() {
+      state.lastViewedMention =
+        state.peer.mentions.find((id) => id > state.lastViewedMention) ||
+        state.peer.mentions[state.peer.mentions.length - 1];
+
+      jumpTo({
+        msg_id: state.lastViewedMention
+      });
     }
 
     return {
       ...toRefs(state),
-      onScroll
+
+      convertCount,
+      onScroll,
+
+      scrollToEnd,
+      scrollToMention
     };
   }
 };
@@ -288,5 +475,57 @@ export default {
 
 .im_top_time.active {
   opacity: 1;
+}
+
+.im_scroll_end_btn,
+.im_scroll_mention_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 25px;
+  bottom: 30px;
+  width: 40px;
+  height: 40px;
+  background: var(--background);
+  border: solid 1px var(--separator-dark);
+  border-radius: 50%;
+  opacity: 1;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
+  transition: background-color .3s, transform .2s, opacity .2s, visibility .2s;
+}
+
+.im_scroll_end_btn img {
+  width: 24px;
+  height: 24px;
+}
+
+.im_scroll_end_btn.hidden,
+.im_scroll_mention_btn.hidden {
+  transform: translateY(20px);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.im_scroll_end_btn div:not(:empty),
+.im_scroll_mention_btn div:not(:empty) {
+  position: absolute;
+  top: -5px;
+  right: -3px;
+  background-color: var(--blue-background);
+  color: #fff;
+  font-size: 12px;
+  border-radius: 10px;
+  padding: 2px 5px 1px 5px;
+}
+
+.im_scroll_mention_btn {
+  bottom: 80px;
+}
+
+.im_scroll_mention_btn svg {
+  margin-top: -2px;
 }
 </style>

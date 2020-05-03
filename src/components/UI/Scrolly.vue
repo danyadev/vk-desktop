@@ -56,9 +56,13 @@ export default {
       barX: null,
       barY: null,
 
-      // top есть, а left нет...
-      // TODO Carousel
+      // Используется в MutationObserver
+      actualScrollWidth: 0,
       actualScrollHeight: 0,
+
+      // Используется для вычисления dx и dy в refreshScrollLayout
+      lastScrollTop: 0,
+      lastScrollLeft: 0,
 
       isActive: false,
       isScrolling: false,
@@ -108,6 +112,11 @@ export default {
 
         await waitAnimationFrame();
 
+        const prevScrollLeft = viewport.scrollLeft;
+        const prevScrollTop = viewport.scrollTop;
+        let dx = 0;
+        let dy = 0;
+
         if (bar.parentElement.matches('.axis-x')) {
           const maxBarLeft = offsetWidth - bar.offsetWidth;
           const barLeft = normalize(
@@ -117,6 +126,8 @@ export default {
               : initialBarLeft + pageX - initialPageX
           );
           const scrollLeft = (barLeft / maxBarLeft) * (scrollWidth - offsetWidth);
+
+          dx = scrollLeft - prevScrollLeft;
 
           if (isMoveToPoint) {
             viewport.scrollTo({
@@ -137,6 +148,8 @@ export default {
           );
           const scrollTop = (barTop / maxBarTop) * (scrollHeight - offsetHeight);
 
+          dy = scrollTop - prevScrollTop;
+
           if (isMoveToPoint) {
             viewport.scrollTo({
               top: scrollTop,
@@ -148,7 +161,7 @@ export default {
           }
         }
 
-        emit('scroll', viewport);
+        emit('scroll', { viewport, dx, dy });
       }
 
       function onMouseUp(event) {
@@ -188,7 +201,7 @@ export default {
       }
     });
 
-    function refreshScrollLayout() {
+    function refreshScrollLayout(isMutationObserver) {
       const { viewport, barX, barY } = state;
 
       if (!viewport) {
@@ -215,14 +228,27 @@ export default {
       barX.style.left = toPercent(barLeft / offsetWidth);
       barY.style.top = toPercent(barTop / offsetHeight);
 
-      emit('scroll', viewport);
+      if (!isMutationObserver) {
+        emit('scroll', {
+          viewport,
+          dx: scrollLeft - state.lastScrollLeft,
+          dy: scrollTop - state.lastScrollTop
+        });
+      }
+
+      state.lastScrollLeft = scrollLeft;
+      state.lastScrollTop = scrollTop;
     }
 
     onMounted(() => {
       state.mutationObserver = new MutationObserver(() => {
-        if (state.viewport.scrollHeight !== state.actualScrollHeight) {
+        if (
+          state.actualScrollWidth !== state.viewport.scrollWidth ||
+          state.viewport.scrollHeight !== state.actualScrollHeight
+        ) {
+          state.actualScrollWidth = state.viewport.scrollWidth;
           state.actualScrollHeight = state.viewport.scrollHeight;
-          refreshScrollLayout();
+          refreshScrollLayout(true);
         }
       });
 
