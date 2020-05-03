@@ -75,12 +75,13 @@ addErrorHandler(14, ({ name, params, data, resolve, reject }) => {
   });
 });
 
-addErrorHandler(17, async ({ data, reject }) => {
+addErrorHandler(17, async ({ data, resolve, reject }) => {
   const redirectUri = data.error.redirect_uri;
   const { data: redirectPage } = await request(redirectUri, { raw: true });
   const goCaptchaLinkMatch = redirectPage.match(/<div class="fi_row"><a href="(.+?)" rel="noopener">/);
 
-  // Это не ошибка подтверждения аккаунта, а запланированное действие, доступное только по данной ссылке
+  // Это не ошибка подтверждения аккаунта, а запланированное действие,
+  // доступное только по данной ссылке
   if (!goCaptchaLinkMatch) {
     // Когда будет нужно можно будет переделать это в модальное окно электрона
     // и реализовать ожидание выхода из него, чтобы продолжить уже в клиенте.

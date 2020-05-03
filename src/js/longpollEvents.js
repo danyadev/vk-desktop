@@ -528,7 +528,10 @@ export default {
         newConversationData.peer.mentions.includes(msg.id) && // В старом сообщении есть упоминание
         !peer.mentions.includes(activeId) // В новом сообщении нет упоминания
       ) {
-        newConversationData.peer.mentions.splice(newConversationData.peer.mentions.indexOf(msg.id), 1);
+        newConversationData.peer.mentions.splice(
+          newConversationData.peer.mentions.indexOf(msg.id),
+          1
+        );
       }
 
       store.commit('messages/updateConversation', newConversationData);

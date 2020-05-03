@@ -25,7 +25,9 @@ export function parseConversation(conversation) {
     // id последнего прочтенного исходящего сообщения
     out_read: conversation.out_read,
     mentions: conversation.mentions || [],
-    pinnedMsg: isChat && chat_settings.pinned_message ? parseMessage(chat_settings.pinned_message) : null,
+    pinnedMsg: isChat && chat_settings.pinned_message
+      ? parseMessage(chat_settings.pinned_message)
+      : null,
     chatSettings: isChat ? chat_settings : null,
     owner_id: isChat ? chat_settings.owner_id : null,
     admin_ids: isChat ? chat_settings.admin_ids : null,

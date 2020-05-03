@@ -1,5 +1,5 @@
 <template>
-  <div :class="['message', { isUnread, out: msg.out }]" :id="'id' + msg.id">
+  <div :id="'id' + msg.id" :class="['message', { isUnread, out: msg.out }]">
     <div class="message_bubble_pre_wrap">
       <div class="message_bubble_wrap">
         <!-- error menu -->

@@ -42,7 +42,7 @@
 
 <script>
 import { reactive, computed, onMounted, nextTick, toRefs } from 'vue';
-import { createQueueManager, concatProfiles, fields, endScroll, debounce, convertCount } from 'js/utils';
+import { createQueueManager, concatProfiles, fields, endScroll, debounce, convertCount, timer } from 'js/utils';
 import { parseMessage, parseConversation } from 'js/messages';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
@@ -100,12 +100,12 @@ export default {
     // Base methods ==========================================
 
     const load = createQueueManager(async ({ params = {}, config = {} } = {}) => {
-      const setPeerLoading = (loading) => {
+      function setPeerLoading(loading) {
         store.commit('messages/updatePeerConfig', {
           peer_id: props.peer_id,
           loading
         });
-      };
+      }
 
       setPeerLoading(true);
       config.beforeLoad && config.beforeLoad();
@@ -142,6 +142,7 @@ export default {
       requestIdleCallback(() => (state.lockScroll = false));
 
       if (!config.isDown) {
+        // Сохраняем старую позицию скролла
         state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
 
         state.loadingUp = false;
@@ -162,9 +163,21 @@ export default {
     });
 
     const jumpTo = createQueueManager(async ({ msg_id, mark = true, top, bottom }) => {
-      const onLoad = async () => {
+      function setScrollTop(scrollTop, afterLoad) {
+        if (afterLoad) {
+          state.list.scrollTop = scrollTop;
+        } else {
+          state.list.scrollTo({
+            top: scrollTop,
+            behavior: 'smooth'
+          });
+        }
+      }
+
+      async function onLoad(afterLoad) {
         if (top) {
-          state.list.scrollTop = 0;
+          setScrollTop(0, afterLoad);
+
           return afterUpdateScrollTop();
         }
 
@@ -177,14 +190,18 @@ export default {
 
             // Из-за возможных небольших несоответствий в размерах
             // было добавлено в запас 5 пикселей.
-            if (state.list.scrollTop >= quarterFromViewport - 5) {
-              state.list.scrollTop = state.list.scrollHeight;
-            } else {
-              state.list.scrollTop = quarterFromViewport;
-            }
+            setScrollTop(
+              state.list.scrollTop >= quarterFromViewport - 5
+                ? state.list.scrollHeight
+                : quarterFromViewport,
+              afterLoad
+            );
           } else {
             // Сообщение по центру экрана
-            state.list.scrollTop = msg.offsetTop + msg.clientHeight / 2 - state.list.clientHeight / 2;
+            setScrollTop(
+              msg.offsetTop + msg.clientHeight / 2 - state.list.clientHeight / 2,
+              afterLoad
+            );
           }
 
           afterUpdateScrollTop();
@@ -195,12 +212,12 @@ export default {
             requestIdleCallback(() => msg.removeAttribute('active'));
           }
         }
-      };
+      }
 
       function beforeLoad() {
         store.commit('messages/removeConversationMessages', props.peer_id);
         state.loadedUp = state.loadedDown = false;
-      };
+      }
 
       state.showEndBtn = false;
       state.showTopTime = false;
@@ -244,7 +261,7 @@ export default {
           });
 
           msg_id = lastMsg.id;
-          onLoad();
+          onLoad(true);
         }
       } else if (state.messages.find((msg) => msg.id === msg_id)) {
         onLoad();
@@ -287,7 +304,8 @@ export default {
         return;
       }
 
-      state.showEndBtn = canShowScrollBtn() && (state.peer && state.peer.unread || scrollyEvent.dy > 0);
+      state.showEndBtn =
+        canShowScrollBtn() && (state.peer && state.peer.unread || scrollyEvent.dy > 0);
 
       checkScrolling(scrollyEvent);
       checkTopTime();
@@ -339,7 +357,10 @@ export default {
         const el = dates[i];
         const nextEl = dates[i + 1];
 
-        if (el.offsetTop <= state.list.scrollTop && (!nextEl || nextEl.offsetTop > state.list.scrollTop)) {
+        if (
+          el.offsetTop <= state.list.scrollTop &&
+          (!nextEl || nextEl.offsetTop > state.list.scrollTop)
+        ) {
           value = el.innerText;
           break;
         }
@@ -362,7 +383,10 @@ export default {
     // Scroll to end & mention buttons =========================
 
     function canShowScrollBtn() {
-      return !(state.loadedDown && !(state.list.scrollTop + state.list.offsetHeight + 100 < state.list.scrollHeight));
+      return !(
+        state.loadedDown &&
+        !(state.list.scrollTop + state.list.offsetHeight + 100 < state.list.scrollHeight)
+      );
     }
 
     function scrollToEnd() {
@@ -375,8 +399,15 @@ export default {
         const unread = state.list.querySelector('.message_unreaded_messages');
 
         if (unread) {
-          if (state.list.offsetHeight + state.list.scrollTop - unread.offsetHeight / 2 < unread.offsetTop) {
-            state.list.scrollTop = unread.offsetTop - state.list.clientHeight / 2;
+          if (
+            state.list.offsetHeight + state.list.scrollTop - unread.offsetHeight / 2
+            < unread.offsetTop
+          ) {
+            state.list.scrollTo({
+              top: unread.offsetTop - state.list.clientHeight / 2,
+              behavior: 'smooth'
+            });
+
             afterUpdateScrollTop();
           } else {
             jumpTo({
