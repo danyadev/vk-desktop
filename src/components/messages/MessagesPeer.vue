@@ -137,8 +137,7 @@ export default {
       if (props.activeChat === props.peer.id) {
         return eventBus.emit('messages:event', 'jump', {
           peer_id: props.activeChat,
-          bottom: true,
-          mark: false
+          bottom: true
         });
       }
 

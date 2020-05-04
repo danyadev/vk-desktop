@@ -30,6 +30,7 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import { getMessagePreview, getPeerTitle } from 'js/messages';
+import { eventBus } from 'js/utils';
 import { getFullDate } from 'js/date';
 import store from 'js/store';
 
@@ -58,7 +59,11 @@ export default {
     });
 
     function openMessage() {
-      // TODO
+      eventBus.emit('messages:event', 'jump', {
+        peer_id: props.peer_id,
+        msg_id: props.msg.id,
+        mark: true
+      });
     }
 
     function hideMessage() {

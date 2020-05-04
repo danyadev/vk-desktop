@@ -83,6 +83,14 @@ export default {
   justify-content: flex-end;
 }
 
+.message[active]:not(.hideBubble) .message_bubble {
+  background-color: var(--message-out-bubble-background);
+}
+
+.message[active]:not(.hideBubble).out .message_bubble {
+  background-color: var(--message-bubble-background);
+}
+
 .message_bubble_pre_wrap {
   max-width: 75%;
 }
@@ -96,6 +104,7 @@ export default {
 
 .message_bubble {
   position: relative;
+  transition: background-color .5s;
 }
 
 .message:not(.hideBubble) .message_bubble {

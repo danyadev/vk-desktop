@@ -186,7 +186,7 @@ export default {
             !modalsState.hasModals // Нет открытых модалок
           ) {
             // Скроллим до конца списка
-            jumpTo({ bottom: true, mark: false });
+            jumpTo({ bottom: true });
           }
           break;
       }
@@ -257,7 +257,7 @@ export default {
       return items;
     });
 
-    const jumpTo = createQueueManager(async ({ msg_id, mark = true, top, bottom }) => {
+    const jumpTo = createQueueManager(async ({ msg_id, mark, top, bottom }) => {
       function setScrollTop(scrollTop, afterLoad) {
         if (afterLoad) {
           state.list.scrollTop = scrollTop;
@@ -301,8 +301,8 @@ export default {
           afterUpdateScrollTop();
 
           if (mark) {
-            msg.setAttribute('active', '');
-            await timer(2000);
+            requestIdleCallback(() => msg.setAttribute('active', ''));
+            await timer(1500);
             requestIdleCallback(() => msg.removeAttribute('active'));
           }
         }
@@ -491,7 +491,8 @@ export default {
       if (state.replyHistory.length) {
         // Возвращаемся на сообщение с ответом
         jumpTo({
-          msg_id: state.replyHistory.pop()
+          msg_id: state.replyHistory.pop(),
+          mark: true
         });
       } else if (state.peer && state.peer.unread) {
         const unread = state.list.querySelector('.message_unreaded_messages');
@@ -508,20 +509,14 @@ export default {
 
             afterUpdateScrollTop();
           } else {
-            jumpTo({
-              bottom: true,
-              mark: false
-            });
+            jumpTo({ bottom: true });
           }
         } else {
           jumpToStartUnread();
         }
       } else {
         // Переходим в самый низ диалога
-        jumpTo({
-          bottom: true,
-          mark: false
-        });
+        jumpTo({ bottom: true });
       }
     }
 
@@ -531,7 +526,8 @@ export default {
         state.peer.mentions[state.peer.mentions.length - 1];
 
       jumpTo({
-        msg_id: state.lastViewedMention
+        msg_id: state.lastViewedMention,
+        mark: true
       });
     }
 

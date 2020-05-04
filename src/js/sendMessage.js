@@ -83,8 +83,7 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
     eventBus.emit('messages:event', 'jump', {
       msg_id,
       peer_id,
-      bottom: true,
-      mark: false
+      bottom: true
     });
 
     await vkapi('messages.send', params);
