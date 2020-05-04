@@ -1,17 +1,22 @@
 <template>
   <div
     :id="'id' + msg.id"
-    :class="['message', { isUnread, out: msg.out, isLoading: msg.isLoading }]"
+    :class="['message', {
+      isUnread,
+      out: msg.out,
+      isLoading: msg.isLoading,
+      isDisappearing: msg.expireTtl && !msg.isExpired
+    }]"
   >
     <div class="message_bubble_pre_wrap">
-      <div class="message_bubble_wrap">
+      <div class="message_bubble_wrap" :data-time="expireTime">
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div class="message_bubble">
           <!-- reply -->
 
           <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">
-            {{ l('im_attachment_deleted') }}
+            {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
           </div>
           <div v-else class="message_text">
             <VKText :inline="false" link mention>{{ msg.text }}</VKText>
@@ -39,6 +44,7 @@
 <script>
 import { reactive, computed } from 'vue';
 import { getTime } from 'js/date';
+import { format } from 'js/date/utils';
 
 import VKText from '../../UI/VKText.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
@@ -54,6 +60,7 @@ export default {
   setup(props) {
     const state = reactive({
       time: computed(() => getTime(new Date(props.msg.date * 1000))),
+      expireTime: '',
 
       isUnread: computed(() => {
         return props.peer && (
@@ -62,6 +69,24 @@ export default {
         ) || props.msg.isLoading;
       })
     });
+
+    if (props.msg.expireTtl) {
+      const expireDate = new Date();
+      const getElapsedTime = () => Math.ceil((Date.now() - props.msg.date * 1000) / 1000);
+      let secs = props.msg.expireTtl - getElapsedTime();
+
+      void function updateDate() {
+        expireDate.setHours(0, 0, secs, 0);
+
+        // Это уменьшит количество потерянных секунд
+        secs = props.msg.expireTtl - getElapsedTime();
+
+        if (secs) {
+          state.expireTime = format(expireDate, 'mm:ss');
+          setTimeout(updateDate, 1000);
+        }
+      }();
+    }
 
     return state;
   }
@@ -176,8 +201,40 @@ export default {
   left: -16px;
 }
 
+.message:not(.isLoading).isUnread.out.isDisappearing .message_bubble::before {
+  left: -47px;
+}
+
 .message.isUnread:not(.out) .message_bubble::after {
   content: '';
   right: -16px;
+}
+
+.message.isUnread:not(.out).isDisappearing .message_bubble::after {
+  right: -47px;
+}
+
+.message.isDisappearing .message_bubble_wrap::before,
+.message.isDisappearing .message_bubble_wrap::after {
+  position: absolute;
+  z-index: 1;
+  background: var(--background);
+  border-radius: 9px;
+  padding: 2px 5px;
+  border: 1px solid var(--steel-gray-background-light);
+  bottom: 1px;
+  color: var(--text-dark-steel-gray);
+  font-weight: 500;
+  font-size: 11px;
+}
+
+.message:not(.isLoading).isDisappearing.out .message_bubble_wrap::before {
+  content: attr(data-time);
+  left: -31px;
+}
+
+.message.isDisappearing:not(.out) .message_bubble_wrap::after {
+  content: attr(data-time);
+  right: -31px;
 }
 </style>

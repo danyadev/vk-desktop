@@ -17,6 +17,12 @@
             <VKText>{{ chatName }}</VKText>
           </div>
           <Icon v-if="owner && owner.verified" name="verified" class="verified" />
+          <Icon
+            v-if="peer.isCasperChat"
+            name="ghost"
+            color="var(--blue-background)"
+            class="im_peer_ghost"
+          />
           <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
         </div>
         <div class="im_peer_time">{{ time }}</div>
@@ -27,7 +33,7 @@
         <div v-else-if="msg.id" class="im_peer_message">
           <div class="im_peer_author">{{ authorName }}</div>
           <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
-            {{ l('im_attachment_deleted') }}
+            {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
           </div>
           <div v-else :key="msg.id" :class="['im_peer_text', { isAttachment }]">
             <ServiceMessage
@@ -40,7 +46,7 @@
           </div>
         </div>
         <div v-else class="im_peer_text isContentDeleted">
-          {{ l('im_no_messages') }}
+          {{ l(peer.isCasperChat ? 'im_messages_disappeared' : 'im_no_messages') }}
         </div>
 
         <div v-if="peer.mentions.length && !fromSearch" class="im_peer_mentioned">
@@ -94,7 +100,7 @@ export default {
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),
       message: computed(() => getMessagePreview(props.msg)),
       isAttachment: computed(() => !props.msg.text && !props.msg.action && props.msg.hasAttachment),
-      outread: computed(() => props.peer.out_read !== props.peer.last_msg_id),
+      outread: computed(() => props.msg.id && props.peer.out_read !== props.peer.last_msg_id),
       photo: computed(() => getPeerAvatar(props.peer.id, props.peer, state.owner)),
       chatName: computed(() => getPeerTitle(props.peer.id, props.peer, state.owner)),
 
@@ -240,6 +246,11 @@ export default {
 .im_peer_title .verified {
   flex: none;
   margin: 2px 0 0 4px;
+}
+
+.im_peer_ghost {
+  flex: none;
+  margin: 1px 0 0 3px;
 }
 
 .im_peer_muted {

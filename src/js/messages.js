@@ -7,19 +7,24 @@ import vkapi from './vkapi';
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
   const { push_settings, chat_settings } = conversation;
+  const isCasperChat = isChat && !!chat_settings.is_disappearing;
 
   return {
     id: conversation.peer.id,
-    isChannel: isChat && chat_settings.is_group_channel,
+    isChannel: isChat && !!chat_settings.is_group_channel,
+    isCasperChat,
     members: isChat ? chat_settings.members_count : null,
     left: isChat && ['left', 'kicked'].includes(chat_settings.state),
-    muted: !!push_settings && push_settings.disabled_forever,
+    muted: !!(push_settings && push_settings.disabled_forever),
     unread: conversation.unread_count || 0,
     photo: isChat ? getPhoto(chat_settings.photo) : null,
     title: isChat ? escape(chat_settings.title).replace(/\n/g, ' ') : null,
-    isWriteAllowed: conversation.can_write.allowed,
+    // 946 причина означает, что это фантомный чат и туда можно писать
+    isWriteAllowed: conversation.can_write.reason === 946 || conversation.can_write.allowed,
     keyboard: conversation.current_keyboard || null,
-    last_msg_id: conversation.last_message_id,
+    last_msg_id: isCasperChat
+      ? conversation.sort_id.minor_id
+      : conversation.last_message_id,
     // id последнего прочтенного входящего сообщения
     in_read: conversation.in_read,
     // id последнего прочтенного исходящего сообщения
@@ -97,6 +102,8 @@ export function parseMessage(message) {
     editTime: message.update_time || 0,
     was_listened: !!message.was_listened,
     isContentDeleted: !message.text && !message.action && !hasAttachment,
+    expireTtl: message.expire_ttl || message.ttl || 0,
+    isExpired: !!message.is_expired,
     fromLongPoll: false
   };
 }

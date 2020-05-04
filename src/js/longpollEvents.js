@@ -106,7 +106,7 @@ function parseLongPollMessage(data, fromHistory) {
   const user = store.getters['users/user'];
   const flag = hasFlag(data[1]);
   const action = getServiceMessage(data[5]);
-  const from_id = flag('outbox') ? user.id : Number(data[5].from || data[2]);
+  const from_id = flag('outbox') ? user.id : +(data[5].from || data[2]);
   const { keyboard, marked_users } = data[5];
   const attachments = getAttachments(data[6]);
   const hasReplyMsg = flag('reply_msg');
@@ -134,6 +134,7 @@ function parseLongPollMessage(data, fromHistory) {
         !out && flag('deleted') ||
         // Сообщение с некоторым сервисным сообщением
         !!data[5].source_is_channel,
+      isCasperChat: !!data[5].ttl,
       keyboard: keyboard && !keyboard.inline && keyboard,
       mentions
     },
@@ -159,6 +160,8 @@ function parseLongPollMessage(data, fromHistory) {
       editTime: data[9],
       was_listened: false,
       isContentDeleted: !data[4] && !action && !hasAttachment,
+      expireTtl: +data[5].expire_ttl || data[5].ttl || 0,
+      isExpired: !!data[5].is_expired,
       // Нужно только для пометки сообщения как обязательное для получения через апи
       fromLongPoll: true
     }
@@ -299,11 +302,14 @@ export default {
     async handler({ peer_id, items: msg_ids }) {
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
-      const { msg } = await getLastMessage(peer_id);
+      const { msg, peer } = await getLastMessage(peer_id);
 
-      if (msg) {
+      if (msg || peer.isCasperChat) {
         store.commit('messages/moveConversation', { peer_id });
-        eventBus.emit('messages:event', 'checkScrolling', { peer_id });
+
+        if (msg) {
+          eventBus.emit('messages:event', 'checkScrolling', { peer_id });
+        }
       } else {
         store.commit('messages/updatePeersList', {
           id: peer_id,

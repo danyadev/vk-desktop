@@ -63,10 +63,13 @@ export default {
   im_user_deleted: 'Страница удалена',
   im_input_placeholder: 'Введите сообщение...',
   im_empty_dialog: 'Ваш список сообщений пуст',
+  im_empty_casper_dialog: ['Здесь давно никто не писал.', 'Развейте эту тоску!'],
   im_unread_messages: 'Новые сообщения',
   im_msg_edited: 'ред',
   im_keyboard_pay_with: 'Оплатить через',
   im_no_messages: 'Сообщений нет',
+  im_messages_disappeared: 'Сообщения исчезли',
+  im_messages_expired: ['{0} сообщение исчезло', '{0} сообщения исчезло', '{0} сообщений исчезло'],
 
   im_search_dialogs: 'Диалоги',
   im_search_placeholder: 'Здесь будут видны найденные беседы и сообщения',
@@ -106,6 +109,7 @@ export default {
 
   // Вложения в сообщениях
   im_attachment_deleted: 'Вложение удалено',
+  is_message_expired: 'Сообщение исчезло',
   im_replied: 'Ответ на сообщение',
   im_forwarded_some: 'Пересланные сообщения',
   im_forwarded: ['{0} пересланное сообщение', '{0} пересланных сообщения', '{0} пересланных сообщений'],
@@ -201,6 +205,7 @@ export default {
     '{0} сделал скриншот беседы',
     '{0} сделала скриншот беседы'
   ],
+
   // Короткие версии, отображаемые в списке диалогов
   im_chat_invite_user_short: [
     '{0} пригласили в беседу',

@@ -89,7 +89,7 @@ export default {
       }
 
       const peers = this.getters['messages/peersList'];
-      const { id } = peers[index].msg;
+      const { last_msg_id } = peers[index].peer;
       let newIndex = index;
 
       if (isRestoreMsg) {
@@ -98,14 +98,14 @@ export default {
         }
 
         for (let i = 0; i < index; i++) {
-          if (peers[i].msg.id < id) {
+          if (peers[i].peer.last_msg_id < last_msg_id) {
             newIndex = i;
             break;
           }
         }
       } else if (index !== peers.length - 1) {
         for (let i = peers.length - 1; i > index; i--) {
-          if (peers[i].msg.id > id) {
+          if (peers[i].peer.last_msg_id > last_msg_id) {
             newIndex = i;
             break;
           }
@@ -118,6 +118,8 @@ export default {
         return;
       }
 
+      // Если элемент последний в списке, а сам список бесед не загружен до конца,
+      // то скорее всего беседа находится дальше чем эта позиция и ее можно удалить.
       if (newIndex === peers.length - 1 && !state.isMessagesPeersLoaded) {
         state.peerIds.splice(index, 1);
       } else {

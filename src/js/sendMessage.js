@@ -86,7 +86,9 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
       bottom: true
     });
 
-    await vkapi('messages.send', params);
+    await vkapi('messages.send', params, {
+      android: true
+    });
   } catch (err) {
     store.commit('messages/editLoadingMessage', {
       peer_id,

@@ -11,6 +11,12 @@
           </div>
           <Icon v-if="owner && owner.verified" name="verified" class="verified white" />
           <Icon
+            v-if="peer && peer.isCasperChat"
+            name="ghost"
+            color="var(--blue-background-text)"
+            class="im_header_ghost"
+          />
+          <Icon
             v-if="peer && peer.muted"
             name="muted"
             color="var(--blue-background-text)"
@@ -101,6 +107,11 @@ export default {
 .im_header_name_wrap .verified {
   flex: none;
   margin: 0 0 0 4px;
+}
+
+.im_header_ghost {
+  opacity: .7;
+  margin: -1px 0 0 3px;
 }
 
 .im_header_muted {

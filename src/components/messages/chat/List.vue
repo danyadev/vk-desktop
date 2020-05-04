@@ -21,8 +21,15 @@
     <div v-if="loadingDown" class="loading"></div>
 
     <div v-if="!hasMessages && !loadingUp && !loadingDown" class="messages_empty_dialog">
-      <img src="~assets/placeholder_empty_messages.webp">
-      {{ l('im_empty_dialog') }}
+      <template v-if="peer.isCasperChat && peer.isWriteAllowed">
+        <Icon name="ghost_outline" color="var(--icon-gray)" />
+        {{ l('im_empty_casper_dialog', 0) }}<br>
+        {{ l('im_empty_casper_dialog', 1) }}
+      </template>
+      <template v-else>
+        <img src="~assets/placeholder_empty_messages.webp">
+        {{ l('im_empty_dialog') }}
+      </template>
     </div>
 
     <div
@@ -571,11 +578,18 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: column;
+  text-align: center;
   color: var(--text-dark-steel-gray);
 }
 
+/* Обычный чат */
 .messages_empty_dialog img {
   height: 160px;
+}
+
+/* Фантомный чат */
+.messages_empty_dialog svg {
+  margin-bottom: 10px;
 }
 
 .im_top_time {
