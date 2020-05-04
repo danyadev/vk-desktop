@@ -8,6 +8,7 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
+import { eventBus } from 'js/utils';
 import router from 'js/router';
 
 import MessagesPeers from './MessagesPeers.vue';
@@ -25,6 +26,10 @@ export default {
     });
 
     function closeChat() {
+      eventBus.emit('messages:event', 'closeChat', {
+        peer_id: state.peer_id
+      });
+
       router.replace('/messages');
     }
 

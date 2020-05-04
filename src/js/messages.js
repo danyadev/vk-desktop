@@ -133,7 +133,7 @@ export function getMessagePreview(msg) {
 }
 
 export function getPeerOnline(peer_id, peer, owner) {
-  if (!peer || !peer.left && peer_id > 2e9 && peer.members === null) {
+  if (!peer || !peer.left && peer_id > 2e9 && peer.members == null) {
     return getTranslate('loading');
   }
 

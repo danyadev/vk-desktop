@@ -193,31 +193,29 @@ export default {
       state.messages[peer_id] = messages.filter(({ id }) => !msg_ids.includes(id));
     },
 
-    // addLoadingMessage(state, { peer_id, msg }) {
-    //   const messages = [...state.loadingMessages[peer_id] || [], msg];
-    //
-    //   Vue.set(state.loadingMessages, peer_id, messages);
-    // },
-    //
-    // editLoadingMessage(state, { peer_id, random_id, error }) {
-    //   const messages = [...state.loadingMessages[peer_id] || []];
-    //   const index = messages.findIndex((msg) => msg.random_id == random_id);
-    //
-    //   if(index !== -1) {
-    //     Vue.set(messages, index, { ...messages[index], error });
-    //     Vue.set(state.loadingMessages, peer_id, messages);
-    //   }
-    // },
-    //
-    // removeLoadingMessage(state, { peer_id, random_id }) {
-    //   const messages = [...state.loadingMessages[peer_id] || []];
-    //   const index = messages.findIndex((msg) => msg.random_id == random_id);
-    //
-    //   if(index !== -1) {
-    //     messages.splice(index, 1);
-    //     Vue.set(state.loadingMessages, peer_id, messages);
-    //   }
-    // },
+    addLoadingMessage(state, { peer_id, msg }) {
+      state.loadingMessages[peer_id] = [...state.loadingMessages[peer_id] || [], msg];
+    },
+
+    editLoadingMessage(state, { peer_id, random_id, error }) {
+      const messages = [...state.loadingMessages[peer_id] || []];
+      const message = messages.find((msg) => msg.random_id === random_id);
+
+      if (message) {
+        message.error = error;
+        state.loadingMessages[peer_id] = messages;
+      }
+    },
+
+    removeLoadingMessage(state, { peer_id, random_id }) {
+      const messages = [...state.loadingMessages[peer_id] || []];
+      const index = messages.findIndex((msg) => msg.random_id === random_id);
+
+      if (index !== -1) {
+        messages.splice(index, 1);
+        state.loadingMessages[peer_id] = messages;
+      }
+    },
 
     updatePeerConfig(state, { peer_id, ...data }) {
       state.peersConfig[peer_id] = {

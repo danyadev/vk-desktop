@@ -1,8 +1,11 @@
 <template>
-  <div :id="'id' + msg.id" :class="['message', { isUnread, out: msg.out }]">
+  <div
+    :id="'id' + msg.id"
+    :class="['message', { isUnread, out: msg.out, isLoading: msg.isLoading }]"
+  >
     <div class="message_bubble_pre_wrap">
       <div class="message_bubble_wrap">
-        <!-- error menu -->
+        <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div class="message_bubble">
           <!-- reply -->
@@ -38,12 +41,14 @@ import { reactive, computed } from 'vue';
 import { getTime } from 'js/date';
 
 import VKText from '../../UI/VKText.vue';
+import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 
 export default {
   props: ['peer_id', 'peer', 'msg'],
 
   components: {
-    VKText
+    VKText,
+    SendMsgErrorMenu
   },
 
   setup(props) {

@@ -62,7 +62,7 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import { getMessagePreview, loadConversationMembers, getPeerAvatar, getPeerTitle } from 'js/messages';
-import { convertCount } from 'js/utils';
+import { convertCount, eventBus } from 'js/utils';
 import { getShortDate } from 'js/date';
 import getTranslate from 'js/getTranslate';
 import store from 'js/store';
@@ -134,20 +134,19 @@ export default {
     });
 
     function openChat() {
-      // TODO
-      // if (props.activeChat === props.peer.id) {
-      //   return eventBus.emit('messages:event', 'jump', {
-      //     peer_id: props.activeChat,
-      //     bottom: true,
-      //     mark: false
-      //   });
-      // }
-      //
-      // if (props.activeChat) {
-      //   eventBus.emit('messages:event', 'closeChat', {
-      //     peer_id: props.activeChat
-      //   });
-      // }
+      if (props.activeChat === props.peer.id) {
+        return eventBus.emit('messages:event', 'jump', {
+          peer_id: props.activeChat,
+          bottom: true,
+          mark: false
+        });
+      }
+
+      if (props.activeChat) {
+        eventBus.emit('messages:event', 'closeChat', {
+          peer_id: props.activeChat
+        });
+      }
 
       router.replace(`/messages/${props.peer.id}`);
     }

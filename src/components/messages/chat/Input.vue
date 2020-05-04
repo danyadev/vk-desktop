@@ -53,6 +53,7 @@ import emoji from 'js/emoji';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
+import sendMessage from 'js/sendMessage';
 
 import Icon from '../../UI/Icon.vue';
 import Ripple from '../../UI/Ripple.vue';
@@ -105,7 +106,10 @@ export default {
     }
 
     function send() {
-      // TODO
+      sendMessage({
+        peer_id: props.peer_id,
+        input: state.input
+      });
     }
 
     const onInput = throttle((event) => {

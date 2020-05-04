@@ -41,15 +41,19 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted, nextTick, toRefs } from 'vue';
-import { createQueueManager, concatProfiles, fields, endScroll, debounce, convertCount, timer } from 'js/utils';
+import electron from 'electron';
+import { reactive, computed, onMounted, onUnmounted, nextTick, toRefs } from 'vue';
+import { createQueueManager, concatProfiles, fields, endScroll, debounce, convertCount, timer, eventBus } from 'js/utils';
 import { parseMessage, parseConversation } from 'js/messages';
+import { modalsState } from 'js/modals';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
 
 import Icon from '../../UI/Icon.vue';
 import Scrolly from '../../UI/Scrolly.vue';
 import MessagesList from './MessagesList.vue';
+
+const currentWindow = electron.remote.getCurrentWindow();
 
 export default {
   props: ['peer_id', 'peer'],
@@ -73,10 +77,13 @@ export default {
       // scrollTop: null,
       lockScroll: false,
 
+      // isScrolledDownOnClose: false,
+      // isUnreadOnClose: false,
+
       topTime: null,
       showTopTime: false,
 
-      showEndBtn: true,
+      showEndBtn: false,
       replyHistory: [],
       lastViewedMention: null,
 
@@ -90,12 +97,100 @@ export default {
       hasMessages: computed(() => state.messagesWithLoading.length)
     });
 
+    // Event listener ===================================
+
     onMounted(() => {
+      eventBus.on('messages:event', onMessageEvent);
       jumpToStartUnread();
 
       // TODO onActivated
       state.startInRead = props.peer && props.peer.in_read;
     });
+
+    onUnmounted(() => {
+      eventBus.removeListener('messages:event', onMessageEvent);
+    });
+
+    // onActivated(() => {
+    //   state.startInRead = props.peer && props.peer.in_read;
+    //
+    //   if(state.scrollTop !== null) {
+    //     const unread = state.list.querySelector('.message_unreaded_messages');
+    //
+    //     if (state.isScrolledDownOnClose && !state.isUnreadOnClose && unread) {
+    //       state.list.scrollTop = state.scrollTop + state.list.clientHeight / 2;
+    //     } else {
+    //       state.list.scrollTop = state.scrollTop;
+    //     }
+    //
+    //     checkReadMessages();
+    //   } else {
+    //     checkScrolling({ viewport: state.list });
+    //   }
+    // });
+
+    async function onMessageEvent(type, { peer_id, ...data }) {
+      if (peer_id !== props.peer_id) {
+        return;
+      }
+
+      const { scrollTop, clientHeight, scrollHeight } = state.list;
+      const isScrolledDown = scrollHeight && scrollTop + clientHeight === scrollHeight;
+
+      console.log(`[Event ${props.peer_id}] ${type}`);
+
+      switch (type) {
+        case 'closeChat':
+          // TODO
+          // state.scrollTop = scrollTop;
+          // state.isScrolledDownOnClose = isScrolledDown;
+          // state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;
+          break;
+
+        case 'checkScrolling':
+          if (data.unlockUp) state.loadedUp = false;
+          if (data.unlockDown) state.loadedDown = false;
+
+          checkScrolling({ viewport: state.list });
+          break;
+
+        case 'changeLoadedState':
+          if (data.loadedUp) state.loadedUp = true;
+          if (data.loadedDown) state.loadedDown = true;
+          break;
+
+        case 'jump':
+          if (data.reply_author) {
+            state.replyHistory.push(data.reply_author);
+          }
+
+          jumpTo(data);
+          break;
+
+        case 'new':
+          // checkReadMessages();
+          await nextTick();
+
+          if (state.loadingMessages.find((msg) => msg.random_id === data.random_id)) {
+            store.commit('messages/removeLoadingMessage', {
+              peer_id,
+              random_id: data.random_id
+            });
+          }
+
+          if (
+            isScrolledDown && // Доскроллено до конца
+            data.isFirstMsg && // Это первое сообщение в списке новых сообщений, пришедших из лп
+            !(state.loadingUp || state.loadingDown) && // Не загружаются новые сообщения
+            currentWindow.isFocused() && // Окно активно
+            !modalsState.hasModals // Нет открытых модалок
+          ) {
+            // Скроллим до конца списка
+            jumpTo({ bottom: true, mark: false });
+          }
+          break;
+      }
+    }
 
     // Base methods ==========================================
 
@@ -177,7 +272,6 @@ export default {
       async function onLoad(afterLoad) {
         if (top) {
           setScrollTop(0, afterLoad);
-
           return afterUpdateScrollTop();
         }
 
@@ -325,14 +419,13 @@ export default {
             start_message_id: msg ? msg.id : -1
           }
         });
-      }
-
-      if (isDown && !state.loadedDown) {
+      } else if (isDown && !state.loadedDown) {
+        const msg = state.messages[state.messages.length - 1];
         state.loadingDown = true;
 
         load({
           params: {
-            start_message_id: state.messages[state.messages.length - 1].id,
+            start_message_id: msg ? msg.id : -1,
             offset: -40
           },
           config: {
@@ -343,7 +436,12 @@ export default {
     }, -1);
 
     function afterUpdateScrollTop() {
-      state.showEndBtn = canShowScrollBtn();
+      // Это нужно, чтобы showEndBtn был изменен после
+      // его изменения на false в функции onScroll
+      setTimeout(() => {
+        state.showEndBtn = canShowScrollBtn();
+      });
+
       checkScrolling({ viewport: state.list });
     }
 
@@ -546,7 +644,7 @@ export default {
   top: -5px;
   right: -3px;
   background-color: var(--blue-background);
-  color: #fff;
+  color: var(--blue-background-text);
   font-size: 12px;
   border-radius: 10px;
   padding: 2px 5px 1px 5px;
