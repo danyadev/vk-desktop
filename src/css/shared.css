@@ -168,3 +168,11 @@ img:not(.emoji) {
   margin-left: 12px;
   line-height: 18px;
 }
+
+.fade-out-enter-active, .fade-out-leave-active {
+  transition: opacity .3s;
+}
+
+.fade-out-enter-from, .fade-out-leave-to {
+  opacity: 0;
+}

@@ -13,6 +13,12 @@
           <VKText>{{ chatName }}</VKText>
         </div>
         <Icon v-if="owner && owner.verified" name="verified" class="verified" />
+        <Icon
+          v-if="peer.isCasperChat"
+          name="ghost"
+          color="var(--blue-background)"
+          class="im_peer_ghost"
+        />
         <div v-if="peer.muted" class="im_peer_muted"></div>
       </div>
       <div :class="['im_peer_online', { active: isOnline }]">{{ onlineText }}</div>

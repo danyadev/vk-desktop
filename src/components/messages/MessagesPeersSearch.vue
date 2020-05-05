@@ -184,14 +184,6 @@ export default {
 </script>
 
 <style>
-.im-peers-search-enter-active, .im-peers-search-leave-active {
-  transition: opacity .3s;
-}
-
-.im-peers-search-enter-from, .im-peers-search-leave-to {
-  opacity: 0;
-}
-
 .im_peers_search_container {
   position: absolute;
   height: 100%;

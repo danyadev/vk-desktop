@@ -5,6 +5,15 @@
       <List :peer_id="peer_id" :peer="peer" />
       <Input :peer_id="peer_id" :peer="peer" />
     </div>
+
+    <Transition name="fade-out">
+      <MessagesChatViewer
+        v-if="viewerMessages.length"
+        :peer_id="peer_id"
+        :peer="peer"
+        :messages="viewerMessages"
+      />
+    </Transition>
   </div>
 </template>
 
@@ -15,12 +24,14 @@ import { eventBus } from 'js/utils';
 import store from 'js/store';
 import router from 'js/router';
 
+import MessagesChatViewer from './MessagesChatViewer.vue';
 import Header from './chat/Header.vue';
 import List from './chat/List.vue';
 import Input from './chat/Input.vue';
 
 export default {
   components: {
+    MessagesChatViewer,
     Header,
     List,
     Input
@@ -29,6 +40,8 @@ export default {
   setup() {
     const state = reactive({
       peer_id: +router.currentRoute.value.params.id,
+      viewerMessages: computed(() => store.state.messages.viewerMessages),
+
       peer: computed(() => {
         const conversation = store.state.messages.conversations[state.peer_id];
         return conversation && conversation.peer;

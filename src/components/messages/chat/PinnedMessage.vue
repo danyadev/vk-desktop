@@ -59,11 +59,15 @@ export default {
     });
 
     function openMessage() {
-      eventBus.emit('messages:event', 'jump', {
-        peer_id: props.peer_id,
-        msg_id: props.msg.id,
-        mark: true
-      });
+      if(props.msg.id) {
+        eventBus.emit('messages:event', 'jump', {
+          peer_id: props.peer_id,
+          msg_id: props.msg.id,
+          mark: true
+        });
+      } else {
+        store.commit('messages/setViewerMessages', [props.msg]);
+      }
     }
 
     function hideMessage() {

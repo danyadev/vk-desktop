@@ -152,6 +152,7 @@ export default {
           // state.scrollTop = scrollTop;
           // state.isScrolledDownOnClose = isScrolledDown;
           // state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;
+          // store.commit('messages/setViewerMessages', []);
           break;
 
         case 'checkScrolling':
@@ -406,7 +407,7 @@ export default {
       }
 
       state.showEndBtn =
-        canShowScrollBtn() && (state.peer && state.peer.unread || scrollyEvent.dy > 0);
+        canShowScrollBtn() && (props.peer && props.peer.unread || scrollyEvent.dy > 0);
 
       checkScrolling(scrollyEvent);
       checkTopTime();
@@ -501,7 +502,7 @@ export default {
           msg_id: state.replyHistory.pop(),
           mark: true
         });
-      } else if (state.peer && state.peer.unread) {
+      } else if (props.peer && props.peer.unread) {
         const unread = state.list.querySelector('.message_unreaded_messages');
 
         if (unread) {
@@ -529,8 +530,8 @@ export default {
 
     function scrollToMention() {
       state.lastViewedMention =
-        state.peer.mentions.find((id) => id > state.lastViewedMention) ||
-        state.peer.mentions[state.peer.mentions.length - 1];
+        props.peer.mentions.find((id) => id > state.lastViewedMention) ||
+        props.peer.mentions[props.peer.mentions.length - 1];
 
       jumpTo({
         msg_id: state.lastViewedMention,

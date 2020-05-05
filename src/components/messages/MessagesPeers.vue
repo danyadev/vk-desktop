@@ -36,7 +36,7 @@
     </Scrolly>
   </div>
 
-  <Transition name="im-peers-search">
+  <Transition name="fade-out">
     <MessagesPeersSearch v-if="isSearch" @close="isSearch = false" />
   </Transition>
 </template>

@@ -53,6 +53,7 @@ export default {
 
   // Сообщения
   im_header_title: 'Сообщения',
+  im_messages_view: 'Просмотр сообщений',
   im_choose_chat: 'Выберите диалог, чтобы начать переписку',
   im_chat_members: ['{0} участник', '{0} участника', '{0} участников'],
   im_chat_group: 'Сообщество',

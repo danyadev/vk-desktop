@@ -10,6 +10,7 @@
 import { reactive, computed, toRefs } from 'vue';
 import { eventBus } from 'js/utils';
 import router from 'js/router';
+import store from 'js/store';
 
 import MessagesPeers from './MessagesPeers.vue';
 
@@ -20,12 +21,16 @@ export default {
 
   setup() {
     const state = reactive({
-      route: computed(() => router.currentRoute.value),
+      route: router.currentRoute,
       peer_id: computed(() => state.route.params.id),
       hasChat: computed(() => state.route.name === 'chat')
     });
 
     function closeChat() {
+      if (store.state.messages.viewerMessages.length) {
+        return store.commit('messages/setViewerMessages', []);
+      }
+
       eventBus.emit('messages:event', 'closeChat', {
         peer_id: state.peer_id
       });

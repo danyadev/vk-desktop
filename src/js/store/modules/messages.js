@@ -32,7 +32,11 @@ export default {
 
     // Некоторая информация о беседах, необходимая вне компонента чата
     // { peer_id: { opened, loading } }
-    peersConfig: {}
+    peersConfig: {},
+
+    // Список сообщений, которые должны отобразиться в просмотре сообщений
+    // [message]
+    viewerMessages: []
   },
 
   mutations: {
@@ -224,6 +228,10 @@ export default {
         ...state.peersConfig[peer_id],
         ...data
       };
+    },
+
+    setViewerMessages(state, messages) {
+      state.viewerMessages = messages;
     }
   },
 

@@ -81,6 +81,16 @@ export default {
         );
       }
 
+      if (isStartUnread) {
+        closeGroup();
+
+        children.push(
+          h('div', { class: 'message_unreaded_messages' }, [
+            h('span', this.l('im_unread_messages'))
+          ])
+        );
+      }
+
       if (msg.action) {
         closeGroup();
 
@@ -96,16 +106,6 @@ export default {
         );
 
         continue;
-      }
-
-      if (isStartUnread) {
-        closeGroup();
-
-        children.push(
-          h('div', { class: 'message_unreaded_messages' }, [
-            h('span', this.l('im_unread_messages'))
-          ])
-        );
       }
 
       if (prevMsg && prevMsg.from !== msg.from) {
