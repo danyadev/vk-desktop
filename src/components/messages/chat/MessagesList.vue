@@ -3,9 +3,11 @@ import { h, Fragment } from 'vue';
 import { getDay } from 'js/date';
 import { isSameDay } from 'js/date/utils';
 import { capitalize } from 'js/utils';
+import store from 'js/store';
 
 import MessagesGroup from './MessagesGroup.vue';
 import Icon from '../../UI/Icon.vue';
+import ServiceMessage from '../ServiceMessage.vue';
 
 export default {
   props: ['peer_id', 'peer', 'list', 'startInRead'],
@@ -80,9 +82,19 @@ export default {
       }
 
       if (msg.action) {
-        // closeGroup();
+        closeGroup();
 
-        // TODO
+        children.push(
+          h('div', { class: 'im_service_message' }, [
+            h(ServiceMessage, {
+              msg,
+              author: store.state.profiles[msg.from],
+              peer_id: props.peer_id,
+              isFull: true
+            })
+          ])
+        );
+
         continue;
       }
 
@@ -163,5 +175,15 @@ export default {
 
 .message_expired svg {
   margin-right: 5px;
+}
+
+.im_service_message {
+  text-align: center;
+  color: var(--text-gray);
+  margin: 8px 0 4px 0;
+}
+
+.im_service_message b {
+  font-weight: 500;
 }
 </style>
