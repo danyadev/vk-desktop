@@ -6,8 +6,9 @@ import { capitalize } from 'js/utils';
 import store from 'js/store';
 
 import MessagesGroup from './MessagesGroup.vue';
-import Icon from '../../UI/Icon.vue';
+import Carousel from './Carousel.vue';
 import ServiceMessage from '../ServiceMessage.vue';
+import Icon from '../../UI/Icon.vue';
 
 export default {
   props: ['peer_id', 'peer', 'list', 'startInRead'],
@@ -114,6 +115,18 @@ export default {
 
       if (!msg.isExpired) {
         activeGroup.push(msg);
+
+        if (msg.template && msg.template.type === 'carousel') {
+          closeGroup();
+
+          children.push(
+            h(Carousel, {
+              peer_id: props.peer_id,
+              author_id: msg.from,
+              template: msg.template
+            })
+          );
+        }
       } else {
         expiredMessages++;
 
