@@ -17,11 +17,21 @@
             @keydown.enter.exact.prevent="send"
           ></div>
 
+          <Icon
+            v-if="hasKeyboard"
+            name="keyboard"
+            :color="showKeyboard ? 'var(--accent)' : 'var(--icon-dark-gray)'"
+            :class="['keyboard_btn', { active: showKeyboard }]"
+            @click.native="showKeyboard = !showKeyboard"
+          />
+
           <img class="emoji_btn" src="~assets/emoji_icon.svg">
         </div>
 
         <img class="send_btn" src="~assets/im_send.svg" @click="send">
       </div>
+
+      <Keyboard v-if="hasKeyboard && showKeyboard" :peer_id="peer_id" :keyboard="keyboard" />
     </template>
     <Ripple
       v-else-if="canWrite.isChannel"
@@ -57,13 +67,15 @@ import sendMessage from 'js/sendMessage';
 
 import Icon from '../../UI/Icon.vue';
 import Ripple from '../../UI/Ripple.vue';
+import Keyboard from './Keyboard.vue';
 
 export default {
   props: ['peer_id', 'peer'],
 
   components: {
     Icon,
-    Ripple
+    Ripple,
+    Keyboard
   },
 
   setup(props) {

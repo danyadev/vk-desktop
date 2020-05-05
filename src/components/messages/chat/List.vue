@@ -101,7 +101,7 @@ export default {
       messagesWithLoading: computed(() => {
         return state.messages.concat(state.loadedDown ? state.loadingMessages : []);
       }),
-      hasMessages: computed(() => state.messagesWithLoading.length)
+      hasMessages: computed(() => !!state.messagesWithLoading.length)
     });
 
     // Event listener ===================================
@@ -489,7 +489,7 @@ export default {
     // Scroll to end & mention buttons =========================
 
     function canShowScrollBtn() {
-      return !(
+      return state.hasMessages && !(
         state.loadedDown &&
         !(state.list.scrollTop + state.list.offsetHeight + 100 < state.list.scrollHeight)
       );

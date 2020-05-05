@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <!-- inline keyboard -->
+        <Keyboard v-if="msg.keyboard" :peer_id="peer_id" :keyboard="msg.keyboard" />
       </div>
     </div>
   </div>
@@ -47,6 +47,7 @@ import { getTime } from 'js/date';
 import { format } from 'js/date/utils';
 
 import VKText from '../../UI/VKText.vue';
+import Keyboard from './Keyboard.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 
 export default {
@@ -54,6 +55,7 @@ export default {
 
   components: {
     VKText,
+    Keyboard,
     SendMsgErrorMenu
   },
 

@@ -179,7 +179,7 @@ export default {
 
 .im_service_message {
   text-align: center;
-  color: var(--text-gray);
+  color: var(--text-dark-steel-gray);
   margin: 8px 0 4px 0;
 }
 

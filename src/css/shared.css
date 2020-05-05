@@ -107,7 +107,8 @@ img:not(.emoji) {
 }
 
 .text-overflow,
-.im_peer_message_wrap > div:first-child {
+.im_peer_message_wrap > div:first-child,
+.keyboard_button div {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
