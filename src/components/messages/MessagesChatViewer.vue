@@ -10,6 +10,7 @@
           :peer_id="peer_id"
           :peer="peer"
           :list="messages"
+          :fromViewer="true"
         />
       </Scrolly>
     </div>
@@ -39,7 +40,7 @@ export default {
       close
     };
   }
-}
+};
 </script>
 
 <style>

@@ -21,7 +21,7 @@ export function parseConversation(conversation) {
     title: isChat ? escape(chat_settings.title).replace(/\n/g, ' ') : null,
     // 946 причина означает, что это фантомный чат и туда можно писать
     isWriteAllowed: conversation.can_write.reason === 946 || conversation.can_write.allowed,
-    keyboard: conversation.current_keyboard || null,
+    keyboard: conversation.current_keyboard,
     last_msg_id: isCasperChat
       ? conversation.sort_id.minor_id
       : conversation.last_message_id,
@@ -33,9 +33,10 @@ export function parseConversation(conversation) {
     pinnedMsg: isChat && chat_settings.pinned_message
       ? parseMessage(chat_settings.pinned_message)
       : null,
-    chatSettings: isChat ? chat_settings : null,
+    acl: isChat ? chat_settings.acl : null,
+    chatState: isChat ? chat_settings.state : null,
     owner_id: isChat ? chat_settings.owner_id : null,
-    admin_ids: isChat ? chat_settings.admin_ids : null,
+    admin_ids: isChat && chat_settings.admin_ids || [],
     loaded: true
   };
 }
@@ -81,23 +82,23 @@ export function parseMessage(message) {
   }
 
   return {
-    id: 'id' in message ? message.id : null,
+    id: message.id,
     from: message.from_id,
     out: message.from_id === store.state.users.activeUser,
     text: escape(message.text).replace(/\n/g, '<br>'),
     date: message.date,
     conversation_msg_id: message.conversation_message_id,
     random_id: message.random_id,
-    action: message.action || null,
+    action: message.action,
     hasAttachment,
     fwdCount,
     fwdMessages: (message.fwd_messages || []).map(parseMessage),
     attachments,
     hasReplyMsg,
     replyMsg: hasReplyMsg ? parseMessage(message.reply_message) : null,
-    keyboard: message.keyboard || null,
+    keyboard: message.keyboard,
     hasTemplate: !!message.template,
-    template: message.template || null,
+    template: message.template,
     hidden: !!message.is_hidden,
     editTime: message.update_time || 0,
     was_listened: !!message.was_listened,
@@ -149,9 +150,9 @@ export function getPeerOnline(peer_id, peer, owner) {
   }
 
   if (peer_id > 2e9) {
-    const { chatSettings, members, isChannel, left } = peer;
+    const { chatState, members, isChannel, left } = peer;
 
-    if (chatSettings.state === 'kicked') {
+    if (chatState === 'kicked') {
       return getTranslate('im_chat_kicked');
     } else if (left) {
       return getTranslate(isChannel ? 'im_chat_left_channel' : 'im_chat_left');

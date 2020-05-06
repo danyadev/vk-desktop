@@ -1,6 +1,6 @@
 <template>
   <Touch class="im_carousel">
-    <div v-for="item of template.elements" class="im_carousel_item">
+    <div v-for="(item, i) of template.elements" :key="i" class="im_carousel_item">
       <img v-if="item.photo" :src="getPhotoFromSizes(item.photo.sizes, 'x').url">
 
       <div class="im_carousel_content">
@@ -44,11 +44,9 @@ export default {
     Keyboard
   },
 
-  setup(props) {
-    return {
-      getPhotoFromSizes
-    };
-  }
+  setup: () => ({
+    getPhotoFromSizes
+  })
 };
 </script>
 

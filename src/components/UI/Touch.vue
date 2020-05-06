@@ -45,7 +45,7 @@ export default {
         requestAnimationFrame(() => {
           root.value.scrollLeft += diff;
         });
-      };
+      }
 
       function onMouseUp() {
         window.removeEventListener('mousemove', onMouseMove);

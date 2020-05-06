@@ -8,6 +8,7 @@ export default {
   you: 'Вы',
   you2: 'Вас',
   loading: 'Загрузка...',
+  delete: 'Удалить',
 
   date_now: 'только что',
   date_at: 'в',
@@ -108,6 +109,15 @@ export default {
 
   im_typing_text: ['{0} печатает', '{0} и {1} печатают', '{0} и еще {1} печатают'],
   im_typing_audio: ['{0} записывает аудио', '{0} и {1} записывают аудио', '{0} и еще {1} записывают аудио'],
+
+  im_message_copied: 'Сообщение скопировано',
+
+  im_toggle_msg_pin: ['Закрепить сообщение', 'Открепить сообщение'],
+  im_copy_msg: 'Скопировать сообщение',
+  im_delete_msg: 'Удалить сообщение',
+  im_mark_msg_as_spam: 'Пометить как спам',
+
+  im_selected_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
 
   // Вложения в сообщениях
   im_attachment_deleted: 'Вложение удалено',
@@ -221,11 +231,7 @@ export default {
   ],
 
   // Модалки
-  ml_captcha_header: 'Введите капчу',
-  ml_captcha_write: 'Введите код с картинки',
-
-  ml_logout_header: 'Выход из аккаунта',
-  ml_logout_sure: 'Вы действительно хотите выйти из аккаунта?',
+  ml_auth_header: 'Авторизация',
 
   ml_blocked_account_title: [
     'Сессия недействительна',
@@ -243,15 +249,24 @@ export default {
   ml_blocked_account_logout: 'Выйти из аккаунта',
   ml_blocked_account_close_app: 'Закрыть приложение',
 
-  ml_multiacc_header: 'Выберите аккаунт',
-  ml_multiacc_add_account: 'Добавить аккаунт',
-  ml_multiacc_active_account: 'Активный аккаунт',
+  ml_captcha_header: 'Введите капчу',
+  ml_captcha_write: 'Введите код с картинки',
 
-  ml_auth_header: 'Авторизация',
+  ml_clear_history_header: 'Удалить все сообщения',
+  ml_clear_history_text: 'Вы действительно хотите удалить всю переписку в этой беседе?',
+
+  ml_delete_messages_header: 'Удаление сообщения',
+  ml_delete_messages_text: 'Вы действительно хотите удалить {0}?',
+  ml_delete_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
+  ml_delete_messages_for_all: 'Удалить для всех',
 
   ml_error_api: 'При вызове метода {0} произошла ошибка со стороны API. Подождите немного и повторите вызов.',
   ml_error_cancel_warn: 'Отмена вызова метода может поломать работу приложения.',
 
-  ml_clear_history_header: 'Удалить все сообщения',
-  ml_clear_history_text: 'Вы действительно хотите удалить всю переписку в этой беседе?'
+  ml_logout_header: 'Выход из аккаунта',
+  ml_logout_sure: 'Вы действительно хотите выйти из аккаунта?',
+
+  ml_multiacc_header: 'Выберите аккаунт',
+  ml_multiacc_add_account: 'Добавить аккаунт',
+  ml_multiacc_active_account: 'Активный аккаунт'
 };

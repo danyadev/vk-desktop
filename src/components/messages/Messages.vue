@@ -27,6 +27,10 @@ export default {
     });
 
     function closeChat() {
+      if (store.state.messages.selectedMessages.length) {
+        return store.commit('messages/removeSelectedMessages');
+      }
+
       if (store.state.messages.viewerMessages.length) {
         return store.commit('messages/setViewerMessages', []);
       }

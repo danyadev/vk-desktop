@@ -162,6 +162,19 @@ export default {
   background: var(--gray-background-overlight);
 }
 
+.chat_input_container::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 4px;
+  margin-bottom: 1px;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
+}
+
 .chat_input_wrap {
   display: flex;
   flex-direction: row;

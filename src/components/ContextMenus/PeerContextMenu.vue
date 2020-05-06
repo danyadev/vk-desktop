@@ -33,7 +33,7 @@
     </div>
 
     <div v-if="!peer.isChannel" class="act_menu_item" @click="clearHistory">
-      <img src="assets/trash.svg" class="act_menu_icon">
+      <Icon name="trash" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_clear_history') }}</div>
     </div>
 

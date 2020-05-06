@@ -21,7 +21,7 @@
     <div v-if="loadingDown" class="loading"></div>
 
     <div v-if="!hasMessages && !loadingUp && !loadingDown" class="messages_empty_dialog">
-      <template v-if="peer.isCasperChat && peer.isWriteAllowed">
+      <template v-if="peer && peer.isCasperChat && peer.isWriteAllowed">
         <Icon name="ghost_outline" color="var(--icon-gray)" />
         {{ l('im_empty_casper_dialog', 0) }}<br>
         {{ l('im_empty_casper_dialog', 1) }}
@@ -144,15 +144,12 @@ export default {
       const { scrollTop, clientHeight, scrollHeight } = state.list;
       const isScrolledDown = scrollHeight && scrollTop + clientHeight === scrollHeight;
 
-      console.log(`[Event ${props.peer_id}] ${type}`);
-
       switch (type) {
         case 'closeChat':
           // TODO
           // state.scrollTop = scrollTop;
           // state.isScrolledDownOnClose = isScrolledDown;
           // state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;
-          // store.commit('messages/setViewerMessages', []);
           break;
 
         case 'checkScrolling':
@@ -283,7 +280,7 @@ export default {
           return afterUpdateScrollTop();
         }
 
-        const msg = state.list.querySelector(`#id${msg_id}`);
+        const msg = state.list.querySelector(`[data-id="${msg_id}"]`);
 
         if (msg) {
           if (msg.clientHeight > state.list.clientHeight) {

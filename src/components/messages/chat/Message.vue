@@ -1,18 +1,21 @@
 <template>
   <div
-    :id="'id' + msg.id"
+    :data-context-menu="!msg.isLoading && !fromViewer && 'message' || undefined"
+    :data-id="msg.id"
     :class="['message', {
       isUnread,
       out: msg.out,
       isLoading: msg.isLoading,
-      isDisappearing: msg.expireTtl && !msg.isExpired
+      isDisappearing: msg.expireTtl && !msg.isExpired,
+      isSelectMode,
+      isSelected
     }]"
   >
     <div class="message_bubble_pre_wrap">
       <div class="message_bubble_wrap" :data-time="expireTime">
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
-        <div class="message_bubble">
+        <div class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseUp">
           <!-- reply -->
 
           <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">
@@ -42,16 +45,17 @@
 </template>
 
 <script>
-import { reactive, computed } from 'vue';
+import { reactive, computed, toRefs } from 'vue';
 import { getTime } from 'js/date';
 import { format } from 'js/date/utils';
+import store from 'js/store';
 
 import VKText from '../../UI/VKText.vue';
 import Keyboard from './Keyboard.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 
 export default {
-  props: ['peer_id', 'peer', 'msg'],
+  props: ['peer_id', 'peer', 'msg', 'fromViewer'],
 
   components: {
     VKText,
@@ -61,6 +65,9 @@ export default {
 
   setup(props) {
     const state = reactive({
+      selectedMessages: computed(() => store.state.messages.selectedMessages),
+      isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
+      isSelectMode: computed(() => !!state.selectedMessages.length),
       time: computed(() => getTime(new Date(props.msg.date * 1000))),
       expireTime: '',
 
@@ -77,6 +84,8 @@ export default {
       const getElapsedTime = () => Math.ceil((Date.now() - props.msg.date * 1000) / 1000);
       let secs = props.msg.expireTtl - getElapsedTime();
 
+      // TODO Остановить обновление времени, если чел вышел из беседы или сообщения уже нет
+      // (onUnmounted при выходе из беседы не срабатывает)
       void function updateDate() {
         expireDate.setHours(0, 0, secs, 0);
 
@@ -90,7 +99,61 @@ export default {
       }();
     }
 
-    return state;
+    let timer;
+
+    function onMouseDown() {
+      if (event.button !== 0 || props.fromViewer) {
+        return;
+      }
+
+      if (state.isSelected) {
+        store.commit('messages/removeSelectedMessage', props.msg.id);
+      } else if (state.isSelectMode) {
+        if (event.shiftKey) {
+          const lastSelectedId = state.selectedMessages[state.selectedMessages.length - 1];
+          const messages = store.state.messages.messages[props.peer_id];
+
+          const lastSelectedIndex = messages.findIndex((msg) => msg.id === lastSelectedId);
+          const msgIndex = messages.findIndex((msg) => props.msg.id === msg.id);
+
+          if (lastSelectedIndex !== -1) {
+            const list = (
+              props.msg.id > lastSelectedId
+                ? messages.slice(lastSelectedIndex + 1, msgIndex + 1)
+                : messages.slice(msgIndex, lastSelectedIndex).reverse()
+            )
+            .filter((msg) => (
+              !msg.action && !msg.isExpired && !state.selectedMessages.includes(msg.id)
+            ))
+            .map((msg) => msg.id);
+
+            for (const id of list) {
+              store.commit('messages/addSelectedMessage', id);
+            }
+          } else {
+            // Сообщения нет в списке, т.к. юзер перепрыгнул в другой фрагмент сообщений
+            store.commit('messages/addSelectedMessage', props.msg.id);
+          }
+        } else {
+          store.commit('messages/addSelectedMessage', props.msg.id);
+        }
+      } else {
+        timer = setTimeout(() => {
+          store.commit('messages/addSelectedMessage', props.msg.id);
+        }, 500);
+      }
+    }
+
+    function onMouseUp() {
+      clearTimeout(timer);
+    }
+
+    return {
+      ...toRefs(state),
+
+      onMouseDown,
+      onMouseUp
+    };
   }
 };
 </script>
@@ -100,6 +163,10 @@ export default {
   display: flex;
   background-color: var(--background);
   user-select: text;
+}
+
+.message.isSelectMode {
+  user-select: none;
 }
 
 .message:not(:first-child) {
@@ -134,6 +201,10 @@ export default {
   transition: background-color .5s;
 }
 
+.message.isSelectMode .message_bubble {
+  cursor: pointer;
+}
+
 .message:not(.hideBubble) .message_bubble {
   background-color: var(--message-bubble-background);
   padding: 8px 12px 9px 12px;
@@ -148,7 +219,6 @@ export default {
 .message_text {
   display: inline;
   line-height: 18px;
-  user-select: text;
 }
 
 .message_text.isContentDeleted {
@@ -188,8 +258,8 @@ export default {
   background-color: var(--text-dark-steel-gray);
 }
 
-.message.isUnread .message_bubble::before,
-.message.isUnread .message_bubble::after {
+.message.isUnread.out .message_bubble::before,
+.message.isUnread:not(.out) .message_bubble::after {
   position: absolute;
   width: 8px;
   height: 8px;
@@ -238,5 +308,17 @@ export default {
 .message.isDisappearing:not(.out) .message_bubble_wrap::after {
   content: attr(data-time);
   right: -31px;
+}
+
+.message.out.isSelected .message_bubble::after,
+.message:not(.out).isSelected .message_bubble::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, .12);
+  border-radius: 18px;
+  top: 0;
+  left: 0;
 }
 </style>

@@ -19,6 +19,7 @@
           :peer_id="peer_id"
           :peer="peer"
           :msg="msg"
+          :fromViewer="fromViewer"
         />
       </div>
     </div>
@@ -34,7 +35,7 @@ import store from 'js/store';
 import Message from './Message.vue';
 
 export default {
-  props: ['peer_id', 'peer', 'messages'],
+  props: ['peer_id', 'peer', 'messages', 'fromViewer'],
 
   components: {
     Message
@@ -66,7 +67,6 @@ export default {
   font-weight: 500;
   margin-left: 50px;
   margin-bottom: 2px;
-  user-select: none;
 }
 
 .messages_stack_content {

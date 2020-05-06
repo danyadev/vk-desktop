@@ -34,7 +34,8 @@ export const defaultUserSettings = {
   pinnedPeers: [],
   typing: true,
   notRead: true,
-  devShowPeerId: false
+  devShowPeerId: false,
+  deleteForAll: false
 };
 
 export const usersStorage = new Storage({

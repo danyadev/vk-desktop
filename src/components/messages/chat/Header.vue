@@ -1,32 +1,65 @@
 <template>
   <div class="header_wrap">
     <div class="header">
-      <img src="~assets/im_back.svg" class="im_header_back" @click="$emit('close')">
-      <img class="im_header_photo" :src="photo">
+      <template v-if="!selectedMessages.length">
+        <img src="~assets/im_back.svg" class="im_header_back" @click="$emit('close')">
+        <img class="im_header_photo" :src="photo">
 
-      <div class="im_header_center text-overflow">
-        <div class="im_header_name_wrap">
-          <div class="im_header_name text-overflow">
-            <VKText>{{ title }}</VKText>
+        <div class="im_header_center text-overflow">
+          <div class="im_header_name_wrap">
+            <div class="im_header_name text-overflow">
+              <VKText>{{ title }}</VKText>
+            </div>
+            <Icon v-if="owner && owner.verified" name="verified" class="verified white" />
+            <Icon
+              v-if="peer && peer.isCasperChat"
+              name="ghost"
+              color="var(--blue-background-text)"
+              class="im_header_ghost"
+            />
+            <Icon
+              v-if="peer && peer.muted"
+              name="muted"
+              color="var(--blue-background-text)"
+              class="im_header_muted"
+            />
           </div>
-          <Icon v-if="owner && owner.verified" name="verified" class="verified white" />
-          <Icon
-            v-if="peer && peer.isCasperChat"
-            name="ghost"
-            color="var(--blue-background-text)"
-            class="im_header_ghost"
-          />
-          <Icon
-            v-if="peer && peer.muted"
-            name="muted"
-            color="var(--blue-background-text)"
-            class="im_header_muted"
-          />
+
+          <Typing v-if="hasTyping" :peer_id="peer_id" :isChat="true" />
+          <div v-else class="im_header_online text-overflow">{{ online }}</div>
+        </div>
+      </template>
+
+      <template v-else>
+        <Icon
+          name="cancel"
+          color="var(--blue-background-text)"
+          width="26" height="26"
+          class="im_header_cancel_select"
+          @click="cancelSelect"
+        />
+
+        <div class="im_header_selected_count">
+          {{ l('im_selected_messages_count', [selectedMessages.length], selectedMessages.length) }}
         </div>
 
-        <Typing v-if="hasTyping" :peer_id="peer_id" :isChat="true" />
-        <div v-else class="im_header_online text-overflow">{{ online }}</div>
-      </div>
+        <div class="im_header_selected_actions">
+          <Icon
+            v-if="peer && !peer.isChannel"
+            name="trash"
+            color="var(--blue-background-text)"
+            class="im_header_selected_action"
+            @click="deleteMessages"
+          />
+
+          <Icon
+            name="spam"
+            color="var(--blue-background-text)"
+            class="im_header_selected_action"
+            @click="markAsSpam"
+          />
+        </div>
+      </template>
     </div>
 
     <PinnedMessage v-if="peer && peer.pinnedMsg" :msg="peer.pinnedMsg" :peer_id="peer_id" />
@@ -34,9 +67,11 @@
 </template>
 
 <script>
-import { reactive, computed } from 'vue';
+import { reactive, computed, toRefs } from 'vue';
 import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/messages';
+import { openModal } from 'js/modals';
 import store from 'js/store';
+import vkapi from 'js/vkapi';
 
 import Icon from '../../UI/Icon.vue';
 import VKText from '../../UI/VKText.vue';
@@ -59,13 +94,59 @@ export default {
       photo: computed(() => getPeerAvatar(props.peer_id, props.peer, state.owner)),
       title: computed(() => getPeerTitle(props.peer_id, props.peer, state.owner)),
       online: computed(() => getPeerOnline(props.peer_id, props.peer, state.owner)),
+      selectedMessages: computed(() => store.state.messages.selectedMessages),
+
       hasTyping: computed(() => {
         const typing = store.state.messages.typing[props.peer_id] || {};
         return !!Object.keys(typing).length;
-      })
+      }),
+
+      canDeleteForAll: computed(() => (
+        props.peer_id > 2e9 &&
+        !!props.peer.acl.can_moderate &&
+        state.selectedMessages.every((id) => {
+          const msg = store.state.messages.messages[props.peer_id].find((msg) => msg.id === id);
+          return !props.peer.admin_ids.includes(msg.from);
+        })
+      ))
     });
 
-    return state;
+    function cancelSelect() {
+      store.commit('messages/removeSelectedMessages');
+    }
+
+    function deleteMessages() {
+      openModal('delete-messages', {
+        count: state.selectedMessages.length,
+        canDeleteForAll: state.canDeleteForAll,
+
+        submit(deleteForAll) {
+          vkapi('messages.delete', {
+            message_ids: state.selectedMessages.join(','),
+            delete_for_all: store.state.users.activeUser === props.peer_id || deleteForAll
+          });
+
+          cancelSelect();
+        }
+      });
+    }
+
+    function markAsSpam() {
+      vkapi('messages.delete', {
+        message_ids: state.selectedMessages.join(','),
+        spam: 1
+      });
+
+      cancelSelect();
+    }
+
+    return {
+      ...toRefs(state),
+
+      cancelSelect,
+      deleteMessages,
+      markAsSpam
+    };
   }
 };
 </script>
@@ -78,12 +159,19 @@ export default {
   height: 40px;
   padding: 8px;
   border-radius: 50%;
+}
+
+.im_header_back,
+.im_header_cancel_select,
+.im_header_selected_action {
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;
 }
 
-.im_header_back:hover {
+.im_header_back:hover,
+.im_header_cancel_select:hover,
+.im_header_selected_action:hover {
   opacity: 1;
 }
 
@@ -122,7 +210,6 @@ export default {
 }
 
 .im_header_name {
-  color: var(--blue-background-text);
   line-height: 14px;
 }
 
@@ -131,5 +218,17 @@ export default {
   font-size: 13px;
   text-align: center;
   margin-top: 2px;
+}
+
+.im_header_cancel_select {
+  margin: 0 10px;
+}
+
+.im_header_selected_actions {
+  margin: 0 3px 0 auto;
+}
+
+.im_header_selected_action {
+  margin-right: 15px;
 }
 </style>

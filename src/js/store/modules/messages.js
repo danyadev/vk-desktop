@@ -27,7 +27,7 @@ export default {
     messages: {},
 
     // Отправленные, но еще не полученные сообщения
-    // { peer_id: [{ random_id, text, date, error, hasAttachment }] }
+    // { peer_id: [message] }
     loadingMessages: {},
 
     // Некоторая информация о беседах, необходимая вне компонента чата
@@ -35,8 +35,13 @@ export default {
     peersConfig: {},
 
     // Список сообщений, которые должны отобразиться в просмотре сообщений
+    // При этом чат нельзя закрыть, пока не закроется список этих сообщений
     // [message]
-    viewerMessages: []
+    viewerMessages: [],
+
+    // Список выделенных сообщений
+    // При этом чат нельзя закрыть, пока не закроется список этих сообщений
+    selectedMessages: []
   },
 
   mutations: {
@@ -196,7 +201,7 @@ export default {
 
     removeMessages(state, { peer_id, msg_ids }) {
       const messages = [...state.messages[peer_id] || []];
-      state.messages[peer_id] = messages.filter(({ id }) => !msg_ids.includes(id));
+      state.messages[peer_id] = messages.filter((msg) => !msg_ids.includes(msg.id));
     },
 
     addLoadingMessage(state, { peer_id, msg }) {
@@ -232,6 +237,23 @@ export default {
 
     setViewerMessages(state, messages) {
       state.viewerMessages = messages;
+    },
+
+    addSelectedMessage(state, id) {
+      state.selectedMessages.push(id);
+    },
+
+    removeSelectedMessage(state, id) {
+      const index = state.selectedMessages.indexOf(id);
+
+      // Эта мутация вызывается при удалении сообщений
+      if (index !== -1) {
+        state.selectedMessages.splice(index, 1);
+      }
+    },
+
+    removeSelectedMessages(state) {
+      state.selectedMessages = [];
     }
   },
 

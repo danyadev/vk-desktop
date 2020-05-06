@@ -137,6 +137,8 @@ function vkapi(name, params, { android, vkme } = {}) {
   return new Promise(async (resolve, reject) => {
     const user = store.getters['users/user'];
 
+    // console.log('[API]', name, Object.assign({}, params));
+
     params = {
       access_token: user && (android ? user.android_token : user.access_token),
       lang: 'ru',

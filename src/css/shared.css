@@ -97,6 +97,7 @@ img:not(.emoji) {
   display: flex;
   align-items: center;
   background: var(--blue-background);
+  color: var(--blue-background-text);
   width: 100%;
   height: 50px;
 }

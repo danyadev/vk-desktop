@@ -59,7 +59,7 @@ export default {
     });
 
     function openMessage() {
-      if(props.msg.id) {
+      if (props.msg.id) {
         eventBus.emit('messages:event', 'jump', {
           peer_id: props.peer_id,
           msg_id: props.msg.id,

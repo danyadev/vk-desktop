@@ -11,7 +11,7 @@ import ServiceMessage from '../ServiceMessage.vue';
 import Icon from '../../UI/Icon.vue';
 
 export default {
-  props: ['peer_id', 'peer', 'list', 'startInRead'],
+  props: ['peer_id', 'peer', 'list', 'startInRead', 'fromViewer'],
 
   render(props) {
     const children = [];
@@ -40,7 +40,8 @@ export default {
           h(MessagesGroup, {
             peer_id: props.peer_id,
             peer: props.peer,
-            messages: activeGroup
+            messages: activeGroup,
+            fromViewer: props.fromViewer
           })
         );
 
@@ -61,7 +62,7 @@ export default {
       );
 
       expiredMessages = 0;
-    }
+    };
 
     for (let i = 0; i < props.list.length; i++) {
       const prevMsg = props.list[i - 1];
@@ -96,7 +97,10 @@ export default {
         closeGroup();
 
         children.push(
-          h('div', { class: 'im_service_message' }, [
+          h('div', {
+            class: 'im_service_message',
+            'data-id': msg.id
+          }, [
             h(ServiceMessage, {
               msg,
               author: store.state.profiles[msg.from],

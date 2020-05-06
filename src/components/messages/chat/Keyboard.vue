@@ -1,41 +1,41 @@
 <template>
-    <Scrolly :vclass="['keyboard', { inline: keyboard.inline }]">
-      <div v-for="line of buttons" class="keyboard_line">
-        <Ripple
-          v-for="({ action, color }, i) of line"
-          :key="i"
-          :color="
-            ['default', 'secondary'].includes(color) && action.type !== 'vkpay'
-              ? 'rgba(0, 0, 0, .08)'
-              : 'rgba(0, 0, 0, .15)'
-          "
-          :class="['keyboard_button', action.type === 'vkpay' ? 'primary' : color]"
-          :style="{ width: `${100 / line.length}%` }"
-          @click="click(action)"
-        >
-          <div v-if="action.type === 'text'">
-            <VKText>{{ action.label }}</VKText>
-          </div>
+  <Scrolly :vclass="['keyboard', { inline: keyboard.inline }]">
+    <div v-for="(line, i) of buttons" :key="i" class="keyboard_line">
+      <Ripple
+        v-for="({ action, color }, j) of line"
+        :key="j"
+        :color="
+          ['default', 'secondary'].includes(color) && action.type !== 'vkpay'
+            ? 'rgba(0, 0, 0, .08)'
+            : 'rgba(0, 0, 0, .15)'
+        "
+        :class="['keyboard_button', action.type === 'vkpay' ? 'primary' : color]"
+        :style="{ width: `${100 / line.length}%` }"
+        @click="click(action)"
+      >
+        <div v-if="action.type === 'text'">
+          <VKText>{{ action.label }}</VKText>
+        </div>
 
-          <template v-else-if="action.type === 'open_app'">
-            <img class="keyboard_services_icon" src="~assets/services.svg">
-            <div class="keyboard_service_key"><VKText>{{ action.label }}</VKText></div>
-          </template>
+        <template v-else-if="action.type === 'open_app'">
+          <img class="keyboard_services_icon" src="~assets/services.svg">
+          <div class="keyboard_service_key"><VKText>{{ action.label }}</VKText></div>
+        </template>
 
-          <template v-else-if="action.type === 'vkpay'">
-            <div>{{ l('im_keyboard_pay_with') }}</div>
-            <img src="~assets/vk_pay.svg">
-          </template>
+        <template v-else-if="action.type === 'vkpay'">
+          <div>{{ l('im_keyboard_pay_with') }}</div>
+          <img src="~assets/vk_pay.svg">
+        </template>
 
-          <template v-else-if="action.type === 'open_link'">
-            <div class="keyboard_service_key"><VKText>{{ action.label }}</VKText></div>
-            <img src="~assets/link.svg" class="keyboard_link_icon">
-          </template>
+        <template v-else-if="action.type === 'open_link'">
+          <div class="keyboard_service_key"><VKText>{{ action.label }}</VKText></div>
+          <img src="~assets/link.svg" class="keyboard_link_icon">
+        </template>
 
-          <div v-else>{{ l('keyboard_button_not_supported') }}</div>
-        </Ripple>
-      </div>
-    </Scrolly>
+        <div v-else>{{ l('keyboard_button_not_supported') }}</div>
+      </Ripple>
+    </div>
+  </Scrolly>
 </template>
 
 <script>
@@ -97,7 +97,7 @@ export default {
       click
     };
   }
-}
+};
 </script>
 
 <style>

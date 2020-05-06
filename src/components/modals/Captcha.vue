@@ -24,7 +24,6 @@
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
 import { closeModal } from 'js/modals';
-import { timer } from 'js/utils';
 
 import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';
@@ -50,18 +49,18 @@ export default {
     }
 
     function sendCode() {
-      if (state.disabled) return;
+      if (state.disabled) {
+        return;
+      }
 
       props.send(state.code.trim());
       closeModal('captcha');
     }
 
-    onMounted(async () => {
-      // Без этих таймаутов фокус почему-то не работает
-      await timer(0);
-      await timer(0);
-
-      state.input.focus();
+    onMounted(() => {
+      requestIdleCallback(() => {
+        state.input.focus();
+      });
     });
 
     return {

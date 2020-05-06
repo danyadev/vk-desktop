@@ -12,6 +12,7 @@ import {
 import { timer, eventBus } from './utils';
 import store from './store';
 import vkapi from './vkapi';
+import router from './router';
 
 function hasFlag(mask) {
   const flags = {
@@ -300,9 +301,25 @@ export default {
       }
     },
     async handler({ peer_id, items: msg_ids }) {
+      const { peer, msg } = await getLastMessage(peer_id);
+      const route = router.currentRoute.value;
+
+      if (
+        store.state.messages.selectedMessages.length &&
+        route.name === 'chat' && +route.params.id === peer_id
+      ) {
+        for (const id of msg_ids) {
+          store.commit('messages/removeSelectedMessage', id);
+        }
+      }
+
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
-      const { msg, peer } = await getLastMessage(peer_id);
+      // Обновляем сообщение потому что чат может быть фантомным или закрепленным
+      store.commit('messages/updateConversation', {
+        peer: { id: peer_id },
+        msg
+      });
 
       if (msg || peer.isCasperChat) {
         store.commit('messages/moveConversation', { peer_id });
@@ -650,13 +667,21 @@ export default {
   },
 
   18: {
-    // Добавление сниппета к сообщению (если сообщение с ссылкой)
+    // 1. Добавление сниппета к сообщению (если сообщение с ссылкой)
+    // 2. "Исчезновение сообщения" - удаление всего контента с добавлением ключа is_expired: true
     // Приходит сообщение
     parser: parseLongPollMessage,
     preload: (data) => hasPreloadMessages([data]),
     async handler({ peer, msg }, isPreload) {
       if (isPreload) {
         [msg] = await loadMessages(peer.id, [msg.id], true);
+      }
+
+      if (msg.isExpired) {
+        store.commit('messages/updateConversation', {
+          peer: { id: peer.id },
+          msg
+        });
       }
 
       store.commit('messages/editMessage', {
@@ -713,16 +738,10 @@ export default {
 
       switch (type) {
         case 2: // Изменилась аватарка беседы
-        case 4: // Изменение прав в беседе
-          loadConversation(peer_id);
-          break;
-
         case 3: // Назначен новый администратор
-          if (isMe) {
-            loadConversation(peer_id);
-          } else {
-            peer.admin_ids.push(extra);
-          }
+        case 4: // Изменение прав в беседе
+        case 9: // Разжалован администратор
+          loadConversation(peer_id);
           break;
 
         case 5: // Закрепление или открепление сообщения
@@ -762,14 +781,6 @@ export default {
           if (isMe) {
             peer.left = true;
             peer.isWriteAllowed = false;
-          }
-          break;
-
-        case 9: // Разжалован администратор
-          if (isMe) {
-            loadConversation(peer_id);
-          } else {
-            peer.admin_ids.splice(peer.admin_ids.indexOf(extra), 1);
           }
           break;
 

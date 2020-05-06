@@ -18,10 +18,10 @@ const modalNames = [
   'BlockedAccount',
   'Captcha',
   'ClearHistory',
+  'DeleteMessages',
   'ErrorApi',
   'Logout',
   // 'MediaViewer',
-  // 'MessagesViewer',
   'Multiaccount',
   'Settings'
 ];

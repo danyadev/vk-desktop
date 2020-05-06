@@ -53,6 +53,8 @@
     "no-shadow": "off",
     "no-restricted-globals": "off",
     "camelcase": "off",
+    "no-void": "off",
+    "wrap-iife": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
     "no-cond-assign": ["error", "except-parens"],
