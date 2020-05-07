@@ -28,6 +28,8 @@
           <Typing v-if="hasTyping" :peer_id="peer_id" :isChat="true" />
           <div v-else class="im_header_online text-overflow">{{ online }}</div>
         </div>
+
+        <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
       </template>
 
       <template v-else>
@@ -75,6 +77,7 @@ import vkapi from 'js/vkapi';
 
 import Icon from '../../UI/Icon.vue';
 import VKText from '../../UI/VKText.vue';
+import MessagesChatMenu from '../../ActionMenus/MessagesChatMenu.vue';
 import PinnedMessage from './PinnedMessage.vue';
 import Typing from '../Typing.vue';
 
@@ -84,6 +87,7 @@ export default {
   components: {
     Icon,
     VKText,
+    MessagesChatMenu,
     PinnedMessage,
     Typing
   },

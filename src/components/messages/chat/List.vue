@@ -50,7 +50,17 @@
 <script>
 import electron from 'electron';
 import { reactive, computed, onMounted, onUnmounted, nextTick, toRefs } from 'vue';
-import { createQueueManager, concatProfiles, fields, endScroll, debounce, convertCount, timer, eventBus } from 'js/utils';
+import {
+  createQueueManager,
+  callWithDelay,
+  debounce,
+  endScroll,
+  fields,
+  eventBus,
+  timer,
+  concatProfiles,
+  convertCount
+} from 'js/utils';
 import { parseMessage, parseConversation } from 'js/messages';
 import { modalsState } from 'js/modals';
 import store from 'js/store';
@@ -95,6 +105,7 @@ export default {
       lastViewedMention: null,
 
       startInRead: 0,
+      lastReadedMsg: null,
 
       messages: computed(() => store.state.messages.messages[props.peer_id] || []),
       loadingMessages: computed(() => store.state.messages.loadingMessages[props.peer_id] || []),
@@ -112,6 +123,7 @@ export default {
 
       // TODO onActivated
       state.startInRead = props.peer && props.peer.in_read;
+      checkReadMessages();
     });
 
     onUnmounted(() => {
@@ -173,7 +185,7 @@ export default {
           break;
 
         case 'new':
-          // checkReadMessages();
+          checkReadMessages();
           await nextTick();
 
           if (state.loadingMessages.find((msg) => msg.random_id === data.random_id)) {
@@ -256,7 +268,7 @@ export default {
 
       setPeerLoading(false);
 
-      // checkReadMessages();
+      checkReadMessages();
       checkTopTime();
 
       return items;
@@ -408,6 +420,7 @@ export default {
 
       checkScrolling(scrollyEvent);
       checkTopTime();
+      checkReadMessages();
     }
 
     const checkScrolling = endScroll(({ isUp, isDown }) => {
@@ -448,6 +461,7 @@ export default {
       });
 
       checkScrolling({ viewport: state.list });
+      checkReadMessages();
     }
 
     // Time bubble ===================================
@@ -535,6 +549,45 @@ export default {
         mark: true
       });
     }
+
+    // Reading messages ===========================
+
+    async function checkReadMessages() {
+      if (store.getters['settings/settings'].notRead || !currentWindow.isFocused()) {
+        return;
+      }
+
+      // Читаем сообщения когда процессор разгружен
+      await new Promise((resolve) => requestIdleCallback(resolve));
+
+      const messages = state.list.querySelectorAll('.isUnread:not(.out)');
+      let lastReadedMsg;
+
+      for (const msg of messages) {
+        if (state.list.offsetHeight + state.list.scrollTop - msg.offsetHeight >= msg.offsetTop) {
+          lastReadedMsg = +msg.dataset.id || +msg.dataset.lastId;
+        } else {
+          break;
+        }
+      }
+
+      if (lastReadedMsg) {
+        readMessages(lastReadedMsg);
+      }
+    }
+
+    const readMessages = callWithDelay((msg_id) => {
+      if (state.lastReadedMsg >= msg_id) {
+        return;
+      }
+
+      state.lastReadedMsg = msg_id;
+
+      vkapi('messages.markAsRead', {
+        start_message_id: msg_id,
+        peer_id: props.peer_id
+      });
+    }, 500);
 
     return {
       ...toRefs(state),

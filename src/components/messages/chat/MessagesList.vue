@@ -16,7 +16,7 @@ export default {
   render(props) {
     const children = [];
     let activeGroup = [];
-    let expiredMessages = 0;
+    let expiredMessages = [];
 
     function getMessageDate(msg, prevMsg) {
       const prevMsgDate = prevMsg && new Date(prevMsg.date * 1000);
@@ -49,19 +49,28 @@ export default {
       }
     }
 
-    const addExpiredMark = () => {
+    const addExpiredMark = (isUnread) => {
       closeGroup();
 
       children.push(
-        h('div', { class: 'message_expired_wrap' }, [
-          h('div', { class: 'message_expired' }, [
-            h(Icon, { name: 'bomb', color: 'var(--icon-gray)' }),
-            this.l('im_messages_expired', [expiredMessages], expiredMessages)
-          ])
-        ])
+        h(
+          'div',
+          {
+            // isUnread добавляется, если не прочтено минимум одно сообщение
+            class: ['message_expired_wrap', { isUnread }],
+            // Для прочтения сообщений
+            'data-last-id': expiredMessages[expiredMessages.length - 1]
+          },
+          [
+            h('div', { class: 'message_expired' }, [
+              h(Icon, { name: 'bomb', color: 'var(--icon-gray)' }),
+              this.l('im_messages_expired', [expiredMessages.length], expiredMessages.length)
+            ])
+          ]
+        )
       );
 
-      expiredMessages = 0;
+      expiredMessages = [];
     };
 
     for (let i = 0; i < props.list.length; i++) {
@@ -70,9 +79,11 @@ export default {
       const nextMsg = props.list[i + 1];
       const messageDate = getMessageDate(msg, prevMsg);
       const isStartUnread = checkIsStartUnread(msg, prevMsg);
+      const isPrevUnread = prevMsg && prevMsg.id > props.peer.in_read;
+      const isUnread = msg.id > props.peer.in_read;
 
-      if (expiredMessages && (messageDate || msg.action || isStartUnread)) {
-        addExpiredMark();
+      if (expiredMessages.length && (messageDate || msg.action || isStartUnread)) {
+        addExpiredMark(isPrevUnread);
       }
 
       if (messageDate) {
@@ -98,7 +109,7 @@ export default {
 
         children.push(
           h('div', {
-            class: 'im_service_message',
+            class: ['im_service_message', { isUnread }],
             'data-id': msg.id
           }, [
             h(ServiceMessage, {
@@ -132,10 +143,10 @@ export default {
           );
         }
       } else {
-        expiredMessages++;
+        expiredMessages.push(msg.id);
 
         if (!(nextMsg && nextMsg.isExpired)) {
-          addExpiredMark();
+          addExpiredMark(isUnread);
         }
       }
     }

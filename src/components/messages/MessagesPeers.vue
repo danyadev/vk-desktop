@@ -3,12 +3,14 @@
     <div class="header">
       <HeaderButton />
       <div class="header_name">{{ l('im_header_title') }}</div>
+
       <Icon
         name="search"
         color="var(--blue-background-text)"
         class="im_peers_search_icon"
         @click="isSearch = true"
       />
+      <MessagesListMenu />
     </div>
     <Scrolly
       class="im_peers_wrap"
@@ -50,9 +52,10 @@ import store from 'js/store';
 
 import HeaderButton from '../HeaderButton.vue';
 import Scrolly from '../UI/Scrolly.vue';
+import Icon from '../UI/Icon.vue';
 import MessagesPeer from './MessagesPeer.vue';
 import MessagesPeersSearch from './MessagesPeersSearch.vue';
-import Icon from '../UI/Icon.vue';
+import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
 
 export default {
   props: ['activeChat'],
@@ -60,9 +63,10 @@ export default {
   components: {
     HeaderButton,
     Scrolly,
+    Icon,
     MessagesPeer,
     MessagesPeersSearch,
-    Icon
+    MessagesListMenu
   },
 
   setup() {

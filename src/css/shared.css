@@ -67,6 +67,8 @@ img:not(.emoji) {
   text-decoration: underline;
 }
 
+/* Input ========================== */
+
 .input {
   width: 250px;
   outline: none;
@@ -92,6 +94,8 @@ img:not(.emoji) {
 .input.error {
   border-color: var(--red);
 }
+
+/* Header ============================ */
 
 .header {
   display: flex;
@@ -143,11 +147,14 @@ img:not(.emoji) {
   color: #fff;
 }
 
+/* Action menu ============================== */
+
 .act_menu_item {
   display: flex;
   align-items: center;
   padding: 10px 12px;
   cursor: pointer;
+  color: var(--text-primary);
   transition: background-color .3s;
 }
 

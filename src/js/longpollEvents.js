@@ -315,12 +315,6 @@ export default {
 
       store.commit('messages/removeMessages', { peer_id, msg_ids });
 
-      // Обновляем сообщение потому что чат может быть фантомным или закрепленным
-      store.commit('messages/updateConversation', {
-        peer: { id: peer_id },
-        msg
-      });
-
       if (msg || peer.isCasperChat) {
         store.commit('messages/moveConversation', { peer_id });
 
@@ -663,6 +657,11 @@ export default {
         id: peer_id,
         remove: true
       });
+
+      store.commit('messages/updateConversation', {
+        peer: { id: peer_id },
+        removeMsg: true
+      });
     }
   },
 
@@ -673,11 +672,14 @@ export default {
     parser: parseLongPollMessage,
     preload: (data) => hasPreloadMessages([data]),
     async handler({ peer, msg }, isPreload) {
+      const conversation = store.state.messages.conversations[peer.id];
+      const fullPeer = conversation && conversation.peer;
+
       if (isPreload) {
         [msg] = await loadMessages(peer.id, [msg.id], true);
       }
 
-      if (msg.isExpired) {
+      if (fullPeer && fullPeer.last_msg_id === msg.id && msg.isExpired) {
         store.commit('messages/updateConversation', {
           peer: { id: peer.id },
           msg

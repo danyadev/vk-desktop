@@ -188,7 +188,7 @@ export default {
   position: absolute;
   height: 100%;
   background: var(--background);
-  z-index: 1;
+  z-index: 3;
 }
 
 .im_peers_search_input {

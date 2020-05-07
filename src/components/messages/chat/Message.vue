@@ -81,7 +81,7 @@ export default {
 
     if (props.msg.expireTtl) {
       const expireDate = new Date();
-      const getElapsedTime = () => Math.ceil((Date.now() - props.msg.date * 1000) / 1000);
+      const getElapsedTime = () => Math.ceil((Date.now() - props.msg.date * 1000) / 1000) + 1;
       let secs = props.msg.expireTtl - getElapsedTime();
 
       // TODO Остановить обновление времени, если чел вышел из беседы или сообщения уже нет
@@ -122,10 +122,10 @@ export default {
                 ? messages.slice(lastSelectedIndex + 1, msgIndex + 1)
                 : messages.slice(msgIndex, lastSelectedIndex).reverse()
             )
-            .filter((msg) => (
-              !msg.action && !msg.isExpired && !state.selectedMessages.includes(msg.id)
-            ))
-            .map((msg) => msg.id);
+              .filter((msg) => (
+                !msg.action && !msg.isExpired && !state.selectedMessages.includes(msg.id)
+              ))
+              .map((msg) => msg.id);
 
             for (const id of list) {
               store.commit('messages/addSelectedMessage', id);
