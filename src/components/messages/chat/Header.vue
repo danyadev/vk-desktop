@@ -51,6 +51,7 @@
             name="trash"
             color="var(--blue-background-text)"
             class="im_header_selected_action"
+            data-tooltip="im_delete_messages"
             @click="deleteMessages"
           />
 
@@ -58,6 +59,7 @@
             name="spam"
             color="var(--blue-background-text)"
             class="im_header_selected_action"
+            data-tooltip="im_mark_msg_as_spam"
             @click="markAsSpam"
           />
         </div>

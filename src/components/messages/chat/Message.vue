@@ -101,7 +101,7 @@ export default {
 
     let timer;
 
-    function onMouseDown() {
+    function onMouseDown(event) {
       if (event.button !== 0 || props.fromViewer) {
         return;
       }

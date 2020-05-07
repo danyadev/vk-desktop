@@ -117,6 +117,7 @@ export default {
   im_toggle_msg_pin: ['Закрепить сообщение', 'Открепить сообщение'],
   im_copy_msg: 'Скопировать сообщение',
   im_delete_msg: 'Удалить сообщение',
+  im_delete_messages: 'Удалить сообщения',
   im_mark_msg_as_spam: 'Пометить как спам',
 
   im_selected_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],

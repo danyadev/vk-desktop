@@ -77,6 +77,9 @@
     "no-unused-expressions": ["error", {
       "allowShortCircuit": true
     }],
+    "prefer-const": ["error", {
+      "destructuring": "all"
+    }],
 
     "import/no-cycle": "off",
     "import/no-dynamic-require": "off",

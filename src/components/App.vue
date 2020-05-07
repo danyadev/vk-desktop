@@ -9,6 +9,7 @@
       <ModalsWrapper />
       <ContextMenuWrapper />
       <SnackbarsWrapper />
+      <TooltipsWrapper />
     </div>
   </div>
 </template>
@@ -31,6 +32,7 @@ import MainMenu from './MainMenu.vue';
 import ModalsWrapper from './ModalsWrapper.vue';
 import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
 import SnackbarsWrapper from './SnackbarsWrapper.vue';
+import TooltipsWrapper from './TooltipsWrapper.vue';
 
 // для разработки / дебага
 window.vkapi = vkapi;
@@ -45,7 +47,8 @@ export default {
     MainMenu,
     ModalsWrapper,
     ContextMenuWrapper,
-    SnackbarsWrapper
+    SnackbarsWrapper,
+    TooltipsWrapper
   },
 
   setup() {
