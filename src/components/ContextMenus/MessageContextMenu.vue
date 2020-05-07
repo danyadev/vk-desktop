@@ -1,5 +1,10 @@
 <template>
   <ContextMenu :event="event">
+    <div v-if="settings.devShowObjectIds" class="act_menu_item" @click="copyMsgId">
+      <Icon name="bug" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <div class="act_menu_data">msg_id: {{ id }}</div>
+    </div>
+
     <div v-if="peer.id > 2e9 && peer.acl.can_change_pin" class="act_menu_item" @click="togglePin">
       <Icon
         :name="isPinnedMessage ? 'unpin' : 'pin'"
@@ -52,6 +57,7 @@ export default {
     const msg_id = +props.id;
 
     const state = reactive({
+      settings: computed(() => store.getters['settings/settings']),
       peer: computed(() => store.state.messages.conversations[peer_id].peer),
 
       msg: computed(() => {
@@ -64,6 +70,15 @@ export default {
         return !!pinnedMsg && pinnedMsg.conversation_msg_id === state.msg.conversation_msg_id;
       })
     });
+
+    function copyMsgId() {
+      electron.remote.clipboard.writeText(props.id);
+
+      addSnackbar({
+        text: getTranslate('im_message_id_copied'),
+        icon: 'copy'
+      });
+    }
 
     function togglePin() {
       const method = state.isPinnedMessage ? 'messages.unpin' : 'messages.pin';
@@ -115,6 +130,7 @@ export default {
     return {
       ...toRefs(state),
 
+      copyMsgId,
       togglePin,
       copy,
       deleteMsg,

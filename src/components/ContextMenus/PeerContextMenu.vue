@@ -1,6 +1,6 @@
 <template>
   <ContextMenu :event="event">
-    <div v-if="settings.devShowPeerId" class="act_menu_item">
+    <div v-if="settings.devShowObjectIds" class="act_menu_item" @click="copyPeerId">
       <Icon name="bug" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">peer_id: {{ peerId }}</div>
     </div>
@@ -56,8 +56,11 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
+import electron from 'electron';
 import { eventBus } from 'js/utils';
 import { openModal } from 'js/modals';
+import { addSnackbar } from 'js/snackbars';
+import getTranslate from 'js/getTranslate';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 
@@ -80,6 +83,15 @@ export default {
       peer: computed(() => store.state.messages.conversations[peer_id].peer),
       isPinnedPeer: computed(() => state.settings.pinnedPeers.includes(peer_id))
     });
+
+    function copyPeerId() {
+      electron.remote.clipboard.writeText(props.peerId);
+
+      addSnackbar({
+        text: getTranslate('im_peer_id_copied'),
+        icon: 'copy'
+      });
+    }
 
     function togglePinPeer() {
       const peers = state.settings.pinnedPeers.slice();
@@ -137,6 +149,7 @@ export default {
     return {
       ...toRefs(state),
 
+      copyPeerId,
       togglePinPeer,
       markAsRead,
       toggleNotifications,

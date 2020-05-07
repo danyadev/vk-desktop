@@ -39,7 +39,11 @@
         <div class="act_menu_data">{{ l('im_toggle_left_state', isChannel ? 3 : 2) }}</div>
       </template>
       <template v-else>
-        <Icon name="close" color="var(--icon-dark-gray)" class="act_menu_icon left_icon" />
+        <Icon
+          name="close"
+          color="var(--icon-dark-gray)"
+          class="act_menu_icon im_chat_act_close_icon"
+        />
         <div class="act_menu_data">{{ l('im_toggle_left_state', isChannel ? 1 : 0) }}</div>
       </template>
     </div>
@@ -158,8 +162,8 @@ export default {
 };
 </script>
 
-<style scoped>
-.left_icon {
-  padding: 1px;
+<style>
+.im_chat_act_close_icon {
+  padding: 1px 2px 1px 1px;
 }
 </style>

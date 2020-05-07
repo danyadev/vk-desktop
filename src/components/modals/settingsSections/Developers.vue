@@ -1,7 +1,7 @@
 <template>
-  <div class="settings_line clickable" @click="toggle('devShowPeerId')">
-    {{ l('settings_show_peer_id') }}
-    <Checkbox :active="settings.devShowPeerId" />
+  <div class="settings_line clickable" @click="toggle('devShowObjectIds')">
+    {{ l('settings_show_object_ids') }}
+    <Checkbox :active="settings.devShowObjectIds" />
   </div>
 </template>
 

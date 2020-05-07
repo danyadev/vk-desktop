@@ -34,7 +34,7 @@ export const defaultUserSettings = {
   pinnedPeers: [],
   typing: true,
   notRead: true,
-  devShowPeerId: false,
+  devShowObjectIds: false,
   deleteForAll: false
 };
 
