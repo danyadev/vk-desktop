@@ -99,7 +99,7 @@ export default {
   ],
 
   im_toggle_pin_peer: ['Закрепить беседу', 'Открепить беседу'],
-  im_mark_messages_as_read: 'Отметить прочитанным',
+  im_mark_as_read: 'Отметить прочитанным',
 
   im_retry_send: 'Повторить отправку',
   im_delete_message: 'Удалить сообщение',

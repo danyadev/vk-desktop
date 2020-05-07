@@ -19,6 +19,11 @@
       <div class="act_menu_data">{{ l('im_copy_msg') }}</div>
     </div>
 
+    <div v-if="msg.id > peer.in_read" class="act_menu_item" @click="markAsRead">
+      <Icon name="show" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
+    </div>
+
     <div v-if="!peer.isChannel" class="act_menu_item" @click="deleteMsg">
       <Icon name="trash" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_delete_msg') }}</div>
@@ -98,6 +103,13 @@ export default {
       });
     }
 
+    function markAsRead() {
+      vkapi('messages.markAsRead', {
+        start_message_id: state.msg.id,
+        peer_id
+      });
+    }
+
     function deleteMsg() {
       const currentUser = store.state.users.activeUser;
 
@@ -133,6 +145,7 @@ export default {
       copyMsgId,
       togglePin,
       copy,
+      markAsRead,
       deleteMsg,
       markAsSpam
     };

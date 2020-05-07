@@ -20,7 +20,7 @@
 
     <div v-if="peer.unread" class="act_menu_item" @click="markAsRead">
       <img src="assets/show.svg" class="act_menu_icon">
-      <div class="act_menu_data">{{ l('im_mark_messages_as_read') }}</div>
+      <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
 
     <div class="act_menu_item" @click="toggleNotifications">
