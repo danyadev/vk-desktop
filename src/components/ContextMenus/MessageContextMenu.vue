@@ -112,11 +112,13 @@ export default {
 
     function deleteMsg() {
       const currentUser = store.state.users.activeUser;
+      const DAY = 1000 * 60 * 60 * 24;
 
       const canDeleteForAll = (
         state.peer.id > 2e9 &&
         state.peer.acl.can_moderate &&
-        !state.peer.admin_ids.includes(state.msg.from)
+        !state.peer.admin_ids.includes(state.msg.from) &&
+        Date.now() - state.msg.date * 1000 < DAY
       );
 
       openModal('delete-messages', {

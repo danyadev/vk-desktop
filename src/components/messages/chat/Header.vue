@@ -93,6 +93,8 @@ export default {
   },
 
   setup(props) {
+    const DAY = 1000 * 60 * 60 * 24;
+
     const state = reactive({
       owner: computed(() => store.state.profiles[props.peer_id]),
       photo: computed(() => getPeerAvatar(props.peer_id, props.peer, state.owner)),
@@ -110,7 +112,7 @@ export default {
         !!props.peer.acl.can_moderate &&
         state.selectedMessages.every((id) => {
           const msg = store.state.messages.messages[props.peer_id].find((msg) => msg.id === id);
-          return !props.peer.admin_ids.includes(msg.from);
+          return !props.peer.admin_ids.includes(msg.from) && (Date.now() - msg.date * 1000 < DAY);
         })
       ))
     });
