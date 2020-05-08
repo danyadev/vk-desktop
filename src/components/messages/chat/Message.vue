@@ -71,7 +71,7 @@ export default {
       selectedMessages: computed(() => store.state.messages.selectedMessages),
       isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
       isSelectMode: computed(() => (
-        !!state.selectedMessages.length || props.isCustomView === 'messages'
+        !!state.selectedMessages.length || props.isCustomView === 'search'
       )),
       time: computed(() => getTime(new Date(props.msg.date * 1000))),
       expireTime: '',
