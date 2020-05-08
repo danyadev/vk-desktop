@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-mac:
-    runs-on: macOS-latest
+    runs-on: macos-10.15
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
@@ -23,7 +23,6 @@ jobs:
           [./out/VK-Desktop-mac.dmg, VK-Desktop-Setup.dmg, application/octet-stream]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
   build-win:
     runs-on: windows-latest

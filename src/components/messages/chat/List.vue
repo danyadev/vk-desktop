@@ -238,8 +238,6 @@ export default {
 
       const peer = parseConversation(conversations[0]);
 
-      state.lockScroll = true;
-
       store.commit('messages/updateConversation', { peer });
       store.commit('addProfiles', concatProfiles(profiles, groups));
       store.commit('messages/addMessages', {
@@ -248,14 +246,17 @@ export default {
         addNew: config.isDown
       });
 
-      const { scrollTop, scrollHeight } = state.list;
+      const { scrollTop, scrollHeight } = state.list || {};
 
+      state.lockScroll = true;
       await nextTick();
       requestIdleCallback(() => (state.lockScroll = false));
 
       if (!config.isDown) {
         // Сохраняем старую позицию скролла
-        state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
+        if (state.list) {
+          state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
+        }
 
         state.loadingUp = false;
         state.loadedUp = config.loadedUp || items.length < (config.isFirstLoad ? 20 : 40);
@@ -268,8 +269,10 @@ export default {
 
       setPeerLoading(false);
 
-      checkReadMessages();
-      checkTopTime();
+      if (state.list) {
+        checkReadMessages();
+        checkTopTime();
+      }
 
       return items;
     });
