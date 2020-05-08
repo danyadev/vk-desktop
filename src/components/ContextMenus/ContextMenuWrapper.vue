@@ -1,5 +1,9 @@
 <template>
-  <div :class="['context_menu_wrap', { active: menu }]" @mousedown="closeMenu" @click="closeMenu">
+  <div
+    :class="['context_menu_wrap', { active: menu }]"
+    @mousedown="tryCloseMenu"
+    @click="tryCloseMenu"
+  >
     <component :is="menu.name" v-if="menu" v-bind="menu.data" />
   </div>
 </template>
@@ -23,12 +27,19 @@ export default {
   setup() {
     const menu = ref(null);
 
-    function closeMenu({ type, target }) {
+    function closeMenu(event) {
+      event && event.stopPropagation();
+      menu.value = null;
+      window.removeEventListener('resize', closeMenu, true);
+      window.removeEventListener('keydown', closeMenu, true);
+    }
+
+    function tryCloseMenu({ type, target }) {
       if (
         type === 'click' && target.closest('.act_menu_item') ||
         type === 'mousedown' && !target.closest('.context_menu')
       ) {
-        menu.value = null;
+        closeMenu();
       }
     }
 
@@ -44,17 +55,16 @@ export default {
               event
             }
           };
-        }
-      });
 
-      window.addEventListener('resize', () => {
-        menu.value = null;
+          window.addEventListener('resize', closeMenu, true);
+          window.addEventListener('keydown', closeMenu, true);
+        }
       });
     });
 
     return {
       menu,
-      closeMenu
+      tryCloseMenu
     };
   }
 };
