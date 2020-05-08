@@ -23,6 +23,7 @@ jobs:
           [./out/VK-Desktop-mac.dmg, VK-Desktop-Setup.dmg, application/octet-stream]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
   build-win:
     runs-on: windows-latest
