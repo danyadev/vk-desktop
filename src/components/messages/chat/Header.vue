@@ -2,8 +2,10 @@
   <div class="header_wrap">
     <div class="header">
       <template v-if="!selectedMessages.length">
-        <img src="~assets/im_back.svg" class="header_btn im_header_back" @click="$emit('close')">
-        <img class="im_header_photo" :src="photo">
+        <div class="im_header_side">
+          <img src="~assets/im_back.svg" class="header_btn im_header_back" @click="$emit('close')">
+          <img class="im_header_photo" :src="photo">
+        </div>
 
         <div class="im_header_center text-overflow">
           <div class="im_header_name_wrap">
@@ -29,13 +31,15 @@
           <div v-else class="im_header_online text-overflow">{{ online }}</div>
         </div>
 
-        <Icon
-          name="search"
-          color="var(--blue-background-text)"
-          class="header_btn im_search_icon"
-          @click="$emit('search')"
-        />
-        <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
+        <div class="im_header_side">
+          <Icon
+            name="search"
+            color="var(--blue-background-text)"
+            class="header_btn im_search_icon"
+            @click="$emit('search')"
+          />
+          <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
+        </div>
       </template>
 
       <template v-else>
@@ -189,6 +193,12 @@ export default {
   height: 35px;
   border-radius: 50%;
   margin: 0 5px 0 5px;
+}
+
+.im_header_side {
+  display: flex;
+  align-items: center;
+  width: 85px;
 }
 
 .im_header_center {
