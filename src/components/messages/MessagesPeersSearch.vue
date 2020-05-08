@@ -11,7 +11,7 @@
       <Icon
         name="cancel"
         color="var(--blue-background-text)"
-        class="im_search_cancel"
+        class="header_btn im_search_cancel"
         @click="$emit('close')"
       />
     </div>

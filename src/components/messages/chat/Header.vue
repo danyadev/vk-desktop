@@ -2,7 +2,7 @@
   <div class="header_wrap">
     <div class="header">
       <template v-if="!selectedMessages.length">
-        <img src="~assets/im_back.svg" class="im_header_back" @click="$emit('close')">
+        <img src="~assets/im_back.svg" class="header_btn im_header_back" @click="$emit('close')">
         <img class="im_header_photo" :src="photo">
 
         <div class="im_header_center text-overflow">
@@ -32,7 +32,7 @@
         <Icon
           name="search"
           color="var(--blue-background-text)"
-          class="im_chat_search_icon"
+          class="header_btn im_search_icon"
           @click="$emit('search')"
         />
         <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
@@ -168,11 +168,6 @@ export default {
 <style>
 .im_header_back {
   display: none;
-  flex: none;
-  width: 40px;
-  height: 40px;
-  padding: 8px;
-  border-radius: 50%;
 }
 
 .im_header_back,
@@ -244,18 +239,5 @@ export default {
 
 .im_header_selected_action {
   margin-right: 15px;
-}
-
-.im_chat_search_icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-  cursor: pointer;
-  opacity: .7;
-  transition: opacity .3s;
-}
-
-.im_chat_search_icon:hover {
-  opacity: 1;
 }
 </style>

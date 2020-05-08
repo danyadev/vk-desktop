@@ -106,6 +106,14 @@ img:not(.emoji) {
   height: 50px;
 }
 
+.header_btn {
+  flex: none;
+  box-sizing: content-box;
+  width: 24px;
+  height: 24px;
+  padding: 13px 8px;
+}
+
 .header_name {
   color: var(--blue-background-text);
   padding-left: 10px;
@@ -202,6 +210,16 @@ img:not(.emoji) {
   display: block;
 }
 
+.im_search_icon {
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .3s;
+}
+
+.im_search_icon:hover {
+  opacity: 1;
+}
+
 .im_search_input {
   color: var(--field-color);
   border: none;
@@ -219,11 +237,10 @@ img:not(.emoji) {
 }
 
 .im_search_cancel {
-  width: 46px;
-  height: 46px;
-  padding: 10px;
+  width: 26px;
+  height: 26px;
+  padding-right: 10px;
   cursor: pointer;
-  flex: none;
   opacity: .7;
   transition: opacity .3s;
 }

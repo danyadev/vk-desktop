@@ -7,7 +7,7 @@
       <Icon
         name="search"
         color="var(--blue-background-text)"
-        class="im_peers_search_icon"
+        class="header_btn im_search_icon"
         @click="isSearch = true"
       />
       <MessagesListMenu />
@@ -157,18 +157,5 @@ export default {
 
 .im_pinned_peers {
   border-bottom: 6px solid var(--separator);
-}
-
-.im_peers_search_icon {
-  width: 24px;
-  height: 24px;
-  margin: 8px;
-  cursor: pointer;
-  opacity: .7;
-  transition: opacity .3s;
-}
-
-.im_peers_search_icon:hover {
-  opacity: 1;
 }
 </style>

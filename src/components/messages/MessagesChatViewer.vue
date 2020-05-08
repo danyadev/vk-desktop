@@ -1,7 +1,7 @@
 <template>
   <div class="im_chat_container im_search_container">
     <div class="header">
-      <img src="~assets/im_back.svg" class="im_header_back" @click="close">
+      <img src="~assets/im_back.svg" class="header_btn im_header_back" @click="close">
       <div class="im_chat_viewer_title">{{ l('im_messages_view') }}</div>
     </div>
     <div class="im_chat_wrap">

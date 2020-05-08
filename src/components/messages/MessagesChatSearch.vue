@@ -1,7 +1,7 @@
 <template>
   <div class="im_chat_container im_search_container">
     <div class="header">
-      <img src="~assets/im_back.svg" class="im_header_back" @click="$emit('close')">
+      <img src="~assets/im_back.svg" class="header_btn im_header_back" @click="$emit('close')">
       <input
         ref="input"
         v-model="text"
@@ -11,7 +11,7 @@
       <Icon
         name="cancel"
         color="var(--blue-background-text)"
-        class="im_search_cancel"
+        class="header_btn im_search_cancel"
         @click="$emit('close')"
       />
     </div>
