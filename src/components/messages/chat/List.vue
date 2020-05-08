@@ -203,7 +203,7 @@ export default {
             !modalsState.hasModals // Нет открытых модалок
           ) {
             // Скроллим до конца списка
-            jumpTo({ bottom: true });
+            jumpTo({ bottom: true, noSmooth: true });
           }
           break;
       }
@@ -274,9 +274,9 @@ export default {
       return items;
     });
 
-    const jumpTo = createQueueManager(async ({ msg_id, mark, top, bottom }) => {
+    const jumpTo = createQueueManager(async ({ msg_id, mark, top, bottom, noSmooth }) => {
       function setScrollTop(scrollTop, afterLoad) {
-        if (afterLoad) {
+        if (afterLoad || noSmooth) {
           state.list.scrollTop = scrollTop;
         } else {
           state.list.scrollTo({
