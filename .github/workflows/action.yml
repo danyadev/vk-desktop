@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-mac:
-    runs-on: macos-10.15
+    runs-on: macOS-latest
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
@@ -16,6 +16,8 @@ jobs:
       run: npm i
     - name: Package electron app and create installer
       run: npm run build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload VK-Desktop.dmg
       uses: danyadev/upload-to-release@master
       with:
