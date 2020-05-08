@@ -76,6 +76,7 @@ export default {
 
   im_search_dialogs: 'Диалоги',
   im_search_placeholder: 'Здесь будут видны найденные беседы и сообщения',
+  im_search_messages_placeholder: 'Здесь будут видны найденные сообщения',
   im_search_nothing: 'По вашему запросу ничего не найдено',
 
   im_chat_online: ['Онлайн', 'Онлайн с телефона', 'Онлайн с {0}'],

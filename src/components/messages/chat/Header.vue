@@ -29,6 +29,12 @@
           <div v-else class="im_header_online text-overflow">{{ online }}</div>
         </div>
 
+        <Icon
+          name="search"
+          color="var(--blue-background-text)"
+          class="im_chat_search_icon"
+          @click="$emit('search')"
+        />
         <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
       </template>
 
@@ -238,5 +244,18 @@ export default {
 
 .im_header_selected_action {
   margin-right: 15px;
+}
+
+.im_chat_search_icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .3s;
+}
+
+.im_chat_search_icon:hover {
+  opacity: 1;
 }
 </style>

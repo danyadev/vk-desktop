@@ -76,12 +76,13 @@ export default {
 .act_menu_btn_wrap {
   height: 40px;
   border-radius: 50%;
+  margin-right: 5px;
 }
 
 .act_menu_btn {
-  width: 40px;
-  height: 40px;
-  padding: 8px;
+  width: 24px;
+  height: 24px;
+  margin: 8px;
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;

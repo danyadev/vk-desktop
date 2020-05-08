@@ -296,15 +296,9 @@ export default {
 
         if (msg) {
           if (msg.clientHeight > state.list.clientHeight) {
-            // Расстояние в 1/4 от начала viewport
-            const quarterFromViewport = msg.offsetTop - state.list.clientHeight / 4;
-
-            // Из-за возможных небольших несоответствий в размерах
-            // было добавлено в запас 5 пикселей.
             setScrollTop(
-              state.list.scrollTop >= quarterFromViewport - 5
-                ? state.list.scrollHeight
-                : quarterFromViewport,
+              // Сообщение будет находиться в 1/4 от начала viewport
+              msg.offsetTop - state.list.clientHeight / 4,
               afterLoad
             );
           } else {

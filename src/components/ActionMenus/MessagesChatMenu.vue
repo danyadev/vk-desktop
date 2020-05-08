@@ -42,7 +42,7 @@
         <Icon
           name="close"
           color="var(--icon-dark-gray)"
-          class="act_menu_icon im_chat_act_close_icon"
+          class="act_menu_icon act_menu_close_icon"
         />
         <div class="act_menu_data">{{ l('im_toggle_left_state', isChannel ? 1 : 0) }}</div>
       </template>
@@ -161,9 +161,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.im_chat_act_close_icon {
-  padding: 1px 2px 1px 1px;
-}
-</style>

@@ -160,9 +160,9 @@ export default {
 }
 
 .im_peers_search_icon {
-  width: 45px;
-  height: 45px;
-  padding: 11px;
+  width: 24px;
+  height: 24px;
+  margin: 8px;
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;

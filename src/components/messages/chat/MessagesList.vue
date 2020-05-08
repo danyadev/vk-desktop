@@ -11,7 +11,7 @@ import ServiceMessage from '../ServiceMessage.vue';
 import Icon from '../../UI/Icon.vue';
 
 export default {
-  props: ['peer_id', 'peer', 'list', 'startInRead', 'fromViewer'],
+  props: ['peer_id', 'peer', 'list', 'startInRead', 'isCustomView'],
 
   render(props) {
     const children = [];
@@ -41,7 +41,7 @@ export default {
             peer_id: props.peer_id,
             peer: props.peer,
             messages: activeGroup,
-            fromViewer: props.fromViewer
+            isCustomView: props.isCustomView
           })
         );
 

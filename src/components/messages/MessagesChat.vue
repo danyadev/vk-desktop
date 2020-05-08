@@ -1,6 +1,6 @@
 <template>
   <div class="im_chat_container">
-    <Header :peer_id="peer_id" :peer="peer" @close="closeChat" />
+    <Header :peer_id="peer_id" :peer="peer" @close="closeChat" @search="isSearch = true" />
     <div :class="['im_chat_wrap', { pinnedMsg }]">
       <List :peer_id="peer_id" :peer="peer" />
       <Input :peer_id="peer_id" :peer="peer" />
@@ -14,6 +14,15 @@
         :messages="viewerMessages"
       />
     </Transition>
+
+    <Transition name="fade-out">
+      <MessagesChatSearch
+        v-if="isSearch"
+        :peer_id="peer_id"
+        :peer="peer"
+        @close="isSearch = false"
+      />
+    </Transition>
   </div>
 </template>
 
@@ -25,6 +34,7 @@ import store from 'js/store';
 import router from 'js/router';
 
 import MessagesChatViewer from './MessagesChatViewer.vue';
+import MessagesChatSearch from './MessagesChatSearch.vue';
 import Header from './chat/Header.vue';
 import List from './chat/List.vue';
 import Input from './chat/Input.vue';
@@ -32,6 +42,7 @@ import Input from './chat/Input.vue';
 export default {
   components: {
     MessagesChatViewer,
+    MessagesChatSearch,
     Header,
     List,
     Input
@@ -41,6 +52,11 @@ export default {
     const state = reactive({
       peer_id: +router.currentRoute.value.params.id,
       viewerMessages: computed(() => store.state.messages.viewerMessages),
+
+      isSearch: computed({
+        get: () => store.state.messages.isMessagesSearch,
+        set: (value) => (store.state.messages.isMessagesSearch = value)
+      }),
 
       peer: computed(() => {
         const conversation = store.state.messages.conversations[state.peer_id];

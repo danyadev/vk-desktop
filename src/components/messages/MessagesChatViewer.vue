@@ -1,5 +1,5 @@
 <template>
-  <div class="im_chat_container im_chat_viewer">
+  <div class="im_chat_container im_search_container">
     <div class="header">
       <img src="~assets/im_back.svg" class="im_header_back" @click="close">
       <div class="im_chat_viewer_title">{{ l('im_messages_view') }}</div>
@@ -10,7 +10,7 @@
           :peer_id="peer_id"
           :peer="peer"
           :list="messages"
-          :fromViewer="true"
+          :isCustomView="true"
         />
       </Scrolly>
     </div>
@@ -44,23 +44,6 @@ export default {
 </script>
 
 <style>
-.im_chat_viewer {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  background: var(--background);
-  /* Скрываем дату из списка ниже, потому что у .im_top_time z-index: 2 */
-  z-index: 3;
-}
-
-.im_chat_viewer .header {
-  color: var(--blue-background-text);
-}
-
-.im_chat_viewer .im_header_back {
-  display: block;
-}
-
 .im_chat_viewer_title {
   padding-left: 10px;
 }

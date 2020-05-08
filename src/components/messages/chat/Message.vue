@@ -1,6 +1,6 @@
 <template>
   <div
-    :data-context-menu="!msg.isLoading && !fromViewer && 'message' || undefined"
+    :data-context-menu="!msg.isLoading && !isCustomView ? 'message' : null"
     :data-id="msg.id"
     :class="['message', {
       isUnread,
@@ -46,6 +46,7 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
+import { eventBus } from 'js/utils';
 import { getTime } from 'js/date';
 import { format } from 'js/date/utils';
 import store from 'js/store';
@@ -55,7 +56,7 @@ import Keyboard from './Keyboard.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 
 export default {
-  props: ['peer_id', 'peer', 'msg', 'fromViewer'],
+  props: ['peer_id', 'peer', 'msg', 'isCustomView'],
 
   components: {
     VKText,
@@ -67,7 +68,9 @@ export default {
     const state = reactive({
       selectedMessages: computed(() => store.state.messages.selectedMessages),
       isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
-      isSelectMode: computed(() => !!state.selectedMessages.length),
+      isSelectMode: computed(() => (
+        !!state.selectedMessages.length || props.isCustomView === 'messages'
+      )),
       time: computed(() => getTime(new Date(props.msg.date * 1000))),
       expireTime: '',
 
@@ -102,7 +105,7 @@ export default {
     let timer;
 
     function onMouseDown(event) {
-      if (event.button !== 0 || props.fromViewer) {
+      if (event.button !== 0 || props.isCustomView) {
         return;
       }
 
@@ -145,6 +148,16 @@ export default {
     }
 
     function onMouseUp() {
+      if (props.isCustomView === 'messages') {
+        store.state.messages.isMessagesSearch = false;
+
+        return eventBus.emit('messages:event', 'jump', {
+          peer_id: props.peer_id,
+          msg_id: props.msg.id,
+          mark: true
+        });
+      }
+
       clearTimeout(timer);
     }
 
@@ -203,6 +216,11 @@ export default {
 
 .message.isSelectMode .message_bubble {
   cursor: pointer;
+}
+
+/* Блокируем все кликабельные элементы во время выделения */
+.message.isSelectMode .message_bubble > * {
+  pointer-events: none;
 }
 
 .message:not(.hideBubble) .message_bubble {

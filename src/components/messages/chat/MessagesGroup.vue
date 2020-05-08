@@ -19,7 +19,7 @@
           :peer_id="peer_id"
           :peer="peer"
           :msg="msg"
-          :fromViewer="fromViewer"
+          :isCustomView="isCustomView"
         />
       </div>
     </div>
@@ -35,7 +35,7 @@ import store from 'js/store';
 import Message from './Message.vue';
 
 export default {
-  props: ['peer_id', 'peer', 'messages', 'fromViewer'],
+  props: ['peer_id', 'peer', 'messages', 'isCustomView'],
 
   components: {
     Message

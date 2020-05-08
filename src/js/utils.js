@@ -249,8 +249,8 @@ export function endScroll(callback, reverse) {
     const isScrolledUp = scrollTop <= 100;
     const isScrolledDown = scrollTop + offsetHeight + 100 >= scrollHeight;
 
-    // reverse = false: проверять скролл вниз
-    // reverse = true: проверять скролл вверх
+    // reverse = 0: проверять скролл вниз
+    // reverse = 1: проверять скролл вверх
     // reverse = -1: проверять все сразу
     const isScrolled = reverse
       ? (reverse === -1 ? (isScrolledUp || isScrolledDown) : isScrolledUp)
