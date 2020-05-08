@@ -87,9 +87,17 @@ const linkParser = createParser({
       return [{ type: 'text', value }];
     }
 
+    let decodedUri = value;
+
+    try {
+      decodedUri = decodeURI(value);
+    } catch (err) {
+      // Попалась ссылка со сломанным закодированным текстом
+    }
+
     return [{
       type: 'link',
-      value: decodeURI(value).replace(/(.{55}).+/, '$1..'),
+      value: decodedUri.replace(/(.{55}).+/, '$1..'),
       link: (match[2] ? '' : 'http://') + value
     }];
   }
