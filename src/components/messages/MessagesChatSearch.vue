@@ -42,7 +42,7 @@
           :peer_id="peer_id"
           :peer="peer"
           :list="messages"
-          isCustomView="messages"
+          isCustomView="search"
         />
       </Scrolly>
     </div>

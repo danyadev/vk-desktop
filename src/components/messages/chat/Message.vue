@@ -15,7 +15,7 @@
       <div class="message_bubble_wrap" :data-time="expireTime">
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
-        <div class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseUp">
+        <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseUp">
           <!-- reply -->
 
           <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">
@@ -66,6 +66,8 @@ export default {
 
   setup(props) {
     const state = reactive({
+      bubble: null,
+
       selectedMessages: computed(() => store.state.messages.selectedMessages),
       isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
       isSelectMode: computed(() => (
@@ -143,12 +145,15 @@ export default {
       } else {
         timer = setTimeout(() => {
           store.commit('messages/addSelectedMessage', props.msg.id);
+          state.bubble.removeEventListener('mousemove', onMouseMove);
         }, 500);
+
+        state.bubble.addEventListener('mousemove', onMouseMove);
       }
     }
 
     function onMouseUp() {
-      if (props.isCustomView === 'messages') {
+      if (props.isCustomView === 'search') {
         store.state.messages.isMessagesSearch = false;
 
         return eventBus.emit('messages:event', 'jump', {
@@ -158,7 +163,16 @@ export default {
         });
       }
 
-      clearTimeout(timer);
+      // Останавливаем таймер
+      onMouseMove();
+    }
+
+    function onMouseMove() {
+      if (timer) {
+        state.bubble.removeEventListener('mousemove', onMouseMove);
+        clearTimeout(timer);
+        timer = null;
+      }
     }
 
     return {
