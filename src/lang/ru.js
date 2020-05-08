@@ -2,6 +2,7 @@ export default {
   cancel: 'Отмена',
   close: 'Закрыть',
   logout: 'Выход',
+  and: 'и',
   yes: 'Да',
   send: 'Отправить',
   retry: 'Повторить',
