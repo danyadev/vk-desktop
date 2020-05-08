@@ -1,5 +1,5 @@
 <template>
-  <img src="assets/menu.webp" class="open_menu_btn" @click="openMenu">
+  <img src="assets/menu.svg" class="open_menu_btn" @click="openMenu">
 </template>
 
 <script>
