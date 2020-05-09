@@ -139,21 +139,33 @@ export default {
       })
     });
 
-    function openChat() {
-      if (props.activeChat === props.peer.id) {
+    async function openChat() {
+      const { activeChat, fromSearch } = props;
+      const peer_id = props.peer.id;
+      const isCurrentChat = activeChat === peer_id;
+
+      if (isCurrentChat && !fromSearch) {
         return eventBus.emit('messages:event', 'jump', {
-          peer_id: props.activeChat,
+          peer_id: activeChat,
           bottom: true
         });
       }
 
-      if (props.activeChat) {
+      if (!isCurrentChat) {
         eventBus.emit('messages:event', 'closeChat', {
-          peer_id: props.activeChat
+          peer_id: activeChat
         });
       }
 
-      router.replace(`/messages/${props.peer.id}`);
+      await router.replace(`/messages/${peer_id}`);
+
+      if (fromSearch) {
+        eventBus.emit('messages:event', 'jump', {
+          peer_id,
+          msg_id: props.msg.id,
+          mark: true
+        });
+      }
     }
 
     return {
