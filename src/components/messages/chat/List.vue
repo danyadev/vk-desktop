@@ -298,10 +298,21 @@ export default {
         const msg = state.list.querySelector(`[data-id="${msg_id}"]`);
 
         if (msg) {
+          // Если сообщение занимает места больше видимого пространства
           if (msg.clientHeight > state.list.clientHeight) {
+            // Сообщение будет находиться в 1/4 от начала viewport
+            const quarterFromViewport = msg.offsetTop - state.list.clientHeight / 4;
+
             setScrollTop(
-              // Сообщение будет находиться в 1/4 от начала viewport
-              msg.offsetTop - state.list.clientHeight / 4,
+              // Если текущая позиция скролла отображает начало сообщения
+              // ниже чем 3/4 от всего видимого пространства, то при последующем нажатии
+              // кнопки скролла вниз нужно проскроллить в самый низ диалога, а не остаться на месте
+              state.list.scrollTop >= quarterFromViewport - 5 && bottom
+                ? state.list.scrollHeight
+                // ... а иначе, когда сообщение находится ниже, просто отобраажем его начало
+                // в 3/4 от видимого пространства
+                : quarterFromViewport,
+
               afterLoad
             );
           } else {
