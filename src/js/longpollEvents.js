@@ -155,7 +155,6 @@ function parseLongPollMessage(data, fromHistory) {
       hasReplyMsg,
       replyMsg: null,
       keyboard: keyboard && keyboard.inline ? keyboard : null,
-      hasTemplate: !!data[5].has_template,
       template: null,
       hidden: flag('hidden'),
       editTime: data[9],
@@ -163,8 +162,9 @@ function parseLongPollMessage(data, fromHistory) {
       isContentDeleted: !data[4] && !action && !hasAttachment,
       expireTtl: +data[5].expire_ttl || data[5].ttl || 0,
       isExpired: !!data[5].is_expired,
+      fromLongPoll: true,
       // Нужно только для пометки сообщения как обязательное для получения через апи
-      fromLongPoll: true
+      hasTemplate: !!data[5].has_template
     }
   };
 }
@@ -226,7 +226,7 @@ function hasSupportedAttachments(msg) {
 
 function hasPreloadMessages(messages) {
   for (const { msg } of messages) {
-    if (msg.fwdCount || msg.hasTemplate) {
+    if (msg.hasReplyMsg || msg.fwdCount || msg.hasTemplate) {
       return true;
     }
 

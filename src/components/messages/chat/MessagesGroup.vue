@@ -86,4 +86,9 @@ export default {
 .messages_stack_list {
   width: 100%;
 }
+
+/* Если есть ава, то отнимаем от общей шириры занимаемое пространство авы */
+.message_photo + .messages_stack_list {
+  width: calc(100% - 45px);
+}
 </style>

@@ -30,8 +30,10 @@
 
       <div class="im_peer_message_wrap">
         <Typing v-if="hasTyping && !fromSearch" :peer_id="peer.id" />
+
         <div v-else-if="msg.id" class="im_peer_message">
           <div class="im_peer_author">{{ authorName }}</div>
+
           <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
             {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
           </div>
@@ -45,6 +47,7 @@
             <VKText v-else mention>{{ message }}</VKText>
           </div>
         </div>
+
         <div v-else class="im_peer_text isContentDeleted">
           {{ l(peer.isCasperChat ? 'im_messages_disappeared' : 'im_no_messages') }}
         </div>

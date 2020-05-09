@@ -97,7 +97,6 @@ export function parseMessage(message) {
     hasReplyMsg,
     replyMsg: hasReplyMsg ? parseMessage(message.reply_message) : null,
     keyboard: message.keyboard,
-    hasTemplate: !!message.template,
     template: message.template,
     hidden: !!message.is_hidden,
     editTime: message.update_time || 0,

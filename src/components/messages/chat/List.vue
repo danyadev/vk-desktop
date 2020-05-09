@@ -259,17 +259,29 @@ export default {
         }
 
         state.loadingUp = false;
-        state.loadedUp = config.loadedUp || items.length < (config.isFirstLoad ? 20 : 40);
+        state.loadedUp = (
+          // Заранее известно, что будет загружена верхняя часть сообщений
+          config.loadedUp ||
+          // При скролле вверх загрузилось меньше сообщений, чем нужно
+          items.length < (config.isFirstLoad ? 20 : 40) && !params.start_message_id ||
+          // При скролле вверх так же загрузилось меньше сообщений, чем нужно
+          params.start_message_id && items.length < 20 + (-params.offset || 0) &&
+          items[0].id !== peer.last_msg_id
+        );
       }
 
-      if (config.isDown || config.isFirstLoad) {
+      if (config.isDown || config.isFirstLoad || params.start_message_id) {
         state.loadingDown = false;
-        state.loadedDown = config.loadedDown || !items[0] || items[0].id === peer.last_msg_id;
+
+        if (!state.loadedDown) {
+          state.loadedDown = config.loadedDown || !items[0] || items[0].id === peer.last_msg_id;
+        }
       }
 
       setPeerLoading(false);
 
       if (state.list) {
+        state.showEndBtn = canShowScrollBtn();
         checkReadMessages();
         checkTopTime();
       }
@@ -298,7 +310,7 @@ export default {
         const msg = state.list.querySelector(`[data-id="${msg_id}"]`);
 
         if (msg) {
-          // Если сообщение занимает места больше видимого пространства
+          // Если сообщение имеет высоту выше видимого пространства
           if (msg.clientHeight > state.list.clientHeight) {
             // Сообщение будет находиться в 1/4 от начала viewport
             const quarterFromViewport = msg.offsetTop - state.list.clientHeight / 4;
@@ -309,7 +321,7 @@ export default {
               // кнопки скролла вниз нужно проскроллить в самый низ диалога, а не остаться на месте
               state.list.scrollTop >= quarterFromViewport - 5 && bottom
                 ? state.list.scrollHeight
-                // ... а иначе, когда сообщение находится ниже, просто отобраажем его начало
+                // ... а иначе, когда сообщение находится ниже, просто отображаем его начало
                 // в 3/4 от видимого пространства
                 : quarterFromViewport,
 

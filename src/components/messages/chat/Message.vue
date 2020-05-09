@@ -16,7 +16,12 @@
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseUp">
-          <!-- reply -->
+          <Reply
+            v-if="msg.hasReplyMsg"
+            :peer_id="peer_id"
+            :msg="msg.replyMsg"
+            :ownerMsgId="msg.id"
+          />
 
           <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">
             {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
@@ -54,6 +59,7 @@ import store from 'js/store';
 import VKText from '../../UI/VKText.vue';
 import Keyboard from './Keyboard.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
+import Reply from './attachments/Reply.vue';
 
 export default {
   props: ['peer_id', 'peer', 'msg', 'isCustomView'],
@@ -61,7 +67,8 @@ export default {
   components: {
     VKText,
     Keyboard,
-    SendMsgErrorMenu
+    SendMsgErrorMenu,
+    Reply
   },
 
   setup(props) {
@@ -97,9 +104,9 @@ export default {
         // Это уменьшит количество потерянных секунд
         secs = props.msg.expireTtl - getElapsedTime();
 
-        if (secs) {
+        if (secs > 0) {
           state.expireTime = format(expireDate, 'mm:ss');
-          setTimeout(updateDate, 1000);
+          setTimeout(updateDate, 500);
         }
       }();
     }
