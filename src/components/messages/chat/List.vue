@@ -258,14 +258,17 @@ export default {
           state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
         }
 
+        const startMsgId = params.start_message_id;
+
         state.loadingUp = false;
         state.loadedUp = (
-          // Заранее известно, что будет загружена верхняя часть сообщений
-          config.loadedUp ||
+          // Значение 0 означает загрузку верхней части сообщений
+          startMsgId === 0 ||
           // При скролле вверх загрузилось меньше сообщений, чем нужно
-          items.length < (config.isFirstLoad ? 20 : 40) && !params.start_message_id ||
+          items.length < (config.isFirstLoad ? 20 : 40) &&
+          (!startMsgId || startMsgId === -1 || config.isUp) ||
           // При скролле вверх так же загрузилось меньше сообщений, чем нужно
-          params.start_message_id && items.length < 20 + (-params.offset || 0) &&
+          startMsgId && items.length < 20 + (-params.offset || 0) &&
           items[0].id !== peer.last_msg_id
         );
       }
@@ -284,6 +287,7 @@ export default {
         state.showEndBtn = canShowScrollBtn();
         checkReadMessages();
         checkTopTime();
+        checkScrolling({ viewport: state.list });
       }
 
       return items;
@@ -307,7 +311,7 @@ export default {
           return afterUpdateScrollTop();
         }
 
-        const msg = state.list.querySelector(`[data-id="${msg_id}"]`);
+        const msg = state.list.querySelector(`[data-id="${msg_id}"], [data-last-id="${msg_id}"]`);
 
         if (msg) {
           // Если сообщение имеет высоту выше видимого пространства
@@ -361,7 +365,7 @@ export default {
         } else {
           load({
             params: { start_message_id: 0, offset: -40 },
-            config: { loadedUp: true, beforeLoad }
+            config: { beforeLoad }
           }).then(onLoad);
         }
       } else if (bottom) {
@@ -455,6 +459,9 @@ export default {
         load({
           params: {
             start_message_id: msg ? msg.id : -1
+          },
+          config: {
+            isUp: true
           }
         });
       } else if (isDown && !state.loadedDown) {

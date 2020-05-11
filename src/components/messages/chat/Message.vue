@@ -6,13 +6,24 @@
       isUnread,
       out: msg.out,
       isLoading: msg.isLoading,
-      isDisappearing: msg.expireTtl && !msg.isExpired,
       isSelectMode,
-      isSelected
+      isSelected,
+
+      isDisappearing: msg.expireTtl,
+      expireIcon,
+      expireHours
     }]"
   >
     <div class="message_bubble_pre_wrap">
-      <div class="message_bubble_wrap" :data-time="expireTime">
+      <div class="message_bubble_wrap">
+        <MessageExpireTime
+          v-if="msg.out && msg.expireTtl"
+          :expireIcon="expireIcon"
+          :expireHours="expireHours"
+          :msg="msg"
+          @update="updateState"
+        />
+
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseUp">
@@ -44,6 +55,14 @@
         </div>
 
         <Keyboard v-if="msg.keyboard" :peer_id="peer_id" :keyboard="msg.keyboard" />
+
+        <MessageExpireTime
+          v-if="!msg.out && msg.expireTtl"
+          :expireIcon="expireIcon"
+          :expireHours="expireHours"
+          :msg="msg"
+          @update="updateState"
+        />
       </div>
     </div>
   </div>
@@ -53,13 +72,13 @@
 import { reactive, computed, toRefs } from 'vue';
 import { eventBus } from 'js/utils';
 import { getTime } from 'js/date';
-import { format } from 'js/date/utils';
 import store from 'js/store';
 
 import VKText from '../../UI/VKText.vue';
 import Keyboard from './Keyboard.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 import Reply from './attachments/Reply.vue';
+import MessageExpireTime from './MessageExpireTime.vue';
 
 export default {
   props: ['peer_id', 'peer', 'msg', 'isCustomView'],
@@ -68,7 +87,8 @@ export default {
     VKText,
     Keyboard,
     SendMsgErrorMenu,
-    Reply
+    Reply,
+    MessageExpireTime
   },
 
   setup(props) {
@@ -80,9 +100,11 @@ export default {
       isSelectMode: computed(() => (
         !!state.selectedMessages.length || props.isCustomView === 'search'
       )),
-      time: computed(() => getTime(new Date(props.msg.date * 1000))),
-      expireTime: '',
 
+      expireIcon: true,
+      expireHours: false,
+
+      time: computed(() => getTime(new Date(props.msg.date * 1000))),
       isUnread: computed(() => {
         return props.peer && (
           props.msg.id > props.peer.out_read || // не прочитано собеседником
@@ -90,26 +112,6 @@ export default {
         ) || props.msg.isLoading;
       })
     });
-
-    if (props.msg.expireTtl) {
-      const expireDate = new Date();
-      const getElapsedTime = () => Math.ceil((Date.now() - props.msg.date * 1000) / 1000) + 1;
-      let secs = props.msg.expireTtl - getElapsedTime();
-
-      // TODO Остановить обновление времени, если чел вышел из беседы или сообщения уже нет
-      // (onUnmounted при выходе из беседы не срабатывает)
-      void function updateDate() {
-        expireDate.setHours(0, 0, secs, 0);
-
-        // Это уменьшит количество потерянных секунд
-        secs = props.msg.expireTtl - getElapsedTime();
-
-        if (secs > 0) {
-          state.expireTime = format(expireDate, 'mm:ss');
-          setTimeout(updateDate, 500);
-        }
-      }();
-    }
 
     let timer;
 
@@ -182,11 +184,16 @@ export default {
       }
     }
 
+    function updateState({ key, value }) {
+      state[key] = value;
+    }
+
     return {
       ...toRefs(state),
 
       onMouseDown,
-      onMouseUp
+      onMouseUp,
+      updateState
     };
   }
 };
@@ -297,6 +304,8 @@ export default {
   background-color: var(--text-dark-steel-gray);
 }
 
+/* Unread dot ============================================ */
+
 .message.isUnread.out .message_bubble::before,
 .message.isUnread:not(.out) .message_bubble::after {
   position: absolute;
@@ -305,49 +314,44 @@ export default {
   bottom: 12px;
   border-radius: 50%;
   background-color: var(--blue-background-overlight);
+
+  --offset: -16px;
 }
 
 .message:not(.isLoading).isUnread.out .message_bubble::before {
   content: '';
-  left: -16px;
-}
-
-.message:not(.isLoading).isUnread.out.isDisappearing .message_bubble::before {
-  left: -47px;
+  left: var(--offset);
 }
 
 .message.isUnread:not(.out) .message_bubble::after {
   content: '';
-  right: -16px;
+  right: var(--offset);
 }
 
+/* Expire time ======================================== */
+
+/* 1. mm:ss */
+
+.message.isUnread.out.isDisappearing .message_bubble::before,
 .message.isUnread:not(.out).isDisappearing .message_bubble::after {
-  right: -47px;
+  --offset: -47px;
 }
 
-.message.isDisappearing .message_bubble_wrap::before,
-.message.isDisappearing .message_bubble_wrap::after {
-  position: absolute;
-  z-index: 1;
-  background: var(--background);
-  border-radius: 9px;
-  padding: 2px 5px;
-  border: 1px solid var(--steel-gray-background-light);
-  bottom: 1px;
-  color: var(--text-dark-steel-gray);
-  font-weight: 500;
-  font-size: 11px;
+/* 2. hhч */
+
+.message.isUnread.out.isDisappearing.expireHours .message_bubble::before,
+.message.isUnread:not(.out).isDisappearing.expireHours .message_bubble::after {
+  --offset: -34px;
 }
 
-.message:not(.isLoading).isDisappearing.out .message_bubble_wrap::before {
-  content: attr(data-time);
-  left: -31px;
+/* 3. icon */
+
+.message.isUnread.out.isDisappearing.expireIcon .message_bubble::before,
+.message.isUnread:not(.out).isDisappearing.expireIcon .message_bubble::after {
+  --offset: -32px;
 }
 
-.message.isDisappearing:not(.out) .message_bubble_wrap::after {
-  content: attr(data-time);
-  right: -31px;
-}
+/* Select mark ================================================== */
 
 .message.out.isSelected .message_bubble::after,
 .message:not(.out).isSelected .message_bubble::before {

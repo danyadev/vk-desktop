@@ -55,6 +55,7 @@
     "camelcase": "off",
     "no-void": "off",
     "wrap-iife": "off",
+    "no-fallthrough": "off",
     "comma-dangle": ["error", "never"],
     "no-return-assign": ["error", "except-parens"],
     "no-cond-assign": ["error", "except-parens"],

@@ -20,11 +20,16 @@ addErrorHandler(5, ({ params, data, user, reject }) => {
     return reject(data.error);
   }
 
-  // По умолчанию: закончилось время действия токена
-  // или была принудительно завершена сессия
-  let id = 0;
+  let id;
 
   switch (data.error.error_msg.slice(27)) {
+    // Была принудительно завершена сессия
+    case 'user revoke access for this token.':
+    // Закончилось время действия токена
+    case 'invalid session.':
+      id = 0;
+      break;
+
     // Страница удалена
     case 'user is deactivated.':
       id = 1;
@@ -34,6 +39,9 @@ addErrorHandler(5, ({ params, data, user, reject }) => {
     case 'invalid access_token (2).':
       id = 2;
       break;
+
+    default:
+      return reject(data.error);
   }
 
   openModal('blocked-account', { id });
@@ -137,7 +145,7 @@ function vkapi(name, params, { android, vkme } = {}) {
   return new Promise(async (resolve, reject) => {
     const user = store.getters['users/user'];
 
-    // console.log('[API]', name, Object.assign({}, params));
+    // console.log('[API]', name, Object.assign({}, params, { fields: '' }));
 
     params = {
       access_token: user && (android ? user.android_token : user.access_token),

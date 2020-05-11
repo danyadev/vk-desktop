@@ -674,6 +674,7 @@ export default {
     async handler({ peer, msg }, isPreload) {
       const conversation = store.state.messages.conversations[peer.id];
       const fullPeer = conversation && conversation.peer;
+      const route = router.currentRoute.value;
 
       if (isPreload) {
         [msg] = await loadMessages(peer.id, [msg.id], true);
@@ -686,6 +687,13 @@ export default {
         });
       }
 
+      if (
+        msg.isExpired && store.state.messages.selectedMessages.length &&
+        route.name === 'chat' && +route.params.id === peer.id
+      ) {
+        store.commit('messages/removeSelectedMessage', msg.id);
+      }
+
       store.commit('messages/editMessage', {
         peer_id: peer.id,
         msg
@@ -694,18 +702,22 @@ export default {
   },
 
   19: {
-    // Сброс кеша сообщения
+    // Сброс кеша сообщения или исчезновение сообщения
     // [msg_id]
-    // Необходимо переполучить сообщение через апи
-    handler(msg_id) {
+    // В первом случае необходимо переполучить сообщение через API
+    async handler([msg_id]) {
       const conversations = store.state.messages.messages;
+
+      // Ждем, пока в 18 событии сообщение пометится как исчезнувшее,
+      // чтобы лишний раз не получать его через API
+      await timer(0);
 
       for (const peer_id in conversations) {
         const messages = conversations[peer_id];
 
-        for (const { id } of messages) {
-          if (id === msg_id) {
-            return loadMessages(+peer_id, [id]);
+        for (const msg of messages) {
+          if (msg.id === msg_id) {
+            return !msg.isExpired && loadMessages(+peer_id, [msg.id]);
           }
         }
       }

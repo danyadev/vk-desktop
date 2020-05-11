@@ -26,7 +26,6 @@
 import { reactive, computed, toRefs } from 'vue';
 import { getPhotoFromSizes, eventBus } from 'js/utils';
 import { getMessagePreview, getPeerTitle } from 'js/messages';
-import { openModal } from 'js/modals';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 
