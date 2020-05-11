@@ -8,12 +8,13 @@
           color="var(--icon-dark-gray)"
           width="26"
           height="26"
+          class="icon-hover"
           @click="closeReply"
         />
       </div>
 
       <div class="chat_input_wrap">
-        <img class="attachments_btn" src="~assets/attachments_icon.svg">
+        <img class="attachments_btn icon-hover" src="~assets/attachments_icon.svg">
 
         <div :class="['chat_input', { hasKeyboard }]">
           <div
@@ -32,14 +33,14 @@
             v-if="hasKeyboard"
             name="keyboard"
             :color="showKeyboard ? 'var(--accent)' : 'var(--icon-dark-gray)'"
-            :class="['keyboard_btn', { active: showKeyboard }]"
+            :class="['keyboard_btn icon-hover', { active: showKeyboard }]"
             @click.native="showKeyboard = !showKeyboard"
           />
 
-          <img class="emoji_btn" src="~assets/emoji_icon.svg">
+          <img class="emoji_btn icon-hover" src="~assets/emoji_icon.svg">
         </div>
 
-        <img class="send_btn" src="~assets/im_send.svg" @click="send">
+        <img class="send_btn icon-hover" src="~assets/im_send.svg" @click="send">
       </div>
 
       <Keyboard v-if="hasKeyboard && showKeyboard" :peer_id="peer_id" :keyboard="keyboard" />
@@ -220,13 +221,6 @@ export default {
   padding: 14px 15px;
   width: 24px;
   height: 24px;
-  opacity: .7;
-  cursor: pointer;
-  transition: opacity .3s;
-}
-
-.attachments_btn:hover, .send_btn:hover {
-  opacity: 1;
 }
 
 .chat_input {
@@ -268,9 +262,6 @@ export default {
 .emoji_btn, .keyboard_btn {
   position: absolute;
   bottom: 7px;
-  opacity: .7;
-  cursor: pointer;
-  transition: opacity .3s;
 }
 
 .emoji_btn {
@@ -283,10 +274,6 @@ export default {
 
 .keyboard_btn.active {
   opacity: .9;
-}
-
-.emoji_btn:hover, .keyboard_btn:hover {
-  opacity: 1;
 }
 
 .emoji_btn:active, .keyboard_btn:active {
@@ -329,12 +316,12 @@ export default {
 
 .chat_input_reply .attach_reply {
   margin: 6px 0 8px 10px;
-  width: calc(100% - 10px - 46px);
+  width: calc(100% - 10px - 54px);
 }
 
 .chat_input_reply svg {
   flex: none;
-  margin: 0 10px;
+  margin: 0 14px;
   cursor: pointer;
 }
 </style>

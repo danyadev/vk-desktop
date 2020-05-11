@@ -155,6 +155,20 @@ img:not(.emoji) {
   color: #fff;
 }
 
+.icon-hover,
+.im_search_icon,
+.im_search_cancel {
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .3s;
+}
+
+.icon-hover:hover,
+.im_search_icon:hover,
+.im_search_cancel:hover {
+  opacity: 1;
+}
+
 /* Action menu ============================== */
 
 .act_menu_item {
@@ -210,16 +224,6 @@ img:not(.emoji) {
   display: block;
 }
 
-.im_search_icon {
-  cursor: pointer;
-  opacity: .7;
-  transition: opacity .3s;
-}
-
-.im_search_icon:hover {
-  opacity: 1;
-}
-
 .im_search_input {
   color: var(--field-color);
   border: none;
@@ -240,13 +244,6 @@ img:not(.emoji) {
   width: 26px;
   height: 26px;
   padding-right: 10px;
-  cursor: pointer;
-  opacity: .7;
-  transition: opacity .3s;
-}
-
-.im_search_cancel:hover {
-  opacity: 1;
 }
 
 .im_search_placeholder {

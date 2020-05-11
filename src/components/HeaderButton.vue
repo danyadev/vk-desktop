@@ -1,5 +1,5 @@
 <template>
-  <img src="assets/menu.svg" class="open_menu_btn" @click="openMenu">
+  <img src="assets/menu.svg" class="open_menu_btn icon-hover" @click="openMenu">
 </template>
 
 <script>
@@ -24,12 +24,5 @@ export default {
   height: 50px;
   padding: 15px 10px;
   border-radius: 50%;
-  cursor: pointer;
-  opacity: .7;
-  transition: opacity .3s;
-}
-
-.open_menu_btn:hover {
-  opacity: 1;
 }
 </style>

@@ -21,7 +21,7 @@
     <Icon
       name="close"
       color="var(--icon-dark-gray)"
-      class="im_pinned_msg_close"
+      class="im_pinned_msg_close icon-hover"
       @click.stop="hideMessage"
     />
   </div>
@@ -148,11 +148,5 @@ export default {
   width: 16px;
   height: 16px;
   padding: 16px 20px;
-  opacity: .7;
-  transition: opacity .3s;
-}
-
-.im_pinned_msg_close:hover {
-  opacity: 1;
 }
 </style>

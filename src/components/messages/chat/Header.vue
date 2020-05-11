@@ -57,7 +57,7 @@
 
         <div class="im_header_selected_actions">
           <Icon
-            v-if="selectedMessages.length === 1"
+            v-if="selectedMessages.length === 1 && peer.isWriteAllowed"
             name="reply"
             color="var(--blue-background-text)"
             data-tooltip="im_reply_msg"

@@ -5,7 +5,7 @@
       color="rgba(255, 255, 255, .2)"
       @click="toggleMenu"
     >
-      <img src="~assets/actions_icon.svg" class="act_menu_btn">
+      <img src="~assets/actions_icon.svg" class="act_menu_btn icon-hover">
     </Ripple>
 
     <div :class="['act_menu', { active }]"><slot v-if="!hideList" /></div>
@@ -83,13 +83,6 @@ export default {
   width: 24px;
   height: 24px;
   margin: 8px;
-  cursor: pointer;
-  opacity: .7;
-  transition: opacity .3s;
-}
-
-.act_menu_btn:hover {
-  opacity: 1;
 }
 
 .act_menu {
