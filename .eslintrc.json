@@ -99,6 +99,7 @@
     "vue/require-prop-types": "off",
     "vue/no-v-html": "off",
     "vue/prop-name-casing": "off",
+    "vue/require-render-return": "off",
     "vue/attribute-hyphenation": ["error", "never"],
     "vue/max-attributes-per-line": ["error", {
       "singleline": 4,

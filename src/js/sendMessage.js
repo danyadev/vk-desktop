@@ -18,7 +18,12 @@ function parseInputText(nodes) {
   return text.trim().replace(/\n/g, '<br>');
 }
 
-export default async function sendMessage({ peer_id, input, keyboard }) {
+function getMessage(peer_id, msg_id) {
+  const messages = store.state.messages.messages[peer_id];
+  return messages && messages.find((msg) => msg.id === msg_id);
+}
+
+export default async function sendMessage({ peer_id, input, keyboard, reply_to }) {
   const random_id = random(-2e9, 2e9);
   let message;
 
@@ -55,9 +60,11 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
     const params = {
       peer_id,
       message,
-      random_id,
-      ...(payload ? { payload } : {})
+      random_id
     };
+
+    if (payload) params.payload = payload;
+    if (reply_to) params.reply_to = reply_to;
 
     store.commit('messages/addLoadingMessage', {
       peer_id,
@@ -71,6 +78,8 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
         fwdCount: 0,
         fwdMessages: [],
         attachments: {},
+        hasReplyMsg: !!reply_to,
+        replyMsg: reply_to && getMessage(peer_id, reply_to),
         editTime: 0,
 
         isLoading: true,
@@ -87,9 +96,7 @@ export default async function sendMessage({ peer_id, input, keyboard }) {
       noSmooth: true
     });
 
-    await vkapi('messages.send', params, {
-      android: true
-    });
+    await vkapi('messages.send', params, { android: true });
   } catch (err) {
     store.commit('messages/editLoadingMessage', {
       peer_id,

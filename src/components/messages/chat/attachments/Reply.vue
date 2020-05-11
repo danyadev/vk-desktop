@@ -25,7 +25,7 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import { getPhotoFromSizes, eventBus } from 'js/utils';
-import { getMessagePreview, getPeerTitle } from 'js/messages';
+import { getMessagePreview, getPeerTitle, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 
@@ -42,12 +42,30 @@ export default {
     const state = reactive({
       photo: computed(() => {
         const { photo, sticker, doc, video, story } = props.msg.attachments;
-        const photoDoc = doc && doc.find((doc) => doc.preview);
-        const videoImages = video && video[0].image;
-        const storyPhotos = story && story[0].photo;
+        const photoDoc = doc && doc[0] && doc.find((doc) => doc.preview);
+        const videoImages = video && video[0] && video[0].image;
+        const storyPhotos = story && story[0] && story[0].photo;
 
-        if (photo) return getPhotoFromSizes(photo[0].sizes, 'o').url;
-        if (sticker) return sticker[0].images[1].url;
+        // TODO убрать когда все вложения будут грузиться по умолчанию
+        if (
+          photo && !photo[0] ||
+          sticker && !sticker[0] ||
+          doc && !doc[0] ||
+          video && !video[0] ||
+          story && !story[0]
+        ) {
+          vkapi('messages.getById', {
+            message_ids: props.msg.id
+          }).then(({ items: [msg] }) => {
+            store.commit('messages/editMessage', {
+              peer_id: props.peer_id,
+              msg: parseMessage(msg)
+            });
+          });
+        }
+
+        if (photo && photo[0]) return getPhotoFromSizes(photo[0].sizes, 'o').url;
+        if (sticker && sticker[0]) return sticker[0].images[devicePixelRatio > 1 ? 1 : 0].url;
         if (photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'm').src;
         if (video) return (videoImages[6] || videoImages[videoImages.length - 1]).url;
         if (storyPhotos) return getPhotoFromSizes(storyPhotos.sizes, ['o', 'j', 'm', 'x']).url;
@@ -106,18 +124,6 @@ export default {
 </script>
 
 <style>
-/* TODO перенести в Attachments.vue */
-.attach_left_border::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 2px;
-  border-radius: 1px;
-  background-color: #5281b9;
-}
-
 .attach_reply {
   display: flex;
   position: relative;
@@ -128,7 +134,7 @@ export default {
 }
 
 .attach_reply::before {
-  top: 3px;
+  top: 3px !important;
 }
 
 /* TODO */
@@ -147,7 +153,7 @@ export default {
 
 .attach_reply_photo {
   flex: none;
-  margin: 4px -4px 0 7px;
+  margin: 3px -4px 0 7px;
   border-radius: 4px;
   object-fit: cover;
 }
@@ -165,7 +171,7 @@ export default {
 }
 
 .attach_reply_name {
-  color: #254f79;
+  color: var(--text-blue-dark);
   font-weight: 500;
   margin-top: 3px;
 }
@@ -175,10 +181,10 @@ export default {
 }
 
 .attach_reply_text.isAttachment {
-  color: #254f79;
+  color: var(--text-blue-dark);
 }
 
 .attach_reply_text.isContentDeleted {
-  color: #696969;
+  color: var(--text-dark-steel-gray);
 }
 </style>

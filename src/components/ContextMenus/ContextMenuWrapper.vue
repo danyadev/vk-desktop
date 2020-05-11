@@ -28,6 +28,10 @@ export default {
     const menu = ref(null);
 
     function closeMenu(event) {
+      if (event && event.type === 'keydown' && event.code !== 'Escape') {
+        return;
+      }
+
       event && event.stopPropagation();
       menu.value = null;
       window.removeEventListener('resize', closeMenu, true);

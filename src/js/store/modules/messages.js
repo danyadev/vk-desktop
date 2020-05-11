@@ -44,7 +44,11 @@ export default {
     selectedMessages: [],
 
     // Находится здесь, потому что нужно при Esc проверять и убирать поиск в другом месте
-    isMessagesSearch: false
+    isMessagesSearch: false,
+
+    // Список сообщений, на которые собираются ответить
+    // { peer_id: msg_id }
+    repliedMessages: {}
   },
 
   mutations: {
@@ -257,6 +261,14 @@ export default {
 
     removeSelectedMessages(state) {
       state.selectedMessages = [];
+    },
+
+    addRepliedMessage(state, { peer_id, msg_id }) {
+      state.repliedMessages[peer_id] = msg_id;
+    },
+
+    removeRepliedMessage(state, peer_id) {
+      delete state.repliedMessages[peer_id];
     }
   },
 

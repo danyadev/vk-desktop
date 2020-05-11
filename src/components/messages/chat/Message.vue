@@ -2,7 +2,7 @@
   <div
     :data-context-menu="!msg.isLoading && !isCustomView ? 'message' : null"
     :data-id="msg.id"
-    :class="['message', {
+    :class="['message', ...attachmentClasses, {
       isUnread,
       out: msg.out,
       isLoading: msg.isLoading,
@@ -41,7 +41,7 @@
             <VKText :inline="false" link mention>{{ msg.text }}</VKText>
           </div>
 
-          <!-- attachments -->
+          <Attachments :msg="msg" />
           <!-- forwarded -->
 
           <div class="message_time_wrap">
@@ -77,8 +77,9 @@ import store from 'js/store';
 import VKText from '../../UI/VKText.vue';
 import Keyboard from './Keyboard.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
-import Reply from './attachments/Reply.vue';
 import MessageExpireTime from './MessageExpireTime.vue';
+import Reply from './attachments/Reply.vue';
+import Attachments from './attachments/Attachments.vue';
 
 export default {
   props: ['peer_id', 'peer', 'msg', 'isCustomView'],
@@ -87,8 +88,9 @@ export default {
     VKText,
     Keyboard,
     SendMsgErrorMenu,
+    MessageExpireTime,
     Reply,
-    MessageExpireTime
+    Attachments
   },
 
   setup(props) {
@@ -110,6 +112,17 @@ export default {
           props.msg.id > props.peer.out_read || // не прочитано собеседником
           props.msg.id > props.peer.in_read // не прочитано мной
         ) || props.msg.isLoading;
+      }),
+
+      attachmentClasses: computed(() => {
+        const classes = [];
+
+        const { attachments, fwdCount } = props.msg;
+        const attachNames = Object.keys(attachments);
+
+        if (attachNames.length || fwdCount) classes.push('hasAttachment');
+
+        return classes;
       })
     });
 
@@ -265,6 +278,11 @@ export default {
 .message_text {
   display: inline;
   line-height: 18px;
+}
+
+.message.hasAttachment .message_text:not(:empty) {
+  display: block;
+  margin-bottom: 5px;
 }
 
 .message_text.isContentDeleted {

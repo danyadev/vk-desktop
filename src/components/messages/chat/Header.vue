@@ -57,18 +57,24 @@
 
         <div class="im_header_selected_actions">
           <Icon
+            v-if="selectedMessages.length === 1"
+            name="reply"
+            color="var(--blue-background-text)"
+            data-tooltip="im_reply_msg"
+            @click="reply"
+          />
+
+          <Icon
             v-if="peer && !peer.isChannel"
             name="trash"
             color="var(--blue-background-text)"
-            class="im_header_selected_action"
-            data-tooltip="im_delete_messages"
+            :data-tooltip="selectedMessages.length === 1 ? 'im_delete_msg' : 'im_delete_messages'"
             @click="deleteMessages"
           />
 
           <Icon
             name="spam"
             color="var(--blue-background-text)"
-            class="im_header_selected_action"
             data-tooltip="im_mark_msg_as_spam"
             @click="markAsSpam"
           />
@@ -133,6 +139,15 @@ export default {
       store.commit('messages/removeSelectedMessages');
     }
 
+    function reply() {
+      store.commit('messages/addRepliedMessage', {
+        peer_id: props.peer_id,
+        msg_id: state.selectedMessages[0]
+      });
+
+      cancelSelect();
+    }
+
     function deleteMessages() {
       openModal('delete-messages', {
         count: state.selectedMessages.length,
@@ -162,6 +177,7 @@ export default {
       ...toRefs(state),
 
       cancelSelect,
+      reply,
       deleteMessages,
       markAsSpam
     };
@@ -176,7 +192,7 @@ export default {
 
 .im_header_back,
 .im_header_cancel_select,
-.im_header_selected_action {
+.im_header_selected_actions svg {
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;
@@ -184,7 +200,7 @@ export default {
 
 .im_header_back:hover,
 .im_header_cancel_select:hover,
-.im_header_selected_action:hover {
+.im_header_selected_actions svg:hover {
   opacity: 1;
 }
 
@@ -247,7 +263,7 @@ export default {
   margin: 0 3px 0 auto;
 }
 
-.im_header_selected_action {
+.im_header_selected_actions svg {
   margin-right: 15px;
 }
 </style>

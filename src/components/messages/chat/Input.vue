@@ -1,6 +1,17 @@
 <template>
   <div class="chat_input_container">
     <template v-if="canWrite.allowed">
+      <div v-if="repliedMsg" class="chat_input_reply">
+        <Reply :peer_id="peer_id" :msg="repliedMsg" :ownerMsgId="repliedMsg.id" />
+        <Icon
+          name="cancel"
+          color="var(--icon-dark-gray)"
+          width="26"
+          height="26"
+          @click="closeReply"
+        />
+      </div>
+
       <div class="chat_input_wrap">
         <img class="attachments_btn" src="~assets/attachments_icon.svg">
 
@@ -33,6 +44,7 @@
 
       <Keyboard v-if="hasKeyboard && showKeyboard" :peer_id="peer_id" :keyboard="keyboard" />
     </template>
+
     <Ripple
       v-else-if="canWrite.isChannel"
       color="var(--messages-peer-ripple)"
@@ -48,6 +60,7 @@
         {{ l('im_toggle_notifications', !peer.muted) }}
       </template>
     </Ripple>
+
     <div v-else class="chat_input_error">
       <img class="chat_input_error_img" src="~assets/error.svg">
       <div class="chat_input_error_text">{{ canWrite.text }}</div>
@@ -56,7 +69,7 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, onMounted } from 'vue';
+import { reactive, computed, toRefs, onMounted, watch } from 'vue';
 import electron from 'electron';
 import { throttle, escape } from 'js/utils';
 import emoji from 'js/emoji';
@@ -68,6 +81,7 @@ import sendMessage from 'js/sendMessage';
 import Icon from '../../UI/Icon.vue';
 import Ripple from '../../UI/Ripple.vue';
 import Keyboard from './Keyboard.vue';
+import Reply from './attachments/Reply.vue';
 
 export default {
   props: ['peer_id', 'peer'],
@@ -75,7 +89,8 @@ export default {
   components: {
     Icon,
     Ripple,
-    Keyboard
+    Keyboard,
+    Reply
   },
 
   setup(props) {
@@ -95,6 +110,11 @@ export default {
           isChannel: props.peer && props.peer.isChannel,
           text: props.peer ? getTranslate('im_chat_cant_write') : getTranslate('loading')
         };
+      }),
+
+      repliedMsg: computed(() => {
+        const id = store.state.messages.repliedMessages[props.peer_id];
+        return id && store.state.messages.messages[props.peer_id].find((msg) => msg.id === id);
       })
     });
 
@@ -118,10 +138,17 @@ export default {
     }
 
     function send() {
+      const reply_to = state.repliedMsg && state.repliedMsg.id;
+
       sendMessage({
         peer_id: props.peer_id,
-        input: state.input
+        input: state.input,
+        reply_to
       });
+
+      if (reply_to) {
+        closeReply();
+      }
     }
 
     const onInput = throttle((event) => {
@@ -133,11 +160,17 @@ export default {
       }
     }, 4000);
 
+    function closeReply() {
+      store.commit('messages/removeRepliedMessage', props.peer_id);
+    }
+
     // TODO onActivated
     onMounted(() => {
-      if (state.input) {
-        state.input.focus();
-      }
+      state.input && state.input.focus();
+    });
+
+    watch(() => state.repliedMsg, (msg) => {
+      msg && state.input.focus();
     });
 
     return {
@@ -146,7 +179,8 @@ export default {
       toggleNotifications,
       paste,
       send,
-      onInput
+      onInput,
+      closeReply
     };
   }
 };
@@ -285,5 +319,22 @@ export default {
 
 .chat_input_error_text {
   margin-left: 10px;
+}
+
+.chat_input_reply {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--separator-dark);
+}
+
+.chat_input_reply .attach_reply {
+  margin: 6px 0 8px 10px;
+  width: calc(100% - 10px - 46px);
+}
+
+.chat_input_reply svg {
+  flex: none;
+  margin: 0 10px;
+  cursor: pointer;
 }
 </style>

@@ -117,6 +117,7 @@ export default {
   im_message_copied: 'Сообщение скопировано',
   im_peer_id_copied: 'ID беседы скопировано',
 
+  im_reply_msg: 'Ответить на сообщение',
   im_toggle_msg_pin: ['Закрепить сообщение', 'Открепить сообщение'],
   im_copy_msg: 'Скопировать сообщение',
   im_delete_msg: 'Удалить сообщение',
