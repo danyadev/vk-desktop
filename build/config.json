@@ -2,7 +2,7 @@
   "productName": "VK Desktop",
   "appId": "ru.danyadev.vkdesktop",
   "artifactName": "VK-Desktop-${os}-${arch}.${ext}",
-  "electronVersion": "7.1.13",
+  "electronVersion": "7.2.4",
   "npmRebuild": false,
   "directories": {
     "output": "out"
