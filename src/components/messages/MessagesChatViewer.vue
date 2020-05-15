@@ -47,4 +47,16 @@ export default {
 .im_chat_viewer_title {
   padding-left: 10px;
 }
+
+/* Здесь снимается ограничение на ширину сообщения, потому что здесь */
+/* может отображаться большой список вложенных пересланных сообщений */
+
+.im_search_container .message_bubble_pre_wrap,
+.im_search_container .message_bubble_wrap {
+  max-width: initial;
+}
+
+.im_search_container .message:not(.out) .message_bubble {
+  margin-right: 35px;
+}
 </style>

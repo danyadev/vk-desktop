@@ -1,0 +1,149 @@
+<template>
+  <div class="attach_fwd_msg">
+    <div class="attach_fwd_msg_header">
+      <img class="attach_fwd_msg_photo" :src="photo">
+      <div class="attach_fwd_msg_info">
+        <div class="attach_fwd_msg_name">{{ name }}</div>
+        <div class="attach_fwd_msg_date">
+          {{ date }}
+          <template v-if="msg.editTime">
+            <div class="attach_fwd_msg_dot"></div>
+            {{ l('im_msg_edited') }}.
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div class="attach_fwd_msg_content">
+      <Reply v-if="msg.isReplyMsg" :msg="msg" :peer_id="peer_id" :isFwdMsg="true" />
+
+      <div v-if="msg.isContentDeleted" class="attach_fwd_msg_text isContentDeleted">
+        {{ l('im_attachment_deleted') }}
+      </div>
+      <div v-else class="attach_fwd_msg_text">
+        <VKText mention link>{{ msg.text }}</VKText>
+      </div>
+
+      <Attachments :msg="msg" :peer_id="peer_id" :fwdDepth="fwdDepth" />
+
+      <div
+        v-if="msg.fwdCount && fwdDepth === 5 && !isCustomView"
+        class="link"
+        @click="openMessagesViewer"
+      >
+        {{ l('im_forwarded_some') }}
+      </div>
+      <Forwarded
+        v-else-if="msg.fwdCount"
+        :peer_id="peer_id"
+        :msg="msg"
+        :isCustomView="isCustomView"
+        :fwdDepth="fwdDepth + 1"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+import { reactive, computed, toRefs } from 'vue';
+import { getPhoto, capitalize, loadProfile } from 'js/utils';
+import { getPeerTitle } from 'js/messages';
+import { getFullDate } from 'js/date';
+import store from 'js/store';
+
+import Reply from './Reply.vue';
+import Attachments from './Attachments.vue';
+import Forwarded from './Forwarded.vue';
+import VKText from '../../../UI/VKText.vue';
+
+export default {
+  props: ['peer_id', 'messages', 'msg', 'isCustomView', 'fwdDepth'],
+
+  components: {
+    Reply,
+    Attachments,
+    Forwarded,
+    VKText
+  },
+
+  setup(props) {
+    const state = reactive({
+      user: computed(() => (
+        store.state.profiles[props.msg.from] || (loadProfile(props.msg.from), null)
+      )),
+      name: computed(() => getPeerTitle(0, null, state.user)),
+      photo: computed(() => getPhoto(state.user) || 'assets/blank.gif'),
+      date: capitalize(getFullDate(new Date(props.msg.date * 1000)))
+    });
+
+    function openMessagesViewer() {
+      store.commit('messages/setViewerMessages', [props.msg]);
+    }
+
+    return {
+      ...toRefs(state),
+      openMessagesViewer
+    };
+  }
+};
+</script>
+
+<style>
+.attach_forwarded .attach_fwd_msg:not(:first-child) {
+  margin-top: 10px;
+}
+
+.attach_fwd_msg_header {
+  display: flex;
+  user-select: none;
+}
+
+.attach_fwd_msg_photo {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.attach_fwd_msg_info,
+.attach_fwd_msg_name,
+.attach_fwd_msg_date {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.attach_fwd_msg_name {
+  color: var(--text-blue-dark);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.attach_fwd_msg_date {
+  display: flex;
+  color: var(--text-dark-steel-gray);
+  margin-top: 1px;
+}
+
+.attach_fwd_msg_dot {
+  width: 2px;
+  height: 2px;
+  margin: 8px 4px 0 4px;
+  border-radius: 50%;
+  background-color: var(--text-dark-steel-gray);
+}
+
+.attach_fwd_msg_content {
+  margin-top: 5px;
+}
+
+.attach_fwd_msg_text.isContentDeleted {
+  color: var(--text-dark-steel-gray);
+}
+
+.attach_fwd_msg_text + .im_attachments,
+.attach_fwd_msg_text + .link,
+.attach_fwd_msg_text + .attach_forwarded {
+  margin-top: 5px;
+}
+</style>

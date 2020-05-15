@@ -7,6 +7,7 @@ import shortcut from 'js/shortcut';
 import { debounce } from 'js/utils';
 
 import App from './components/App.vue';
+import ForwardedMessage from './components/messages/chat/attachments/ForwardedMessage.vue';
 
 const app = createApp(App);
 
@@ -18,6 +19,8 @@ app.mixin({
     this.l = getTranslate;
   }
 });
+
+app.component('ForwardedMessage', ForwardedMessage);
 
 app.mount('#app');
 

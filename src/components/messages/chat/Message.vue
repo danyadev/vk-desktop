@@ -42,7 +42,14 @@
           </div>
 
           <Attachments :msg="msg" />
-          <!-- forwarded -->
+
+          <Forwarded
+            v-if="msg.fwdCount"
+            :peer_id="peer_id"
+            :msg="msg"
+            :isCustomView="isCustomView"
+            :fwdDepth="1"
+          />
 
           <div class="message_time_wrap">
             <template v-if="msg.editTime">
@@ -80,6 +87,7 @@ import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 import MessageExpireTime from './MessageExpireTime.vue';
 import Reply from './attachments/Reply.vue';
 import Attachments from './attachments/Attachments.vue';
+import Forwarded from './attachments/Forwarded.vue';
 
 export default {
   props: ['peer_id', 'peer', 'msg', 'isCustomView'],
@@ -90,7 +98,8 @@ export default {
     SendMsgErrorMenu,
     MessageExpireTime,
     Reply,
-    Attachments
+    Attachments,
+    Forwarded
   },
 
   setup(props) {
