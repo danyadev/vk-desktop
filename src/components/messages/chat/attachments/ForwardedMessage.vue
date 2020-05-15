@@ -15,7 +15,7 @@
     </div>
 
     <div class="attach_fwd_msg_content">
-      <Reply v-if="msg.isReplyMsg" :msg="msg" :peer_id="peer_id" :isFwdMsg="true" />
+      <Reply v-if="msg.hasReplyMsg" :msg="msg" :peer_id="peer_id" :isFwdMsg="true" />
 
       <div v-if="msg.isContentDeleted" class="attach_fwd_msg_text isContentDeleted">
         {{ l('im_attachment_deleted') }}

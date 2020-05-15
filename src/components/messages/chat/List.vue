@@ -177,7 +177,7 @@ export default {
           break;
 
         case 'jump':
-          if (data.reply_author) {
+          if (data.reply_author && !state.replyHistory.includes(data.reply_author)) {
             state.replyHistory.push(data.reply_author);
           }
 

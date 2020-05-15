@@ -82,6 +82,8 @@ export default {
       }
 
       function jumpToMsg() {
+        store.commit('messages/setViewerMessages', []);
+
         eventBus.emit('messages:event', 'jump', {
           peer_id: props.peer_id,
           msg_id: props.msg.id,
