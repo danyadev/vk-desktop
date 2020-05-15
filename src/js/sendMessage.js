@@ -23,12 +23,12 @@ function getMessage(peer_id, msg_id) {
   return messages && messages.find((msg) => msg.id === msg_id);
 }
 
-export default async function sendMessage({ peer_id, input, keyboard, reply_to }) {
+export default async function sendMessage({ peer_id, input, keyboardButton, reply_to }) {
   const random_id = random(-2e9, 2e9);
   let message;
 
-  if (keyboard) {
-    const { author_id, action, one_time } = keyboard;
+  if (keyboardButton) {
+    const { author_id, action, one_time } = keyboardButton;
     // Почему-то в группах приходит screen_name вместо domain
     const { screen_name } = store.state.profiles[author_id];
 
@@ -54,50 +54,48 @@ export default async function sendMessage({ peer_id, input, keyboard, reply_to }
     input.innerHTML = '';
   }
 
-  try {
-    const msg_id = 'loading' + counter++;
-    const payload = keyboard && keyboard.action.payload;
-    const params = {
-      peer_id,
-      message,
-      random_id
-    };
+  const msg_id = 'loading' + counter++;
+  const payload = keyboardButton && keyboardButton.action.payload;
+  const params = {
+    peer_id,
+    message,
+    random_id
+  };
 
-    if (payload) params.payload = payload;
-    if (reply_to) params.reply_to = reply_to;
+  if (payload) params.payload = payload;
+  if (reply_to) params.reply_to = reply_to;
 
-    store.commit('messages/addLoadingMessage', {
-      peer_id,
-      msg: {
-        id: msg_id,
-        from: store.state.users.activeUser,
-        out: true,
-        text: message,
-        date: (Date.now() / 1000).toFixed(),
-        random_id,
-        fwdCount: 0,
-        fwdMessages: [],
-        attachments: {},
-        hasReplyMsg: !!reply_to,
-        replyMsg: reply_to && getMessage(peer_id, reply_to),
-        editTime: 0,
+  store.commit('messages/addLoadingMessage', {
+    peer_id,
+    msg: {
+      id: msg_id,
+      from: store.state.users.activeUser,
+      out: true,
+      text: message,
+      date: (Date.now() / 1000).toFixed(),
+      random_id,
+      fwdCount: 0,
+      fwdMessages: [],
+      attachments: {},
+      hasReplyMsg: !!reply_to,
+      replyMsg: reply_to && getMessage(peer_id, reply_to),
+      editTime: 0,
 
-        isLoading: true,
-        params
-      }
-    });
+      isLoading: true,
+      params
+    }
+  });
 
-    await nextTick();
+  await nextTick();
 
-    eventBus.emit('messages:event', 'jump', {
-      msg_id,
-      peer_id,
-      bottom: true,
-      noSmooth: true
-    });
+  eventBus.emit('messages:event', 'jump', {
+    msg_id,
+    peer_id,
+    bottom: true,
+    noSmooth: true
+  });
 
-    await vkapi('messages.send', params, { android: true });
-  } catch (err) {
+  vkapi('messages.send', params, { android: true }).catch((err) => {
     store.commit('messages/editLoadingMessage', {
       peer_id,
       random_id,
@@ -114,5 +112,5 @@ export default async function sendMessage({ peer_id, input, keyboard, reply_to }
         }
       });
     }
-  }
+  });
 }

@@ -70,7 +70,7 @@ export default {
         case 'text':
           sendMessage({
             peer_id: props.peer_id,
-            keyboard: {
+            keyboardButton: {
               action,
               author_id: props.keyboard.author_id,
               one_time: props.keyboard.one_time
