@@ -20,7 +20,7 @@
     "@vue/compiler-sfc": "3.0.0-beta.12",
     "copy-webpack-plugin": "5.1.1",
     "css-loader": "3.5.3",
-    "electron": "7.2.4",
+    "electron": "7.3.0",
     "electron-builder": "22.6.0",
     "eslint": "7.0.0",
     "eslint-config-airbnb-base": "14.1.0",
