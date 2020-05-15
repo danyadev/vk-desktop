@@ -51,12 +51,20 @@ export default {
 /* Здесь снимается ограничение на ширину сообщения, потому что здесь */
 /* может отображаться большой список вложенных пересланных сообщений */
 
-.im_search_container .message_bubble_pre_wrap,
-.im_search_container .message_bubble_wrap {
+.im_search_container .attach_forwarded {
+  width: max-content;
+}
+
+.im_search_container .message.fwdOverflow .message_bubble_pre_wrap,
+.im_search_container .message.fwdOverflow .message_bubble_wrap {
   max-width: initial;
 }
 
-.im_search_container .message:not(.out) .message_bubble {
+.im_search_container .message.fwdOverflow {
+  justify-content: initial;
+}
+
+.im_search_container .message.fwdOverflow .message_bubble {
   margin-right: 35px;
 }
 </style>

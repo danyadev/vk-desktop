@@ -5,6 +5,7 @@
     :class="['message', ...attachmentClasses, {
       isUnread,
       out: msg.out,
+      fwdOverflow,
       isLoading: msg.isLoading,
       isSelectMode,
       isSelected,
@@ -45,6 +46,7 @@
 
           <Forwarded
             v-if="msg.fwdCount"
+            ref="forwarded"
             :peer_id="peer_id"
             :msg="msg"
             :isCustomView="isCustomView"
@@ -76,7 +78,7 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs } from 'vue';
+import { reactive, computed, toRefs, onMounted } from 'vue';
 import { eventBus } from 'js/utils';
 import { getTime } from 'js/date';
 import store from 'js/store';
@@ -105,6 +107,7 @@ export default {
   setup(props) {
     const state = reactive({
       bubble: null,
+      forwarded: null,
 
       selectedMessages: computed(() => store.state.messages.selectedMessages),
       isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
@@ -112,9 +115,10 @@ export default {
         !!state.selectedMessages.length || props.isCustomView === 'search'
       )),
 
-      expireIcon: true,
+      expireIcon: !!props.msg.expireTtl, // изначально true если сообщение фантомное
       expireHours: false,
 
+      fwdOverflow: false,
       time: computed(() => getTime(new Date(props.msg.date * 1000))),
       isUnread: computed(() => {
         return props.peer && (
@@ -157,11 +161,9 @@ export default {
               props.msg.id > lastSelectedId
                 ? messages.slice(lastSelectedIndex + 1, msgIndex + 1)
                 : messages.slice(msgIndex, lastSelectedIndex).reverse()
-            )
-              .filter((msg) => (
-                !msg.action && !msg.isExpired && !state.selectedMessages.includes(msg.id)
-              ))
-              .map((msg) => msg.id);
+            ).filter((msg) => (
+              !msg.action && !msg.isExpired && !state.selectedMessages.includes(msg.id)
+            )).map((msg) => msg.id);
 
             for (const id of list) {
               store.commit('messages/addSelectedMessage', id);
@@ -209,6 +211,12 @@ export default {
     function updateState({ key, value }) {
       state[key] = value;
     }
+
+    onMounted(() => {
+      if (state.forwarded && props.isCustomView) {
+        state.fwdOverflow = state.forwarded.$el.clientWidth > state.bubble.clientWidth;
+      }
+    });
 
     return {
       ...toRefs(state),
