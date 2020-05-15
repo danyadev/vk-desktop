@@ -100,14 +100,16 @@ class Longpoll {
     const events = [];
 
     for (const item of history.history) {
+      const msg = messages[item[1]];
+
       if ([3, 4, 5, 18].includes(item[0])) {
         events.push([
           item[0], // id события
-          { peer: peers[item[3]], msg: messages[item[1]] },
+          { peer: peers[item[3]], msg },
           'fromHistory',
           item[3] // peer_id
         ]);
-      } else {
+      } else if (item[0] !== 19 || !(msg && msg.isExpired)) {
         events.push(item);
       }
     }
