@@ -33,7 +33,7 @@
           />
           <div class="menu_item_name">{{ l('menu', route) }}</div>
           <div class="menu_item_counter" :title="counters[route]">
-            {{ convertCount(counters[route]) }}
+            {{ convertCount(counters[route]) || '' }}
           </div>
         </Ripple>
 
