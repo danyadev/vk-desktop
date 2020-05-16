@@ -88,10 +88,12 @@ module.exports = function(env, { mode }) {
     plugins: [
       new VueLoaderPlugin(),
       new MiniCssExtractPlugin({ filename: '[name].css' }),
-      new CopyWebpackPlugin([
-        { from: 'index.html', to: 'index.html' },
-        { from: 'src/assets', to: 'assets' }
-      ])
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: 'index.html', to: 'index.html' },
+          { from: 'src/assets', to: 'assets' }
+        ]
+      })
     ],
     resolve: {
       extensions: ['.js'],
