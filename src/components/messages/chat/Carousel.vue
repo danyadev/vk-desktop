@@ -67,7 +67,7 @@ export default {
 }
 
 .im_carousel_item:not(:first-child) {
-  margin-left: 5px;
+  margin-left: 6px;
 }
 
 .im_carousel_item > img {
@@ -79,13 +79,13 @@ export default {
 .im_carousel_content {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 166px);
+  height: calc(100% - 136px);
   padding: 10px;
 }
 
 .im_carousel_description {
   color: var(--text-dark-steel-gray);
-  margin: 6px 0 25px 0;
+  margin: 6px 0 20px 0;
 }
 
 .im_carousel_buttons {
