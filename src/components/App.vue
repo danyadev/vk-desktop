@@ -23,7 +23,7 @@ import request from 'js/request';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
 import longpoll from 'js/longpoll';
-import * as auth from './auth/';
+import * as auth from './auth';
 
 import 'css/shared.css';
 import 'css/colors.css';

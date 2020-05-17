@@ -34,7 +34,7 @@
             name="keyboard"
             :color="showKeyboard ? 'var(--accent)' : 'var(--icon-dark-gray)'"
             :class="['keyboard_btn icon-hover', { active: showKeyboard }]"
-            @click.native="showKeyboard = !showKeyboard"
+            @click="showKeyboard = !showKeyboard"
           />
 
           <img class="emoji_btn icon-hover" src="~assets/emoji_icon.svg">
