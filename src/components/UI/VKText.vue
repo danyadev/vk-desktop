@@ -71,7 +71,7 @@ export default {
 
 const mentionRE = /\[(club|id)(\d+)\|(.+?)\]/g;
 const linkRE =
-  /(?!\.|-)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*(?<!\))[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig;
+  /(?!\.|-)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig;
 
 const linkParser = createParser({
   regexp: linkRE,
@@ -87,6 +87,16 @@ const linkParser = createParser({
       return [{ type: 'text', value }];
     }
 
+    // Удаляем из ссылки все, что находится после ) или "
+    // чтобы не ломать отображение ссылок в сжатом JSON или при закрытии скобки
+    const removeTextMatch = value.match(/((?:\)|").+)/);
+    let textAfterLink;
+
+    if (removeTextMatch) {
+      textAfterLink = removeTextMatch[1];
+      value = value.replace(textAfterLink, '');
+    }
+
     let decodedUri = value;
 
     try {
@@ -95,11 +105,14 @@ const linkParser = createParser({
       // Попалась ссылка со сломанным закодированным текстом
     }
 
-    return [{
-      type: 'link',
-      value: decodedUri.replace(/(.{55}).+/, '$1..'),
-      link: (match[2] ? '' : 'http://') + value
-    }];
+    return [
+      {
+        type: 'link',
+        value: decodedUri.replace(/(.{55}).+/, '$1..'),
+        link: (match[2] ? '' : 'http://') + value
+      },
+      ...(textAfterLink ? [{ type: 'text', value: textAfterLink }] : [])
+    ];
   }
 });
 
