@@ -1,9 +1,8 @@
 <template>
   <div class="attach_forwarded attach_left_border">
     <ForwardedMessage
-      v-for="fwd of msg.fwdMessages"
+      v-for="fwd of fwdMessages"
       :key="fwd.id"
-      :messages="msg.fwdMessages"
       :msg="fwd"
       :peer_id="peer_id"
       :isCustomView="isCustomView"
@@ -13,10 +12,18 @@
 </template>
 
 <script>
-// ForwardedMessage зарегестрирован глобально, чтобы предотвратить рекурсию при рендере
+// ForwardedMessage зарегистрирован глобально, чтобы предотвратить рекурсию при рендере
 
 export default {
-  props: ['peer_id', 'msg', 'isCustomView', 'fwdDepth']
+  props: ['peer_id', 'msg', 'isCustomView', 'fwdDepth'],
+
+  setup(props) {
+    const { fwdMessages, replyMsg } = props.msg;
+
+    return {
+      fwdMessages: replyMsg ? [replyMsg] : fwdMessages
+    };
+  }
 };
 </script>
 

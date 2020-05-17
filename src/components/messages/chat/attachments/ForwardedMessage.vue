@@ -15,8 +15,6 @@
     </div>
 
     <div class="attach_fwd_msg_content">
-      <Reply v-if="msg.hasReplyMsg" :msg="msg" :peer_id="peer_id" :isFwdMsg="true" />
-
       <div v-if="msg.isContentDeleted" class="attach_fwd_msg_text isContentDeleted">
         {{ l('im_attachment_deleted') }}
       </div>
@@ -26,20 +24,22 @@
 
       <Attachments :msg="msg" :peer_id="peer_id" :fwdDepth="fwdDepth" />
 
-      <div
-        v-if="msg.fwdCount && fwdDepth === 5 && !isCustomView"
-        class="link"
-        @click="openMessagesViewer"
-      >
-        {{ l('im_forwarded_some') }}
-      </div>
-      <Forwarded
-        v-else-if="msg.fwdCount"
-        :peer_id="peer_id"
-        :msg="msg"
-        :isCustomView="isCustomView"
-        :fwdDepth="fwdDepth + 1"
-      />
+      <template v-if="msg.fwdCount || msg.hasReplyMsg">
+        <div
+          v-if="fwdDepth === 5 && !isCustomView"
+          class="link"
+          @click="openMessagesViewer"
+        >
+          {{ l('im_forwarded_some') }}
+        </div>
+        <Forwarded
+          v-else
+          :peer_id="peer_id"
+          :msg="msg"
+          :isCustomView="isCustomView"
+          :fwdDepth="fwdDepth + 1"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -51,16 +51,14 @@ import { getPeerTitle } from 'js/messages';
 import { getFullDate } from 'js/date';
 import store from 'js/store';
 
-import Reply from './Reply.vue';
 import Attachments from './Attachments.vue';
 import Forwarded from './Forwarded.vue';
 import VKText from '../../../UI/VKText.vue';
 
 export default {
-  props: ['peer_id', 'messages', 'msg', 'isCustomView', 'fwdDepth'],
+  props: ['peer_id', 'msg', 'isCustomView', 'fwdDepth'],
 
   components: {
-    Reply,
     Attachments,
     Forwarded,
     VKText

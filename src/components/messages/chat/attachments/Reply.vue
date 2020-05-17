@@ -32,7 +32,7 @@ import store from 'js/store';
 import VKText from '../../../UI/VKText.vue';
 
 export default {
-  props: ['peer_id', 'msg', 'ownerMsgId', 'isFwdMsg'],
+  props: ['peer_id', 'msg', 'ownerMsgId'],
 
   components: {
     VKText
@@ -92,7 +92,7 @@ export default {
         });
       }
 
-      if (!props.msg.id || props.isFwdMsg) {
+      if (!props.msg.id) {
         return openMessageViewer();
       }
 
