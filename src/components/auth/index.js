@@ -21,13 +21,11 @@ export function getAndroidToken(login, password, params = {}) {
       ...params
     });
 
-    const { data } = await request({
-      host: 'oauth.vk.com',
-      path: `/token?${query}`,
+    const { data } = await request(`https://oauth.vk.com/token?${query}`, {
       headers: {
         'User-Agent': AndroidUserAgent
       }
-    });
+    }, {});
 
     if (data.trusted_hash) {
       store.commit('users/setTrustedHash', {
@@ -72,9 +70,7 @@ async function getDesktopToken(androidToken) {
     sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
   });
 
-  const { data } = await request({
-    host: 'oauth.vk.com',
-    path: `/authorize?${query}`,
+  const { data } = await request(`https://oauth.vk.com/authorize?${query}`, {
     headers: {
       'User-Agent': VKDesktopUserAgent
     }

@@ -23,6 +23,7 @@ import request from 'js/request';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
 import longpoll from 'js/longpoll';
+import * as auth from './auth/';
 
 import 'css/shared.css';
 import 'css/colors.css';
@@ -40,6 +41,7 @@ window.store = store;
 window.router = router;
 window.longpoll = longpoll;
 window.request = request;
+window.auth = auth;
 
 export default {
   components: {

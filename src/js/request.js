@@ -1,28 +1,39 @@
 import { promises as dns } from 'dns';
 import https from 'https';
-import { timer } from './utils';
+import { timer, isObject } from './utils';
 
-function request(requestParams, params = {}) {
+// Возможные варианты передачи параметров:
+// 1. request(paramsOrUrl, options?)
+// 2. request(url, params, options)
+// 3. request(url, params, {})
+// т.е. при наличии params обязательно наличие и options,
+// а так же первый аргумент должен быть строкой
+function request(paramsOrUrl, paramsOrOptions = {}, options) {
+  if (!options) {
+    options = paramsOrOptions;
+    paramsOrOptions = {};
+  }
+
   return new Promise((resolve, reject) => {
-    const req = https.request(requestParams, (res) => {
+    function handleRequest(res) {
       const chunks = [];
       const MB = 1 << 20;
       const contentLength = +res.headers['content-length'];
       let loadedLength = 0;
 
-      if (params.pipe) {
-        res.pipe(params.pipe);
+      if (options.pipe) {
+        res.pipe(options.pipe);
       }
 
       res.on('data', (chunk) => {
-        if (!params.pipe) {
+        if (!options.pipe) {
           chunks.push(chunk);
         }
 
-        if (params.progress) {
+        if (options.progress) {
           loadedLength += chunk.length;
 
-          params.progress({
+          options.progress({
             // Размер файла в МБ
             size: contentLength / MB,
             // Сколько МБ уже скачалось
@@ -37,23 +48,27 @@ function request(requestParams, params = {}) {
         const raw = String(Buffer.concat(chunks));
 
         resolve({
-          data: params.raw ? raw : JSON.parse(raw),
+          data: options.raw ? raw : JSON.parse(raw),
           headers: res.headers,
           statusCode: res.statusCode
         });
       });
-    });
+    }
+
+    const req = isObject(paramsOrUrl)
+      ? https.request(paramsOrUrl, handleRequest)
+      : https.request(paramsOrUrl, paramsOrOptions, handleRequest);
 
     req.on('error', reject);
 
-    if (params.timeout) {
-      req.setTimeout(params.timeout, req.abort);
+    if (options.timeout) {
+      req.setTimeout(options.timeout, req.abort);
     }
 
-    if (params.multipart) {
-      sendMultipart(req, params.multipart);
+    if (options.multipart) {
+      sendMultipart(req, options.multipart);
     } else {
-      req.end(params.postData || '');
+      req.end(options.postData || '');
     }
   });
 }
@@ -124,6 +139,11 @@ export default async function(...data) {
     try {
       return await request(...data);
     } catch (err) {
+      // Если ошибка не относится к проблемам с сетью, то выкидываем ошибку
+      if (!['ETIMEDOUT', 'ECONNRESET', 'ENOTFOUND'].includes(err.code)) {
+        throw err;
+      }
+
       if (!waitConnectionPromise) {
         waitConnectionPromise = waitConnection();
       }

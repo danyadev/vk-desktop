@@ -165,6 +165,10 @@ function vkapi(name, params, { android, vkme } = {}) {
       postData: querystring.stringify(params)
     });
 
+    if (data.execute_errors) {
+      reject(data);
+    }
+
     if (data.response !== undefined) {
       return resolve(data.response);
     }

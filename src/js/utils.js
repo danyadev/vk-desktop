@@ -367,8 +367,8 @@ export async function downloadFile(src, withRedirect, progress) {
 
   if (files) {
     if (withRedirect) {
-      const { headers: { location } } = await request(src);
-      src = location;
+      const { headers } = await request(src);
+      src = headers.location;
     }
 
     const [name] = (new URL(src)).pathname.split('/').reverse();
@@ -378,4 +378,18 @@ export async function downloadFile(src, withRedirect, progress) {
       progress
     });
   }
+}
+
+export function parseMp3Link(url) {
+  if (url.includes('.mp3?')) {
+    return url;
+  }
+
+  const match = url.match(
+    url.startsWith('https://ps')
+      ? /(https:\/\/.+)\/.+?\/audios\/(.+?)\/index\.m3u8\?extra=(.+)/
+      : /(https:\/\/.+)\/.+?\/(.+?)\/index\.m3u8\?extra=(.+)/
+  );
+
+  return `${match[1]}/${match[2]}.mp3?extra=${match[3]}`;
 }
