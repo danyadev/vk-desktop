@@ -1,16 +1,34 @@
 <script>
 import { h } from 'vue';
+import components from '.';
 
 export default {
   props: ['msg'],
 
   render(props) {
     const attachments = [];
+    const attachNames = Object.keys(props.msg.attachments);
+    // Вложения, с которыми не будут отображаться другие вложения (будут скрыты)
+    const singleAttachments = ['sticker', 'gift', 'audio_message'];
+    const hasSingleAttach = singleAttachments.some((attach) => attachNames.includes(attach));
 
     for (const type in props.msg.attachments) {
-      attachments.push(
-        h('div', { class: 'im_attach_unknown' }, `(${type})`)
-      );
+      const attach = props.msg.attachments[type];
+      const component = components[type];
+
+      if (hasSingleAttach && !singleAttachments.includes(type)) {
+        continue;
+      }
+
+      if (component) {
+        attachments.push(
+          h(component, { attach })
+        );
+      } else {
+        attachments.push(
+          h('div', { class: 'im_attach_unknown' }, `(${type})`)
+        );
+      }
     }
 
     if (attachments.length) {

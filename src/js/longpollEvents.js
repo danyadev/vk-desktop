@@ -6,8 +6,7 @@ import {
   addNotificationsTimer
 } from './messages';
 import {
-  supportedAttachments,
-  preloadAttachments
+  supportedAttachments
 } from '../components/messages/chat/attachments';
 import { timer, eventBus } from './utils';
 import store from './store';
@@ -224,20 +223,8 @@ function hasSupportedAttachments(msg) {
   return false;
 }
 
-function hasPreloadMessages(messages) {
-  for (const { msg } of messages) {
-    if (msg.hasReplyMsg || msg.fwdCount || msg.hasTemplate) {
-      return true;
-    }
-
-    for (const attach in msg.attachments) {
-      if (preloadAttachments.has(attach)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+function hasPreloadMessages(conversations) {
+  return conversations.some(({ msg }) => hasSupportedAttachments(msg));
 }
 
 async function watchTyping(peer_id, user_id) {

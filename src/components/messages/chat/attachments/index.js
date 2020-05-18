@@ -1,5 +1,9 @@
-export const supportedAttachments = new Set();
+import Sticker from './Sticker.vue';
 
-export const preloadAttachments = new Set();
+export const supportedAttachments = new Set([
+  'sticker'
+]);
 
-export default {};
+export default {
+  sticker: Sticker
+};

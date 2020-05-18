@@ -129,11 +129,23 @@ export default {
 
       attachmentClasses: computed(() => {
         const classes = [];
+        let flyTime = false;
 
-        const { attachments, fwdCount } = props.msg;
+        const { text, attachments, hasReplyMsg, fwdCount } = props.msg;
+        const { sticker } = attachments;
         const attachNames = Object.keys(attachments);
+        const oneAttach = attachNames.length === 1;
 
         if (attachNames.length || fwdCount) classes.push('hasAttachment');
+        if (sticker) classes.push('isSticker');
+        if (sticker) flyTime = true;
+
+        if (sticker && !hasReplyMsg && !text && oneAttach) {
+          classes.push('hideBubble');
+          flyTime = true;
+        }
+
+        if (flyTime) classes.push('flyTime');
 
         return classes;
       })
@@ -310,6 +322,8 @@ export default {
   display: inline;
 }
 
+/* Message time wrap =================================== */
+
 .message_time_wrap {
   position: relative;
   display: flex;
@@ -327,6 +341,30 @@ export default {
   margin: 5px 0 0 6px;
 }
 
+.message.flyTime .message_time_wrap {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #ffffffdf;
+  border-radius: 9px;
+  padding: 2px 6px;
+  width: fit-content;
+}
+
+.message.isSticker:not(.hideBubble) .message_time_wrap,
+.message.flyTime.hideBubble:not(.isSticker) .message_time_wrap {
+  right: 4px;
+  bottom: 4px;
+}
+
+.message.isSticker:not(.hideBubble).out .message_time_wrap {
+  background-color: #c7dff9df;
+}
+
+.message.isSticker:not(.hideBubble):not(.out) .message_time_wrap {
+  background-color: #dfe6eadf;
+}
+
 .message_edited {
   margin-top: -1px;
 }
@@ -339,7 +377,7 @@ export default {
   background-color: var(--text-dark-steel-gray);
 }
 
-/* Unread dot ============================================ */
+/* Unread dot ========================================== */
 
 .message.isUnread.out .message_bubble::before,
 .message.isUnread:not(.out) .message_bubble::after {
@@ -363,7 +401,7 @@ export default {
   right: var(--offset);
 }
 
-/* Expire time ======================================== */
+/* Expire time ========================================= */
 
 /* 1. mm:ss */
 
@@ -386,7 +424,7 @@ export default {
   --offset: -32px;
 }
 
-/* Select mark ================================================== */
+/* Select mark ========================================= */
 
 .message.out.isSelected .message_bubble::after,
 .message:not(.out).isSelected .message_bubble::before {
@@ -398,5 +436,11 @@ export default {
   border-radius: 18px;
   top: 0;
   left: 0;
+}
+
+/* Ограничение ширины сообщения со стикером ============ */
+.message:not(.hideBubble).isSticker .attach_reply,
+.message:not(.hideBubble).isSticker .message_text {
+  width: 128px;
 }
 </style>

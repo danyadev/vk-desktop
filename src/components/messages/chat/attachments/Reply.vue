@@ -49,7 +49,6 @@ export default {
         // TODO убрать когда все вложения будут грузиться по умолчанию
         if (
           photo && !photo[0] ||
-          sticker && !sticker[0] ||
           doc && !doc[0] ||
           video && !video[0] ||
           story && !story[0]
@@ -65,7 +64,7 @@ export default {
         }
 
         if (photo && photo[0]) return getPhotoFromSizes(photo[0].sizes, 'o').url;
-        if (sticker && sticker[0]) return sticker[0].images[devicePixelRatio > 1 ? 1 : 0].url;
+        if (sticker) return sticker[0].images[devicePixelRatio > 1 ? 1 : 0].url;
         if (photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'm').src;
         if (video) return (videoImages[6] || videoImages[videoImages.length - 1]).url;
         if (storyPhotos) return getPhotoFromSizes(storyPhotos.sizes, ['o', 'j', 'm', 'x']).url;
