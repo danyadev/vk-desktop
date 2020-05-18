@@ -1,8 +1,18 @@
 <template>
   <div class="chat_input_container">
     <template v-if="canWrite.allowed">
-      <div v-if="repliedMsg" class="chat_input_reply">
-        <Reply :peer_id="peer_id" :msg="repliedMsg" :ownerMsgId="repliedMsg.id" />
+      <div v-if="repliedMsg || fwdMessages.length" class="chat_input_reply">
+        <Reply v-if="repliedMsg" :peer_id="peer_id" :msg="repliedMsg" :ownerMsgId="repliedMsg.id" />
+        <div v-else class="attach_reply attach_left_border" @click="openFwdMessages">
+          <div class="attach_reply_content">
+            <div class="attach_reply_name">{{ l('im_forwarded_some') }}</div>
+
+            <div class="attach_reply_text isAttachment">
+              {{ l('im_forwarded', [fwdMessages.length], fwdMessages.length) }}
+            </div>
+          </div>
+        </div>
+
         <Icon
           name="cancel"
           color="var(--icon-dark-gray)"
@@ -73,11 +83,12 @@
 import { reactive, computed, toRefs, onMounted, watch } from 'vue';
 import electron from 'electron';
 import { throttle, escape } from 'js/utils';
+import getTranslate from 'js/getTranslate';
+import sendMessage from 'js/sendMessage';
 import emoji from 'js/emoji';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
-import getTranslate from 'js/getTranslate';
-import sendMessage from 'js/sendMessage';
+import router from 'js/router';
 
 import Icon from '../../UI/Icon.vue';
 import Ripple from '../../UI/Ripple.vue';
@@ -97,6 +108,7 @@ export default {
   setup(props) {
     const state = reactive({
       input: null,
+      route: router.currentRoute,
       keyboard: computed(() => props.peer && props.peer.keyboard || {}),
       hasKeyboard: computed(() => (state.keyboard.buttons || []).length),
       showKeyboard: false,
@@ -113,10 +125,10 @@ export default {
         };
       }),
 
-      repliedMsg: computed(() => {
-        const id = store.state.messages.repliedMessages[props.peer_id];
-        return id && store.state.messages.messages[props.peer_id].find((msg) => msg.id === id);
-      })
+      repliedMsg: computed(() => store.state.messages.repliedMessages[props.peer_id]),
+      fwdMessages: computed(() => (
+        store.state.messages.forwardedMessages[props.peer_id] || []
+      ).sort((a, b) => a.id - b.id))
     });
 
     function toggleNotifications() {
@@ -144,10 +156,11 @@ export default {
       sendMessage({
         peer_id: props.peer_id,
         input: state.input,
-        reply_to
+        reply_to,
+        fwdMessages: state.fwdMessages
       });
 
-      if (reply_to) {
+      if (reply_to || state.fwdMessages.length) {
         closeReply();
       }
     }
@@ -163,6 +176,14 @@ export default {
 
     function closeReply() {
       store.commit('messages/removeRepliedMessage', props.peer_id);
+      store.state.messages.forwardedMessages[props.peer_id] = [];
+    }
+
+    function openFwdMessages() {
+      store.commit('messages/openMessagesViewer', {
+        messages: state.fwdMessages,
+        peer_id: +state.route.params.fromId || props.peer_id
+      });
     }
 
     // TODO onActivated
@@ -170,8 +191,10 @@ export default {
       state.input && state.input.focus();
     });
 
-    watch(() => state.repliedMsg, (msg) => {
-      msg && state.input.focus();
+    watch([() => state.repliedMsg, () => state.fwdMessages], (msg) => {
+      if (Array.isArray(msg) && msg.length || msg) {
+        state.input.focus();
+      }
     });
 
     return {
@@ -181,7 +204,8 @@ export default {
       paste,
       send,
       onInput,
-      closeReply
+      closeReply,
+      openFwdMessages
     };
   }
 };

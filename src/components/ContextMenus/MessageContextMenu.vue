@@ -10,6 +10,11 @@
       <div class="act_menu_data">{{ l('im_reply_msg') }}</div>
     </div>
 
+    <div v-if="peer.isWriteAllowed" class="act_menu_item" @click="forward">
+      <Icon name="forward" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <div class="act_menu_data">{{ l('im_forward_message') }}</div>
+    </div>
+
     <div v-if="peer.id > 2e9 && peer.acl.can_change_pin" class="act_menu_item" @click="togglePin">
       <Icon
         :name="isPinnedMessage ? 'unpin' : 'pin'"
@@ -17,11 +22,6 @@
         class="act_menu_icon"
       />
       <div class="act_menu_data">{{ l('im_toggle_msg_pin', isPinnedMessage) }}</div>
-    </div>
-
-    <div v-if="msg.text" class="act_menu_item" @click="copy">
-      <Icon name="copy" color="var(--icon-dark-gray)" class="act_menu_icon" />
-      <div class="act_menu_data">{{ l('im_copy_msg') }}</div>
     </div>
 
     <div v-if="msg.id > peer.in_read" class="act_menu_item" @click="markAsRead">
@@ -91,9 +91,21 @@ export default {
     }
 
     function reply() {
+      store.state.messages.forwardedMessages[peer_id] = [];
       store.commit('messages/addRepliedMessage', {
         peer_id,
-        msg_id: state.msg.id
+        msg: state.msg
+      });
+    }
+
+    function forward() {
+      store.commit('messages/removeRepliedMessage', props.peer_id);
+      store.state.messages.forwardedMessages[peer_id] = [state.msg];
+      router.replace({
+        name: 'forward-to',
+        params: {
+          fromId: peer_id
+        }
       });
     }
 
@@ -103,15 +115,6 @@ export default {
       vkapi(method, {
         peer_id,
         message_id: msg_id
-      });
-    }
-
-    function copy() {
-      electron.remote.clipboard.writeText(state.msg.text);
-
-      addSnackbar({
-        text: getTranslate('im_message_copied'),
-        icon: 'copy'
       });
     }
 
@@ -158,8 +161,8 @@ export default {
 
       copyMsgId,
       reply,
+      forward,
       togglePin,
-      copy,
       markAsRead,
       deleteMsg,
       markAsSpam

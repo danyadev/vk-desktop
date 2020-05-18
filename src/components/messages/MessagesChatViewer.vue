@@ -18,25 +18,29 @@
 </template>
 
 <script>
+import { computed } from 'vue';
 import store from 'js/store';
 
 import Scrolly from '../UI/Scrolly.vue';
 import MessagesList from './chat/MessagesList.vue';
 
 export default {
-  props: ['peer_id', 'peer', 'messages'],
+  props: ['peer_id', 'messages'],
 
   components: {
     Scrolly,
     MessagesList
   },
 
-  setup() {
+  setup(props) {
+    const peer = computed(() => store.state.messages.conversations[props.peer_id].peer);
+
     function close() {
-      store.commit('messages/setViewerMessages', []);
+      store.commit('messages/closeMessagesViewer');
     }
 
     return {
+      peer,
       close
     };
   }

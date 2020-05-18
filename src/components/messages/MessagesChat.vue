@@ -8,10 +8,9 @@
 
     <Transition name="fade-out">
       <MessagesChatViewer
-        v-if="viewerMessages.length"
-        :peer_id="peer_id"
-        :peer="peer"
-        :messages="viewerMessages"
+        v-if="viewer.messages.length"
+        :peer_id="viewer.peer_id"
+        :messages="viewer.messages"
       />
     </Transition>
 
@@ -51,7 +50,7 @@ export default {
   setup() {
     const state = reactive({
       peer_id: +router.currentRoute.value.params.id,
-      viewerMessages: computed(() => store.state.messages.viewerMessages),
+      viewer: computed(() => store.state.messages.viewer),
 
       isSearch: computed({
         get: () => store.state.messages.isMessagesSearch,

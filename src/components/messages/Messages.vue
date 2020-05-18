@@ -35,15 +35,19 @@ export default {
         return store.commit('messages/removeSelectedMessages');
       }
 
-      if (store.state.messages.viewerMessages.length) {
-        return store.commit('messages/setViewerMessages', []);
+      if (store.state.messages.viewer.messages.length) {
+        return store.commit('messages/closeMessagesViewer');
       }
 
-      eventBus.emit('messages:event', 'closeChat', {
-        peer_id: state.peer_id
-      });
+      if (state.route.name === 'forward-to') {
+        router.replace(`/messages/${state.route.params.fromId}`);
+      } else {
+        eventBus.emit('messages:event', 'closeChat', {
+          peer_id: state.peer_id
+        });
 
-      router.replace('/messages');
+        router.replace('/messages');
+      }
     }
 
     return {

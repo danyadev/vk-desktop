@@ -12,10 +12,7 @@ class Storage {
       ...storageData
     };
 
-    if (beforeSave) {
-      beforeSave(this.data);
-    }
-
+    beforeSave && beforeSave(this.data);
     this.save();
   }
 

@@ -96,6 +96,8 @@ export default {
 
   setup(props) {
     const state = reactive({
+      route: router.currentRoute,
+
       isChat: props.peer.id > 2e9,
       profiles: computed(() => store.state.profiles),
       owner: computed(() => state.profiles[props.peer.id]),
@@ -160,7 +162,20 @@ export default {
         });
       }
 
-      await router.replace(`/messages/${peer_id}`);
+      if (state.route.name === 'forward-to') {
+        store.state.messages.forwardedMessages[peer_id] = (
+          store.state.messages.tmpForwardingMessages
+        );
+        store.state.messages.tmpForwardingMessages = [];
+      }
+
+      await router.replace({
+        name: 'chat',
+        params: {
+          id: peer_id,
+          fromId: state.route.params.fromId
+        }
+      });
 
       if (fromSearch) {
         eventBus.emit('messages:event', 'jump', {

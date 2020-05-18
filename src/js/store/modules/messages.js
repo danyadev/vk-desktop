@@ -36,8 +36,11 @@ export default {
 
     // Список сообщений, которые должны отобразиться в просмотре сообщений
     // При этом чат нельзя закрыть, пока не закроется список этих сообщений
-    // [message]
-    viewerMessages: [],
+    viewer: {
+      // [message]
+      messages: [],
+      peer_id: null
+    },
 
     // Список выделенных сообщений
     // При этом чат нельзя закрыть, пока не закроется список этих сообщений
@@ -46,9 +49,20 @@ export default {
     // Находится здесь, потому что нужно при Esc проверять и убирать поиск в другом месте
     isMessagesSearch: false,
 
+    // TODO перенести в Input, который будет сохранять свое состояние.
+    // Передавать информацию можно будет через eventBus
+
     // Список сообщений, на которые собираются ответить
-    // { peer_id: msg_id }
-    repliedMessages: {}
+    // { peer_id: message }
+    repliedMessages: {},
+
+    // Список сообщений, которые собираются переслать
+    // { peer_id: [message] }
+    forwardedMessages: {},
+
+    // Пересылаемые в данный момент сообщения
+    // [message]
+    tmpForwardingMessages: []
   },
 
   mutations: {
@@ -242,8 +256,18 @@ export default {
       };
     },
 
-    setViewerMessages(state, messages) {
-      state.viewerMessages = messages;
+    openMessagesViewer(state, { messages, peer_id }) {
+      state.viewer = {
+        messages,
+        peer_id
+      };
+    },
+
+    closeMessagesViewer(state) {
+      state.viewer = {
+        messages: [],
+        peer_id: null
+      };
     },
 
     addSelectedMessage(state, id) {
@@ -263,8 +287,8 @@ export default {
       state.selectedMessages = [];
     },
 
-    addRepliedMessage(state, { peer_id, msg_id }) {
-      state.repliedMessages[peer_id] = msg_id;
+    addRepliedMessage(state, { peer_id, msg }) {
+      state.repliedMessages[peer_id] = msg;
     },
 
     removeRepliedMessage(state, peer_id) {

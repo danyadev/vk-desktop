@@ -39,7 +39,7 @@
 
     <div v-if="peerId > 2e9" class="act_menu_item" @click="leftFromChat">
       <template v-if="peer.left">
-        <img src="assets/forward.svg" class="act_menu_icon">
+        <Icon name="forward" color="var(--icon-dark-gray)" class="act_menu_icon" />
         <div class="act_menu_data">{{ l('im_toggle_left_state', peer.isChannel ? 3 : 2) }}</div>
       </template>
       <template v-else>

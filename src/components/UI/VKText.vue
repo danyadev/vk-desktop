@@ -93,6 +93,7 @@ const linkParser = createParser({
     let textAfterLink;
 
     if (removeTextMatch) {
+      // eslint-disable-next-line prefer-destructuring
       textAfterLink = removeTextMatch[1];
       value = value.replace(textAfterLink, '');
     }

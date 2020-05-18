@@ -77,12 +77,15 @@ export default {
     });
 
     async function jump() {
-      function openMessageViewer() {
-        store.commit('messages/setViewerMessages', [props.msg]);
+      function openMessagesViewer() {
+        store.commit('messages/openMessagesViewer', {
+          messages: [props.msg],
+          peer_id: props.peer_id
+        });
       }
 
       function jumpToMsg() {
-        store.commit('messages/setViewerMessages', []);
+        store.commit('messages/closeMessagesViewer');
 
         eventBus.emit('messages:event', 'jump', {
           peer_id: props.peer_id,
@@ -93,7 +96,7 @@ export default {
       }
 
       if (!props.msg.id) {
-        return openMessageViewer();
+        return openMessagesViewer();
       }
 
       const messages = store.state.messages.messages[props.peer_id];
@@ -111,7 +114,7 @@ export default {
       });
 
       if (!msg || msg.deleted) {
-        openMessageViewer();
+        openMessagesViewer();
       } else {
         jumpToMsg();
       }

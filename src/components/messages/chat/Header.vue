@@ -57,10 +57,12 @@
 
         <div class="im_header_selected_actions">
           <Icon
-            v-if="selectedMessages.length === 1 && peer.isWriteAllowed"
+            v-if="selectedMessages.length && peer.isWriteAllowed"
             name="reply"
             color="var(--blue-background-text)"
-            data-tooltip="im_reply_msg"
+            :data-tooltip="
+              selectedMessages.length === 1 ? 'im_reply_msg' : 'im_forward_messages_here'
+            "
             @click="reply"
           />
 
@@ -70,6 +72,14 @@
             color="var(--blue-background-text)"
             :data-tooltip="selectedMessages.length === 1 ? 'im_delete_msg' : 'im_delete_messages'"
             @click="deleteMessages"
+          />
+
+          <Icon
+            v-if="selectedMessages.length && peer.isWriteAllowed"
+            name="forward"
+            color="var(--blue-background-text)"
+            data-tooltip="im_forward_messages"
+            @click="forward"
           />
 
           <Icon
@@ -92,6 +102,7 @@ import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/messages';
 import { openModal } from 'js/modals';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
+import router from 'js/router';
 
 import Icon from '../../UI/Icon.vue';
 import VKText from '../../UI/VKText.vue';
@@ -113,6 +124,10 @@ export default {
   setup(props) {
     const DAY = 1000 * 60 * 60 * 24;
 
+    function getMessage(id) {
+      return id && store.state.messages.messages[props.peer_id].find((msg) => msg.id === id);
+    }
+
     const state = reactive({
       owner: computed(() => store.state.profiles[props.peer_id]),
       photo: computed(() => getPeerAvatar(props.peer_id, props.peer, state.owner)),
@@ -129,7 +144,7 @@ export default {
         props.peer_id > 2e9 &&
         !!props.peer.acl.can_moderate &&
         state.selectedMessages.every((id) => {
-          const msg = store.state.messages.messages[props.peer_id].find((msg) => msg.id === id);
+          const msg = getMessage(id);
           return !props.peer.admin_ids.includes(msg.from) && (Date.now() - msg.date * 1000 < DAY);
         })
       ))
@@ -139,13 +154,37 @@ export default {
       store.commit('messages/removeSelectedMessages');
     }
 
-    function reply() {
-      store.commit('messages/addRepliedMessage', {
-        peer_id: props.peer_id,
-        msg_id: state.selectedMessages[0]
-      });
+    function forward(toThisChat) {
+      if (toThisChat === true) {
+        store.state.messages.forwardedMessages[props.peer_id] = (
+          state.selectedMessages.map(getMessage)
+        );
+      } else {
+        store.state.messages.tmpForwardingMessages = state.selectedMessages.map(getMessage);
+        router.replace({
+          name: 'forward-to',
+          params: {
+            fromId: props.peer_id
+          }
+        });
+      }
 
+      store.commit('messages/removeRepliedMessage', props.peer_id);
       cancelSelect();
+    }
+
+    function reply() {
+      if (state.selectedMessages.length === 1) {
+        store.commit('messages/addRepliedMessage', {
+          peer_id: props.peer_id,
+          msg: getMessage(state.selectedMessages[0])
+        });
+
+        store.state.messages.forwardedMessages[props.peer_id] = [];
+        cancelSelect();
+      } else {
+        forward(true);
+      }
     }
 
     function deleteMessages() {
@@ -177,6 +216,7 @@ export default {
       ...toRefs(state),
 
       cancelSelect,
+      forward,
       reply,
       deleteMessages,
       markAsSpam

@@ -23,7 +23,9 @@ function getMessage(peer_id, msg_id) {
   return messages && messages.find((msg) => msg.id === msg_id);
 }
 
-export default async function sendMessage({ peer_id, input, keyboardButton, reply_to }) {
+export default async function sendMessage({
+  peer_id, input, keyboardButton, reply_to, fwdMessages = []
+}) {
   const random_id = random(-2e9, 2e9);
   let message;
 
@@ -64,6 +66,9 @@ export default async function sendMessage({ peer_id, input, keyboardButton, repl
 
   if (payload) params.payload = payload;
   if (reply_to) params.reply_to = reply_to;
+  if (fwdMessages.length) {
+    params.forward_messages = fwdMessages.map((msg) => msg.id).join(',');
+  }
 
   store.commit('messages/addLoadingMessage', {
     peer_id,
@@ -74,11 +79,11 @@ export default async function sendMessage({ peer_id, input, keyboardButton, repl
       text: message,
       date: (Date.now() / 1000).toFixed(),
       random_id,
-      fwdCount: 0,
-      fwdMessages: [],
+      fwdCount: fwdMessages.length,
+      fwdMessages: fwdMessages.sort((a, b) => a.id - b.id),
       attachments: {},
-      hasReplyMsg: !!reply_to,
-      replyMsg: reply_to && getMessage(peer_id, reply_to),
+      hasReplyMsg: !!params.reply_to,
+      replyMsg: params.reply_to && getMessage(peer_id, params.reply_to),
       editTime: 0,
 
       isLoading: true,

@@ -75,7 +75,10 @@ export default {
     });
 
     function openMessagesViewer() {
-      store.commit('messages/setViewerMessages', [props.msg]);
+      store.commit('messages/openMessagesViewer', {
+        messages: [props.msg],
+        peer_id: props.peer_id
+      });
     }
 
     return {

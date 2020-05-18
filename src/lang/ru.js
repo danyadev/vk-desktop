@@ -58,6 +58,7 @@ export default {
   im_header_title: 'Сообщения',
   im_messages_view: 'Просмотр сообщений',
   im_choose_chat: 'Выберите диалог, чтобы начать переписку',
+  im_choose_chat_to_forward: 'Выберите диалог, чтобы переслать туда сообщения',
   im_chat_members: ['{0} участник', '{0} участника', '{0} участников'],
   im_chat_group: 'Сообщество',
   im_chat_cant_write: 'Отправка сообщений ограничена',
@@ -106,6 +107,9 @@ export default {
 
   im_retry_send: 'Повторить отправку',
   im_delete_message: 'Удалить сообщение',
+  im_forward_message: 'Переслать сообщение',
+  im_forward_messages: 'Переслать сообщения',
+  im_forward_messages_here: 'Переслать сюда',
 
   im_send_typing: 'Отправлять тайпинг',
   im_not_read_messages: 'Нечиталка сообщений',
@@ -119,7 +123,6 @@ export default {
 
   im_reply_msg: 'Ответить на сообщение',
   im_toggle_msg_pin: ['Закрепить сообщение', 'Открепить сообщение'],
-  im_copy_msg: 'Скопировать сообщение',
   im_delete_msg: 'Удалить сообщение',
   im_delete_messages: 'Удалить сообщения',
   im_mark_msg_as_spam: 'Пометить как спам',

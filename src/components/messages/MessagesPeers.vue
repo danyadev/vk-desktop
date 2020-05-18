@@ -2,7 +2,9 @@
   <div class="im_peers_container">
     <div class="header">
       <HeaderButton />
-      <div class="header_name">{{ l('im_header_title') }}</div>
+      <div class="header_name">
+        {{ l(route.name === 'forward-to' ? 'im_forward_messages' : 'im_header_title') }}
+      </div>
 
       <Icon
         name="search"
@@ -49,6 +51,7 @@ import { fields, concatProfiles, timer, endScroll } from 'js/utils';
 import { parseConversation, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
+import router from 'js/router';
 
 import HeaderButton from '../HeaderButton.vue';
 import Scrolly from '../UI/Scrolly.vue';
@@ -71,6 +74,8 @@ export default {
 
   setup() {
     const state = reactive({
+      route: router.currentRoute,
+
       loading: true,
       loaded: computed({
         get: () => store.state.messages.isMessagesPeersLoaded,
