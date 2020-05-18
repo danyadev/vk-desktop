@@ -44,7 +44,12 @@
   --messages-peer-ripple: #e6ebf2;
 
   --message-bubble-background: #dfe6ea;
+  --message-bubble-background-alpha: #dfe6eadf;
   --message-out-bubble-background: #c7dff9;
+  --message-out-bubble-background-alpha: #c7dff9df;
+
+  /* Используется для времени у стикеров в сообщении */
+  --background-alpha: #ffffffdf;
 
   --forwarded-left-border: #7197c5;
 }

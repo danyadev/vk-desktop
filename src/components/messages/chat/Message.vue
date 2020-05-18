@@ -304,6 +304,20 @@ export default {
   background-color: var(--message-out-bubble-background);
 }
 
+.message.hideBubble.isDisappearing:not(.out) .message_bubble {
+  /* Отступ справа нужен для того, чтобы иконка исчезающего сообщения не залезала на время */
+  margin-right: 5px;
+}
+
+.message_bubble::before,
+.message_bubble::after {
+  --unread-offset: 0px;
+}
+
+.message.hideBubble.isDisappearing:not(.out) .message_bubble::after {
+  --unread-offset: 5px;
+}
+
 .message_text {
   display: inline;
   line-height: 18px;
@@ -345,7 +359,7 @@ export default {
   position: absolute;
   bottom: 0;
   right: 0;
-  background-color: #ffffffdf;
+  background-color: var(--background-alpha);
   border-radius: 9px;
   padding: 2px 6px;
   width: fit-content;
@@ -358,11 +372,11 @@ export default {
 }
 
 .message.isSticker:not(.hideBubble).out .message_time_wrap {
-  background-color: #c7dff9df;
+  background-color: var(--message-out-bubble-background-alpha);
 }
 
 .message.isSticker:not(.hideBubble):not(.out) .message_time_wrap {
-  background-color: #dfe6eadf;
+  background-color: var(--message-bubble-background-alpha);
 }
 
 .message_edited {
@@ -388,7 +402,7 @@ export default {
   border-radius: 50%;
   background-color: var(--blue-background-overlight);
 
-  --offset: -16px;
+  --offset: calc(-16px - var(--unread-offset));
 }
 
 .message:not(.isLoading).isUnread.out .message_bubble::before {
@@ -407,21 +421,21 @@ export default {
 
 .message.isUnread.out.isDisappearing .message_bubble::before,
 .message.isUnread:not(.out).isDisappearing .message_bubble::after {
-  --offset: -47px;
+  --offset: calc(-47px - var(--unread-offset));
 }
 
 /* 2. hhч */
 
 .message.isUnread.out.isDisappearing.expireHours .message_bubble::before,
 .message.isUnread:not(.out).isDisappearing.expireHours .message_bubble::after {
-  --offset: -34px;
+  --offset: calc(-34px - var(--unread-offset));
 }
 
 /* 3. icon */
 
 .message.isUnread.out.isDisappearing.expireIcon .message_bubble::before,
 .message.isUnread:not(.out).isDisappearing.expireIcon .message_bubble::after {
-  --offset: -32px;
+  --offset: calc(-32px - var(--unread-offset));
 }
 
 /* Select mark ========================================= */

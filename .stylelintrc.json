@@ -9,6 +9,7 @@
     "declaration-colon-newline-after": null,
     "no-descending-specificity": null,
     "comment-empty-line-before": null,
+    "length-zero-no-unit": null,
     "number-leading-zero": "never",
     "indentation": [2, {
       "ignore": ["value"]
