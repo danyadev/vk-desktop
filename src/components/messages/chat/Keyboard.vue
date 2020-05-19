@@ -5,6 +5,7 @@
         v-for="{ action, color } of line"
         :key="action"
         :color="
+          // vkpay приходит с цветом default, однако в приложении имеет синий цвет
           ['default', 'secondary'].includes(color) && action.type !== 'vkpay'
             ? 'rgba(0, 0, 0, .08)'
             : 'rgba(0, 0, 0, .15)'
@@ -112,10 +113,11 @@ export default {
 }
 
 .message_bubble .keyboard.inline {
-  padding: 10px 0 3px 0;
+  padding: 8px 0 0 0;
   /* Нужно для того, чтобы время у сообщения (если оно не вмещается после текста) не отнимало */
   /* место у клавиатуры */
-  width: 100%;
+  width: calc(100% + 3px * 2);
+  margin-left: -3px;
 }
 
 .keyboard_line {
@@ -155,7 +157,7 @@ export default {
 
 .keyboard_button.default,
 .keyboard_button.secondary {
-  background: #0034691f;
+  background: #004a961f;
   color: #45586f;
 }
 
