@@ -85,7 +85,7 @@ import electron from 'electron';
 import { throttle, escape } from 'js/utils';
 import getTranslate from 'js/getTranslate';
 import sendMessage from 'js/sendMessage';
-import emoji from 'js/emoji';
+import emoji, { isEmoji } from 'js/emoji';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
@@ -145,8 +145,13 @@ export default {
       }
     }
 
-    function paste() {
-      const text = escape(electron.remote.clipboard.readText()).replace(/\n/g, '<br>');
+    function paste(pasteText) {
+      const text = escape(
+        typeof pasteText === 'string'
+          ? pasteText
+          : electron.remote.clipboard.readText()
+      ).replace(/\n/g, '<br>');
+
       document.execCommand('insertHTML', false, emoji(text));
     }
 
@@ -165,7 +170,16 @@ export default {
       }
     }
 
-    const onInput = throttle((event) => {
+    function onInput(event) {
+      if (isEmoji(event.data)) {
+        event.preventDefault();
+        paste(event.data);
+      }
+
+      sendTyping(event);
+    }
+
+    const sendTyping = throttle((event) => {
       if (event.data && store.getters['settings/settings'].typing && props.peer_id !== 100) {
         vkapi('messages.setActivity', {
           peer_id: props.peer_id,
