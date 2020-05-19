@@ -1,21 +1,26 @@
 <template>
-  <div
-    v-if="isAnimation"
-    v-show="isAnimationLoaded"
-    ref="container"
-    class="attach_sticker"
-    @mousemove="startAnimation"
-  ></div>
+  <div class="attach_sticker">
+    <div
+      v-if="isAnimation"
+      ref="transparent"
+      class="attach_sticker_transparent"
+      @mouseover="onMouseOver"
+    />
 
-  <img
-    v-if="!isAnimationLoaded"
-    class="attach_sticker"
-    :src="image"
-    loading="lazy"
-    width="128"
-    height="128"
-    @mousemove.once="isAnimation && startAnimation()"
-  >
+    <div
+      v-if="isAnimation"
+      v-show="isAnimationLoaded"
+      ref="container"
+    />
+
+    <img
+      v-if="!isAnimationLoaded"
+      :src="image"
+      loading="lazy"
+      width="128"
+      height="128"
+    >
+  </div>
 </template>
 
 <script>
@@ -30,57 +35,82 @@ export default {
     const image = sticker.images[devicePixelRatio > 1 ? 2 : 1].url;
     const { animation_url } = sticker;
 
+    const transparent = ref(null);
     const container = ref(null);
     const isAnimationLoaded = ref(false);
-    let firstAnimationStarted = false;
     let animation;
+    let isHovered = true; // первая проверка будет когда мышь уже наведена
 
-    function startAnimation() {
-      if (!firstAnimationStarted) {
-        firstAnimationStarted = true;
+    function initAnimation() {
+      animation = lottie.loadAnimation({
+        container: container.value,
+        path: animation_url,
+        renderer: 'svg',
+        autoplay: false,
+        loop: false,
 
-        animation = lottie.loadAnimation({
-          container: container.value,
-          path: animation_url,
-          renderer: 'svg',
-          autoplay: false,
-          loop: false,
+        rendererSettings: {
+          progressiveLoad: true
+        }
+      });
 
-          rendererSettings: {
-            progressiveLoad: true
-          }
+      animation.addEventListener('data_ready', () => {
+        requestIdleCallback(() => {
+          isAnimationLoaded.value = true;
+          animation.play();
         });
+      });
 
-        animation.addEventListener('data_ready', () => {
-          requestIdleCallback(() => {
-            isAnimationLoaded.value = true;
-            animation.play();
-          });
-        });
-
-        animation.addEventListener('complete', () => {
+      // Приходит после завершения анимации
+      animation.addEventListener('complete', () => {
+        if (isHovered) {
+          animation.goToAndPlay(0);
+        } else {
           animation.goToAndStop(0);
-        });
-      } else if (animation.isPaused) {
+        }
+      });
+    }
+
+    function onMouseOver() {
+      transparent.value.addEventListener('mouseout', onMouseOut);
+      isHovered = true;
+
+      if (!animation && animation_url) {
+        initAnimation();
+      }
+
+      if (isAnimationLoaded.value && animation.isPaused) {
         animation.goToAndPlay(0);
       }
     }
 
+    function onMouseOut() {
+      transparent.value.removeEventListener('mouseout', onMouseOut);
+      isHovered = false;
+    }
+
     return {
+      transparent,
       container,
       image,
       isAnimation: !!animation_url,
       isAnimationLoaded,
-      startAnimation
+      initAnimation,
+      onMouseOver
     };
   }
 };
 </script>
 
 <style>
-.attach_sticker {
+.attach_sticker > * {
   vertical-align: middle;
   width: 128px;
   height: 128px;
+}
+
+.attach_sticker_transparent {
+  position: absolute;
+  z-index: 1;
 }
 </style>
