@@ -28,42 +28,44 @@
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseUp">
-          <Reply
-            v-if="msg.hasReplyMsg"
-            :peer_id="peer_id"
-            :msg="msg.replyMsg"
-            :ownerMsgId="msg.id"
-          />
+          <div class="message_bubble_content">
+            <Reply
+              v-if="msg.hasReplyMsg"
+              :peer_id="peer_id"
+              :msg="msg.replyMsg"
+              :ownerMsgId="msg.id"
+            />
 
-          <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">
-            {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
+            <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">
+              {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
+            </div>
+            <div v-else class="message_text">
+              <VKText :inline="false" link mention>{{ msg.text }}</VKText>
+            </div>
+
+            <Attachments :msg="msg" />
+
+            <Forwarded
+              v-if="msg.fwdCount"
+              ref="forwarded"
+              :peer_id="peer_id"
+              :msg="msg"
+              :isCustomView="isCustomView"
+              :fwdDepth="1"
+            />
+
+            <div class="message_time_wrap">
+              <template v-if="msg.editTime">
+                <div class="message_edited">{{ l('im_msg_edited') }}</div>
+                <div class="message_dot"></div>
+              </template>
+
+              <div class="message_time">{{ time }}</div>
+            </div>
           </div>
-          <div v-else class="message_text">
-            <VKText :inline="false" link mention>{{ msg.text }}</VKText>
-          </div>
 
-          <Attachments :msg="msg" />
-
-          <Forwarded
-            v-if="msg.fwdCount"
-            ref="forwarded"
-            :peer_id="peer_id"
-            :msg="msg"
-            :isCustomView="isCustomView"
-            :fwdDepth="1"
-          />
-
-          <div class="message_time_wrap">
-            <template v-if="msg.editTime">
-              <div class="message_edited">{{ l('im_msg_edited') }}</div>
-              <div class="message_dot"></div>
-            </template>
-
-            <div class="message_time">{{ time }}</div>
-          </div>
+          <Keyboard v-if="msg.keyboard" :peer_id="peer_id" :keyboard="msg.keyboard" />
         </div>
-
-        <Keyboard v-if="msg.keyboard" :peer_id="peer_id" :keyboard="msg.keyboard" />
 
         <MessageExpireTime
           v-if="!msg.out && msg.expireTtl"

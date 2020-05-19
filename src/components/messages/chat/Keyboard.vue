@@ -29,7 +29,6 @@
 
         <template v-else-if="action.type === 'open_link'">
           <div class="keyboard_service_key"><VKText>{{ action.label }}</VKText></div>
-          <img src="~assets/link.svg" class="keyboard_link_icon">
         </template>
 
         <div v-else>{{ l('keyboard_button_not_supported') }}</div>
@@ -107,8 +106,16 @@ export default {
   user-select: none;
 }
 
+/* Отображается в карусели */
 .keyboard.inline {
-  padding: 6px 0 0 0;
+  padding: 0;
+}
+
+.message_bubble .keyboard.inline {
+  padding: 10px 0 3px 0;
+  /* Нужно для того, чтобы время у сообщения (если оно не вмещается после текста) не отнимало */
+  /* место у клавиатуры */
+  width: 100%;
 }
 
 .keyboard_line {
@@ -139,6 +146,7 @@ export default {
 
 .keyboard.inline .keyboard_button {
   margin: 0;
+  border-radius: 10px;
 }
 
 .keyboard.inline .keyboard_button:not(:last-child) {
@@ -147,7 +155,7 @@ export default {
 
 .keyboard_button.default,
 .keyboard_button.secondary {
-  background: #0039731a;
+  background: #0034691f;
   color: #45586f;
 }
 
@@ -173,10 +181,5 @@ export default {
 
 .keyboard_services_icon {
   margin-right: 5px;
-}
-
-.keyboard_link_icon {
-  margin-left: 1px;
-  width: 20px;
 }
 </style>
