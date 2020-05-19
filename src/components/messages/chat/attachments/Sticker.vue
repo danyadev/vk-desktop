@@ -14,12 +14,12 @@
     loading="lazy"
     width="128"
     height="128"
-    @mouseover.once="isStickerHovered = true"
+    @mousemove.once="isAnimation && startAnimation()"
   >
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import lottie from 'lottie-web';
 
 export default {
@@ -28,45 +28,49 @@ export default {
   setup(props) {
     const [sticker] = props.attach;
     const image = sticker.images[devicePixelRatio > 1 ? 2 : 1].url;
-
-    let animation;
     const { animation_url } = sticker;
+
     const container = ref(null);
     const isAnimationLoaded = ref(false);
-    const isStickerHovered = ref(false);
+    let firstAnimationStarted = false;
+    let animation;
 
-    if (animation_url) {
-      onMounted(() => {
+    function startAnimation() {
+      if (!firstAnimationStarted) {
+        firstAnimationStarted = true;
+
         animation = lottie.loadAnimation({
           container: container.value,
           path: animation_url,
           renderer: 'svg',
           autoplay: false,
-          loop: false
+          loop: false,
+
+          rendererSettings: {
+            progressiveLoad: true
+          }
         });
 
         animation.addEventListener('data_ready', () => {
-          isAnimationLoaded.value = true;
-
-          if (isStickerHovered.value) {
+          requestIdleCallback(() => {
+            isAnimationLoaded.value = true;
             animation.play();
-          }
+          });
         });
-      });
-    }
 
-    function startAnimation() {
-      if (animation.isPaused) {
+        animation.addEventListener('complete', () => {
+          animation.goToAndStop(0);
+        });
+      } else if (animation.isPaused) {
         animation.goToAndPlay(0);
       }
     }
 
     return {
+      container,
       image,
       isAnimation: !!animation_url,
       isAnimationLoaded,
-      isStickerHovered,
-      container,
       startAnimation
     };
   }
