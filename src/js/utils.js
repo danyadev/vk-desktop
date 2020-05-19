@@ -143,30 +143,29 @@ export function createQueueManager(fn) {
 // Пример:
 // const parser = createParser({
 //   regexp: /element/g,
-//   parseText: (value, customType) => [{ type: 'text', value }],
-//   parseElement: (value, match, customType) => [{ type: customType, value }]
+//   parseText: (value, ...args) => [{ type: 'text', value }],
+//   parseElement: (value, match, ...args) => [{ type: 'el', value }]
 // });
-// const result = parser('text element', 'myType');
-// result = [{ type: 'text', value: 'text ' }, { type: 'myType', value: 'element' }];
+// const result = parser('text element', 'arg1', 'arg2');
+// result = [{ type: 'text', value: 'text ' }, { type: 'el', value: 'element' }];
 export function createParser({ regexp, parseText, parseElement }) {
   return function(text, ...args) {
     const blocks = [];
-    let match;
     let offset = 0;
 
-    while ((match = regexp.exec(text))) {
-      const len = match[0].length;
+    for (const match of text.matchAll(regexp)) {
+      const { 0: result, index } = match;
 
-      if (offset !== match.index) {
-        blocks.push(...parseText(text.slice(offset, match.index), ...args));
+      if (index !== offset) {
+        blocks.push(...parseText(text.slice(offset, index), ...args));
       }
 
-      offset = match.index + len;
+      blocks.push(...parseElement(result, match, ...args));
 
-      blocks.push(...parseElement(text.slice(match.index, offset), match, ...args));
+      offset = index + result.length;
     }
 
-    if (offset !== text.length) {
+    if (text.length !== offset) {
       blocks.push(...parseText(text.slice(offset, text.length), ...args));
     }
 

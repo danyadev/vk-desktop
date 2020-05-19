@@ -112,7 +112,7 @@ const linkParser = createParser({
         value: decodedUri.replace(/(.{55}).+/, '$1..'),
         link: (match[2] ? '' : 'http://') + value
       },
-      ...(textAfterLink ? [{ type: 'text', value: textAfterLink }] : [])
+      ...(textAfterLink ? linkParser(textAfterLink) : [])
     ];
   }
 });
