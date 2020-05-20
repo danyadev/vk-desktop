@@ -8,6 +8,8 @@ import MessagesChatEmpty from '../components/messages/MessagesChatEmpty.vue';
 import MessagesChat from '../components/messages/MessagesChat.vue';
 import MessagesChatForward from '../components/messages/MessagesChatForward.vue';
 
+import Audio from '../components/audio/Audio.vue';
+
 export default createRouter({
   history: createMemoryHistory(),
   routes: [
@@ -40,6 +42,11 @@ export default createRouter({
           component: MessagesChatForward
         }
       ]
+    },
+
+    {
+      path: '/audio',
+      component: Audio
     }
   ]
 });

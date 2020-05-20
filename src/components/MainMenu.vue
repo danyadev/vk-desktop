@@ -85,7 +85,7 @@ export default {
       user: computed(() => store.getters['users/user']),
 
       routes: computed(() => {
-        return ['messages'].map((route) => ({
+        return ['messages', 'audio'].map((route) => ({
           route,
           active: isActiveRoute(`/${route}`)
         }));

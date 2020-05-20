@@ -45,6 +45,7 @@ export default {
 
   menu: {
     messages: 'Сообщения',
+    audio: 'Аудиозаписи',
     settings: 'Настройки'
   },
 
