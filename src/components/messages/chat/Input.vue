@@ -37,6 +37,7 @@
             @drop.prevent
             @paste.prevent="paste"
             @keydown.enter.exact.prevent="send"
+            @mousedown="setCaretForEmoji"
           ></div>
 
           <Icon
@@ -215,6 +216,21 @@ export default {
       }).catch(() => {});
     }, 4000);
 
+    function setCaretForEmoji(event) {
+      if (event.target.tagName !== 'IMG') {
+        return;
+      }
+
+      const range = new Range();
+      const sel = window.getSelection();
+
+      range.selectNode(event.target);
+      range.collapse(event.offsetX <= 8);
+
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
     function closeReply() {
       store.commit('messages/removeRepliedMessage', props.peer_id);
       store.state.messages.forwardedMessages[props.peer_id] = [];
@@ -245,6 +261,7 @@ export default {
       paste,
       send,
       onInput,
+      setCaretForEmoji,
       closeReply,
       openFwdMessages
     };
