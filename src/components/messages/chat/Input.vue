@@ -170,22 +170,49 @@ export default {
       }
     }
 
+    function preventInputEvent(event) {
+      const range = new Range();
+      const sel = window.getSelection();
+
+      const node = [...state.input.childNodes].find((el) => el === sel.anchorNode);
+      const emojiIndex = node.data.indexOf(event.data);
+
+      range.setStart(node, emojiIndex);
+      range.setEnd(node, emojiIndex + event.data.length);
+
+      if (!sel.isCollapsed) {
+        // Удаляем уже выделенный ранее текст
+        document.execCommand('delete');
+      }
+
+      // Создаем свое выделение
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      // Удаляем выделенный текст
+      document.execCommand('delete');
+    }
+
     function onInput(event) {
+      if (!event.data) {
+        return;
+      }
+
       if (isEmoji(event.data)) {
-        event.preventDefault();
+        preventInputEvent(event);
         paste(event.data);
       }
 
-      sendTyping(event);
+      if (store.getters['settings/settings'].typing && props.peer_id !== 100) {
+        sendTyping();
+      }
     }
 
-    const sendTyping = throttle((event) => {
-      if (event.data && store.getters['settings/settings'].typing && props.peer_id !== 100) {
-        vkapi('messages.setActivity', {
-          peer_id: props.peer_id,
-          type: 'typing'
-        }).catch(() => {});
-      }
+    const sendTyping = throttle(() => {
+      vkapi('messages.setActivity', {
+        peer_id: props.peer_id,
+        type: 'typing'
+      }).catch(() => {});
     }, 4000);
 
     function closeReply() {
