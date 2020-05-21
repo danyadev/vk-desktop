@@ -11,11 +11,11 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
       with:
-        node-version: 12.14.1
+        node-version: 12.16.3
     - name: Install dependencies
-      run: npm i
+      run: yarn
     - name: Package electron app and create installer
-      run: npm run build
+      run: yarn build
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload VK-Desktop.dmg
@@ -32,13 +32,13 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
       with:
-        node-version: 12.14.1
+        node-version: 12.16.3
     - name: Install dependencies
-      run: npm i
+      run: yarn
     - name: Build Electron app
-      run: npm run build
+      run: yarn build
     - name: Create installer
-      run: npm run win-setup
+      run: yarn win-setup
     - name: Upload release files
       uses: danyadev/upload-to-release@master
       with:
@@ -54,11 +54,11 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
       with:
-        node-version: 12.14.1
+        node-version: 12.16.3
     - name: Install dependencies
-      run: npm i
+      run: yarn
     - name: Build Electron app
-      run: npm run build
+      run: yarn build
     - name: Upload release files
       uses: danyadev/upload-to-release@master
       with:
