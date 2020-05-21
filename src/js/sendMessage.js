@@ -49,7 +49,7 @@ export default async function sendMessage({
   }
 
   if (!message && (!fwdMessages.length || reply_to)) {
-    return;
+    return false;
   }
 
   if (input) {

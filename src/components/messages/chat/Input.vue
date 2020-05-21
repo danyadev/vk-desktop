@@ -156,17 +156,21 @@ export default {
       document.execCommand('insertHTML', false, emoji(text));
     }
 
-    function send() {
+    async function send() {
       const reply_to = state.repliedMsg && state.repliedMsg.id;
 
-      sendMessage({
+      // Функция не ждет отсылки сообщения через API.
+      // Асинхронная функция потому, что там вызывается await nextTick();
+      // isSended означает, что сообщение содержит необходимую для отправки информацию
+      // и можно очищать поле ввода и удалять весь вложенный в инпут контент
+      const isSended = await sendMessage({
         peer_id: props.peer_id,
         input: state.input,
         reply_to,
         fwdMessages: state.fwdMessages
       });
 
-      if (reply_to || state.fwdMessages.length) {
+      if (isSended && (reply_to || state.fwdMessages.length)) {
         closeReply();
       }
     }
