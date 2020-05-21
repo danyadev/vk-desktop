@@ -1,7 +1,7 @@
 [Setup]
 AppId=VKDesktop
 AppName=VK Desktop
-AppVersion=0.3.0-alpha.3
+AppVersion=0.3.0-alpha.4
 AppPublisher=danyadev
 AppPublisherURL=https://vk.com/danyadev
 AppSupportURL=https://vk.com/vk_desktop_app
