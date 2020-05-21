@@ -452,6 +452,7 @@ export default {
   border-radius: 18px;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 /* Ограничение ширины сообщения со стикером ============ */

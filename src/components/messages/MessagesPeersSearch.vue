@@ -22,7 +22,7 @@
       :lock="lockScroll"
       @scroll="onScroll"
     >
-      <div v-if="!text" class="im_search_placeholder">
+      <div v-if="!text && !conversations.length && !messages.length" class="im_search_placeholder">
         {{ l('im_search_placeholder') }}
       </div>
 
@@ -35,7 +35,12 @@
 
       <div v-if="conversations.length">
         <div class="im_search_subheader">{{ l('im_search_dialogs') }}</div>
-        <MessagesProfile v-for="peer of conversations" :key="peer.id" :peer="peer" />
+        <MessagesProfile
+          v-for="peer of conversations"
+          :key="peer.id"
+          :peer="peer"
+          @close="$emit('close')"
+        />
       </div>
 
       <div v-if="conversations.length && messages.length" class="im_search_separator"></div>
@@ -60,6 +65,7 @@ import { debounce, endScroll, fields, concatProfiles, createQueueManager } from 
 import { parseConversation, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
+import router from 'js/router';
 
 import HeaderButton from '../HeaderButton.vue';
 import Icon from '../UI/Icon.vue';
@@ -90,7 +96,7 @@ export default {
       messages: []
     });
 
-    const load = createQueueManager(async ({ beforeLoad } = {}) => {
+    const searchPeersAndMessages = createQueueManager(async (beforeLoad) => {
       if (beforeLoad) {
         beforeLoad();
       }
@@ -153,14 +159,40 @@ export default {
       }
     });
 
+    const searchOnlyPeers = createQueueManager(async (beforeLoad) => {
+      if (beforeLoad) {
+        beforeLoad();
+      }
+
+      if (!state.text) {
+        return;
+      }
+
+      state.loading = true;
+
+      const { items, profiles, groups } = await vkapi('messages.searchConversations', {
+        q: state.text,
+        count: 50,
+        extended: 1,
+        fields
+      });
+
+      store.commit('addProfiles', concatProfiles(profiles, groups));
+      state.conversations = items.map(parseConversation);
+      state.loading = false;
+      state.loaded = true;
+    });
+
+    const search = router.currentRoute.value.name === 'forward-to'
+      ? searchOnlyPeers
+      : searchPeersAndMessages;
+
     watch(() => state.text, debounce(() => {
-      load({
-        beforeLoad() {
-          state.loaded = false;
-          state.offset = 0;
-          state.conversations = [];
-          state.messages = [];
-        }
+      search(() => {
+        state.loaded = false;
+        state.offset = 0;
+        state.conversations = [];
+        state.messages = [];
       });
     }, 500));
 
@@ -170,7 +202,7 @@ export default {
 
     const onScroll = endScroll(() => {
       if (!state.loading && !state.loaded) {
-        load();
+        search();
       }
     });
 

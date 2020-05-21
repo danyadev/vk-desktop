@@ -1,5 +1,9 @@
 <template>
-  <Ripple color="var(--messages-peer-ripple)" class="im_peer im_peer_profile" @click="openChat">
+  <Ripple
+    color="var(--messages-peer-ripple)"
+    :class="['im_peer im_peer_profile', { im_peer_locked: isForwardTo && peer.isChannel }]"
+    @click="openChat"
+  >
     <img
       :src="photo"
       class="im_peer_photo"
@@ -45,8 +49,9 @@ export default {
     Icon
   },
 
-  setup(props) {
+  setup(props, { emit }) {
     const state = reactive({
+      isForwardTo: computed(() => router.currentRoute.value.name === 'forward-to'),
       isChat: computed(() => props.peer.id > 2e9),
       profiles: computed(() => store.state.profiles),
       owner: computed(() => state.profiles[props.peer.id]),
@@ -58,6 +63,20 @@ export default {
     });
 
     function openChat() {
+      if (state.isForwardTo) {
+        if (props.peer.isChannel) {
+          return;
+        }
+
+        store.state.messages.forwardedMessages[props.peer.id] = (
+          store.state.messages.tmpForwardingMessages
+        );
+
+        store.state.messages.tmpForwardingMessages = [];
+
+        emit('close');
+      }
+
       router.replace(`/messages/${props.peer.id}`);
     }
 

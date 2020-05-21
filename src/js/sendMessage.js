@@ -48,7 +48,7 @@ export default async function sendMessage({
     message = parseInputText(input.childNodes);
   }
 
-  if (!message) {
+  if (!message && (!fwdMessages.length || reply_to)) {
     return;
   }
 
@@ -118,4 +118,6 @@ export default async function sendMessage({
       });
     }
   });
+
+  return true;
 }

@@ -1,7 +1,7 @@
 <template>
   <Ripple
     color="var(--messages-peer-ripple)"
-    class="im_peer"
+    :class="['im_peer', { im_peer_locked: route.name === 'forward-to' && peer.isChannel }]"
     data-context-menu="peer"
     :data-peer-id="peer.id"
     @click="openChat"
@@ -145,6 +145,10 @@ export default {
     });
 
     async function openChat() {
+      if (state.route.name === 'forward-to' && props.peer.isChannel) {
+        return;
+      }
+
       const { activeChat, fromSearch } = props;
       const peer_id = props.peer.id;
       const isCurrentChat = activeChat === peer_id;
@@ -166,6 +170,7 @@ export default {
         store.state.messages.forwardedMessages[peer_id] = (
           store.state.messages.tmpForwardingMessages
         );
+
         store.state.messages.tmpForwardingMessages = [];
       }
 
@@ -203,9 +208,14 @@ export default {
   transition: background-color .3s;
 }
 
-.im_peer:hover {
+.im_peer:not(.im_peer_locked):hover {
   background: var(--messages-peer-hover);
   cursor: pointer;
+}
+
+.im_peer_locked {
+  background: rgba(0, 0, 0, .08);
+  pointer-events: none;
 }
 
 .im_peer_photo {

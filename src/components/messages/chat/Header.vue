@@ -75,7 +75,7 @@
           />
 
           <Icon
-            v-if="selectedMessages.length && peer.isWriteAllowed"
+            v-if="selectedMessages.length"
             name="forward"
             color="var(--blue-background-text)"
             data-tooltip="im_forward_messages"
