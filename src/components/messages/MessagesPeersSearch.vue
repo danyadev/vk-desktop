@@ -178,7 +178,7 @@ export default {
       });
 
       store.commit('addProfiles', concatProfiles(profiles, groups));
-      state.conversations = items.map(parseConversation);
+      state.conversations = items.map(parseConversation).filter((peer) => peer.isWriteAllowed);
       state.loading = false;
       state.loaded = true;
     });

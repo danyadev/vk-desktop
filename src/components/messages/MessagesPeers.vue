@@ -75,6 +75,7 @@ export default {
   setup() {
     const state = reactive({
       route: router.currentRoute,
+      isForwardTo: computed(() => state.route.name === 'forward-to'),
 
       loading: true,
       loaded: computed({
@@ -92,10 +93,11 @@ export default {
       peersLists: computed(() => ({
         pinned: state.settings.pinnedPeers
           .map((id) => store.state.messages.conversations[id])
-          .filter(Boolean),
+          .filter(({ peer }) => peer && !(state.isForwardTo && !peer.isWriteAllowed)),
 
         unpinned: state.peersList.filter(({ peer }) => {
-          return !state.settings.pinnedPeers.includes(peer.id);
+          const isHidden = state.isForwardTo && !peer.isWriteAllowed;
+          return !state.settings.pinnedPeers.includes(peer.id) && !isHidden;
         })
       }))
     });

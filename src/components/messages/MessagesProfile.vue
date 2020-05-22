@@ -1,7 +1,7 @@
 <template>
   <Ripple
     color="var(--messages-peer-ripple)"
-    :class="['im_peer im_peer_profile', { im_peer_locked: isForwardTo && peer.isChannel }]"
+    class="im_peer im_peer_profile"
     @click="openChat"
   >
     <img

@@ -1,7 +1,7 @@
 <template>
   <Ripple
     color="var(--messages-peer-ripple)"
-    :class="['im_peer', { im_peer_locked: isPeerLocked }]"
+    class="im_peer"
     data-context-menu="peer"
     :data-peer-id="peer.id"
     @click="openChat"
@@ -98,7 +98,6 @@ export default {
     const state = reactive({
       route: router.currentRoute,
 
-      isPeerLocked: computed(() => state.route.name === 'forward-to' && props.peer.isChannel),
       isChat: props.peer.id > 2e9,
       profiles: computed(() => store.state.profiles),
       owner: computed(() => state.profiles[props.peer.id]),
@@ -146,10 +145,6 @@ export default {
     });
 
     async function openChat() {
-      if (state.isPeerLocked) {
-        return;
-      }
-
       const { activeChat, fromSearch } = props;
       const peer_id = props.peer.id;
       const isCurrentChat = activeChat === peer_id;
@@ -209,14 +204,9 @@ export default {
   transition: background-color .3s;
 }
 
-.im_peer:not(.im_peer_locked):hover {
+.im_peer:hover {
   background: var(--messages-peer-hover);
   cursor: pointer;
-}
-
-.im_peer_locked {
-  background: rgba(0, 0, 0, .08);
-  pointer-events: none;
 }
 
 .im_peer_photo {
