@@ -97,7 +97,8 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs } from 'vue';
+import { reactive, computed, toRefs, nextTick } from 'vue';
+import { eventBus } from 'js/utils';
 import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/messages';
 import { openModal } from 'js/modals';
 import store from 'js/store';
@@ -154,11 +155,20 @@ export default {
       store.commit('messages/removeSelectedMessages');
     }
 
+    function scrollToEnd() {
+      eventBus.emit('messages:event', 'jump', {
+        peer_id: props.peer_id,
+        bottom: true
+      });
+    }
+
     function forward(toThisChat) {
       if (toThisChat === true) {
         store.state.messages.forwardedMessages[props.peer_id] = (
           state.selectedMessages.map(getMessage)
         );
+
+        nextTick().then(scrollToEnd);
       } else {
         store.state.messages.tmpForwardingMessages = state.selectedMessages.map(getMessage);
         router.replace({
@@ -173,7 +183,7 @@ export default {
       cancelSelect();
     }
 
-    function reply() {
+    async function reply() {
       if (state.selectedMessages.length === 1) {
         store.commit('messages/addRepliedMessage', {
           peer_id: props.peer_id,
@@ -182,6 +192,9 @@ export default {
 
         store.state.messages.forwardedMessages[props.peer_id] = [];
         cancelSelect();
+
+        await nextTick();
+        scrollToEnd();
       } else {
         forward(true);
       }

@@ -42,8 +42,9 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs } from 'vue';
+import { reactive, computed, toRefs, nextTick } from 'vue';
 import electron from 'electron';
+import { eventBus } from 'js/utils';
 import { openModal } from 'js/modals';
 import { addSnackbar } from 'js/snackbars';
 import getTranslate from 'js/getTranslate';
@@ -90,11 +91,17 @@ export default {
       });
     }
 
-    function reply() {
+    async function reply() {
       store.state.messages.forwardedMessages[peer_id] = [];
       store.commit('messages/addRepliedMessage', {
         peer_id,
         msg: state.msg
+      });
+
+      await nextTick();
+      eventBus.emit('messages:event', 'jump', {
+        peer_id,
+        bottom: true
       });
     }
 
