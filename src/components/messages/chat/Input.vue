@@ -252,8 +252,11 @@ export default {
       state.input && state.input.focus();
     });
 
-    watch([() => state.repliedMsg, () => state.fwdMessages], (msg) => {
-      if (Array.isArray(msg) && msg.length || msg) {
+    watch([() => state.repliedMsg, () => state.fwdMessages], ([msg, fwd], [prevMsg, prevFwd]) => {
+      if (
+        msg !== prevMsg && msg ||
+        fwd !== prevFwd && fwd.length
+      ) {
         state.input.focus();
       }
     });
