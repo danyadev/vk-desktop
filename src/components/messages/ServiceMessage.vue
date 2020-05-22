@@ -1,9 +1,9 @@
 <script>
-import { h, computed, Fragment } from 'vue';
-import { loadConversationMembers, loadedConversationMembers } from 'js/messages';
+import { h, Fragment } from 'vue';
 import { loadProfile, createParser } from 'js/utils';
-import getTranslate from 'js/getTranslate';
+import { loadConversationMembers, loadedConversationMembers } from 'js/messages';
 import store from 'js/store';
+import getTranslate from 'js/getTranslate';
 
 import VKText from '../UI/VKText.vue';
 
@@ -11,16 +11,12 @@ export default {
   props: ['msg', 'author', 'peer_id', 'isFull'],
 
   setup(props) {
-    const serviceMessage = computed(() => {
-      return getServiceMessage(
-        props.msg,
-        props.author || { id: props.msg.from },
-        props.peer_id,
-        props.isFull
-      );
-    });
-
-    return () => serviceMessage.value;
+    return () => getServiceMessage(
+      props.msg,
+      props.author || { id: props.msg.from },
+      props.peer_id,
+      props.isFull
+    );
   }
 };
 
@@ -29,9 +25,11 @@ const translateParser = createParser({
   parseText: (value) => [value],
   parseElement(value, match, replaces) {
     const id = match[1];
+    const text = replaces[id];
+
     return [
-      h('b', [
-        h(VKText, () => [replaces[id]])
+      h('b', { key: text }, [
+        h(VKText, () => [text])
       ])
     ];
   }

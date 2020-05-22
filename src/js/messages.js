@@ -251,6 +251,8 @@ export async function loadConversationMembers(id, force) {
     // здесь удаляется пометка беседы как загруженная для возможности повторить попытку
     if (err.error_code === 917) {
       loadedConversationMembers.delete(id);
+    } else {
+      throw err;
     }
   }
 }
