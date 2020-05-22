@@ -9,8 +9,8 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import { eventBus } from 'js/utils';
-import router from 'js/router';
 import store from 'js/store';
+import router from 'js/router';
 
 import MessagesPeers from './MessagesPeers.vue';
 

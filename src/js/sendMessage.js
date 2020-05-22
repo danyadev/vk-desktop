@@ -1,7 +1,7 @@
 import { nextTick } from 'vue';
 import { random, eventBus } from './utils';
-import store from './store';
 import vkapi from './vkapi';
+import store from './store';
 
 let counter = 0;
 

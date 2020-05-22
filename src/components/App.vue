@@ -16,12 +16,12 @@
 
 <script>
 import { reactive, computed, onMounted, watch } from 'vue';
-import router from 'js/router';
-import store from 'js/store';
-import vkapi from 'js/vkapi';
-import request from 'js/request';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
+import vkapi from 'js/vkapi';
+import store from 'js/store';
+import router from 'js/router';
+import request from 'js/request';
 import longpoll from 'js/longpoll';
 import * as auth from './auth';
 
@@ -39,8 +39,8 @@ import TooltipsWrapper from './TooltipsWrapper.vue';
 window.vkapi = vkapi;
 window.store = store;
 window.router = router;
-window.longpoll = longpoll;
 window.request = request;
+window.longpoll = longpoll;
 window.auth = auth;
 
 export default {

@@ -1,8 +1,8 @@
 <script>
-import electron from 'electron';
 import { h, Fragment, computed } from 'vue';
-import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
+import electron from 'electron';
 import { createParser, unescape } from 'js/utils';
+import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
 import domains from 'js/json/domains.json';
 
 export default {

@@ -1,9 +1,9 @@
 import querystring from 'querystring';
 import { AndroidUserAgent, VKDesktopUserAgent, fields } from 'js/utils';
-import vkapi, { version } from 'js/vkapi';
-import request from 'js/request';
-import store from 'js/store';
 import { openModal, closeModal } from 'js/modals';
+import vkapi, { version } from 'js/vkapi';
+import store from 'js/store';
+import request from 'js/request';
 
 export function getAndroidToken(login, password, params = {}) {
   return new Promise(async (resolve) => {

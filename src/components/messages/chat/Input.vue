@@ -84,12 +84,12 @@
 import { reactive, computed, toRefs, onMounted, watch } from 'vue';
 import electron from 'electron';
 import { throttle, escape } from 'js/utils';
-import getTranslate from 'js/getTranslate';
-import sendMessage from 'js/sendMessage';
-import emoji, { isEmoji } from 'js/emoji';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
+import emoji, { isEmoji } from 'js/emoji';
+import getTranslate from 'js/getTranslate';
+import sendMessage from 'js/sendMessage';
 
 import Icon from '../../UI/Icon.vue';
 import Ripple from '../../UI/Ripple.vue';

@@ -1,9 +1,9 @@
 import querystring from 'querystring';
 import electron from 'electron';
 import { VKDesktopUserAgent, AndroidUserAgent } from './utils';
-import request from './request';
-import store from './store';
 import { openModal } from './modals';
+import store from './store';
+import request from './request';
 
 export const version = '5.126';
 

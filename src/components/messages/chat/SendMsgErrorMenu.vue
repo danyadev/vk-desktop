@@ -19,8 +19,8 @@
 
 <script>
 import { reactive, toRefs } from 'vue';
-import store from 'js/store';
 import vkapi from 'js/vkapi';
+import store from 'js/store';
 
 import Icon from '../../UI/Icon.vue';
 

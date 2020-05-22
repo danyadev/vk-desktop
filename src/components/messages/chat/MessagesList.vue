@@ -1,8 +1,8 @@
 <script>
 import { h, Fragment } from 'vue';
+import { capitalize } from 'js/utils';
 import { getDay } from 'js/date';
 import { isSameDay } from 'js/date/utils';
-import { capitalize } from 'js/utils';
 import store from 'js/store';
 
 import MessagesGroup from './MessagesGroup.vue';

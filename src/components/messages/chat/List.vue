@@ -63,8 +63,8 @@ import {
 } from 'js/utils';
 import { parseMessage, parseConversation } from 'js/messages';
 import { modalsState } from 'js/modals';
-import store from 'js/store';
 import vkapi from 'js/vkapi';
+import store from 'js/store';
 
 import Icon from '../../UI/Icon.vue';
 import Scrolly from '../../UI/Scrolly.vue';

@@ -60,9 +60,9 @@ import electron from 'electron';
 import { eventBus } from 'js/utils';
 import { openModal } from 'js/modals';
 import { addSnackbar } from 'js/snackbars';
-import getTranslate from 'js/getTranslate';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
+import getTranslate from 'js/getTranslate';
 
 import ContextMenu from './ContextMenu.vue';
 import Icon from '../UI/Icon.vue';

@@ -28,8 +28,8 @@
 
 <script>
 import { computed, reactive } from 'vue';
-import { getPeerTitle } from 'js/messages';
 import { getPhoto } from 'js/utils';
+import { getPeerTitle } from 'js/messages';
 import store from 'js/store';
 
 import Message from './Message.vue';

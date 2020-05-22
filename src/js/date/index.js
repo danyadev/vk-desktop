@@ -1,4 +1,3 @@
-import getTranslate from '../getTranslate';
 import {
   format,
   formatDistance,
@@ -9,6 +8,7 @@ import {
   differenceInHours,
   differenceInYears
 } from './utils';
+import getTranslate from '../getTranslate';
 
 export function getTime(date) {
   return format(date, 'hh:mm');

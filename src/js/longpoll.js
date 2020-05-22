@@ -1,9 +1,9 @@
 import querystring from 'querystring';
-import request from './request';
-import vkapi from './vkapi';
 import { concatProfiles, fields } from './utils';
 import { parseConversation, parseMessage, getLastMsgId } from './messages';
+import vkapi from './vkapi';
 import store from './store';
+import request from './request';
 import longpollEvents from './longpollEvents';
 
 class Longpoll {

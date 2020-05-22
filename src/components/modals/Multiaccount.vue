@@ -29,9 +29,9 @@
 
 <script>
 import { computed } from 'vue';
-import store from 'js/store';
-import { usersStorage } from 'js/store/Storage';
 import { openModal, closeModal } from 'js/modals';
+import { usersStorage } from 'js/store/Storage';
+import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 
 import ModalHeader from './ModalHeader.vue';

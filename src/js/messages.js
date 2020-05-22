@@ -1,8 +1,8 @@
 import { escape, getPhoto, fields, concatProfiles, capitalize, getAppName } from './utils';
 import { getLastOnlineDate } from './date';
-import getTranslate from './getTranslate';
-import store from './store';
 import vkapi from './vkapi';
+import store from './store';
+import getTranslate from './getTranslate';
 
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;

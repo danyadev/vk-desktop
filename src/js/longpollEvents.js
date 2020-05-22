@@ -1,3 +1,4 @@
+import { timer, eventBus } from './utils';
 import {
   parseMessage,
   parseConversation,
@@ -8,9 +9,8 @@ import {
 import {
   supportedAttachments
 } from '../components/messages/chat/attachments';
-import { timer, eventBus } from './utils';
-import store from './store';
 import vkapi from './vkapi';
+import store from './store';
 import router from './router';
 
 function hasFlag(mask) {

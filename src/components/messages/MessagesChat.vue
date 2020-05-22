@@ -27,8 +27,8 @@
 
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
-import { loadConversation, loadConversationMembers } from 'js/messages';
 import { eventBus } from 'js/utils';
+import { loadConversation, loadConversationMembers } from 'js/messages';
 import store from 'js/store';
 import router from 'js/router';
 

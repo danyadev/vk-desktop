@@ -70,12 +70,12 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { getMessagePreview, loadConversationMembers, getPeerAvatar, getPeerTitle } from 'js/messages';
 import { convertCount, eventBus } from 'js/utils';
+import { getMessagePreview, loadConversationMembers, getPeerAvatar, getPeerTitle } from 'js/messages';
 import { getShortDate } from 'js/date';
-import getTranslate from 'js/getTranslate';
 import store from 'js/store';
 import router from 'js/router';
+import getTranslate from 'js/getTranslate';
 
 import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';

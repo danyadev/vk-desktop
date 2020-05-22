@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import vkapi from 'js/vkapi';
 import { closeModal } from 'js/modals';
+import vkapi from 'js/vkapi';
 
 import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';

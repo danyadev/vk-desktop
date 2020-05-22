@@ -60,10 +60,10 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import router from 'js/router';
-import store from 'js/store';
 import { onTransitionEnd, convertCount } from 'js/utils';
 import { openModal } from 'js/modals';
+import store from 'js/store';
+import router from 'js/router';
 
 import Ripple from './UI/Ripple.vue';
 import Icon from './UI/Icon.vue';

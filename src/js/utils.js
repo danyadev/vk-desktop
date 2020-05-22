@@ -1,12 +1,12 @@
 import fs from 'fs';
-import path from 'path';
 import { EventEmitter } from 'events';
+import path from 'path';
 import electron from 'electron';
 import { version } from '../../package.json';
-import request from './request';
+import { usersStorage } from './store/Storage';
 import vkapi from './vkapi';
 import store from './store';
-import { usersStorage } from './store/Storage';
+import request from './request';
 import copyObject from './copyObject';
 
 // --- Переменные

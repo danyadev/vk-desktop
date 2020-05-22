@@ -1,10 +1,10 @@
 import { createApp } from 'vue';
 import electron from 'electron';
+import { debounce } from 'js/utils';
 import store from 'js/store';
 import router from 'js/router';
 import getTranslate from 'js/getTranslate';
 import shortcut from 'js/shortcut';
-import { debounce } from 'js/utils';
 
 import App from './components/App.vue';
 import ForwardedMessage from './components/messages/chat/attachments/ForwardedMessage.vue';

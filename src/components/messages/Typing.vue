@@ -12,8 +12,8 @@
 <script>
 import { computed } from 'vue';
 import { loadProfile } from 'js/utils';
-import getTranslate from 'js/getTranslate';
 import store from 'js/store';
+import getTranslate from 'js/getTranslate';
 
 export default {
   props: ['peer_id', 'isChat'],
