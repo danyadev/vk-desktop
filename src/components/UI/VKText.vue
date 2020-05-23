@@ -1,8 +1,9 @@
 <script>
-import { h, Fragment, computed } from 'vue';
+import { h, Fragment, computed, nextTick } from 'vue';
 import electron from 'electron';
 import { createParser, unescape } from 'js/utils';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
+import store from 'js/store';
 import domains from 'js/json/domains.json';
 
 export default {
@@ -12,7 +13,7 @@ export default {
       type: Boolean,
       default: true
     },
-    // Парсить ли ссылки
+    // Парсить ли ссылки и хештеги
     link: {
       type: Boolean
     },
@@ -27,36 +28,53 @@ export default {
     const text = computed(() => slots.default()[0].children);
 
     function parseBlock(block) {
-      const elements = [];
+      if (block.type === 'mention') {
+        if (props.mention) {
+          const mentionContent = block.value.reduce((blocks, mentionTextBlock) => {
+            return [...blocks, ...parseBlock(mentionTextBlock)];
+          }, []);
+
+          return mentionContent;
+        }
+
+        return [block.raw];
+      }
+
+      if (block.type === 'emoji') {
+        return [generateEmojiImageVNode(h, block.value)];
+      }
+
+      if (block.type === 'br') {
+        return [props.inline ? ' ' : h('br')];
+      }
 
       if (block.type === 'link' && props.link) {
-        elements.push(
+        return [
           h('div', {
             class: 'link',
             onClick: () => electron.shell.openItem(block.link)
           }, [block.value])
-        );
-      } else if (block.type === 'mention') {
-        if (props.mention) {
-          // TODO элемент, при наведении на который отображать информацию о юзере
-          const mentionContent = block.value.reduce((blocks, mentionTextBlock) => {
-            blocks.push(...parseBlock(mentionTextBlock));
-            return blocks;
-          }, []);
-
-          elements.push(...mentionContent);
-        } else {
-          elements.push(block.raw);
-        }
-      } else if (block.type === 'emoji') {
-        elements.push(generateEmojiImageVNode(h, block.value));
-      } else if (block.type === 'br') {
-        elements.push(props.inline ? ' ' : h('br'));
-      } else {
-        elements.push(block.value);
+        ];
       }
 
-      return elements;
+      if (block.type === 'hashtag' && props.link) {
+        return [
+          h('div', {
+            class: 'link',
+            async onClick() {
+              store.state.messages.isMessagesSearch = true;
+
+              await nextTick();
+
+              const input = document.querySelector('.im_chat_search_input');
+              input.value = block.value;
+              input.dispatchEvent(new Event('input'));
+            }
+          }, [block.value])
+        ];
+      }
+
+      return [block.value];
     }
 
     return () => h(
@@ -73,9 +91,15 @@ const mentionRE = /\[(club|id)(\d+)\|(.+?)\]/g;
 const linkRE =
   /(?!\.|-)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig;
 
+const hashtagParser = createParser({
+  regexp: /#[a-zа-яё0-9_]+/ig,
+  parseText: (value) => [{ type: 'text', value }],
+  parseElement: (value) => [{ type: 'hashtag', value }]
+});
+
 const linkParser = createParser({
   regexp: linkRE,
-  parseText: (value) => [{ type: 'text', value }],
+  parseText: hashtagParser,
   parseElement(value, match, isMention) {
     const { localhost, port, ip } = match.groups;
     const isValidIP = !ip || !ip.split('.').find((v) => v > 255);

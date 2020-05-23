@@ -334,10 +334,6 @@ export default {
   color: var(--text-dark-steel-gray);
 }
 
-.message_text .link {
-  display: inline;
-}
-
 /* Message time wrap =================================== */
 
 .message_time_wrap {

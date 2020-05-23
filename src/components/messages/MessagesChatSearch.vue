@@ -5,7 +5,7 @@
       <input
         ref="input"
         v-model="text"
-        class="im_search_input"
+        class="im_search_input im_chat_search_input"
         placeholder="Введите запрос..."
       >
       <Icon

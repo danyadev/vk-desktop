@@ -59,6 +59,7 @@ img:not(.emoji) {
 }
 
 .link {
+  display: inline;
   color: var(--text-blue);
   cursor: pointer;
 }
