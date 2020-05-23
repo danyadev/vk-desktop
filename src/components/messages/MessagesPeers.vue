@@ -93,7 +93,9 @@ export default {
       peersLists: computed(() => ({
         pinned: state.settings.pinnedPeers
           .map((id) => store.state.messages.conversations[id])
-          .filter(({ peer }) => peer && !(state.isForwardTo && !peer.isWriteAllowed)),
+          .filter((conversation) => (
+            conversation && !(state.isForwardTo && !conversation.peer.isWriteAllowed)
+          )),
 
         unpinned: state.peersList.filter(({ peer }) => {
           const isHidden = state.isForwardTo && !peer.isWriteAllowed;
