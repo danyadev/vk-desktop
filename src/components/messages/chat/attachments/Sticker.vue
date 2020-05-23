@@ -25,7 +25,7 @@
 
 <script>
 import { ref } from 'vue';
-import lottie from 'lottie-web';
+import lottie from 'lottie-web/build/player/lottie_light';
 
 export default {
   props: ['attach'],
