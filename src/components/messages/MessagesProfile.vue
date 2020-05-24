@@ -53,8 +53,7 @@ export default {
     const state = reactive({
       isForwardTo: computed(() => router.currentRoute.value.name === 'forward-to'),
       isChat: computed(() => props.peer.id > 2e9),
-      profiles: computed(() => store.state.profiles),
-      owner: computed(() => state.profiles[props.peer.id]),
+      owner: computed(() => store.state.profiles[props.peer.id]),
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),
       photo: computed(() => getPeerAvatar(props.peer.id, props.peer, state.owner)),
       chatName: computed(() => getPeerTitle(props.peer.id, props.peer, state.owner)),

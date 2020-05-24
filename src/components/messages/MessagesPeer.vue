@@ -99,9 +99,8 @@ export default {
       route: router.currentRoute,
 
       isChat: props.peer.id > 2e9,
-      profiles: computed(() => store.state.profiles),
-      owner: computed(() => state.profiles[props.peer.id]),
-      author: computed(() => state.profiles[props.msg.from]),
+      owner: computed(() => store.state.profiles[props.peer.id]),
+      author: computed(() => store.state.profiles[props.msg.from]),
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),
       message: computed(() => getMessagePreview(props.msg)),
       isAttachment: computed(() => !props.msg.text && !props.msg.action && props.msg.hasAttachment),
