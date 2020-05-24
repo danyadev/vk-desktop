@@ -160,6 +160,9 @@ export default {
         eventBus.emit('messages:event', 'closeChat', {
           peer_id: activeChat
         });
+
+        // TODO remove
+        await router.replace('/messages');
       }
 
       if (state.route.name === 'forward-to') {
