@@ -3,6 +3,7 @@ import { h, Fragment, computed, nextTick } from 'vue';
 import electron from 'electron';
 import { createParser, unescape, eventBus } from 'js/utils';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
+import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
 import domains from 'js/json/domains.json';
@@ -83,7 +84,7 @@ export default {
                 }
 
                 if (url.pathname.startsWith('/write')) {
-                  return openChat(+sel.slice(6));
+                  return openChat(+url.pathname.slice(6));
                 }
               }
 
@@ -115,7 +116,7 @@ export default {
                   const idMatch = domain.match(/(id|club)(\d+)$/);
 
                   if (idMatch) {
-                    return openChat(match[1] === 'id' ? +match[2] : -match[2]);
+                    return openChat(idMatch[1] === 'id' ? +idMatch[2] : -idMatch[2]);
                   }
 
                   const localProfile = Object.values(store.state.profiles).find((profile) => (
