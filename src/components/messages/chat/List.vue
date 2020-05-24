@@ -158,7 +158,7 @@ export default {
 
       switch (type) {
         case 'closeChat':
-          // TODO
+          // TODO Удалить и перенести в onBeforeDeactivated???
           // state.scrollTop = scrollTop;
           // state.isScrolledDownOnClose = isScrolledDown;
           // state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;

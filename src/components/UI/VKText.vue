@@ -1,9 +1,10 @@
 <script>
 import { h, Fragment, computed, nextTick } from 'vue';
 import electron from 'electron';
-import { createParser, unescape } from 'js/utils';
+import { createParser, unescape, eventBus } from 'js/utils';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
 import store from 'js/store';
+import router from 'js/router';
 import domains from 'js/json/domains.json';
 
 export default {
@@ -52,7 +53,98 @@ export default {
         return [
           h('div', {
             class: 'link',
-            onClick: () => electron.shell.openItem(block.link)
+            async onClick() {
+              const url = new URL(block.link);
+              const params = new Map(url.searchParams);
+              const route = router.currentRoute.value;
+
+              async function openChat(peer_id) {
+                if (route.name === 'chat') {
+                  eventBus.emit('messages:event', 'closeChat', {
+                    peer_id: route.params.id
+                  });
+
+                  // TODO remove
+                  await router.replace('/messages');
+                }
+
+                router.replace(`/messages/${peer_id}`);
+              }
+
+              if (url.host === 'm.vk.com') {
+                if (params.get('act') === 'show') {
+                  if (params.has('chat')) {
+                    return openChat(2e9 + +params.get('chat'));
+                  }
+
+                  if (params.has('peer')) {
+                    return openChat(+params.get('peer'));
+                  }
+                }
+
+                if (url.pathname.startsWith('/write')) {
+                  return openChat(+sel.slice(6));
+                }
+              }
+
+              if (url.host === 'vk.com') {
+                if (url.pathname === '/im' && params.has('sel')) {
+                  const sel = params.get('sel');
+
+                  if (sel.startsWith('c')) {
+                    return openChat(2e9 + +sel.slice(1));
+                  }
+
+                  return openChat(+sel);
+                }
+
+                if (url.pathname.startsWith('/write')) {
+                  return openChat(+url.pathname.slice(6));
+                }
+              }
+
+              if (url.host === 'vk.me') {
+                // if (url.pathname.startsWith('/join/') && url.pathname.length > 6) {
+                //   TODO chat preview
+                //   vkapi messages.getChatPreview link: block.link
+                // }
+
+                const domain = url.pathname.slice(1);
+
+                if (!domain.includes('/')) {
+                  const idMatch = domain.match(/(id|club)(\d+)$/);
+
+                  if (idMatch) {
+                    return openChat(match[1] === 'id' ? +match[2] : -match[2]);
+                  }
+
+                  const localProfile = Object.values(store.state.profiles).find((profile) => (
+                    profile.domain === domain || profile.screen_name === domain
+                  ));
+
+                  if (localProfile) {
+                    return openChat(localProfile.id);
+                  }
+
+                  const profileInfo = await vkapi('utils.resolveScreenName', {
+                    screen_name: domain
+                  });
+
+                  // В случае, когда домен неверный, приходит []
+                  if (!Array.isArray(profileInfo)) {
+                    if (profileInfo.type === 'user') {
+                      return openChat(+profileInfo.object_id);
+                    }
+
+                    if (profileInfo.type === 'group') {
+                      return openChat(-profileInfo.object_id);
+                    }
+                  }
+                }
+              }
+
+              electron.shell.openItem(block.link);
+            }
           }, [block.value])
         ];
       }
@@ -87,10 +179,6 @@ export default {
   }
 };
 
-const mentionRE = /\[(club|id)(\d+)\|(.+?)\]/g;
-const linkRE =
-  /(?!\.|-)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig;
-
 const hashtagParser = createParser({
   regexp: /#[a-zа-яё0-9_]+/ig,
   parseText: (value) => [{ type: 'text', value }],
@@ -98,7 +186,7 @@ const hashtagParser = createParser({
 });
 
 const linkParser = createParser({
-  regexp: linkRE,
+  regexp: /(?!\.|-)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig,
   parseText: hashtagParser,
   parseElement(value, match, isMention) {
     const { localhost, port, ip } = match.groups;
@@ -154,7 +242,7 @@ const emojiParser = createParser({
 });
 
 const mentionParser = createParser({
-  regexp: mentionRE,
+  regexp: /\[(club|id)(\d+)\|(.+?)\]/g,
   parseText: emojiParser,
   parseElement(mentionText, match) {
     const [, type, id, text] = match;
