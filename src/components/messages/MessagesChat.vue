@@ -102,6 +102,11 @@ export default {
 </script>
 
 <style>
+.im_chat_container {
+  display: flex;
+  flex-direction: column;
+}
+
 .im_chat_wrap {
   display: flex;
   flex-direction: column;

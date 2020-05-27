@@ -636,7 +636,8 @@ export default {
 }
 
 .messages_list_wrap {
-  height: 100%;
+  height: 0;
+  flex: 1;
 }
 
 .messages_list {

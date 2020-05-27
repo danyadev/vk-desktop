@@ -2227,10 +2227,10 @@ electron-to-chromium@^1.3.413:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.446.tgz#12c336bc858e04d6b614a488f32f2dd89561601f"
   integrity sha512-CLQaFuvkKqR9FD2G3cJrr1fV7DRMXiAKWLP2F8cxtvvtzAS7Tubt0kF47/m+uE61kiT+I7ZEn7HqLnmWdOhmuA==
 
-electron@7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-7.3.0.tgz#b4e1bd1efe32314534dba9b60ea5cc688216f3b3"
-  integrity sha512-uG3WVhyawWXBUJN+f5GkdCq8z5r+XsvpLLAyUuPo+DL2PXt57YI1wEXc5qTJq9hzlLAcGOlU/4+8pSkYBWOn1A==
+electron@8.3.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-8.3.0.tgz#c2b565a4c10d6d287d20164bcd5a478468b940a9"
+  integrity sha512-XRjiIJICZCgUr2vKSUI2PTkfP0gPFqCtqJUaTJSfCTuE3nTrxBKOUNeRMuCzEqspKkpFQU3SB3MdbMSHmZARlQ==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
@@ -2447,10 +2447,10 @@ eslint-plugin-import@2.20.2:
     read-pkg-up "^2.0.0"
     resolve "^1.12.0"
 
-eslint-plugin-vue@7.0.0-alpha.3:
-  version "7.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.0.0-alpha.3.tgz#f0dcf8017328539b1b2c19f55862fa6a606f245a"
-  integrity sha512-sHc8iX2Bbp8TPDYb4GQVQ5nx8sX98rrRDGnhzX2kgtxZWchRbQztU8qk1ke4r6kVJTkSfekwXzTw1UOeTyTHRg==
+eslint-plugin-vue@7.0.0-alpha.4:
+  version "7.0.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.0.0-alpha.4.tgz#30364d6f027f9bc2904ec034bd66c3b7bdbd0cfe"
+  integrity sha512-uqEma7BRMWOneI1kJU/BMQvTPlIZWOTfVbY2GA/c6Jj1fGLAOL32twS5PB2aB7qaYx8qPfCDWnryXqu6U7lrCw==
   dependencies:
     eslint-utils "^2.0.0"
     natural-compare "^1.4.0"
@@ -2485,10 +2485,10 @@ eslint-visitor-keys@^1.1.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.1.0.tgz#e2a82cea84ff246ad6fb57f9bde5b46621459ec2"
   integrity sha512-8y9YjtM1JBJU/A9Kc+SbaOV4y29sSWckBwMHa+FGtVj5gN/sbnKDf6xJUl+8g7FAij9LVaP8C24DUiH/f/2Z9A==
 
-eslint@7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.0.0.tgz#c35dfd04a4372110bd78c69a8d79864273919a08"
-  integrity sha512-qY1cwdOxMONHJfGqw52UOpZDeqXy8xmD0u8CT6jIstil72jkhURC704W8CFyTPDPllz4z4lu0Ql1+07PG/XdIg==
+eslint@7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.1.0.tgz#d9a1df25e5b7859b0a3d86bb05f0940ab676a851"
+  integrity sha512-DfS3b8iHMK5z/YLSme8K5cge168I8j8o1uiVmFCgnnjxZQbCGyraF8bMl7Ju4yfBmCuxD7shOF7eqGkcuIHfsA==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     ajv "^6.10.0"
@@ -6842,10 +6842,10 @@ term-size@^2.1.0:
   resolved "https://registry.yarnpkg.com/term-size/-/term-size-2.2.0.tgz#1f16adedfe9bdc18800e1776821734086fcc6753"
   integrity sha512-a6sumDlzyHVJWb8+YofY4TW112G6p2FCPEAFk+59gIYHv3XHRhm9ltVQ9kli4hNWeQBwSpe8cRN25x0ROunMOw==
 
-terser-webpack-plugin@3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-3.0.1.tgz#31928c9330a582fb5ec6f90805337289b85cb8fe"
-  integrity sha512-eFDtq8qPUEa9hXcUzTwKXTnugIVtlqc1Z/ZVhG8LmRT3lgRY13+pQTnFLY2N7ATB6TKCHuW/IGjoAnZz9wOIqw==
+terser-webpack-plugin@3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-3.0.2.tgz#fdc501c73847d8904f6a80c5009b11ee2d11b8eb"
+  integrity sha512-QeBHLJzKJHCnrPNlZj5EmOF6wwvzpVGDHvTrySIH8+jZEXfcKKCiriRmF6945rKzuZDnkOEU/LDv7qtPiiyP/Q==
   dependencies:
     cacache "^15.0.3"
     find-cache-dir "^3.3.1"
@@ -7366,10 +7366,10 @@ vue-eslint-parser@^7.1.0:
     esquery "^1.0.1"
     lodash "^4.17.15"
 
-vue-loader@16.0.0-beta.2:
-  version "16.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/vue-loader/-/vue-loader-16.0.0-beta.2.tgz#45492439608984fe926ca7d83fb9704ec8cc518e"
-  integrity sha512-kOU5tV0w/gDnKWP+vjAZmQPQJ00GNH6VJfOnMAU4c54OTqg7UqLbpEkFA2HFWe6Ws/3imal3uODYN2M19LmMAw==
+vue-loader@16.0.0-beta.3:
+  version "16.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/vue-loader/-/vue-loader-16.0.0-beta.3.tgz#2374094399fed98a8a5750912f3caaaefa814553"
+  integrity sha512-B1jRmai+/sr5PDkRqZe6KllBGMJb4+AsjA44yg1dAod8W+tIdvKTffVEl+5lcXSZy5NsjEx3KqpvV6qq8l/ggA==
   dependencies:
     "@types/mini-css-extract-plugin" "^0.9.1"
     chalk "^3.0.0"

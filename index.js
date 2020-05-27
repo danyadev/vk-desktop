@@ -4,6 +4,9 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 const { app, BrowserWindow, shell } = require('electron');
 
+// Выключаем варнинг в консоли
+app.allowRendererProcessReuse = true;
+
 app.once('ready', () => {
   const { screen } = require('electron');
 
@@ -16,9 +19,11 @@ app.once('ready', () => {
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
-      webgl: false
+      spellcheck: true
     }
   });
+
+  win.webContents.session.setSpellCheckerLanguages(['ru', 'en-US']);
 
   win.webContents.once('dom-ready', async () => {
     const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');

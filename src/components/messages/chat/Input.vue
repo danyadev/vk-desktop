@@ -32,6 +32,7 @@
             class="chat_input_area"
             role="textbox"
             contenteditable
+            spellcheck
             :placeholder="l('im_input_placeholder')"
             @input="onInput"
             @drop.prevent
