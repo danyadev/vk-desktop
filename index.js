@@ -5,7 +5,7 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 const { app, BrowserWindow, shell } = require('electron');
 
 // Выключаем варнинг в консоли
-app.allowRendererProcessReuse = true;
+app.allowRendererProcessReuse = false;
 
 app.once('ready', () => {
   const { screen } = require('electron');
@@ -50,7 +50,7 @@ app.once('ready', () => {
 
   win.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    shell.openExternal(url);
+    shell.openItem(url);
   });
 
   if (process.platform === 'darwin') {
