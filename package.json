@@ -2,11 +2,10 @@
   "name": "vk-desktop",
   "version": "0.3.0-alpha.4",
   "description": "Клиент ВКонтакте",
-  "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --mode development --hot",
-    "lint": "eslint src --ext .vue,.js && stylelint src/**/*.{vue,css}",
     "build": "yarn run dist && yarn run pack",
+    "lint": "eslint src --ext .vue,.js && stylelint src/**/*.{vue,css}",
     "dist": "webpack --mode production",
     "pack": "electron-builder --config build/config.json",
     "win-setup": "yarn win-setup64 && yarn win-setup32",

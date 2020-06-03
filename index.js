@@ -2,14 +2,12 @@
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, screen } = require('electron');
 
 // Выключаем варнинг в консоли
 app.allowRendererProcessReuse = false;
 
 app.once('ready', () => {
-  const { screen } = require('electron');
-
   const win = new BrowserWindow({
     minWidth: 400,
     minHeight: 550,
@@ -27,20 +25,20 @@ app.once('ready', () => {
 
   win.webContents.once('dom-ready', async () => {
     const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
     if (data) {
       const { window } = JSON.parse(data);
-      const maximized = window.width >= width && window.height >= height;
+      const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+      const isMaximized = window.width >= width && window.height >= height;
 
       win.setBounds({
         x: window.x,
         y: window.y,
-        width: maximized ? width : window.width,
-        height: maximized ? height : window.height
+        width: isMaximized ? width : window.width,
+        height: isMaximized ? height : window.height
       });
 
-      if (maximized) {
+      if (isMaximized) {
         win.maximize();
       }
     }

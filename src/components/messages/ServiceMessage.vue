@@ -132,7 +132,7 @@ function getServiceMessage(msg, author, peer_id, isFull) {
       return getVNode('im_chat_screenshot', type(0), [name(0)]);
 
     case 'chat_group_call_started':
-      return getVNode('chat_group_call_started', type(0), [name(0)]);
+      return getVNode('im_chat_group_call_started', type(0), [name(0)]);
 
     default:
       console.warn('[im] Неизвестное действие:', msg.action.type);

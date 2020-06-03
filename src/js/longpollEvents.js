@@ -566,7 +566,7 @@ export default {
           id: peer_id,
           unread: count,
           in_read: msg_id,
-          ...(isMyDialog ? { out_read: msg_id } : {}),
+          ...(isMyDialog && { out_read: msg_id }),
           mentions: newMentions
         }
       });
