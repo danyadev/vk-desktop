@@ -43,18 +43,28 @@ function parseLocalEmoji(data) {
   });
 }
 
-// Генерирует из эмодзи картинку
-function generateEmojiImageText(emoji) {
+function getEmojiAndStyle(emoji) {
   const validEmoji = generateValidEmoji(emoji);
   const local = localEmoji.get(validEmoji);
+  let style;
 
   if (local) {
     const [id, x, y, posX, posY] = parseLocalEmoji(local);
     const isRetina = devicePixelRatio > 1;
     const x2 = isRetina ? '_2x' : '';
     const pos = isRetina ? `/ ${posX}px ${posY}px` : '';
-    const style = `background: url('assets/emoji_sprites/sprite_${id}${x2}.webp') -${x}px -${y}px ${pos}`;
 
+    style = `background: url('assets/emoji_sprites/sprite_${id}${x2}.webp') -${x}px -${y}px ${pos}`;
+  }
+
+  return [validEmoji, style];
+}
+
+// Генерирует из эмодзи картинку
+function generateEmojiImageText(emoji) {
+  const [validEmoji, style] = getEmojiAndStyle(emoji);
+
+  if (style) {
     return `<img class="emoji" src="assets/blank.gif" style="${style}" alt="${validEmoji}">`;
   }
 
@@ -63,22 +73,14 @@ function generateEmojiImageText(emoji) {
 
 // Генерирует из эмодзи VNode img элемент
 export function generateEmojiImageVNode(createElement, emoji) {
-  const validEmoji = generateValidEmoji(emoji);
-  const local = localEmoji.get(validEmoji);
+  const [validEmoji, style] = getEmojiAndStyle(emoji);
 
-  if (local) {
-    const [id, x, y, posX, posY] = parseLocalEmoji(local);
-    const isRetina = devicePixelRatio > 1;
-    const x2 = isRetina ? '_2x' : '';
-    const pos = isRetina ? `/ ${posX}px ${posY}px` : '';
-
+  if (style) {
     return createElement('img', {
       class: 'emoji',
       src: 'assets/blank.gif',
       alt: validEmoji,
-      style: {
-        background: `url('assets/emoji_sprites/sprite_${id}${x2}.webp') -${x}px -${y}px ${pos}`
-      }
+      style
     });
   }
 

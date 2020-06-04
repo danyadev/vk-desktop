@@ -150,7 +150,7 @@ export default {
         state.loading = false;
         stop();
         onScroll(state.scrolly);
-      })
+      });
     });
 
     return {
