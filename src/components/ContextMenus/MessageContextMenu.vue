@@ -135,10 +135,10 @@ export default {
     }
 
     function deleteMsg() {
-      const currentUser = store.state.users.activeUser;
       const DAY = 1000 * 60 * 60 * 24;
 
       const canDeleteForAll = (
+        store.state.users.activeUser !== state.peer.id &&
         state.peer.id > 2e9 &&
         state.peer.acl.can_moderate &&
         !state.hasCallAttach &&
@@ -153,7 +153,7 @@ export default {
         submit(deleteForAll) {
           vkapi('messages.delete', {
             message_ids: state.msg.id,
-            delete_for_all: (currentUser === state.peer.id || deleteForAll) ? 1 : 0
+            delete_for_all: deleteForAll ? 1 : 0
           });
         }
       });

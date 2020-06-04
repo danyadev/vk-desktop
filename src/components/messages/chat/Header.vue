@@ -142,12 +142,13 @@ export default {
       }),
 
       canDeleteForAll: computed(() => (
+        store.state.users.activeUser !== props.peer_id &&
         props.peer_id > 2e9 &&
-        !!props.peer.acl.can_moderate &&
-        state.selectedMessages.every((id) => {
-          const msg = getMessage(id);
-          return !props.peer.admin_ids.includes(msg.from) && (Date.now() - msg.date * 1000 < DAY);
-        })
+        props.peer.acl.can_moderate &&
+        state.selectedMessages.map(getMessage).every((msg) => (
+          !props.peer.admin_ids.includes(msg.from) &&
+          Date.now() - msg.date * 1000 < DAY
+        ))
       ))
     });
 
@@ -208,7 +209,7 @@ export default {
         submit(deleteForAll) {
           vkapi('messages.delete', {
             message_ids: state.selectedMessages.join(','),
-            delete_for_all: store.state.users.activeUser === props.peer_id || deleteForAll
+            delete_for_all: deleteForAll ? 1 : 0
           });
 
           cancelSelect();
