@@ -73,7 +73,8 @@ export default {
         profiles,
         groups,
         lp,
-        temporarilyDisabledNotifications
+        temporarilyDisabledNotifications,
+        firstConversations
       } = await vkapi('execute.init', {
         lp_version: longpoll.version,
         fields
@@ -89,6 +90,11 @@ export default {
           msg: msg.id ? parseMessage(msg) : {}
         });
       }
+
+      store.commit('messages/addConversations', firstConversations.map((conversation) => ({
+        peer: parseConversation(conversation.conversation),
+        msg: conversation.last_message ? parseMessage(conversation.last_message) : {}
+      })));
 
       store.commit('settings/updateUserSettings', {
         pinnedPeers: pinnedPeers.map(({ peer }) => peer.peer.id)

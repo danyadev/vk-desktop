@@ -15,6 +15,7 @@
       <MessagesListMenu />
     </div>
     <Scrolly
+      ref="scrolly"
       class="im_peers_wrap"
       :vclass="{ loading }"
       :lock="lockScroll"
@@ -46,7 +47,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, computed, onMounted, nextTick } from 'vue';
+import { reactive, toRefs, computed, onMounted, nextTick, watch } from 'vue';
 import { fields, concatProfiles, timer, endScroll } from 'js/utils';
 import { parseConversation, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
@@ -74,6 +75,8 @@ export default {
 
   setup() {
     const state = reactive({
+      scrolly: null,
+
       route: router.currentRoute,
       isForwardTo: computed(() => state.route.name === 'forward-to'),
 
@@ -141,7 +144,13 @@ export default {
     });
 
     onMounted(() => {
-      load();
+      // Обнаруживаем первую загрузку
+      // До этого момента LongPoll не запустится, так что проблем не будет
+      const stop = watch(() => state.peersLists, () => {
+        state.loading = false;
+        stop();
+        onScroll(state.scrolly);
+      })
     });
 
     return {
