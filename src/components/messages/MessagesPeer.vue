@@ -155,7 +155,7 @@ export default {
         });
       }
 
-      if (!isCurrentChat) {
+      if (!isCurrentChat && activeChat) {
         eventBus.emit('messages:event', 'closeChat', {
           peer_id: activeChat
         });
