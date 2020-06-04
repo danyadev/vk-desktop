@@ -5,12 +5,12 @@
       <div class="act_menu_data">msg_id: {{ id }}</div>
     </div>
 
-    <div v-if="peer.isWriteAllowed" class="act_menu_item" @click="reply">
+    <div v-if="peer.isWriteAllowed && !hasCallAttach" class="act_menu_item" @click="reply">
       <Icon name="reply" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_reply_msg') }}</div>
     </div>
 
-    <div v-if="peer.isWriteAllowed" class="act_menu_item" @click="forward">
+    <div v-if="peer.isWriteAllowed && !hasCallAttach" class="act_menu_item" @click="forward">
       <Icon name="forward" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_forward_message') }}</div>
     </div>
@@ -79,7 +79,9 @@ export default {
       isPinnedMessage: computed(() => {
         const { pinnedMsg } = state.peer;
         return !!pinnedMsg && pinnedMsg.conversation_msg_id === state.msg.conversation_msg_id;
-      })
+      }),
+
+      hasCallAttach: computed(() => !!state.msg.attachments.call)
     });
 
     function copyMsgId() {
@@ -139,6 +141,7 @@ export default {
       const canDeleteForAll = (
         state.peer.id > 2e9 &&
         state.peer.acl.can_moderate &&
+        !state.hasCallAttach &&
         !state.peer.admin_ids.includes(state.msg.from) &&
         Date.now() - state.msg.date * 1000 < DAY
       );
@@ -150,7 +153,7 @@ export default {
         submit(deleteForAll) {
           vkapi('messages.delete', {
             message_ids: state.msg.id,
-            delete_for_all: currentUser === state.peer.id || deleteForAll
+            delete_for_all: (currentUser === state.peer.id || deleteForAll) ? 1 : 0
           });
         }
       });

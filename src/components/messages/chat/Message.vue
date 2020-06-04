@@ -156,7 +156,7 @@ export default {
     let timer;
 
     function onMouseDown(event) {
-      if (event.button !== 0 || props.isCustomView) {
+      if (event.button !== 0 || props.isCustomView || props.msg.attachments.call) {
         return;
       }
 
@@ -176,7 +176,10 @@ export default {
                 ? messages.slice(lastSelectedIndex + 1, msgIndex + 1)
                 : messages.slice(msgIndex, lastSelectedIndex).reverse()
             ).filter((msg) => (
-              !msg.action && !msg.isExpired && !state.selectedMessages.includes(msg.id)
+              !msg.action &&
+              !msg.isExpired &&
+              !msg.attachments.call &&
+              !state.selectedMessages.includes(msg.id)
             )).map((msg) => msg.id);
 
             for (const id of list) {
