@@ -68,7 +68,7 @@ function request(paramsOrUrl, paramsOrOptions = {}, options) {
     if (options.multipart) {
       sendMultipart(req, options.multipart);
     } else {
-      req.end(options.postData || '');
+      req.end(options.body || '');
     }
   });
 }

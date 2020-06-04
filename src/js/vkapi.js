@@ -120,7 +120,7 @@ addErrorHandler(17, async ({ data, resolve, reject }) => {
             method: 'POST'
           }, {
             raw: true,
-            postData: querystring.stringify({
+            body: querystring.stringify({
               captcha_sid: captchaSid,
               captcha_key: code
             })
@@ -162,7 +162,7 @@ function vkapi(name, params, { android, vkme } = {}) {
         'User-Agent': android ? AndroidUserAgent : VKDesktopUserAgent
       }
     }, {
-      postData: querystring.stringify(params)
+      body: querystring.stringify(params)
     });
 
     if (data.execute_errors) {
