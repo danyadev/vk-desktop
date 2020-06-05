@@ -338,12 +338,20 @@ export default {
       let unlockUp;
       let unlockDown;
 
-      items = items.filter((item) => {
-        if (!topMsg) unlockUp = unlockDown = true;
-        else if (item.msg.id < topMsg.id) unlockUp = true;
-        else if (item.msg.id > bottomMsg.id) unlockDown = true;
-        else return 1;
-      });
+      if (!topMsg) {
+        unlockUp = true;
+        unlockDown = true;
+      } else {
+        items = items.filter((item) => {
+          if (item.msg.id < topMsg.id) {
+            unlockUp = true;
+          } else if (item.msg.id > bottomMsg.id) {
+            unlockDown = true;
+          } else {
+            return true;
+          }
+        });
+      }
 
       if (items.length) {
         const { items: newMessages } = await vkapi('messages.getById', {
@@ -770,8 +778,13 @@ export default {
           break;
 
         case 7: // Пользователь покинул беседу
-          if (peer.members != null) peer.members--;
-          if (isMe) peer.left = true;
+          if (peer.members != null) {
+            peer.members--;
+          }
+
+          if (isMe) {
+            peer.left = true;
+          }
           break;
 
         case 8: // Пользователя исключили из беседы

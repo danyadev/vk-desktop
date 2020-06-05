@@ -1,12 +1,8 @@
-import fs from 'fs';
 import { EventEmitter } from 'events';
-import path from 'path';
-import electron from 'electron';
 import { version } from '../../package.json';
 import { usersStorage } from './store/Storage';
 import vkapi from './vkapi';
 import store from './store';
-import request from './request';
 import copyObject from './copyObject';
 
 // --- Переменные
@@ -71,8 +67,8 @@ export function debounce(fn, delay) {
   };
 }
 
-// Вызывает переданную функцию, если после последнего вызова прошло более delay мс
-// А это значит, что функция может вообще не вызваться, что не всегда нужно
+// Вызывает переданную функцию, если после последнего вызова прошло более delay мс.
+// Это значит, что функция может вообще не вызваться, что не всегда нужно
 export function throttle(fn, delay) {
   let lastCall = 0;
 
@@ -359,36 +355,36 @@ export function getAppName(app_id) {
   }
 }
 
-export async function downloadFile(src, withRedirect, progress) {
-  const files = electron.remote.dialog.showOpenDialogSync({
-    properties: ['openDirectory']
-  });
+// export async function downloadFile(src, withRedirect, progress) {
+//   const files = electron.remote.dialog.showOpenDialogSync({
+//     properties: ['openDirectory']
+//   });
+//
+//   if (files) {
+//     if (withRedirect) {
+//       const { headers } = await request(src);
+//       src = headers.location;
+//     }
+//
+//     const [name] = (new URL(src)).pathname.split('/').reverse();
+//
+//     await request(src, {
+//       pipe: fs.createWriteStream(path.join(files[0], name)),
+//       progress
+//     });
+//   }
+// }
 
-  if (files) {
-    if (withRedirect) {
-      const { headers } = await request(src);
-      src = headers.location;
-    }
-
-    const [name] = (new URL(src)).pathname.split('/').reverse();
-
-    await request(src, {
-      pipe: fs.createWriteStream(path.join(files[0], name)),
-      progress
-    });
-  }
-}
-
-export function parseMp3Link(url) {
-  if (url.includes('.mp3?')) {
-    return url;
-  }
-
-  const match = url.match(
-    url.startsWith('https://ps')
-      ? /(https:\/\/.+)\/.+?\/audios\/(.+?)\/index\.m3u8\?extra=(.+)/
-      : /(https:\/\/.+)\/.+?\/(.+?)\/index\.m3u8\?extra=(.+)/
-  );
-
-  return `${match[1]}/${match[2]}.mp3?extra=${match[3]}`;
-}
+// export function parseMp3Link(url) {
+//   if (url.includes('.mp3?')) {
+//     return url;
+//   }
+//
+//   const match = url.match(
+//     url.startsWith('https://ps')
+//       ? /(https:\/\/.+)\/.+?\/audios\/(.+?)\/index\.m3u8\?extra=(.+)/
+//       : /(https:\/\/.+)\/.+?\/(.+?)\/index\.m3u8\?extra=(.+)/
+//   );
+//
+//   return `${match[1]}/${match[2]}.mp3?extra=${match[3]}`;
+// }

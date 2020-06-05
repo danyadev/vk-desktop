@@ -66,6 +66,7 @@ export default async function sendMessage({
 
   if (payload) params.payload = payload;
   if (reply_to) params.reply_to = reply_to;
+
   if (fwdMessages.length) {
     params.forward_messages = fwdMessages.map((msg) => msg.id).join(',');
   }

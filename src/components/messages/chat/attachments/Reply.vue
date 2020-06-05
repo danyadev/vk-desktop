@@ -46,7 +46,7 @@ export default {
         const videoImages = video && video[0] && video[0].image;
         const storyPhotos = story && story[0] && story[0].photo;
 
-        // TODO убрать когда все вложения будут грузиться по умолчанию
+        // TODO Убрать, когда все вложения будут грузиться по умолчанию
         if (
           photo && !photo[0] ||
           doc && !doc[0] ||

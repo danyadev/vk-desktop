@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 import { settingsStorage, usersStorage } from './Storage';
 
-import rootModule from './modules/index';
+import rootModule from './modules';
 import messages from './modules/messages';
 import settings from './modules/settings';
 import users from './modules/users';

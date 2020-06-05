@@ -87,7 +87,7 @@ export default {
         opened: true
       });
 
-      // TODO перенести в onActivated
+      // TODO Перенести в onActivated
       if (!state.peer || !state.peer.loaded || state.peer_id < 2e9) {
         loadConversation(state.peer_id);
       }

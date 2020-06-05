@@ -58,7 +58,9 @@ export default {
     }
 
     function setAccount(id) {
-      if (activeUser.value === id) return;
+      if (activeUser.value === id) {
+        return;
+      }
 
       if (activeUser.value) {
         const usersData = { ...usersStorage.data };

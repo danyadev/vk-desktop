@@ -39,7 +39,7 @@ export default {
     const container = ref(null);
     const isAnimationLoaded = ref(false);
     let animation;
-    let isHovered = true; // первая проверка будет когда мышь уже наведена
+    let isHovered = true;
 
     function initAnimation() {
       animation = lottie.loadAnimation({

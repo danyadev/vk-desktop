@@ -16,19 +16,19 @@ function generateValidEmoji(emoji) {
 }
 
 // Преобразует символ эмодзи в hex-код
-export function getEmojiCode(emoji) {
-  return encodeURIComponent(generateValidEmoji(emoji)).replace(/%/g, '').toLowerCase();
-}
+// export function getEmojiCode(emoji) {
+//   return encodeURIComponent(generateValidEmoji(emoji)).replace(/%/g, '').toLowerCase();
+// }
 
-export function getEmojiFromCode(rawCode) {
-  // isKeyCap = true только в случаях с эмодзи "1⃣".
-  // Его код - (0-9#*)e283a3
-  const isKeyCap = (rawCode.length % 2) === 1;
-  const start = isKeyCap ? rawCode.slice(0, 1) : '';
-  const code = isKeyCap ? rawCode.slice(1) : rawCode;
-
-  return start + decodeURIComponent('%' + code.match(/(..?)/g).join('%'));
-}
+// export function getEmojiFromCode(rawCode) {
+//   // isKeyCap = true только в случаях с эмодзи "1⃣".
+//   // Его код - (0-9#*)e283a3
+//   const isKeyCap = (rawCode.length % 2) === 1;
+//   const start = isKeyCap ? rawCode.slice(0, 1) : '';
+//   const code = isKeyCap ? rawCode.slice(1) : rawCode;
+//
+//   return start + decodeURIComponent('%' + code.match(/(..?)/g).join('%'));
+// }
 
 // Извлекает из запакованной локальной записи позицию
 // эмодзи в виде [id, x, y, posX, posY]

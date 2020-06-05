@@ -71,7 +71,12 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import { convertCount, eventBus } from 'js/utils';
-import { getMessagePreview, loadConversationMembers, getPeerAvatar, getPeerTitle } from 'js/messages';
+import {
+  getMessagePreview,
+  loadConversationMembers,
+  getPeerAvatar,
+  getPeerTitle
+} from 'js/messages';
 import { getShortDate } from 'js/date';
 import store from 'js/store';
 import router from 'js/router';

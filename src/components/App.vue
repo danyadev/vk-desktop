@@ -35,7 +35,7 @@ import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
 import SnackbarsWrapper from './SnackbarsWrapper.vue';
 import TooltipsWrapper from './TooltipsWrapper.vue';
 
-// для разработки / дебага
+// Для разработки / дебага
 window.vkapi = vkapi;
 window.store = store;
 window.router = router;

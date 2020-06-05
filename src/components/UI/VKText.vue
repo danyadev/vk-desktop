@@ -32,9 +32,9 @@ export default {
     function parseBlock(block) {
       if (block.type === 'mention') {
         if (props.mention) {
-          const mentionContent = block.value.reduce((blocks, mentionTextBlock) => {
-            return [...blocks, ...parseBlock(mentionTextBlock)];
-          }, []);
+          const mentionContent = block.value.reduce((blocks, mentionTextBlock) => (
+            [...blocks, ...parseBlock(mentionTextBlock)]
+          ), []);
 
           return mentionContent;
         }
@@ -200,13 +200,12 @@ const linkParser = createParser({
       return [{ type: 'text', value }];
     }
 
-    // Удаляем из ссылки все, что находится после ) или "
+    // Удаляем из ссылки все, что находится после ) или ",
     // чтобы не ломать отображение ссылок в сжатом JSON или при закрытии скобки
     const removeTextMatch = value.match(/((?:\)|").+)/);
     let textAfterLink;
 
     if (removeTextMatch) {
-      // eslint-disable-next-line prefer-destructuring
       textAfterLink = removeTextMatch[1];
       value = value.replace(textAfterLink, '');
     }

@@ -35,7 +35,9 @@ export default {
 
   setup() {
     function onClickToBg({ target }) {
-      if (!target.matches('.modal_wrap')) return;
+      if (!target.matches('.modal_wrap')) {
+        return;
+      }
 
       const [modal] = target.children;
       const header = modal.querySelector('.modal_header');

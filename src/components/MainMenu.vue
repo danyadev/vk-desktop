@@ -84,12 +84,12 @@ export default {
       counters: computed(() => store.state.menuCounters),
       user: computed(() => store.getters['users/user']),
 
-      routes: computed(() => {
-        return ['messages', 'audio'].map((route) => ({
+      routes: computed(() => (
+        ['messages', 'audio'].map((route) => ({
           route,
           active: isActiveRoute(`/${route}`)
-        }));
-      })
+        }))
+      ))
     });
 
     function isActiveRoute(route) {

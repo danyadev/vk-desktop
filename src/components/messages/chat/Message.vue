@@ -117,17 +117,18 @@ export default {
         !!state.selectedMessages.length || props.isCustomView === 'search'
       )),
 
-      expireIcon: !!props.msg.expireTtl, // изначально true если сообщение фантомное
+      expireIcon: !!props.msg.expireTtl, // Изначально true если сообщение фантомное
       expireHours: false,
 
       fwdOverflow: false,
       time: computed(() => getTime(new Date(props.msg.date * 1000))),
-      isUnread: computed(() => {
-        return props.peer && (
-          props.msg.id > props.peer.out_read || // не прочитано собеседником
-          props.msg.id > props.peer.in_read // не прочитано мной
-        ) || props.msg.isLoading;
-      }),
+      isUnread: computed(() => (
+        props.msg.isLoading ||
+        props.peer && (
+          props.msg.id > props.peer.out_read || // Не прочитано собеседником
+          props.msg.id > props.peer.in_read // Не прочитано мной
+        )
+      )),
 
       attachmentClasses: computed(() => {
         const classes = [];
@@ -147,7 +148,9 @@ export default {
           flyTime = true;
         }
 
-        if (flyTime) classes.push('flyTime');
+        if (flyTime) {
+          classes.push('flyTime');
+        }
 
         return classes;
       })

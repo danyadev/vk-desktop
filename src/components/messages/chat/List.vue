@@ -109,9 +109,9 @@ export default {
 
       messages: computed(() => store.state.messages.messages[props.peer_id] || []),
       loadingMessages: computed(() => store.state.messages.loadingMessages[props.peer_id] || []),
-      messagesWithLoading: computed(() => {
-        return state.messages.concat(state.loadedDown ? state.loadingMessages : []);
-      }),
+      messagesWithLoading: computed(() => (
+        state.messages.concat(state.loadedDown ? state.loadingMessages : [])
+      )),
       hasMessages: computed(() => !!state.messagesWithLoading.length)
     });
 
@@ -351,7 +351,8 @@ export default {
 
       function beforeLoad() {
         store.commit('messages/removeConversationMessages', props.peer_id);
-        state.loadedUp = state.loadedDown = false;
+        state.loadedUp = false;
+        state.loadedDown = false;
       }
 
       state.showEndBtn = false;
