@@ -134,9 +134,9 @@ export default {
     function leftFromChat() {
       if (state.peer.isChannel) {
         eventBus.emit('messages:event', 'changeLoadedState', {
-          peer_id: this.peerId,
-          loadedUp: !this.peer.left,
-          loadedDown: !this.peer.left
+          peer_id,
+          loadedUp: !state.peer.left,
+          loadedDown: !state.peer.left
         });
       }
 
