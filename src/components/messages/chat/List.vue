@@ -449,7 +449,7 @@ export default {
     }
 
     const checkScrolling = endScroll(({ isUp, isDown }) => {
-      if (state.loadingUp || state.loadingDown) {
+      if (state.loadingUp || state.loadingDown || state.lockScroll) {
         return;
       }
 
