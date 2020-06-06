@@ -8,7 +8,7 @@
           <div class="item_name_wrap">
             <div class="item_name">{{ user.first_name }} {{ user.last_name }}</div>
             <Icon
-              v-if="user.id != activeUser"
+              v-if="user.id !== activeUser"
               name="close"
               color="var(--icon-dark-gray)"
               class="item_close"

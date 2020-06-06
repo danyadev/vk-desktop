@@ -46,7 +46,8 @@
         <Icon
           name="cancel"
           color="var(--blue-background-text)"
-          width="26" height="26"
+          width="26"
+          height="26"
           class="im_header_cancel_select"
           @click="cancelSelect"
         />

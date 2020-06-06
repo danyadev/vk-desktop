@@ -59,9 +59,7 @@ export default {
 
     return {
       ...toRefs(state),
-
-      toggleMenu,
-      onMouseMove
+      toggleMenu
     };
   }
 };

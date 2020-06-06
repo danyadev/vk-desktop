@@ -18,6 +18,7 @@ export default {
   props: ['peer_id', 'msg', 'isCustomView', 'fwdDepth'],
 
   setup(props) {
+    // eslint-disable-next-line vue/no-setup-props-destructure
     const { fwdMessages, replyMsg } = props.msg;
 
     return {

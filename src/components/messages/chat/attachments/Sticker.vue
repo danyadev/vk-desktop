@@ -31,6 +31,7 @@ export default {
   props: ['attach'],
 
   setup(props) {
+    // eslint-disable-next-line vue/no-setup-props-destructure
     const [sticker] = props.attach;
     const image = sticker.images[devicePixelRatio > 1 ? 2 : 1].url;
     const { animation_url } = sticker;

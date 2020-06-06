@@ -18,7 +18,10 @@ module.exports = {
     'import/ignore': []
   },
 
-  extends: ['plugin:vue/vue3-recommended'],
+  extends: [
+    // Включает максимальное количество правил
+    'plugin:vue/vue3-recommended'
+  ],
 
   rules: {
     'array-bracket-spacing': 'error',
@@ -27,7 +30,6 @@ module.exports = {
     'arrow-spacing': 'error',
     'block-scoped-var': 'error',
     'brace-style': 'error',
-    // 'camelcase': 'error', // TODO
     'comma-dangle': 'error',
     'comma-spacing': 'error',
     'comma-style': 'error',
@@ -233,19 +235,71 @@ module.exports = {
       ]
     }],
 
+    // Включаем правила, которые не указаны в рекомендуемых
+    'vue/component-name-in-template-casing': 'error',
+    'vue/html-comment-content-newline': 'error',
+    'vue/html-comment-content-spacing': 'error',
+    'vue/html-comment-indent': 'error',
+    // 'vue/no-bare-strings-in-template': 'error', // TODO next release
+    'vue/no-duplicate-attr-inheritance': 'error',
+    'vue/no-potential-component-option-typo': 'error',
+    'vue/no-static-inline-styles': 'error',
+    'vue/no-unregistered-components': ['error', {
+      ignorePatterns: ['(ForwardedMessage|RouterView)']
+    }],
+    // TODO
+    // https://github.com/vuejs/eslint-plugin-vue/issues/1195
+    // https://github.com/vuejs/eslint-plugin-vue/issues/1196
+    // 'vue/no-unused-properties': ['error', {
+    //   groups: ['props', 'setup']
+    // }],
+    // 'vue/no-useless-v-bind': 'error', // TODO next release
+    // 'vue/no-useless-mustaches': 'error', // TODO next release
+    'vue/padding-line-between-blocks': 'error',
+    // TODO https://github.com/vuejs/eslint-plugin-vue/issues/1197
+    // 'vue/require-direct-export': 'error',
+
+    // Включаем правила, идентичные eslint-base, но которые направлены на выражения в template
+    'vue/array-bracket-spacing': 'error',
+    'vue/arrow-spacing': 'error',
+    'vue/brace-style': 'error',
+    'vue/comma-dangle': 'error',
+    'vue/comma-spacing': 'error',
+    'vue/comma-style': 'error',
+    'vue/dot-notation': 'error',
+    'vue/eqeqeq': ['error', 'always', {
+      null: 'ignore'
+    }],
+    'vue/key-spacing': ['error', {
+      mode: 'minimum'
+    }],
+    'vue/keyword-spacing': 'error',
+    'vue/max-len': ['error', {
+      code: 100,
+      ignoreStrings: true,
+      ignoreRegExpLiterals: true
+    }],
+    'vue/no-empty-pattern': 'error',
+    'vue/no-irregular-whitespace': 'error',
+    'vue/no-useless-concat': 'error',
+    'vue/object-curly-spacing': ['error', 'always'],
+    'vue/space-in-parens': 'error',
+    'vue/space-infix-ops': 'error',
+    'vue/space-unary-ops': 'error',
+    'vue/template-curly-spacing': 'error',
+
+    // Изменяем уже включенные правила для соответствия своему стилю
     'vue/singleline-html-element-content-newline': 'off',
-    'vue/no-multiple-template-root': 'off',
     'vue/require-prop-types': 'off',
     'vue/no-v-html': 'off',
-    'vue/prop-name-casing': 'off', // TODO
+    'vue/prop-name-casing': 'off',
     'vue/require-render-return': 'off',
-    'vue/no-setup-props-destructure': 'off',
     'vue/attribute-hyphenation': ['error', 'never'],
     'vue/max-attributes-per-line': ['error', {
       singleline: 4,
       multiline: {
         allowFirstLine: true,
-        max: 2
+        max: 1
       }
     }],
     'vue/order-in-components': ['error', {
@@ -266,6 +320,19 @@ module.exports = {
       },
       svg: 'always',
       math: 'always'
-    }]
+    }],
+
+    // Отключаем правила, которые не имеют смысла, чтобы увеличить скорость проверки
+    'vue/comment-directive': 'off', // Это правило включает комментарии типа eslint-disable
+    'vue/jsx-uses-vars': 'off', // Это правило включает поддержку импорта компонентов для JSX
+    'vue/no-arrow-functions-in-watch': 'off',
+    'vue/no-async-in-computed-properties': 'off',
+    'vue/no-deprecated-data-object-declaration': 'off',
+    'vue/no-shared-component-data': 'off',
+    'vue/return-in-computed-property': 'off',
+    'vue/valid-v-on': 'off',
+    'vue/valid-v-once': 'off',
+    'vue/valid-v-pre': 'off',
+    'vue/valid-v-text': 'off'
   }
 };

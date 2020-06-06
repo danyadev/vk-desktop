@@ -8,7 +8,8 @@
       :src="photo"
       class="im_peer_photo"
       loading="lazy"
-      width="50" height="50"
+      width="50"
+      height="50"
     >
 
     <div class="im_peer_content">
