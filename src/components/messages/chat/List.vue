@@ -115,7 +115,7 @@ export default {
       hasMessages: computed(() => !!state.messagesWithLoading.length)
     });
 
-    // Event listener ===================================
+    // Event listener =====================================
 
     onMounted(() => {
       eventBus.on('messages:event', onMessageEvent);
@@ -123,7 +123,6 @@ export default {
 
       // TODO onActivated
       state.startInRead = props.peer && props.peer.in_read;
-      checkReadMessages();
     });
 
     onUnmounted(() => {
@@ -184,8 +183,13 @@ export default {
           jumpTo(data);
           break;
 
+        // Вызывается уже после добавления сообщения в store,
+        // но до обновления беседы и последнего сообщения
         case 'new':
-          checkReadMessages();
+          if (state.messages.length) {
+            checkReadMessages();
+          }
+
           await nextTick();
 
           if (state.loadingMessages.find((msg) => msg.random_id === data.random_id)) {
@@ -209,7 +213,7 @@ export default {
       }
     }
 
-    // Base methods ==========================================
+    // Base methods =======================================
 
     const load = createQueueManager(async ({ params = {}, config = {} } = {}) => {
       function setPeerLoading(loading) {
@@ -492,7 +496,7 @@ export default {
       checkReadMessages();
     }
 
-    // Time bubble ===================================
+    // Time bubble ========================================
 
     function checkTopTime() {
       const dates = state.list.querySelectorAll('.message_date');
@@ -525,7 +529,7 @@ export default {
       state.showTopTime = false;
     }, 1000);
 
-    // Scroll to end & mention buttons =========================
+    // Scroll to end & mention buttons ====================
 
     function canShowScrollBtn() {
       return state.hasMessages && !(
@@ -578,14 +582,14 @@ export default {
       });
     }
 
-    // Reading messages ===========================
+    // Reading messages ===================================
 
     async function checkReadMessages() {
       if (store.getters['settings/settings'].notRead || !currentWindow.isFocused()) {
         return;
       }
 
-      // Читаем сообщения когда процессор разгружен
+      // Ждем разгрузки процессора
       await new Promise((resolve) => requestIdleCallback(resolve));
 
       const messages = state.list.querySelectorAll('.isUnread:not(.out)');

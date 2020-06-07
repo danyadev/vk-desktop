@@ -96,7 +96,6 @@ export default {
       image,
       isAnimation: !!animation_url,
       isAnimationLoaded,
-      initAnimation,
       onMouseOver
     };
   }

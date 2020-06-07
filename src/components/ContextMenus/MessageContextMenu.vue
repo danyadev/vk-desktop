@@ -2,7 +2,7 @@
   <ContextMenu :event="event">
     <div v-if="settings.devShowObjectIds" class="act_menu_item" @click="copyMsgId">
       <Icon name="bug" color="var(--icon-dark-gray)" class="act_menu_icon" />
-      <div class="act_menu_data">msg_id: {{ id }}</div>
+      <div class="act_menu_data">{{ l('im_message_id') }}: {{ id }}</div>
     </div>
 
     <div v-if="peer.isWriteAllowed && !hasCallAttach" class="act_menu_item" @click="reply">

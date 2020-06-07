@@ -13,7 +13,7 @@ import getTranslate from 'js/getTranslate';
 import Icon from '../../UI/Icon.vue';
 
 export default {
-  props: ['msg', 'expireIcon', 'expireHours'],
+  props: ['msg', 'expireIcon'],
 
   components: {
     Icon

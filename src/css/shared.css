@@ -31,8 +31,11 @@ body {
   user-select: none;
 }
 
-img:not(.emoji) {
+img {
   -webkit-user-drag: none;
+}
+
+img:not(.emoji) {
   user-select: none;
 }
 

@@ -20,7 +20,6 @@
         <MessageExpireTime
           v-if="msg.out && msg.expireTtl"
           :expireIcon="expireIcon"
-          :expireHours="expireHours"
           :msg="msg"
           @update="updateState"
         />
@@ -70,7 +69,6 @@
         <MessageExpireTime
           v-if="!msg.out && msg.expireTtl"
           :expireIcon="expireIcon"
-          :expireHours="expireHours"
           :msg="msg"
           @update="updateState"
         />

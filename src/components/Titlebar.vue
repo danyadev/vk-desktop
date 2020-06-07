@@ -1,6 +1,6 @@
 <template>
   <div :class="['titlebar', { maximized }]">
-    <div ref="drag" class="titlebar_drag">VK Desktop</div>
+    <div ref="drag" class="titlebar_drag">{{ l('vk_desktop') }}</div>
     <div class="titlebar_buttons">
       <div
         v-for="button of buttons"

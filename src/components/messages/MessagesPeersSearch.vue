@@ -6,7 +6,7 @@
         ref="input"
         v-model="text"
         class="im_search_input"
-        placeholder="Введите запрос..."
+        :placeholder="l('search')"
       >
       <Icon
         name="cancel"

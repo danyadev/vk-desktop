@@ -240,24 +240,21 @@ module.exports = {
     'vue/html-comment-content-newline': 'error',
     'vue/html-comment-content-spacing': 'error',
     'vue/html-comment-indent': 'error',
-    // 'vue/no-bare-strings-in-template': 'error', // TODO next release
+    'vue/no-bare-strings-in-template': 'error',
     'vue/no-duplicate-attr-inheritance': 'error',
     'vue/no-potential-component-option-typo': 'error',
+    'vue/no-restricted-v-bind': ['error', '/^v-/', 'click'],
     'vue/no-static-inline-styles': 'error',
     'vue/no-unregistered-components': ['error', {
       ignorePatterns: ['(ForwardedMessage|RouterView)']
     }],
-    // TODO
-    // https://github.com/vuejs/eslint-plugin-vue/issues/1195
-    // https://github.com/vuejs/eslint-plugin-vue/issues/1196
-    // 'vue/no-unused-properties': ['error', {
-    //   groups: ['props', 'setup']
-    // }],
-    // 'vue/no-useless-v-bind': 'error', // TODO next release
-    // 'vue/no-useless-mustaches': 'error', // TODO next release
+    'vue/no-unused-properties': ['error', {
+      groups: ['props', 'setup']
+    }],
+    'vue/no-useless-mustaches': 'error',
+    'vue/no-useless-v-bind': 'error',
     'vue/padding-line-between-blocks': 'error',
-    // TODO https://github.com/vuejs/eslint-plugin-vue/issues/1197
-    // 'vue/require-direct-export': 'error',
+    'vue/require-direct-export': 'error',
 
     // Включаем правила, идентичные eslint-base, но которые направлены на выражения в template
     'vue/array-bracket-spacing': 'error',
@@ -270,6 +267,7 @@ module.exports = {
     'vue/eqeqeq': ['error', 'always', {
       null: 'ignore'
     }],
+    'vue/func-call-spacing': 'error',
     'vue/key-spacing': ['error', {
       mode: 'minimum'
     }],
@@ -282,7 +280,14 @@ module.exports = {
     'vue/no-empty-pattern': 'error',
     'vue/no-irregular-whitespace': 'error',
     'vue/no-useless-concat': 'error',
+    'vue/object-curly-newline': 'error',
     'vue/object-curly-spacing': ['error', 'always'],
+    'vue/operator-linebreak': ['error', 'after', {
+      overrides: ['?', ':', '+', '>', '<', '>=', '<=']
+        .reduce((all, operator) => (
+          all[operator] = 'before', all
+        ), {})
+    }],
     'vue/space-in-parens': 'error',
     'vue/space-infix-ops': 'error',
     'vue/space-unary-ops': 'error',

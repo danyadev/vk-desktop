@@ -2,7 +2,7 @@
   <ContextMenu :event="event">
     <div v-if="settings.devShowObjectIds" class="act_menu_item" @click="copyPeerId">
       <Icon name="bug" color="var(--icon-dark-gray)" class="act_menu_icon" />
-      <div class="act_menu_data">peer_id: {{ peerId }}</div>
+      <div class="act_menu_data">{{ l('im_peer_id') }}: {{ peerId }}</div>
     </div>
 
     <div

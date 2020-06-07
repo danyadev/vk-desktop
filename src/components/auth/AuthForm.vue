@@ -1,7 +1,7 @@
 <template>
   <div class="auth" @keydown.enter="auth">
     <img src="~assets/logo.webp" class="auth_logo">
-    <div class="auth_name">VK Desktop</div>
+    <div class="auth_name">{{ l('vk_desktop') }}</div>
     <input
       ref="input"
       v-model="login"

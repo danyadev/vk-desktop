@@ -1,4 +1,5 @@
 export default {
+  vk_desktop: 'VK Desktop',
   cancel: 'Отмена',
   close: 'Закрыть',
   logout: 'Выход',
@@ -10,6 +11,7 @@ export default {
   you2: 'Вас',
   loading: 'Загрузка...',
   delete: 'Удалить',
+  search: 'Поиск',
 
   date_now: 'только что',
   date_at: 'в',
@@ -118,8 +120,9 @@ export default {
   im_typing_text: ['{0} печатает', '{0} и {1} печатают', '{0} и еще {1} печатают'],
   im_typing_audio: ['{0} записывает аудио', '{0} и {1} записывают аудио', '{0} и еще {1} записывают аудио'],
 
+  im_message_id: 'ID сообщения',
   im_message_id_copied: 'ID сообщения скопировано',
-  im_message_copied: 'Сообщение скопировано',
+  im_peer_id: 'ID беседы',
   im_peer_id_copied: 'ID беседы скопировано',
 
   im_reply_msg: 'Ответить на сообщение',
@@ -277,6 +280,7 @@ export default {
   ml_delete_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
   ml_delete_messages_for_all: 'Удалить для всех',
 
+  ml_error_api_header: 'Internal Server Error',
   ml_error_api: 'При вызове метода {0} произошла ошибка со стороны API. Подождите немного и повторите вызов.',
   ml_error_cancel_warn: 'Отмена вызова метода может поломать работу приложения.',
 

@@ -2452,10 +2452,10 @@ eslint-plugin-import@2.20.2:
     read-pkg-up "^2.0.0"
     resolve "^1.12.0"
 
-eslint-plugin-vue@7.0.0-alpha.5:
-  version "7.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.0.0-alpha.5.tgz#ff592fc2609fa5e089a7a7dc8bbc7e95a3c5f694"
-  integrity sha512-ODTeB/Vr8CUutkS5u55v3Q6RvCd3nHIkk+GpuklRjtlcoopm2DOIQ1rgZLi0Otlh+a0iyGkMW4dlvj7weEEk2w==
+eslint-plugin-vue@7.0.0-alpha.6:
+  version "7.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.0.0-alpha.6.tgz#a6ad485f0bae2df73870f66b7fe46dcac764480f"
+  integrity sha512-gxRMxp3njmTez+aKGvVTUauAvt4Pd9WlU2wHW/sOzwHln1JTa7vV86iETRXBVxhqf0nDBsSfuDS7k6HLefvSPg==
   dependencies:
     eslint-utils "^2.0.0"
     natural-compare "^1.4.0"
