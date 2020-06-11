@@ -175,7 +175,7 @@ export default {
 }
 
 .attach_reply_name {
-  color: var(--text-blue-dark);
+  color: var(--text-blue);
   font-weight: 500;
   margin-top: 3px;
 }
@@ -185,7 +185,7 @@ export default {
 }
 
 .attach_reply_text.isAttachment {
-  color: var(--text-blue-dark);
+  color: var(--text-blue);
 }
 
 .attach_reply_text.isContentDeleted {

@@ -253,8 +253,8 @@ export default {
 }
 
 .menu_item_counter:not(:empty) {
-  background: var(--blue-background);
-  color: var(--blue-background-text);
+  background: var(--background-blue);
+  color: var(--background-blue-text);
   line-height: 18px;
   padding: 1px 6px 0 6px;
   border-radius: 10px;

@@ -20,7 +20,7 @@
           <Icon
             v-if="peer.isCasperChat"
             name="ghost"
-            color="var(--blue-background)"
+            color="var(--background-blue)"
             class="im_peer_ghost"
           />
           <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
@@ -53,7 +53,7 @@
         </div>
 
         <div v-if="peer.mentions.length && !fromSearch" class="im_peer_mentioned">
-          <Icon name="mention" color="var(--blue-background-text)" width="20" height="18" />
+          <Icon name="mention" color="var(--background-blue-text)" width="20" height="18" />
         </div>
 
         <div
@@ -343,15 +343,15 @@ export default {
   padding: 1px 6px 0 6px;
   margin: 1px 0 0 3px;
   border-radius: 10px;
-  background: var(--blue-background);
-  color: var(--blue-background-text);
+  background: var(--background-blue);
+  color: var(--background-blue-text);
   font-size: 12px;
   line-height: 18px;
   height: 19px;
 }
 
 .im_peer_unread:not(.outread).muted {
-  background: var(--steel-gray-background-light);
+  background: var(--background-light-steel-gray);
 }
 
 .im_peer_unread.outread {
@@ -360,7 +360,7 @@ export default {
   width: 8px;
   height: 8px;
   border-radius: 10px;
-  background: var(--blue-background-overlight);
+  background: var(--background-blue-overlight);
 }
 
 .im_peer_mentioned {
@@ -368,6 +368,6 @@ export default {
   bottom: -1px;
   margin: 0 2px;
   border-radius: 10px;
-  background: var(--blue-background);
+  background: var(--background-blue);
 }
 </style>

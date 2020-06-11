@@ -1,6 +1,6 @@
 <template>
   <div :class="['checkbox', { active }]">
-    <Icon v-if="active" name="done" color="var(--blue-background-text)" />
+    <Icon v-if="active" name="done" color="var(--background-blue-text)" />
   </div>
 </template>
 

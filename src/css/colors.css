@@ -1,5 +1,16 @@
 .root {
   --background: #fff;
+  /* Используется для времени у стикеров в сообщении */
+  --background-alpha: #ffffffdf;
+
+  --background-blue: #5181b8;
+  /* Используется для точки, которая означает, что сообщение еще не прочитано */
+  --background-blue-overlight: #92b2d6;
+  --background-blue-text: #fff;
+  --background-blue-ripple: #00000026;
+  --background-light-steel-gray: #aeb7c2;
+  /* Используется для окраски фона поля для ввода текста (deprecated) */
+  --background-gray-overlight: #fbfbfb;
 
   --text-primary: #000;
   --text-primary-alpha: rgba(0, 0, 0, .75);
@@ -8,7 +19,6 @@
   --text-dark-steel-gray: #5c6570;
   --text-gray: #454647;
   --text-blue: #2a5989;
-  --text-blue-dark: #254f79; /* надо бы ему сделать delete */
   --text-blue-light: #3f70a7;
 
   --accent: #528bcc;
@@ -28,19 +38,10 @@
   --field-border: #0000001f;
   --field-color: #222;
 
-  --blue-background: #5181b8;
-  --blue-background-overlight: #92b2d6;
-  --blue-background-text: #fff;
-  /* --blue-background-text: #000; */
-  --blue-background-text-alpha: rgba(255, 255, 255, .75);
-  --blue-background-ripple: #00000026;
-  --steel-gray-background-light: #aeb7c2;
-  --gray-background-overlight: #fbfbfb;
-
   --icon-gray: #99a2ad;
   --icon-dark-gray: #828a99;
-  --icon-blue: #648fc1;
-  --icon-blue: #3F8AE0;
+  /* --icon-blue: #648fc1; */
+  --icon-blue: #3f8ae0;
 
   --hover-background: #edf2f8;
   --hover-background-ripple: #e1ebf4;
@@ -54,6 +55,5 @@
   --message-out-bubble-background: #c7dff9;
   --message-out-bubble-background-alpha: #c7dff9df;
 
-  /* Используется для времени у стикеров в сообщении */
-  --background-alpha: #ffffffdf;
+  --forwarded-left-border: #7197c5;
 }

@@ -735,8 +735,8 @@ export default {
   position: absolute;
   top: -5px;
   right: -3px;
-  background-color: var(--blue-background);
-  color: var(--blue-background-text);
+  background-color: var(--background-blue);
+  color: var(--background-blue-text);
   font-size: 12px;
   border-radius: 10px;
   padding: 2px 5px 1px 5px;

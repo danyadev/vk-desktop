@@ -284,7 +284,7 @@ export default {
   flex-direction: column;
   flex: none;
   border-top: 1px solid var(--separator-dark);
-  background: var(--gray-background-overlight);
+  background: var(--background-gray-overlight);
 }
 
 .chat_input_container::before {

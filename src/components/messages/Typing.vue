@@ -88,10 +88,8 @@ export default {
 }
 
 .typing_wrap.isChat {
-  color: var(--blue-background-text-alpha);
   font-size: 13px;
   margin-top: 2px;
-  justify-content: center;
 }
 
 .typing {
@@ -107,7 +105,7 @@ export default {
 
 .typing_item {
   display: inline-block;
-  background: var(--blue-background);
+  background: var(--background-blue);
   margin-bottom: 2px;
   animation: 1.1s linear 0s infinite typing;
   width: 5px;
@@ -120,7 +118,6 @@ export default {
 }
 
 .typing_wrap.isChat .typing_item {
-  background: var(--blue-background-text-alpha);
   margin-bottom: 1px;
 }
 

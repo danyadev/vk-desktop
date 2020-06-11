@@ -21,7 +21,7 @@
         <Icon
           v-if="peer.isCasperChat"
           name="ghost"
-          color="var(--blue-background)"
+          color="var(--background-blue)"
           class="im_peer_ghost"
         />
         <div v-if="peer.muted" class="im_peer_muted"></div>
