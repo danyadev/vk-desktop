@@ -2,18 +2,22 @@
   --background: #fff;
 
   --text-primary: #000;
+  --text-primary-alpha: rgba(0, 0, 0, .75);
+  --text-secondary: #818c99;
   --text-steel-gray: #6d7885;
   --text-dark-steel-gray: #5c6570;
   --text-gray: #454647;
   --text-blue: #2a5989;
-  --text-blue-dark: #254f79;
+  --text-blue-dark: #254f79; /* надо бы ему сделать delete */
   --text-blue-light: #3f70a7;
 
-  --accent: #528bcc; /* кликабельный / активный элемент */
+  --accent: #528bcc;
   --red: #de3f3f;
   --green: #8ac176;
   --separator: #e7e8ec;
   --separator-dark: #d7d8d9;
+
+  --titlebar-background: #F5F5F5;
 
   --button-light-background: #0039731a;
   --button-light-color: #55677d;
@@ -27,6 +31,7 @@
   --blue-background: #5181b8;
   --blue-background-overlight: #92b2d6;
   --blue-background-text: #fff;
+  /* --blue-background-text: #000; */
   --blue-background-text-alpha: rgba(255, 255, 255, .75);
   --blue-background-ripple: #00000026;
   --steel-gray-background-light: #aeb7c2;
@@ -35,6 +40,7 @@
   --icon-gray: #99a2ad;
   --icon-dark-gray: #828a99;
   --icon-blue: #648fc1;
+  --icon-blue: #3F8AE0;
 
   --hover-background: #edf2f8;
   --hover-background-ripple: #e1ebf4;
@@ -50,6 +56,4 @@
 
   /* Используется для времени у стикеров в сообщении */
   --background-alpha: #ffffffdf;
-
-  --forwarded-left-border: #7197c5;
 }

@@ -1,6 +1,8 @@
 import electron from 'electron';
 
-const win = electron.remote.getCurrentWindow();
+// Здесь нельзя импортировать currentWindow из js/utils, потому что
+// в том файле импортируется этот файл
+const currentWindow = electron.remote.getCurrentWindow();
 
 class Storage {
   constructor({ name, defaults, beforeSave }) {
@@ -49,7 +51,7 @@ export const settingsStorage = new Storage({
   name: 'settings',
 
   defaults: {
-    window: win.getBounds(),
+    window: currentWindow.getBounds(),
     langName: 'ru',
     userSettings: {}
   },

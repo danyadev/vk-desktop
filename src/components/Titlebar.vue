@@ -1,14 +1,14 @@
 <template>
   <div :class="['titlebar', { maximized }]">
     <div ref="drag" class="titlebar_drag">{{ l('vk_desktop') }}</div>
-    <div class="titlebar_buttons">
+    <div v-if="!isMac" class="titlebar_buttons">
       <div
-        v-for="button of buttons"
+        v-for="button of ['minimize', 'maximize', 'restore', 'close']"
         :key="button"
         :class="['titlebar_button', button]"
         @click="click(button)"
       >
-        <img :src="`assets/titlebar/${button}.svg`">
+        <Icon :name="`titlebar/${button}`" color="var(--text-primary)" />
       </div>
     </div>
   </div>
@@ -16,19 +16,24 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import electron from 'electron';
+import { currentWindow } from 'js/utils';
+
+import Icon from './UI/Icon.vue';
 
 export default {
+  components: {
+    Icon
+  },
+
   setup() {
-    const win = electron.remote.getCurrentWindow();
-    const maximized = ref(win.isMaximized());
+    const maximized = ref(currentWindow.isMaximized());
     const drag = ref(null);
 
     onMounted(() => {
       if (process.platform === 'darwin') {
         drag.value.addEventListener('dblclick', () => {
-          if (!win.isFullScreen()) {
-            win.emit(maximized.value ? 'unmaximize' : 'maximize');
+          if (!currentWindow.isFullScreen()) {
+            currentWindow.emit(maximized.value ? 'unmaximize' : 'maximize');
           }
         });
       }
@@ -36,22 +41,20 @@ export default {
       const onMaximize = () => (maximized.value = true);
       const onUnmaximize = () => (maximized.value = false);
 
-      win.on('maximize', onMaximize);
-      win.on('unmaximize', onUnmaximize);
+      currentWindow.on('maximize', onMaximize);
+      currentWindow.on('unmaximize', onUnmaximize);
 
       window.addEventListener('beforeunload', () => {
-        win.removeListener('maximize', onMaximize);
-        win.removeListener('unmaximize', onUnmaximize);
+        currentWindow.removeListener('maximize', onMaximize);
+        currentWindow.removeListener('unmaximize', onUnmaximize);
       });
     });
 
     return {
       maximized,
       drag,
-      buttons: ['minimize', 'maximize', 'restore', 'close'],
-      click(button) {
-        win[button]();
-      }
+      isMac: process.platform === 'darwin',
+      click: (button) => currentWindow[button]()
     };
   }
 };
@@ -63,7 +66,13 @@ export default {
   position: relative;
   height: var(--titlebar-height);
   z-index: 5;
-  background: var(--blue-background);
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+.mac .titlebar {
+  background: var(--titlebar-background);
+  color: var(--text-secondary);
 }
 
 .titlebar_drag {
@@ -71,7 +80,7 @@ export default {
   flex-grow: 1;
   margin: 4px 0 0 4px;
   padding-left: 4px;
-  color: var(--blue-background-text);
+  font-family: Segoe UI;
   line-height: 24px;
   overflow: hidden;
   white-space: nowrap;
@@ -92,20 +101,27 @@ export default {
   align-items: center;
   width: 48px;
   cursor: pointer;
-  transition: .2s background-color;
+  transition: background-color .2s;
 }
 
 .titlebar_button:hover {
-  background: rgba(0, 0, 0, .2);
+  background: rgba(0, 0, 0, .1);
 }
 
 .titlebar_button.close:hover {
   background: var(--red);
 }
 
+.titlebar_button.close svg {
+  transition: color .2s;
+}
+
+.titlebar_button.close:hover svg {
+  color: #fff;
+}
+
 .titlebar.maximized .titlebar_button.maximize,
-.titlebar:not(.maximized) .titlebar_button.restore,
-.mac .titlebar .titlebar_buttons {
+.titlebar:not(.maximized) .titlebar_button.restore {
   display: none;
 }
 

@@ -1,6 +1,5 @@
 import { createApp } from 'vue';
-import electron from 'electron';
-import { debounce } from 'js/utils';
+import { debounce, currentWindow } from 'js/utils';
 import store from 'js/store';
 import router from 'js/router';
 import getTranslate from 'js/getTranslate';
@@ -24,16 +23,14 @@ app.component('ForwardedMessage', ForwardedMessage);
 
 app.mount('#app');
 
-const win = electron.remote.getCurrentWindow();
-
 shortcut(['Control+Shift+I', 'F12'], () => {
-  if (win.isDevToolsOpened()) {
-    win.closeDevTools();
+  if (currentWindow.isDevToolsOpened()) {
+    currentWindow.closeDevTools();
   } else {
-    win.openDevTools();
+    currentWindow.openDevTools();
   }
 });
 
 window.addEventListener('resize', debounce(() => {
-  store.commit('settings/setWindowBounds', win.getBounds());
+  store.commit('settings/setWindowBounds', currentWindow.getBounds());
 }, 2000));

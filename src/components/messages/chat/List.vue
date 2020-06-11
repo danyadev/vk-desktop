@@ -48,7 +48,6 @@
 </template>
 
 <script>
-import electron from 'electron';
 import { reactive, computed, onMounted, onUnmounted, nextTick, toRefs } from 'vue';
 import {
   createQueueManager,
@@ -59,7 +58,8 @@ import {
   eventBus,
   timer,
   concatProfiles,
-  convertCount
+  convertCount,
+  currentWindow
 } from 'js/utils';
 import { parseMessage, parseConversation } from 'js/messages';
 import { modalsState } from 'js/modals';
@@ -69,8 +69,6 @@ import store from 'js/store';
 import Icon from '../../UI/Icon.vue';
 import Scrolly from '../../UI/Scrolly.vue';
 import MessagesList from './MessagesList.vue';
-
-const currentWindow = electron.remote.getCurrentWindow();
 
 export default {
   props: ['peer_id', 'peer'],

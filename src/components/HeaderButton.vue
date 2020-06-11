@@ -1,18 +1,10 @@
 <template>
-  <img src="assets/menu.svg" class="open_menu_btn icon-hover" @click="openMenu">
+  <img
+    src="assets/menu.svg"
+    class="open_menu_btn icon-hover"
+    @click="$store.commit('setMenuState', true)"
+  >
 </template>
-
-<script>
-import store from 'js/store';
-
-export default {
-  methods: {
-    openMenu() {
-      store.commit('setMenuState', true);
-    }
-  }
-};
-</script>
 
 <style>
 .open_menu_btn {

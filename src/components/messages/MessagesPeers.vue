@@ -1,18 +1,8 @@
 <template>
   <div class="im_peers_container">
-    <div class="header">
-      <HeaderButton />
-      <div class="header_name">
-        {{ l(route.name === 'forward-to' ? 'im_forward_messages' : 'im_header_title') }}
-      </div>
-
-      <Icon
-        name="search"
-        color="var(--blue-background-text)"
-        class="header_btn im_search_icon"
-        @click="isSearch = true"
-      />
-      <MessagesListMenu />
+    <div :class="['header', { isScrolled }]">
+      <SearchInput />
+      <Icon name="write_square" color="var(--icon-blue)" class="im_create_chat_btn" />
     </div>
     <Scrolly
       ref="scrolly"
@@ -57,9 +47,9 @@ import router from 'js/router';
 import HeaderButton from '../HeaderButton.vue';
 import Scrolly from '../UI/Scrolly.vue';
 import Icon from '../UI/Icon.vue';
+import SearchInput from '../UI/SearchInput.vue';
 import MessagesPeer from './MessagesPeer.vue';
 import MessagesPeersSearch from './MessagesPeersSearch.vue';
-import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
 
 export default {
   props: ['activeChat'],
@@ -68,9 +58,9 @@ export default {
     HeaderButton,
     Scrolly,
     Icon,
+    SearchInput,
     MessagesPeer,
-    MessagesPeersSearch,
-    MessagesListMenu
+    MessagesPeersSearch
   },
 
   setup() {
@@ -88,6 +78,7 @@ export default {
 
       lockScroll: false,
       isSearch: false,
+      isScrolled: false,
 
       peerIds: computed(() => store.state.messages.peerIds),
       settings: computed(() => store.getters['settings/settings']),
@@ -136,7 +127,12 @@ export default {
       }
     }
 
-    const onScroll = endScroll(() => {
+    function onScroll(scrollyEvent) {
+      state.isScrolled = !!scrollyEvent.viewport.scrollTop;
+      checkScroll(scrollyEvent);
+    }
+
+    const checkScroll = endScroll(() => {
       if (!state.loading && !state.loaded) {
         state.loading = true;
         load();
@@ -162,15 +158,23 @@ export default {
 </script>
 
 <style>
+.im_peers_container {
+  border-right: 1px solid var(--separator);
+}
+
+.im_peers_container .header.isScrolled {
+  border-bottom: 1px solid var(--separator);
+}
+
+.im_create_chat_btn {
+  flex: none;
+  margin-right: 16px;
+}
+
 .im_peers_wrap {
   width: 100%;
   /* 50px - постоянная высота у .header */
   height: calc(100% - 50px);
-  border-right: 1px solid var(--separator);
-}
-
-.im_peers_container .header_name {
-  flex-grow: 1;
 }
 
 .im_pinned_peers {
