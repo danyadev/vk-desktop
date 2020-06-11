@@ -10,7 +10,7 @@
       >
       <Icon
         name="cancel"
-        color="var(--background-blue-text)"
+        color="var(--icon-blue)"
         class="header_btn im_search_cancel"
         @click="$emit('close')"
       />

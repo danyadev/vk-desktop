@@ -2,7 +2,12 @@
   <div class="header_wrap">
     <div class="header">
       <template v-if="!selectedMessages.length">
-        <img src="~assets/im_back.svg" class="header_btn im_header_back" @click="$emit('close')">
+        <Icon
+          name="im_back"
+          color="var(--icon-blue)"
+          class="header_btn im_header_back"
+          @click="$emit('close')"
+        />
         <img class="im_header_photo" :src="photo">
 
         <div class="im_header_center text-overflow">
@@ -20,7 +25,7 @@
             <Icon
               v-if="peer && peer.muted"
               name="muted"
-              color="var(--icon-blue)"
+              color="var(--icon-gray)"
               class="im_header_muted"
             />
           </div>
@@ -32,7 +37,7 @@
         <Icon
           name="search"
           color="var(--icon-blue)"
-          class="header_btn im_search_icon"
+          class="header_btn"
           @click="$emit('search')"
         />
         <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
@@ -237,11 +242,28 @@ export default {
 </script>
 
 <style>
+.header_wrap {
+  position: relative;
+  border-bottom: 1px solid var(--separator);
+}
+
+.header_wrap::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 4px;
+  margin-top: 1px;
+  pointer-events: none;
+  background: linear-gradient(0deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
+}
+
 .im_header_back {
   display: none;
 }
 
-.im_header_back,
 .im_header_cancel_select,
 .im_header_selected_actions svg {
   cursor: pointer;
@@ -249,7 +271,6 @@ export default {
   transition: opacity .3s;
 }
 
-.im_header_back:hover,
 .im_header_cancel_select:hover,
 .im_header_selected_actions svg:hover {
   opacity: 1;

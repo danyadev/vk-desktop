@@ -167,17 +167,13 @@ img:not(.emoji) {
   color: #fff;
 }
 
-.icon-hover,
-.im_search_icon,
-.im_search_cancel {
+.icon-hover {
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;
 }
 
-.icon-hover:hover,
-.im_search_icon:hover,
-.im_search_cancel:hover {
+.icon-hover:hover {
   opacity: 1;
 }
 
