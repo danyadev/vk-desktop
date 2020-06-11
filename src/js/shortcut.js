@@ -1,3 +1,5 @@
+import { currentWindow } from './utils';
+
 const pressedKeys = new Set();
 // Предполагается, что одно и тоже сочетание клавиш будет обрабатываться один раз
 const callbacks = new Map();
@@ -18,6 +20,10 @@ window.addEventListener('keydown', (event) => {
 
 window.addEventListener('keyup', (event) => {
   pressedKeys.delete(getKeyName(event));
+});
+
+currentWindow.webContents.on('devtools-opened', () => {
+  pressedKeys.clear();
 });
 
 export default function(accelerators, callback) {

@@ -121,9 +121,9 @@ export default {
   im_typing_audio: ['{0} записывает аудио', '{0} и {1} записывают аудио', '{0} и еще {1} записывают аудио'],
 
   im_message_id: 'ID сообщения',
-  im_message_id_copied: 'ID сообщения скопировано',
+  im_message_id_copied: 'ID сообщения скопирован',
   im_peer_id: 'ID беседы',
-  im_peer_id_copied: 'ID беседы скопировано',
+  im_peer_id_copied: 'ID беседы скопирован',
 
   im_reply_msg: 'Ответить на сообщение',
   im_toggle_msg_pin: ['Закрепить сообщение', 'Открепить сообщение'],

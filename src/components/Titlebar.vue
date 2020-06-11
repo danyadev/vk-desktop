@@ -70,9 +70,14 @@ export default {
   color: var(--text-primary);
 }
 
+.root:not(.mac) .titlebar {
+  font-family: Segoe UI;
+}
+
 .mac .titlebar {
   background: var(--titlebar-background);
   color: var(--text-secondary);
+  font-size: 13px;
 }
 
 .titlebar_drag {
@@ -80,7 +85,6 @@ export default {
   flex-grow: 1;
   margin: 4px 0 0 4px;
   padding-left: 4px;
-  font-family: Segoe UI;
   line-height: 24px;
   overflow: hidden;
   white-space: nowrap;
