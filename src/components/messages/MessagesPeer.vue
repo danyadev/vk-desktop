@@ -11,40 +11,44 @@
 
     <div class="im_peer_content">
       <div class="im_peer_title">
-        <div class="im_peer_name_wrap">
-          <div :class="['im_peer_name text-overflow', { blueName }]">
-            <VKText>{{ chatName }}</VKText>
-          </div>
-          <Icon v-if="owner && owner.verified" name="verified" class="verified" />
-          <Icon
-            v-if="peer.isCasperChat"
-            name="ghost"
-            color="var(--background-blue)"
-            class="im_peer_ghost"
-          />
-          <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
+        <div :class="['im_peer_name text-overflow', { blueName }]">
+          <VKText>{{ chatName }}</VKText>
         </div>
-        <div class="im_peer_time">{{ time }}</div>
+        <Icon v-if="owner && owner.verified" name="verified" class="verified" />
+        <Icon
+          v-if="peer.isCasperChat"
+          name="ghost"
+          color="var(--background-blue)"
+          class="im_peer_ghost"
+        />
+        <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
       </div>
 
       <div class="im_peer_message_wrap">
         <Typing v-if="hasTyping && !fromSearch" :peer_id="peer.id" />
 
         <div v-else-if="msg.id" class="im_peer_message">
-          <div class="im_peer_author">{{ authorName }}</div>
+          <div class="im_peer_text_wrap text-overflow">
+            <div class="im_peer_author">{{ authorName }}</div>
 
-          <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
-            {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
+            <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
+              {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
+            </div>
+            <div v-else :key="msg.id" :class="['im_peer_text', { isAttachment }]">
+              <ServiceMessage
+                v-if="msg.action"
+                :msg="msg"
+                :author="author"
+                :peer_id="peer.id"
+              />
+              <VKText v-else mention>{{ message }}</VKText>
+            </div>
           </div>
-          <div v-else :key="msg.id" :class="['im_peer_text', { isAttachment }]">
-            <ServiceMessage
-              v-if="msg.action"
-              :msg="msg"
-              :author="author"
-              :peer_id="peer.id"
-            />
-            <VKText v-else mention>{{ message }}</VKText>
-          </div>
+
+          <template v-if="shortTime">
+            <div class="message_dot"></div>
+            <div class="im_peer_short_time">{{ shortTime }}</div>
+          </template>
         </div>
 
         <div v-else class="im_peer_text isContentDeleted">
@@ -76,7 +80,7 @@ import {
   getPeerAvatar,
   getPeerTitle
 } from 'js/messages';
-import { getShortDate } from 'js/date';
+import { getShortTime } from 'js/date';
 import store from 'js/store';
 import router from 'js/router';
 import getTranslate from 'js/getTranslate';
@@ -87,7 +91,7 @@ import Typing from './Typing.vue';
 import ServiceMessage from './ServiceMessage.vue';
 
 export default {
-  props: ['peer', 'msg', 'activeChat', 'fromSearch'],
+  props: ['peer', 'msg', 'activeChat', 'nowDate', 'fromSearch'],
 
   components: {
     Icon,
@@ -117,12 +121,9 @@ export default {
         }
       }),
 
-      time: computed(() => {
-        // Даты может не быть если нет сообщения и беседа закреплена
-        if (props.msg.date) {
-          return getShortDate(new Date(props.msg.date * 1000));
-        }
-      }),
+      shortTime: computed(() => (
+        props.msg.date && getShortTime(new Date(props.msg.date * 1000), props.nowDate)
+      )),
 
       hasTyping: computed(() => {
         const typing = store.state.messages.typing[props.peer.id] || {};
@@ -262,12 +263,6 @@ export default {
 .im_peer_title {
   display: flex;
   margin-top: 5px;
-}
-
-.im_peer_name_wrap {
-  display: flex;
-  flex-grow: 1;
-  overflow: hidden;
   font-weight: 500;
 }
 
@@ -297,14 +292,6 @@ export default {
   margin: 3px 0 0 3px;
 }
 
-.im_peer_time {
-  flex: none;
-  margin-left: 5px;
-  color: var(--text-steel-gray);
-  font-size: 13px;
-  margin-top: 1px;
-}
-
 .im_peer_message_wrap {
   display: flex;
   height: 20px;
@@ -312,6 +299,7 @@ export default {
 }
 
 .im_peer_message_wrap > div:first-child {
+  display: flex;
   flex-grow: 1;
   margin-top: 2px;
 }
@@ -320,7 +308,7 @@ export default {
   color: var(--text-gray);
 }
 
-.im_peer_message div {
+.im_peer_text_wrap div {
   display: inline;
 }
 
@@ -341,9 +329,21 @@ export default {
   color: var(--text-dark-steel-gray);
 }
 
+.im_peer .message_dot {
+  flex: none;
+  margin: 8px 4px 0 4px;
+  background: var(--background-steel-gray);
+}
+
+.im_peer_short_time {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-steel-gray);
+}
+
 .im_peer_unread:not(:empty) {
   padding: 1px 6px 0 6px;
-  margin: 1px 0 0 3px;
+  margin: 1px 0 0 10px;
   border-radius: 10px;
   background: var(--background-blue);
   color: var(--background-blue-text);
@@ -358,7 +358,7 @@ export default {
 
 .im_peer_unread.outread {
   flex: none;
-  margin: 7px 4px 0 4px;
+  margin: 7px 4px 0 10px;
   width: 8px;
   height: 8px;
   border-radius: 10px;

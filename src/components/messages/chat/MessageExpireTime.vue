@@ -38,7 +38,7 @@ export default {
         });
 
         expireTime.value = hours
-          ? hours + getTranslate('hour_symbol')
+          ? hours + getTranslate('date_symbols', 'hour')
           : format(expireDate, 'mm:ss');
       } else {
         clearIntervals();

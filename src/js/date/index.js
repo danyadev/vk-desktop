@@ -3,33 +3,17 @@ import {
   formatDistance,
   isYesterday,
   isSameDay,
-  isSameYear,
   differenceInSeconds,
+  differenceInMinutes,
   differenceInHours,
+  differenceInDays,
+  differenceInMonths,
   differenceInYears
 } from './utils';
 import getTranslate from '../getTranslate';
 
 export function getTime(date) {
   return format(date, 'hh:mm');
-}
-
-// 1) 12:30
-// 2) вчера
-// 3) 1 мар
-// 4) 1 мар 2019
-export function getShortDate(date) {
-  const now = new Date();
-
-  if (isSameDay(date, now)) {
-    return getTime(date);
-  } else if (isYesterday(date)) {
-    return getTranslate('yesterday');
-  } else if (isSameYear(now, date)) {
-    return format(date, 'd MMM');
-  } else {
-    return format(date, 'd MMM yyyy');
-  }
 }
 
 // мар / марта (fullMonth)
@@ -93,4 +77,37 @@ export function getDay(date) {
   } else {
     return `${day} ${date.getFullYear()}`;
   }
+}
+
+// 1) (ничего; в случае, если разница меньше минуты)
+// 2) 5м
+// 3) 5ч
+// 4) 5д
+// 5) 5м (месяцев)
+// 6) 5г
+export function getShortTime(date, now) {
+  const getSymbol = getTranslate.bind(this, 'date_symbols');
+  let time;
+
+  if ((time = differenceInYears(now, date))) {
+    return time + getSymbol('year');
+  }
+
+  if ((time = differenceInMonths(now, date))) {
+    return time + getSymbol('month');
+  }
+
+  if ((time = differenceInDays(now, date))) {
+    return time + getSymbol('day');
+  }
+
+  if ((time = differenceInHours(now, date))) {
+    return time + getSymbol('hour');
+  }
+
+  if ((time = differenceInMinutes(now, date))) {
+    return time + getSymbol('minute');
+  }
+
+  return '';
 }

@@ -18,6 +18,7 @@
           :peer="peer"
           :msg="msg"
           :activeChat="activeChat"
+          :nowDate="nowDate"
         />
       </div>
 
@@ -27,6 +28,7 @@
         :peer="peer"
         :msg="msg"
         :activeChat="activeChat"
+        :nowDate="nowDate"
       />
     </Scrolly>
   </div>
@@ -44,7 +46,6 @@ import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
 
-import HeaderButton from '../HeaderButton.vue';
 import Scrolly from '../UI/Scrolly.vue';
 import Icon from '../UI/Icon.vue';
 import SearchInput from '../UI/SearchInput.vue';
@@ -55,7 +56,6 @@ export default {
   props: ['activeChat'],
 
   components: {
-    HeaderButton,
     Scrolly,
     Icon,
     SearchInput,
@@ -79,6 +79,8 @@ export default {
       lockScroll: false,
       isSearch: false,
       isScrolled: false,
+
+      nowDate: new Date(),
 
       peerIds: computed(() => store.state.messages.peerIds),
       settings: computed(() => store.getters['settings/settings']),
@@ -147,6 +149,10 @@ export default {
         stop();
         onScroll(state.scrolly);
       });
+
+      setInterval(() => {
+        state.nowDate = new Date();
+      }, 10 * 1000);
     });
 
     return {
