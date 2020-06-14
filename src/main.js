@@ -21,7 +21,7 @@ app.mixin({
 
 app.component('ForwardedMessage', ForwardedMessage);
 
-app.mount('#app');
+app.mount('body');
 
 shortcut(['Control+Shift+I', 'F12'], () => {
   if (currentWindow.isDevToolsOpened()) {

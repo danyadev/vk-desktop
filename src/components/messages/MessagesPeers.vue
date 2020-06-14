@@ -162,6 +162,11 @@ export default {
   border-right: 1px solid var(--separator);
 }
 
+.im_peers_container .header {
+  /* Необходимо для смещения border-bottom, чтобы он совпадал с бордером в беседе */
+  box-sizing: content-box;
+}
+
 .im_peers_container .header.isScrolled {
   border-bottom: 1px solid var(--separator);
 }

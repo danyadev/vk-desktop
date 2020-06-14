@@ -60,7 +60,7 @@
 
     <Ripple
       v-else-if="canWrite.isChannel"
-      color="var(--messages-peer-ripple)"
+      color="var(--messages-peer-active)"
       class="chat_input_error isChannel"
       @click="toggleNotifications"
     >

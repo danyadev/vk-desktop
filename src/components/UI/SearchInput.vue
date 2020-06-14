@@ -1,7 +1,7 @@
 <template>
   <div class="search_input">
     <Icon name="search_small" color="var(--icon-gray)" />
-    <input type="text" :placeholder="l('search')">
+    <input type="text" :placeholder="l('search')" spellcheck="false">
   </div>
 </template>
 
@@ -33,6 +33,7 @@ export default {
 .search_input input {
   border: none;
   padding: 0;
+  margin-right: 10px;
   font: inherit;
   background: none;
   width: 100%;

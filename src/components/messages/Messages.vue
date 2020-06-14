@@ -22,7 +22,7 @@ export default {
   setup() {
     const state = reactive({
       route: router.currentRoute,
-      peer_id: computed(() => state.route.params.id),
+      peer_id: computed(() => +state.route.params.id),
       hasChat: computed(() => state.route.name === 'chat')
     });
 
@@ -65,8 +65,10 @@ export default {
 }
 
 @media screen and (max-width: 649px) {
-  .im_peers_container { width: 100% }
-  .im_peers_wrap { border-right: none }
+  .im_peers_container {
+    width: 100%;
+    border-right: none;
+  }
 
   .messages_container:not(.hasChat) .im_chat_container { display: none }
   .messages_container.hasChat .im_chat_container { width: 100% }

@@ -46,8 +46,8 @@
   --hover-background-ripple: #e1ebf4;
   --hover-background-gray: #ebedf0;
 
-  --messages-peer-hover: #f5f7fa;
-  --messages-peer-ripple: #e6ebf2;
+  --messages-peer-active: #f0f1f2;
+  --messages-peer-hover: #f8f8f8;
 
   --message-bubble-background: #dfe6ea;
   --message-bubble-background-alpha: #dfe6eadf;

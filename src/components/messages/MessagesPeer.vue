@@ -1,7 +1,6 @@
 <template>
-  <Ripple
-    color="var(--messages-peer-ripple)"
-    class="im_peer"
+  <div
+    :class="['im_peer', { active: isOpenedChat }]"
     data-context-menu="peer"
     :data-peer-id="peer.id"
     @click="openChat"
@@ -65,7 +64,7 @@
         </div>
       </div>
     </div>
-  </Ripple>
+  </div>
 </template>
 
 <script>
@@ -82,7 +81,6 @@ import store from 'js/store';
 import router from 'js/router';
 import getTranslate from 'js/getTranslate';
 
-import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';
 import VKText from '../UI/VKText.vue';
 import Typing from './Typing.vue';
@@ -92,7 +90,6 @@ export default {
   props: ['peer', 'msg', 'activeChat', 'fromSearch'],
 
   components: {
-    Ripple,
     Icon,
     VKText,
     Typing,
@@ -112,6 +109,7 @@ export default {
       outread: computed(() => props.msg.id && props.peer.out_read !== props.peer.last_msg_id),
       photo: computed(() => getPeerAvatar(props.peer.id, props.peer, state.owner)),
       chatName: computed(() => getPeerTitle(props.peer.id, props.peer, state.owner)),
+      isOpenedChat: computed(() => props.activeChat === props.peer.id),
 
       online: computed(() => {
         if (state.owner && state.owner.online) {
@@ -151,16 +149,15 @@ export default {
     async function openChat() {
       const { activeChat, fromSearch } = props;
       const peer_id = props.peer.id;
-      const isCurrentChat = activeChat === peer_id;
 
-      if (isCurrentChat && !fromSearch) {
+      if (state.isOpenedChat && !fromSearch) {
         return eventBus.emit('messages:event', 'jump', {
           peer_id: activeChat,
           bottom: true
         });
       }
 
-      if (!isCurrentChat && activeChat) {
+      if (!state.isOpenedChat && activeChat) {
         eventBus.emit('messages:event', 'closeChat', {
           peer_id: activeChat
         });
@@ -208,19 +205,25 @@ export default {
 .im_peer {
   display: flex;
   position: relative;
+  border-radius: 8px;
+  margin: 0 8px;
+  cursor: pointer;
   transition: background-color .3s;
 }
 
 .im_peer:hover {
   background: var(--messages-peer-hover);
-  cursor: pointer;
+}
+
+.im_peer.active {
+  background: var(--messages-peer-active);
 }
 
 .im_peer_photo {
   position: relative;
   width: 50px;
   height: 50px;
-  margin: 10px 10px 10px 16px;
+  margin: 8px 14px 8px 10px;
 }
 
 .im_peer_photo,
@@ -253,7 +256,7 @@ export default {
 
 .im_peer_content {
   width: calc(100% - 76px);
-  padding: 10px 16px 10px 0;
+  padding: 8px 8px 8px 0;
 }
 
 .im_peer_title {
@@ -317,14 +320,13 @@ export default {
   color: var(--text-gray);
 }
 
-.im_peer_author:not(:empty) {
+.im_peer_message div {
   display: inline;
-  margin-right: 3px;
-  color: var(--text-dark-steel-gray);
 }
 
-.im_peer_text {
-  display: inline;
+.im_peer_author:not(:empty) {
+  margin-right: 3px;
+  color: var(--text-dark-steel-gray);
 }
 
 .im_peer_text b {

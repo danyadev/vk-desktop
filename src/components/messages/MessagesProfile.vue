@@ -1,9 +1,5 @@
 <template>
-  <Ripple
-    color="var(--messages-peer-ripple)"
-    class="im_peer im_peer_profile"
-    @click="openChat"
-  >
+  <div class="im_peer im_peer_profile" @click="openChat">
     <img
       :src="photo"
       class="im_peer_photo"
@@ -28,7 +24,7 @@
       </div>
       <div :class="['im_peer_online', { active: isOnline }]">{{ onlineText }}</div>
     </div>
-  </Ripple>
+  </div>
 </template>
 
 <script>
@@ -38,7 +34,6 @@ import store from 'js/store';
 import router from 'js/router';
 
 import VKText from '../UI/VKText.vue';
-import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';
 
 export default {
@@ -46,7 +41,6 @@ export default {
 
   components: {
     VKText,
-    Ripple,
     Icon
   },
 
