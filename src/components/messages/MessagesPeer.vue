@@ -305,7 +305,7 @@ export default {
 
 .im_peer_pinned {
   flex: none;
-  margin: 1px 0 0 2px;
+  margin: 1px 0 0 3px;
 }
 
 .im_peer_message_wrap {
