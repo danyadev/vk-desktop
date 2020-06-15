@@ -11,19 +11,8 @@
       :lock="lockScroll"
       @scroll="onScroll"
     >
-      <div v-if="peersLists.pinned.length" class="im_pinned_peers">
-        <MessagesPeer
-          v-for="{ peer, msg } of peersLists.pinned"
-          :key="peer.id"
-          :peer="peer"
-          :msg="msg"
-          :activeChat="activeChat"
-          :nowDate="nowDate"
-        />
-      </div>
-
       <MessagesPeer
-        v-for="{ peer, msg } of peersLists.unpinned"
+        v-for="{ peer, msg } of peersList"
         :key="peer.id"
         :peer="peer"
         :msg="msg"
@@ -84,20 +73,20 @@ export default {
 
       peerIds: computed(() => store.state.messages.peerIds),
       settings: computed(() => store.getters['settings/settings']),
-      peersList: computed(() => store.getters['messages/peersList']),
 
-      peersLists: computed(() => ({
-        pinned: state.settings.pinnedPeers
-          .map((id) => store.state.messages.conversations[id])
-          .filter((conversation) => (
-            conversation && !(state.isForwardTo && !conversation.peer.isWriteAllowed)
-          )),
+      peersList: computed(() => {
+        const pinnedPeers = store.state.messages.pinnedPeers.map((id) => (
+          store.state.messages.conversations[id]
+        ));
 
-        unpinned: state.peersList.filter(({ peer }) => {
-          const isHidden = state.isForwardTo && !peer.isWriteAllowed;
-          return !state.settings.pinnedPeers.includes(peer.id) && !isHidden;
-        })
-      }))
+        const unpinnedPeers = store.getters['messages/peersList'].filter(({ peer }) => (
+          !store.state.messages.pinnedPeers.includes(peer.id)
+        ));
+
+        return pinnedPeers
+          .concat(unpinnedPeers)
+          .filter(({ peer }) => !(state.isForwardTo && !peer.isWriteAllowed));
+      })
     });
 
     async function load() {
@@ -144,7 +133,7 @@ export default {
     onMounted(() => {
       // Обнаруживаем первую загрузку
       // До этого момента LongPoll не запустится, так что проблем не будет
-      const stop = watch(() => state.peersLists, () => {
+      const stop = watch(() => state.peersList, () => {
         state.loading = false;
         stop();
         onScroll(state.scrolly);
@@ -171,10 +160,11 @@ export default {
 .im_peers_container .header {
   /* Необходимо для смещения border-bottom, чтобы он совпадал с бордером в беседе */
   box-sizing: content-box;
+  border-bottom: 1px solid transparent;
 }
 
 .im_peers_container .header.isScrolled {
-  border-bottom: 1px solid var(--separator);
+  border-bottom-color: var(--separator);
 }
 
 .im_create_chat_btn {
@@ -186,11 +176,5 @@ export default {
   width: 100%;
   /* 50px - постоянная высота у .header */
   height: calc(100% - 50px);
-}
-
-.im_pinned_peers {
-  border-bottom: 6px solid var(--separator);
-  padding-bottom: 5px;
-  margin-bottom: 5px;
 }
 </style>

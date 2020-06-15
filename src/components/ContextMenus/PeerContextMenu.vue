@@ -6,7 +6,7 @@
     </div>
 
     <div
-      v-if="settings.pinnedPeers.length < 5 || isPinnedPeer"
+      v-if="pinnedPeers.length < 5 || isPinnedPeer"
       class="act_menu_item"
       @click="togglePinPeer"
     >
@@ -81,7 +81,8 @@ export default {
     const state = reactive({
       settings: computed(() => store.getters['settings/settings']),
       peer: computed(() => store.state.messages.conversations[peer_id].peer),
-      isPinnedPeer: computed(() => state.settings.pinnedPeers.includes(peer_id))
+      pinnedPeers: computed(() => store.state.messages.pinnedPeers),
+      isPinnedPeer: computed(() => state.pinnedPeers.includes(peer_id))
     });
 
     function copyPeerId() {
@@ -94,7 +95,7 @@ export default {
     }
 
     function togglePinPeer() {
-      const peers = state.settings.pinnedPeers.slice();
+      const peers = state.pinnedPeers.slice();
 
       if (state.isPinnedPeer) {
         peers.splice(peers.indexOf(peer_id), 1);
@@ -102,9 +103,7 @@ export default {
         peers.push(peer_id);
       }
 
-      store.commit('settings/updateUserSettings', {
-        pinnedPeers: peers
-      });
+      store.state.messages.pinnedPeers = peers;
 
       vkapi('storage.set', {
         key: 'pinnedPeers',

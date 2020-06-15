@@ -30,7 +30,6 @@ class Storage {
 
 export const defaultUserSettings = {
   hiddenPinnedMessages: {},
-  pinnedPeers: [],
   typing: true,
   notRead: true,
   devShowObjectIds: false,

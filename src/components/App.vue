@@ -96,9 +96,7 @@ export default {
         msg: conversation.last_message ? parseMessage(conversation.last_message) : {}
       })));
 
-      store.commit('settings/updateUserSettings', {
-        pinnedPeers: pinnedPeers.map(({ peer }) => peer.peer.id)
-      });
+      store.state.messages.pinnedPeers = pinnedPeers.map(({ peer }) => peer.peer.id);
 
       longpoll.start(lp);
 

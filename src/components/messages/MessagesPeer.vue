@@ -22,6 +22,14 @@
           class="im_peer_ghost"
         />
         <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
+        <Icon
+          v-if="isPinned"
+          name="pin"
+          color="var(--icon-dark-blue)"
+          width="16"
+          height="16"
+          class="im_peer_pinned"
+        />
       </div>
 
       <div class="im_peer_message_wrap">
@@ -114,6 +122,7 @@ export default {
       photo: computed(() => getPeerAvatar(props.peer.id, props.peer, state.owner)),
       chatName: computed(() => getPeerTitle(props.peer.id, props.peer, state.owner)),
       isOpenedChat: computed(() => props.activeChat === props.peer.id),
+      isPinned: computed(() => store.state.messages.pinnedPeers.includes(props.peer.id)),
 
       online: computed(() => {
         if (state.owner && state.owner.online) {
@@ -277,7 +286,7 @@ export default {
 
 .im_peer_title .verified {
   flex: none;
-  margin: 2px 0 0 4px;
+  margin: 3px 0 0 4px;
 }
 
 .im_peer_ghost {
@@ -290,6 +299,11 @@ export default {
   width: 13px;
   height: 13px;
   margin: 3px 0 0 3px;
+}
+
+.im_peer_pinned {
+  flex: none;
+  margin: 1px 0 0 3px;
 }
 
 .im_peer_message_wrap {
