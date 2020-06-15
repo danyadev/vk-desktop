@@ -160,7 +160,7 @@ img:not(.emoji) {
   width: 12px;
   height: 12px;
   vertical-align: middle;
-  color: var(--accent);
+  color: var(--icon-dark-blue);
 }
 
 .verified.white {

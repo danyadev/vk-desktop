@@ -18,10 +18,9 @@
         <Icon
           v-if="peer.isCasperChat"
           name="ghost"
-          color="var(--background-blue)"
+          color="var(--icon-dark-blue)"
           class="im_peer_ghost"
         />
-        <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
         <Icon
           v-if="isPinned"
           name="pin"
@@ -30,6 +29,7 @@
           height="16"
           class="im_peer_pinned"
         />
+        <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
       </div>
 
       <div class="im_peer_message_wrap">
@@ -303,7 +303,7 @@ export default {
 
 .im_peer_pinned {
   flex: none;
-  margin: 1px 0 0 3px;
+  margin: 1px 0 0 2px;
 }
 
 .im_peer_message_wrap {
