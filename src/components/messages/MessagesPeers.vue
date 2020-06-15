@@ -190,5 +190,7 @@ export default {
 
 .im_pinned_peers {
   border-bottom: 6px solid var(--separator);
+  padding-bottom: 5px;
+  margin-bottom: 5px;
 }
 </style>

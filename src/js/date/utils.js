@@ -1,5 +1,9 @@
 import getTranslate from '../getTranslate';
 
+function floor(num) {
+  return num < 0 ? Math.ceil(num) : Math.floor(num);
+}
+
 export function format(date, mask) {
   const addZero = (num) => (num < 10 ? '0' + num : num);
   const months = getTranslate('months');
@@ -81,19 +85,19 @@ function differenceInMilliseconds(d1, d2) {
 }
 
 export function differenceInSeconds(d1, d2) {
-  return Math.floor(differenceInMilliseconds(d1, d2) / 1000);
+  return floor(differenceInMilliseconds(d1, d2) / 1000);
 }
 
 export function differenceInMinutes(d1, d2) {
-  return Math.floor(differenceInSeconds(d1, d2) / 60);
+  return floor(differenceInSeconds(d1, d2) / 60);
 }
 
 export function differenceInHours(d1, d2) {
-  return Math.floor(differenceInMinutes(d1, d2) / 60);
+  return floor(differenceInMinutes(d1, d2) / 60);
 }
 
 export function differenceInDays(d1, d2) {
-  return Math.floor(differenceInHours(d1, d2) / 24);
+  return floor(differenceInHours(d1, d2) / 24);
 }
 
 function differenceInCalendarMonths(d1, d2) {

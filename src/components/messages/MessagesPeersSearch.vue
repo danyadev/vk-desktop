@@ -1,7 +1,6 @@
 <template>
   <div class="im_peers_container im_search_container">
     <div class="header">
-      <HeaderButton />
       <input
         ref="input"
         v-model="text"
@@ -67,7 +66,6 @@ import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
 
-import HeaderButton from '../HeaderButton.vue';
 import Icon from '../UI/Icon.vue';
 import Scrolly from '../UI/Scrolly.vue';
 import MessagesPeer from './MessagesPeer.vue';
@@ -75,7 +73,6 @@ import MessagesProfile from './MessagesProfile.vue';
 
 export default {
   components: {
-    HeaderButton,
     Icon,
     Scrolly,
     MessagesPeer,
