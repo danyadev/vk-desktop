@@ -7,7 +7,7 @@
           <div class="attach_reply_content">
             <div class="attach_reply_name">{{ l('im_forwarded_some') }}</div>
 
-            <div class="attach_reply_text isAttachment">
+            <div class="attach_reply_text hasAttachment">
               {{ l('im_forwarded', [fwdMessages.length], fwdMessages.length) }}
             </div>
           </div>

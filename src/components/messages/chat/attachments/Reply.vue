@@ -15,7 +15,7 @@
       <div v-if="msg.isContentDeleted" class="attach_reply_text isContentDeleted">
         {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
       </div>
-      <div v-else :class="['attach_reply_text', { isAttachment: msg.hasAttachment && !msg.text }]">
+      <div v-else :class="['attach_reply_text', { hasAttachment: msg.hasAttachment && !msg.text }]">
         <VKText mention>{{ text }}</VKText>
       </div>
     </div>
@@ -184,7 +184,7 @@ export default {
   margin-top: 1px;
 }
 
-.attach_reply_text.isAttachment {
+.attach_reply_text.hasAttachment {
   color: var(--text-blue);
 }
 

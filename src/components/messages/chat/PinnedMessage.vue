@@ -7,7 +7,7 @@
         <div class="im_pinned_msg_name">{{ name }}</div>
         <div class="im_pinned_msg_time">{{ time }}</div>
       </div>
-      <div :class="['im_pinned_msg_text text-overflow', { isAttachment }]">
+      <div :class="['im_pinned_msg_text text-overflow', { hasAttachment }]">
         <ServiceMessage
           v-if="msg.action"
           :msg="msg"
@@ -55,7 +55,9 @@ export default {
       name: computed(() => getPeerTitle(0, null, state.author)),
       time: computed(() => getFullDate(new Date(props.msg.date * 1000))),
       text: computed(() => getMessagePreview(props.msg)),
-      isAttachment: computed(() => props.msg.hasAttachment && !props.msg.text && !props.msg.action)
+      hasAttachment: computed(() => (
+        props.msg.hasAttachment && !props.msg.text && !props.msg.action
+      ))
     });
 
     function openMessage() {
@@ -127,7 +129,7 @@ export default {
   font-size: 13px;
 }
 
-.im_pinned_msg_text.isAttachment {
+.im_pinned_msg_text.hasAttachment {
   color: var(--text-blue);
 }
 

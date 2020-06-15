@@ -42,7 +42,7 @@
             <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
               {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
             </div>
-            <div v-else :key="msg.id" :class="['im_peer_text', { isAttachment }]">
+            <div v-else :key="msg.id" :class="['im_peer_text', { hasAttachment }]">
               <ServiceMessage
                 v-if="msg.action"
                 :msg="msg"
@@ -117,7 +117,9 @@ export default {
       author: computed(() => store.state.profiles[props.msg.from]),
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),
       message: computed(() => getMessagePreview(props.msg)),
-      isAttachment: computed(() => !props.msg.text && !props.msg.action && props.msg.hasAttachment),
+      hasAttachment: computed(() => (
+        !props.msg.text && !props.msg.action && props.msg.hasAttachment
+      )),
       outread: computed(() => props.msg.id && props.peer.out_read !== props.peer.last_msg_id),
       photo: computed(() => getPeerAvatar(props.peer.id, props.peer, state.owner)),
       chatName: computed(() => getPeerTitle(props.peer.id, props.peer, state.owner)),
@@ -335,7 +337,7 @@ export default {
   font-weight: 500;
 }
 
-.im_peer_text.isAttachment {
+.im_peer_text.hasAttachment {
   color: var(--text-blue);
 }
 
