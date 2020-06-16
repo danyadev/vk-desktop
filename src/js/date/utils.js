@@ -9,8 +9,9 @@ export function format(date, mask) {
   const months = getTranslate('months');
 
   const tokens = {
-    // год (nnnn)
+    // год (nnnn; nn)
     yyyy: () => date.getFullYear(),
+    yy: () => ('' + date.getFullYear()).slice(-2),
 
     // месяц (полное название; короткое название; 01-12; 1-12)
     MMMM: () => months[date.getMonth()],

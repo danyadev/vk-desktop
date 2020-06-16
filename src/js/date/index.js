@@ -84,13 +84,13 @@ export function getDay(date) {
 // 3) 1ч - 23ч
 // 4) 1д - 2д
 // 5) 1 мар
-// 6) 1 мар 2019
+// 6) 01.03.19
 export function getShortTime(date, now) {
   const getSymbol = getTranslate.bind(this, 'date_symbols');
   let time;
 
   if (differenceInYears(now, date)) {
-    return format(date, `d MMM yyyy`);
+    return format(date, 'dd.MM.yy');
   }
 
   if (differenceInMonths(now, date)) {

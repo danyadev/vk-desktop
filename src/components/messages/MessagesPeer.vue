@@ -238,7 +238,7 @@ export default {
   position: relative;
   width: 50px;
   height: 50px;
-  margin: 8px 14px 8px 10px;
+  margin: 8px 10px 8px 8px;
 }
 
 .im_peer_photo,
@@ -270,7 +270,7 @@ export default {
 }
 
 .im_peer_content {
-  width: calc(100% - 76px);
+  width: calc(100% - 68px);
   padding: 8px 8px 8px 0;
 }
 
@@ -368,7 +368,7 @@ export default {
 
 .im_peer_unread:not(:empty) {
   padding: 1px 6px 0 6px;
-  margin: 1px 0 0 10px;
+  margin: 1px 0 0 8px;
   border-radius: 10px;
   background: var(--background-blue);
   color: var(--background-blue-text);
@@ -383,7 +383,7 @@ export default {
 
 .im_peer_unread.outread {
   flex: none;
-  margin: 7px 4px 0 10px;
+  margin: 7px 4px 0 8px;
   width: 8px;
   height: 8px;
   border-radius: 10px;
