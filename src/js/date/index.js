@@ -80,25 +80,27 @@ export function getDay(date) {
 }
 
 // 1) (ничего; в случае, если разница меньше минуты)
-// 2) 5м
-// 3) 5ч
-// 4) 5д
-// 5) 5м (месяцев)
-// 6) 5г
+// 2) 1м - 59м
+// 3) 1ч - 23ч
+// 4) 1д - 2д
+// 5) 1 мар
+// 6) 1 мар 2019
 export function getShortTime(date, now) {
   const getSymbol = getTranslate.bind(this, 'date_symbols');
   let time;
 
-  if ((time = differenceInYears(now, date))) {
-    return time + getSymbol('year');
+  if (differenceInYears(now, date)) {
+    return format(date, `d MMM yyyy`);
   }
 
-  if ((time = differenceInMonths(now, date))) {
-    return time + getSymbol('month');
+  if (differenceInMonths(now, date)) {
+    return format(date, 'd MMM');
   }
 
   if ((time = differenceInDays(now, date))) {
-    return time + getSymbol('day');
+    return time < 3
+      ? time + getSymbol('day')
+      : format(date, 'd MMM');
   }
 
   if ((time = differenceInHours(now, date))) {
