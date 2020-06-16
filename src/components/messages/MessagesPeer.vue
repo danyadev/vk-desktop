@@ -11,25 +11,28 @@
 
     <div class="im_peer_content">
       <div class="im_peer_title">
-        <div :class="['im_peer_name text-overflow', { blueName }]">
-          <VKText>{{ chatName }}</VKText>
+        <div class="im_peer_name_wrap">
+          <div :class="['im_peer_name text-overflow', { blueName }]">
+            <VKText>{{ chatName }}</VKText>
+          </div>
+          <Icon v-if="owner && owner.verified" name="verified" class="verified" />
+          <Icon
+            v-if="peer.isCasperChat"
+            name="ghost"
+            color="var(--icon-dark-blue)"
+            class="im_peer_ghost"
+          />
+          <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
         </div>
-        <Icon v-if="owner && owner.verified" name="verified" class="verified" />
-        <Icon
-          v-if="peer.isCasperChat"
-          name="ghost"
-          color="var(--icon-dark-blue)"
-          class="im_peer_ghost"
-        />
+
         <Icon
           v-if="isPinned"
           name="pin"
-          color="var(--icon-dark-blue)"
+          color="var(--icon-gray)"
           width="16"
           height="16"
           class="im_peer_pinned"
         />
-        <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
       </div>
 
       <div class="im_peer_message_wrap">
@@ -274,6 +277,12 @@ export default {
 .im_peer_title {
   display: flex;
   margin-top: 5px;
+}
+
+.im_peer_name_wrap {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
   font-weight: 500;
 }
 
