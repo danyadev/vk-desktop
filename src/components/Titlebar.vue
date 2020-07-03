@@ -1,5 +1,5 @@
 <template>
-  <div :class="['titlebar', { maximized }]">
+  <div :class="['titlebar segoe-ui', { maximized }]">
     <div ref="drag" class="titlebar_drag">{{ l('vk_desktop') }}</div>
     <div v-if="!isMac" class="titlebar_buttons">
       <div
@@ -68,10 +68,6 @@ export default {
   z-index: 5;
   background: var(--background);
   color: var(--text-primary);
-}
-
-.root:not(.mac) .titlebar {
-  font-family: Segoe UI;
 }
 
 .mac .titlebar {

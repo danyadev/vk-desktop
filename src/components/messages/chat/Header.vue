@@ -5,7 +5,9 @@
         <Icon
           name="im_back"
           color="var(--icon-blue)"
-          class="header_btn im_header_back"
+          width="24"
+          height="26"
+          class="im_header_back"
           @click="$emit('close')"
         />
         <img class="im_header_photo" :src="photo">
@@ -247,8 +249,13 @@ export default {
   border-bottom: 1px solid var(--separator);
 }
 
+.im_chat_container .header {
+  padding-left: 15px;
+}
+
 .im_header_back {
   display: none;
+  margin: 0 6px 0 -6px;
 }
 
 .im_header_cancel_select,
@@ -267,7 +274,7 @@ export default {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  margin: 0 5px 0 5px;
+  margin-right: 10px;
 }
 
 .im_header_center {
@@ -301,7 +308,7 @@ export default {
 }
 
 .im_header_online:not(:empty) {
-  color: var(--text-primary-alpha);
+  color: var(--text-dark-steel-gray);
   font-size: 13px;
   margin-top: 2px;
 }

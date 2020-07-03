@@ -90,7 +90,7 @@ export default {
 
 @media screen and (min-width: 670px) and (max-width: 840px) {
   .im_peers_container { width: 48% }
-  .im_chat_container { width: 54% }
+  .im_chat_container { width: 52% }
 }
 
 @media screen and (min-width: 841px) {

@@ -65,6 +65,10 @@ img:not(.emoji) {
   letter-spacing: .03em;
 }
 
+.root:not(.mac) .segoe-ui {
+  font-family: Segoe UI;
+}
+
 .section_container {
   width: calc(100% - 65px);
   height: 100%;
