@@ -5,7 +5,7 @@
       color="rgba(255, 255, 255, .2)"
       @click="toggleMenu"
     >
-      <img src="~assets/actions_icon.svg" class="act_menu_btn icon-hover">
+      <Icon name="actions_icon" color="var(--icon-blue)" class="act_menu_btn" />
     </Ripple>
 
     <div :class="['act_menu', { active }]"><slot v-if="!hideList" /></div>
@@ -16,12 +16,14 @@
 import { reactive, toRefs } from 'vue';
 
 import Ripple from '../UI/Ripple.vue';
+import Icon from '../UI/Icon.vue';
 
 export default {
   props: ['hideList'],
 
   components: {
-    Ripple
+    Ripple,
+    Icon
   },
 
   setup() {
@@ -93,7 +95,7 @@ export default {
   opacity: 0;
   pointer-events: none;
   z-index: 2;
-  background: #fff;
+  background: var(--background);
   border-radius: 6px;
   box-shadow: 0 0 4px rgba(0, 0, 0, .2),
               0 4px 36px -6px rgba(0, 0, 0, .4);
@@ -104,11 +106,5 @@ export default {
   margin-top: 6px;
   opacity: 1;
   pointer-events: all;
-}
-
-.act_menu_separator {
-  height: 1px;
-  margin: 4px 0;
-  background: #e0e0e0;
 }
 </style>

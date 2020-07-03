@@ -20,6 +20,13 @@
   src: url('~assets/RobotoMedium.ttf');
 }
 
+@font-face {
+  font-family: Segoe UI;
+  font-weight: 400;
+  font-display: block;
+  src: url('~assets/SegoeUI.ttf');
+}
+
 body {
   font-family: BlinkMacSystemFont, Roboto;
   font-size: 15px;
@@ -40,8 +47,9 @@ img:not(.emoji) {
 }
 
 .app {
-  height: calc(100vh - var(--titlebar-height));
+  display: flex;
   position: relative;
+  height: calc(100vh - var(--titlebar-height));
 }
 
 .root {
@@ -53,6 +61,17 @@ img:not(.emoji) {
 
 .root.mac {
   --titlebar-height: 22px;
+
+  letter-spacing: .03em;
+}
+
+.root:not(.mac) .segoe-ui {
+  font-family: Segoe UI;
+}
+
+.section_container {
+  width: calc(100% - 65px);
+  height: 100%;
 }
 
 .emoji {
@@ -69,6 +88,29 @@ img:not(.emoji) {
 
 .link:hover {
   text-decoration: underline;
+}
+
+.border-top-shadow::before,
+.border-bottom-shadow::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 4px;
+  pointer-events: none;
+}
+
+.border-top-shadow::before {
+  bottom: 100%;
+  margin-bottom: 1px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
+}
+
+.border-bottom-shadow::after {
+  top: 100%;
+  margin-top: 1px;
+  background: linear-gradient(0deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
 }
 
 /* Input ========================== */
@@ -104,8 +146,8 @@ img:not(.emoji) {
 .header {
   display: flex;
   align-items: center;
-  background: var(--blue-background);
-  color: var(--blue-background-text);
+  background: var(--background);
+  color: var(--text-primary);
   width: 100%;
   height: 50px;
 }
@@ -119,7 +161,7 @@ img:not(.emoji) {
 }
 
 .header_name {
-  color: var(--blue-background-text);
+  color: var(--text-primary);
   padding-left: 10px;
 }
 
@@ -151,7 +193,7 @@ img:not(.emoji) {
   width: 12px;
   height: 12px;
   vertical-align: middle;
-  color: var(--accent);
+  color: var(--icon-dark-blue);
 }
 
 .verified.white {
@@ -159,17 +201,13 @@ img:not(.emoji) {
   color: #fff;
 }
 
-.icon-hover,
-.im_search_icon,
-.im_search_cancel {
+.icon-hover {
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;
 }
 
-.icon-hover:hover,
-.im_search_icon:hover,
-.im_search_cancel:hover {
+.icon-hover:hover {
   opacity: 1;
 }
 

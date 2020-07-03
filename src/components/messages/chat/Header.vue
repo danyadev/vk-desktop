@@ -1,11 +1,16 @@
 <template>
-  <div class="header_wrap">
+  <div class="header_wrap border-bottom-shadow">
     <div class="header">
       <template v-if="!selectedMessages.length">
-        <div class="im_header_side">
-          <img src="~assets/im_back.svg" class="header_btn im_header_back" @click="$emit('close')">
-          <img class="im_header_photo" :src="photo">
-        </div>
+        <Icon
+          name="im_back"
+          color="var(--icon-blue)"
+          width="24"
+          height="26"
+          class="im_header_back"
+          @click="$emit('close')"
+        />
+        <img class="im_header_photo" :src="photo">
 
         <div class="im_header_center text-overflow">
           <div class="im_header_name_wrap">
@@ -16,13 +21,13 @@
             <Icon
               v-if="peer && peer.isCasperChat"
               name="ghost"
-              color="var(--blue-background-text)"
+              color="var(--icon-blue)"
               class="im_header_ghost"
             />
             <Icon
               v-if="peer && peer.muted"
               name="muted"
-              color="var(--blue-background-text)"
+              color="var(--icon-gray)"
               class="im_header_muted"
             />
           </div>
@@ -31,21 +36,19 @@
           <div v-else class="im_header_online text-overflow">{{ online }}</div>
         </div>
 
-        <div class="im_header_side">
-          <Icon
-            name="search"
-            color="var(--blue-background-text)"
-            class="header_btn im_search_icon"
-            @click="$emit('search')"
-          />
-          <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
-        </div>
+        <Icon
+          name="search"
+          color="var(--icon-blue)"
+          class="header_btn"
+          @click="$emit('search')"
+        />
+        <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
       </template>
 
       <template v-else>
         <Icon
           name="cancel"
-          color="var(--blue-background-text)"
+          color="var(--icon-blue)"
           width="26"
           height="26"
           class="im_header_cancel_select"
@@ -60,7 +63,7 @@
           <Icon
             v-if="selectedMessages.length && peer.isWriteAllowed"
             name="reply"
-            color="var(--blue-background-text)"
+            color="var(--icon-blue)"
             :data-tooltip="
               selectedMessages.length === 1 ? 'im_reply_msg' : 'im_forward_messages_here'
             "
@@ -70,7 +73,7 @@
           <Icon
             v-if="peer && !peer.isChannel"
             name="trash"
-            color="var(--blue-background-text)"
+            color="var(--icon-blue)"
             :data-tooltip="selectedMessages.length === 1 ? 'im_delete_msg' : 'im_delete_messages'"
             @click="deleteMessages"
           />
@@ -78,14 +81,14 @@
           <Icon
             v-if="selectedMessages.length"
             name="forward"
-            color="var(--blue-background-text)"
+            color="var(--icon-blue)"
             data-tooltip="im_forward_messages"
             @click="forward"
           />
 
           <Icon
             name="spam"
-            color="var(--blue-background-text)"
+            color="var(--icon-blue)"
             data-tooltip="im_mark_msg_as_spam"
             @click="markAsSpam"
           />
@@ -241,11 +244,20 @@ export default {
 </script>
 
 <style>
-.im_header_back {
-  display: none;
+.header_wrap {
+  position: relative;
+  border-bottom: 1px solid var(--separator);
 }
 
-.im_header_back,
+.im_chat_container .header {
+  padding-left: 15px;
+}
+
+.im_header_back {
+  display: none;
+  margin: 0 6px 0 -6px;
+}
+
 .im_header_cancel_select,
 .im_header_selected_actions svg {
   cursor: pointer;
@@ -253,7 +265,6 @@ export default {
   transition: opacity .3s;
 }
 
-.im_header_back:hover,
 .im_header_cancel_select:hover,
 .im_header_selected_actions svg:hover {
   opacity: 1;
@@ -263,13 +274,7 @@ export default {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  margin: 0 5px 0 5px;
-}
-
-.im_header_side {
-  display: flex;
-  align-items: center;
-  width: 85px;
+  margin-right: 10px;
 }
 
 .im_header_center {
@@ -278,7 +283,6 @@ export default {
 
 .im_header_name_wrap {
   display: flex;
-  justify-content: center;
   height: 16px;
 }
 
@@ -304,9 +308,8 @@ export default {
 }
 
 .im_header_online:not(:empty) {
-  color: var(--blue-background-text-alpha);
+  color: var(--text-dark-steel-gray);
   font-size: 13px;
-  text-align: center;
   margin-top: 2px;
 }
 

@@ -51,7 +51,7 @@ export default {
   padding-top: 5px;
 }
 
-.im_attachments .im_attach_unknown:last-child {
+.message_bubble_content > .im_attachments .im_attach_unknown:last-child {
   margin-bottom: -5px;
 }
 
@@ -63,6 +63,6 @@ export default {
   left: 0;
   width: 2px;
   border-radius: 1px;
-  background-color: var(--blue-background);
+  background-color: var(--background-blue);
 }
 </style>

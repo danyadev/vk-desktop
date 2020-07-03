@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import electron from 'electron';
 import { version } from '../../package.json';
 import { usersStorage } from './store/Storage';
 import vkapi from './vkapi';
@@ -14,6 +15,8 @@ export const AndroidUserAgent = `VKAndroidApp/5.56.1-4841 ${deviceInfo}`;
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
 export const eventBus = new EventEmitter();
+
+export const currentWindow = electron.remote.getCurrentWindow();
 
 // --- Основные утилиты
 

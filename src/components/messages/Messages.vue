@@ -1,5 +1,9 @@
 <template>
-  <div :class="['messages_container', { hasChat }]" tabindex="-1" @keydown.esc="closeChat">
+  <div
+    :class="['section_container messages_container', { hasChat }]"
+    tabindex="-1"
+    @keydown.esc="closeChat"
+  >
     <MessagesPeers :activeChat="peer_id" />
     <!-- TODO(vue-router) :key="peer_id" + KeepAlive -->
     <RouterView />
@@ -22,7 +26,7 @@ export default {
   setup() {
     const state = reactive({
       route: router.currentRoute,
-      peer_id: computed(() => state.route.params.id),
+      peer_id: computed(() => +state.route.params.id),
       hasChat: computed(() => state.route.name === 'chat')
     });
 
@@ -61,12 +65,21 @@ export default {
 <style>
 .messages_container {
   display: flex;
-  height: 100%;
 }
 
-@media screen and (max-width: 649px) {
-  .im_peers_container { width: 100% }
-  .im_peers_wrap { border-right: none }
+@media screen and (max-width: 669px) {
+  .menu.left {
+    display: none !important;
+  }
+
+  .section_container {
+    width: 100% !important;
+  }
+
+  .im_peers_container {
+    width: 100%;
+    border-right: none;
+  }
 
   .messages_container:not(.hasChat) .im_chat_container { display: none }
   .messages_container.hasChat .im_chat_container { width: 100% }
@@ -75,13 +88,19 @@ export default {
   .messages_container.hasChat .im_header_back { display: block }
 }
 
-@media screen and (min-width: 650px) and (max-width: 899px) {
-  .im_peers_container { width: 42% }
-  .im_chat_container { width: 58% }
+@media screen and (min-width: 670px) and (max-width: 840px) {
+  .im_peers_container { width: 48% }
+  .im_chat_container { width: 52% }
 }
 
-@media screen and (min-width: 900px) {
-  .im_peers_container { width: 378px }
-  .im_chat_container { width: calc(100% - 378px) }
+@media screen and (min-width: 841px) {
+  .im_peers_container { width: 371px }
+  .im_chat_container { width: calc(100% - 371px) }
+}
+
+@media screen and (min-width: 670px) {
+  .menu.bottom {
+    display: none;
+  }
 }
 </style>

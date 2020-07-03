@@ -2,7 +2,7 @@
   <div class="settings_wrap">
     <div class="settings">
       <div class="settings_header">
-        <div class="settings_header_text text-overflow">{{ l('menu', 'settings') }}</div>
+        <div class="settings_header_text text-overflow">{{ l('ml_settings_header') }}</div>
         <div class="settings_header_close">
           <CloseModal :closable="true" :isSettings="true" />
         </div>
@@ -17,7 +17,7 @@
             @click="activeSection = section.name"
           >
             <Icon :name="section.icon" color="var(--accent)" />
-            <div class="settings_left_name">{{ l('settings_sections', section.name) }}</div>
+            <div class="settings_left_name">{{ l('ml_settings_sections', section.name) }}</div>
           </Ripple>
         </div>
         <div class="settings_right_panel">

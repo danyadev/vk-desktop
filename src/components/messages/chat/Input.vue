@@ -1,5 +1,5 @@
 <template>
-  <div class="chat_input_container">
+  <div class="chat_input_container border-top-shadow">
     <template v-if="canWrite.allowed">
       <div v-if="repliedMsg || fwdMessages.length" class="chat_input_reply">
         <Reply v-if="repliedMsg" :peer_id="peer_id" :msg="repliedMsg" :ownerMsgId="repliedMsg.id" />
@@ -7,7 +7,7 @@
           <div class="attach_reply_content">
             <div class="attach_reply_name">{{ l('im_forwarded_some') }}</div>
 
-            <div class="attach_reply_text isAttachment">
+            <div class="attach_reply_text hasAttachment">
               {{ l('im_forwarded', [fwdMessages.length], fwdMessages.length) }}
             </div>
           </div>
@@ -60,7 +60,7 @@
 
     <Ripple
       v-else-if="canWrite.isChannel"
-      color="var(--messages-peer-ripple)"
+      color="var(--messages-peer-active)"
       class="chat_input_error isChannel"
       @click="toggleNotifications"
     >
@@ -284,20 +284,7 @@ export default {
   flex-direction: column;
   flex: none;
   border-top: 1px solid var(--separator-dark);
-  background: var(--gray-background-overlight);
-}
-
-.chat_input_container::before {
-  content: '';
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  left: 0;
-  z-index: 1;
-  height: 4px;
-  margin-bottom: 1px;
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
+  background: var(--background-gray-overlight);
 }
 
 .chat_input_wrap {

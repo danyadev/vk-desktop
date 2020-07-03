@@ -2,7 +2,7 @@
   <Icon
     v-if="closable"
     name="close"
-    color="var(--blue-background-text)"
+    color="var(--background-blue-text)"
     class="modal_header_close icon-hover"
     @click.stop="close"
   />

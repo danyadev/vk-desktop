@@ -1,12 +1,17 @@
 import getTranslate from '../getTranslate';
 
+function floor(num) {
+  return num < 0 ? Math.ceil(num) : Math.floor(num);
+}
+
 export function format(date, mask) {
   const addZero = (num) => (num < 10 ? '0' + num : num);
   const months = getTranslate('months');
 
   const tokens = {
-    // год (nnnn)
+    // год (nnnn; nn)
     yyyy: () => date.getFullYear(),
+    yy: () => ('' + date.getFullYear()).slice(-2),
 
     // месяц (полное название; короткое название; 01-12; 1-12)
     MMMM: () => months[date.getMonth()],
@@ -54,8 +59,18 @@ function addDays(date, count) {
   return copy;
 }
 
-function differenceInMilliseconds(d1, d2) {
-  return d1.getTime() - d2.getTime();
+function compareAsc(d1, d2) {
+  const diff = differenceInMilliseconds(d1, d2);
+
+  if (diff < 0) {
+    return -1;
+  }
+
+  if (diff > 0) {
+    return 1;
+  }
+
+  return 0;
 }
 
 export function isSameDay(d1, d2) {
@@ -66,16 +81,40 @@ export function isYesterday(date) {
   return isSameDay(date, addDays(Date.now(), -1));
 }
 
-export function isSameYear(d1, d2) {
-  return d1.getFullYear() === d2.getFullYear();
+function differenceInMilliseconds(d1, d2) {
+  return d1.getTime() - d2.getTime();
 }
 
 export function differenceInSeconds(d1, d2) {
-  return Math.round(differenceInMilliseconds(d1, d2) / 1000);
+  return floor(differenceInMilliseconds(d1, d2) / 1000);
+}
+
+export function differenceInMinutes(d1, d2) {
+  return floor(differenceInSeconds(d1, d2) / 60);
 }
 
 export function differenceInHours(d1, d2) {
-  return Math.round(differenceInSeconds(d1, d2) / 3600);
+  return floor(differenceInMinutes(d1, d2) / 60);
+}
+
+export function differenceInDays(d1, d2) {
+  return floor(differenceInHours(d1, d2) / 24);
+}
+
+function differenceInCalendarMonths(d1, d2) {
+  return differenceInYears(d1, d2) * 12 + d1.getMonth() - d2.getMonth();
+}
+
+export function differenceInMonths(d1, d2) {
+  const sign = compareAsc(d1, d2);
+  const diff = differenceInCalendarMonths(d1, d2);
+  const d1Copy = copyDate(d1);
+
+  d1Copy.setMonth(d1Copy.getMonth() - sign * diff);
+
+  const isLastMonthNotFull = compareAsc(d1Copy, d2) === -sign;
+
+  return sign * (diff - isLastMonthNotFull);
 }
 
 export function differenceInYears(d1, d2) {

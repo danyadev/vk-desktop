@@ -31,14 +31,14 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--blue-background);
+  background: var(--background-blue);
   height: 48px;
   padding: 0 10px 0 25px;
 }
 
 .modal_header_title {
   font-size: 15px;
-  color: var(--blue-background-text);
+  color: var(--background-blue-text);
   line-height: 18px;
 }
 

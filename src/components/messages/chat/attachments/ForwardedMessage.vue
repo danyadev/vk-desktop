@@ -22,7 +22,7 @@
         <VKText mention link>{{ msg.text }}</VKText>
       </div>
 
-      <Attachments :msg="msg" :peer_id="peer_id" :fwdDepth="fwdDepth" />
+      <Attachments :msg="msg" />
 
       <template v-if="msg.fwdCount || msg.hasReplyMsg">
         <div
@@ -115,7 +115,7 @@ export default {
 }
 
 .attach_fwd_msg_name {
-  color: var(--text-blue-dark);
+  color: var(--text-blue);
   font-weight: 500;
   margin-top: 2px;
 }

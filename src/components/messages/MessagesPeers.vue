@@ -1,18 +1,8 @@
 <template>
   <div class="im_peers_container">
-    <div class="header">
-      <HeaderButton />
-      <div class="header_name">
-        {{ l(route.name === 'forward-to' ? 'im_forward_messages' : 'im_header_title') }}
-      </div>
-
-      <Icon
-        name="search"
-        color="var(--blue-background-text)"
-        class="header_btn im_search_icon"
-        @click="isSearch = true"
-      />
-      <MessagesListMenu />
+    <div :class="['header', { isScrolled }]">
+      <SearchInput />
+      <Icon name="write_square" color="var(--icon-blue)" class="im_create_chat_btn" />
     </div>
     <Scrolly
       ref="scrolly"
@@ -21,24 +11,17 @@
       :lock="lockScroll"
       @scroll="onScroll"
     >
-      <div v-if="peersLists.pinned.length" class="im_pinned_peers">
-        <MessagesPeer
-          v-for="{ peer, msg } of peersLists.pinned"
-          :key="peer.id"
-          :peer="peer"
-          :msg="msg"
-          :activeChat="activeChat"
-        />
-      </div>
-
       <MessagesPeer
-        v-for="{ peer, msg } of peersLists.unpinned"
+        v-for="{ peer, msg } of peersList"
         :key="peer.id"
         :peer="peer"
         :msg="msg"
         :activeChat="activeChat"
+        :nowDate="nowDate"
       />
     </Scrolly>
+
+    <BottomMenu />
   </div>
 
   <Transition name="fade-out">
@@ -54,23 +37,23 @@ import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
 
-import HeaderButton from '../HeaderButton.vue';
 import Scrolly from '../UI/Scrolly.vue';
 import Icon from '../UI/Icon.vue';
+import SearchInput from '../UI/SearchInput.vue';
+import BottomMenu from '../menu/BottomMenu.vue';
 import MessagesPeer from './MessagesPeer.vue';
 import MessagesPeersSearch from './MessagesPeersSearch.vue';
-import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
 
 export default {
   props: ['activeChat'],
 
   components: {
-    HeaderButton,
     Scrolly,
     Icon,
+    SearchInput,
+    BottomMenu,
     MessagesPeer,
-    MessagesPeersSearch,
-    MessagesListMenu
+    MessagesPeersSearch
   },
 
   setup() {
@@ -88,23 +71,26 @@ export default {
 
       lockScroll: false,
       isSearch: false,
+      isScrolled: false,
+
+      nowDate: new Date(),
 
       peerIds: computed(() => store.state.messages.peerIds),
       settings: computed(() => store.getters['settings/settings']),
-      peersList: computed(() => store.getters['messages/peersList']),
 
-      peersLists: computed(() => ({
-        pinned: state.settings.pinnedPeers
-          .map((id) => store.state.messages.conversations[id])
-          .filter((conversation) => (
-            conversation && !(state.isForwardTo && !conversation.peer.isWriteAllowed)
-          )),
+      peersList: computed(() => {
+        const pinnedPeers = store.state.messages.pinnedPeers.map((id) => (
+          store.state.messages.conversations[id]
+        ));
 
-        unpinned: state.peersList.filter(({ peer }) => {
-          const isHidden = state.isForwardTo && !peer.isWriteAllowed;
-          return !state.settings.pinnedPeers.includes(peer.id) && !isHidden;
-        })
-      }))
+        const unpinnedPeers = store.getters['messages/peersList'].filter(({ peer }) => (
+          !store.state.messages.pinnedPeers.includes(peer.id)
+        ));
+
+        return pinnedPeers
+          .concat(unpinnedPeers)
+          .filter(({ peer }) => !(state.isForwardTo && !peer.isWriteAllowed));
+      })
     });
 
     async function load() {
@@ -136,7 +122,12 @@ export default {
       }
     }
 
-    const onScroll = endScroll(() => {
+    function onScroll(scrollyEvent) {
+      state.isScrolled = !!scrollyEvent.viewport.scrollTop;
+      checkScroll(scrollyEvent);
+    }
+
+    const checkScroll = endScroll(() => {
       if (!state.loading && !state.loaded) {
         state.loading = true;
         load();
@@ -146,11 +137,15 @@ export default {
     onMounted(() => {
       // Обнаруживаем первую загрузку
       // До этого момента LongPoll не запустится, так что проблем не будет
-      const stop = watch(() => state.peersLists, () => {
+      const stop = watch(() => state.peersList, () => {
         state.loading = false;
         stop();
         onScroll(state.scrolly);
       });
+
+      setInterval(() => {
+        state.nowDate = new Date();
+      }, 10 * 1000);
     });
 
     return {
@@ -162,18 +157,28 @@ export default {
 </script>
 
 <style>
+.im_peers_container {
+  border-right: 1px solid var(--separator);
+}
+
+.im_peers_container .header {
+  /* Необходимо для смещения border-bottom, чтобы он совпадал с бордером в беседе */
+  box-sizing: content-box;
+  border-bottom: 1px solid transparent;
+}
+
+.im_peers_container .header.isScrolled {
+  border-bottom-color: var(--separator);
+}
+
+.im_create_chat_btn {
+  flex: none;
+  margin-right: 16px;
+}
+
 .im_peers_wrap {
   width: 100%;
   /* 50px - постоянная высота у .header */
   height: calc(100% - 50px);
-  border-right: 1px solid var(--separator);
-}
-
-.im_peers_container .header_name {
-  flex-grow: 1;
-}
-
-.im_pinned_peers {
-  border-bottom: 6px solid var(--separator);
 }
 </style>

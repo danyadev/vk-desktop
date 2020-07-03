@@ -8,7 +8,7 @@ export default function Button(props, { slots }) {
   return h(
     Ripple,
     {
-      color: light.value ? 'var(--button-light-ripple)' : 'var(--blue-background-ripple)',
+      color: light.value ? 'var(--button-light-ripple)' : 'var(--background-blue-ripple)',
       class: ['button', {
         light: light.value,
         disabled: props.disabled
@@ -22,8 +22,8 @@ export default function Button(props, { slots }) {
 <style>
 .button {
   display: inline-block;
-  background: var(--blue-background);
-  color: var(--blue-background-text);
+  background: var(--background-blue);
+  color: var(--background-blue-text);
   padding: 9px;
   border-radius: 5px;
   line-height: 18px;

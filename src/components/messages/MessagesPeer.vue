@@ -1,7 +1,6 @@
 <template>
-  <Ripple
-    color="var(--messages-peer-ripple)"
-    class="im_peer"
+  <div
+    :class="['im_peer', { active: isOpenedChat }]"
     data-context-menu="peer"
     :data-peer-id="peer.id"
     @click="openChat"
@@ -20,32 +19,47 @@
           <Icon
             v-if="peer.isCasperChat"
             name="ghost"
-            color="var(--blue-background)"
+            color="var(--icon-dark-blue)"
             class="im_peer_ghost"
           />
           <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
         </div>
-        <div class="im_peer_time">{{ time }}</div>
+
+        <Icon
+          v-if="isPinned"
+          name="pin"
+          color="var(--icon-gray)"
+          width="16"
+          height="16"
+          class="im_peer_pinned"
+        />
       </div>
 
       <div class="im_peer_message_wrap">
         <Typing v-if="hasTyping && !fromSearch" :peer_id="peer.id" />
 
         <div v-else-if="msg.id" class="im_peer_message">
-          <div class="im_peer_author">{{ authorName }}</div>
+          <div class="im_peer_text_wrap text-overflow">
+            <div class="im_peer_author">{{ authorName }}</div>
 
-          <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
-            {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
+            <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
+              {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
+            </div>
+            <div v-else :key="msg.id" :class="['im_peer_text', { hasAttachment }]">
+              <ServiceMessage
+                v-if="msg.action"
+                :msg="msg"
+                :author="author"
+                :peer_id="peer.id"
+              />
+              <VKText v-else mention>{{ message }}</VKText>
+            </div>
           </div>
-          <div v-else :key="msg.id" :class="['im_peer_text', { isAttachment }]">
-            <ServiceMessage
-              v-if="msg.action"
-              :msg="msg"
-              :author="author"
-              :peer_id="peer.id"
-            />
-            <VKText v-else mention>{{ message }}</VKText>
-          </div>
+
+          <template v-if="shortTime">
+            <div class="message_dot"></div>
+            <div class="im_peer_short_time">{{ shortTime }}</div>
+          </template>
         </div>
 
         <div v-else class="im_peer_text isContentDeleted">
@@ -53,7 +67,7 @@
         </div>
 
         <div v-if="peer.mentions.length && !fromSearch" class="im_peer_mentioned">
-          <Icon name="mention" color="var(--blue-background-text)" width="20" height="18" />
+          <Icon name="mention" color="var(--background-blue-text)" width="20" height="18" />
         </div>
 
         <div
@@ -65,7 +79,7 @@
         </div>
       </div>
     </div>
-  </Ripple>
+  </div>
 </template>
 
 <script>
@@ -77,22 +91,20 @@ import {
   getPeerAvatar,
   getPeerTitle
 } from 'js/messages';
-import { getShortDate } from 'js/date';
+import { getShortTime } from 'js/date';
 import store from 'js/store';
 import router from 'js/router';
 import getTranslate from 'js/getTranslate';
 
-import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';
 import VKText from '../UI/VKText.vue';
 import Typing from './Typing.vue';
 import ServiceMessage from './ServiceMessage.vue';
 
 export default {
-  props: ['peer', 'msg', 'activeChat', 'fromSearch'],
+  props: ['peer', 'msg', 'activeChat', 'nowDate', 'fromSearch'],
 
   components: {
-    Ripple,
     Icon,
     VKText,
     Typing,
@@ -108,10 +120,14 @@ export default {
       author: computed(() => store.state.profiles[props.msg.from]),
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),
       message: computed(() => getMessagePreview(props.msg)),
-      isAttachment: computed(() => !props.msg.text && !props.msg.action && props.msg.hasAttachment),
+      hasAttachment: computed(() => (
+        !props.msg.text && !props.msg.action && props.msg.hasAttachment
+      )),
       outread: computed(() => props.msg.id && props.peer.out_read !== props.peer.last_msg_id),
       photo: computed(() => getPeerAvatar(props.peer.id, props.peer, state.owner)),
       chatName: computed(() => getPeerTitle(props.peer.id, props.peer, state.owner)),
+      isOpenedChat: computed(() => props.activeChat === props.peer.id),
+      isPinned: computed(() => store.state.messages.pinnedPeers.includes(props.peer.id)),
 
       online: computed(() => {
         if (state.owner && state.owner.online) {
@@ -119,12 +135,9 @@ export default {
         }
       }),
 
-      time: computed(() => {
-        // Даты может не быть если нет сообщения и беседа закреплена
-        if (props.msg.date) {
-          return getShortDate(new Date(props.msg.date * 1000));
-        }
-      }),
+      shortTime: computed(() => (
+        props.msg.date && getShortTime(new Date(props.msg.date * 1000), props.nowDate)
+      )),
 
       hasTyping: computed(() => {
         const typing = store.state.messages.typing[props.peer.id] || {};
@@ -151,16 +164,15 @@ export default {
     async function openChat() {
       const { activeChat, fromSearch } = props;
       const peer_id = props.peer.id;
-      const isCurrentChat = activeChat === peer_id;
 
-      if (isCurrentChat && !fromSearch) {
+      if (state.isOpenedChat && !fromSearch) {
         return eventBus.emit('messages:event', 'jump', {
           peer_id: activeChat,
           bottom: true
         });
       }
 
-      if (!isCurrentChat && activeChat) {
+      if (!state.isOpenedChat && activeChat) {
         eventBus.emit('messages:event', 'closeChat', {
           peer_id: activeChat
         });
@@ -208,19 +220,25 @@ export default {
 .im_peer {
   display: flex;
   position: relative;
+  border-radius: 8px;
+  margin: 0 8px;
+  cursor: pointer;
   transition: background-color .3s;
 }
 
 .im_peer:hover {
   background: var(--messages-peer-hover);
-  cursor: pointer;
+}
+
+.im_peer.active {
+  background: var(--messages-peer-active);
 }
 
 .im_peer_photo {
   position: relative;
   width: 50px;
   height: 50px;
-  margin: 10px 10px 10px 16px;
+  margin: 8px 10px 8px 8px;
 }
 
 .im_peer_photo,
@@ -252,12 +270,8 @@ export default {
 }
 
 .im_peer_content {
-  width: calc(100% - 76px);
-  padding: 10px 16px 10px 0;
-}
-
-.im_peer:not(:last-child) .im_peer_content {
-  border-bottom: 1px solid var(--separator);
+  width: calc(100% - 68px);
+  padding: 8px 8px 8px 0;
 }
 
 .im_peer_title {
@@ -283,7 +297,7 @@ export default {
 
 .im_peer_title .verified {
   flex: none;
-  margin: 2px 0 0 4px;
+  margin: 3px 0 0 4px;
 }
 
 .im_peer_ghost {
@@ -298,12 +312,9 @@ export default {
   margin: 3px 0 0 3px;
 }
 
-.im_peer_time {
+.im_peer_pinned {
   flex: none;
-  margin-left: 5px;
-  color: var(--text-steel-gray);
-  font-size: 13px;
-  margin-top: 1px;
+  margin: 1px 0 0 3px;
 }
 
 .im_peer_message_wrap {
@@ -313,6 +324,7 @@ export default {
 }
 
 .im_peer_message_wrap > div:first-child {
+  display: flex;
   flex-grow: 1;
   margin-top: 2px;
 }
@@ -321,21 +333,20 @@ export default {
   color: var(--text-gray);
 }
 
-.im_peer_author:not(:empty) {
+.im_peer_text_wrap div {
   display: inline;
-  margin-right: 3px;
-  color: var(--text-dark-steel-gray);
 }
 
-.im_peer_text {
-  display: inline;
+.im_peer_author:not(:empty) {
+  margin-right: 3px;
+  color: var(--text-dark-steel-gray);
 }
 
 .im_peer_text b {
   font-weight: 500;
 }
 
-.im_peer_text.isAttachment {
+.im_peer_text.hasAttachment {
   color: var(--text-blue);
 }
 
@@ -343,28 +354,40 @@ export default {
   color: var(--text-dark-steel-gray);
 }
 
+.im_peer .message_dot {
+  flex: none;
+  margin: 8px 4px 0 4px;
+  background: var(--background-steel-gray);
+}
+
+.im_peer_short_time {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-steel-gray);
+}
+
 .im_peer_unread:not(:empty) {
   padding: 1px 6px 0 6px;
-  margin: 1px 0 0 3px;
+  margin: 1px 0 0 8px;
   border-radius: 10px;
-  background: var(--blue-background);
-  color: var(--blue-background-text);
+  background: var(--background-blue);
+  color: var(--background-blue-text);
   font-size: 12px;
   line-height: 18px;
   height: 19px;
 }
 
 .im_peer_unread:not(.outread).muted {
-  background: var(--steel-gray-background-light);
+  background: var(--background-light-steel-gray);
 }
 
 .im_peer_unread.outread {
   flex: none;
-  margin: 7px 4px 0 4px;
+  margin: 7px 4px 0 8px;
   width: 8px;
   height: 8px;
   border-radius: 10px;
-  background: var(--blue-background-overlight);
+  background: var(--background-blue-overlight);
 }
 
 .im_peer_mentioned {
@@ -372,6 +395,6 @@ export default {
   bottom: -1px;
   margin: 0 2px;
   border-radius: 10px;
-  background: var(--blue-background);
+  background: var(--background-blue);
 }
 </style>

@@ -402,7 +402,7 @@ export default {
   height: 8px;
   bottom: 12px;
   border-radius: 50%;
-  background-color: var(--blue-background-overlight);
+  background-color: var(--background-blue-overlight);
 
   --offset: calc(-16px - var(--unread-offset));
 }

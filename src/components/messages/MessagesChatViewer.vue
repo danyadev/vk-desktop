@@ -1,7 +1,12 @@
 <template>
   <div class="im_chat_container im_search_container">
     <div class="header">
-      <img src="~assets/im_back.svg" class="header_btn im_header_back" @click="close">
+      <Icon
+        name="im_back"
+        color="var(--icon-blue)"
+        class="header_btn im_header_back"
+        @click="close"
+      />
       <div class="im_chat_viewer_title">{{ l('im_messages_view') }}</div>
     </div>
     <div class="im_chat_wrap">
@@ -21,6 +26,7 @@
 import { computed } from 'vue';
 import store from 'js/store';
 
+import Icon from '../UI/Icon.vue';
 import Scrolly from '../UI/Scrolly.vue';
 import MessagesList from './chat/MessagesList.vue';
 
@@ -28,6 +34,7 @@ export default {
   props: ['peer_id', 'messages'],
 
   components: {
+    Icon,
     Scrolly,
     MessagesList
   },
