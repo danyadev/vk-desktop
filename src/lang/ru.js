@@ -1,4 +1,5 @@
 export default {
+  // ----- Без категории
   vk_desktop: 'VK Desktop',
   cancel: 'Отмена',
   close: 'Закрыть',
@@ -13,6 +14,7 @@ export default {
   delete: 'Удалить',
   search: 'Поиск',
 
+  // ----- Дата и время
   date_now: 'только что',
   date_at: 'в',
   today: 'сегодня',
@@ -31,7 +33,7 @@ export default {
     year: 'г'
   },
 
-  // Авторизация
+  // ----- Авторизация
   enter_login: 'Введите логин',
   enter_password: 'Введите пароль',
   login: 'Войти',
@@ -51,19 +53,7 @@ export default {
   retry_send_sms: 'Отправить SMS-код можно через {0}',
   available_accounts_list: 'Список доступных аккаунтов',
 
-  menu: {
-    messages: 'Сообщения',
-    audio: 'Аудиозаписи',
-    settings: 'Настройки'
-  },
-
-  settings_sections: {
-    developers: 'Для разработчиков'
-  },
-
-  settings_show_object_ids: 'Отображать id бесед и сообщений в контекстном меню',
-
-  // Сообщения
+  // ----- Сообщения
   im_header_title: 'Сообщения',
   im_messages_view: 'Просмотр сообщений',
   im_choose_chat: 'Выберите диалог, чтобы начать переписку',
@@ -256,7 +246,10 @@ export default {
     '{0} исключили из беседы'
   ],
 
-  // Модалки
+  // ----- Аудиозаписи
+  audios_not_implemented: 'Данный раздел не реализован.',
+
+  // ----- Модалки
   ml_auth_header: 'Авторизация',
 
   ml_blocked_account_title: [
@@ -295,5 +288,12 @@ export default {
 
   ml_multiacc_header: 'Выберите аккаунт',
   ml_multiacc_add_account: 'Добавить аккаунт',
-  ml_multiacc_active_account: 'Активный аккаунт'
+  ml_multiacc_active_account: 'Активный аккаунт',
+
+  ml_settings_header: 'Настройки',
+  ml_settings_sections: {
+    developers: 'Для разработчиков'
+  },
+  // TODO создать объект для переводов пунктов
+  ml_settings_show_object_ids: 'Отображать id бесед и сообщений в контекстном меню'
 };

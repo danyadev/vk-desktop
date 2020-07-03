@@ -47,8 +47,9 @@ img:not(.emoji) {
 }
 
 .app {
-  height: calc(100vh - var(--titlebar-height));
+  display: flex;
   position: relative;
+  height: calc(100vh - var(--titlebar-height));
 }
 
 .root {
@@ -62,6 +63,11 @@ img:not(.emoji) {
   --titlebar-height: 22px;
 
   letter-spacing: .03em;
+}
+
+.section_container {
+  width: calc(100% - 65px);
+  height: 100%;
 }
 
 .emoji {
@@ -78,6 +84,29 @@ img:not(.emoji) {
 
 .link:hover {
   text-decoration: underline;
+}
+
+.border-top-shadow::before,
+.border-bottom-shadow::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 4px;
+  pointer-events: none;
+}
+
+.border-top-shadow::before {
+  bottom: 100%;
+  margin-bottom: 1px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
+}
+
+.border-bottom-shadow::after {
+  top: 100%;
+  margin-top: 1px;
+  background: linear-gradient(0deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
 }
 
 /* Input ========================== */

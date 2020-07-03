@@ -4,9 +4,11 @@ import Auth from '../components/auth/Auth.vue';
 import AuthConfirm from '../components/auth/AuthConfirm.vue';
 
 import Messages from '../components/messages/Messages.vue';
-import MessagesChatEmpty from '../components/messages/MessagesChatEmpty.vue';
 import MessagesChat from '../components/messages/MessagesChat.vue';
+import MessagesChatEmpty from '../components/messages/MessagesChatEmpty.vue';
 import MessagesChatForward from '../components/messages/MessagesChatForward.vue';
+
+import Audios from '../components/audios/Audios.vue';
 
 export default createRouter({
   history: createMemoryHistory(),
@@ -40,6 +42,11 @@ export default createRouter({
           component: MessagesChatForward
         }
       ]
+    },
+
+    {
+      path: '/audios',
+      component: Audios
     }
   ]
 });

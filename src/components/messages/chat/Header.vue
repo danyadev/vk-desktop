@@ -1,5 +1,5 @@
 <template>
-  <div class="header_wrap">
+  <div class="header_wrap border-bottom-shadow">
     <div class="header">
       <template v-if="!selectedMessages.length">
         <Icon
@@ -245,19 +245,6 @@ export default {
 .header_wrap {
   position: relative;
   border-bottom: 1px solid var(--separator);
-}
-
-.header_wrap::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  z-index: 1;
-  height: 4px;
-  margin-top: 1px;
-  pointer-events: none;
-  background: linear-gradient(0deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
 }
 
 .im_header_back {

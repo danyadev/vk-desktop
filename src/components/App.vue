@@ -3,7 +3,7 @@
     <Titlebar />
 
     <div class="app">
-      <MainMenu v-if="activeUser" />
+      <LeftMenu v-if="activeUser" />
       <RouterView />
 
       <ModalsWrapper />
@@ -29,7 +29,7 @@ import 'css/shared.css';
 import 'css/colors.css';
 
 import Titlebar from './Titlebar.vue';
-import MainMenu from './MainMenu.vue';
+import LeftMenu from './menu/LeftMenu.vue';
 import ModalsWrapper from './ModalsWrapper.vue';
 import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
 import SnackbarsWrapper from './SnackbarsWrapper.vue';
@@ -46,7 +46,7 @@ window.auth = auth;
 export default {
   components: {
     Titlebar,
-    MainMenu,
+    LeftMenu,
     ModalsWrapper,
     ContextMenuWrapper,
     SnackbarsWrapper,

@@ -1,5 +1,5 @@
 <template>
-  <div class="chat_input_container">
+  <div class="chat_input_container border-top-shadow">
     <template v-if="canWrite.allowed">
       <div v-if="repliedMsg || fwdMessages.length" class="chat_input_reply">
         <Reply v-if="repliedMsg" :peer_id="peer_id" :msg="repliedMsg" :ownerMsgId="repliedMsg.id" />
@@ -285,19 +285,6 @@ export default {
   flex: none;
   border-top: 1px solid var(--separator-dark);
   background: var(--background-gray-overlight);
-}
-
-.chat_input_container::before {
-  content: '';
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  left: 0;
-  z-index: 1;
-  height: 4px;
-  margin-bottom: 1px;
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
 }
 
 .chat_input_wrap {
