@@ -2,7 +2,8 @@ module.exports = {
   root: true,
 
   parserOptions: {
-    sourceType: 'module'
+    sourceType: 'module',
+    ecmaVersion: 2019
   },
 
   env: {
@@ -127,6 +128,7 @@ module.exports = {
     'no-underscore-dangle': 'error',
     'no-unneeded-ternary': 'error',
     'no-unreachable': 'error',
+    'no-unreachable-loop': 'error',
     'no-unsafe-negation': 'error',
     'no-unused-expressions': ['error', {
       allowShortCircuit: true
@@ -277,8 +279,10 @@ module.exports = {
       ignoreStrings: true,
       ignoreRegExpLiterals: true
     }],
+    'vue/no-empty-component-block': 'error',
     'vue/no-empty-pattern': 'error',
     'vue/no-irregular-whitespace': 'error',
+    'vue/no-multiple-objects-in-class': 'error',
     'vue/no-useless-concat': 'error',
     'vue/object-curly-newline': 'error',
     'vue/object-curly-spacing': ['error', 'always'],

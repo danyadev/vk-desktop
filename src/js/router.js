@@ -14,6 +14,11 @@ export default createRouter({
   history: createMemoryHistory(),
   routes: [
     {
+      path: '',
+      redirect: '/auth'
+    },
+
+    {
       path: '/auth',
       component: Auth
     },

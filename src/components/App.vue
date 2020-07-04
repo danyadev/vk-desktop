@@ -61,7 +61,7 @@ export default {
 
     async function initUser() {
       if (!state.activeUser) {
-        return router.replace('/auth');
+        return;
       }
 
       router.replace('/messages');
@@ -105,7 +105,7 @@ export default {
       }
     }
 
-    onMounted(() => router.isReady().then(initUser));
+    initUser();
     watch(() => state.activeUser, initUser);
 
     return state;
