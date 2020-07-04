@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted, watch } from 'vue';
+import { reactive, computed, watch } from 'vue';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
 import vkapi from 'js/vkapi';

@@ -83,7 +83,6 @@ export default {
     }
 
     return {
-      activeUser,
       users,
 
       getUserDescription,
