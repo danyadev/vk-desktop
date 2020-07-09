@@ -1,6 +1,6 @@
 <template>
   <div class="settings_line clickable" @click="toggle('devShowObjectIds')">
-    {{ l('ml_settings_show_object_ids') }}
+    {{ l('ml_settings_options', 'show_object_ids') }}
     <Checkbox :active="settings.devShowObjectIds" />
   </div>
 </template>

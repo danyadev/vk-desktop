@@ -294,6 +294,7 @@ export default {
   ml_settings_sections: {
     developers: 'Для разработчиков'
   },
-  // TODO создать объект для переводов пунктов
-  ml_settings_show_object_ids: 'Отображать id бесед и сообщений в контекстном меню'
+  ml_settings_options: {
+    show_object_ids: 'Отображать id бесед и сообщений в контекстном меню'
+  }
 };

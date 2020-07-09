@@ -211,7 +211,7 @@ const linkParser = createParser({
 
     try {
       decodedUri = decodeURI(value);
-    } catch (err) {
+    } catch {
       // Попалась ссылка со сломанным закодированным текстом
     }
 

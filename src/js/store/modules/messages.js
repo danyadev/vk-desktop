@@ -12,7 +12,7 @@ export default {
     peerIds: [],
 
     // Некоторая информация о беседах, необходимая вне компонента чата
-    // { peer_id: { opened, loading } }
+    // { peer_id: { wasOpened, loading } }
     peersConfig: {},
 
     // Список закрепленных бесед

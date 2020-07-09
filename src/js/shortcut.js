@@ -1,7 +1,7 @@
 import { currentWindow } from './utils';
 
 const pressedKeys = new Set();
-// Предполагается, что одно и тоже сочетание клавиш будет обрабатываться один раз
+// Предполагается, что одно и то же сочетание клавиш будет обрабатываться один раз
 const callbacks = new Map();
 
 function getKeyName({ key, code }) {

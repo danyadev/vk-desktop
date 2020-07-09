@@ -103,7 +103,7 @@ export default {
 
         state.isAppCode = false;
         updateTimer(data.delay);
-      } catch (err) {
+      } catch {
         state.disableForceSMS = true;
       }
 

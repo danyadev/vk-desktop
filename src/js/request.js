@@ -122,7 +122,7 @@ async function waitConnection() {
       await dns.lookup('api.vk.com');
       waitConnectionPromise = null;
       break;
-    } catch (err) {
+    } catch {
       if (navigator.onLine) {
         await timer(5000);
       } else {

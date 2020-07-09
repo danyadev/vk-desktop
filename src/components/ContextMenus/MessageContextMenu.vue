@@ -29,7 +29,11 @@
       <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
 
-    <div v-if="!peer.isChannel && !hasCallAttach" class="act_menu_item" @click="deleteMsg">
+    <div
+      v-if="!peer.isChannel && !hasCallAttach"
+      class="act_menu_item"
+      @click="deleteMessages([msg.id], peer)"
+    >
       <Icon name="trash" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_delete_msg') }}</div>
     </div>
@@ -137,10 +141,6 @@ export default {
       });
     }
 
-    function deleteMsg() {
-      deleteMessages([state.msg.id], state.peer);
-    }
-
     function markAsSpam() {
       vkapi('messages.delete', {
         message_ids: state.msg.id,
@@ -156,7 +156,7 @@ export default {
       forward,
       togglePin,
       markAsRead,
-      deleteMsg,
+      deleteMessages,
       markAsSpam
     };
   }

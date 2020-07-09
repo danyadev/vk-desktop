@@ -86,8 +86,7 @@ export default {
 
       store.commit('messages/updatePeerConfig', {
         peer_id: state.peer_id,
-        // TODO переименовать на более очевидное название
-        opened: true
+        wasOpened: true
       });
     });
 

@@ -394,7 +394,7 @@ export default {
     parser: parseLongPollMessage,
     preload: hasPreloadMessages,
     async handler({ peer_id, items }, isPreload) {
-      const { opened, loading } = store.state.messages.peersConfig[peer_id] || {};
+      const { wasOpened, loading } = store.state.messages.peersConfig[peer_id] || {};
       const conversation = store.state.messages.conversations[peer_id];
       const localMessages = store.state.messages.messages[peer_id] || [];
       const lastLocalMsg = localMessages[localMessages.length - 1];
@@ -406,7 +406,7 @@ export default {
         mentions: conversation && conversation.peer.mentions || []
       };
 
-      const isChatLoadedBottom = opened && (
+      const isChatLoadedBottom = wasOpened && (
         !lastLocalMsg && !loading ||
         lastLocalMsg && conversation.peer.last_msg_id === lastLocalMsg.id
       );

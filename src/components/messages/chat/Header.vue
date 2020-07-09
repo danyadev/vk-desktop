@@ -75,7 +75,7 @@
             name="trash"
             color="var(--icon-blue)"
             :data-tooltip="selectedMessages.length === 1 ? 'im_delete_msg' : 'im_delete_messages'"
-            @click="deleteMessagesWrap"
+            @click="deleteMessages(selectedMessages, peer, true)"
           />
 
           <Icon
@@ -200,10 +200,6 @@ export default {
       }
     }
 
-    function deleteMessagesWrap() {
-      deleteMessages(state.selectedMessages, props.peer, true);
-    }
-
     function markAsSpam() {
       vkapi('messages.delete', {
         message_ids: state.selectedMessages.join(','),
@@ -219,7 +215,7 @@ export default {
       cancelSelect,
       forward,
       reply,
-      deleteMessagesWrap,
+      deleteMessages,
       markAsSpam
     };
   }
