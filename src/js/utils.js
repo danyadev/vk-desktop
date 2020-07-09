@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import electron from 'electron';
+import os from 'os';
 import { version } from '../../package.json';
 import { usersStorage } from './store/Storage';
 import vkapi from './vkapi';
@@ -8,9 +9,8 @@ import copyObject from './copyObject';
 
 // --- Переменные
 
-const deviceInfo = '(1; 1; 1; 1; 1; 1)';
-export const VKDesktopUserAgent = `VKDesktop/${version} ${deviceInfo}`;
-export const AndroidUserAgent = `VKAndroidApp/5.56.1-4841 ${deviceInfo}`;
+export const VKDesktopUserAgent = `VKDesktop/${version} (${os.platform()}; ${os.release()}; ${os.arch()})`;
+export const AndroidUserAgent = `VKAndroidApp/6.7-5621 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 1920x720)`;
 
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
