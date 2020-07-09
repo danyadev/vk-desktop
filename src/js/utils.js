@@ -52,6 +52,10 @@ export function isObject(obj) {
   return obj && !Array.isArray(obj) && typeof obj === 'object';
 }
 
+export function toUrlParams(object) {
+  return new URLSearchParams(object).toString();
+}
+
 // --- Функции-обертки
 
 // Вызывает переданную функцию через delay мс после последнего вызова

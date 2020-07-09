@@ -1,5 +1,4 @@
-import querystring from 'querystring';
-import { AndroidUserAgent, VKDesktopUserAgent, fields } from 'js/utils';
+import { AndroidUserAgent, VKDesktopUserAgent, fields, toUrlParams } from 'js/utils';
 import { openModal, closeModal } from 'js/modals';
 import vkapi, { version } from 'js/vkapi';
 import store from 'js/store';
@@ -7,7 +6,7 @@ import request from 'js/request';
 
 export function getAndroidToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
-    const query = querystring.stringify({
+    const query = toUrlParams({
       scope: 'all',
       client_id: 2274003,
       client_secret: 'hHbZxrka2uZ6jB1inYsH',
@@ -56,7 +55,7 @@ export function getAndroidToken(login, password, params = {}) {
 }
 
 async function getDesktopToken(androidToken) {
-  const query = querystring.stringify({
+  const query = toUrlParams({
     redirect_uri: 'https://oauth.vk.com/blank.html',
     display: 'page',
     response_type: 'token',

@@ -1,6 +1,5 @@
-import querystring from 'querystring';
 import electron from 'electron';
-import { VKDesktopUserAgent, AndroidUserAgent } from './utils';
+import { VKDesktopUserAgent, AndroidUserAgent, toUrlParams } from './utils';
 import { openModal } from './modals';
 import store from './store';
 import request from './request';
@@ -120,7 +119,7 @@ addErrorHandler(17, async ({ data, resolve, reject }) => {
             method: 'POST'
           }, {
             raw: true,
-            body: querystring.stringify({
+            body: toUrlParams({
               captcha_sid: captchaSid,
               captcha_key: code
             })
@@ -162,7 +161,7 @@ function vkapi(name, params, { android, vkme } = {}) {
         'User-Agent': android ? AndroidUserAgent : VKDesktopUserAgent
       }
     }, {
-      body: querystring.stringify(params)
+      body: toUrlParams(params)
     });
 
     if (data.execute_errors) {

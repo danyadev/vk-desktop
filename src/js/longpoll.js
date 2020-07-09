@@ -1,5 +1,4 @@
-import querystring from 'querystring';
-import { concatProfiles, fields } from './utils';
+import { concatProfiles, fields, toUrlParams } from './utils';
 import { parseConversation, parseMessage, getLastMsgId } from './messages';
 import vkapi from './vkapi';
 import store from './store';
@@ -30,7 +29,7 @@ class Longpoll {
 
   async loop() {
     while (true) {
-      const { data } = await request(`https://${this.server}?` + querystring.stringify({
+      const { data } = await request(`https://${this.server}?` + toUrlParams({
         act: 'a_check',
         key: this.key,
         ts: this.ts,
