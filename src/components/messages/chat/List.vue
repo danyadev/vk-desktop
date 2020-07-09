@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted, onUnmounted, nextTick, toRefs } from 'vue';
+import { reactive, computed, onMounted, onActivated, nextTick, toRefs } from 'vue';
 import {
   createQueueManager,
   callWithDelay,
@@ -89,11 +89,11 @@ export default {
       loadedUp: false,
       loadedDown: false,
 
-      // scrollTop: null,
+      scrollTop: null,
       lockScroll: false,
 
-      // isScrolledDownOnClose: false,
-      // isUnreadOnClose: false,
+      isScrolledDownOnClose: false,
+      isUnreadOnClose: false,
 
       topTime: null,
       showTopTime: false,
@@ -118,32 +118,25 @@ export default {
     onMounted(() => {
       eventBus.on('messages:event', onMessageEvent);
       jumpToStartUnread();
+    });
 
-      // TODO onActivated
+    onActivated(() => {
       state.startInRead = props.peer && props.peer.in_read;
-    });
 
-    onUnmounted(() => {
-      eventBus.removeListener('messages:event', onMessageEvent);
-    });
+      if (state.scrollTop !== null) {
+        const unread = state.list.querySelector('.message_unreaded_messages');
 
-    // onActivated(() => {
-    //   state.startInRead = props.peer && props.peer.in_read;
-    //
-    //   if(state.scrollTop !== null) {
-    //     const unread = state.list.querySelector('.message_unreaded_messages');
-    //
-    //     if (state.isScrolledDownOnClose && !state.isUnreadOnClose && unread) {
-    //       state.list.scrollTop = state.scrollTop + state.list.clientHeight / 2;
-    //     } else {
-    //       state.list.scrollTop = state.scrollTop;
-    //     }
-    //
-    //     checkReadMessages();
-    //   } else {
-    //     checkScrolling({ viewport: state.list });
-    //   }
-    // });
+        if (state.isScrolledDownOnClose && !state.isUnreadOnClose && unread) {
+          state.list.scrollTop = state.scrollTop + state.list.clientHeight / 2;
+        } else {
+          state.list.scrollTop = state.scrollTop;
+        }
+
+        checkReadMessages();
+      } else {
+        checkScrolling({ viewport: state.list });
+      }
+    });
 
     async function onMessageEvent(type, { peer_id, ...data }) {
       if (peer_id !== props.peer_id) {
@@ -155,10 +148,10 @@ export default {
 
       switch (type) {
         case 'closeChat':
-          // TODO Удалить и перенести в onBeforeDeactivated???
-          // state.scrollTop = scrollTop;
-          // state.isScrolledDownOnClose = isScrolledDown;
-          // state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;
+          // TODO Дождаться реализации onBeforeDeactivate
+          state.scrollTop = scrollTop;
+          state.isScrolledDownOnClose = isScrolledDown;
+          state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;
           break;
 
         case 'checkScrolling':
@@ -204,7 +197,6 @@ export default {
             currentWindow.isFocused() && // Окно активно
             !modalsState.hasModals // Нет открытых модалок
           ) {
-            // Скроллим до конца списка
             jumpTo({ bottom: true, noSmooth: true });
           }
           break;

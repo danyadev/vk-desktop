@@ -71,6 +71,7 @@ export default {
         emit('close');
       }
 
+      // TODO emit closeChat?
       router.replace(`/messages/${props.peer.id}`);
     }
 

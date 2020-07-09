@@ -12,6 +12,7 @@ import Audios from '../components/audios/Audios.vue';
 
 export default createRouter({
   history: createMemoryHistory(),
+
   routes: [
     {
       path: '',

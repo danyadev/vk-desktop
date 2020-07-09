@@ -59,14 +59,11 @@ export default {
               const params = new Map(url.searchParams);
               const route = router.currentRoute.value;
 
-              async function openChat(peer_id) {
+              function openChat(peer_id) {
                 if (route.name === 'chat') {
                   eventBus.emit('messages:event', 'closeChat', {
                     peer_id: route.params.id
                   });
-
-                  // TODO remove
-                  await router.replace('/messages');
                 }
 
                 router.replace(`/messages/${peer_id}`);

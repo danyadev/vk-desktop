@@ -5,8 +5,12 @@
     @keydown.esc="closeChat"
   >
     <MessagesPeers :activeChat="peer_id" />
-    <!-- TODO(vue-router) :key="peer_id" + KeepAlive -->
-    <RouterView />
+
+    <RouterView v-slot="{ Component }">
+      <KeepAlive>
+        <component :is="Component" :key="peer_id" />
+      </KeepAlive>
+    </RouterView>
   </div>
 </template>
 
@@ -26,7 +30,7 @@ export default {
   setup() {
     const state = reactive({
       route: router.currentRoute,
-      peer_id: computed(() => +state.route.params.id),
+      peer_id: computed(() => +state.route.params.id || 0),
       hasChat: computed(() => state.route.name === 'chat')
     });
 
@@ -44,14 +48,14 @@ export default {
       }
 
       if (state.route.name === 'forward-to') {
-        router.replace(`/messages/${state.route.params.fromId}`);
-      } else {
-        eventBus.emit('messages:event', 'closeChat', {
-          peer_id: state.peer_id
-        });
-
-        router.replace('/messages');
+        return router.replace(`/messages/${state.route.params.fromId}`);
       }
+
+      eventBus.emit('messages:event', 'closeChat', {
+        peer_id: state.peer_id
+      });
+
+      router.replace('/messages');
     }
 
     return {

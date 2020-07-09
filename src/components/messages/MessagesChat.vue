@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, onMounted } from 'vue';
+import { reactive, computed, toRefs, onMounted, onActivated } from 'vue';
 import { eventBus } from 'js/utils';
 import { loadConversation, loadConversationMembers } from 'js/messages';
 import store from 'js/store';
@@ -49,6 +49,8 @@ export default {
 
   setup() {
     const state = reactive({
+      // Здесь не нужен computed, потому что MessagesChat создается отдельно для каждой беседы
+      // и сохраняется с помощью KeepAlive
       peer_id: +router.currentRoute.value.params.id,
       viewer: computed(() => store.state.messages.viewer),
 
@@ -84,10 +86,12 @@ export default {
 
       store.commit('messages/updatePeerConfig', {
         peer_id: state.peer_id,
+        // TODO переименовать на более очевидное название
         opened: true
       });
+    });
 
-      // TODO Перенести в onActivated
+    onActivated(() => {
       if (!state.peer || !state.peer.loaded || state.peer_id < 2e9) {
         loadConversation(state.peer_id);
       }
