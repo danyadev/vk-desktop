@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, onMounted, watch } from 'vue';
+import { reactive, computed, toRefs, onActivated, watch } from 'vue';
 import electron from 'electron';
 import { throttle, escape } from 'js/utils';
 import vkapi from 'js/vkapi';
@@ -248,8 +248,7 @@ export default {
       });
     }
 
-    // TODO onActivated
-    onMounted(() => {
+    onActivated(() => {
       state.input && state.input.focus();
     });
 
