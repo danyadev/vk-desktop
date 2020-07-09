@@ -110,6 +110,9 @@ export default {
     function forward() {
       store.commit('messages/removeRepliedMessage', peer_id);
       store.state.messages.tmpForwardingMessages = [state.msg];
+
+      eventBus.emit('messages:event', 'closeChat', { peer_id });
+
       router.replace({
         name: 'forward-to',
         params: {

@@ -175,6 +175,10 @@ export default {
 
         nextTick().then(scrollToEnd);
       } else {
+        eventBus.emit('messages:event', 'closeChat', {
+          peer_id: props.peer_id
+        });
+
         store.state.messages.tmpForwardingMessages = state.selectedMessages.map(getMessage);
         router.replace({
           name: 'forward-to',
