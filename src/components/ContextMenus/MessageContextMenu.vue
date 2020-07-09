@@ -108,8 +108,8 @@ export default {
     }
 
     function forward() {
-      store.commit('messages/removeRepliedMessage', props.peer_id);
-      store.state.messages.forwardedMessages[peer_id] = [state.msg];
+      store.commit('messages/removeRepliedMessage', peer_id);
+      store.state.messages.tmpForwardingMessages = [state.msg];
       router.replace({
         name: 'forward-to',
         params: {
