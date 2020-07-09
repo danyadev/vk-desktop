@@ -17,6 +17,7 @@
       @mouseenter="activateScrollBars({ enter: 1 })"
       @mouseleave="hideScrollBars"
       @mousedown="onMouseDown"
+      @wheel.passive="onBarWheel"
     >
       <div ref="barX" class="scrolly-bar"></div>
     </div>
@@ -26,6 +27,7 @@
       @mouseenter="activateScrollBars({ enter: 1 })"
       @mouseleave="hideScrollBars"
       @mousedown="onMouseDown"
+      @wheel.passive="onBarWheel"
     >
       <div ref="barY" class="scrolly-bar"></div>
     </div>
@@ -94,6 +96,11 @@ export default {
     function onScroll() {
       refreshScrollLayout();
       activateScrollBars();
+    }
+
+    function onBarWheel(event) {
+      state.viewport.scrollLeft += event.deltaX;
+      state.viewport.scrollTop += event.deltaY;
     }
 
     function onMouseDown({ target: clickTarget, pageX: initialPageX, pageY: initialPageY }) {
@@ -276,6 +283,7 @@ export default {
       ...toRefs(state),
 
       onScroll,
+      onBarWheel,
       onMouseDown,
       activateScrollBars,
       hideScrollBars
