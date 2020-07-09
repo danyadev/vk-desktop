@@ -19,7 +19,7 @@ export default {
   props: ['peer_id', 'isChat'],
 
   setup(props) {
-    function name(id) {
+    function name(id, showFullLastName) {
       const user = store.state.profiles[id];
 
       if (props.peer_id < 2e9) {
@@ -31,12 +31,16 @@ export default {
         return '...';
       }
 
-      return user.name || `${user.first_name} ${user.last_name[0] + '.'}`;
+      return user.name || `${user.first_name} ${
+        showFullLastName
+          ? user.last_name
+          : user.last_name[0] + '.'
+      }`;
     }
 
     function getText(type, users) {
       if (users.length === 1) {
-        return getTranslate(`im_typing_${type}`, 0, [name(users[0])]);
+        return getTranslate(`im_typing_${type}`, 0, [name(users[0], true)]);
       } else if (users.length === 2) {
         return getTranslate(`im_typing_${type}`, 1, [name(users[0]), name(users[1])]);
       }
