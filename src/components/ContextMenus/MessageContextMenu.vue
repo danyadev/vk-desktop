@@ -29,7 +29,7 @@
       <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
 
-    <div v-if="!peer.isChannel" class="act_menu_item" @click="deleteMsg">
+    <div v-if="!peer.isChannel && !hasCallAttach" class="act_menu_item" @click="deleteMsg">
       <Icon name="trash" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_delete_msg') }}</div>
     </div>
@@ -45,7 +45,7 @@
 import { reactive, computed, toRefs, nextTick } from 'vue';
 import electron from 'electron';
 import { eventBus } from 'js/utils';
-import { openModal } from 'js/modals';
+import { deleteMessages } from 'js/messages';
 import { addSnackbar } from 'js/snackbars';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -138,28 +138,7 @@ export default {
     }
 
     function deleteMsg() {
-      const DAY = 1000 * 60 * 60 * 24;
-
-      const canDeleteForAll = (
-        store.state.users.activeUser !== state.peer.id &&
-        state.peer.id > 2e9 &&
-        state.peer.acl.can_moderate &&
-        !state.hasCallAttach &&
-        !state.peer.admin_ids.includes(state.msg.from) &&
-        Date.now() - state.msg.date * 1000 < DAY
-      );
-
-      openModal('delete-messages', {
-        count: 1,
-        canDeleteForAll,
-
-        submit(deleteForAll) {
-          vkapi('messages.delete', {
-            message_ids: state.msg.id,
-            delete_for_all: deleteForAll ? 1 : 0
-          });
-        }
-      });
+      deleteMessages([state.msg.id], state.peer);
     }
 
     function markAsSpam() {

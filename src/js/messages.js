@@ -1,4 +1,5 @@
 import { escape, getPhoto, fields, concatProfiles, capitalize, getAppName } from './utils';
+import { openModal } from 'js/modals';
 import { getLastOnlineDate } from './date';
 import vkapi from './vkapi';
 import store from './store';
@@ -215,6 +216,45 @@ export function getPeerTitle(peer_id, peer, owner) {
 export function getLastMsgId() {
   const [peer] = store.getters['messages/peersList'];
   return peer ? peer.msg.id : null;
+}
+
+export function getMessageById(msg_id, peer_id) {
+  return msg_id && store.state.messages.messages[peer_id].find((msg) => msg.id === msg_id);
+}
+
+export function deleteMessages(message_ids, peer, needCancelSelect) {
+  const activeUserId = store.state.users.activeUser;
+  const DAY = 1000 * 60 * 60 * 24;
+
+  const canDeleteForAll = (
+    activeUserId !== peer.id &&
+    message_ids
+      .map((id) => getMessageById(id, peer.id))
+      .every((msg) => (
+        !peer.admin_ids.includes(msg.from) &&
+        Date.now() - msg.date * 1000 < DAY &&
+        (
+          msg.from === activeUserId ||
+          peer.id > 2e9 && peer.acl.can_moderate
+        )
+      ))
+  );
+
+  openModal('delete-messages', {
+    count: message_ids.length,
+    canDeleteForAll,
+
+    submit(deleteForAll) {
+      vkapi('messages.delete', {
+        message_ids: message_ids.join(','),
+        delete_for_all: deleteForAll ? 1 : 0
+      });
+
+      if (needCancelSelect) {
+        store.commit('messages/removeSelectedMessages');
+      }
+    }
+  });
 }
 
 export async function loadConversation(id) {

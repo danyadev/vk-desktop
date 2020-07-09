@@ -55,11 +55,6 @@ module.exports = {
     }],
     'keyword-spacing': 'error',
     'lines-between-class-members': 'error',
-    'max-len': ['error', {
-      code: 100,
-      ignoreStrings: true,
-      ignoreRegExpLiterals: true
-    }],
     'new-cap': ['error', {
       properties: false
     }],

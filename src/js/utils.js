@@ -9,8 +9,10 @@ import copyObject from './copyObject';
 
 // --- Переменные
 
-export const VKDesktopUserAgent = `VKDesktop/${version} (${os.platform()}; ${os.release()}; ${os.arch()})`;
-export const AndroidUserAgent = `VKAndroidApp/6.7-5621 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 1920x720)`;
+export const VKDesktopUserAgent =
+  `VKDesktop/${version} (${os.platform()}; ${os.release()}; ${os.arch()})`;
+export const AndroidUserAgent =
+  'VKAndroidApp/6.7-5621 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 1920x720)';
 
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 

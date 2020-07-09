@@ -75,7 +75,7 @@
             name="trash"
             color="var(--icon-blue)"
             :data-tooltip="selectedMessages.length === 1 ? 'im_delete_msg' : 'im_delete_messages'"
-            @click="deleteMessages"
+            @click="deleteMessagesWrap"
           />
 
           <Icon
@@ -103,8 +103,13 @@
 <script>
 import { reactive, computed, toRefs, nextTick } from 'vue';
 import { eventBus } from 'js/utils';
-import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/messages';
-import { openModal } from 'js/modals';
+import {
+  getPeerAvatar,
+  getPeerTitle,
+  getPeerOnline,
+  getMessageById,
+  deleteMessages
+} from 'js/messages';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
 import router from 'js/router';
@@ -127,12 +132,6 @@ export default {
   },
 
   setup(props) {
-    const DAY = 1000 * 60 * 60 * 24;
-
-    function getMessage(id) {
-      return id && store.state.messages.messages[props.peer_id].find((msg) => msg.id === id);
-    }
-
     const state = reactive({
       owner: computed(() => store.state.profiles[props.peer_id]),
       photo: computed(() => getPeerAvatar(props.peer_id, props.peer, state.owner)),
@@ -143,17 +142,7 @@ export default {
       hasTyping: computed(() => {
         const typing = store.state.messages.typing[props.peer_id] || {};
         return !!Object.keys(typing).length;
-      }),
-
-      canDeleteForAll: computed(() => (
-        store.state.users.activeUser !== props.peer_id &&
-        props.peer_id > 2e9 &&
-        props.peer.acl.can_moderate &&
-        state.selectedMessages.map(getMessage).every((msg) => (
-          !props.peer.admin_ids.includes(msg.from) &&
-          Date.now() - msg.date * 1000 < DAY
-        ))
-      ))
+      })
     });
 
     function cancelSelect() {
@@ -170,7 +159,7 @@ export default {
     function forward(toThisChat) {
       if (toThisChat === true) {
         store.state.messages.forwardedMessages[props.peer_id] = (
-          state.selectedMessages.map(getMessage)
+          state.selectedMessages.map((id) => getMessageById(id, props.peer_id))
         );
 
         nextTick().then(scrollToEnd);
@@ -179,7 +168,9 @@ export default {
           peer_id: props.peer_id
         });
 
-        store.state.messages.tmpForwardingMessages = state.selectedMessages.map(getMessage);
+        store.state.messages.tmpForwardingMessages = state.selectedMessages.map(
+          (id) => getMessageById(id, props.peer_id)
+        );
         router.replace({
           name: 'forward-to',
           params: {
@@ -196,7 +187,7 @@ export default {
       if (state.selectedMessages.length === 1) {
         store.commit('messages/addRepliedMessage', {
           peer_id: props.peer_id,
-          msg: getMessage(state.selectedMessages[0])
+          msg: getMessageById(state.selectedMessages[0], props.peer_id)
         });
 
         store.state.messages.forwardedMessages[props.peer_id] = [];
@@ -209,20 +200,8 @@ export default {
       }
     }
 
-    function deleteMessages() {
-      openModal('delete-messages', {
-        count: state.selectedMessages.length,
-        canDeleteForAll: state.canDeleteForAll,
-
-        submit(deleteForAll) {
-          vkapi('messages.delete', {
-            message_ids: state.selectedMessages.join(','),
-            delete_for_all: deleteForAll ? 1 : 0
-          });
-
-          cancelSelect();
-        }
-      });
+    function deleteMessagesWrap() {
+      deleteMessages(state.selectedMessages, props.peer, true);
     }
 
     function markAsSpam() {
@@ -240,7 +219,7 @@ export default {
       cancelSelect,
       forward,
       reply,
-      deleteMessages,
+      deleteMessagesWrap,
       markAsSpam
     };
   }
