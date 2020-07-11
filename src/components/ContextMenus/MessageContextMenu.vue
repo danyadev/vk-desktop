@@ -98,13 +98,13 @@ export default {
     }
 
     async function reply() {
-      store.state.messages.forwardedMessages[peer_id] = [];
-      store.commit('messages/addRepliedMessage', {
-        peer_id,
-        msg: state.msg
+      eventBus.emit('messages:replyOrForward', {
+        type: 'reply',
+        data: state.msg
       });
 
       await nextTick();
+
       eventBus.emit('messages:event', 'jump', {
         peer_id,
         bottom: true
@@ -112,10 +112,11 @@ export default {
     }
 
     function forward() {
-      store.commit('messages/removeRepliedMessage', peer_id);
       store.state.messages.tmpForwardingMessages = [state.msg];
 
-      eventBus.emit('messages:event', 'closeChat', { peer_id });
+      eventBus.emit('messages:event', 'closeChat', {
+        peer_id
+      });
 
       router.replace({
         name: 'forward-to',

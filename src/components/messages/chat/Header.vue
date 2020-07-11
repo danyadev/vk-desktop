@@ -82,8 +82,10 @@
             v-if="selectedMessages.length"
             name="forward"
             color="var(--icon-blue)"
-            data-tooltip="im_forward_messages"
-            @click="forward"
+            :data-tooltip="
+              selectedMessages.length === 1 ? 'im_forward_message' : 'im_forward_messages'
+            "
+            @click="forward()"
           />
 
           <Icon
@@ -157,20 +159,22 @@ export default {
     }
 
     function forward(toThisChat) {
-      if (toThisChat === true) {
-        store.state.messages.forwardedMessages[props.peer_id] = (
-          state.selectedMessages.map((id) => getMessageById(id, props.peer_id))
-        );
+      if (toThisChat) {
+        eventBus.emit('messages:replyOrForward', {
+          type: 'forward',
+          data: state.selectedMessages.map((id) => getMessageById(id, props.peer_id))
+        });
 
         nextTick().then(scrollToEnd);
       } else {
+        store.state.messages.tmpForwardingMessages = state.selectedMessages.map(
+          (id) => getMessageById(id, props.peer_id)
+        );
+
         eventBus.emit('messages:event', 'closeChat', {
           peer_id: props.peer_id
         });
 
-        store.state.messages.tmpForwardingMessages = state.selectedMessages.map(
-          (id) => getMessageById(id, props.peer_id)
-        );
         router.replace({
           name: 'forward-to',
           params: {
@@ -179,25 +183,22 @@ export default {
         });
       }
 
-      store.commit('messages/removeRepliedMessage', props.peer_id);
       cancelSelect();
     }
 
     async function reply() {
-      if (state.selectedMessages.length === 1) {
-        store.commit('messages/addRepliedMessage', {
-          peer_id: props.peer_id,
-          msg: getMessageById(state.selectedMessages[0], props.peer_id)
-        });
-
-        store.state.messages.forwardedMessages[props.peer_id] = [];
-        cancelSelect();
-
-        await nextTick();
-        scrollToEnd();
-      } else {
-        forward(true);
+      if (state.selectedMessages.length > 1) {
+        return forward(true);
       }
+
+      eventBus.emit('messages:replyOrForward', {
+        type: 'reply',
+        data: getMessageById(state.selectedMessages[0], props.peer_id)
+      });
+
+      cancelSelect();
+      await nextTick();
+      scrollToEnd();
     }
 
     function markAsSpam() {

@@ -82,9 +82,9 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, onActivated, watch } from 'vue';
+import { reactive, computed, toRefs, onActivated, onDeactivated, watch } from 'vue';
 import electron from 'electron';
-import { throttle, escape } from 'js/utils';
+import { throttle, escape, eventBus } from 'js/utils';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
@@ -115,6 +115,9 @@ export default {
       hasKeyboard: computed(() => (state.keyboard.buttons || []).length),
       showKeyboard: false,
 
+      repliedMsg: null,
+      fwdMessages: [],
+
       canWrite: computed(() => {
         if (props.peer && props.peer.isWriteAllowed) {
           return { allowed: true };
@@ -125,13 +128,40 @@ export default {
           isChannel: props.peer && props.peer.isChannel,
           text: props.peer ? getTranslate('im_chat_cant_write') : getTranslate('loading')
         };
-      }),
-
-      repliedMsg: computed(() => store.state.messages.repliedMessages[props.peer_id]),
-      fwdMessages: computed(() => (
-        store.state.messages.forwardedMessages[props.peer_id] || []
-      ).sort((a, b) => a.id - b.id))
+      })
     });
+
+    const focusInput = () => state.input && state.input.focus();
+
+    onActivated(() => {
+      eventBus.on('messages:replyOrForward', onReplyOrForward);
+      focusInput();
+    });
+
+    onDeactivated(() => {
+      eventBus.removeListener('messages:replyOrForward', onReplyOrForward);
+    });
+
+    function onReplyOrForward({ type, data }) {
+      if (type === 'reply') {
+        if (state.fwdMessages) {
+          state.fwdMessages = [];
+        }
+
+        state.repliedMsg = data;
+      }
+
+      if (type === 'forward') {
+        if (state.repliedMsg) {
+          state.repliedMsg = null;
+        }
+
+        state.fwdMessages = data;
+      }
+    }
+
+    watch(() => state.repliedMsg, (msg) => msg && focusInput());
+    watch(() => state.fwdMessages, (fwd) => fwd.length && focusInput());
 
     function toggleNotifications() {
       if (props.peer.left) {
@@ -237,8 +267,8 @@ export default {
     }
 
     function closeReply() {
-      store.commit('messages/removeRepliedMessage', props.peer_id);
-      store.state.messages.forwardedMessages[props.peer_id] = [];
+      state.repliedMsg = null;
+      state.fwdMessages = [];
     }
 
     function openFwdMessages() {
@@ -247,19 +277,6 @@ export default {
         peer_id: +state.route.params.fromId || props.peer_id
       });
     }
-
-    onActivated(() => {
-      state.input && state.input.focus();
-    });
-
-    watch([() => state.repliedMsg, () => state.fwdMessages], ([msg, fwd], [prevMsg, prevFwd]) => {
-      if (
-        msg !== prevMsg && msg ||
-        fwd !== prevFwd && fwd.length
-      ) {
-        state.input.focus();
-      }
-    });
 
     return {
       ...toRefs(state),

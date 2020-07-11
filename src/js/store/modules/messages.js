@@ -53,18 +53,6 @@ export default {
     // Находится здесь, потому что нужно при Esc проверять и убирать поиск в другом месте
     isMessagesSearch: false,
 
-    // TODO
-    // Перенести разделы ниже в Input, который будет сохранять свое состояние.
-    // Передавать информацию можно будет через eventBus
-
-    // Список сообщений, на которые собираются ответить
-    // { peer_id: message }
-    repliedMessages: {},
-
-    // Список сообщений, которые собираются переслать
-    // { peer_id: [message] }
-    forwardedMessages: {},
-
     // Пересылаемые в данный момент сообщения
     // [message]
     tmpForwardingMessages: []
@@ -290,14 +278,6 @@ export default {
 
     removeSelectedMessages(state) {
       state.selectedMessages = [];
-    },
-
-    addRepliedMessage(state, { peer_id, msg }) {
-      state.repliedMessages[peer_id] = msg;
-    },
-
-    removeRepliedMessage(state, peer_id) {
-      delete state.repliedMessages[peer_id];
     }
   },
 

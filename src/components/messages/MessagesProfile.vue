@@ -29,6 +29,7 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
+import { eventBus } from 'js/utils';
 import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/messages';
 import store from 'js/store';
 import router from 'js/router';
@@ -56,23 +57,18 @@ export default {
       isOnline: computed(() => state.owner && state.owner.online)
     });
 
-    function openChat() {
-      if (state.isForwardTo) {
-        if (props.peer.isChannel) {
-          return;
-        }
-
-        store.state.messages.forwardedMessages[props.peer.id] = (
-          store.state.messages.tmpForwardingMessages
-        );
-
-        store.state.messages.tmpForwardingMessages = [];
-
-        emit('close');
-      }
-
+    async function openChat() {
       // TODO emit closeChat?
-      router.replace(`/messages/${props.peer.id}`);
+      await router.replace(`/messages/${props.peer.id}`);
+
+      if (state.isForwardTo) {
+        emit('close');
+        eventBus.emit('messages:replyOrForward', {
+          type: 'forward',
+          data: store.state.messages.tmpForwardingMessages
+        });
+        store.state.messages.tmpForwardingMessages = [];
+      }
     }
 
     return {

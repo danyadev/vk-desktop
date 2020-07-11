@@ -164,6 +164,7 @@ export default {
     async function openChat() {
       const { activeChat, fromSearch } = props;
       const peer_id = props.peer.id;
+      const isForwardTo = state.route.name === 'forward-to';
 
       if (state.isOpenedChat && !fromSearch) {
         return eventBus.emit('messages:event', 'jump', {
@@ -178,14 +179,6 @@ export default {
         });
       }
 
-      if (state.route.name === 'forward-to') {
-        store.state.messages.forwardedMessages[peer_id] = (
-          store.state.messages.tmpForwardingMessages
-        );
-
-        store.state.messages.tmpForwardingMessages = [];
-      }
-
       await router.replace({
         name: 'chat',
         params: {
@@ -193,6 +186,14 @@ export default {
           fromId: state.route.params.fromId
         }
       });
+
+      if (isForwardTo) {
+        eventBus.emit('messages:replyOrForward', {
+          type: 'forward',
+          data: store.state.messages.tmpForwardingMessages
+        });
+        store.state.messages.tmpForwardingMessages = [];
+      }
 
       if (fromSearch) {
         eventBus.emit('messages:event', 'jump', {
