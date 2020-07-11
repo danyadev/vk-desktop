@@ -61,7 +61,11 @@
 
         <div class="im_header_selected_actions">
           <Icon
-            v-if="selectedMessages.length && peer.isWriteAllowed"
+            v-if="
+              selectedMessages.length && peer.isWriteAllowed && (
+                !peer.isCasperChat || selectedMessages.length === 1
+              )
+            "
             name="reply"
             color="var(--icon-blue)"
             :data-tooltip="
@@ -79,7 +83,7 @@
           />
 
           <Icon
-            v-if="selectedMessages.length"
+            v-if="selectedMessages.length && !peer.isCasperChat"
             name="forward"
             color="var(--icon-blue)"
             :data-tooltip="
