@@ -10,7 +10,7 @@
       <div class="act_menu_data">{{ l('im_reply_msg') }}</div>
     </div>
 
-    <div v-if="peer.isWriteAllowed && !hasCallAttach" class="act_menu_item" @click="forward">
+    <div v-if="!hasCallAttach" class="act_menu_item" @click="forward">
       <Icon name="forward" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_forward_message') }}</div>
     </div>
