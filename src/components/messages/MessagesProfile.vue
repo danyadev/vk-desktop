@@ -40,6 +40,8 @@ import Icon from '../UI/Icon.vue';
 export default {
   props: ['peer'],
 
+  emits: ['close'],
+
   components: {
     VKText,
     Icon

@@ -129,6 +129,8 @@ import Typing from '../Typing.vue';
 export default {
   props: ['peer_id', 'peer'],
 
+  emits: ['close', 'search'],
+
   components: {
     Icon,
     VKText,

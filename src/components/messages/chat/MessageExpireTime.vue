@@ -15,6 +15,8 @@ import Icon from '../../UI/Icon.vue';
 export default {
   props: ['msg', 'expireIcon'],
 
+  emits: ['update'],
+
   components: {
     Icon
   },

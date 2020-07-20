@@ -41,6 +41,8 @@ import Button from '../UI/Button.vue';
 export default {
   props: ['isModal'],
 
+  emits: ['confirm'],
+
   components: {
     Button
   },

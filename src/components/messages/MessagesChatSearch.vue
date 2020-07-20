@@ -68,6 +68,8 @@ import MessagesList from './chat/MessagesList.vue';
 export default {
   props: ['peer_id', 'peer'],
 
+  emits: ['close'],
+
   components: {
     Icon,
     Scrolly,

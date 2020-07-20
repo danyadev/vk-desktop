@@ -29,6 +29,8 @@ import Button from '../UI/Button.vue';
 export default {
   props: ['isModal', 'params'],
 
+  emits: ['back'],
+
   components: {
     Button
   },

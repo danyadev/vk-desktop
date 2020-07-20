@@ -72,6 +72,8 @@ import MessagesPeer from './MessagesPeer.vue';
 import MessagesProfile from './MessagesProfile.vue';
 
 export default {
+  emits: ['close'],
+
   components: {
     Icon,
     Scrolly,
