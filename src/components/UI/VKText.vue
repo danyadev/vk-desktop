@@ -167,13 +167,18 @@ export default {
       return [block.value];
     }
 
-    return () => h(
-      Fragment,
-      mentionParser(unescape(text.value)).reduce((blocks, block) => {
+    return () => {
+      const children = mentionParser(unescape(text.value)).reduce((blocks, block) => {
         blocks.push(...parseBlock(block));
         return blocks;
-      }, [])
-    );
+      }, []);
+
+      if (!children.length) {
+        children.push('');
+      }
+
+      return h(Fragment, children);
+    };
   }
 };
 
