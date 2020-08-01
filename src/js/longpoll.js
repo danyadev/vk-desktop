@@ -102,9 +102,12 @@ class Longpoll {
       const msg = messages[item[1]];
 
       if ([3, 4, 5, 18].includes(item[0])) {
+        // 18 событие не содержит peer_id (т.е. там есть только ID сообщения)
+        const peer_id = item[3] || msg.peer_id;
+
         events.push([
           item[0], // id события
-          { peer: peers[item[3]], msg },
+          { peer: peers[peer_id], msg },
           'fromHistory',
           item[3] // peer_id
         ]);
