@@ -254,6 +254,7 @@ module.exports = {
     'vue/no-useless-v-bind': 'error',
     'vue/padding-line-between-blocks': 'error',
     'vue/require-direct-export': 'error',
+    'vue/v-for-delimiter-style': ['error', 'of'],
 
     // Включаем правила, идентичные eslint-base, но которые направлены на выражения в template
     'vue/array-bracket-spacing': 'error',
@@ -293,26 +294,7 @@ module.exports = {
     'vue/template-curly-spacing': 'error',
 
     // Изменяем уже включенные правила для соответствия своему стилю
-    'vue/singleline-html-element-content-newline': 'off',
-    'vue/require-prop-types': 'off',
-    'vue/no-v-html': 'off',
-    'vue/prop-name-casing': 'off',
-    'vue/require-render-return': 'off',
     'vue/attribute-hyphenation': ['error', 'never'],
-    'vue/max-attributes-per-line': ['error', {
-      singleline: 4,
-      multiline: {
-        allowFirstLine: true,
-        max: 1
-      }
-    }],
-    'vue/order-in-components': ['error', {
-      order: [
-        'props',
-        'components',
-        'setup'
-      ]
-    }],
     'vue/component-tags-order': ['error', {
       order: ['template', 'script', 'style']
     }],
@@ -325,6 +307,25 @@ module.exports = {
       svg: 'always',
       math: 'always'
     }],
+    'vue/max-attributes-per-line': ['error', {
+      singleline: 4,
+      multiline: {
+        allowFirstLine: true,
+        max: 1
+      }
+    }],
+    'vue/no-v-html': 'off',
+    'vue/order-in-components': ['error', {
+      order: [
+        'props',
+        'components',
+        'setup'
+      ]
+    }],
+    'vue/prop-name-casing': 'off',
+    'vue/require-prop-types': 'off',
+    'vue/require-render-return': 'off',
+    'vue/singleline-html-element-content-newline': 'off',
 
     // Отключаем правила, которые не имеют смысла, чтобы увеличить скорость проверки
     'vue/comment-directive': 'off', // Это правило включает комментарии типа eslint-disable
