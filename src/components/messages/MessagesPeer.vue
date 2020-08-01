@@ -42,10 +42,10 @@
           <div class="im_peer_text_wrap text-overflow">
             <div class="im_peer_author">{{ authorName }}</div>
 
-            <div v-if="msg.isContentDeleted" :key="msg.id" class="im_peer_text isContentDeleted">
+            <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted">
               {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
             </div>
-            <div v-else :key="msg.id" :class="['im_peer_text', { hasAttachment }]">
+            <div v-else :class="['im_peer_text', { hasAttachment }]">
               <ServiceMessage
                 v-if="msg.action"
                 :msg="msg"

@@ -13,11 +13,7 @@ const app = createApp(App);
 app.use(store);
 app.use(router);
 
-app.mixin({
-  beforeCreate() {
-    this.l = getTranslate;
-  }
-});
+app.config.globalProperties.l = getTranslate;
 
 app.component('ForwardedMessage', ForwardedMessage);
 

@@ -2,8 +2,9 @@ const { spawn } = require('child_process');
 const electron = require('electron');
 const path = require('path');
 
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { DefinePlugin } = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 
@@ -86,6 +87,10 @@ module.exports = function(env, { mode }) {
       ]
     },
     plugins: [
+      new DefinePlugin({
+        __VUE_OPTIONS_API__: false,
+        __VUE_PROD_DEVTOOLS__: false
+      }),
       new VueLoaderPlugin(),
       new MiniCssExtractPlugin({ filename: '[name].css' }),
       new CopyWebpackPlugin({

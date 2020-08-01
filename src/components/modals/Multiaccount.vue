@@ -2,7 +2,7 @@
   <div class="modal">
     <ModalHeader>{{ l('ml_multiacc_header') }}</ModalHeader>
     <div class="modal_content">
-      <div v-for="user in users" :key="user.id" class="item" @click="setAccount(user.id)">
+      <div v-for="user of users" :key="user.id" class="item" @click="setAccount(user.id)">
         <img class="item_photo" :src="user.photo_100">
         <div class="item_data">
           <div class="item_name_wrap">

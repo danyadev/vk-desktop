@@ -3,7 +3,7 @@
     <div class="ripples">
       <TransitionGroup name="ripple">
         <div
-          v-for="ripple in ripples"
+          v-for="ripple of ripples"
           :key="ripple.id"
           class="ripple"
           :style="{
