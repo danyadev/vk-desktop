@@ -4,9 +4,18 @@ import electron from 'electron';
 // в том файле импортируется этот файл
 const currentWindow = electron.remote.getCurrentWindow();
 
-class Storage {
-  constructor({ name, defaults, beforeSave }) {
-    const storageData = JSON.parse(localStorage.getItem(name) || '{}');
+interface StorageOptions<DataType> {
+  name: string
+  defaults: DataType
+  beforeSave?(data: DataType): void
+}
+
+class Storage<DataType> {
+  name: string;
+  data: DataType;
+
+  constructor({ name, defaults, beforeSave }: StorageOptions<DataType>) {
+    const storageData: Partial<DataType> = JSON.parse(localStorage.getItem(name) || '{}');
 
     this.name = name;
     this.data = {
@@ -18,7 +27,7 @@ class Storage {
     this.save();
   }
 
-  update(data) {
+  update(data: DataType) {
     this.data = data;
     this.save();
   }
@@ -36,7 +45,14 @@ export const defaultUserSettings = {
   deleteForAll: false
 };
 
-export const usersStorage = new Storage({
+interface UsersStorage {
+  activeUser: number | null
+  trustedHashes: Record<string, string>
+  // any = Account
+  users: Record<number, any>
+}
+
+export const usersStorage = new Storage<UsersStorage>({
   name: 'users',
 
   defaults: {
@@ -46,13 +62,25 @@ export const usersStorage = new Storage({
   }
 });
 
-export const settingsStorage = new Storage({
+interface SettingsStorage {
+  window: Electron.Rectangle
+  langName: 'ru'
+  userSettings: {
+    hiddenPinnedMessages: {}
+    pinnedPeers: number[]
+    typing: boolean
+    notRead: boolean
+    devShowPeerId: boolean
+  }
+}
+
+export const settingsStorage = new Storage<SettingsStorage>({
   name: 'settings',
 
   defaults: {
     window: currentWindow.getBounds(),
     langName: 'ru',
-    userSettings: {}
+    userSettings: {} as SettingsStorage['userSettings']
   },
 
   beforeSave({ userSettings }) {
