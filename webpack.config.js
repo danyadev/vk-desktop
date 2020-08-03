@@ -103,7 +103,7 @@ module.exports = function(env, { mode }) {
       })
     ],
     resolve: {
-      extensions: ['.js'],
+      extensions: ['.js', '.ts'],
       symlinks: false,
       alias: getProjectAliases('webpack')
     }

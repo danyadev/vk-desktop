@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "webpack-dev-server --mode development --hot",
     "build": "yarn run dist && yarn run pack",
-    "lint": "eslint src --ext .vue,.js && stylelint src/**/*.{vue,css}",
+    "lint": "eslint src --ext .vue,.ts,.js && stylelint src/**/*.{vue,css}",
     "test": "jest",
     "dist": "webpack --mode production",
     "pack": "electron-builder --config build/config.json",
@@ -18,6 +18,8 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "26.0.8",
+    "@typescript-eslint/eslint-plugin": "3.7.1",
+    "@typescript-eslint/parser": "3.7.1",
     "@vue/compiler-sfc": "3.0.0-rc.5",
     "copy-webpack-plugin": "6.0.3",
     "css-loader": "4.2.0",
@@ -38,6 +40,7 @@
     "ts-jest": "26.1.4",
     "typescript": "3.9.7",
     "vue": "3.0.0-rc.5",
+    "vue-eslint-parser": "7.1.0",
     "vue-loader": "16.0.0-beta.4",
     "vue-router": "4.0.0-beta.4",
     "vue-svg-loader": "danyadev/vue-svg-loader#next",

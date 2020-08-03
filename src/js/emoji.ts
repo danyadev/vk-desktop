@@ -1,4 +1,4 @@
-import localEmojiString from 'js/json/localEmoji.json';
+import localEmojiString from './json/localEmoji.json';
 
 const localEmoji = new Map<string, string>(
   localEmojiString.split(';').map((str) => str.split('=')) as [string, string][]

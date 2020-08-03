@@ -66,7 +66,7 @@ interface SettingsStorage {
   window: Electron.Rectangle
   langName: 'ru'
   userSettings: {
-    hiddenPinnedMessages: {}
+    hiddenPinnedMessages: Record<number, boolean>
     pinnedPeers: number[]
     typing: boolean
     notRead: boolean
