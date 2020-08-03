@@ -38,6 +38,7 @@
     "stylelint-config-standard": "20.0.0",
     "terser-webpack-plugin": "3.0.8",
     "ts-jest": "26.1.4",
+    "ts-loader": "8.0.2",
     "typescript": "3.9.7",
     "vue": "3.0.0-rc.5",
     "vue-eslint-parser": "7.1.0",
