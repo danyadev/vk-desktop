@@ -5,7 +5,6 @@ module.exports = {
 
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    project: './tsconfig.json',
     extraFileExtensions: ['.vue'],
 
     // sourceType: 'module',
@@ -15,7 +14,8 @@ module.exports = {
   env: {
     browser: true,
     node: true,
-    es2020: true
+    es2020: true,
+    jest: true
   },
 
   plugins: ['import'],
@@ -28,7 +28,7 @@ module.exports = {
   extends: [
     // Включает максимальное количество правил
     'plugin:vue/vue3-recommended',
-    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended'
     // 'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
 

@@ -1,23 +1,17 @@
 import { emojiRegex } from 'js/emoji';
 import domains from 'js/json/domains.json';
 
-// Создает парсер текста, который делит текст на блоки с помощью регулярки.
-// parseText вызывается если кусок текста не входит в регулярку
-// parseText(value (кусок текста), ...args (параметры, переданные в экземпляр парсера)) {}
-// parseElement вызывается если кусок текста уже входит в регулярку
-// parseElement(value, match (вывод регулярки), ...args) {}
-// Эти функции обязательны и должны вернуть массив, который затем добавится к ответу
-// Пример:
-// const parser = createParser({
-//   regexp: /element/g,
-//   parseText: (value, ...args) => [{ type: 'text', value }],
-//   parseElement: (value, match, ...args) => [{ type: 'el', value }]
-// });
-// const result = parser('text element', 'arg1', 'arg2');
-// result = [{ type: 'text', value: 'text ' }, { type: 'el', value: 'element' }];
-export function createParser({ regexp, parseText, parseElement }) {
-  return function(text, ...args) {
-    const blocks = [];
+interface CreateParserParams<ParseTextType, ParseElementType> {
+  regexp: RegExp
+  parseText(value: string, ...args: any[]): ParseTextType[]
+  parseElement(value: string, match: RegExpMatchArray, ...args: any[]): ParseElementType[]
+}
+
+export function createParser<ParseTextType, ParseElementType>(
+  { regexp, parseText, parseElement }: CreateParserParams<ParseTextType, ParseElementType>
+) {
+  return function(text: string, ...args: any[]) {
+    const blocks: (ParseTextType | ParseElementType)[] = [];
     let offset = 0;
 
     for (const match of text.matchAll(regexp)) {
@@ -40,19 +34,32 @@ export function createParser({ regexp, parseText, parseElement }) {
   };
 }
 
-export const hashtagParser = createParser({
+interface ParserReturnType<Type> {
+  type: Type,
+  value: string
+}
+
+type TextType = ParserReturnType<'text'>;
+type HashtagElementType = TextType | ParserReturnType<'hashtag'>;
+
+export const hashtagParser = createParser<TextType, HashtagElementType>({
   regexp: /#[a-zа-яё0-9_]+/ig,
   parseText: (value) => [{ type: 'text', value }],
-  parseElement: (value) => [{ type: 'hashtag', value }]
+  parseElement: (value, match, isMention = false) => [
+    { type: isMention ? 'text' : 'hashtag', value }
+  ]
 });
 
-export const linkParser = createParser({
-  regexp: /(?!\.|-)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig,
+type LinkTextType = TextType | HashtagElementType;
+type LinkElementType = ParserReturnType<'link'> & { link: string };
+
+export const linkParser = createParser<LinkTextType, TextType | LinkElementType>({
+  regexp: /(?!\.)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig,
   parseText: hashtagParser,
-  parseElement(value, match, isMention) {
+  parseElement(value, match, isMention = false) {
     const { localhost, port, ip } = match.groups;
-    const isValidIP = !ip || !ip.split('.').find((v) => v > 255);
-    const isValidPort = !port || port.slice(1) <= 65535;
+    const isValidIP = !ip || !ip.split('.').find((v) => +v > 255);
+    const isValidPort = !port || +port.slice(1) < 65536;
     const domain = match[4] && match[4].toLowerCase();
     const isValidDomain = isValidIP && isValidPort && (ip || localhost || domains.includes(domain));
 
@@ -62,7 +69,7 @@ export const linkParser = createParser({
 
     // Удаляем из ссылки все, что находится после ) или ",
     // чтобы не ломать отображение ссылок в сжатом JSON или при закрытии скобки
-    const removeTextMatch = value.match(/((?:\)|").+)/);
+    const removeTextMatch = value.match(/((?:[)"]).+)/);
     let textAfterLink;
 
     if (removeTextMatch) {
@@ -89,19 +96,33 @@ export const linkParser = createParser({
   }
 });
 
-export const brParser = createParser({
+type BrTextType = LinkTextType | LinkElementType;
+type BrElementType = { type: 'br' };
+
+export const brParser = createParser<BrTextType, BrElementType>({
   regexp: /<br>/g,
   parseText: linkParser,
   parseElement: () => [{ type: 'br' }]
 });
 
-export const emojiParser = createParser({
+type EmojiTextType = BrTextType | BrElementType;
+type EmojiElementType = ParserReturnType<'emoji'>
+
+export const emojiParser = createParser<EmojiTextType, EmojiElementType>({
   regexp: emojiRegex,
   parseText: brParser,
   parseElement: (value) => [{ type: 'emoji', value }]
 });
 
-export const mentionParser = createParser({
+type MentionTextType = EmojiTextType | EmojiElementType;
+interface MentionElementType {
+  type: 'mention',
+  value: ReturnType<typeof emojiParser>,
+  id: number,
+  raw: string
+}
+
+export const mentionParser = createParser<MentionTextType, MentionElementType>({
   regexp: /\[(club|id)(\d+)\|(.+?)\]/g,
   parseText: emojiParser,
   parseElement(mentionText, match) {
@@ -109,9 +130,9 @@ export const mentionParser = createParser({
 
     return [{
       type: 'mention',
-      value: emojiParser(text, true),
       id: type === 'id' ? +id : -id,
-      raw: mentionText
+      raw: mentionText,
+      value: emojiParser(text, true)
     }];
   }
 });

@@ -110,7 +110,7 @@ export function callWithDelay(fn, delay) {
   };
 }
 
-// Выполняет асинхронную фукнцию только когда прошлая фукнция уже была выполнена
+// Выполняет асинхронную функцию только когда прошлая функция уже была выполнена
 export function createQueueManager(fn) {
   const queue = [];
   let isExecuting = false;
@@ -158,7 +158,7 @@ export function getPhoto(user) {
   return user && (devicePixelRatio > 1 ? user.photo_100 : user.photo_50);
 }
 
-// Возвращает фотографию нужного размера из обьекта фотографий
+// Возвращает фотографию нужного размера из объекта фотографий
 export function getPhotoFromSizes(sizes, size, isDoc) {
   const find = (type) => sizes.find((photo) => photo.type === type);
   const optionalTypes = isDoc ? ['z', 'y', 'x', 'm', 's'] : ['w', 'z', 'y'];

@@ -10,7 +10,7 @@ const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 const getProjectAliases = require('./getProjectAliases');
 
-module.exports = function(env, { mode }) {
+module.exports = function(env, { mode = 'development' } = {}) {
   const isDev = mode === 'development';
 
   return {
