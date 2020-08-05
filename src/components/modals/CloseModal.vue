@@ -20,12 +20,13 @@ export default {
     Icon
   },
 
-  methods: {
-    close() {
+  setup() {
+    function close() {
       const parent = this.isSettings ? this.$parent : this.$parent.$parent;
-
       closeModal(parent.$attrs['data-name']);
     }
+
+    return { close };
   }
 };
 </script>

@@ -30,16 +30,20 @@ export default {
     Button
   },
 
-  methods: {
-    logout,
-
-    closeApp() {
+  setup() {
+    function closeApp() {
       electron.remote.app.exit();
-    },
+    }
 
-    close() {
+    function close() {
       closeModal('blocked-account');
     }
+
+    return {
+      logout,
+      closeApp,
+      close
+    };
   }
 };
 </script>

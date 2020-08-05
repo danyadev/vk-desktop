@@ -22,12 +22,15 @@ export default {
     Button
   },
 
-  methods: {
-    logout,
-
-    cancel() {
+  setup() {
+    function cancel() {
       closeModal('logout');
     }
+
+    return {
+      logout,
+      cancel
+    };
   }
 };
 </script>

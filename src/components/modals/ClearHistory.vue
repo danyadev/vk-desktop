@@ -24,16 +24,21 @@ export default {
     Button
   },
 
-  methods: {
-    clear() {
+  setup() {
+    function clear() {
       vkapi('messages.deleteConversation', {
         peer_id: this.peer_id
       }).then(this.close);
-    },
+    }
 
-    close() {
+    function close() {
       closeModal('clear-history');
     }
+
+    return {
+      clear,
+      close
+    };
   }
 };
 </script>
