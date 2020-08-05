@@ -1,11 +1,11 @@
 'use strict';
 
-const { app, Menu, shell } = require('electron');
+const { app, Menu, shell, BrowserWindow } = require('electron');
 
 module.exports = function(mainWindow) {
   const menu = [
     {
-      label: 'VK Deskop',
+      label: 'VK Desktop',
       submenu: [
         {
           label: 'О программе VK Desktop',
@@ -184,4 +184,4 @@ module.exports = function(mainWindow) {
   ];
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
-}
+};

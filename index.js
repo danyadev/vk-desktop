@@ -1,10 +1,10 @@
 'use strict';
 
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 const { app, BrowserWindow, shell, screen } = require('electron');
 
-// Выключаем варнинг в консоли
+// Выключаем предупреждение в консоли
 app.allowRendererProcessReuse = false;
 
 app.once('ready', () => {
