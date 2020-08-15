@@ -1,8 +1,7 @@
 <script>
 import { h, Fragment } from 'vue';
-import { loadProfile } from 'js/utils';
+import { loadProfile, createParser } from 'js/utils';
 import { loadConversationMembers, loadedConversationMembers } from 'js/messages';
-import { createParser } from 'js/textParser';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 

@@ -8,8 +8,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 
-const getProjectAliases = require('./getProjectAliases');
-
 module.exports = function(env, { mode = 'development' } = {}) {
   const isDev = mode === 'development';
 
@@ -67,14 +65,6 @@ module.exports = function(env, { mode = 'development' } = {}) {
           exclude: /node_modules/
         },
         {
-          test: /\.ts$/,
-          loader: 'ts-loader',
-          options: {
-            appendTsSuffixTo: [/\.vue$/]
-          },
-          exclude: /node_modules/
-        },
-        {
           test: /\.css$/,
           use: [
             {
@@ -111,9 +101,12 @@ module.exports = function(env, { mode = 'development' } = {}) {
       })
     ],
     resolve: {
-      extensions: ['.js', '.ts'],
+      extensions: ['.js'],
       symlinks: false,
-      alias: getProjectAliases('webpack')
+      alias: ['assets', 'css', 'js', 'lang'].reduce((alias, name) => {
+        alias[name] = path.resolve(__dirname, 'src/' + name);
+        return alias;
+      }, {})
     }
   };
 };

@@ -1,19 +1,15 @@
 module.exports = {
   root: true,
 
-  parser: 'vue-eslint-parser',
-
   parserOptions: {
-    parser: '@typescript-eslint/parser',
-    extraFileExtensions: ['.vue'],
+    sourceType: 'module',
     ecmaVersion: 2019
   },
 
   env: {
     browser: true,
     node: true,
-    es2020: true,
-    jest: true
+    es2020: true
   },
 
   plugins: ['import'],
@@ -25,9 +21,7 @@ module.exports = {
 
   extends: [
     // Включает максимальное количество правил
-    'plugin:vue/vue3-recommended',
-    'plugin:@typescript-eslint/recommended'
-    // 'plugin:@typescript-eslint/recommended-requiring-type-checking'
+    'plugin:vue/vue3-recommended'
   ],
 
   rules: {
@@ -60,6 +54,7 @@ module.exports = {
       mode: 'minimum'
     }],
     'keyword-spacing': 'error',
+    'lines-between-class-members': 'error',
     'new-cap': ['error', {
       properties: false
     }],
@@ -214,8 +209,7 @@ module.exports = {
     'import/default': 'error',
     'import/export': 'error',
     'import/extensions': ['error', 'always', {
-      js: 'never',
-      ts: 'never'
+      js: 'never'
     }],
     'import/first': 'error',
     'import/named': 'error',
@@ -237,12 +231,6 @@ module.exports = {
         ['internal', 'parent', 'sibling', 'index']
       ]
     }],
-
-    // TypeScript (пока отключаю все ошибки, потому что заниматься самим TS буду в другой раз)
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-var-requires': 'off',
-    '@typescript-eslint/no-empty-function': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
 
     // Включаем правила, которые не указаны в рекомендуемых
     'vue/component-name-in-template-casing': 'error',
