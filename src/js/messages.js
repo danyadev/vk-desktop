@@ -16,7 +16,7 @@ export function parseConversation(conversation) {
     isCasperChat,
     members: isChat ? chat_settings.members_count : null,
     left: isChat && ['left', 'kicked'].includes(chat_settings.state),
-    muted: !!(push_settings && push_settings.disabled_forever),
+    muted: !!(push_settings && (push_settings.disabled_forever || push_settings.disabled_until)),
     unread: conversation.unread_count || 0,
     photo: isChat ? getPhoto(chat_settings.photo) : null,
     title: isChat ? escape(chat_settings.title).replace(/\n/g, ' ') : null,
@@ -88,6 +88,7 @@ export function parseMessage(message) {
     out: message.from_id === store.state.users.activeUser,
     text: escape(message.text).replace(/\n/g, '<br>'),
     date: message.date,
+    peer_id: message.peer_id,
     conversation_msg_id: message.conversation_message_id,
     random_id: message.random_id,
     action: message.action,
@@ -98,6 +99,7 @@ export function parseMessage(message) {
     hasReplyMsg,
     replyMsg: hasReplyMsg ? parseMessage(message.reply_message) : null,
     keyboard: message.keyboard,
+    hasTemplate: !!message.template,
     template: message.template,
     hidden: !!message.is_hidden,
     editTime: message.update_time || 0,
@@ -112,32 +114,32 @@ export function parseMessage(message) {
 export function getMessagePreview(msg) {
   if (msg.text) {
     return msg.text;
-  } else if (msg.hasAttachment) {
-    const { hasReplyMsg, fwdCount, attachments } = msg;
-    const [attachName] = Object.keys(attachments);
-
-    if (attachName) {
-      const count = attachments[attachName].length;
-      const translate = getTranslate('im_attachments', attachName, [count], count);
-
-      if (!translate) {
-        console.warn('[im] Неизвестное вложение:', attachName, `(${count})`);
-        return capitalize(attachName);
-      }
-
-      return translate;
-    }
-
-    if (hasReplyMsg) {
-      return getTranslate('im_replied');
-    }
-
-    if (fwdCount < 0) {
-      return getTranslate('im_forwarded_some');
-    }
-
-    return getTranslate('im_forwarded', [fwdCount], fwdCount);
   }
+
+  const { hasReplyMsg, fwdCount, attachments } = msg;
+  const [attachName] = Object.keys(attachments);
+
+  if (attachName) {
+    const count = attachments[attachName].length;
+    const translate = getTranslate('im_attachments', attachName, [count], count);
+
+    if (!translate) {
+      console.warn('[im] Неизвестное вложение:', attachName, `(${count})`);
+      return capitalize(attachName);
+    }
+
+    return translate;
+  }
+
+  if (hasReplyMsg) {
+    return getTranslate('im_replied');
+  }
+
+  if (fwdCount < 0) {
+    return getTranslate('im_forwarded_some');
+  }
+
+  return getTranslate('im_forwarded', [fwdCount], fwdCount);
 }
 
 export function getPeerOnline(peer_id, peer, owner) {
@@ -219,6 +221,12 @@ export function getLastMsgId() {
 }
 
 export function getMessageById(msg_id, peer_id) {
+  if (!msg_id) {
+    // TODO дождаться и проверить
+    // https://github.com/vuejs/vue-next/issues/1865
+    console.error(msg_id, peer_id);
+  }
+
   return msg_id && store.state.messages.messages[peer_id].find((msg) => msg.id === msg_id);
 }
 

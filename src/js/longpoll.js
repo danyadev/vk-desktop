@@ -7,8 +7,8 @@ import longpollEvents from './longpollEvents';
 
 class Longpoll {
   constructor() {
-    this.debug = false;
     this.version = 10;
+    this.debug = false;
   }
 
   getServer() {
@@ -21,8 +21,8 @@ class Longpoll {
   start(data) {
     this.server = data.server;
     this.key = data.key;
-    this.pts = data.pts;
     this.ts = data.ts;
+    this.pts = data.pts;
 
     this.loop();
   }
@@ -149,7 +149,9 @@ class Longpoll {
 
       const fromHistory = rawEvent[1] === 'fromHistory';
       const rawData = fromHistory ? rawEvent[0] : rawEvent;
-      const data = event.parser ? event.parser(rawData, fromHistory) : rawData;
+      const data = event.parser && !fromHistory
+        ? event.parser(rawData)
+        : rawData;
 
       if (!data) {
         continue;

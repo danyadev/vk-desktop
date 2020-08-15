@@ -92,12 +92,7 @@ function getAttachments(data) {
 }
 
 // https://github.com/danyadev/longpoll-doc#структура-сообщения
-function parseLongPollMessage(data, fromHistory) {
-  // Если данные получены через messages.getLongPollHistory
-  if (fromHistory) {
-    return data;
-  }
-
+function parseLongPollMessage(data) {
   // Если это 2 событие прочтения сообщения или пометки его важным
   if (!data[3]) {
     return;
@@ -144,6 +139,7 @@ function parseLongPollMessage(data, fromHistory) {
       out: from_id === user.id || flag('outbox'),
       text: action ? '' : data[4],
       date: data[3],
+      peer_id: data[2],
       conversation_msg_id: data[8],
       random_id: data[7],
       action,
@@ -154,6 +150,7 @@ function parseLongPollMessage(data, fromHistory) {
       hasReplyMsg,
       replyMsg: null,
       keyboard: keyboard && keyboard.inline ? keyboard : null,
+      hasTemplate: !!data[5].has_template,
       template: null,
       hidden: flag('hidden'),
       editTime: data[9],
@@ -161,9 +158,7 @@ function parseLongPollMessage(data, fromHistory) {
       isContentDeleted: !data[4] && !action && !hasAttachment,
       expireTtl: +data[5].expire_ttl || data[5].ttl || 0,
       isExpired: !!data[5].is_expired,
-      fromLongPoll: true,
-      // Нужно только для пометки сообщения как обязательное для получения через апи
-      hasTemplate: !!data[5].has_template
+      fromLongPoll: true
     }
   };
 }
@@ -223,8 +218,8 @@ function hasSupportedAttachments(msg) {
   return false;
 }
 
-function hasPreloadMessages(conversations) {
-  return conversations.some(({ msg }) => hasSupportedAttachments(msg));
+function hasPreloadMessages(items) {
+  return items.some(({ msg }) => hasSupportedAttachments(msg));
 }
 
 async function watchTyping(peer_id, user_id) {
@@ -416,8 +411,8 @@ export default {
           peer_id,
           addNew: true,
           messages: items
-            .filter((msg) => !hasPreloadMessages([msg]))
-            .map((peer) => peer.msg)
+            .filter((item) => !hasPreloadMessages([item]))
+            .map((item) => item.msg)
         });
       }
 
@@ -865,7 +860,7 @@ export default {
   },
 
   114: {
-    // Изменеие настроек пуш-уведомлений в беседе
+    // Изменение настроек пуш-уведомлений в беседе
     // [{ peer_id, sound, disabled_until }]
     // disabled_until: -1 - выключены; 0 - включены; * - время их включения
     handler([{ peer_id, disabled_until }]) {

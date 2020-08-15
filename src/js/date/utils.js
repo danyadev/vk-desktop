@@ -37,7 +37,7 @@ export function format(date, mask) {
   };
 
   Object.entries(tokens).forEach(([token, replacer]) => {
-    mask = mask.replace(token, replacer);
+    mask = mask.replace(new RegExp(token, 'g'), replacer);
   });
 
   return mask;
@@ -90,15 +90,15 @@ export function differenceInSeconds(d1, d2) {
 }
 
 export function differenceInMinutes(d1, d2) {
-  return floor(differenceInSeconds(d1, d2) / 60);
+  return floor(differenceInMilliseconds(d1, d2) / (1000 * 60));
 }
 
 export function differenceInHours(d1, d2) {
-  return floor(differenceInMinutes(d1, d2) / 60);
+  return floor(differenceInMilliseconds(d1, d2) / (1000 * 3600));
 }
 
 export function differenceInDays(d1, d2) {
-  return floor(differenceInHours(d1, d2) / 24);
+  return floor(differenceInMilliseconds(d1, d2) / (1000 * 3600 * 24));
 }
 
 function differenceInCalendarMonths(d1, d2) {
@@ -114,7 +114,7 @@ export function differenceInMonths(d1, d2) {
 
   const isLastMonthNotFull = compareAsc(d1Copy, d2) === -sign;
 
-  return sign * (diff - isLastMonthNotFull);
+  return sign * (diff - (isLastMonthNotFull ? 1 : 0));
 }
 
 export function differenceInYears(d1, d2) {

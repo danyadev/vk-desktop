@@ -147,8 +147,8 @@ export default {
       const isScrolledDown = scrollHeight && scrollTop + clientHeight === scrollHeight;
 
       switch (type) {
+        // TODO Дождаться реализации onBeforeDeactivate и перенести туда этот код
         case 'closeChat':
-          // TODO Дождаться реализации onBeforeDeactivate
           state.scrollTop = scrollTop;
           state.isScrolledDownOnClose = isScrolledDown;
           state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;

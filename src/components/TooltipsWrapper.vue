@@ -2,7 +2,7 @@
   <Transition name="fade-out">
     <div v-if="text">
       <div class="tooltip_arrow" :style="arrowPosition"></div>
-      <div ref="tooltip" class="tooltip_text" :style="position">{{ text }}</div>
+      <div ref="tooltip" class="tooltip_text" :style="textPosition">{{ text }}</div>
     </div>
   </Transition>
 </template>
@@ -15,9 +15,9 @@ export default {
   setup() {
     const state = reactive({
       tooltip: null,
-      text: null,
+      text: '',
       arrowPosition: {},
-      position: {}
+      textPosition: {}
     });
 
     function setPosition(el) {
@@ -29,10 +29,8 @@ export default {
       const centerElX = x + width / 2;
       const maxTooltipRight = clientWidth - tooltipWidth - 8;
 
-      // Вычитаем из координаты высоту тайтлбара, т.к.
-      // враппер контекстного меню имеет высоту в виде
-      // <высота приложения> - <высота тайтлбара>,
-      // а координаты приходят с верхней точки приложения
+      // Вычитаем из координаты высоту тайтлбара, т.к. враппер контекстного меню имеет высоту в виде
+      // <высота приложения> - <высота тайтлбара>, а координаты приходят с верхней точки приложения
       y -= titlebar.clientHeight - height;
       // Центруем тултип по центру элемента
       x = centerElX - tooltipWidth / 2;
@@ -41,7 +39,7 @@ export default {
         x = maxTooltipRight;
       }
 
-      state.position = {
+      state.textPosition = {
         left: x + 'px',
         top: y + 'px'
       };

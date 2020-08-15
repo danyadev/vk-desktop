@@ -34,8 +34,6 @@ export default async function sendMessage({
     // Почему-то в группах приходит screen_name вместо domain
     const { screen_name } = store.state.profiles[author_id];
 
-    message = peer_id > 2e9 ? `@${screen_name} ${action.label}` : action.label;
-
     if (one_time) {
       store.commit('messages/updateConversation', {
         peer: {
@@ -44,6 +42,8 @@ export default async function sendMessage({
         }
       });
     }
+
+    message = peer_id > 2e9 ? `@${screen_name} ${action.label}` : action.label;
   } else {
     message = parseInputText(input.childNodes);
   }

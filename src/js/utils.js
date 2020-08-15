@@ -139,6 +139,45 @@ export function createQueueManager(fn) {
   };
 }
 
+// Создает парсер текста, который делит текст на блоки с помощью регулярки.
+// parseText вызывается если кусок текста не входит в регулярку
+// parseText(value (кусок текста), ...args (параметры, переданные в экземпляр парсера)) {}
+// parseElement вызывается если кусок текста уже входит в регулярку
+// parseElement(value, match (вывод регулярки), ...args) {}
+// Эти функции обязательны и должны вернуть массив, который затем добавится к ответу
+// Пример:
+// const parser = createParser({
+//   regexp: /element/g,
+//   parseText: (value, ...args) => [{ type: 'text', value }],
+//   parseElement: (value, match, ...args) => [{ type: 'el', value }]
+// });
+// const result = parser('text element', 'arg1', 'arg2');
+// result = [{ type: 'text', value: 'text ' }, { type: 'el', value: 'element' }];
+export function createParser({ regexp, parseText, parseElement }) {
+  return function(text, ...args) {
+    const blocks = [];
+    let offset = 0;
+
+    for (const match of text.matchAll(regexp)) {
+      const { 0: result, index } = match;
+
+      if (index !== offset) {
+        blocks.push(...parseText(text.slice(offset, index), ...args));
+      }
+
+      blocks.push(...parseElement(result, match, ...args));
+
+      offset = index + result.length;
+    }
+
+    if (text.length !== offset) {
+      blocks.push(...parseText(text.slice(offset, text.length), ...args));
+    }
+
+    return blocks;
+  };
+}
+
 // --- Остальные вспомогательные функции
 
 // 125 -> 125
@@ -151,17 +190,30 @@ export function convertCount(count) {
     return Math.floor(count / 1e3) + 'K';
   }
 
-  return count;
+  return '' + count;
 }
 
-export function getPhoto(user) {
-  return user && (devicePixelRatio > 1 ? user.photo_100 : user.photo_50);
+export function getPhoto(obj) {
+  return obj && (devicePixelRatio > 1 ? obj.photo_100 : obj.photo_50);
 }
 
 // Возвращает фотографию нужного размера из объекта фотографий
 export function getPhotoFromSizes(sizes, size, isDoc) {
   const find = (type) => sizes.find((photo) => photo.type === type);
   const optionalTypes = isDoc ? ['z', 'y', 'x', 'm', 's'] : ['w', 'z', 'y'];
+
+  if (Array.isArray(size)) {
+    for (let i = 0; i < size.length; i++) {
+      const photo = find(size[i]);
+
+      if (photo) {
+        return photo;
+      }
+    }
+
+    return;
+  }
+
   const index = optionalTypes.indexOf(size);
 
   if (index !== -1) {
@@ -174,14 +226,6 @@ export function getPhotoFromSizes(sizes, size, isDoc) {
     }
 
     return isDoc ? find('o') : find('x');
-  } else if (Array.isArray(size)) {
-    for (let i = 0; i < size.length; i++) {
-      const photo = find(size[i]);
-
-      if (photo) {
-        return photo;
-      }
-    }
   }
 
   return find(size);

@@ -10,32 +10,37 @@ const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 module.exports = function(env, { mode = 'development' } = {}) {
   const isDev = mode === 'development';
+  const minimizer = [];
+
+  if (!isDev) {
+    minimizer.push(
+      new TerserWebpackPlugin({
+        extractComments: false,
+        terserOptions: {
+          ecma: 8,
+          module: true,
+          compress: {
+            keep_fargs: false,
+            passes: 2,
+            unsafe: true,
+            unsafe_arrows: true,
+            unsafe_methods: true,
+            unsafe_proto: true
+          },
+          output: {
+            comments: false
+          }
+        }
+      })
+    );
+  }
 
   return {
     mode,
     target: 'electron-renderer',
     stats: { children: false },
     optimization: {
-      minimizer: [
-        new TerserWebpackPlugin({
-          extractComments: false,
-          terserOptions: {
-            ecma: 8,
-            module: true,
-            compress: {
-              keep_fargs: false,
-              passes: 2,
-              unsafe: true,
-              unsafe_arrows: true,
-              unsafe_methods: true,
-              unsafe_proto: true
-            },
-            output: {
-              comments: false
-            }
-          }
-        })
-      ]
+      minimizer
     },
     entry: './src/main.js',
     output: {
