@@ -190,7 +190,7 @@ export function convertCount(count) {
     return Math.floor(count / 1e3) + 'K';
   }
 
-  return '' + count;
+  return count;
 }
 
 export function getPhoto(obj) {

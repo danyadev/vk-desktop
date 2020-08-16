@@ -8,7 +8,7 @@
 
     <RouterView v-slot="{ Component }">
       <KeepAlive>
-        <component :is="Component" :key="peer_id" />
+        <component :is="Component" :key="`${route.name}${peer_id}`" />
       </KeepAlive>
     </RouterView>
   </div>
