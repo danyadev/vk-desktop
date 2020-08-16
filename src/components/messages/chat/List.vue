@@ -41,7 +41,7 @@
     </div>
 
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
-      <div>{{ peer && convertCount(peer.unread) || '' }}</div>
+      <div>{{ peer && peer.unread > 0 && convertCount(peer.unread) || '' }}</div>
       <img src="~assets/dropdown.webp">
     </div>
   </Scrolly>
