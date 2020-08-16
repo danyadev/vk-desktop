@@ -167,7 +167,7 @@ export default {
       if (props.peer.left) {
         vkapi('messages.addChatUser', {
           chat_id: props.peer_id - 2e9,
-          user_id: store.state.users.activeUser
+          user_id: store.state.users.activeUserID
         });
       } else {
         vkapi('account.setSilenceMode', {

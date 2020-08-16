@@ -443,7 +443,7 @@ export default {
             peerData.unread = (conversation.peer.unread || 0) + 1;
           }
 
-          if (mentions.includes(store.state.users.activeUser)) {
+          if (mentions.includes(store.state.users.activeUserID)) {
             peerData.mentions.push(msg.id);
           }
         }
@@ -507,7 +507,7 @@ export default {
       const conversation = store.state.messages.conversations[peer.id];
       const messages = store.state.messages.messages[peer.id] || [];
       const isLastMsg = conversation && conversation.msg.id === msg.id;
-      const activeId = store.state.users.activeUser;
+      const { activeUserID } = store.state.users;
 
       removeTyping(peer.id, msg.from);
 
@@ -533,7 +533,7 @@ export default {
       if (
         msg.id > (conversation && conversation.peer.in_read) && // Непрочитанное сообщение
         newConversationData.peer.mentions.includes(msg.id) && // В старом сообщении есть упоминание
-        !peer.mentions.includes(activeId) // В новом сообщении нет упоминания
+        !peer.mentions.includes(activeUserID) // В новом сообщении нет упоминания
       ) {
         newConversationData.peer.mentions.splice(
           newConversationData.peer.mentions.indexOf(msg.id),
@@ -556,7 +556,7 @@ export default {
       const conversation = store.state.messages.conversations[peer_id];
       const mentions = conversation && conversation.peer.mentions || [];
       const newMentions = mentions.slice();
-      const isMyDialog = peer_id === store.state.users.activeUser;
+      const isMyDialog = peer_id === store.state.users.activeUserID;
 
       for (const id of mentions) {
         if (msg_id >= id) {
@@ -724,7 +724,7 @@ export default {
     // Изменение данных чата
     // [type, peer_id, extra]
     handler([type, peer_id, extra]) {
-      const isMe = extra === store.state.users.activeUser;
+      const isMe = extra === store.state.users.activeUserID;
       const conversation = store.state.messages.conversations[peer_id];
       const peer = conversation && conversation.peer;
 
@@ -806,7 +806,7 @@ export default {
     // [peer_id, [from_ids], ids_length, timestamp]
     handler([peer_id, ids]) {
       for (const id of ids) {
-        if (id === store.state.users.activeUser) {
+        if (id === store.state.users.activeUserID) {
           continue;
         }
 
@@ -826,7 +826,7 @@ export default {
     // [peer_id, [from_ids], ids_length, timestamp]
     handler([peer_id, ids]) {
       for (const id of ids) {
-        if (id === store.state.users.activeUser) {
+        if (id === store.state.users.activeUserID) {
           continue;
         }
 

@@ -43,7 +43,7 @@ function getVNode(name, key, replaces) {
 function getServiceMessage(msg, author, peer_id, isFull) {
   const actID = msg.action.member_id;
   const actUser = store.state.profiles[actID] || { id: actID };
-  const { activeUser: id } = store.state.users;
+  const { activeUserID } = store.state.users;
   const isAuthor = actID === author.id;
 
   // Возвращает индекс для массива определенного перевода
@@ -51,7 +51,7 @@ function getServiceMessage(msg, author, peer_id, isFull) {
     const user = isActionUser ? actUser : author;
 
     // Вы / Вас
-    if (user.id === id) {
+    if (user.id === activeUserID) {
       return 0;
     }
 
@@ -63,7 +63,7 @@ function getServiceMessage(msg, author, peer_id, isFull) {
   function name(isActionUser, isAccCase) {
     const user = isActionUser ? actUser : author;
 
-    if (user.id === id) {
+    if (user.id === activeUserID) {
       return isAccCase ? getTranslate('you2') : getTranslate('you');
     } else if (user.name) {
       return user.name;

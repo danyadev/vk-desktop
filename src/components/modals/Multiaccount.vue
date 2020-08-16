@@ -45,11 +45,11 @@ export default {
   },
 
   setup() {
-    const activeUser = computed(() => store.state.users.activeUser);
+    const activeUserID = computed(() => store.state.users.activeUserID);
     const users = computed(() => store.state.users.users);
 
     function getUserDescription(user) {
-      if (activeUser.value !== user.id) {
+      if (activeUserID.value !== user.id) {
         return '@' + user.domain;
       }
 
@@ -57,14 +57,14 @@ export default {
     }
 
     function setAccount(id) {
-      if (activeUser.value === id) {
+      if (activeUserID.value === id) {
         return;
       }
 
-      if (activeUser.value) {
+      if (activeUserID.value) {
         const usersData = { ...usersStorage.data };
 
-        usersData.activeUser = id;
+        usersData.activeUserID = id;
         usersStorage.update(usersData);
 
         window.location.reload();
@@ -75,7 +75,7 @@ export default {
     }
 
     function removeAccount(id) {
-      if (id === activeUser.value) {
+      if (id === activeUserID.value) {
         openModal('logout');
       } else {
         store.commit('users/removeUser', id);

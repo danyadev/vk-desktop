@@ -290,11 +290,11 @@ export function onTransitionEnd(el, anyTarget) {
 }
 
 export function logout() {
-  const { activeUser } = store.state.users;
+  const { activeUserID } = store.state.users;
   const usersData = copyObject(usersStorage.data);
 
-  usersData.activeUser = null;
-  delete usersData.users[activeUser];
+  usersData.activeUserID = null;
+  delete usersData.users[activeUserID];
 
   usersStorage.update(usersData);
 

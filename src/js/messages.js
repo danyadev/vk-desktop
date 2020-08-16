@@ -85,7 +85,7 @@ export function parseMessage(message) {
   return {
     id: message.id,
     from: message.from_id,
-    out: message.from_id === store.state.users.activeUser,
+    out: message.from_id === store.state.users.activeUserID,
     text: escape(message.text).replace(/\n/g, '<br>'),
     date: message.date,
     peer_id: message.peer_id,
@@ -231,18 +231,18 @@ export function getMessageById(msg_id, peer_id) {
 }
 
 export function deleteMessages(message_ids, peer, needCancelSelect) {
-  const activeUserId = store.state.users.activeUser;
+  const { activeUserID } = store.state.users;
   const DAY = 1000 * 60 * 60 * 24;
 
   const canDeleteForAll = (
-    activeUserId !== peer.id &&
+    activeUserID !== peer.id &&
     message_ids
       .map((id) => getMessageById(id, peer.id))
       .every((msg) => (
         !peer.admin_ids.includes(msg.from) &&
         Date.now() - msg.date * 1000 < DAY &&
         (
-          msg.from === activeUserId ||
+          msg.from === activeUserID ||
           peer.id > 2e9 && peer.acl.can_moderate
         )
       ))

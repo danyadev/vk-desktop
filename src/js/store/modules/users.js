@@ -7,7 +7,7 @@ export default {
 
   mutations: {
     setActiveUser(state, id) {
-      state.activeUser = id;
+      state.activeUserID = id;
     },
 
     updateUser(state, data) {
@@ -28,7 +28,7 @@ export default {
 
   getters: {
     user(state) {
-      return state.users[state.activeUser];
+      return state.users[state.activeUserID];
     }
   }
 };

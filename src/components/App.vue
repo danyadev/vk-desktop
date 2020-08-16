@@ -3,7 +3,7 @@
     <Titlebar />
 
     <div class="app">
-      <LeftMenu v-if="activeUser" />
+      <LeftMenu v-if="activeUserID" />
       <RouterView />
 
       <ModalsWrapper />
@@ -56,11 +56,11 @@ export default {
   setup() {
     const state = reactive({
       mac: process.platform === 'darwin',
-      activeUser: computed(() => store.state.users.activeUser)
+      activeUserID: computed(() => store.state.users.activeUserID)
     });
 
     async function initUser() {
-      if (!state.activeUser) {
+      if (!state.activeUserID) {
         return;
       }
 
@@ -106,7 +106,7 @@ export default {
     }
 
     initUser();
-    watch(() => state.activeUser, initUser);
+    watch(() => state.activeUserID, initUser);
 
     return state;
   }

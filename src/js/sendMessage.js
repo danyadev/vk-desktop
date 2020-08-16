@@ -75,7 +75,7 @@ export default async function sendMessage({
     peer_id,
     msg: {
       id: msg_id,
-      from: store.state.users.activeUser,
+      from: store.state.users.activeUserID,
       out: true,
       text: message,
       date: (Date.now() / 1000).toFixed(),

@@ -40,7 +40,7 @@ export const usersStorage = new Storage({
   name: 'users',
 
   defaults: {
-    activeUser: null,
+    activeUserID: null,
     trustedHashes: {},
     users: {}
   }

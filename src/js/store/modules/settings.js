@@ -20,7 +20,7 @@ export default {
     },
 
     updateUserSettings(state, settings) {
-      state.userSettings[this.state.users.activeUser] = {
+      state.userSettings[this.state.users.activeUserID] = {
         ...this.getters['settings/settings'],
         ...settings
       };
@@ -29,7 +29,7 @@ export default {
 
   getters: {
     settings(state, getters, { users }) {
-      return state.userSettings[users.activeUser];
+      return state.userSettings[users.activeUserID];
     },
 
     lang({ langName }) {

@@ -144,7 +144,7 @@ export default {
 
       vkapi(state.left ? 'messages.addChatUser' : 'messages.removeChatUser', {
         chat_id: props.peer_id - 2e9,
-        user_id: store.state.users.activeUser
+        user_id: store.state.users.activeUserID
       });
     }
 
