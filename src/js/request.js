@@ -140,7 +140,7 @@ export default async function(...data) {
       return await request(...data);
     } catch (err) {
       // Если ошибка не относится к проблемам с сетью, то выкидываем ошибку
-      if (!['ETIMEDOUT', 'ECONNRESET', 'ENOTFOUND'].includes(err.code)) {
+      if (!['ETIMEDOUT', 'ECONNRESET', 'ENOTFOUND', 'ENETUNREACH'].includes(err.code)) {
         throw err;
       }
 
