@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <ModalHeader :closable="false">{{ l('ml_captcha_header') }}</ModalHeader>
+    <ModalHeader unclosable>{{ l('ml_captcha_header') }}</ModalHeader>
     <div class="modal_content">
       <div class="captcha_img">
         <img :src="src" @click="updateImg">

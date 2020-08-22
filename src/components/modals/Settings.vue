@@ -4,7 +4,7 @@
       <div class="settings_header">
         <div class="settings_header_text text-overflow">{{ l('ml_settings_header') }}</div>
         <div class="settings_header_close">
-          <CloseModal :closable="true" :isSettings="true" />
+          <CloseModal :closable="true" />
         </div>
       </div>
       <div class="settings_content">

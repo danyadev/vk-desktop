@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <ModalHeader :closable="false">{{ l('ml_error_api_header') }}</ModalHeader>
+    <ModalHeader unclosable>{{ l('ml_error_api_header') }}</ModalHeader>
     <div class="modal_content">
       {{ l('ml_error_api', [method]) }}
 

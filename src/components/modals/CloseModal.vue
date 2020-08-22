@@ -4,7 +4,7 @@
     name="close"
     color="var(--background-blue-text)"
     class="modal_header_close icon-hover"
-    @click.stop="close"
+    @click.stop="closeModal()"
   />
 </template>
 
@@ -14,19 +14,14 @@ import { closeModal } from 'js/modals';
 import Icon from '../UI/Icon.vue';
 
 export default {
-  props: ['closable', 'isSettings'],
+  props: ['closable'],
 
   components: {
     Icon
   },
 
   setup() {
-    function close() {
-      const parent = this.isSettings ? this.$parent : this.$parent.$parent;
-      closeModal(parent.$attrs['data-name']);
-    }
-
-    return { close };
+    return { closeModal };
   }
 };
 </script>

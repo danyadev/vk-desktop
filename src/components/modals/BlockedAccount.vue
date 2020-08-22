@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <ModalHeader :closable="false">{{ l('ml_blocked_account_title', id) }}</ModalHeader>
+    <ModalHeader unclosable>{{ l('ml_blocked_account_title', id) }}</ModalHeader>
     <div class="modal_content" v-html="l('ml_blocked_account_content', id)"></div>
     <div class="modal_footer">
       <Button v-if="fromAuth" right @click="close">{{ l('close') }}</Button>

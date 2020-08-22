@@ -1,9 +1,9 @@
 <template>
-  <div class="modal_header" :closable="isClosable">
+  <div class="modal_header">
     <div class="modal_header_title"><slot /></div>
     <div class="modal_header_buttons">
       <slot name="icons" />
-      <CloseModal :closable="isClosable" />
+      <CloseModal :closable="!('unclosable' in $props)" />
     </div>
   </div>
 </template>
@@ -12,16 +12,10 @@
 import CloseModal from './CloseModal.vue';
 
 export default {
-  props: ['closable'],
+  props: ['unclosable'],
 
   components: {
     CloseModal
-  },
-
-  setup(props) {
-    return {
-      isClosable: ('closable' in props) ? props.closable : true
-    };
   }
 };
 </script>
