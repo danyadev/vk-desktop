@@ -221,13 +221,7 @@ export function getLastMsgId() {
 }
 
 export function getMessageById(msg_id, peer_id) {
-  if (!msg_id) {
-    // TODO дождаться и проверить
-    // https://github.com/vuejs/vue-next/issues/1865
-    console.error(msg_id, peer_id);
-  }
-
-  return msg_id && store.state.messages.messages[peer_id].find((msg) => msg.id === msg_id);
+  return store.state.messages.messages[peer_id].find((msg) => msg.id === msg_id);
 }
 
 export function deleteMessages(message_ids, peer, needCancelSelect) {

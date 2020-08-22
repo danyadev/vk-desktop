@@ -1,4 +1,4 @@
-import { timer, eventBus } from './utils';
+import { lastItem, timer, eventBus } from './utils';
 import {
   parseMessage,
   parseConversation,
@@ -325,10 +325,10 @@ export default {
     async handler({ peer_id, items }) {
       const conversation = store.state.messages.conversations[peer_id];
       const conversationsList = store.getters['messages/peersList'];
-      const lastLocalConversation = conversationsList[conversationsList.length - 1];
+      const lastLocalConversation = lastItem(conversationsList);
       const messagesList = store.state.messages.messages[peer_id] || [];
       const [topMsg] = messagesList;
-      const bottomMsg = messagesList[messagesList.length - 1];
+      const bottomMsg = lastItem(messagesList);
       const { msg } = await getLastMessage(peer_id);
       let unlockUp;
       let unlockDown;
@@ -392,8 +392,8 @@ export default {
       const { wasOpened, loading } = store.state.messages.peersConfig[peer_id] || {};
       const conversation = store.state.messages.conversations[peer_id];
       const localMessages = store.state.messages.messages[peer_id] || [];
-      const lastLocalMsg = localMessages[localMessages.length - 1];
-      let lastMsg = items[items.length - 1].msg;
+      const lastLocalMsg = lastItem(localMessages);
+      let lastMsg = lastItem(items).msg;
       const messagesWithAttachments = [];
       const peerData = {
         id: peer_id,
@@ -459,7 +459,7 @@ export default {
             addNew: true
           });
 
-          lastMsg = messages[messages.length - 1];
+          lastMsg = lastItem(messages);
         } else {
           loadMessages(peer_id, messagesWithAttachments);
         }

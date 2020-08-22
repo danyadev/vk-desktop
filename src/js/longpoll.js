@@ -1,4 +1,4 @@
-import { concatProfiles, fields, toUrlParams } from './utils';
+import { lastItem, concatProfiles, fields, toUrlParams } from './utils';
 import { parseConversation, parseMessage, getLastMsgId } from './messages';
 import vkapi from './vkapi';
 import store from './store';
@@ -158,7 +158,7 @@ class Longpoll {
       }
 
       if (event.pack) {
-        const prevEvent = events[events.length - 1];
+        const prevEvent = lastItem(events);
 
         if (
           prevEvent &&

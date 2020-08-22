@@ -58,6 +58,10 @@ export function toUrlParams(object) {
   return new URLSearchParams(object).toString();
 }
 
+export function lastItem(arr) {
+  return arr[arr.length - 1];
+}
+
 // --- Функции-обертки
 
 // Вызывает переданную функцию через delay мс после последнего вызова
@@ -179,6 +183,11 @@ export function createParser({ regexp, parseText, parseElement }) {
 }
 
 // --- Остальные вспомогательные функции
+
+export function moveArrItem(arr, from, to) {
+  arr.splice(to, 0, arr.splice(from, 1)[0]);
+  return arr;
+}
 
 // 125 -> 125
 // 12.732 -> 12K

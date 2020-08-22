@@ -1,7 +1,4 @@
-function moveArrItem(arr, from, to) {
-  arr.splice(to, 0, arr.splice(from, 1)[0]);
-  return arr;
-}
+import { lastItem, moveArrItem } from 'js/utils';
 
 export default {
   namespaced: true,
@@ -184,7 +181,7 @@ export default {
       // [1, 2, 3, 4, 5]
       const list = [...state.messages[peer_id] || []];
 
-      if (!list.length || msg.id > list[list.length - 1].id) {
+      if (!list.length || msg.id > lastItem(list).id) {
         // В конец
         list.push(msg);
       } else if (msg.id < list[0].id) {

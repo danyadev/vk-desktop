@@ -79,7 +79,7 @@
 
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
-import { eventBus } from 'js/utils';
+import { lastItem, eventBus } from 'js/utils';
 import { getTime } from 'js/date';
 import store from 'js/store';
 
@@ -165,7 +165,7 @@ export default {
         store.commit('messages/removeSelectedMessage', props.msg.id);
       } else if (state.isSelectMode) {
         if (event.shiftKey) {
-          const lastSelectedId = state.selectedMessages[state.selectedMessages.length - 1];
+          const lastSelectedId = lastItem(state.selectedMessages);
           const messages = store.state.messages.messages[props.peer_id];
 
           const lastSelectedIndex = messages.findIndex((msg) => msg.id === lastSelectedId);

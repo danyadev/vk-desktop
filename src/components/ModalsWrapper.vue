@@ -10,6 +10,7 @@
 
 <script>
 import { toRefs } from 'vue';
+import { lastItem } from 'js/utils';
 import { modalsState, closeModal } from 'js/modals';
 
 const modalComponents = {};
@@ -49,7 +50,7 @@ export default {
 
     function onEscape() {
       const keys = Object.keys(modalsState.modals);
-      const name = keys[keys.length - 1];
+      const name = lastItem(keys);
       const header = document.querySelector(`.modal[data-name="${name}"] .modal_header`);
 
       if (!header || header.getAttribute('closable') !== 'false') {
