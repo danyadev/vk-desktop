@@ -13,15 +13,15 @@ function addErrorHandler(code, fn) {
 }
 
 // Сессия устарела
-addErrorHandler(5, ({ params, data, user, reject }) => {
+addErrorHandler(5, ({ params, error, user, reject }) => {
   // Был передан другой токен
   if (!user || ![user.access_token, user.android_token].includes(params.access_token)) {
-    return reject(data.error);
+    return reject(error);
   }
 
   let id;
 
-  switch (data.error.error_msg.slice(27)) {
+  switch (error.error_msg.slice(27)) {
     // Была принудительно завершена сессия
     case 'user revoke access for this token.':
     // Закончилось время действия токена
@@ -40,7 +40,7 @@ addErrorHandler(5, ({ params, data, user, reject }) => {
       break;
 
     default:
-      return reject(data.error);
+      return reject(error);
   }
 
   openModal('blocked-account', { id });
@@ -57,24 +57,24 @@ addErrorHandler(9, ({ reject }) => {
 });
 
 // Internal Server Error
-addErrorHandler(10, ({ name, data, reject }) => {
+addErrorHandler(10, ({ name, error, reject }) => {
   openModal('error-api', {
     method: name,
-    error: data.error,
+    error,
     retry: reject
   });
 });
 
 // Капча
-addErrorHandler(14, ({ name, params, data, resolve, reject }) => {
+addErrorHandler(14, ({ name, params, error, resolve, reject }) => {
   openModal('captcha', {
-    src: data.error.captcha_img,
+    src: error.captcha_img,
     send(code) {
       if (name === 'captcha.force') {
         return resolve(1);
       }
 
-      params.captcha_sid = data.error.captcha_sid;
+      params.captcha_sid = error.captcha_sid;
       params.captcha_key = code;
 
       reject();
@@ -82,8 +82,8 @@ addErrorHandler(14, ({ name, params, data, resolve, reject }) => {
   });
 });
 
-addErrorHandler(17, async ({ data, resolve, reject }) => {
-  const redirectUri = data.error.redirect_uri;
+addErrorHandler(17, async ({ error, resolve, reject }) => {
+  const redirectUri = error.redirect_uri;
   const { data: redirectPage } = await request(redirectUri, { raw: true });
   const goCaptchaLinkMatch = redirectPage.match(/<div class="fi_row"><a href="(.+?)" rel="noopener">/);
 
@@ -165,17 +165,35 @@ function vkapi(name, params, { android, vkme } = {}) {
     });
 
     if (data.execute_errors) {
-      reject(data);
+      console.warn('[vkapi] error', data.execute_errors);
+
+      let hasHandler = false;
+
+      for (const error of data.execute_errors) {
+        const errorHandler = errorHandlers[data.error.error_code];
+
+        if (errorHandler) {
+          errorHandler({ name, params, error, user, resolve, reject });
+          hasHandler = true;
+          break;
+        }
+      }
+
+      if (!hasHandler) {
+        reject(data);
+      }
     }
 
     if (data.response !== undefined) {
       return resolve(data.response);
     }
 
+    console.warn('[vkapi] error', data.error);
+
     const errorHandler = errorHandlers[data.error.error_code];
 
     if (errorHandler) {
-      errorHandler({ name, params, data, user, resolve, reject });
+      errorHandler({ name, params, error: data.error, user, resolve, reject });
     } else {
       reject(data.error);
     }
