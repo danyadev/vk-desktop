@@ -53,9 +53,6 @@
 
     <div class="menu_grow"></div>
 
-    <div class="menu_icon" @click="openModal('multiaccount')">
-      <Icon name="menu/profile" color="var(--icon-gray)" width="28" height="28" />
-    </div>
     <div class="menu_icon" @click="openModal('settings')">
       <Icon name="menu/settings" color="var(--icon-gray)" width="28" height="28" />
     </div>
