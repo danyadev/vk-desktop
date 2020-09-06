@@ -1,5 +1,4 @@
 import { reactive, computed } from 'vue';
-import { lastItem } from './utils';
 
 export const modalsState = reactive({
   modals: {},
@@ -13,6 +12,11 @@ export function openModal(name, props) {
   };
 }
 
-export function closeModal(name = lastItem(Object.keys(modalsState.modals))) {
+export function closeModal(name) {
+  if (!name) {
+    const allNames = Object.keys(modalsState.modals);
+    name = allNames[allNames.length - 1];
+  }
+
   delete modalsState.modals[name];
 }

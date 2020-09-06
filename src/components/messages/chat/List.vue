@@ -50,7 +50,6 @@
 <script>
 import { reactive, computed, onMounted, onActivated, nextTick, toRefs } from 'vue';
 import {
-  lastItem,
   createQueueManager,
   callWithDelay,
   debounce,
@@ -371,8 +370,8 @@ export default {
           if (msg_id) {
             onLoad();
           } else {
-            const lastLoadingMsg = lastItem(state.loadingMessages);
-            const lastMsg = lastItem(state.messages);
+            const lastLoadingMsg = state.loadingMessages[state.loadingMessages.length - 1];
+            const lastMsg = state.messages[state.messages.length - 1];
 
             if (lastLoadingMsg) {
               msg_id = lastLoadingMsg.id;
@@ -461,7 +460,7 @@ export default {
           }
         });
       } else if (isDown && !state.loadedDown) {
-        const msg = lastItem(state.messages);
+        const msg = state.messages[state.messages.length - 1];
         state.loadingDown = true;
 
         load({
@@ -565,7 +564,7 @@ export default {
     function scrollToMention() {
       state.lastViewedMention = (
         props.peer.mentions.find((id) => id > state.lastViewedMention) ||
-        lastItem(props.peer.mentions)
+        props.peer.mentions[props.peer.mentions.length - 1]
       );
 
       jumpTo({

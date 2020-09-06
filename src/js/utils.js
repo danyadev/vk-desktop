@@ -58,10 +58,6 @@ export function toUrlParams(object) {
   return new URLSearchParams(object).toString();
 }
 
-export function lastItem(arr) {
-  return arr[arr.length - 1];
-}
-
 // --- Функции-обертки
 
 // Вызывает переданную функцию через delay мс после последнего вызова

@@ -1,6 +1,6 @@
 <script>
 import { h, Fragment } from 'vue';
-import { lastItem, capitalize } from 'js/utils';
+import { capitalize } from 'js/utils';
 import { getDay } from 'js/date';
 import { isSameDay } from 'js/date/utils';
 import store from 'js/store';
@@ -59,7 +59,7 @@ export default {
             // isUnread добавляется, если не прочтено минимум одно сообщение
             class: ['message_expired_wrap', { isUnread }],
             // Для прочтения сообщений
-            'data-last-id': lastItem(expiredMessages)
+            'data-last-id': expiredMessages[expiredMessages.length - 1]
           },
           [
             h('div', { class: 'message_expired' }, [

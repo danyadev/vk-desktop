@@ -24,7 +24,7 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { lastItem, getPhotoFromSizes, eventBus } from 'js/utils';
+import { getPhotoFromSizes, eventBus } from 'js/utils';
 import { getMessagePreview, getPeerTitle, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -66,7 +66,7 @@ export default {
         if (photo && photo[0]) return getPhotoFromSizes(photo[0].sizes, 'o').url;
         if (sticker) return sticker[0].images[devicePixelRatio > 1 ? 1 : 0].url;
         if (photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'm').src;
-        if (video) return (videoImages[6] || lastItem(videoImages)).url;
+        if (video) return (videoImages[6] || videoImages[videoImages.length - 1]).url;
         if (storyPhotos) return getPhotoFromSizes(storyPhotos.sizes, ['o', 'j', 'm', 'x']).url;
       }),
 
