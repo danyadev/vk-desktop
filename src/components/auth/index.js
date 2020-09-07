@@ -102,3 +102,18 @@ export async function loadUser(android_token, isModal) {
     store.commit('users/setActiveUser', user.id);
   }
 }
+
+export async function getUserByToken(access_token) {
+  const [user] = await vkapi('users.get', {
+    access_token,
+    fields
+  });
+
+  store.commit('users/updateUser', {
+    ...user,
+    access_token,
+    android_token
+  });
+
+  store.commit('settings/setDefaultSettings', user.id);
+}

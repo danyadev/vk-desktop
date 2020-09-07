@@ -5,14 +5,14 @@
     <input
       ref="input"
       v-model="login"
-      :class="['input', { error }]"
+      :class="['input', { error: error.login }]"
       type="text"
       :placeholder="l('enter_login')"
     >
     <div class="auth_password_wrap">
       <input
         v-model="password"
-        :class="['input', { error }]"
+        :class="['input', { error: error.password }]"
         :type="hidePassword ? 'password' : 'text'"
         :placeholder="l('enter_password')"
       >
@@ -21,6 +21,21 @@
         @click="hidePassword = !hidePassword"
       />
     </div>
+  
+    <hr class="split_token">
+    <div class="auth_token_wrap">
+      <input
+        v-model="myToken"
+        :class="['input', { error: error.token }]"
+        :type="hideToken ? 'password' : 'text'"
+        :placeholder="l('or_enter_token')"
+      >
+      <div
+        :class="['auth_password_switch', { hidden: hideToken }]"
+        @click="hideToken = !hideToken"
+      />
+    </div>
+
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
 
     <div v-if="hasUsers" class="link auth_open_multiacc" @click="openModal('multiaccount')">
@@ -34,7 +49,7 @@ import { reactive, computed, toRefs, onMounted } from 'vue';
 import { onTransitionEnd, timer } from 'js/utils';
 import { openModal } from 'js/modals';
 import store from 'js/store';
-import { getAndroidToken, loadUser } from '.';
+import { getAndroidToken, loadUser, getUserByToken } from '.';
 
 import Button from '../UI/Button.vue';
 
@@ -53,12 +68,20 @@ export default {
 
       login: '',
       password: '',
+      myToken: '',
 
       loading: false,
-      error: false,
+      error: {
+        login: false,
+        password: false,
+        token: false,
+      },
       hidePassword: true,
+      hideToken: true,
 
-      canAuth: computed(() => !state.loading && state.login && state.password),
+      authByToken: false,
+
+      canAuth: computed(() => !state.loading && (state.login && state.password || state.myToken)),
       hasUsers: computed(() => !props.isModal && Object.keys(store.state.users.users).length)
     });
 
@@ -69,15 +92,33 @@ export default {
 
       state.loading = true;
 
+      if (state.myToken) {
+        try {
+          const data = await getUserByToken(state.myToken);
+          console.log('user data', data);
+          loadUser(state.myToken, props.isModal);
+        } catch (error) {
+          state.loading = false;
+
+          state.error.token = true;
+          await onTransitionEnd(state.input);
+          await timer(500);
+          state.error.token = false;
+        }
+        return;
+      }
+
       const data = await getAndroidToken(state.login, state.password);
 
       if (data.error === 'invalid_client') {
         state.loading = false;
 
-        state.error = true;
+        state.error.login = true;
+        state.error.password = true;
         await onTransitionEnd(state.input);
         await timer(500);
-        state.error = false;
+        state.error.login = false;
+        state.error.password = false;
       } else if (data.error === 'account_banned') {
         state.loading = false;
 
@@ -120,6 +161,10 @@ export default {
   text-align: center;
 }
 
+.split_token {
+  width: 250px;
+}
+
 .auth input {
   margin-bottom: 6px;
 }
@@ -139,6 +184,14 @@ export default {
 }
 
 .auth_password_wrap input {
+  padding-right: 30px;
+}
+
+.auth_token_wrap {
+  position: relative;
+}
+
+.auth_token_wrap input {
   padding-right: 30px;
 }
 
