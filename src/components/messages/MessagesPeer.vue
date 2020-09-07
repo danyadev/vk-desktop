@@ -366,7 +366,7 @@ export default {
 
 .im_peer_unread:not(:empty) {
   padding: 1px 6px 0 6px;
-  margin: 1px 0 0 8px;
+  margin: 1px 0 0 6px;
   border-radius: 10px;
   background: var(--background-blue);
   color: var(--background-blue-text);
@@ -381,7 +381,7 @@ export default {
 
 .im_peer_unread.outread {
   flex: none;
-  margin: 7px 4px 0 8px;
+  margin: 7px 4px 0 6px;
   width: 8px;
   height: 8px;
   border-radius: 10px;
@@ -391,8 +391,12 @@ export default {
 .im_peer_mentioned {
   position: relative;
   bottom: -1px;
-  margin: 0 2px;
+  margin: 0 2px 0 6px;
   border-radius: 10px;
   background: var(--background-blue);
+}
+
+.im_peer_mentioned + .im_peer_unread {
+  margin-left: 3px;
 }
 </style>
