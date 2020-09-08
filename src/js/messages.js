@@ -65,11 +65,11 @@ export function parseMessage(message) {
       const artistLink = 'https://m.vk.com/artist/';
       const articleLink = 'https://m.vk.com/@';
 
-      if (attach.url.includes(playlistLink)) {
+      if (attach.url.startsWith(playlistLink)) {
         type = 'audio_playlist';
-      } else if (attach.url.includes(artistLink)) {
+      } else if (attach.url.startsWith(artistLink)) {
         type = 'artist';
-      } else if (attach.url.includes(articleLink)) {
+      } else if (attach.url.startsWith(articleLink)) {
         // articles.getByLink с ссылкой в поле links
         type = 'article';
       }
