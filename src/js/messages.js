@@ -215,11 +215,6 @@ export function getPeerTitle(peer_id, peer, owner) {
   return '...';
 }
 
-export function getLastMsgId() {
-  const [peer] = store.getters['messages/peersList'];
-  return peer ? peer.msg.id : null;
-}
-
 export function getMessageById(msg_id, peer_id) {
   return store.state.messages.messages[peer_id].find((msg) => msg.id === msg_id);
 }

@@ -1,5 +1,5 @@
 import { concatProfiles, fields, toUrlParams } from './utils';
-import { parseConversation, parseMessage, getLastMsgId } from './messages';
+import { parseConversation, parseMessage } from './messages';
 import vkapi from './vkapi';
 import store from './store';
 import request from './request';
@@ -75,10 +75,8 @@ class Longpoll {
 
   async getHistory() {
     const history = await vkapi('messages.getLongPollHistory', {
-      ts: this.ts,
       pts: this.pts,
       msgs_limit: 500,
-      max_msg_id: getLastMsgId(),
       lp_version: this.version,
       fields
     });
