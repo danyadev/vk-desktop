@@ -141,7 +141,7 @@ export default {
         if (sticker) classes.push('isSticker');
         if (sticker) flyTime = true;
 
-        if (sticker && !hasReplyMsg && !text && oneAttach) {
+        if (sticker && !hasReplyMsg && !text) {
           classes.push('hideBubble');
           flyTime = true;
         }
