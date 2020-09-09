@@ -3,6 +3,7 @@
     <div :class="['header', { isScrolled }]">
       <SearchInput />
       <Icon name="write_square" color="var(--icon-blue)" class="im_create_chat_btn" />
+      <MessagesListMenu />
     </div>
     <Scrolly
       ref="scrolly"
@@ -43,6 +44,7 @@ import SearchInput from '../UI/SearchInput.vue';
 import BottomMenu from '../menu/BottomMenu.vue';
 import MessagesPeer from './MessagesPeer.vue';
 import MessagesPeersSearch from './MessagesPeersSearch.vue';
+import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
 
 export default {
   props: ['activeChat'],
@@ -53,7 +55,8 @@ export default {
     SearchInput,
     BottomMenu,
     MessagesPeer,
-    MessagesPeersSearch
+    MessagesPeersSearch,
+    MessagesListMenu
   },
 
   setup() {
@@ -173,7 +176,7 @@ export default {
 
 .im_create_chat_btn {
   flex: none;
-  margin-right: 16px;
+  margin-right: 4px;
 }
 
 .im_peers_wrap {
