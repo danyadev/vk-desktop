@@ -94,35 +94,43 @@ export function getDay(date) {
  * 1. пустая строка, если прошло меньше минуты
  * 2. 1м - 59м
  * 3. 1ч - 23ч
- * 4. 1д - 2д
- * 5. 1 мар
- * 6. 01.03.19
+ * 4. 1 мар
+ * 5. 01.03.19
  */
 export function getShortTime(date, now) {
   const getSymbol = getTranslate.bind(this, 'date_symbols');
   let time;
 
   if (differenceInYears(now, date)) {
-    return format(date, 'dd.MM.yy');
+    return {
+      type: 'long',
+      text: format(date, 'dd.MM.yy')
+    };
   }
 
-  if (differenceInMonths(now, date)) {
-    return format(date, 'd MMM');
-  }
-
-  if ((time = differenceInDays(now, date))) {
-    return time < 3
-      ? time + getSymbol('day')
-      : format(date, 'd MMM');
+  if (differenceInMonths(now, date) || differenceInDays(now, date)) {
+    return {
+      type: 'long',
+      text: format(date, 'd MMM')
+    };
   }
 
   if ((time = differenceInHours(now, date))) {
-    return time + getSymbol('hour');
+    return {
+      type: 'short',
+      text: time + getSymbol('hour')
+    };
   }
 
   if ((time = differenceInMinutes(now, date))) {
-    return time + getSymbol('minute');
+    return {
+      type: 'short',
+      text: time + getSymbol('minute')
+    };
   }
 
-  return '';
+  return {
+    type: 'short',
+    text: ''
+  };
 }

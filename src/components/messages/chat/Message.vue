@@ -135,7 +135,6 @@ export default {
         const { text, attachments, hasReplyMsg, fwdCount } = props.msg;
         const { sticker } = attachments;
         const attachNames = Object.keys(attachments);
-        const oneAttach = attachNames.length === 1;
 
         if (attachNames.length || fwdCount) classes.push('hasAttachment');
         if (sticker) classes.push('isSticker');

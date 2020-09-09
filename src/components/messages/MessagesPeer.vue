@@ -33,6 +33,8 @@
           height="16"
           class="im_peer_pinned"
         />
+
+        <div v-if="messageTime.type === 'long'" class="im_peer_time">{{ messageTime.text }}</div>
       </div>
 
       <div class="im_peer_message_wrap">
@@ -56,9 +58,9 @@
             </div>
           </div>
 
-          <template v-if="shortTime">
+          <template v-if="messageTime.type === 'short' && messageTime.text">
             <div class="message_dot"></div>
-            <div class="im_peer_short_time">{{ shortTime }}</div>
+            <div class="im_peer_short_time">{{ messageTime.text }}</div>
           </template>
         </div>
 
@@ -135,8 +137,8 @@ export default {
         }
       }),
 
-      shortTime: computed(() => (
-        props.msg.date && getShortTime(new Date(props.msg.date * 1000), props.nowDate)
+      messageTime: computed(() => (
+        props.msg.date ? getShortTime(new Date(props.msg.date * 1000), props.nowDate) : {}
       )),
 
       hasTyping: computed(() => {
@@ -313,6 +315,14 @@ export default {
 .im_peer_pinned {
   flex: none;
   margin: 1px 0 0 3px;
+}
+
+.im_peer_time {
+  flex: none;
+  margin-left: 5px;
+  color: var(--text-steel-gray);
+  font-size: 13px;
+  margin-top: 1px;
 }
 
 .im_peer_message_wrap {
