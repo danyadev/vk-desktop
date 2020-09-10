@@ -1,12 +1,8 @@
 <template>
-  <div ref="root" class="act_menu_wrap">
-    <Ripple
-      class="ripple_fast act_menu_btn_wrap"
-      color="rgba(255, 255, 255, .2)"
-      @click="toggleMenu"
-    >
+  <div ref="root" class="act_menu_wrap" @mouseover="onMouseOver" @mouseout="onMouseOut">
+    <div class="act_menu_btn_wrap">
       <Icon name="actions_icon" color="var(--icon-blue)" class="act_menu_btn" />
-    </Ripple>
+    </div>
 
     <div :class="['act_menu', { active }]"><slot v-if="!hideList" /></div>
   </div>
@@ -14,15 +10,14 @@
 
 <script>
 import { reactive, toRefs } from 'vue';
+import { mouseOverWrapper, mouseOutWrapper } from 'js/utils';
 
-import Ripple from '../UI/Ripple.vue';
 import Icon from '../UI/Icon.vue';
 
 export default {
   props: ['hideList'],
 
   components: {
-    Ripple,
     Icon
   },
 
@@ -33,35 +28,26 @@ export default {
       timeout: null
     });
 
-    function toggleMenu() {
-      if (state.active) {
-        window.removeEventListener('mousemove', onMouseMove);
-      } else {
-        window.addEventListener('mousemove', onMouseMove);
-      }
-
+    const setActive = (value) => {
+      state.active = value;
       clearTimeout(state.timeout);
       state.timeout = null;
-      state.active = !state.active;
-    }
+    };
 
-    function onMouseMove(event) {
-      const isActive = event.path.find((el) => el === state.root);
+    const onMouseOver = mouseOverWrapper(() => {
+      setActive(true);
+    });
 
-      if (isActive) {
-        if (state.timeout) {
-          clearTimeout(state.timeout);
-          state.timeout = null;
-          state.active = true;
-        }
-      } else if (!state.timeout) {
-        state.timeout = setTimeout(toggleMenu, 500);
-      }
-    }
+    const onMouseOut = mouseOutWrapper(() => {
+      state.timeout = setTimeout(() => {
+        setActive(false);
+      }, 500);
+    });
 
     return {
       ...toRefs(state),
-      toggleMenu
+      onMouseOver,
+      onMouseOut
     };
   }
 };

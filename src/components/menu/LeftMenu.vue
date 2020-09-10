@@ -61,7 +61,7 @@
 
 <script>
 import { computed, ref, toRefs } from 'vue';
-import { convertCount, getPhoto, moveArrItem } from 'js/utils';
+import { convertCount, getPhoto, moveArrItem, mouseOutWrapper } from 'js/utils';
 import { openModal } from 'js/modals';
 import { state, openPage, setAccount } from '.';
 import store from 'js/store';
@@ -76,11 +76,9 @@ export default {
   setup() {
     const isUsersListActive = ref(false);
 
-    function onMouseOut() {
-      if (!event.toElement || !event.toElement.closest('.menu_users_list')) {
-        isUsersListActive.value = false;
-      }
-    }
+    const onMouseOut = mouseOutWrapper(() => {
+      isUsersListActive.value = false;
+    });
 
     function onClick(user_id) {
       if (user_id === state.activeUserID) {

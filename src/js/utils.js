@@ -178,6 +178,26 @@ export function createParser({ regexp, parseText, parseElement }) {
   };
 }
 
+export function mouseOverWrapper(fn) {
+  return (event) => {
+    const root = event.currentTarget;
+
+    if (!event.fromElement || !root.contains(event.fromElement)) {
+      fn(event);
+    }
+  }
+}
+
+export function mouseOutWrapper(fn) {
+  return (event) => {
+    const root = event.currentTarget;
+
+    if (!event.toElement || !root.contains(event.toElement)) {
+      fn(event);
+    }
+  };
+}
+
 // --- Остальные вспомогательные функции
 
 export function moveArrItem(arr, from, to) {

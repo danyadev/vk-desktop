@@ -26,6 +26,7 @@
 <script>
 import { ref } from 'vue';
 import lottie from 'lottie-web/build/player/lottie_light';
+import { mouseOverWrapper, mouseOutWrapper } from 'js/utils';
 
 export default {
   props: ['attach'],
@@ -72,7 +73,7 @@ export default {
       });
     }
 
-    function onMouseOver() {
+    const onMouseOver = mouseOverWrapper(() => {
       transparent.value.addEventListener('mouseout', onMouseOut);
       isHovered = true;
 
@@ -83,12 +84,12 @@ export default {
       if (isAnimationLoaded.value && animation.isPaused) {
         animation.goToAndPlay(0);
       }
-    }
+    });
 
-    function onMouseOut() {
+    const onMouseOut = mouseOutWrapper(() => {
       transparent.value.removeEventListener('mouseout', onMouseOut);
       isHovered = false;
-    }
+    });
 
     return {
       transparent,
