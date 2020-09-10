@@ -1,5 +1,5 @@
 <template>
-  <div class="ripple_outer" @mousedown.left="addRipple">
+  <div ref="outer" class="ripple_outer" @mousedown.left="addRipple">
     <div class="ripples">
       <TransitionGroup name="ripple">
         <div
@@ -11,7 +11,7 @@
             left: ripple.left,
             width: ripple.width,
             height: ripple.height,
-            background
+            background: color
           }"
         />
       </TransitionGroup>
@@ -22,22 +22,29 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { reactive, toRefs } from 'vue';
 
 export default {
-  props: ['color'],
+  props: {
+    color: {
+      type: String,
+      default: 'rgba(255, 255, 255, .3)'
+    }
+  },
 
-  setup(props) {
-    const ripples = ref([]);
-    const background = computed(() => props.color || 'rgba(255, 255, 255, .3)');
+  setup() {
+    const state = reactive({
+      outer: null,
+      ripples: []
+    });
 
     function addRipple(event) {
-      const { left, top } = this.$el.getBoundingClientRect();
-      const { offsetWidth, offsetHeight } = this.$el;
+      const { left, top } = state.outer.getBoundingClientRect();
+      const { offsetWidth, offsetHeight } = state.outer;
       const rippleWidth = offsetWidth > offsetHeight ? offsetWidth : offsetHeight;
       const halfRippleWidth = rippleWidth / 2;
 
-      ripples.value.push({
+      state.ripples.push({
         width: `${rippleWidth}px`,
         height: `${rippleWidth}px`,
         left: `${event.clientX - left - halfRippleWidth}px`,
@@ -46,14 +53,13 @@ export default {
       });
 
       window.addEventListener('mouseup', () => {
-        ripples.value = [];
+        state.ripples = [];
       }, { once: true });
     }
 
     return {
-      ripples,
-      addRipple,
-      background
+      ...toRefs(state),
+      addRipple
     };
   }
 };
