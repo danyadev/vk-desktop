@@ -170,7 +170,7 @@ function vkapi(name, params, { android, vkme } = {}) {
       let hasHandler = false;
 
       for (const error of data.execute_errors) {
-        const errorHandler = errorHandlers[data.error.error_code];
+        const errorHandler = errorHandlers[data.error_code];
 
         if (errorHandler) {
           errorHandler({ name, params, error, user, resolve, reject });
