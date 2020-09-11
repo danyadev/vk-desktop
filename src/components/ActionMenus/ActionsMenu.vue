@@ -25,23 +25,36 @@ export default {
     const state = reactive({
       root: null,
       active: false,
-      timeout: null
+      showTimeout: null,
+      hideTimeout: null
     });
 
     const setActive = (value) => {
       state.active = value;
-      clearTimeout(state.timeout);
-      state.timeout = null;
+      clearTimeout(state.hideTimeout);
+      state.hideTimeout = null;
     };
 
     const onMouseOver = mouseOverWrapper(() => {
-      setActive(true);
+      if (state.active) {
+        return setActive(true);
+      }
+
+      state.showTimeout = setTimeout(() => {
+        state.showTimeout = null;
+        setActive(true);
+      }, 150);
     });
 
     const onMouseOut = mouseOutWrapper(() => {
-      state.timeout = setTimeout(() => {
-        setActive(false);
-      }, 500);
+      if (state.showTimeout) {
+        clearTimeout(state.showTimeout);
+        state.showTimeout = null;
+      } else {
+        state.hideTimeout = setTimeout(() => {
+          setActive(false);
+        }, 250);
+      }
     });
 
     return {
@@ -62,7 +75,8 @@ export default {
 .act_menu_btn_wrap {
   height: 40px;
   border-radius: 50%;
-  margin-right: 5px;
+  padding-right: 5px;
+  cursor: pointer;
 }
 
 .act_menu_btn {
