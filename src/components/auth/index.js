@@ -60,7 +60,6 @@ async function getDesktopToken(androidToken) {
     display: 'page',
     response_type: 'token',
     access_token: androidToken,
-    revoke: 1,
     lang: 'ru',
     scope: 136297695,
     client_id: 6717234,
@@ -69,13 +68,13 @@ async function getDesktopToken(androidToken) {
     sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
   });
 
-  const { data } = await request(`https://oauth.vk.com/authorize?${query}`, {
+  const linkResponse = await request(`https://oauth.vk.com/authorize?${query}`, {
     headers: {
       'User-Agent': VKDesktopUserAgent
     }
   }, { raw: true });
 
-  const link = 'https://oauth.vk.com' + data.match(/(\/auth_by_token.+?)"/)[1];
+  const link = 'https://oauth.vk.com' + linkResponse.headers.location;
   const { headers } = await request(link, { raw: true });
 
   return headers.location.match(/#access_token=([a-z0-9]{85})/)[1];
