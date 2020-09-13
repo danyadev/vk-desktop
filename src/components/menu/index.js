@@ -34,10 +34,10 @@ export function setAccount(id) {
   }
 
   if (state.activeUserID) {
-    const usersData = { ...usersStorage.data };
-
-    usersData.activeUserID = id;
-    usersStorage.update(usersData);
+    usersStorage.update({
+      ...usersStorage.data,
+      activeUserID: id
+    });
 
     window.location.reload();
   } else {

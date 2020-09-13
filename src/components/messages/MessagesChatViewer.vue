@@ -4,7 +4,9 @@
       <Icon
         name="im_back"
         color="var(--icon-blue)"
-        class="header_btn im_header_back"
+        width="24"
+        height="26"
+        class="im_header_back"
         @click="close"
       />
       <div class="im_chat_viewer_title">{{ l('im_messages_view') }}</div>

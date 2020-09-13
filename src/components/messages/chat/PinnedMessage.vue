@@ -113,7 +113,7 @@ export default {
 
 .im_pinned_msg {
   flex-grow: 1;
-  width: calc(100% - 60px - 56px);
+  overflow: auto;
 }
 
 .im_pinned_msg_name {
@@ -127,6 +127,10 @@ export default {
   margin-left: 5px;
   color: var(--text-steel-gray);
   font-size: 13px;
+}
+
+.im_pinned_msg_text {
+  margin-top: 1px;
 }
 
 .im_pinned_msg_text.hasAttachment {

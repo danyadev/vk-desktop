@@ -1,27 +1,26 @@
 <template>
   <div class="messages_stack">
-    <div v-if="showUserData" class="message_name">{{ name }}</div>
+    <img
+      v-if="showUserData"
+      class="message_photo"
+      :src="photo"
+      loading="lazy"
+      width="35"
+      height="35"
+    >
 
-    <div class="messages_stack_content">
-      <img
-        v-if="showUserData"
-        class="message_photo"
-        :src="photo"
-        loading="lazy"
-        width="35"
-        height="35"
-      >
-
-      <div class="messages_stack_list">
-        <Message
-          v-for="msg of messages"
-          :key="msg.id"
-          :peer_id="peer_id"
-          :peer="peer"
-          :msg="msg"
-          :isCustomView="isCustomView"
-        />
-      </div>
+    <div class="messages_stack_list">
+      <Message
+        v-for="(msg, i) of messages"
+        :key="msg.id"
+        :peer_id="peer_id"
+        :peer="peer"
+        :msg="msg"
+        :user="user"
+        :showUserData="showUserData"
+        :isFirstItem="!i"
+        :isCustomView="isCustomView"
+      />
     </div>
   </div>
 </template>
@@ -29,7 +28,6 @@
 <script>
 import { computed, reactive } from 'vue';
 import { getPhoto } from 'js/utils';
-import { getPeerTitle } from 'js/messages';
 import store from 'js/store';
 
 import Message from './Message.vue';
@@ -45,11 +43,10 @@ export default {
     const state = reactive({
       msg: computed(() => props.messages[0]),
       user: computed(() => store.state.profiles[state.msg.from]),
-      name: computed(() => getPeerTitle(0, null, state.user)),
       photo: computed(() => getPhoto(state.user) || 'assets/blank.gif'),
-      isChat: computed(() => props.peer_id > 2e9),
-      isChannel: computed(() => props.peer && props.peer.isChannel),
-      showUserData: computed(() => !state.msg.out && state.isChat && !state.isChannel)
+      showUserData: computed(() => (
+        !state.msg.out && props.peer_id > 2e9 && !(props.peer && props.peer.isChannel)
+      ))
     });
 
     return state;
@@ -59,18 +56,8 @@ export default {
 
 <style>
 .messages_stack {
-  padding: 8px 14px 4px 14px;
-}
-
-.message_name {
-  color: var(--text-blue);
-  font-weight: 500;
-  margin-left: 50px;
-  margin-bottom: 2px;
-}
-
-.messages_stack_content {
   display: flex;
+  padding: 8px 14px 4px 14px;
 }
 
 .message_photo {

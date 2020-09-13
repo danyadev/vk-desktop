@@ -33,14 +33,13 @@
           </div>
 
           <Typing v-if="hasTyping" :peer_id="peer_id" :isChat="true" />
-          <div v-else class="im_header_online text-overflow">{{ online }}</div>
+          <div v-else class="im_header_online text-overflow roboto-vk">{{ online }}</div>
         </div>
 
         <Icon
           name="search"
           color="var(--icon-blue)"
-          class="header_btn"
-          @click="$emit('search')"
+          class="im_search_btn"
         />
         <MessagesChatMenu :peer_id="peer_id" :peer="peer" />
       </template>
@@ -230,18 +229,15 @@ export default {
 </script>
 
 <style>
-.header_wrap {
-  position: relative;
-  border-bottom: 1px solid var(--separator);
-}
-
 .im_chat_container .header {
   padding-left: 15px;
 }
 
 .im_header_back {
   display: none;
+  flex: none;
   margin: 0 6px 0 -6px;
+  cursor: pointer;
 }
 
 .im_header_cancel_select,
@@ -270,6 +266,7 @@ export default {
 .im_header_name_wrap {
   display: flex;
   height: 16px;
+  margin-top: 3px;
 }
 
 .im_header_name_wrap .verified {
@@ -295,8 +292,8 @@ export default {
 
 .im_header_online:not(:empty) {
   color: var(--text-dark-steel-gray);
-  font-size: 13px;
-  margin-top: 2px;
+  font-size: 14px;
+  margin-top: 1px;
 }
 
 .im_header_cancel_select {
@@ -309,5 +306,11 @@ export default {
 
 .im_header_selected_actions svg {
   margin-right: 15px;
+}
+
+.im_search_btn {
+  flex: none;
+  box-sizing: content-box;
+  padding: 0 5px;
 }
 </style>

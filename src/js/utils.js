@@ -185,7 +185,7 @@ export function mouseOverWrapper(fn) {
     if (!event.fromElement || !root.contains(event.fromElement)) {
       fn(event);
     }
-  }
+  };
 }
 
 export function mouseOutWrapper(fn) {

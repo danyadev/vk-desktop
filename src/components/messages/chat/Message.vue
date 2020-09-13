@@ -27,6 +27,13 @@
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseUp">
+          <div
+            v-if="isFirstItem && showUserData && !attachmentClasses.includes('hideBubble')"
+            class="message_name roboto-vk"
+          >
+            {{ name }}
+          </div>
+
           <div class="message_bubble_content">
             <Reply
               v-if="msg.hasReplyMsg"
@@ -80,6 +87,7 @@
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
 import { eventBus } from 'js/utils';
+import { getPeerTitle } from 'js/messages';
 import { getTime } from 'js/date';
 import store from 'js/store';
 
@@ -92,7 +100,7 @@ import Attachments from './attachments/Attachments.vue';
 import Forwarded from './attachments/Forwarded.vue';
 
 export default {
-  props: ['peer_id', 'peer', 'msg', 'isCustomView'],
+  props: ['peer_id', 'peer', 'msg', 'user', 'showUserData', 'isFirstItem', 'isCustomView'],
 
   components: {
     VKText,
@@ -108,6 +116,8 @@ export default {
     const state = reactive({
       bubble: null,
       forwarded: null,
+
+      name: computed(() => getPeerTitle(0, null, props.user)),
 
       selectedMessages: computed(() => store.state.messages.selectedMessages),
       isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
@@ -287,6 +297,13 @@ export default {
 .message_bubble {
   position: relative;
   transition: background-color .5s;
+}
+
+.message_name {
+  color: var(--text-blue);
+  font-weight: 500;
+  font-size: 13px;
+  margin-bottom: 2px;
 }
 
 .message.isSelectMode .message_bubble {

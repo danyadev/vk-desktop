@@ -14,10 +14,10 @@
         </div>
 
         <Icon
-          name="cancel"
+          name="close"
           color="var(--icon-dark-gray)"
-          width="26"
-          height="26"
+          width="16"
+          height="16"
           class="icon-hover"
           @click="closeReply"
         />
@@ -295,11 +295,9 @@ export default {
 
 <style>
 .chat_input_container {
-  position: relative;
   display: flex;
   flex-direction: column;
   flex: none;
-  border-top: 1px solid var(--separator-dark);
   background: var(--background-gray-overlight);
 }
 
@@ -318,7 +316,8 @@ export default {
 
 .chat_input {
   position: relative;
-  width: calc(100% - 108px);
+  flex-grow: 1;
+  overflow: auto;
   margin: 6px 0;
   background: var(--background);
   border: 1px solid var(--separator-dark);
@@ -404,17 +403,20 @@ export default {
 .chat_input_reply {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--separator-dark);
+  border-bottom: 1px solid var(--separator);
+  padding: 0 5%;
 }
 
 .chat_input_reply .attach_reply {
   margin: 6px 0 8px 10px;
-  width: calc(100% - 10px - 54px);
+  overflow: auto;
+  flex-grow: 1;
 }
 
 .chat_input_reply svg {
+  box-sizing: content-box;
   flex: none;
-  margin: 0 14px;
+  padding: 16px;
   cursor: pointer;
 }
 </style>

@@ -24,10 +24,6 @@
 
     <BottomMenu />
   </div>
-
-  <Transition name="fade-out">
-    <MessagesPeersSearch v-if="isSearch" @close="isSearch = false" />
-  </Transition>
 </template>
 
 <script>
@@ -43,7 +39,6 @@ import Icon from '../UI/Icon.vue';
 import SearchInput from '../UI/SearchInput.vue';
 import BottomMenu from '../menu/BottomMenu.vue';
 import MessagesPeer from './MessagesPeer.vue';
-import MessagesPeersSearch from './MessagesPeersSearch.vue';
 import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
 
 export default {
@@ -55,7 +50,6 @@ export default {
     SearchInput,
     BottomMenu,
     MessagesPeer,
-    MessagesPeersSearch,
     MessagesListMenu
   },
 
@@ -161,6 +155,8 @@ export default {
 
 <style>
 .im_peers_container {
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid var(--separator);
 }
 
@@ -171,6 +167,7 @@ export default {
 }
 
 .im_peers_container .header.isScrolled {
+  position: relative;
   border-bottom-color: var(--separator);
 }
 
@@ -181,7 +178,7 @@ export default {
 
 .im_peers_wrap {
   width: 100%;
-  /* 50px - постоянная высота у .header */
-  height: calc(100% - 50px);
+  overflow-y: auto;
+  flex-grow: 1;
 }
 </style>

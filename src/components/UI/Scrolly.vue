@@ -312,10 +312,6 @@ export default {
   overflow: hidden;
 }
 
-.scrolly-viewport::-webkit-scrollbar {
-  display: none;
-}
-
 .scrolly-bar-wrap {
   position: absolute;
   z-index: 1;

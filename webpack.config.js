@@ -80,7 +80,7 @@ module.exports = function(env, { mode = 'development' } = {}) {
           ]
         },
         {
-          test: /\.(png|webp|svg|gif|ttf)$/,
+          test: /\.(png|webp|svg|gif|ttf|woff2)$/,
           loader: 'file-loader',
           options: {
             publicPath: 'assets/',

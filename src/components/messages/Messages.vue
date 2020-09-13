@@ -71,13 +71,9 @@ export default {
   display: flex;
 }
 
-@media screen and (max-width: 669px) {
+@media screen and (max-width: 699px) {
   .menu.left {
     display: none !important;
-  }
-
-  .section_container {
-    width: 100% !important;
   }
 
   .im_peers_container {
@@ -92,17 +88,18 @@ export default {
   .messages_container.hasChat .im_header_back { display: block }
 }
 
-@media screen and (min-width: 670px) and (max-width: 840px) {
-  .im_peers_container { width: 48% }
-  .im_chat_container { width: 52% }
+@media screen and (min-width: 700px) and (max-width: 850px) {
+  .im_peers_container { width: 43% }
+  .im_chat_container { width: 57% }
 }
 
-@media screen and (min-width: 841px) {
-  .im_peers_container { width: 371px }
-  .im_chat_container { width: calc(100% - 371px) }
+@media screen and (min-width: 851px) {
+  /* 785px = 850px - 65px (ширина левого меню) */
+  .im_peers_container { width: calc(785px * 0.43) }
+  .im_chat_container { width: calc(100% - 785px * 0.43) }
 }
 
-@media screen and (min-width: 670px) {
+@media screen and (min-width: 700px) {
   .menu.bottom {
     display: none;
   }

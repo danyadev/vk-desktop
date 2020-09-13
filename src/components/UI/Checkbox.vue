@@ -28,7 +28,7 @@ export default {
 }
 
 .checkbox.active {
-  background: var(--icon-blue);
+  background: var(--accent);
 }
 
 .checkbox:not(.active) {

@@ -60,7 +60,9 @@ export default {
     return {
       ...toRefs(state),
       onMouseOver,
-      onMouseOut
+      onMouseOut,
+      // Используется в других компонентах
+      setActive
     };
   }
 };

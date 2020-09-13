@@ -1,7 +1,7 @@
 <template>
   <div class="im_chat_container">
     <Header :peer_id="peer_id" :peer="peer" @close="closeChat" @search="isSearch = true" />
-    <div :class="['im_chat_wrap', { pinnedMsg }]">
+    <div class="im_chat_wrap">
       <List :peer_id="peer_id" :peer="peer" />
       <Input :peer_id="peer_id" :peer="peer" />
     </div>
@@ -11,15 +11,6 @@
         v-if="viewer.messages.length"
         :peer_id="viewer.peer_id"
         :messages="viewer.messages"
-      />
-    </Transition>
-
-    <Transition name="fade-out">
-      <MessagesChatSearch
-        v-if="isSearch"
-        :peer_id="peer_id"
-        :peer="peer"
-        @close="isSearch = false"
       />
     </Transition>
   </div>
@@ -33,7 +24,6 @@ import store from 'js/store';
 import router from 'js/router';
 
 import MessagesChatViewer from './MessagesChatViewer.vue';
-import MessagesChatSearch from './MessagesChatSearch.vue';
 import Header from './chat/Header.vue';
 import List from './chat/List.vue';
 import Input from './chat/Input.vue';
@@ -41,7 +31,6 @@ import Input from './chat/Input.vue';
 export default {
   components: {
     MessagesChatViewer,
-    MessagesChatSearch,
     Header,
     List,
     Input
@@ -113,10 +102,7 @@ export default {
 .im_chat_wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 50px);
-}
-
-.im_chat_wrap.pinnedMsg {
-  height: calc(100% - 50px - 52px);
+  flex-grow: 1;
+  overflow: auto;
 }
 </style>

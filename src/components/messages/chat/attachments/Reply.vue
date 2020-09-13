@@ -10,7 +10,7 @@
     >
 
     <div class="attach_reply_content">
-      <div class="attach_reply_name">{{ name }}</div>
+      <div class="attach_reply_name roboto-vk">{{ name }}</div>
 
       <div v-if="msg.isContentDeleted" class="attach_reply_text isContentDeleted">
         {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
@@ -177,11 +177,8 @@ export default {
 .attach_reply_name {
   color: var(--text-blue);
   font-weight: 500;
-  margin-top: 3px;
-}
-
-.attach_reply_text {
-  margin-top: 1px;
+  font-size: 13px;
+  margin: 4px 0 2px 0;
 }
 
 .attach_reply_text.hasAttachment {

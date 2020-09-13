@@ -18,8 +18,8 @@
       </div>
     </div>
 
-    <div class="menu_icon" @click="openModal('multiaccount')">
-      <Icon name="menu/profile" color="var(--icon-gray)" width="28" height="28" />
+    <div class="menu_icon" @click="openModal('settings')">
+      <Icon name="menu/settings" color="var(--icon-gray)" width="28" height="28" />
     </div>
   </div>
 </template>
@@ -51,13 +51,11 @@ export default {
 
 <style>
 .menu.bottom {
-  position: absolute;
-  bottom: 0;
   display: flex;
   justify-content: space-evenly;
+  flex: none;
   width: 100%;
   height: 50px;
-  border-top: 1px solid var(--separator);
   background: var(--background);
 }
 

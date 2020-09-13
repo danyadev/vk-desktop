@@ -82,7 +82,7 @@ export default {
     });
 
     function goToFirstMsg() {
-      state.actionsMenu.toggleMenu();
+      state.actionsMenu.setActive(false);
 
       eventBus.emit('messages:event', 'jump', {
         peer_id: props.peer_id,
@@ -91,7 +91,7 @@ export default {
     }
 
     function togglePinnedMsg() {
-      state.actionsMenu.toggleMenu();
+      state.actionsMenu.setActive(false);
 
       const { hiddenPinnedMessages } = state;
 
@@ -107,7 +107,7 @@ export default {
     }
 
     function unpinMsg() {
-      state.actionsMenu.toggleMenu();
+      state.actionsMenu.setActive(false);
 
       vkapi('messages.unpin', {
         peer_id: props.peer_id
@@ -115,7 +115,7 @@ export default {
     }
 
     function toggleNotifications() {
-      state.actionsMenu.toggleMenu();
+      state.actionsMenu.setActive(false);
 
       vkapi('account.setSilenceMode', {
         peer_id: props.peer_id,
@@ -124,7 +124,7 @@ export default {
     }
 
     function clearHistory() {
-      state.actionsMenu.toggleMenu();
+      state.actionsMenu.setActive(false);
 
       openModal('clear-history', {
         peer_id: props.peer_id
@@ -132,7 +132,7 @@ export default {
     }
 
     function leftFromChat() {
-      state.actionsMenu.toggleMenu();
+      state.actionsMenu.setActive(false);
 
       if (state.isChannel) {
         eventBus.emit('messages:event', 'changeLoadedState', {

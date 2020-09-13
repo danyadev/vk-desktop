@@ -6,6 +6,10 @@
   outline: none;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 @font-face {
   font-family: Roboto;
   font-weight: 400;
@@ -18,6 +22,20 @@
   font-weight: 500;
   font-display: block;
   src: url('~assets/RobotoMedium.ttf');
+}
+
+@font-face {
+  font-family: Roboto VK;
+  font-weight: 400;
+  font-display: block;
+  src: url('~assets/Roboto-VK-400.woff2');
+}
+
+@font-face {
+  font-family: Roboto VK;
+  font-weight: 500;
+  font-display: block;
+  src: url('~assets/Roboto-VK-500.woff2');
 }
 
 @font-face {
@@ -69,8 +87,13 @@ img:not(.emoji) {
   font-family: Segoe UI;
 }
 
+.root:not(.mac) .roboto-vk {
+  font-family: Roboto VK;
+}
+
 .section_container {
-  width: calc(100% - 65px);
+  flex-grow: 1;
+  overflow: auto;
   height: 100%;
 }
 
@@ -90,6 +113,17 @@ img:not(.emoji) {
   text-decoration: underline;
 }
 
+.border-top-shadow {
+  position: relative;
+  border-top: 1px solid var(--separator);
+}
+
+.border-bottom-shadow {
+  position: relative;
+  border-bottom: 1px solid var(--separator);
+}
+
+.im_peers_container .header.isScrolled::after,
 .border-top-shadow::before,
 .border-bottom-shadow::after {
   content: '';
@@ -107,6 +141,7 @@ img:not(.emoji) {
   background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .03) 75%, rgba(0, 0, 0, .06));
 }
 
+.im_peers_container .header.isScrolled::after,
 .border-bottom-shadow::after {
   top: 100%;
   margin-top: 1px;
@@ -150,14 +185,6 @@ img:not(.emoji) {
   color: var(--text-primary);
   width: 100%;
   height: 50px;
-}
-
-.header_btn {
-  flex: none;
-  box-sizing: content-box;
-  width: 24px;
-  height: 24px;
-  padding: 13px 8px;
 }
 
 .header_name {
