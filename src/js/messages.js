@@ -222,29 +222,41 @@ export function getMessageById(msg_id, peer_id) {
 export function deleteMessages(message_ids, peer, needCancelSelect) {
   const { activeUserID } = store.state.users;
   const DAY = 1000 * 60 * 60 * 24;
+  const messages = message_ids.map((id) => getMessageById(id, peer.id));
+  const isChatOwner = peer.owner_id === activeUserID;
 
   const canDeleteForAll = (
     activeUserID !== peer.id &&
-    message_ids
-      .map((id) => getMessageById(id, peer.id))
-      .every((msg) => (
-        !peer.admin_ids.includes(msg.from) &&
-        Date.now() - msg.date * 1000 < DAY &&
-        (
-          msg.from === activeUserID ||
-          peer.id > 2e9 && peer.acl.can_moderate
-        )
-      ))
+    messages.every((msg) => (
+      Date.now() - msg.date * 1000 < DAY &&
+      (isChatOwner || !peer.admin_ids.includes(msg.from)) &&
+      (
+        msg.from === activeUserID ||
+        peer.id > 2e9 && peer.acl.can_moderate
+      )
+    ))
   );
 
   openModal('delete-messages', {
     count: message_ids.length,
     canDeleteForAll,
 
-    submit(deleteForAll) {
-      vkapi('messages.delete', {
+    async submit(deleteForAll) {
+      const chatAdmins = [];
+
+      if (isChatOwner) {
+        for (const msg of messages) {
+          if (peer.admin_ids.includes(msg.from)) {
+            chatAdmins.push(msg.from);
+          }
+        }
+      }
+
+      await vkapi('execute.deleteMessages', {
+        peer_id: peer.id,
         message_ids: message_ids.join(','),
-        delete_for_all: deleteForAll ? 1 : 0
+        for_all: deleteForAll ? 1 : 0,
+        admins: chatAdmins.join(',')
       });
 
       if (needCancelSelect) {
@@ -254,7 +266,15 @@ export function deleteMessages(message_ids, peer, needCancelSelect) {
   });
 }
 
+const loadingConversations = new Set();
+
 export async function loadConversation(id) {
+  if (loadingConversations.has(id)) {
+    return;
+  }
+
+  loadingConversations.add(id);
+
   const { items: [conversation], profiles, groups } = await vkapi('messages.getConversationsById', {
     peer_ids: id,
     extended: 1,
@@ -265,6 +285,8 @@ export async function loadConversation(id) {
   store.commit('messages/updateConversation', {
     peer: parseConversation(conversation)
   });
+
+  loadingConversations.delete(id);
 }
 
 export const loadedConversationMembers = new Set();
