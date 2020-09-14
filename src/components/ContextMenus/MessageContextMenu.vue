@@ -24,7 +24,7 @@
       <div class="act_menu_data">{{ l('im_toggle_msg_pin', isPinnedMessage) }}</div>
     </div>
 
-    <div v-if="msg.id > peer.in_read" class="act_menu_item" @click="markAsRead">
+    <div v-if="msg && msg.id > peer.in_read" class="act_menu_item" @click="markAsRead">
       <Icon name="show" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
@@ -82,10 +82,14 @@ export default {
 
       isPinnedMessage: computed(() => {
         const { pinnedMsg } = state.peer;
-        return !!pinnedMsg && pinnedMsg.conversation_msg_id === state.msg.conversation_msg_id;
+        return (
+          !!pinnedMsg &&
+          state.msg &&
+          pinnedMsg.conversation_msg_id === state.msg.conversation_msg_id
+        );
       }),
 
-      hasCallAttach: computed(() => !!state.msg.attachments.call)
+      hasCallAttach: computed(() => state.msg && !!state.msg.attachments.call)
     });
 
     function copyMsgId() {

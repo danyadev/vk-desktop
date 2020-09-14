@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { capitalize } from 'js/utils';
 
 const getComponentName = (name) => capitalize(name) + 'ContextMenu';
@@ -59,6 +59,10 @@ export default {
               event
             }
           };
+
+          onBeforeUnmount(() => {
+            closeMenu();
+          }, element.__vueParentComponent);
 
           window.addEventListener('resize', closeMenu, true);
           window.addEventListener('keydown', closeMenu, true);
