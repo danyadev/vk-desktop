@@ -62,6 +62,7 @@ export default {
       onMouseOver,
       onMouseOut,
       // Используется в других компонентах
+      // eslint-disable-next-line vue/no-unused-properties
       setActive
     };
   }

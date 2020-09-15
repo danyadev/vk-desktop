@@ -12,6 +12,8 @@
 import CloseModal from './CloseModal.vue';
 
 export default {
+  // https://github.com/vuejs/eslint-plugin-vue/issues/1285
+  // eslint-disable-next-line vue/no-unused-properties
   props: ['unclosable'],
 
   components: {

@@ -28,6 +28,8 @@ export function openPage(route) {
   }
 }
 
+// Работа с мультиаккаунтом еще не закончена
+// eslint-disable-next-line import/no-unused-modules
 export function setAccount(id) {
   if (state.activeUserID === id) {
     return;
@@ -45,6 +47,8 @@ export function setAccount(id) {
   }
 }
 
+// Работа с мультиаккаунтом еще не закончена
+// eslint-disable-next-line import/no-unused-modules
 export function removeAccount(id) {
   if (id === state.activeUserID) {
     openModal('logout');
