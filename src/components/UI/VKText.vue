@@ -186,7 +186,7 @@ const hashtagParser = createParser({
 });
 
 const linkParser = createParser({
-  regexp: /(?!\.|-)((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig,
+  regexp: /((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig,
   parseText: hashtagParser,
   parseElement(value, match, isMention) {
     const { localhost, port, ip } = match.groups;
@@ -194,8 +194,9 @@ const linkParser = createParser({
     const isValidPort = !port || port.slice(1) <= 65535;
     const domain = match[4] && match[4].toLowerCase();
     const isValidDomain = isValidIP && isValidPort && (ip || localhost || domains.includes(domain));
+    const isInvalidDomainName = match[3].includes('@') || match[3].startsWith('.');
 
-    if (isMention || !isValidDomain || match[3] && match[3].includes('@')) {
+    if (isMention || !isValidDomain || isInvalidDomainName) {
       return [{ type: 'text', value }];
     }
 
