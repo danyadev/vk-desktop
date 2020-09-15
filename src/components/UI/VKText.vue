@@ -1,5 +1,5 @@
 <script>
-import { h, Fragment, computed, nextTick } from 'vue';
+import { h, Fragment, computed } from 'vue';
 import electron from 'electron';
 import { createParser, unescape, eventBus } from 'js/utils';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
@@ -36,7 +36,12 @@ export default {
             [...blocks, ...parseBlock(mentionTextBlock)]
           ), []);
 
-          return mentionContent;
+          return [
+            h('div', {
+              class: 'link',
+              onClick() {}
+            }, mentionContent)
+          ];
         }
 
         return [block.raw];
@@ -151,15 +156,7 @@ export default {
         return [
           h('div', {
             class: 'link',
-            async onClick() {
-              store.state.messages.isMessagesSearch = true;
-
-              await nextTick();
-
-              const input = document.querySelector('.im_chat_search_input');
-              input.value = block.value;
-              input.dispatchEvent(new Event('input'));
-            }
+            onClick() {}
           }, [block.value])
         ];
       }

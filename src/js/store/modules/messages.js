@@ -47,9 +47,6 @@ export default {
     // При этом чат нельзя закрыть, пока не закроется список этих сообщений
     selectedMessages: [],
 
-    // Находится здесь, потому что нужно при Esc проверять и убирать поиск в другом месте
-    isMessagesSearch: false,
-
     // Пересылаемые в данный момент сообщения
     // [message]
     tmpForwardingMessages: []
@@ -254,6 +251,10 @@ export default {
     },
 
     closeMessagesViewer(state) {
+      if (!state.viewer.peer_id) {
+        return;
+      }
+
       state.viewer = {
         messages: [],
         peer_id: null

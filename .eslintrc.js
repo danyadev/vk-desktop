@@ -120,7 +120,6 @@ module.exports = {
     'no-trailing-spaces': 'error',
     'no-undef-init': 'error',
     'no-undef': 'error',
-    'no-underscore-dangle': 'error',
     'no-unneeded-ternary': 'error',
     'no-unreachable': 'error',
     'no-unreachable-loop': 'error',

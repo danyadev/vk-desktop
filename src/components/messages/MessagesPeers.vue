@@ -67,7 +67,6 @@ export default {
       }),
 
       lockScroll: false,
-      isSearch: false,
       isScrolled: false,
 
       nowDate: new Date(),

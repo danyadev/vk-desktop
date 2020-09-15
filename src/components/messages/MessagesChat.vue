@@ -1,6 +1,6 @@
 <template>
   <div class="im_chat_container">
-    <Header :peer_id="peer_id" :peer="peer" @close="closeChat" @search="isSearch = true" />
+    <Header :peer_id="peer_id" :peer="peer" @close="closeChat" />
     <div class="im_chat_wrap">
       <List :peer_id="peer_id" :peer="peer" />
       <Input :peer_id="peer_id" :peer="peer" />
@@ -42,11 +42,6 @@ export default {
       // и сохраняется с помощью KeepAlive
       peer_id: +router.currentRoute.value.params.id,
       viewer: computed(() => store.state.messages.viewer),
-
-      isSearch: computed({
-        get: () => store.state.messages.isMessagesSearch,
-        set: (value) => (store.state.messages.isMessagesSearch = value)
-      }),
 
       peer: computed(() => {
         const conversation = store.state.messages.conversations[state.peer_id];

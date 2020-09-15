@@ -24,6 +24,7 @@ import router from 'js/router';
 import request from 'js/request';
 import longpoll from 'js/longpoll';
 import * as auth from './auth';
+import * as emoji from 'js/emoji';
 
 import 'css/shared.css';
 import 'css/colors.css';
@@ -42,6 +43,7 @@ window.router = router;
 window.request = request;
 window.longpoll = longpoll;
 window.auth = auth;
+window.emoji = emoji;
 
 export default {
   components: {

@@ -109,7 +109,7 @@ export default {
 
         children.push(
           h('div', {
-            class: ['im_service_message', { isUnread }],
+            class: ['im_service_message roboto-vk', { isUnread }],
             'data-id': msg.id
           }, [
             h(ServiceMessage, {

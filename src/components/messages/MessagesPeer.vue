@@ -38,10 +38,10 @@
       </div>
 
       <div class="im_peer_message_wrap">
-        <Typing v-if="hasTyping && !fromSearch" :peer_id="peer.id" />
+        <Typing v-if="hasTyping" :peer_id="peer.id" />
 
         <div v-else-if="msg.id" class="im_peer_message">
-          <div class="im_peer_text_wrap text-overflow">
+          <div class="im_peer_text_wrap text-overflow roboto-vk">
             <div class="im_peer_author">{{ authorName }}</div>
 
             <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted">
@@ -68,12 +68,11 @@
           {{ l(peer.isCasperChat ? 'im_messages_disappeared' : 'im_no_messages') }}
         </div>
 
-        <div v-if="peer.mentions.length && !fromSearch" class="im_peer_mentioned">
+        <div v-if="peer.mentions.length" class="im_peer_mentioned">
           <Icon name="mention" color="var(--background-blue-text)" width="20" height="18" />
         </div>
 
         <div
-          v-if="!fromSearch"
           :class="['im_peer_unread', { outread, muted: peer.muted }]"
           :title="peer.unread || ''"
         >
@@ -104,7 +103,7 @@ import Typing from './Typing.vue';
 import ServiceMessage from './ServiceMessage.vue';
 
 export default {
-  props: ['peer', 'msg', 'activeChat', 'nowDate', 'fromSearch'],
+  props: ['peer', 'msg', 'activeChat', 'nowDate'],
 
   components: {
     Icon,
@@ -164,11 +163,13 @@ export default {
     });
 
     async function openChat() {
-      const { activeChat, fromSearch } = props;
+      const { activeChat } = props;
       const peer_id = props.peer.id;
       const isForwardTo = state.route.name === 'forward-to';
 
-      if (state.isOpenedChat && !fromSearch) {
+      store.commit('messages/closeMessagesViewer');
+
+      if (state.isOpenedChat) {
         return eventBus.emit('messages:event', 'jump', {
           peer_id: activeChat,
           bottom: true
@@ -195,14 +196,6 @@ export default {
           data: store.state.messages.tmpForwardingMessages
         });
         store.state.messages.tmpForwardingMessages = [];
-      }
-
-      if (fromSearch) {
-        eventBus.emit('messages:event', 'jump', {
-          peer_id,
-          msg_id: props.msg.id,
-          mark: true
-        });
       }
     }
 

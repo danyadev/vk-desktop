@@ -35,10 +35,6 @@ export default {
     });
 
     function closeChat() {
-      if (store.state.messages.isMessagesSearch) {
-        return (store.state.messages.isMessagesSearch = false);
-      }
-
       if (store.state.messages.selectedMessages.length) {
         return store.commit('messages/removeSelectedMessages');
       }

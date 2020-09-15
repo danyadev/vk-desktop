@@ -26,7 +26,7 @@
 
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
-        <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseUp">
+        <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseMove">
           <div
             v-if="isFirstItem && showUserData && !attachmentClasses.includes('hideBubble')"
             class="message_name roboto-vk"
@@ -45,7 +45,7 @@
             <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">
               {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
             </div>
-            <div v-else class="message_text">
+            <div v-else class="message_text roboto-vk">
               <VKText :inline="false" link mention>{{ msg.text }}</VKText>
             </div>
 
@@ -86,7 +86,6 @@
 
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
-import { eventBus } from 'js/utils';
 import { getPeerTitle } from 'js/messages';
 import { getTime } from 'js/date';
 import store from 'js/store';
@@ -122,7 +121,7 @@ export default {
       selectedMessages: computed(() => store.state.messages.selectedMessages),
       isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
       isSelectMode: computed(() => (
-        !!state.selectedMessages.length || props.isCustomView === 'search'
+        !!state.selectedMessages.length
       )),
 
       expireIcon: !!props.msg.expireTtl, // Изначально true если сообщение фантомное
@@ -212,21 +211,6 @@ export default {
       }
     }
 
-    function onMouseUp() {
-      if (props.isCustomView === 'search') {
-        store.state.messages.isMessagesSearch = false;
-
-        return eventBus.emit('messages:event', 'jump', {
-          peer_id: props.peer_id,
-          msg_id: props.msg.id,
-          mark: true
-        });
-      }
-
-      // Останавливаем таймер
-      onMouseMove();
-    }
-
     function onMouseMove() {
       if (timer) {
         state.bubble.removeEventListener('mousemove', onMouseMove);
@@ -249,7 +233,7 @@ export default {
       ...toRefs(state),
 
       onMouseDown,
-      onMouseUp,
+      onMouseMove,
       updateState
     };
   }

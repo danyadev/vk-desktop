@@ -2,19 +2,13 @@
   <div v-if="!isHidden" class="im_pinned_msg_wrap" @click="openMessage">
     <Icon name="pin" color="var(--icon-dark-gray)" class="im_pinned_msg_icon" />
 
-    <div class="im_pinned_msg">
+    <div class="im_pinned_msg roboto-vk">
       <div class="im_pinned_msg_name_wrap text-overflow">
         <div class="im_pinned_msg_name">{{ name }}</div>
         <div class="im_pinned_msg_time">{{ time }}</div>
       </div>
       <div :class="['im_pinned_msg_text text-overflow', { hasAttachment }]">
-        <ServiceMessage
-          v-if="msg.action"
-          :msg="msg"
-          :author="author"
-          :peer_id="peer_id"
-        />
-        <VKText v-else mention>{{ text }}</VKText>
+        <VKText mention>{{ text }}</VKText>
       </div>
     </div>
 
@@ -36,15 +30,13 @@ import store from 'js/store';
 
 import Icon from '../../UI/Icon.vue';
 import VKText from '../../UI/VKText.vue';
-import ServiceMessage from '../ServiceMessage.vue';
 
 export default {
   props: ['msg', 'peer_id'],
 
   components: {
     Icon,
-    VKText,
-    ServiceMessage
+    VKText
   },
 
   setup(props) {
@@ -116,6 +108,10 @@ export default {
   overflow: auto;
 }
 
+.im_pinned_msg_name_wrap {
+  font-size: 13px;
+}
+
 .im_pinned_msg_name {
   display: inline;
   color: var(--text-blue);
@@ -126,7 +122,6 @@ export default {
   display: inline;
   margin-left: 5px;
   color: var(--text-steel-gray);
-  font-size: 13px;
 }
 
 .im_pinned_msg_text {

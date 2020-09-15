@@ -9,8 +9,8 @@
       height="37"
     >
 
-    <div class="attach_reply_content">
-      <div class="attach_reply_name roboto-vk">{{ name }}</div>
+    <div class="attach_reply_content roboto-vk">
+      <div class="attach_reply_name">{{ name }}</div>
 
       <div v-if="msg.isContentDeleted" class="attach_reply_text isContentDeleted">
         {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}

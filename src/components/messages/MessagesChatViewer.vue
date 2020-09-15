@@ -1,6 +1,6 @@
 <template>
   <div class="im_chat_container im_search_container">
-    <div class="header">
+    <div class="header border-bottom-shadow">
       <Icon
         name="im_back"
         color="var(--icon-blue)"
@@ -57,8 +57,13 @@ export default {
 </script>
 
 <style>
+.im_search_container .header {
+  box-sizing: content-box;
+}
+
 .im_chat_viewer_title {
   padding-left: 10px;
+  color: var(--text-azure);
 }
 
 /* Здесь снимается ограничение на ширину сообщения, потому что здесь */

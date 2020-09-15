@@ -4,11 +4,11 @@
       <img v-if="item.photo" :src="getPhotoFromSizes(item.photo.sizes, 'x').url">
 
       <div class="im_carousel_content">
-        <div class="im_carousel_title">
+        <div class="im_carousel_title roboto-vk">
           <VKText>{{ item.title }}</VKText>
         </div>
 
-        <div class="im_carousel_description">
+        <div class="im_carousel_description roboto-vk">
           <VKText>{{ item.description }}</VKText>
         </div>
 
@@ -54,7 +54,7 @@ export default {
 .im_carousel {
   display: flex;
   margin-top: 2px;
-  padding-left: 15px;
+  padding-left: 14px;
   flex: none;
 }
 

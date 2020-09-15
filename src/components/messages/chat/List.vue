@@ -517,7 +517,7 @@ export default {
 
     const hideTopTime = debounce(() => {
       state.showTopTime = false;
-    }, 1000);
+    }, 500);
 
     // Scroll to end & mention buttons ====================
 

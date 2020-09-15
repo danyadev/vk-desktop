@@ -382,7 +382,7 @@ export default {
 }
 
 .chat_input_error.isChannel {
-  color: var(--text-blue-light);
+  color: var(--text-azure);
   cursor: pointer;
   transition: background-color .2s;
 }

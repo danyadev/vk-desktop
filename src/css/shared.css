@@ -272,7 +272,7 @@ img:not(.emoji) {
 /* Transition animations ====================== */
 
 .fade-out-enter-active, .fade-out-leave-active {
-  transition: opacity .3s;
+  transition: opacity .2s;
 }
 
 .fade-out-enter-from, .fade-out-leave-to {

@@ -2,7 +2,7 @@
   <div class="attach_fwd_msg">
     <div class="attach_fwd_msg_header">
       <img class="attach_fwd_msg_photo" :src="photo">
-      <div class="attach_fwd_msg_info">
+      <div class="attach_fwd_msg_info roboto-vk">
         <div class="attach_fwd_msg_name">{{ name }}</div>
         <div class="attach_fwd_msg_date">
           {{ date }}
@@ -18,7 +18,7 @@
       <div v-if="msg.isContentDeleted" class="attach_fwd_msg_text isContentDeleted">
         {{ l('im_attachment_deleted') }}
       </div>
-      <div v-else class="attach_fwd_msg_text">
+      <div v-else class="attach_fwd_msg_text roboto-vk">
         <VKText :inline="false" mention link>{{ msg.text }}</VKText>
       </div>
 
@@ -101,8 +101,8 @@ export default {
 
 .attach_fwd_msg_photo {
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   margin-right: 10px;
 }
 
@@ -112,6 +112,10 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.attach_fwd_msg_info {
+  font-size: 13px;
 }
 
 .attach_fwd_msg_name {
