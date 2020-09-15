@@ -170,44 +170,49 @@ export default {
       }
 
       if (state.isSelected) {
-        store.commit('messages/removeSelectedMessage', props.msg.id);
-      } else if (state.isSelectMode) {
-        if (event.shiftKey) {
-          const lastSelectedId = state.selectedMessages[state.selectedMessages.length - 1];
-          const messages = store.state.messages.messages[props.peer_id];
+        return store.commit('messages/removeSelectedMessage', props.msg.id);
+      }
 
-          const lastSelectedIndex = messages.findIndex((msg) => msg.id === lastSelectedId);
-          const msgIndex = messages.findIndex((msg) => props.msg.id === msg.id);
-
-          if (lastSelectedIndex !== -1) {
-            const list = (
-              props.msg.id > lastSelectedId
-                ? messages.slice(lastSelectedIndex + 1, msgIndex + 1)
-                : messages.slice(msgIndex, lastSelectedIndex).reverse()
-            ).filter((msg) => (
-              !msg.action &&
-              !msg.isExpired &&
-              !msg.attachments.call &&
-              !state.selectedMessages.includes(msg.id)
-            )).map((msg) => msg.id);
-
-            for (const id of list) {
-              store.commit('messages/addSelectedMessage', id);
-            }
-          } else {
-            // Сообщения нет в списке, т.к. юзер перепрыгнул в другой фрагмент сообщений
-            store.commit('messages/addSelectedMessage', props.msg.id);
-          }
-        } else {
-          store.commit('messages/addSelectedMessage', props.msg.id);
-        }
-      } else {
+      if (!state.isSelectMode) {
         timer = setTimeout(() => {
           store.commit('messages/addSelectedMessage', props.msg.id);
           state.bubble.removeEventListener('mousemove', onMouseMove);
         }, 500);
 
         state.bubble.addEventListener('mousemove', onMouseMove);
+
+        return;
+      }
+
+      if (!event.shiftKey) {
+        return store.commit('messages/addSelectedMessage', props.msg.id);
+      }
+
+      // Обработка shift + клик
+      const lastSelectedId = state.selectedMessages[state.selectedMessages.length - 1];
+      const messages = store.state.messages.messages[props.peer_id];
+
+      const lastSelectedIndex = messages.findIndex((msg) => msg.id === lastSelectedId);
+      const msgIndex = messages.findIndex((msg) => props.msg.id === msg.id);
+
+      if (lastSelectedIndex === -1) {
+        // Сообщения нет в списке, т.к. юзер перепрыгнул в другой фрагмент сообщений
+        return store.commit('messages/addSelectedMessage', props.msg.id);
+      }
+
+      const list = (
+        props.msg.id > lastSelectedId
+          ? messages.slice(lastSelectedIndex + 1, msgIndex + 1)
+          : messages.slice(msgIndex, lastSelectedIndex).reverse()
+      ).filter((msg) => (
+        !msg.action &&
+        !msg.isExpired &&
+        !msg.attachments.call &&
+        !state.selectedMessages.includes(msg.id)
+      )).map((msg) => msg.id);
+
+      for (const id of list) {
+        store.commit('messages/addSelectedMessage', id);
       }
     }
 
