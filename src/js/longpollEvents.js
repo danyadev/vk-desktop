@@ -881,5 +881,13 @@ export default {
 
   115: {
     // Звонок
+  },
+
+  119: {
+    // Ответ callback-кнопки
+    // [{ owner_id, peer_id, event_id, action? }]
+    handler([data]) {
+      eventBus.emit('keyboard:callback', data);
+    }
   }
 };

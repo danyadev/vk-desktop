@@ -1,5 +1,5 @@
 <template>
-  <Scrolly :vclass="['keyboard', { inline: keyboard.inline }]">
+  <Scrolly :vclass="['keyboard', { inline: msg.keyboard.inline }]">
     <div v-for="(line, i) of buttons" :key="i" class="keyboard_line">
       <Ripple
         v-for="{ action, color } of line"
@@ -28,8 +28,17 @@
           <img src="~assets/vk_pay.svg">
         </template>
 
-        <template v-else-if="action.type === 'open_link'">
-          <div class="keyboard_service_key"><VKText>{{ action.label }}</VKText></div>
+        <div v-else-if="action.type === 'open_link'" class="keyboard_service_key">
+          <VKText>{{ action.label }}</VKText>
+        </div>
+
+        <template v-else-if="action.type === 'callback'">
+          <Icon
+            v-if="activeCallbackButtons.find((btn) => btn.action === action)"
+            name="spinner"
+            class="spinner"
+          />
+          <VKText v-else>{{ action.label }}</VKText>
         </template>
 
         <div v-else>{{ l('keyboard_button_not_supported') }}</div>
@@ -39,31 +48,110 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs } from 'vue';
+import {
+  reactive,
+  computed,
+  toRefs,
+  onMounted,
+  onUnmounted,
+  onActivated,
+  onDeactivated
+} from 'vue';
 import electron from 'electron';
+import { eventBus } from 'js/utils';
+import { addSnackbar } from 'js/snackbars';
 import sendMessage from 'js/sendMessage';
 
 import Scrolly from '../../UI/Scrolly.vue';
 import Ripple from '../../UI/Ripple.vue';
 import VKText from '../../UI/VKText.vue';
+import Icon from '../../UI/Icon.vue';
 
 const { shell } = electron.remote;
 
 export default {
-  props: ['peer_id', 'keyboard'],
+  props: ['peer_id', 'msg'],
 
   components: {
     Scrolly,
     Ripple,
-    VKText
+    VKText,
+    Icon
   },
 
   setup(props) {
     const state = reactive({
-      buttons: computed(() => props.keyboard.buttons || [])
+      buttons: computed(() => props.msg.keyboard.buttons || []),
+      activeCallbackButtons: []
     });
 
-    function click(action) {
+    function getAppLink(action) {
+      const owner_id = action.owner_id ? `_${action.owner_id}` : '';
+      const hash = action.hash ? `#${action.hash}` : '';
+      return `https://vk.com/app${action.app_id}${owner_id}${hash}`;
+    }
+
+    function toggleBus(bool) {
+      if (bool) {
+        eventBus.on('keyboard:callback', onKeyboardCallback);
+      } else {
+        eventBus.removeListener('keyboard:callback', onKeyboardCallback);
+
+        for (const btn of state.activeCallbackButtons) {
+          clearTimeout(btn.timeout);
+        }
+      }
+    }
+
+    function onKeyboardCallback(data) {
+      const btn = state.activeCallbackButtons.find((btn) => btn.event_id === data.event_id);
+
+      if (data.peer_id !== props.peer_id || !btn) {
+        return;
+      }
+
+      clearTimeout(btn.timeout);
+      stopCallbackBtn(btn);
+
+      if (!data.action) {
+        return;
+      }
+
+      switch (data.action.type) {
+        case 'show_snackbar':
+          addSnackbar({ text: data.action.text });
+          break;
+
+        case 'open_link':
+          shell.openItem(data.action.link);
+          break;
+
+        case 'open_app':
+          shell.openItem(getAppLink(data.action));
+          break;
+
+        default:
+          console.warn('[keyboard] Неизвестный тип callback-кнопки:', data.action);
+          break;
+      }
+    }
+
+    function stopCallbackBtn(btn) {
+      const index = state.activeCallbackButtons.indexOf(btn);
+
+      if (index > -1) {
+        state.activeCallbackButtons.splice(index, 1);
+      }
+    }
+
+    // onMounted -> n(onDeactivated -> onActivated) -> onUnmounted
+    onMounted(() => toggleBus(true));
+    onUnmounted(() => toggleBus(false));
+
+    onActivated(() => toggleBus(true));
+    onDeactivated(() => toggleBus(false));
+
+    async function click(action) {
       const hash = action.hash ? `#${action.hash}` : '';
 
       switch (action.type) {
@@ -72,14 +160,14 @@ export default {
             peer_id: props.peer_id,
             keyboardButton: {
               action,
-              author_id: props.keyboard.author_id,
-              one_time: props.keyboard.one_time
+              author_id: props.msg.keyboard.author_id,
+              one_time: props.msg.keyboard.one_time
             }
           });
           break;
 
         case 'open_app':
-          shell.openItem(`https://vk.com/app${action.app_id}${hash}`);
+          shell.openItem(getAppLink(action));
           break;
 
         case 'vkpay':
@@ -88,6 +176,24 @@ export default {
 
         case 'open_link':
           shell.openItem(action.link);
+          break;
+
+        case 'callback':
+          if (state.activeCallbackButtons.find((btn) => btn.action === action)) {
+            return;
+          }
+
+          const length = state.activeCallbackButtons.push({ action });
+          const btn = state.activeCallbackButtons[length - 1];
+
+          const event_id = await vkapi('messages.sendMessageEvent', {
+            peer_id: props.peer_id,
+            message_id: props.msg.id,
+            payload: action.payload
+          });
+
+          btn.event_id = event_id;
+          btn.timeout = setTimeout(() => stopCallbackBtn(btn), 60 * 1000);
           break;
       }
     }
@@ -183,5 +289,9 @@ export default {
 
 .keyboard_services_icon {
   margin-right: 5px;
+}
+
+.spinner {
+  animation: spinner .7s infinite linear;
 }
 </style>

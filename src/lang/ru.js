@@ -159,7 +159,8 @@ export default {
     wall_reply: ['Комментарий на стене'],
     audio_message: ['Голосовое сообщение'],
     money_request: ['Запрос денег'],
-    audio_playlist: ['Плейлист']
+    audio_playlist: ['Плейлист'],
+    group_call_in_progress: ['Активный звонок']
   },
 
   // Сервисные сообщения
