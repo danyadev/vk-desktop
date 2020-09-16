@@ -36,6 +36,7 @@ export default {
   // ----- Авторизация
   enter_login: 'Введите логин',
   enter_password: 'Введите пароль',
+  or_enter_token: 'Или введите Токен',
   login: 'Войти',
   auth_errors: {
     invalid_client: 'Неверный логин или пароль',
