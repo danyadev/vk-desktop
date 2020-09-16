@@ -54,7 +54,7 @@
                 :author="author"
                 :peer_id="peer.id"
               />
-              <VKText v-else mention>{{ message }}</VKText>
+              <VKText v-else mention="attachment">{{ message }}</VKText>
             </div>
           </div>
 

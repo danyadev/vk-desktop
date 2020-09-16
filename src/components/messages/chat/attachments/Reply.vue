@@ -16,7 +16,7 @@
         {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
       </div>
       <div v-else :class="['attach_reply_text', { hasAttachment: msg.hasAttachment && !msg.text }]">
-        <VKText mention>{{ text }}</VKText>
+        <VKText mention="attachment">{{ text }}</VKText>
       </div>
     </div>
   </div>

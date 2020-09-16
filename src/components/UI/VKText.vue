@@ -19,10 +19,11 @@ export default {
     link: {
       type: Boolean
     },
-    // Отображать ли информацию о странице при наведении на упоминание
-    // + Дополнительный проп для создания "кликабельных" меншнов?
+    // text - преобразовать упоминание в нормальный вид ([id|text] -> text)
+    // attachment - выделить упоминание синим цветом
+    // link - выделить синим цветом и сделать кликабельным
     mention: {
-      type: Boolean
+      type: String
     }
   },
 
@@ -31,20 +32,30 @@ export default {
 
     function parseBlock(block) {
       if (block.type === 'mention') {
-        if (props.mention) {
-          const mentionContent = block.value.reduce((blocks, mentionTextBlock) => (
-            [...blocks, ...parseBlock(mentionTextBlock)]
-          ), []);
+        if (!props.mention) {
+          return [block.raw];
+        }
 
+        const mentionContent = block.value.reduce((blocks, mentionTextBlock) => (
+          [...blocks, ...parseBlock(mentionTextBlock)]
+        ), []);
+
+        if (props.mention === 'text') {
+          return mentionContent;
+        }
+
+        if (props.mention === 'link') {
           return [
             h('div', {
-              class: 'link',
-              onClick() {}
+              class: props.mention === 'link' ? 'link' : 'mention_attachment'
+              // onClick() {}
             }, mentionContent)
           ];
         }
 
-        return [block.raw];
+        return [
+          h('div', { class: 'mention_attachment' }, mentionContent)
+        ];
       }
 
       if (block.type === 'emoji') {
@@ -155,8 +166,8 @@ export default {
       if (block.type === 'hashtag' && props.link) {
         return [
           h('div', {
-            class: 'link',
-            onClick() {}
+            class: 'link'
+            // onClick() {}
           }, [block.value])
         ];
       }
@@ -256,3 +267,9 @@ const mentionParser = createParser({
   }
 });
 </script>
+
+<style>
+.mention_attachment {
+  color: var(--text-blue);
+}
+</style>

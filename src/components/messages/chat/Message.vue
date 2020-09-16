@@ -46,7 +46,7 @@
               {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
             </div>
             <div v-else class="message_text roboto-vk">
-              <VKText :inline="false" link mention>{{ msg.text }}</VKText>
+              <VKText :inline="false" link mention="link">{{ msg.text }}</VKText>
             </div>
 
             <Attachments :msg="msg" />
