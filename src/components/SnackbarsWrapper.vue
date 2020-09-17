@@ -1,7 +1,7 @@
 <template>
   <div class="snackbars">
-    <TransitionGroup name="snackbar">
-      <div v-for="snackbar of snackbars" :key="snackbar.id" class="snackbar">
+    <Transition name="snackbar" mode="out-in">
+      <div v-if="snackbar" :key="snackbar.id" class="snackbar">
         <Icon
           v-if="snackbar.icon"
           :name="snackbar.icon"
@@ -12,7 +12,7 @@
 
         {{ snackbar.text }}
       </div>
-    </TransitionGroup>
+    </Transition>
   </div>
 </template>
 
