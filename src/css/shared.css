@@ -172,10 +172,6 @@ img:not(.emoji) {
   color: var(--field-placeholder);
 }
 
-.input.error {
-  border-color: var(--red);
-}
-
 /* Header ============================ */
 
 .header {

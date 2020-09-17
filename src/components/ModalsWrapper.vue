@@ -18,7 +18,6 @@ import { modalsState, closeModal } from 'js/modals';
 
 const modalComponents = {};
 const modalNames = [
-  'Auth',
   'BlockedAccount',
   'Captcha',
   'ClearHistory',
@@ -26,7 +25,6 @@ const modalNames = [
   'ErrorApi',
   'Logout',
   // 'MediaViewer',
-  'Multiaccount',
   'Settings'
 ];
 

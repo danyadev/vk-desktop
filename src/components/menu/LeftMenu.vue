@@ -23,12 +23,12 @@
           </div>
         </div>
 
-        <div class="menu_user" @click="openModal('auth'), (isUsersListActive = false)">
+        <div class="menu_user" @click="openAuth">
           <div class="menu_user_photo add-profile">
             <Icon name="plus" color="var(--icon-blue)" />
           </div>
           <div class="menu_user_name text-overflow segoe-ui">
-            {{ l('ml_multiacc_add_account') }}
+            {{ l('add_account') }}
           </div>
         </div>
       </div>
@@ -65,6 +65,7 @@ import { convertCount, getPhoto, moveArrItem, mouseOutWrapper } from 'js/utils';
 import { openModal } from 'js/modals';
 import { state, openPage, setAccount } from '.';
 import store from 'js/store';
+import router from 'js/router';
 
 import Icon from '../UI/Icon.vue';
 
@@ -86,6 +87,15 @@ export default {
       } else {
         setAccount(user_id);
       }
+    }
+
+    function openAuth() {
+      router.push({
+        path: '/auth',
+        query: {
+          onlyAddUser: 1
+        }
+      });
     }
 
     return {
@@ -110,7 +120,8 @@ export default {
       getPhoto,
 
       openModal,
-      openPage
+      openPage,
+      openAuth
     };
   }
 };

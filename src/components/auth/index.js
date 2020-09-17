@@ -1,7 +1,8 @@
 import { AndroidUserAgent, VKDesktopUserAgent, fields, toUrlParams } from 'js/utils';
-import { openModal, closeModal } from 'js/modals';
+import { openModal } from 'js/modals';
 import vkapi, { version } from 'js/vkapi';
 import store from 'js/store';
+import router from 'js/router';
 import request from 'js/request';
 
 export function getAndroidToken(login, password, params = {}) {
@@ -80,7 +81,7 @@ async function getDesktopToken(androidToken) {
   return headers.location.match(/#access_token=([a-z0-9]{85})/)[1];
 }
 
-export async function loadUser(android_token, isModal) {
+export async function loadUser(android_token, onlyAddUser) {
   const access_token = await getDesktopToken(android_token);
   const [user] = await vkapi('users.get', {
     access_token,
@@ -95,8 +96,8 @@ export async function loadUser(android_token, isModal) {
 
   store.commit('settings/setDefaultSettings', user.id);
 
-  if (isModal) {
-    closeModal('auth');
+  if (onlyAddUser) {
+    router.go(-1);
   } else {
     store.commit('users/setActiveUser', user.id);
   }

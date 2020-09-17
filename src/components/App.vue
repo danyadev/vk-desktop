@@ -3,7 +3,7 @@
     <Titlebar />
 
     <div class="app">
-      <LeftMenu v-if="activeUserID" />
+      <LeftMenu v-if="!isAuth" />
       <RouterView />
 
       <ModalsWrapper />
@@ -58,7 +58,8 @@ export default {
   setup() {
     const state = reactive({
       mac: process.platform === 'darwin',
-      activeUserID: computed(() => store.state.users.activeUserID)
+      activeUserID: computed(() => store.state.users.activeUserID),
+      isAuth: computed(() => ['/', '/auth'].includes(router.currentRoute.value.path))
     });
 
     async function initUser() {

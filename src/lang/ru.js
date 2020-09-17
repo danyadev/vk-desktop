@@ -13,6 +13,7 @@ export default {
   loading: 'Загрузка...',
   delete: 'Удалить',
   search: 'Поиск',
+  add_account: 'Добавить аккаунт',
 
   // ----- Дата и время
   date_now: 'только что',
@@ -27,20 +28,14 @@ export default {
   ],
   date_symbols: {
     minute: 'м',
-    hour: 'ч',
-    day: 'д',
-    month: 'м',
-    year: 'г'
+    hour: 'ч'
   },
 
   // ----- Авторизация
   enter_login: 'Введите логин',
   enter_password: 'Введите пароль',
   login: 'Войти',
-  auth_errors: {
-    invalid_client: 'Неверный логин или пароль',
-    account_banned: 'Ваша страница заблокирована'
-  },
+  invalid_login_or_password: 'Неверный логин или пароль',
 
   security_check: 'Проверка безопасности',
   code_sent_to: [
@@ -51,7 +46,6 @@ export default {
   wrong_code: 'Неверный код',
   use_force_sms: 'Использовать SMS-код',
   retry_send_sms: 'Отправить SMS-код можно через {0}',
-  available_accounts_list: 'Список доступных аккаунтов',
 
   // ----- Сообщения
   im_header_title: 'Сообщения',
@@ -76,10 +70,10 @@ export default {
   im_messages_expired: ['{0} сообщение исчезло', '{0} сообщения исчезло', '{0} сообщений исчезло'],
   keyboard_button_not_supported: 'Клавиша не поддерживается',
 
-  im_search_dialogs: 'Диалоги',
-  im_search_placeholder: 'Здесь будут видны найденные беседы и сообщения',
-  im_search_messages_placeholder: 'Здесь будут видны найденные сообщения',
-  im_search_nothing: 'По вашему запросу ничего не найдено',
+  // im_search_dialogs: 'Диалоги',
+  // im_search_placeholder: 'Здесь будут видны найденные беседы и сообщения',
+  // im_search_messages_placeholder: 'Здесь будут видны найденные сообщения',
+  // im_search_nothing: 'По вашему запросу ничего не найдено',
 
   im_chat_online: ['Онлайн', 'Онлайн с телефона', 'Онлайн с {0}'],
   im_chat_was_online: ['Был в сети {0}', 'Была в сети {0}'],
@@ -263,8 +257,6 @@ export default {
   audios_not_implemented: 'Данный раздел не реализован.',
 
   // ----- Модалки
-  ml_auth_header: 'Авторизация',
-
   ml_blocked_account_title: [
     'Сессия недействительна',
     'Страница удалена',
@@ -298,10 +290,6 @@ export default {
 
   ml_logout_header: 'Выход из аккаунта',
   ml_logout_sure: 'Вы действительно хотите выйти из аккаунта?',
-
-  ml_multiacc_header: 'Выберите аккаунт',
-  ml_multiacc_add_account: 'Добавить аккаунт',
-  ml_multiacc_active_account: 'Активный аккаунт',
 
   ml_settings_header: 'Настройки',
   ml_settings_sections: {

@@ -5,14 +5,14 @@
     <input
       ref="input"
       v-model="login"
-      :class="['input', { error }]"
+      class="input"
       type="text"
       :placeholder="l('enter_login')"
     >
     <div class="auth_password_wrap">
       <input
         v-model="password"
-        :class="['input', { error }]"
+        class="input"
         :type="hidePassword ? 'password' : 'text'"
         :placeholder="l('enter_password')"
       >
@@ -22,25 +22,20 @@
       />
     </div>
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
-
-    <div v-if="hasUsers" class="link auth_open_multiacc" @click="openModal('multiaccount')">
-      {{ l('available_accounts_list') }}
-    </div>
   </div>
 </template>
 
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
-import { onTransitionEnd, timer } from 'js/utils';
 import { openModal } from 'js/modals';
-import store from 'js/store';
-import { getAndroidToken, loadUser } from '.';
+import { addSnackbar } from 'js/snackbars';
+import getTranslate from 'js/getTranslate';
+import { getAndroidToken } from '.';
 
 import Button from '../UI/Button.vue';
 
 export default {
-  props: ['isModal'],
-  emits: ['confirm'],
+  emits: ['confirm', 'auth'],
 
   components: {
     Button
@@ -54,11 +49,9 @@ export default {
       password: '',
 
       loading: false,
-      error: false,
       hidePassword: true,
 
-      canAuth: computed(() => !state.loading && state.login && state.password),
-      hasUsers: computed(() => !props.isModal && Object.keys(store.state.users.users).length)
+      canAuth: computed(() => !state.loading && state.login && state.password)
     });
 
     async function auth() {
@@ -70,27 +63,32 @@ export default {
 
       const data = await getAndroidToken(state.login, state.password);
 
-      if (data.error === 'invalid_client') {
-        state.loading = false;
+      switch (data.error) {
+        case 'invalid_client':
+          state.loading = false;
+          addSnackbar({
+            text: getTranslate('invalid_login_or_password')
+          });
+          break;
 
-        state.error = true;
-        await onTransitionEnd(state.input);
-        await timer(500);
-        state.error = false;
-      } else if (data.error === 'account_banned') {
-        state.loading = false;
+        case 'account_banned':
+          state.loading = false;
+          openModal('blocked-account', {
+            fromAuth: true
+          });
+          break;
 
-        openModal('blocked-account', {
-          fromAuth: true
-        });
-      } else if (data.error === 'need_validation') {
-        emit('confirm', {
-          ...data,
-          login: state.login,
-          password: state.password
-        });
-      } else {
-        loadUser(data.access_token, props.isModal);
+        case 'need_validation':
+          emit('confirm', {
+            ...data,
+            login: state.login,
+            password: state.password
+          });
+          break;
+
+        default:
+          emit('auth', data.access_token);
+          break;
       }
     }
 
@@ -100,9 +98,7 @@ export default {
 
     return {
       ...toRefs(state),
-
-      auth,
-      openModal
+      auth
     };
   }
 };
@@ -162,10 +158,5 @@ export default {
 
 .auth_button {
   width: 250px;
-}
-
-.auth_open_multiacc {
-  position: absolute;
-  bottom: 10px;
 }
 </style>

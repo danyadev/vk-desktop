@@ -2,11 +2,13 @@
   <div class="auth auth_code" @keydown.enter="auth">
     <div class="auth_code_header">{{ l('security_check') }}</div>
     <div class="auth_code_descr">{{ l('code_sent_to', isAppCode, [phoneMask]) }}</div>
-    <input ref="input" v-model="code" :class="['input', { error }]" :placeholder="l('enter_code')">
+
+    <input ref="input" v-model="code" class="input" :placeholder="l('enter_code')">
     <div class="auth_code_buttons">
       <Button light :disabled="loading" @click="$emit('back')">{{ l('cancel') }}</Button>
       <Button :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
     </div>
+
     <div class="auth_use_sms link" :class="{ hidden: disableForceSMS }" @click="enableForceSms">
       {{
         timeToSendSMS
@@ -19,27 +21,27 @@
 
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
-import { onTransitionEnd, timer } from 'js/utils';
+import { addSnackbar } from 'js/snackbars';
 import { format } from 'js/date/utils';
 import vkapi from 'js/vkapi';
-import { getAndroidToken, loadUser } from '.';
+import getTranslate from 'js/getTranslate';
+import { getAndroidToken } from '.';
 
 import Button from '../UI/Button.vue';
 
 export default {
-  props: ['isModal', 'params'],
-  emits: ['back'],
+  props: ['params'],
+  emits: ['back', 'auth'],
 
   components: {
     Button
   },
 
-  setup(props) {
+  setup(props, { emit }) {
     const state = reactive({
       isAppCode: props.params.validation_type === '2fa_app',
       phoneMask: props.params.phone_mask,
       loading: false,
-      error: false,
       code: '',
       canAuth: computed(() => !state.loading && state.code.trim()),
       timeToSendSMS: null,
@@ -51,18 +53,6 @@ export default {
       updateTimer(120);
       state.input.focus();
     });
-
-    function updateTimer(time) {
-      if (time) {
-        state.timeToSendSMS = new Date(time * 1000);
-
-        setTimeout(() => {
-          updateTimer(--time);
-        }, 1000);
-      } else {
-        state.timeToSendSMS = null;
-      }
-    }
 
     async function auth() {
       if (!state.canAuth) {
@@ -78,12 +68,23 @@ export default {
       if (data.error === 'invalid_request') {
         state.loading = false;
 
-        state.error = true;
-        await onTransitionEnd(state.input);
-        await timer(500);
-        state.error = false;
+        addSnackbar({
+          text: getTranslate('wrong_code')
+        });
       } else {
-        loadUser(data.access_token, props.isModal);
+        emit('auth', data.access_token);
+      }
+    }
+
+    function updateTimer(time) {
+      if (time) {
+        state.timeToSendSMS = new Date(time * 1000);
+
+        setTimeout(() => {
+          updateTimer(--time);
+        }, 1000);
+      } else {
+        state.timeToSendSMS = null;
       }
     }
 

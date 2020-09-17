@@ -299,21 +299,6 @@ export function endScroll(callback, reverse) {
   };
 }
 
-export function onTransitionEnd(el, anyTarget) {
-  return new Promise((resolve) => {
-    function onTransitionEndListener(event) {
-      if (!anyTarget && event.target !== el) {
-        return;
-      }
-
-      el.removeEventListener('transitionend', onTransitionEndListener);
-      resolve();
-    }
-
-    el.addEventListener('transitionend', onTransitionEndListener);
-  });
-}
-
 export function logout() {
   const { activeUserID } = store.state.users;
   const usersData = copyObject(usersStorage.data);
@@ -393,6 +378,21 @@ export function getAppName(app_id) {
       return 'VK mp3 mod';
   }
 }
+
+// export function onTransitionEnd(el, anyTarget) {
+//   return new Promise((resolve) => {
+//     function onTransitionEndListener(event) {
+//       if (!anyTarget && event.target !== el) {
+//         return;
+//       }
+//
+//       el.removeEventListener('transitionend', onTransitionEndListener);
+//       resolve();
+//     }
+//
+//     el.addEventListener('transitionend', onTransitionEndListener);
+//   });
+// }
 
 // export async function downloadFile(src, withRedirect, progress) {
 //   const files = electron.remote.dialog.showOpenDialogSync({

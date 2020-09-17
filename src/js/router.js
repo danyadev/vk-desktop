@@ -15,12 +15,9 @@ export default createRouter({
 
   routes: [
     {
-      path: '',
-      redirect: '/auth'
-    },
-
-    {
       path: '/auth',
+      // По умолчанию будет открываться /auth
+      alias: '',
       component: Auth
     },
     {
