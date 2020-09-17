@@ -334,6 +334,7 @@ module.exports = {
     'vue/no-deprecated-data-object-declaration': 'off',
     'vue/no-shared-component-data': 'off',
     'vue/return-in-computed-property': 'off',
+    'vue/require-default-prop': 'off',
     'vue/valid-v-on': 'off',
     'vue/valid-v-once': 'off',
     'vue/valid-v-pre': 'off',

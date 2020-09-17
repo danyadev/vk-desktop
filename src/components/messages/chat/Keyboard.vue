@@ -60,6 +60,7 @@ import {
 import electron from 'electron';
 import { eventBus } from 'js/utils';
 import { addSnackbar } from 'js/snackbars';
+import vkapi from 'js/vkapi';
 import sendMessage from 'js/sendMessage';
 
 import Scrolly from '../../UI/Scrolly.vue';
@@ -264,7 +265,7 @@ export default {
 .keyboard_button.default,
 .keyboard_button.secondary {
   background: #004a961f;
-  color: #45586f;
+  color: var(--button-light-color);
 }
 
 .keyboard_button.primary {
@@ -284,7 +285,7 @@ export default {
 }
 
 .keyboard_service_key {
-  color: #0f5cb3;
+  color: var(--text-light-blue);
 }
 
 .keyboard_services_icon {

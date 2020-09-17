@@ -208,7 +208,7 @@ export default {
 .im_service_message {
   text-align: center;
   color: var(--text-dark-steel-gray);
-  margin: 8px 0 4px 0;
+  margin: 8px 15px 4px 15px;
 }
 
 .im_service_message b {

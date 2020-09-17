@@ -31,7 +31,7 @@
         name="trash"
         color="var(--icon-gray)"
         :data-tooltip="messages.length === 1 ? 'im_delete_msg' : 'im_delete_messages'"
-        @click="deleteMessages(selectedMessages, peer, true)"
+        @click="deleteMessages(messages, peer, true)"
       />
 
       <Icon

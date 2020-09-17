@@ -50,7 +50,6 @@ function toPercent(n) {
 
 export default {
   props: ['vclass', 'lock'],
-
   emits: ['scroll'],
 
   setup(props, { emit }) {

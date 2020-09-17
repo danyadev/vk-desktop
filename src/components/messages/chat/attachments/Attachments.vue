@@ -51,7 +51,7 @@ export default {
   padding-top: 5px;
 }
 
-.message_bubble_content > .im_attachments .im_attach_unknown:last-child {
+.message:not(.hasForward) .message_bubble_content > .im_attachments .im_attach_unknown:last-child {
   margin-bottom: -5px;
 }
 

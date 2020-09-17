@@ -16,11 +16,11 @@
           <div class="im_header_name text-overflow">
             <VKText>{{ title }}</VKText>
           </div>
-          <Icon v-if="owner && owner.verified" name="verified" class="verified white" />
+          <Icon v-if="owner && owner.verified" name="verified" class="verified" />
           <Icon
             v-if="peer && peer.isCasperChat"
             name="ghost"
-            color="var(--icon-blue)"
+            color="var(--icon-dark-blue)"
             class="im_header_ghost"
           />
           <Icon
@@ -127,12 +127,11 @@ export default {
 }
 
 .im_header_ghost {
-  opacity: .7;
   margin: -1px 0 0 3px;
 }
 
 .im_header_muted {
-  opacity: .7;
+  opacity: .8;
   width: 14px;
   height: 16px;
   margin-left: 3px;

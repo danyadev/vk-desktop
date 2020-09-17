@@ -1,5 +1,9 @@
 <template>
-  <div :class="['modals_container', { active: hasModals }]" tabindex="-1" @keydown.esc="onEscape">
+  <div
+    :class="['modals_container roboto-vk', { active: hasModals }]"
+    tabindex="-1"
+    @keydown.esc="onEscape"
+  >
     <TransitionGroup name="modal">
       <div v-for="modal of modals" :key="modal.name" class="modal_wrap" @click.stop="onClickToBg">
         <component :is="modal.name" :data-name="modal.name" v-bind="modal.props" />

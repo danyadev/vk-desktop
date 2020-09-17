@@ -220,12 +220,7 @@ img:not(.emoji) {
   width: 12px;
   height: 12px;
   vertical-align: middle;
-  color: var(--icon-dark-blue);
-}
-
-.verified.white {
-  opacity: .7;
-  color: #fff;
+  color: var(--icon-blue);
 }
 
 .icon-hover {

@@ -67,7 +67,7 @@ export default {
   display: flex;
 }
 
-@media screen and (max-width: 699px) {
+@media screen and (max-width: 719px) {
   .menu.left {
     display: none !important;
   }
@@ -84,15 +84,15 @@ export default {
   .messages_container.hasChat .im_header_back { display: block }
 }
 
-@media screen and (min-width: 700px) and (max-width: 850px) {
-  .im_peers_container { width: 43% }
-  .im_chat_container { width: 57% }
+@media screen and (min-width: 720px) and (max-width: 850px) {
+  .im_peers_container { width: 44% }
+  .im_chat_container { width: 56% }
 }
 
 @media screen and (min-width: 851px) {
-  /* 785px = 850px - 65px (ширина левого меню) */
-  .im_peers_container { width: calc(785px * 0.43) }
-  .im_chat_container { width: calc(100% - 785px * 0.43) }
+  /* 790px = 850px - 60px (ширина левого меню) */
+  .im_peers_container { width: calc(790px * .44) }
+  .im_chat_container { width: calc(100% - 790px * .44) }
 }
 
 @media screen and (min-width: 700px) {

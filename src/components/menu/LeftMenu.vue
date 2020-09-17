@@ -121,7 +121,7 @@ export default {
   display: flex;
   flex-direction: column;
   flex: none;
-  width: 65px;
+  width: 60px;
   height: 100%;
   padding-top: 15px;
   border-right: 1px solid var(--separator);
@@ -139,7 +139,7 @@ export default {
 .menu_item_counter {
   position: absolute;
   top: -3px;
-  left: 32px;
+  left: 30px;
   font-size: 12px;
   background: var(--red-light);
   color: var(--background);
@@ -167,10 +167,10 @@ export default {
 
 .menu_users_list {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   background: var(--background);
   width: 250px;
-  padding: 7px 8px;
+  padding: 7px 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .15),
               0 1px 2px rgba(0, 0, 0, .15);
   border-radius: 8px;

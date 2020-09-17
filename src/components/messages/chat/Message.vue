@@ -154,9 +154,8 @@ export default {
           flyTime = true;
         }
 
-        if (flyTime) {
-          classes.push('flyTime');
-        }
+        if (flyTime) classes.push('flyTime');
+        if (fwdCount) classes.push('hasForward');
 
         return classes;
       })
