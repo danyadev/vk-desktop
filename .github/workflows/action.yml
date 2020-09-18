@@ -27,6 +27,8 @@ jobs:
       run: yarn
     - name: Build Electron app
       run: yarn build
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
     - name: Create installer
       if: startsWith(matrix.os, 'windows')
       run: yarn win-setup
