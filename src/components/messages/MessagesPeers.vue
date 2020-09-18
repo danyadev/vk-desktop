@@ -133,9 +133,10 @@ export default {
     onMounted(() => {
       // Обнаруживаем первую загрузку
       // До этого момента LongPoll не запустится, так что проблем не будет
-      const stop = watch(() => state.peersList, () => {
+      const stop = watch(() => state.peersList, async () => {
         state.loading = false;
         stop();
+        await nextTick();
         onScroll(state.scrolly);
       });
 

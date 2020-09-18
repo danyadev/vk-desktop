@@ -14,6 +14,7 @@ export default {
   delete: 'Удалить',
   search: 'Поиск',
   add_account: 'Добавить аккаунт',
+  delete_account: 'Удалить аккаунт',
 
   // ----- Дата и время
   date_now: 'только что',

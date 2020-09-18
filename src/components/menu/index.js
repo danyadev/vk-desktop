@@ -1,7 +1,5 @@
 import { reactive, computed } from 'vue';
 import { getPhoto } from 'js/utils';
-import { openModal } from 'js/modals';
-import { usersStorage } from 'js/store/Storage';
 import store from 'js/store';
 import router from 'js/router';
 
@@ -25,34 +23,5 @@ function isActiveRoute(route) {
 export function openPage(route) {
   if (!isActiveRoute(route)) {
     router.replace(route);
-  }
-}
-
-// Работа с мультиаккаунтом еще не закончена
-// eslint-disable-next-line import/no-unused-modules
-export function setAccount(id) {
-  if (state.activeUserID === id) {
-    return;
-  }
-
-  if (state.activeUserID) {
-    usersStorage.update({
-      ...usersStorage.data,
-      activeUserID: id
-    });
-
-    window.location.reload();
-  } else {
-    store.commit('users/setActiveUser', id);
-  }
-}
-
-// Работа с мультиаккаунтом еще не закончена
-// eslint-disable-next-line import/no-unused-modules
-export function removeAccount(id) {
-  if (id === state.activeUserID) {
-    openModal('logout');
-  } else {
-    store.commit('users/removeUser', id);
   }
 }

@@ -22,13 +22,31 @@
       />
     </div>
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
+
+    <div class="auth_users roboto-vk">
+      <div
+        v-for="user of $store.state.users.users"
+        :key="user.id"
+        class="auth_user"
+        @click="setAccount(user.id)"
+      >
+        <img
+          :src="getPhoto(user)"
+          data-context-menu="account"
+          :data-id="user.id"
+        >
+        {{ user.first_name }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
+import { getPhoto } from 'js/utils';
 import { openModal } from 'js/modals';
 import { addSnackbar } from 'js/snackbars';
+import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 import { getAndroidToken } from '.';
 
@@ -52,6 +70,10 @@ export default {
       hidePassword: true,
 
       canAuth: computed(() => !state.loading && state.login && state.password)
+    });
+
+    onMounted(() => {
+      state.input.focus();
     });
 
     async function auth() {
@@ -92,12 +114,15 @@ export default {
       }
     }
 
-    onMounted(() => {
-      state.input.focus();
-    });
+    function setAccount(id) {
+      store.commit('users/setActiveUser', id);
+    }
 
     return {
       ...toRefs(state),
+
+      setAccount,
+      getPhoto,
       auth
     };
   }
@@ -158,5 +183,29 @@ export default {
 
 .auth_button {
   width: 250px;
+}
+
+.auth_users {
+  position: relative;
+  display: flex;
+  margin-top: 25px;
+  top: 10px;
+}
+
+.auth_user:not(:last-child) {
+  margin-right: 15px;
+}
+
+.auth_user {
+  border-radius: 10px;
+}
+
+.auth_user img {
+  display: block;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 4px;
+  cursor: pointer;
 }
 </style>

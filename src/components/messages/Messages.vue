@@ -95,7 +95,7 @@ export default {
   .im_chat_container { width: calc(100% - 790px * .44) }
 }
 
-@media screen and (min-width: 700px) {
+@media screen and (min-width: 720px) {
   .menu.bottom {
     display: none;
   }

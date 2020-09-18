@@ -62,8 +62,9 @@
 <script>
 import { computed, ref, toRefs } from 'vue';
 import { convertCount, getPhoto, moveArrItem, mouseOutWrapper } from 'js/utils';
+import { usersStorage } from 'js/store/Storage';
 import { openModal } from 'js/modals';
-import { state, openPage, setAccount } from '.';
+import { state, openPage } from '.';
 import store from 'js/store';
 import router from 'js/router';
 
@@ -80,6 +81,19 @@ export default {
     const onMouseOut = mouseOutWrapper(() => {
       isUsersListActive.value = false;
     });
+
+    function setAccount(id) {
+      if (state.activeUserID === id) {
+        return;
+      }
+
+      usersStorage.update({
+        ...usersStorage.data,
+        activeUserID: id
+      });
+
+      window.location.reload();
+    }
 
     function onClick(user_id) {
       if (user_id === state.activeUserID) {
@@ -155,7 +169,7 @@ export default {
   background: var(--red-light);
   color: var(--background);
   border-radius: 10px;
-  padding: 2px 5px 2px 4px;
+  padding: 2px 5px;
   min-width: 18px;
   text-align: center;
 }

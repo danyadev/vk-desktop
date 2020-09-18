@@ -51,7 +51,7 @@ export default {
 .context_menu {
   position: relative;
   width: 250px;
-  padding: 6px 0;
+  padding: 5px 0;
   background: var(--background);
   border-radius: 6px;
   box-shadow: 0 0 4px rgba(0, 0, 0, .2),

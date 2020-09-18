@@ -124,11 +124,12 @@ function parseLongPollMessage(data) {
   return {
     peer: {
       id: data[2],
-      isChannel:
+      isChannel: (
         // Сообщение от повторного вступления в канал
         !out && flag('deleted') ||
-        // Сообщение с некоторым сервисным сообщением
-        !!data[5].source_is_channel,
+        // Сообщение с chat_title_update или chat_photo_remove
+        !!data[5].source_is_channel
+      ),
       isCasperChat: !!data[5].ttl,
       keyboard: keyboard && !keyboard.inline && keyboard,
       mentions
@@ -728,10 +729,9 @@ export default {
       const conversation = store.state.messages.conversations[peer_id];
       const peer = conversation && conversation.peer;
 
-      // Изменение названия беседы (1)
-      // и включение/выключение клавиатуры (11)
-      // обрабатываются в 4 событии
-      if (!peer || [1, 11].includes(type)) {
+      // Изменение названия беседы (1) и вкл/выкл клавиатуры (11) обрабатываются в 4 событии.
+      // 19 событие (вкл/выкл группового звонка) пока не нужно обрабатывать
+      if (!peer || [1, 11, 19].includes(type)) {
         return;
       }
 

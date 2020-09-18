@@ -223,7 +223,7 @@ img:not(.emoji) {
 .act_menu_item {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
+  padding: 9px 12px;
   cursor: pointer;
   color: var(--text-primary);
   transition: background-color .3s;

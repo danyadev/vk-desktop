@@ -17,7 +17,8 @@ const getComponentName = (name) => capitalize(name) + 'ContextMenu';
 export default {
   components: [
     'peer',
-    'message'
+    'message',
+    'account'
   ].reduce((components, rawName) => {
     const name = getComponentName(rawName);
     components[name] = require(`./${name}.vue`).default;
