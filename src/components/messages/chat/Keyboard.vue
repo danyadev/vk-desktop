@@ -1,5 +1,5 @@
 <template>
-  <Scrolly :vclass="['keyboard', { inline: msg.keyboard.inline }]">
+  <Scrolly :vclass="['keyboard', { inline: keyboard.inline }]">
     <div v-for="(line, i) of buttons" :key="i" class="keyboard_line">
       <Ripple
         v-for="{ action, color } of line"
@@ -71,7 +71,7 @@ import Icon from '../../UI/Icon.vue';
 const { shell } = electron.remote;
 
 export default {
-  props: ['peer_id', 'msg'],
+  props: ['peer_id', 'keyboard', 'msg_id'],
 
   components: {
     Scrolly,
@@ -82,7 +82,7 @@ export default {
 
   setup(props) {
     const state = reactive({
-      buttons: computed(() => props.msg.keyboard.buttons || []),
+      buttons: computed(() => props.keyboard.buttons || []),
       activeCallbackButtons: []
     });
 
@@ -161,8 +161,8 @@ export default {
             peer_id: props.peer_id,
             keyboardButton: {
               action,
-              author_id: props.msg.keyboard.author_id,
-              one_time: props.msg.keyboard.one_time
+              author_id: props.keyboard.author_id,
+              one_time: props.keyboard.one_time
             }
           });
           break;
@@ -187,10 +187,14 @@ export default {
           const length = state.activeCallbackButtons.push({ action });
           const btn = state.activeCallbackButtons[length - 1];
 
+          const param = props.msg_id
+            ? { message_id: props.msg_id }
+            : { author_id: props.keyboard.author_id };
+
           const event_id = await vkapi('messages.sendMessageEvent', {
             peer_id: props.peer_id,
-            message_id: props.msg.id,
-            payload: action.payload
+            payload: action.payload,
+            ...param
           });
 
           btn.event_id = event_id;
@@ -280,7 +284,7 @@ export default {
   background: #e64646;
 }
 
-.keyboard_button > img {
+.keyboard_button > img:not(.emoji) {
   height: 24px;
 }
 

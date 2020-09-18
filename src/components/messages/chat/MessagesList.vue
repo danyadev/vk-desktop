@@ -137,8 +137,7 @@ export default {
           children.push(
             h(Carousel, {
               peer_id: props.peer_id,
-              author_id: msg.from,
-              template: msg.template
+              msg
             })
           );
         }

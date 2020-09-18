@@ -1,6 +1,6 @@
 <template>
   <Touch class="im_carousel">
-    <div v-for="(item, i) of template.elements" :key="i" class="im_carousel_item">
+    <div v-for="(item, i) of msg.template.elements" :key="i" class="im_carousel_item">
       <img v-if="item.photo" :src="getPhotoFromSizes(item.photo.sizes, 'x').url">
 
       <div class="im_carousel_content">
@@ -17,9 +17,10 @@
           :peer_id="peer_id"
           :keyboard="{
             inline: true,
-            author_id,
+            author_id: msg.from,
             buttons: item.buttons.map((btn) => [btn])
           }"
+          :msg_id="msg.id"
         />
       </div>
     </div>
@@ -36,7 +37,7 @@ import VKText from '../../UI/VKText.vue';
 import Keyboard from './Keyboard.vue';
 
 export default {
-  props: ['peer_id', 'author_id', 'template'],
+  props: ['peer_id', 'msg'],
 
   components: {
     Touch,

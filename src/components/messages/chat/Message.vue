@@ -70,7 +70,12 @@
             </div>
           </div>
 
-          <Keyboard v-if="msg.keyboard" :peer_id="peer_id" :msg="msg" />
+          <Keyboard
+            v-if="msg.keyboard"
+            :peer_id="peer_id"
+            :keyboard="msg.keyboard"
+            :msg_id="msg.id"
+          />
         </div>
 
         <MessageExpireTime
