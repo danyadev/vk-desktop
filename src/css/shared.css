@@ -38,13 +38,6 @@
   src: url('~assets/Roboto-VK-500.woff2');
 }
 
-@font-face {
-  font-family: Segoe UI;
-  font-weight: 400;
-  font-display: block;
-  src: url('~assets/SegoeUI.ttf');
-}
-
 body {
   font-family: BlinkMacSystemFont, Roboto;
   font-size: 15px;
@@ -81,10 +74,6 @@ img:not(.emoji) {
   --titlebar-height: 22px;
 
   letter-spacing: .03em;
-}
-
-.root:not(.mac) .segoe-ui {
-  font-family: Segoe UI;
 }
 
 .root:not(.mac) .roboto-vk {

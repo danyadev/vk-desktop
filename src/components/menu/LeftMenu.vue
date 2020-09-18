@@ -7,7 +7,7 @@
         @click="isUsersListActive = !isUsersListActive"
       >
 
-      <div :class="['menu_users_list', { active: isUsersListActive }]" @mouseout="onMouseOut">
+      <div :class="['menu_users_list roboto-vk', { active: isUsersListActive }]" @mouseout="onMouseOut">
         <div
           v-for="user of usersList"
           :key="user.id"
@@ -18,7 +18,7 @@
           <div v-if="user.id === activeUserID" class="menu_user_active_icon">
             <Icon name="done_circle_mini" color="var(--icon-blue)" />
           </div>
-          <div class="menu_user_name text-overflow segoe-ui">
+          <div class="menu_user_name text-overflow">
             {{ user.first_name }} {{ user.last_name }}
           </div>
         </div>
@@ -27,7 +27,7 @@
           <div class="menu_user_photo add-profile">
             <Icon name="plus" color="var(--icon-blue)" />
           </div>
-          <div class="menu_user_name text-overflow segoe-ui">
+          <div class="menu_user_name text-overflow">
             {{ l('add_account') }}
           </div>
         </div>

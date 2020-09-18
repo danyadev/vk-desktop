@@ -1,5 +1,5 @@
 <template>
-  <div :class="['titlebar segoe-ui', { maximized }]">
+  <div :class="['titlebar', { maximized }]">
     <div ref="drag" class="titlebar_drag">{{ l('vk_desktop') }}</div>
     <div v-if="!isMac" class="titlebar_buttons">
       <div
