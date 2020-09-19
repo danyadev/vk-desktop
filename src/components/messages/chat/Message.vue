@@ -215,9 +215,7 @@ export default {
         !state.selectedMessages.includes(msg.id)
       )).map((msg) => msg.id);
 
-      for (const id of list) {
-        store.commit('messages/addSelectedMessage', id);
-      }
+      store.commit('messages/addSelectedMessages', list);
     }
 
     function onMouseMove() {

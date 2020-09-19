@@ -263,6 +263,15 @@ export default {
 
     addSelectedMessage(state, id) {
       state.selectedMessages.push(id);
+      state.selectedMessages.sort((a, b) => a - b);
+    },
+
+    addSelectedMessages(state, ids) {
+      for (const id of ids) {
+        state.selectedMessages.push(+id);
+      }
+
+      state.selectedMessages.sort((a, b) => a - b);
     },
 
     removeSelectedMessage(state, id) {
