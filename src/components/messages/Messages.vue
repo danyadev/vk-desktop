@@ -81,13 +81,13 @@ export default {
 
 @media screen and (min-width: 720px) and (max-width: 850px) {
   .im_peers_container { width: 44% }
-  .im_chat_container { width: 56% }
+  .messages_container > .im_chat_container { width: 56% }
 }
 
 @media screen and (min-width: 851px) {
   /* 790px = 850px - 60px (ширина левого меню) */
   .im_peers_container { width: calc(790px * .44) }
-  .im_chat_container { width: calc(100% - 790px * .44) }
+  .messages_container > .im_chat_container { width: calc(100% - 790px * .44) }
 }
 
 @media screen and (min-width: 720px) {

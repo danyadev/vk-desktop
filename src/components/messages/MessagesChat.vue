@@ -80,6 +80,7 @@ export default {
 .im_chat_container {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .im_chat_wrap {
