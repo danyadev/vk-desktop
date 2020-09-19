@@ -724,7 +724,7 @@ export default {
   52: {
     // Изменение данных чата
     // [type, peer_id, extra]
-    handler([type, peer_id, extra]) {
+    async handler([type, peer_id, extra]) {
       const isMe = extra === store.state.users.activeUserID;
       const conversation = store.state.messages.conversations[peer_id];
       const peer = conversation && conversation.peer;
@@ -745,6 +745,9 @@ export default {
         case 3: // Назначен новый администратор
         case 4: // Изменение прав в беседе
         case 9: // Разжалован администратор
+          // Подождем, пока обработаются другие события по типу удаления сообщения
+          // админа беседы, чтобы там не появилась лишняя метка непрочитанного сообщения
+          await timer(0);
           loadConversation(peer_id);
           break;
 
