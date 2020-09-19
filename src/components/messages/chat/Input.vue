@@ -45,11 +45,11 @@
             v-if="hasKeyboard"
             name="keyboard"
             :color="showKeyboard ? 'var(--accent)' : 'var(--icon-dark-gray)'"
-            :class="['keyboard_btn icon-hover', { active: showKeyboard }]"
+            :class="['input_keyboard_btn icon-hover', { active: showKeyboard }]"
             @click="showKeyboard = !showKeyboard"
           />
 
-          <img class="emoji_btn icon-hover" src="~assets/emoji_icon.svg">
+          <img class="input_emoji_btn icon-hover" src="~assets/emoji_icon.svg">
         </div>
 
         <img class="send_btn icon-hover" src="~assets/im_send.svg" @click="send">
@@ -316,6 +316,7 @@ export default {
 
 .chat_input {
   position: relative;
+  display: flex;
   flex-grow: 1;
   overflow: auto;
   margin: 6px 0;
@@ -325,11 +326,12 @@ export default {
 }
 
 .chat_input_area {
+  flex-grow: 1;
   color: var(--field-color);
   min-height: 18px;
   max-height: 180px;
   line-height: 18px;
-  padding: 10px 35px 10px 13px;
+  padding: 10px 13px;
   overflow-x: auto;
 }
 
@@ -347,28 +349,25 @@ export default {
 .chat_input_area i { font-style: normal }
 .chat_input_area u { text-decoration: none }
 
-.chat_input.hasKeyboard .chat_input_area {
-  padding-right: 68px;
+.input_keyboard_btn {
+  flex: none;
 }
 
-.emoji_btn, .keyboard_btn {
-  position: absolute;
-  bottom: 7px;
+.input_emoji_btn {
+  margin: 0 8px 0 4px;
+  height: 24px;
 }
 
-.emoji_btn {
-  right: 8px;
+.input_keyboard_btn, .input_emoji_btn {
+  margin-top: auto;
+  margin-bottom: 7px;
 }
 
-.keyboard_btn {
-  right: 36px;
-}
-
-.keyboard_btn.active {
+.input_keyboard_btn.active {
   opacity: .9;
 }
 
-.emoji_btn:active, .keyboard_btn:active {
+.input_emoji_btn:active, .input_keyboard_btn:active {
   transform: translateY(1px);
 }
 
