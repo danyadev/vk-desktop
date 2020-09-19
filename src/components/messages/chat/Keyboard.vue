@@ -213,9 +213,12 @@ export default {
 
 <style>
 .keyboard {
-  max-height: 40vh;
   padding: 8px 12px 12px 12px;
   user-select: none;
+}
+
+.keyboard:not(.inline) {
+  max-height: 40vh;
 }
 
 /* Отображается в карусели */
