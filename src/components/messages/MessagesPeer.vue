@@ -176,12 +176,6 @@ export default {
         });
       }
 
-      if (!state.isOpenedChat && activeChat) {
-        eventBus.emit('messages:event', 'closeChat', {
-          peer_id: activeChat
-        });
-      }
-
       await router.replace({
         name: 'chat',
         params: {

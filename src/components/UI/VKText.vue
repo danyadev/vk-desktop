@@ -1,7 +1,7 @@
 <script>
 import { h, Fragment, computed } from 'vue';
 import electron from 'electron';
-import { createParser, unescape, eventBus } from 'js/utils';
+import { createParser, unescape } from 'js/utils';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -73,15 +73,8 @@ export default {
             async onClick() {
               const url = new URL(block.link);
               const params = new Map(url.searchParams);
-              const route = router.currentRoute.value;
 
               function openChat(peer_id) {
-                if (route.name === 'chat') {
-                  eventBus.emit('messages:event', 'closeChat', {
-                    peer_id: route.params.id
-                  });
-                }
-
                 router.replace(`/messages/${peer_id}`);
               }
 
@@ -253,7 +246,9 @@ const emojiParser = createParser({
 });
 
 const mentionParser = createParser({
-  regexp: /\[(club|id)(\d+)\|(.+?)\]/g,
+  // public нужен для предварительного отображения сообщения с
+  // упоминанием вида [public{xxx}|text]
+  regexp: /\[(club|public|id)(\d+)\|(.+?)\]/g,
   parseText: emojiParser,
   parseElement(mentionText, match) {
     const [, type, id, text] = match;

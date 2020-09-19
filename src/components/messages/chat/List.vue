@@ -49,6 +49,7 @@
 
 <script>
 import { reactive, computed, onMounted, onActivated, nextTick, toRefs } from 'vue';
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import {
   createQueueManager,
   callWithDelay,
@@ -120,6 +121,20 @@ export default {
       jumpToStartUnread();
     });
 
+    function saveScrollData() {
+      const { scrollTop, clientHeight, scrollHeight } = state.list;
+      const isScrolledDown = scrollHeight && scrollTop + clientHeight === scrollHeight;
+
+      state.scrollTop = scrollTop;
+      state.isScrolledDownOnClose = isScrolledDown;
+      state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;
+    }
+
+    // /messages/xxx -> /messages
+    onBeforeRouteLeave(saveScrollData);
+    // /messages/xxx -> messages/yyy
+    onBeforeRouteUpdate(saveScrollData);
+
     onActivated(() => {
       state.startInRead = props.peer && props.peer.in_read;
 
@@ -147,13 +162,6 @@ export default {
       const isScrolledDown = scrollHeight && scrollTop + clientHeight === scrollHeight;
 
       switch (type) {
-        // TODO Дождаться реализации onBeforeDeactivate и перенести туда этот код
-        case 'closeChat':
-          state.scrollTop = scrollTop;
-          state.isScrolledDownOnClose = isScrolledDown;
-          state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;
-          break;
-
         case 'checkScrolling':
           if (data.unlockUp) state.loadedUp = false;
           if (data.unlockDown) state.loadedDown = false;

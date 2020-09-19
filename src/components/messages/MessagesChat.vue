@@ -1,6 +1,6 @@
 <template>
   <div class="im_chat_container">
-    <Header :peer_id="peer_id" :peer="peer" @close="closeChat" />
+    <Header :peer_id="peer_id" :peer="peer" @close="$router.replace('/messages')" />
     <div class="im_chat_wrap">
       <List :peer_id="peer_id" :peer="peer" />
       <Input :peer_id="peer_id" :peer="peer" />
@@ -17,8 +17,7 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, onMounted, onActivated } from 'vue';
-import { eventBus } from 'js/utils';
+import { reactive, computed, onMounted, onActivated } from 'vue';
 import { loadConversation, loadConversationMembers } from 'js/messages';
 import store from 'js/store';
 import router from 'js/router';
@@ -55,14 +54,6 @@ export default {
       })
     });
 
-    function closeChat() {
-      eventBus.emit('messages:event', 'closeChat', {
-        peer_id: state.peer_id
-      });
-
-      router.replace('/messages');
-    }
-
     onMounted(() => {
       if (state.peer_id > 2e9) {
         loadConversationMembers(state.peer_id, true);
@@ -80,10 +71,7 @@ export default {
       }
     });
 
-    return {
-      ...toRefs(state),
-      closeChat
-    };
+    return state;
   }
 };
 </script>

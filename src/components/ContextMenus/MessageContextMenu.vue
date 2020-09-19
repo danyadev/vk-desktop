@@ -118,10 +118,6 @@ export default {
     function forward() {
       store.state.messages.tmpForwardingMessages = [state.msg];
 
-      eventBus.emit('messages:event', 'closeChat', {
-        peer_id
-      });
-
       router.replace({
         name: 'forward-to',
         params: {

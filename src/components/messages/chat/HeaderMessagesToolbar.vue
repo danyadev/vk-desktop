@@ -95,10 +95,6 @@ export default {
           (id) => getMessageById(id, props.peer_id)
         );
 
-        eventBus.emit('messages:event', 'closeChat', {
-          peer_id: props.peer_id
-        });
-
         router.replace({
           name: 'forward-to',
           params: {

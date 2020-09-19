@@ -16,7 +16,6 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { eventBus } from 'js/utils';
 import store from 'js/store';
 import router from 'js/router';
 
@@ -46,10 +45,6 @@ export default {
       if (state.route.name === 'forward-to') {
         return router.replace(`/messages/${state.route.params.fromId}`);
       }
-
-      eventBus.emit('messages:event', 'closeChat', {
-        peer_id: state.peer_id
-      });
 
       router.replace('/messages');
     }
