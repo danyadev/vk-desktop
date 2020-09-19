@@ -7,7 +7,7 @@
     @click="$router.go(-1)"
   />
 
-  <AuthForm v-if="!isConfirm" @confirm="onConfirm" @auth="onAuth" />
+  <AuthForm v-if="!isConfirm" :onlyAddUser="onlyAddUser" @confirm="onConfirm" @auth="onAuth" />
   <AuthConfirm v-else :params="params" @back="onBack" @auth="onAuth" />
 </template>
 

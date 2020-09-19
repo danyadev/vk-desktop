@@ -23,7 +23,7 @@
     </div>
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
 
-    <div class="auth_users roboto-vk">
+    <div v-if="!onlyAddUser" class="auth_users roboto-vk">
       <div
         v-for="user of $store.state.users.users"
         :key="user.id"
@@ -53,6 +53,7 @@ import { getAndroidToken } from '.';
 import Button from '../UI/Button.vue';
 
 export default {
+  props: ['onlyAddUser'],
   emits: ['confirm', 'auth'],
 
   components: {
