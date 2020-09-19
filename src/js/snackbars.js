@@ -1,5 +1,5 @@
 import { reactive } from 'vue';
-import { timer } from './utils';
+import { timer, createCallablePromise } from './utils';
 
 const snackbars = [];
 let id = 0;
@@ -12,9 +12,15 @@ let inWork = false;
 
 async function execute() {
   const data = snackbars.shift();
+  const closePromise = createCallablePromise();
 
+  data.close = closePromise.resolve;
   snackbarsState.snackbar = data;
-  await timer(data.timeout || 2000);
+
+  await Promise.race([
+    timer(data.duration || 2000),
+    closePromise
+  ]);
 
   if (snackbars.length) {
     execute();
@@ -29,7 +35,8 @@ interface Data {
   text: string
   icon?: string // название svg иконки
   color?: string // цвет иконки (по умолчанию 'var(--icon-blue)')
-  timeout?: number // время отображения снекбара в мс (по умолчанию 2000)
+  duration?: number // время отображения снекбара в мс (по умолчанию 2000)
+  closable?: boolean // добавлять ли иконку закрытия снекбара (по умолчанию false)
 }
 */
 export function addSnackbar(data) {

@@ -205,6 +205,21 @@ export function moveArrItem(arr, from, to) {
   return arr;
 }
 
+export function createCallablePromise() {
+  let resolve;
+  let reject;
+
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  promise.resolve = resolve;
+  promise.reject = reject;
+
+  return promise;
+}
+
 // 125 -> 125
 // 12.732 -> 12K
 // 5.324.267 -> 5M

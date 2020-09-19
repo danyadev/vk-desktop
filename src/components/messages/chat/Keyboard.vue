@@ -120,7 +120,11 @@ export default {
 
       switch (data.action.type) {
         case 'show_snackbar':
-          addSnackbar({ text: data.action.text });
+          addSnackbar({
+            text: data.action.text,
+            duration: 8000,
+            closable: true
+          });
           break;
 
         case 'open_link':

@@ -83,7 +83,7 @@ export default {
 .context_menu_wrap {
   position: absolute;
   top: 0;
-  z-index: 3;
+  z-index: 4;
   width: 100%;
   height: 100%;
   visibility: hidden;

@@ -8,9 +8,22 @@
           :color="snackbar.color || 'var(--icon-blue)'"
           width="24"
           height="24"
+          class="snackbar_icon"
         />
 
-        {{ snackbar.text }}
+        <div>
+          <VKText mention="attachment">{{ snackbar.text }}</VKText>
+        </div>
+
+        <Icon
+          v-if="snackbar.closable"
+          name="close"
+          color="var(--icon-dark-gray)"
+          width="14"
+          height="14"
+          class="snackbar_close_icon"
+          @click="snackbar.close"
+        />
       </div>
     </Transition>
   </div>
@@ -20,10 +33,12 @@
 import { snackbarsState } from 'js/snackbars';
 
 import Icon from './UI/Icon.vue';
+import VKText from './UI/VKText.vue';
 
 export default {
   components: {
-    Icon
+    Icon,
+    VKText
   },
 
   setup() {
@@ -39,7 +54,7 @@ export default {
 
 .snackbar-enter-from, .snackbar-leave-to {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(15px);
 }
 
 .snackbars {
@@ -52,18 +67,17 @@ export default {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  padding-bottom: 20px;
+  padding-bottom: 25px;
 }
 
 .snackbar {
   display: flex;
   align-items: center;
-  position: relative;
+  text-align: center;
   padding: 5px 12px;
-  margin-top: 10px;
   max-width: 80%;
   min-height: 45px;
-  max-height: 200px;
+  pointer-events: auto;
   background: var(--background);
   border: 1px solid var(--separator-dark);
   border-radius: 10px;
@@ -71,7 +85,14 @@ export default {
               0 0 2px 0 rgba(0, 0, 0, .08);
 }
 
-.snackbar svg {
+.snackbar_icon {
+  flex: none;
   margin-right: 10px;
+}
+
+.snackbar_close_icon {
+  flex: none;
+  margin-left: 10px;
+  cursor: pointer;
 }
 </style>
