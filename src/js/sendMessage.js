@@ -81,7 +81,7 @@ export default async function sendMessage({
       date: (Date.now() / 1000).toFixed(),
       random_id,
       fwdCount: fwdMessages.length,
-      fwdMessages: fwdMessages,
+      fwdMessages,
       attachments: {},
       hasReplyMsg: !!params.reply_to,
       replyMsg: params.reply_to && getMessage(peer_id, params.reply_to),

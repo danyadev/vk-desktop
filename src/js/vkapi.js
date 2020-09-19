@@ -167,8 +167,6 @@ function vkapi(name, params, { android, vkme } = {}) {
     });
 
     if (data.execute_errors) {
-      console.warn('[vkapi] error', data.execute_errors);
-
       let hasHandler = false;
 
       for (const error of data.execute_errors) {
@@ -189,8 +187,6 @@ function vkapi(name, params, { android, vkme } = {}) {
     if (data.response !== undefined) {
       return resolve(data.response);
     }
-
-    console.warn('[vkapi] error', data.error);
 
     const errorHandler = errorHandlers[data.error.error_code];
 

@@ -3,9 +3,7 @@ import { h, Fragment, computed } from 'vue';
 import electron from 'electron';
 import { createParser, unescape } from 'js/utils';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
-import vkapi from 'js/vkapi';
-import store from 'js/store';
-import router from 'js/router';
+import internalLinkResolver from 'js/internalLinkResolver';
 import domains from 'js/json/domains.json';
 
 export default {
@@ -16,15 +14,11 @@ export default {
       default: true
     },
     // Парсить ли ссылки и хештеги
-    link: {
-      type: Boolean
-    },
+    link: Boolean,
     // text - преобразовать упоминание в нормальный вид ([id|text] -> text)
     // attachment - выделить упоминание синим цветом
     // link - выделить синим цветом и сделать кликабельным
-    mention: {
-      type: String
-    }
+    mention: String
   },
 
   setup(props, { slots }) {
@@ -44,18 +38,21 @@ export default {
           return mentionContent;
         }
 
+        let attrs;
+
         if (props.mention === 'link') {
-          return [
-            h('div', {
-              class: props.mention === 'link' ? 'link' : 'mention_attachment'
-              // onClick() {}
-            }, mentionContent)
-          ];
+          attrs = {
+            class: 'link',
+            onClick() {
+              const path = block.id > 0 ? `id${block.id}` : `club${-block.id}`;
+              electron.shell.openItem(`https://vk.com/${path}`);
+            }
+          };
+        } else {
+          attrs = { class: 'mention_attachment' };
         }
 
-        return [
-          h('div', { class: 'mention_attachment' }, mentionContent)
-        ];
+        return [h('div', attrs, mentionContent)];
       }
 
       if (block.type === 'emoji') {
@@ -70,88 +67,7 @@ export default {
         return [
           h('div', {
             class: 'link',
-            async onClick() {
-              const url = new URL(block.link);
-              const params = new Map(url.searchParams);
-
-              function openChat(peer_id) {
-                router.replace(`/messages/${peer_id}`);
-              }
-
-              if (url.host === 'm.vk.com') {
-                if (params.get('act') === 'show') {
-                  if (params.has('chat')) {
-                    return openChat(2e9 + +params.get('chat'));
-                  }
-
-                  if (params.has('peer')) {
-                    return openChat(+params.get('peer'));
-                  }
-                }
-
-                if (url.pathname.startsWith('/write')) {
-                  return openChat(+url.pathname.slice(6));
-                }
-              }
-
-              if (url.host === 'vk.com') {
-                if (url.pathname === '/im' && params.has('sel')) {
-                  const sel = params.get('sel');
-
-                  if (sel.startsWith('c')) {
-                    return openChat(2e9 + +sel.slice(1));
-                  }
-
-                  return openChat(+sel);
-                }
-
-                if (url.pathname.startsWith('/write')) {
-                  return openChat(+url.pathname.slice(6));
-                }
-              }
-
-              if (url.host === 'vk.me') {
-                // if (url.pathname.startsWith('/join/') && url.pathname.length > 6) {
-                //   TODO chat preview
-                //   vkapi messages.getChatPreview link: block.link
-                // }
-
-                const domain = url.pathname.slice(1);
-
-                if (!domain.includes('/')) {
-                  const idMatch = domain.match(/(id|club)(\d+)$/);
-
-                  if (idMatch) {
-                    return openChat(idMatch[1] === 'id' ? +idMatch[2] : -idMatch[2]);
-                  }
-
-                  const localProfile = Object.values(store.state.profiles).find((profile) => (
-                    profile.domain === domain || profile.screen_name === domain
-                  ));
-
-                  if (localProfile) {
-                    return openChat(localProfile.id);
-                  }
-
-                  const profileInfo = await vkapi('utils.resolveScreenName', {
-                    screen_name: domain
-                  });
-
-                  // В случае, когда домен неверный, приходит []
-                  if (!Array.isArray(profileInfo)) {
-                    if (profileInfo.type === 'user') {
-                      return openChat(+profileInfo.object_id);
-                    }
-
-                    if (profileInfo.type === 'group') {
-                      return openChat(-profileInfo.object_id);
-                    }
-                  }
-                }
-              }
-
-              electron.shell.openItem(block.link);
-            }
+            onClick: () => internalLinkResolver(block.link)
           }, [block.value])
         ];
       }
