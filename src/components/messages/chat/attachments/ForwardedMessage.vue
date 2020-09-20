@@ -22,7 +22,7 @@
         <VKText :inline="false" mention="link" link>{{ msg.text }}</VKText>
       </div>
 
-      <Attachments :msg="msg" />
+      <Attachments :attachments="msg.attachments" />
 
       <template v-if="msg.fwdCount || msg.hasReplyMsg">
         <div
@@ -51,7 +51,6 @@ import { getPeerTitle } from 'js/messages';
 import { getFullDate } from 'js/date';
 import store from 'js/store';
 
-import Attachments from './Attachments.vue';
 import Forwarded from './Forwarded.vue';
 import VKText from '../../../UI/VKText.vue';
 
@@ -59,7 +58,6 @@ export default {
   props: ['peer_id', 'msg', 'isCustomView', 'fwdDepth'],
 
   components: {
-    Attachments,
     Forwarded,
     VKText
   },
@@ -139,7 +137,7 @@ export default {
 }
 
 .attach_fwd_msg_content {
-  margin-top: 5px;
+  margin-top: 6px;
 }
 
 .attach_fwd_msg_text.isContentDeleted {

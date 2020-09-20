@@ -18,11 +18,10 @@ export default {
   props: ['peer_id', 'msg', 'isCustomView', 'fwdDepth'],
 
   setup(props) {
-    // eslint-disable-next-line vue/no-setup-props-destructure
-    const { fwdMessages, replyMsg } = props.msg;
-
     return {
-      fwdMessages: replyMsg ? [replyMsg] : fwdMessages
+      fwdMessages: props.msg.replyMsg
+        ? [props.msg.replyMsg]
+        : props.msg.fwdMessages
     };
   }
 };
@@ -32,10 +31,6 @@ export default {
 .attach_forwarded {
   position: relative;
   padding-left: 10px;
-}
-
-.attach_forwarded::before {
-  background: var(--forwarded-left-border);
 }
 
 .im_attachments + .attach_forwarded {

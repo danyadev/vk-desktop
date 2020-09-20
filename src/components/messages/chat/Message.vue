@@ -49,7 +49,7 @@
               <VKText :inline="false" link mention="link">{{ msg.text }}</VKText>
             </div>
 
-            <Attachments :msg="msg" />
+            <Attachments :attachments="msg.attachments" />
 
             <Forwarded
               v-if="msg.fwdCount"
@@ -100,7 +100,6 @@ import Keyboard from './Keyboard.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 import MessageExpireTime from './MessageExpireTime.vue';
 import Reply from './attachments/Reply.vue';
-import Attachments from './attachments/Attachments.vue';
 import Forwarded from './attachments/Forwarded.vue';
 
 export default {
@@ -112,7 +111,6 @@ export default {
     SendMsgErrorMenu,
     MessageExpireTime,
     Reply,
-    Attachments,
     Forwarded
   },
 

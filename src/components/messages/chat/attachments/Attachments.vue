@@ -3,17 +3,17 @@ import { h } from 'vue';
 import components from '.';
 
 export default {
-  props: ['msg'],
+  props: ['attachments'],
 
   render(props) {
     const attachments = [];
-    const attachNames = Object.keys(props.msg.attachments);
+    const attachNames = Object.keys(props.attachments);
     // Вложения, с которыми не будут отображаться другие вложения (будут скрыты)
     const singleAttachments = ['sticker', 'gift', 'audio_message'];
     const hasSingleAttach = singleAttachments.some((attach) => attachNames.includes(attach));
 
-    for (const type in props.msg.attachments) {
-      const attach = props.msg.attachments[type];
+    for (const type in props.attachments) {
+      const attach = props.attachments[type];
       const component = components[type];
 
       if (hasSingleAttach && !singleAttachments.includes(type)) {
@@ -63,6 +63,12 @@ export default {
   left: 0;
   width: 2px;
   border-radius: 1px;
-  background-color: var(--background-blue);
+  background: var(--background-blue);
+}
+
+.attach_title {
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: var(--text-dark-steel-gray);
 }
 </style>

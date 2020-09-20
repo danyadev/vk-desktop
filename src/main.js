@@ -7,6 +7,7 @@ import shortcut from 'js/shortcut';
 
 import App from './components/App.vue';
 import ForwardedMessage from './components/messages/chat/attachments/ForwardedMessage.vue';
+import Attachments from './components/messages/chat/attachments/Attachments.vue';
 
 const app = createApp(App);
 
@@ -16,6 +17,7 @@ app.use(router);
 app.config.globalProperties.l = getTranslate;
 
 app.component('ForwardedMessage', ForwardedMessage);
+app.component('Attachments', Attachments);
 
 app.mount('body');
 

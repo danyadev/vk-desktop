@@ -125,6 +125,7 @@ export default {
   im_selected_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
 
   // Вложения в сообщениях
+  im_open_comment: 'Открыть комментарий',
   im_attachment_deleted: 'Вложение удалено',
   is_message_expired: 'Сообщение исчезло',
   im_replied: 'Ответ на сообщение',

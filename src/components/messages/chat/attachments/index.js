@@ -1,9 +1,12 @@
 import Sticker from './Sticker.vue';
+import WallReply from './WallReply.vue';
 
 export const supportedAttachments = new Set([
-  'sticker'
+  'sticker',
+  'wall_reply'
 ]);
 
 export default {
-  sticker: Sticker
+  sticker: Sticker,
+  wall_reply: WallReply
 };

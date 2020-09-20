@@ -54,9 +54,40 @@ export function parseMessage(message) {
   const fwdCount = message.fwd_messages ? message.fwd_messages.length : 0;
   const hasReplyMsg = !!message.reply_message;
   const hasAttachment = !!(fwdCount || hasReplyMsg || message.attachments.length);
+
+  return {
+    id: message.id,
+    from: message.from_id,
+    out: message.from_id === store.state.users.activeUserID,
+    text: escape(message.text).replace(/\n/g, '<br>'),
+    date: message.date,
+    peer_id: message.peer_id,
+    conversation_msg_id: message.conversation_message_id,
+    random_id: message.random_id,
+    action: message.action,
+    hasAttachment,
+    fwdCount,
+    fwdMessages: (message.fwd_messages || []).map(parseMessage),
+    attachments: parseAttachments(message.attachments),
+    hasReplyMsg,
+    replyMsg: hasReplyMsg ? parseMessage(message.reply_message) : null,
+    keyboard: message.keyboard,
+    hasTemplate: !!message.template,
+    template: message.template,
+    hidden: !!message.is_hidden,
+    editTime: message.update_time || 0,
+    was_listened: !!message.was_listened,
+    isContentDeleted: !message.text && !message.action && !hasAttachment,
+    expireTtl: message.expire_ttl || message.ttl || 0,
+    isExpired: !!message.is_expired,
+    fromLongPoll: false
+  };
+}
+
+export function parseAttachments(list) {
   const attachments = {};
 
-  for (const attachDescription of message.attachments) {
+  for (const attachDescription of list) {
     let { type } = attachDescription;
     const attach = attachDescription[type];
 
@@ -82,33 +113,7 @@ export function parseMessage(message) {
     }
   }
 
-  return {
-    id: message.id,
-    from: message.from_id,
-    out: message.from_id === store.state.users.activeUserID,
-    text: escape(message.text).replace(/\n/g, '<br>'),
-    date: message.date,
-    peer_id: message.peer_id,
-    conversation_msg_id: message.conversation_message_id,
-    random_id: message.random_id,
-    action: message.action,
-    hasAttachment,
-    fwdCount,
-    fwdMessages: (message.fwd_messages || []).map(parseMessage),
-    attachments,
-    hasReplyMsg,
-    replyMsg: hasReplyMsg ? parseMessage(message.reply_message) : null,
-    keyboard: message.keyboard,
-    hasTemplate: !!message.template,
-    template: message.template,
-    hidden: !!message.is_hidden,
-    editTime: message.update_time || 0,
-    was_listened: !!message.was_listened,
-    isContentDeleted: !message.text && !message.action && !hasAttachment,
-    expireTtl: message.expire_ttl || message.ttl || 0,
-    isExpired: !!message.is_expired,
-    fromLongPoll: false
-  };
+  return attachments;
 }
 
 export function getMessagePreview(msg) {
@@ -229,7 +234,7 @@ export function deleteMessages(message_ids, peer, needCancelSelect) {
     activeUserID !== peer.id &&
     messages.every((msg) => (
       Date.now() - msg.date * 1000 < DAY &&
-      (isChatOwner || !peer.admin_ids.includes(msg.from)) &&
+      (isChatOwner || !peer.admin_ids.includes(msg.from) && msg.from !== peer.owner_id) &&
       (
         msg.from === activeUserID ||
         peer.id > 2e9 && peer.acl.can_moderate

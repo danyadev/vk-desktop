@@ -244,7 +244,7 @@ module.exports = {
     'vue/no-restricted-v-bind': ['error', '/^v-/', 'click'],
     'vue/no-static-inline-styles': 'error',
     'vue/no-unregistered-components': ['error', {
-      ignorePatterns: ['(ForwardedMessage|RouterView)']
+      ignorePatterns: ['(ForwardedMessage|RouterView|Attachments)']
     }],
     'vue/no-unused-properties': ['error', {
       groups: ['props', 'setup']
