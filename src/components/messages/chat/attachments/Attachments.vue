@@ -51,7 +51,7 @@ export default {
   padding-top: 5px;
 }
 
-.message:not(.hasForward) .message_bubble_content > .im_attachments .im_attach_unknown:last-child {
+.message_bubble_content > .im_attachments > .im_attach_unknown:last-child {
   margin-bottom: -5px;
 }
 
@@ -70,5 +70,17 @@ export default {
   font-size: 13px;
   margin-bottom: 4px;
   color: var(--text-dark-steel-gray);
+}
+
+.outline_button {
+  color: var(--text-light-blue);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 3px 16px;
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+  cursor: pointer;
 }
 </style>

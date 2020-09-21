@@ -1,12 +1,12 @@
 <template>
   <div class="attach_wall">
-    <div class="attach_title">{{ l('im_attachments', 'wall_reply', [], 1) }}</div>
+    <div class="attach_title">{{ l('im_attachments', 'wall', [], 1) }}</div>
 
     <div class="attach_forwarded attach_left_border">
       <ForwardedMessage :msg="fakeMsg" />
 
-      <div class="outline_button" @click="openComment">
-        {{ l('im_open_comment') }}
+      <div class="outline_button" @click="openWall">
+        {{ l('im_open_wall') }}
       </div>
     </div>
   </div>
@@ -23,18 +23,19 @@ export default {
     // eslint-disable-next-line vue/no-setup-props-destructure
     const [attach] = props.attach;
 
-    function openComment() {
-      let link = `https://vk.com/wall${attach.owner_id}_${attach.post_id}?reply=${attach.id}`;
+    function openWall() {
+      electron.shell.openItem(`https://vk.com/wall${attach.to_id}_${attach.id}`);
+    }
 
-      if (attach.parents_stack[0]) {
-        link += `&thread=${attach.parents_stack[0]}`;
-      }
-
-      electron.shell.openItem(link);
+    if (attach.geo) {
+      (attach.attachments || (attach.attachments = [])).push({
+        type: 'geo',
+        geo: attach.geo
+      });
     }
 
     return {
-      openComment,
+      openWall,
 
       fakeMsg: {
         from: attach.from_id,
@@ -47,3 +48,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.attach_wall .attach_left_border::before {
+  background: var(--forwarded-left-border);
+}
+</style>

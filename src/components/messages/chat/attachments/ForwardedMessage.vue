@@ -19,7 +19,9 @@
         {{ l('im_attachment_deleted') }}
       </div>
       <div v-else class="attach_fwd_msg_text roboto-vk">
-        <VKText :inline="false" mention="link" link>{{ msg.text }}</VKText>
+        <ShortText>
+          <VKText :inline="false" mention="link" link>{{ msg.text }}</VKText>
+        </ShortText>
       </div>
 
       <Attachments :attachments="msg.attachments" />
@@ -53,13 +55,15 @@ import store from 'js/store';
 
 import Forwarded from './Forwarded.vue';
 import VKText from '../../../UI/VKText.vue';
+import ShortText from '../../../UI/ShortText.vue';
 
 export default {
   props: ['peer_id', 'msg', 'isCustomView', 'fwdDepth'],
 
   components: {
     Forwarded,
-    VKText
+    VKText,
+    ShortText
   },
 
   setup(props) {
@@ -138,6 +142,11 @@ export default {
 
 .attach_fwd_msg_content {
   margin-top: 6px;
+}
+
+.attach_fwd_msg_text {
+  user-select: text;
+  line-height: 18px;
 }
 
 .attach_fwd_msg_text.isContentDeleted {

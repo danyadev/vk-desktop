@@ -15,6 +15,7 @@ export default {
   search: 'Поиск',
   add_account: 'Добавить аккаунт',
   delete_account: 'Удалить аккаунт',
+  show_in_full: 'Показать полностью',
 
   // ----- Дата и время
   date_now: 'только что',
@@ -125,7 +126,6 @@ export default {
   im_selected_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
 
   // Вложения в сообщениях
-  im_open_comment: 'Открыть комментарий',
   im_attachment_deleted: 'Вложение удалено',
   is_message_expired: 'Сообщение исчезло',
   im_replied: 'Ответ на сообщение',
@@ -158,6 +158,9 @@ export default {
     audio_playlist: ['Плейлист'],
     group_call_in_progress: ['Активный звонок']
   },
+
+  im_open_comment: 'Открыть комментарий',
+  im_open_wall: 'Открыть запись',
 
   // Сервисные сообщения
   // Все {0} и {1} в дальнейшем оборачиваются в <b></b>
