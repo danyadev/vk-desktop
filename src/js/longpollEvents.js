@@ -1,6 +1,7 @@
 import { timer, eventBus } from './utils';
 import {
   parseMessage,
+  parseAttachments,
   parseConversation,
   loadConversation,
   loadConversationMembers,
@@ -64,6 +65,10 @@ function getServiceMessage(data) {
 function getAttachments(data) {
   const attachments = {};
 
+  const loadedAttachments = data.attachments
+    ? parseAttachments(JSON.parse(data.attachments))
+    : {};
+
   if (data.geo) {
     attachments.geo = [null];
   }
@@ -80,10 +85,10 @@ function getAttachments(data) {
       if (kind === 'graffiti') type = 'graffiti';
       if (type === 'group') type = 'event';
 
-      if (attachments[type]) {
-        attachments[type].push(null);
+      if (loadedAttachments[type]) {
+        attachments[type] = loadedAttachments[type];
       } else {
-        attachments[type] = [null];
+        (attachments[type] || (attachments[type] = [])).push(null);
       }
     }
   }
@@ -205,13 +210,18 @@ async function loadMessages(peer_id, msg_ids, onlyReturnMessages) {
   return messages;
 }
 
+// Проверяет, есть ли поддерживаемое вложение в сообщении,
+// чтобы в дальнейшем его получить через API
 function hasSupportedAttachments(msg) {
   if (msg.hasReplyMsg || msg.fwdCount || msg.hasTemplate) {
     return true;
   }
 
   for (const attach in msg.attachments) {
-    if (supportedAttachments.has(attach)) {
+    // > !msg.attachments[attach][0]
+    // Если LP вернул в ответе объект сообщения, то получать это вложение
+    // через API уже нет необходимости, поэтому его мы пропускаем
+    if (supportedAttachments.has(attach) && !msg.attachments[attach][0]) {
       return true;
     }
   }
@@ -219,6 +229,7 @@ function hasSupportedAttachments(msg) {
   return false;
 }
 
+// Проверяет, есть ли в одном из сообщений поддерживаемое вложение
 function hasPreloadMessages(items) {
   return items.some(({ msg }) => hasSupportedAttachments(msg));
 }
