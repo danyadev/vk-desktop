@@ -105,8 +105,9 @@ function parseLongPollMessage(data) {
   const activeUser = store.getters['users/user'];
   const flag = hasFlag(data[1]);
   const action = getServiceMessage(data[5]);
-  const out = flag('outbox');
-  const from_id = out ? activeUser.id : +(data[5].from || data[2]);
+  const from_id = flag('outbox') ? activeUser.id : +(data[5].from || data[2]);
+  // flag('outbox') возвращает false, когда пишешь сообщение в свой же лс
+  const out = from_id === activeUser.id;
   const { keyboard, marked_users } = data[5];
   const attachments = getAttachments(data[6]);
   const hasReplyMsg = flag('reply_msg');
