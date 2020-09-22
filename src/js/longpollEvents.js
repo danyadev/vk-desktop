@@ -5,11 +5,10 @@ import {
   parseConversation,
   loadConversation,
   loadConversationMembers,
-  addNotificationsTimer
+  addNotificationsTimer,
+  activeKeyboardCallbackButtons
 } from './messages';
-import {
-  supportedAttachments
-} from '../components/messages/chat/attachments';
+import { supportedAttachments } from '../components/messages/chat/attachments';
 import vkapi from './vkapi';
 import store from './store';
 import router from './router';
@@ -103,15 +102,15 @@ function parseLongPollMessage(data) {
     return;
   }
 
-  const user = store.getters['users/user'];
+  const activeUser = store.getters['users/user'];
   const flag = hasFlag(data[1]);
   const action = getServiceMessage(data[5]);
-  const from_id = flag('outbox') ? user.id : +(data[5].from || data[2]);
+  const out = flag('outbox');
+  const from_id = out ? activeUser.id : +(data[5].from || data[2]);
   const { keyboard, marked_users } = data[5];
   const attachments = getAttachments(data[6]);
   const hasReplyMsg = flag('reply_msg');
   const hasAttachment = !!(hasReplyMsg || data[6].fwd || Object.keys(attachments).length);
-  const out = from_id === user.id;
   let mentions = [];
 
   if (keyboard) {
@@ -120,7 +119,7 @@ function parseLongPollMessage(data) {
 
   for (const [id, users] of marked_users || []) {
     if (id === 1) {
-      mentions = (users === 'all' ? [user.id] : users);
+      mentions = (users === 'all' ? [activeUser.id] : users);
     }
 
     // type 2 = бомбочка
@@ -142,7 +141,7 @@ function parseLongPollMessage(data) {
     msg: {
       id: data[0],
       from: from_id,
-      out: from_id === user.id || flag('outbox'),
+      out,
       text: action ? '' : data[4],
       date: data[3],
       peer_id: data[2],
@@ -901,7 +900,8 @@ export default {
     // Ответ callback-кнопки
     // [{ owner_id, peer_id, event_id, action? }]
     handler([data]) {
-      eventBus.emit('keyboard:callback', data);
+      const callback = activeKeyboardCallbackButtons[data.event_id];
+      callback && callback(data);
     }
   }
 };

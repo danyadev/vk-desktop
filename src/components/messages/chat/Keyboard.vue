@@ -48,17 +48,9 @@
 </template>
 
 <script>
-import {
-  reactive,
-  computed,
-  toRefs,
-  onMounted,
-  onUnmounted,
-  onActivated,
-  onDeactivated
-} from 'vue';
+import { reactive, computed, toRefs } from 'vue';
 import electron from 'electron';
-import { eventBus } from 'js/utils';
+import { activeKeyboardCallbackButtons } from 'js/messages';
 import { addSnackbar } from 'js/snackbars';
 import vkapi from 'js/vkapi';
 import sendMessage from 'js/sendMessage';
@@ -90,18 +82,6 @@ export default {
       const owner_id = action.owner_id ? `_${action.owner_id}` : '';
       const hash = action.hash ? `#${action.hash}` : '';
       return `https://vk.com/app${action.app_id}${owner_id}${hash}`;
-    }
-
-    function toggleBus(bool) {
-      if (bool) {
-        eventBus.on('keyboard:callback', onKeyboardCallback);
-      } else {
-        eventBus.removeListener('keyboard:callback', onKeyboardCallback);
-
-        for (const btn of state.activeCallbackButtons) {
-          clearTimeout(btn.timeout);
-        }
-      }
     }
 
     function onKeyboardCallback(data) {
@@ -147,14 +127,9 @@ export default {
       if (index > -1) {
         state.activeCallbackButtons.splice(index, 1);
       }
+
+      delete activeKeyboardCallbackButtons[btn.event_id];
     }
-
-    // onMounted -> n(onDeactivated -> onActivated) -> onUnmounted
-    onMounted(() => toggleBus(true));
-    onUnmounted(() => toggleBus(false));
-
-    onActivated(() => toggleBus(true));
-    onDeactivated(() => toggleBus(false));
 
     async function click(action) {
       const hash = action.hash ? `#${action.hash}` : '';
@@ -184,6 +159,7 @@ export default {
           break;
 
         case 'callback':
+          // Игнорируем клик по кнопке, у которой еще не пришел ответ
           if (state.activeCallbackButtons.find((btn) => btn.action === action)) {
             return;
           }
@@ -202,7 +178,9 @@ export default {
           });
 
           btn.event_id = event_id;
-          btn.timeout = setTimeout(() => stopCallbackBtn(btn), 60 * 1000);
+          btn.timeout = setTimeout(() => stopCallbackBtn(btn), 30 * 1000);
+
+          activeKeyboardCallbackButtons[event_id] = onKeyboardCallback;
           break;
       }
     }

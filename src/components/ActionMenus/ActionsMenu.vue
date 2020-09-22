@@ -93,7 +93,7 @@ export default {
   width: 250px;
   min-height: 50px;
   right: 0;
-  padding: 6px 0;
+  padding: 5px 0;
   margin: -6px 6px 6px 6px;
   opacity: 0;
   pointer-events: none;

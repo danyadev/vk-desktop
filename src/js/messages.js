@@ -346,3 +346,5 @@ export function addNotificationsTimer({ peer_id, disabled_until }, remove) {
     }, disabled_until * 1000 - Date.now())
   );
 }
+
+export const activeKeyboardCallbackButtons = {};

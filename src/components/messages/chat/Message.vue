@@ -179,7 +179,7 @@ export default {
         timer = setTimeout(() => {
           store.commit('messages/addSelectedMessage', props.msg.id);
           state.bubble.removeEventListener('mousemove', onMouseMove);
-        }, 500);
+        }, 400);
 
         state.bubble.addEventListener('mousemove', onMouseMove);
 
