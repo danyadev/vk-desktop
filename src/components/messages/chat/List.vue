@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted, onActivated, nextTick, toRefs } from 'vue';
+import { reactive, computed, onActivated, nextTick, toRefs } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import {
   createQueueManager,
@@ -95,6 +95,7 @@ export default {
 
       isScrolledDownOnClose: false,
       isUnreadOnClose: false,
+      savePositionOnOpen: null,
 
       topTime: null,
       showTopTime: false,
@@ -116,11 +117,6 @@ export default {
 
     // Event listener =====================================
 
-    onMounted(() => {
-      eventBus.on('messages:event', onMessageEvent);
-      jumpToStartUnread();
-    });
-
     function saveScrollData() {
       const { scrollTop, clientHeight, scrollHeight } = state.list;
       const isScrolledDown = scrollHeight && scrollTop + clientHeight === scrollHeight;
@@ -138,19 +134,33 @@ export default {
     onActivated(() => {
       state.startInRead = props.peer && props.peer.in_read;
 
-      if (state.scrollTop !== null) {
-        const unread = state.list.querySelector('.message_unreaded_messages');
-
-        if (state.isScrolledDownOnClose && !state.isUnreadOnClose && unread) {
-          state.list.scrollTop = state.scrollTop + state.list.clientHeight / 2;
-        } else {
-          state.list.scrollTop = state.scrollTop;
-        }
-
-        checkReadMessages();
-      } else {
-        checkScrolling({ viewport: state.list });
+      // Первый запуск, вместо onMounted
+      if (state.scrollTop === null) {
+        eventBus.on('messages:event', onMessageEvent);
+        jumpToStartUnread();
+        return;
       }
+
+      // Сохраняем позицию после закрытия беседы до загрузки сообщений
+      if (state.savePositionOnOpen) {
+        const { scrollTop, scrollHeight } = state.savePositionOnOpen;
+
+        state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
+        state.scrollTop = state.list.scrollTop;
+        state.savePositionOnOpen = null;
+      }
+
+      const unread = state.list.querySelector('.message_unreaded_messages');
+
+      if (state.isScrolledDownOnClose && !state.isUnreadOnClose && unread) {
+        // Спускаемся на половину viewport ниже, чтобы плашка
+        // "непрочитанные сообщения" была по середине
+        state.list.scrollTop = state.scrollTop + state.list.clientHeight / 2;
+      } else {
+        state.list.scrollTop = state.scrollTop;
+      }
+
+      checkReadMessages();
     });
 
     async function onMessageEvent(type, { peer_id, ...data }) {
@@ -230,6 +240,8 @@ export default {
         state.loadingUp = true;
       }
 
+      const { scrollTop, scrollHeight } = state.list;
+
       const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
         peer_id: props.peer_id,
         count: 40,
@@ -248,16 +260,18 @@ export default {
         addNew: config.isDown
       });
 
-      const { scrollTop, scrollHeight } = state.list || {};
-
       state.lockScroll = true;
       await nextTick();
       requestIdleCallback(() => (state.lockScroll = false));
 
       if (!config.isDown) {
-        // Сохраняем старую позицию скролла
-        if (state.list) {
+        if (state.list.scrollHeight) {
+          // Сохраняем старую позицию скролла
           state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
+        } else {
+          // Чат закрылся до того, как были загружены сообщения
+          // Позиция скролла будет восстановлена при последующем открытии
+          state.savePositionOnOpen = { scrollTop, scrollHeight };
         }
 
         const startMsgId = params.start_message_id;

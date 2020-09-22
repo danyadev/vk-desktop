@@ -52,7 +52,8 @@ export default {
 }
 
 .message_bubble_content > .im_attachments > .im_attach_unknown:last-child {
-  margin-bottom: -5px;
+  /* Убираем слишком большой отступ от конца сообщения */
+  margin-bottom: -10px;
 }
 
 .attach_left_border::before {

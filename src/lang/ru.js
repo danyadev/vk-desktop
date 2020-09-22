@@ -15,7 +15,7 @@ export default {
   search: 'Поиск',
   add_account: 'Добавить аккаунт',
   delete_account: 'Удалить аккаунт',
-  show_in_full: 'Показать полностью',
+  show_in_full: 'Показать полностью...',
 
   // ----- Дата и время
   date_now: 'только что',
