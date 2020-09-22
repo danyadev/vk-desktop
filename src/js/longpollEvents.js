@@ -219,7 +219,7 @@ function hasSupportedAttachments(msg) {
 
   for (const attach in msg.attachments) {
     // > !msg.attachments[attach][0]
-    // Если LP вернул в ответе объект сообщения, то получать это вложение
+    // Если LP вернул в ответе объект вложения, то получать это вложение
     // через API уже нет необходимости, поэтому его мы пропускаем
     if (supportedAttachments.has(attach) && !msg.attachments[attach][0]) {
       return true;

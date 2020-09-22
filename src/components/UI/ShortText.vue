@@ -52,7 +52,7 @@ export default {
       lineHeight = parseInt(style.lineHeight);
 
       if (!lineHeight) {
-        return console.error('Не был найден line-height');
+        return;
       }
 
       window.addEventListener('resize', checkHeight);

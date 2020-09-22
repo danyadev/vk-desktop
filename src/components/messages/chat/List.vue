@@ -124,6 +124,11 @@ export default {
       state.scrollTop = scrollTop;
       state.isScrolledDownOnClose = isScrolledDown;
       state.isUnreadOnClose = props.peer.last_msg_id > props.peer.in_read;
+
+      // Сообщения еще загружаются, но пользователь уже вышел из беседы
+      if (state.loadingUp) {
+        state.savePositionOnOpen = { scrollTop, scrollHeight };
+      }
     }
 
     // /messages/xxx -> /messages
@@ -240,8 +245,6 @@ export default {
         state.loadingUp = true;
       }
 
-      const { scrollTop, scrollHeight } = state.list;
-
       const { items, conversations, profiles, groups } = await vkapi('messages.getHistory', {
         peer_id: props.peer_id,
         count: 40,
@@ -250,6 +253,7 @@ export default {
         ...params
       });
 
+      const { scrollTop, scrollHeight } = state.list;
       const peer = parseConversation(conversations[0]);
 
       store.commit('messages/updateConversation', { peer });
@@ -268,10 +272,6 @@ export default {
         if (state.list.scrollHeight) {
           // Сохраняем старую позицию скролла
           state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
-        } else {
-          // Чат закрылся до того, как были загружены сообщения
-          // Позиция скролла будет восстановлена при последующем открытии
-          state.savePositionOnOpen = { scrollTop, scrollHeight };
         }
 
         const startMsgId = params.start_message_id;
