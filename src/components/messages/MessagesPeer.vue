@@ -120,7 +120,7 @@ export default {
       owner: computed(() => store.state.profiles[props.peer.id]),
       author: computed(() => store.state.profiles[props.msg.from]),
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),
-      message: computed(() => getMessagePreview(props.msg)),
+      message: computed(() => props.msg.id && getMessagePreview(props.msg)),
       hasAttachment: computed(() => (
         !props.msg.text && !props.msg.action && props.msg.hasAttachment
       )),

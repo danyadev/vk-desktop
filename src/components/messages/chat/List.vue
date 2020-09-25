@@ -456,13 +456,16 @@ export default {
         return;
       }
 
-      state.showEndBtn =
-        canShowScrollBtn() && (props.peer && props.peer.unread || scrollyEvent.dy > 0);
-
+      checkShowEndBtn(scrollyEvent);
       checkScrolling(scrollyEvent);
       checkTopTime();
       checkReadMessages();
     }
+
+    const checkShowEndBtn = callWithDelay((scrollyEvent) => {
+      state.showEndBtn =
+        canShowScrollBtn() && (props.peer && props.peer.unread || scrollyEvent.dy > 0);
+    }, 150);
 
     const checkScrolling = endScroll(({ isUp, isDown }) => {
       if (state.loadingUp || state.loadingDown || state.lockScroll) {

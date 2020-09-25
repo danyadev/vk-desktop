@@ -141,8 +141,7 @@ export default {
   top: 3px !important;
 }
 
-/* TODO */
-/* .message.removeBottomMargin .attach_reply,
+.message.removeBottomMargin .attach_reply,
 .message.removeMiddleMargin .attach_reply {
   margin-left: 5px;
 }
@@ -153,7 +152,11 @@ export default {
 
 .message.hasPhoto .attach_reply + .message_text:not(:empty) {
   margin-top: -4px;
-} */
+}
+
+.attach_reply.attach_left_border::before {
+  background: var(--background-blue);
+}
 
 .attach_reply_photo {
   flex: none;

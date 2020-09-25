@@ -48,9 +48,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.attach_wall .attach_left_border::before {
-  background: var(--forwarded-left-border);
-}
-</style>

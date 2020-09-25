@@ -43,6 +43,12 @@ export function format(date, mask) {
   return mask;
 }
 
+export function createDateFrom(ms) {
+  const date = new Date();
+  date.setHours(0, 0, 0, ms);
+  return date;
+}
+
 function copyDate(date) {
   return new Date(typeof date === 'number' ? date : date.getTime());
 }

@@ -24,11 +24,11 @@ export default {
     Button
   },
 
-  setup() {
+  setup(props) {
     function clear() {
       vkapi('messages.deleteConversation', {
-        peer_id: this.peer_id
-      }).then(this.close);
+        peer_id: props.peer_id
+      }).then(close);
     }
 
     function close() {

@@ -12,6 +12,9 @@ export default {
     const singleAttachments = ['sticker', 'gift', 'audio_message'];
     const hasSingleAttach = singleAttachments.some((attach) => attachNames.includes(attach));
 
+    const layoutAttachs = {};
+    const documentAttachs = [];
+
     for (const type in props.attachments) {
       const attach = props.attachments[type];
       const component = components[type];
@@ -20,7 +23,25 @@ export default {
         continue;
       }
 
-      if (component) {
+      if (['photo', 'video', 'doc'].includes(type)) {
+        if (type === 'doc') {
+          const photoDocs = [];
+
+          for (const doc of attach) {
+            if (doc.preview && doc.preview.photo) {
+              photoDocs.push(doc);
+            } else {
+              documentAttachs.push(doc);
+            }
+          }
+
+          if (photoDocs.length) {
+            layoutAttachs.doc = photoDocs;
+          }
+        } else {
+          layoutAttachs[type] = attach;
+        }
+      } else if (component) {
         attachments.push(
           h(component, { attach })
         );
@@ -30,6 +51,22 @@ export default {
         );
       }
     }
+
+    if (Object.keys(layoutAttachs).length) {
+      attachments.unshift(
+        h(components.photosLayout, {
+          attachments: layoutAttachs
+        })
+      );
+    }
+
+    // if(documentAttachs.length) {
+    //   attachments.push(
+    //     ...documentAttachs.map((attach) => {
+    //       return h(components.doc, { attach });
+    //     })
+    //   );
+    // }
 
     if (attachments.length) {
       return h('div', { class: 'im_attachments' }, attachments);
@@ -53,7 +90,7 @@ export default {
 
 .message_bubble_content > .im_attachments > .im_attach_unknown:last-child {
   /* Убираем слишком большой отступ от конца сообщения */
-  margin-bottom: -10px;
+  margin-bottom: -5px;
 }
 
 .attach_left_border::before {
@@ -64,7 +101,7 @@ export default {
   left: 0;
   width: 2px;
   border-radius: 1px;
-  background: var(--background-blue);
+  background: var(--attach-left-border);
 }
 
 .attach_title {

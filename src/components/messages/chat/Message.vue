@@ -145,14 +145,53 @@ export default {
         let flyTime = false;
 
         const { text, attachments, hasReplyMsg, fwdCount } = props.msg;
-        const { sticker } = attachments;
+        const { sticker, photo, video, doc } = attachments;
         const attachNames = Object.keys(attachments);
+        const oneAttachType = attachNames.length === 1;
 
-        if (attachNames.length || fwdCount) classes.push('hasAttachment');
+        const onlyPhotoAttachs = (
+          (photo || video || doc) && (!doc || doc.every((doc) => doc.preview)) &&
+          attachNames.every((attach) => ['photo', 'video', 'doc'].includes(attach))
+        );
+        const onlyPhotos = onlyPhotoAttachs && !hasReplyMsg && !fwdCount;
+        const hasPhoto = (
+          attachNames.find((attach) => ['photo', 'video'].includes(attach)) ||
+          doc && doc.find((doc) => doc.preview)
+        );
+
+        if (attachNames.length) classes.push('hasAttachment');
+        if (hasPhoto) classes.push('hasPhoto');
         if (sticker) classes.push('isSticker');
         if (sticker) flyTime = true;
 
-        if (sticker && !hasReplyMsg && !text) {
+        if (onlyPhotos && !text) {
+          // Только фотографии.
+          // Уменьшаем отступы со всех сторон
+          classes.push('removeMargin');
+          flyTime = true;
+        } else if (!text && !hasReplyMsg && hasPhoto) {
+          // С фото, но без текста и ответа на сообщение (без контента над фотками).
+          // Уменьшаем отступы сверху, справа и слева
+          classes.push('removeTopMargin');
+        } else if (onlyPhotoAttachs && !fwdCount) {
+          // Фотографии находятся в самом верху сообщения, значит
+          // отступы можно уменьшить только когда в сообщении есть
+          // только фотографии (+ текст или ответ на сообщение).
+          // Уменьшаем отступы слева, снизу и справа
+          classes.push('removeBottomMargin');
+          flyTime = true;
+        } else if (hasPhoto) {
+          // возможно текст сверху и остальные вложения снизу
+          // Уменьшаем отступы слева и справа
+          classes.push('removeMiddleMargin');
+        }
+
+        if (
+          sticker && !hasReplyMsg && !text ||
+
+          !text && onlyPhotos && oneAttachType &&
+          (photo && photo.length === 1 || video && video.length === 1 || doc && doc.length === 1)
+        ) {
           classes.push('hideBubble');
           flyTime = true;
         }
@@ -278,7 +317,7 @@ export default {
 
 .message_bubble_wrap {
   position: relative;
-  max-width: 600px;
+  max-width: 550px;
   display: flex;
   flex-direction: column;
 }
@@ -372,10 +411,14 @@ export default {
   width: fit-content;
 }
 
-.message.isSticker:not(.hideBubble) .message_time_wrap,
-.message.flyTime.hideBubble:not(.isSticker) .message_time_wrap {
+.message.isSticker:not(.hideBubble) .message_time_wrap {
   right: 4px;
   bottom: 4px;
+}
+
+.message.flyTime.hideBubble:not(.isSticker) .message_time_wrap {
+  right: 6px;
+  bottom: 6px;
 }
 
 .message.isSticker:not(.hideBubble).out .message_time_wrap {
@@ -464,5 +507,76 @@ export default {
 .message:not(.hideBubble).isSticker .attach_reply,
 .message:not(.hideBubble).isSticker .message_text {
   width: 128px;
+}
+
+/* Фотографии ========================================== */
+
+.message.flyTime:not(.isSticker) .message_time_wrap {
+  background: #000000a0;
+  color: #f5f5f5;
+  right: 10px;
+  bottom: 10px;
+  padding: 3px 6px;
+  font-weight: normal;
+}
+
+.message.flyTime:not(.isSticker) .message_dot {
+  background: #f5f5f5;
+}
+
+.message.hasPhoto .message_name {
+  margin-left: 5px;
+}
+
+.message.removeMargin .message_name {
+  margin-bottom: 5px;
+}
+
+.message.hasPhoto .message_text:not(:empty) {
+  margin: 0 5px 5px 5px;
+}
+
+.message.removeMargin .attach_photos > .attach_photo_wrap:first-child img,
+.message.removeTopMargin .attach_photos > .attach_photo_wrap:first-child img {
+  border-top-left-radius: 14px;
+}
+
+.message.removeMargin .attach_photo_wrap.endFirstRow img,
+.message.removeTopMargin .attach_photo_wrap.endFirstRow img {
+  border-top-right-radius: 14px;
+}
+
+.message.removeMargin .attach_photo_wrap.lastRow:first-child img,
+.message.removeBottomMargin .attach_photo_wrap.lastRow:first-child img,
+.message.removeMargin br + .attach_photo_wrap.lastRow img,
+.message.removeBottomMargin br + .attach_photo_wrap.lastRow img {
+  border-bottom-left-radius: 14px;
+}
+
+.message.removeMargin .attach_photo_wrap.lastRow.lastColumn img,
+.message.removeBottomMargin .attach_photo_wrap.lastRow.lastColumn img {
+  border-bottom-right-radius: 14px;
+}
+
+.message.removeMargin:not(.hideBubble) .message_bubble {
+  padding: 6px;
+}
+
+.message.removeTopMargin .message_bubble {
+  padding: 6px 6px 8px 6px;
+}
+
+.message.removeBottomMargin .message_bubble {
+  padding: 8px 6px 6px 6px;
+}
+
+.message.removeMiddleMargin .message_bubble {
+  padding: 8px 6px;
+}
+
+.message.removeTopMargin:not(.flyTime) .message_time_wrap,
+.message.removeBottomMargin:not(.flyTime) .message_time_wrap,
+.message.removeMiddleMargin:not(.flyTime) .message_time_wrap {
+  margin-right: 6px;
 }
 </style>

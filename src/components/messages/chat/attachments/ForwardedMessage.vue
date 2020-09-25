@@ -106,6 +106,7 @@ export default {
   width: 35px;
   height: 35px;
   margin-right: 10px;
+  flex: none;
 }
 
 .attach_fwd_msg_info,
