@@ -208,6 +208,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   color: var(--text-dark-steel-gray);
   margin: 8px 15px 4px 15px;
 }

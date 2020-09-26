@@ -513,7 +513,7 @@ export default {
 
 .message.flyTime:not(.isSticker) .message_time_wrap {
   background: #000000a0;
-  color: #f5f5f5;
+  color: var(--text-white);
   right: 10px;
   bottom: 10px;
   padding: 3px 6px;
@@ -521,7 +521,7 @@ export default {
 }
 
 .message.flyTime:not(.isSticker) .message_dot {
-  background: #f5f5f5;
+  background: var(--text-white);
 }
 
 .message.hasPhoto .message_name {

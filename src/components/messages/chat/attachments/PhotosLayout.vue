@@ -228,7 +228,7 @@ export default {
   top: 5px;
   left: 5px;
   background: #000000aa;
-  color: #f5f5f5;
+  color: var(--text-white);
   font-size: 11px;
   border-radius: 8px;
   padding: 3px 7px 3px 5px;
@@ -250,7 +250,8 @@ export default {
   width: 16px;
   height: 16px;
   margin: -1px 2px 0 0;
-  background: url('~assets/play.svg') center / contain;
+  -webkit-mask-image: url('~assets/play.svg');
+  background-color: var(--text-white);
 }
 
 .attach_photo {

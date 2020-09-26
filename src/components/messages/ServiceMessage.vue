@@ -37,13 +37,11 @@ const translateParser = createParser({
 
 function getVNode(name, key, replaces, photo) {
   const translate = getTranslate(name, key);
-  const children = translateParser(translate, replaces);
+  const message = h('span', translateParser(translate, replaces));
 
   return h(
     Fragment,
-    photo
-      ? [h('span', children), photo]
-      : children
+    photo ? [message, photo] : message
   );
 }
 

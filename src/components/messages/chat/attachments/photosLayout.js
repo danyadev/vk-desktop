@@ -14,7 +14,7 @@ function getMultiThumbsHeight(ratios, width, margin) {
 
 function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
   thumb.width = width;
-  thumb.height = columnItem ? height : Math.max(height, 100);
+  thumb.height = columnItem ? height : Math.max(height, 50);
 
   if (lastColumn) thumb.lastColumn = lastColumn;
   if (lastRow) thumb.lastRow = lastRow;
@@ -22,20 +22,21 @@ function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
 }
 
 function calcOnePhotoSize(photo, ratios, maxWidth, maxHeight) {
-  const minPhotoWidth = 100;
+  const minPhotoWidth = 50;
+
+  if (photo.height > maxHeight) {
+    photo.height = maxHeight;
+    photo.width = maxHeight * ratios[0];
+  }
 
   if (photo.width < minPhotoWidth) {
     photo.width = minPhotoWidth;
+    photo.height = minPhotoWidth / ratios[0];
   }
 
   if (photo.width > maxWidth) {
     photo.width = maxWidth;
     photo.height = maxWidth / ratios[0];
-  }
-
-  if (photo.height > maxHeight) {
-    photo.height = maxHeight;
-    photo.width = maxHeight * ratios[0];
   }
 
   ratios[0] = photo.width / photo.height;
@@ -127,10 +128,10 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
       // [photo]
       // [photo]
       const width = Math.min(maxWidth, Math.max(thumbs[0].width, thumbs[1].width));
-      const minHeight = Math.min((thumbs[0].height + thumbs[1].height) / 2, maxHeight);
+      const mediumHeight = Math.min((thumbs[0].height + thumbs[1].height) / 2, maxHeight);
       const height = Math.min(
         (width / photoRatios[0] + width / photoRatios[1]) / 2,
-        (minHeight - margin) / 2
+        (mediumHeight - margin) / 2
       );
 
       updateThumb(thumbs[0], width, height, true, false);

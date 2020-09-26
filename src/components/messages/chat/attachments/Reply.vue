@@ -41,17 +41,16 @@ export default {
   setup(props) {
     const state = reactive({
       photo: computed(() => {
-        const { photo, sticker, doc, video, story } = props.msg.attachments;
-        const photoDoc = doc && doc[0] && doc.find((doc) => doc.preview);
-        const videoImages = video && video[0] && video[0].image;
-        const storyPhotos = story && story[0] && story[0].photo;
+        const { photo, sticker, doc, video, story, link } = props.msg.attachments;
+        const photoDoc = doc && doc.find((doc) => doc.preview);
+        const videoImage = video && video[0].image;
+        const storyImage = story && story[0] && story[0].photo;
+        const linkImage = link && link[0] && link[0].photo;
 
         // TODO Убрать, когда все вложения будут грузиться по умолчанию
         if (
-          photo && !photo[0] ||
-          doc && !doc[0] ||
-          video && !video[0] ||
-          story && !story[0]
+          story && !story[0] ||
+          link && !link[0]
         ) {
           vkapi('messages.getById', {
             message_ids: props.msg.id
@@ -63,11 +62,12 @@ export default {
           });
         }
 
-        if (photo && photo[0]) return getPhotoFromSizes(photo[0].sizes, 'o').url;
+        if (photo) return getPhotoFromSizes(photo[0].sizes, 'o').url;
         if (sticker) return sticker[0].images[devicePixelRatio > 1 ? 1 : 0].url;
-        if (photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'm').src;
-        if (video) return (videoImages[6] || videoImages[videoImages.length - 1]).url;
-        if (storyPhotos) return getPhotoFromSizes(storyPhotos.sizes, ['o', 'j', 'm', 'x']).url;
+        if (photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'o').src;
+        if (videoImage) return (videoImage[6] || videoImage[videoImage.length - 1]).url;
+        if (storyImage) return getPhotoFromSizes(storyImage.sizes, ['o', 'j', 'm', 'x']).url;
+        if (linkImage) return getPhotoFromSizes(linkImage.sizes, 'o').url;
       }),
 
       user: computed(() => store.state.profiles[props.msg.from]),
