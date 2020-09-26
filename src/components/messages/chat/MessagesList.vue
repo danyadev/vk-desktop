@@ -205,7 +205,9 @@ export default {
 }
 
 .im_service_message {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   color: var(--text-dark-steel-gray);
   margin: 8px 15px 4px 15px;
 }

@@ -1,6 +1,6 @@
 <script>
 import { h, Fragment } from 'vue';
-import { loadProfile, createParser } from 'js/utils';
+import { loadProfile, createParser, getPhotoFromSizes } from 'js/utils';
 import { loadConversationMembers, loadedConversationMembers } from 'js/messages';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
@@ -35,9 +35,16 @@ const translateParser = createParser({
   }
 });
 
-function getVNode(name, key, replaces) {
+function getVNode(name, key, replaces, photo) {
   const translate = getTranslate(name, key);
-  return h(Fragment, translateParser(translate, replaces));
+  const children = translateParser(translate, replaces);
+
+  return h(
+    Fragment,
+    photo
+      ? [h('span', children), photo]
+      : children
+  );
 }
 
 function getServiceMessage(msg, author, peer_id, isFull) {
@@ -89,7 +96,20 @@ function getServiceMessage(msg, author, peer_id, isFull) {
       return getVNode('im_chat_create', type(0), [name(0), msg.action.text]);
 
     case 'chat_photo_update':
-      return getVNode('im_chat_photo_update', type(0), [name(0)]);
+      const [attach] = msg.attachments.photo;
+      let photo;
+
+      if (isFull) {
+        photo = h('img', {
+          class: 'service_message_photo',
+          src: getPhotoFromSizes(attach.sizes, 'p').url,
+          onClick() {
+            //
+          }
+        });
+      }
+
+      return getVNode('im_chat_photo_update', type(0), [name(0)], photo);
 
     case 'chat_photo_remove':
       return getVNode('im_chat_photo_remove', type(0), [name(0)]);
@@ -146,3 +166,14 @@ function getServiceMessage(msg, author, peer_id, isFull) {
   }
 }
 </script>
+
+<style>
+.service_message_photo {
+  width: 100px;
+  height: 100px;
+  margin-top: 10px;
+  border-radius: 50%;
+  object-fit: contain;
+  cursor: pointer;
+}
+</style>
