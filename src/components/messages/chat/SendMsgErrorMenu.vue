@@ -64,9 +64,7 @@ export default {
         setLoadingError(false);
 
         try {
-          await vkapi('messages.send', props.msg.params, {
-            android: true
-          });
+          await vkapi('messages.send', props.msg.params, { android: true });
           // Так как эта ошибка возникает только когда пользователю нельзя писать
           // в лс, при успешной отправке нужно разрешить писать сообщения
           setCanWrite(true);

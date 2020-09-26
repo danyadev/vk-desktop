@@ -181,6 +181,7 @@ const mentionParser = createParser({
 
 <style>
 .mention_attachment {
+  display: inline;
   color: var(--text-blue);
 }
 </style>

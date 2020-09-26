@@ -127,9 +127,7 @@ export default {
     }
 
     function togglePin() {
-      const method = state.isPinnedMessage ? 'messages.unpin' : 'messages.pin';
-
-      vkapi(method, {
+      vkapi(state.isPinnedMessage ? 'messages.unpin' : 'messages.pin', {
         peer_id,
         message_id: msg_id
       });
