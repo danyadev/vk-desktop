@@ -42,6 +42,8 @@
           :fwdDepth="fwdDepth + 1"
         />
       </template>
+
+      <slot name="afterContent" />
     </div>
   </div>
 </template>

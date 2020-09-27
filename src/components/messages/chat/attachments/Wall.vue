@@ -3,7 +3,13 @@
     <div class="attach_title">{{ l('im_attachments', 'wall', [], 1) }}</div>
 
     <div class="attach_forwarded attach_left_border">
-      <ForwardedMessage :msg="fakeMsg" />
+      <ForwardedMessage :msg="fakeMsg">
+        <template v-if="postReply" v-slot:afterContent>
+          <div class="attach_forwarded attach_left_border">
+            <ForwardedMessage :msg="postReply" />
+          </div>
+        </template>
+      </ForwardedMessage>
 
       <div class="outline_button" @click="openWall">
         {{ l('im_open_wall') }}
@@ -27,6 +33,16 @@ export default {
       electron.shell.openItem(`https://vk.com/wall${attach.to_id}_${attach.id}`);
     }
 
+    function generateMessage(attach) {
+      return {
+        from: attach.from_id,
+        date: attach.date,
+        text: attach.text.replace(/\n/g, '<br>'),
+        attachments: parseAttachments(attach.attachments || []),
+        isContentDeleted: !attach.text && !attach.attachments && !attach.copy_history
+      };
+    }
+
     if (attach.geo) {
       (attach.attachments || (attach.attachments = [])).push({
         type: 'geo',
@@ -34,16 +50,12 @@ export default {
       });
     }
 
+    const postReply = attach.copy_history && attach.copy_history[0];
+
     return {
       openWall,
-
-      fakeMsg: {
-        from: attach.from_id,
-        date: attach.date,
-        text: attach.text.replace(/\n/g, '<br>'),
-        attachments: parseAttachments(attach.attachments || []),
-        isContentDeleted: !attach.text && !attach.attachments
-      }
+      fakeMsg: generateMessage(attach),
+      postReply: postReply && generateMessage(postReply)
     };
   }
 };
