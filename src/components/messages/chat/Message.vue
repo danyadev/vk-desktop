@@ -6,6 +6,7 @@
       isUnread,
       out: msg.out,
       fwdOverflow,
+      showUserName,
       isLoading: msg.isLoading,
       isSelectMode,
       isSelected,
@@ -27,10 +28,7 @@
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseMove">
-          <div
-            v-if="isFirstItem && showUserData && !attachmentClasses.includes('hideBubble')"
-            class="message_name roboto-vk"
-          >
+          <div v-if="showUserName" class="message_name roboto-vk">
             {{ name }}
           </div>
 
@@ -119,6 +117,9 @@ export default {
       bubble: null,
       forwarded: null,
 
+      showUserName: computed(() => (
+        props.isFirstItem && props.showUserData && !state.attachmentClasses.includes('hideBubble')
+      )),
       name: computed(() => getPeerTitle(0, null, props.user)),
 
       selectedMessages: computed(() => store.state.messages.selectedMessages),
@@ -529,7 +530,8 @@ export default {
   margin-left: 5px;
 }
 
-.message.removeMargin .message_name {
+.message.removeMargin .message_name,
+.message.removeTopMargin .message_name {
   margin-bottom: 5px;
 }
 
@@ -537,13 +539,13 @@ export default {
   margin: 0 5px 5px 5px;
 }
 
-.message.removeMargin .attach_photos > .attach_photo_wrap:first-child img,
-.message.removeTopMargin .attach_photos > .attach_photo_wrap:first-child img {
+.message.removeMargin:not(.showUserName) .attach_photos > .attach_photo_wrap:first-child img,
+.message.removeTopMargin:not(.showUserName) .attach_photos > .attach_photo_wrap:first-child img {
   border-top-left-radius: 14px;
 }
 
-.message.removeMargin .attach_photo_wrap.endFirstRow img,
-.message.removeTopMargin .attach_photo_wrap.endFirstRow img {
+.message.removeMargin:not(.showUserName) .attach_photo_wrap.endFirstRow img,
+.message.removeTopMargin:not(.showUserName) .attach_photo_wrap.endFirstRow img {
   border-top-right-radius: 14px;
 }
 
