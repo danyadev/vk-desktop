@@ -105,7 +105,7 @@ export default {
       lastViewedMention: null,
 
       startInRead: 0,
-      lastReadedMsg: null,
+      lastReadedMsgId: null,
 
       messages: computed(() => store.state.messages.messages[props.peer_id] || []),
       loadingMessages: computed(() => store.state.messages.loadingMessages[props.peer_id] || []),
@@ -600,42 +600,37 @@ export default {
 
     // Reading messages ===================================
 
-    async function checkReadMessages() {
+    const checkReadMessages = callWithDelay(() => {
       if (store.getters['settings/settings'].notRead || !currentWindow.isFocused()) {
         return;
       }
 
-      // Ждем разгрузки процессора
-      await new Promise((resolve) => requestIdleCallback(resolve));
-
-      const messages = state.list.querySelectorAll('.isUnread:not(.out)');
-      let lastReadedMsg;
+      let lastReadedMsgId;
+      const messages = state.list.querySelectorAll(
+        '.message:not(.out), .message_expired_wrap, .im_service_message'
+      );
 
       for (const msg of messages) {
         if (state.list.offsetHeight + state.list.scrollTop - msg.offsetHeight >= msg.offsetTop) {
-          lastReadedMsg = +msg.dataset.id || +msg.dataset.lastId;
+          lastReadedMsgId = +msg.dataset.id || +msg.dataset.lastId;
         } else {
           break;
         }
       }
 
-      if (lastReadedMsg) {
-        readMessages(lastReadedMsg);
+      if (lastReadedMsgId) {
+        if (state.lastReadedMsgId >= lastReadedMsgId) {
+          return;
+        }
+
+        state.lastReadedMsgId = lastReadedMsgId;
+
+        vkapi('messages.markAsRead', {
+          start_message_id: lastReadedMsgId,
+          peer_id: props.peer_id
+        });
       }
-    }
-
-    const readMessages = callWithDelay((msg_id) => {
-      if (state.lastReadedMsg >= msg_id) {
-        return;
-      }
-
-      state.lastReadedMsg = msg_id;
-
-      vkapi('messages.markAsRead', {
-        start_message_id: msg_id,
-        peer_id: props.peer_id
-      });
-    }, 500);
+    }, 200);
 
     return {
       ...toRefs(state),

@@ -136,7 +136,8 @@ export default {
         props.msg.isLoading ||
         props.peer && (
           props.msg.id > props.peer.out_read || // Не прочитано собеседником
-          props.msg.id > props.peer.in_read // Не прочитано мной
+          props.msg.id > props.peer.in_read && // Не прочитано мной
+          store.getters['settings/settings'].notRead
         )
       )),
 
