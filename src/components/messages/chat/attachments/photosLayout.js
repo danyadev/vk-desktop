@@ -166,7 +166,15 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
     } else {
       // [photo1][p2]
       // [      ][p3]
-      const height1 = Math.min(maxHeight, thumbs[0].height);
+      const mediumRightPhotosHeight = (thumbs[1].height + thumbs[2].height) / 2;
+      const height1 = Math.min(
+        maxHeight,
+        Math.max(
+          Math.min(thumbs[0].height, mediumRightPhotosHeight * 1.5),
+          Math.min(mediumRightPhotosHeight, thumbs[0].height * 1.5),
+          mediumRightPhotosHeight * .75
+        )
+      );
       // Высота p3
       const height2 = photoRatios[1] * (height1 - margin) / (photoRatios[2] + photoRatios[1]);
       // Высота p2
@@ -174,7 +182,10 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
       const width1 = Math.min(height1 * photoRatios[0], (maxWidth - margin) * .75);
       const width2 = Math.min(
         maxWidth - width1 - margin,
-        (height3 * photoRatios[1] + height2 * photoRatios[2]) / 2
+        Math.max(
+          (height3 * photoRatios[1] + height2 * photoRatios[2]) / 2,
+          width1 / 3 // (3/4) / 3 = 1/4
+        )
       );
 
       updateThumb(thumbs[0], width1, height1, false, true);

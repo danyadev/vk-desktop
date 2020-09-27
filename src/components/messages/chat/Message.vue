@@ -418,8 +418,8 @@ export default {
 }
 
 .message.flyTime.hideBubble:not(.isSticker) .message_time_wrap {
-  right: 6px;
-  bottom: 6px;
+  right: 5px;
+  bottom: 5px;
 }
 
 .message.isSticker:not(.hideBubble).out .message_time_wrap {
