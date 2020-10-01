@@ -251,14 +251,16 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
       [thumbs.length]: [getMultiThumbsHeight(photoRatios, maxWidth, margin)]
     };
 
-    for (let i = 1; i < thumbs.length; i++) {
+    const minPhotosAtFirstRow = thumbs.length < 7 ? 1 : 2;
+
+    for (let i = minPhotosAtFirstRow; i < thumbs.length - 1; i++) {
       photosLayoutVariants[`${i},${thumbs.length - i}`] = [
         getMultiThumbsHeight(photoRatios.slice(0, i), maxWidth, margin),
         getMultiThumbsHeight(photoRatios.slice(i, thumbs.length), maxWidth, margin)
       ];
     }
 
-    for (let i = 1; i < thumbs.length - 1; i++) {
+    for (let i = minPhotosAtFirstRow; i < thumbs.length - 1; i++) {
       for (let j = 1; j < thumbs.length - i; j++) {
         photosLayoutVariants[`${i},${j},${thumbs.length - i - j}`] = [
           getMultiThumbsHeight(photoRatios.slice(0, i), maxWidth, margin),
@@ -274,15 +276,39 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
     // Все возможные положения находятся в photosLayoutVariants.
     let optimalPhotosLayout = null;
     let minHeightDiff = 0;
+    let reservedMaxWidthAndLayout = [];
 
     for (const key in photosLayoutVariants) {
       const photosHeight = photosLayoutVariants[key];
-
+      const photosInRows = key.split(',');
       // Math.abs нужен для того, чтобы считать размеры, максимально приближенные
       // к максимальной высоте сетки. Например, при выборе между
       // [-500, 50, 500] победит именно 50, так как он ближе всего к 0
-      const layoutHeight = getArraySum(photosHeight) + margin * (photosHeight.length - 1);
-      const heightDiff = Math.abs(layoutHeight - maxHeight);
+      const heightDiff = Math.abs(
+        (getArraySum(photosHeight) + margin * (photosHeight.length - 1)) - maxHeight
+      );
+      let index = 0;
+      let isPhotoWidthLessThanMin = false;
+
+      for (let row = 0; row < photosInRows.length; row++) {
+        for (let column = 0; column < photosInRows[row]; column++) {
+          const width = photoRatios[index++] * photosHeight[row];
+
+          if (width < 50) {
+            const [prevWidth] = reservedMaxWidthAndLayout;
+
+            if (!prevWidth || width > prevWidth) {
+              reservedMaxWidthAndLayout = [width, key, heightDiff];
+            }
+
+            isPhotoWidthLessThanMin = true;
+          }
+        }
+      }
+
+      if (isPhotoWidthLessThanMin) {
+        continue;
+      }
 
       if (!optimalPhotosLayout || heightDiff < minHeightDiff) {
         optimalPhotosLayout = key;
@@ -290,22 +316,25 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
       }
     }
 
-    const thumbsCopy = thumbs.slice();
-    const photosInRowArr = optimalPhotosLayout.split(',');
+    if (!optimalPhotosLayout) {
+      [, optimalPhotosLayout, minHeightDiff] = reservedMaxWidthAndLayout;
+    }
+
     const rowHeights = photosLayoutVariants[optimalPhotosLayout];
+    const photosInRows = optimalPhotosLayout.split(',');
+    let photoIndex = 0;
 
-    for (let i = 0; i < photosInRowArr.length; i++) {
-      const photosInRow = photosInRowArr[i];
-      const photos = thumbsCopy.splice(0, photosInRow);
-      const rowHeight = rowHeights[i];
+    for (let column = 0; column < photosInRows.length; column++) {
+      const photosInRow = photosInRows[column];
+      const rowHeight = rowHeights[column];
 
-      for (let j = 0; j < photos.length; j++) {
-        const width = photoRatios.splice(0, 1)[0] * rowHeight;
-        const height = rowHeight;
-        const lastColumn = photos.length - 1 === j;
-        const lastRow = photosInRowArr.length - 1 === i;
+      for (let row = 0; row < photosInRow; row++) {
+        const index = photoIndex++;
+        const width = photoRatios[index] * rowHeight;
+        const lastColumn = row === photosInRow - 1;
+        const lastRow = column === photosInRows.length - 1;
 
-        updateThumb(photos[j], width, height, lastColumn, lastRow);
+        updateThumb(thumbs[index], width, rowHeight, lastColumn, lastRow);
       }
     }
   }
