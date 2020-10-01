@@ -24,6 +24,11 @@ function updateThumb(thumb, width, height, lastColumn, lastRow, columnItem) {
 function calcOnePhotoSize(photo, ratios, maxWidth, maxHeight) {
   const minPhotoWidth = 50;
 
+  if (photo.height < 50) {
+    photo.height = 50;
+    photo.width = 50 * ratios[0];
+  }
+
   if (photo.height > maxHeight) {
     photo.height = maxHeight;
     photo.width = maxHeight * ratios[0];

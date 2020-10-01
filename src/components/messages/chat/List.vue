@@ -611,7 +611,9 @@ export default {
       );
 
       for (const msg of messages) {
-        if (state.list.offsetHeight + state.list.scrollTop - msg.offsetHeight >= msg.offsetTop) {
+        if (
+          state.list.offsetHeight + state.list.scrollTop - msg.offsetHeight / 2 >= msg.offsetTop
+        ) {
           lastReadedMsgId = +msg.dataset.id || +msg.dataset.lastId;
         } else {
           break;

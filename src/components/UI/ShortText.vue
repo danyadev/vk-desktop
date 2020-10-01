@@ -1,17 +1,15 @@
 <template>
-  <span class="short_text_wrap">
-    <span ref="root" :style="{ lineClamp: short ? shortenLines : 'unset' }">
-      <slot />
-    </span>
-
-    <div
-      v-if="short"
-      class="link show_full_text roboto-vk"
-      @click="short = false"
-    >
-      {{ l('show_in_full') }}
-    </div>
+  <span ref="root" class="short_text" :style="{ lineClamp: short ? shortenLines : 'unset' }">
+    <slot />
   </span>
+
+  <div
+    v-if="short"
+    class="link show_full_text roboto-vk"
+    @click="short = false"
+  >
+    {{ l('show_in_full') }}
+  </div>
 </template>
 
 <script>
@@ -69,7 +67,7 @@ export default {
 </script>
 
 <style>
-.short_text_wrap > span {
+.short_text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;

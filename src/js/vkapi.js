@@ -38,6 +38,7 @@ function handleError({ user, params, error, ...context }) {
       return;
     }
 
+    // Слишком много запросов в секунду / однотипных действий
     if (error.error_code === 6 || error.error_code === 9) {
       return setTimeout(() => {
         context.reject();
@@ -49,7 +50,7 @@ function handleError({ user, params, error, ...context }) {
     if (error.error_code === 10) {
       return openModal('error-api', {
         method: context.name,
-        error: error,
+        error,
         retry() {
           context.reject();
           resolve();
@@ -143,7 +144,7 @@ function handleError({ user, params, error, ...context }) {
   });
 }
 
-function vkapi(name, params, { android, vkme } = {}) {
+function vkapi(name, params, { android } = {}) {
   return new Promise(async (resolve, reject) => {
     const user = store.getters['users/user'];
 
@@ -163,7 +164,7 @@ function vkapi(name, params, { android, vkme } = {}) {
     }
 
     const { data } = await request({
-      host: vkme ? 'api.vk.me' : 'api.vk.com',
+      host: 'api.vk.com',
       path: `/method/${name}`,
       method: 'POST',
       headers: {

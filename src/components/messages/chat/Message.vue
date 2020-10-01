@@ -516,8 +516,8 @@ export default {
 .message.flyTime:not(.isSticker) .message_time_wrap {
   background: #000000a0;
   color: var(--text-white);
-  right: 10px;
-  bottom: 10px;
+  right: 11px;
+  bottom: 11px;
   padding: 3px 6px;
   font-weight: normal;
 }
@@ -539,25 +539,41 @@ export default {
   margin: 0 5px 5px 5px;
 }
 
-.message.removeMargin:not(.showUserName) .attach_photos > .attach_photo_wrap:first-child img,
-.message.removeTopMargin:not(.showUserName) .attach_photos > .attach_photo_wrap:first-child img {
+.message.removeMargin:not(.showUserName) .message_bubble_content > .im_attachments
+> .attach_photos_wrap .attach_photo_wrap:first-child img,
+
+.message.removeTopMargin:not(.showUserName) .message_bubble_content > .im_attachments
+> .attach_photos_wrap .attach_photo_wrap:first-child img {
   border-top-left-radius: 14px;
 }
 
-.message.removeMargin:not(.showUserName) .attach_photo_wrap.endFirstRow img,
-.message.removeTopMargin:not(.showUserName) .attach_photo_wrap.endFirstRow img {
+.message.removeMargin:not(.showUserName) .message_bubble_content > .im_attachments
+> .attach_photos_wrap .attach_photo_wrap.endFirstRow img,
+
+.message.removeTopMargin:not(.showUserName) .message_bubble_content > .im_attachments
+> .attach_photos_wrap .attach_photo_wrap.endFirstRow img {
   border-top-right-radius: 14px;
 }
 
-.message.removeMargin .attach_photo_wrap.lastRow:first-child img,
-.message.removeBottomMargin .attach_photo_wrap.lastRow:first-child img,
-.message.removeMargin br + .attach_photo_wrap.lastRow img,
-.message.removeBottomMargin br + .attach_photo_wrap.lastRow img {
+.message.removeMargin .message_bubble_content > .im_attachments
+> .attach_photos_wrap .attach_photo_wrap.lastRow:first-child img,
+
+.message.removeBottomMargin .message_bubble_content > .im_attachments
+> .attach_photos_wrap .attach_photo_wrap.lastRow:first-child img,
+
+.message.removeMargin .message_bubble_content > .im_attachments
+> .attach_photos_wrap br + .attach_photo_wrap.lastRow img,
+
+.message.removeBottomMargin .message_bubble_content > .im_attachments
+> .attach_photos_wrap br + .attach_photo_wrap.lastRow img {
   border-bottom-left-radius: 14px;
 }
 
-.message.removeMargin .attach_photo_wrap.lastRow.lastColumn img,
-.message.removeBottomMargin .attach_photo_wrap.lastRow.lastColumn img {
+.message.removeMargin .message_bubble_content > .im_attachments
+> .attach_photos_wrap .attach_photo_wrap.lastRow.lastColumn img,
+
+.message.removeBottomMargin .message_bubble_content > .im_attachments
+> .attach_photos_wrap .attach_photo_wrap.lastRow.lastColumn img {
   border-bottom-right-radius: 14px;
 }
 

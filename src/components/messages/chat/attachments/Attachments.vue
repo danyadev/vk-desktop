@@ -85,12 +85,18 @@ export default {
 }
 
 .im_attachments > div:not(:first-child) {
-  padding-top: 5px;
+  margin-top: 5px;
 }
 
 .message_bubble_content > .im_attachments > .im_attach_unknown:last-child {
   /* Убираем слишком большой отступ от конца сообщения */
   margin-bottom: -5px;
+}
+
+.message.hasPhoto .message_bubble_content > .attach_forwarded,
+.message.hasPhoto .message_bubble_content > .im_attachments > div:not(.attach_photos_wrap) {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .attach_left_border::before {

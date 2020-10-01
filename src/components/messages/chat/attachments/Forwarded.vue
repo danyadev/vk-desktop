@@ -37,8 +37,4 @@ export default {
 .im_attachments + .attach_forwarded {
   margin-top: 5px;
 }
-
-.message.hasPhoto .message_bubble_content > .attach_forwarded {
-  margin-left: 5px;
-}
 </style>

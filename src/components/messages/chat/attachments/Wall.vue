@@ -4,7 +4,7 @@
 
     <div class="attach_forwarded attach_left_border">
       <ForwardedMessage :msg="fakeMsg">
-        <template v-if="postReply" v-slot:afterContent>
+        <template v-if="postReply" #afterContent>
           <div class="attach_forwarded attach_left_border">
             <ForwardedMessage :msg="postReply" />
           </div>
