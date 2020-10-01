@@ -81,6 +81,10 @@ export default {
         ];
       }
 
+      if (block.type === 'massMention' && props.mention && props.mention !== 'text') {
+        return [h('div', { class: 'mention_attachment' }, block.value)];
+      }
+
       return [block.value];
     }
 
@@ -99,10 +103,20 @@ export default {
   }
 };
 
+const massMentionParser = createParser({
+  regexp: /(?:@|\*)(?:(all|everyone|все)|(online|here|здесь|тут))/ig,
+  parseText: (value) => [{ type: 'text', value }],
+  parseElement: (value, match, isMention) => [{
+    type: isMention ? 'text' : 'massMention',
+    subtype: match[1] ? 'all' : 'online',
+    value
+  }]
+});
+
 const hashtagParser = createParser({
   regexp: /#[a-zа-яё0-9_]+/ig,
-  parseText: (value) => [{ type: 'text', value }],
-  parseElement: (value) => [{ type: 'hashtag', value }]
+  parseText: massMentionParser,
+  parseElement: (value, match, isMention) => [{ type: isMention ? 'text' : 'hashtag', value }]
 });
 
 const linkParser = createParser({
