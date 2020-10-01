@@ -260,7 +260,7 @@ export default {
   max-width: 100%;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, .08);
+  background: var(--background-black-alpha);
 }
 
 .attach_photo_wrap:not(.lastColumn) {

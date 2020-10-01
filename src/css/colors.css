@@ -11,6 +11,7 @@
   --background-steel-gray: #9099a3;
   /* Используется для окраски фона поля для ввода текста (deprecated) */
   --background-gray-overlight: #fbfbfb;
+  --background-black-alpha: rgba(0, 0, 0, .08);
 
   --text-white: #f5f5f5;
   --text-primary: #000;

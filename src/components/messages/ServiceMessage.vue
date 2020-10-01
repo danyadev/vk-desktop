@@ -171,7 +171,8 @@ function getServiceMessage(msg, author, peer_id, isFull) {
   height: 100px;
   margin-top: 10px;
   border-radius: 50%;
-  object-fit: contain;
+  object-fit: cover;
+  background: var(--background-black-alpha);
   cursor: pointer;
 }
 </style>
