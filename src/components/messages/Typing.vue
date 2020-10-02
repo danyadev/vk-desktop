@@ -1,6 +1,6 @@
 <template>
   <div :class="['typing_wrap', { isChat }]">
-    <div class="typing_text text-overflow roboto-vk">{{ text }}</div>
+    <div class="typing_text text-overflow">{{ text }}</div>
     <div class="typing">
       <div class="typing_item"></div>
       <div class="typing_item"></div>

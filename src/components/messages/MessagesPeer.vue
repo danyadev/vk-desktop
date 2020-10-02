@@ -12,7 +12,7 @@
     <div class="im_peer_content">
       <div class="im_peer_title">
         <div class="im_peer_name_wrap">
-          <div :class="['im_peer_name text-overflow', { blueName }]">
+          <div :class="['im_peer_name text-overflow roboto-old', { blueName }]">
             <VKText>{{ chatName }}</VKText>
           </div>
           <Icon v-if="owner && owner.verified" name="verified" class="verified" />
@@ -41,7 +41,7 @@
         <Typing v-if="hasTyping" :peer_id="peer.id" />
 
         <div v-else-if="msg.id" class="im_peer_message">
-          <div class="im_peer_text_wrap text-overflow roboto-vk">
+          <div class="im_peer_text_wrap text-overflow">
             <div class="im_peer_author">{{ authorName }}</div>
 
             <div v-if="msg.isContentDeleted" class="im_peer_text isContentDeleted">

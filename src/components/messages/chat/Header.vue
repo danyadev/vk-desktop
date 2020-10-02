@@ -32,7 +32,7 @@
         </div>
 
         <Typing v-if="hasTyping" :peer_id="peer_id" :isChat="true" />
-        <div v-else class="im_header_online text-overflow roboto-vk">{{ online }}</div>
+        <div v-else class="im_header_online text-overflow">{{ online }}</div>
       </div>
 
       <Icon

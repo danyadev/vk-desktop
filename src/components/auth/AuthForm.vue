@@ -23,7 +23,7 @@
     </div>
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
 
-    <div v-if="!onlyAddUser" class="auth_users roboto-vk">
+    <div v-if="!onlyAddUser" class="auth_users">
       <div
         v-for="user of $store.state.users.users"
         :key="user.id"

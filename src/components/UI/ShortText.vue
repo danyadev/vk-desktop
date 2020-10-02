@@ -5,7 +5,7 @@
 
   <div
     v-if="short"
-    class="link show_full_text roboto-vk"
+    class="link show_full_text"
     @click="short = false"
   >
     {{ l('show_in_full') }}

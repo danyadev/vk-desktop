@@ -7,7 +7,7 @@
         @click="isUsersListActive = !isUsersListActive"
       >
 
-      <div :class="['menu_users_list roboto-vk', { active: isUsersListActive }]" @mouseout="onMouseOut">
+      <div :class="['menu_users_list', { active: isUsersListActive }]" @mouseout="onMouseOut">
         <div
           v-for="user of usersList"
           :key="user.id"

@@ -109,7 +109,7 @@ export default {
 
         children.push(
           h('div', {
-            class: ['im_service_message roboto-vk', { isUnread }],
+            class: ['im_service_message', { isUnread }],
             'data-id': msg.id
           }, [
             h(ServiceMessage, {
@@ -196,12 +196,12 @@ export default {
   border: 1px solid var(--separator-dark);
   border-radius: 20px;
   color: var(--text-dark-steel-gray);
-  padding: 5px 8px;
+  padding: 5px 12px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
 }
 
 .message_expired svg {
-  margin-right: 5px;
+  margin-right: 6px;
 }
 
 .im_service_message {

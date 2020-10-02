@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['modals_container roboto-vk', { active: hasModals }]"
+    :class="['modals_container', { active: hasModals }]"
     tabindex="-1"
     @keydown.esc="onEscape"
   >

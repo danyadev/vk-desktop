@@ -28,7 +28,7 @@
         <SendMsgErrorMenu v-if="msg.isLoading" :msg="msg" />
 
         <div ref="bubble" class="message_bubble" @mousedown="onMouseDown" @mouseup="onMouseMove">
-          <div v-if="showUserName" class="message_name roboto-vk">
+          <div v-if="showUserName" class="message_name">
             {{ name }}
           </div>
 
@@ -43,7 +43,7 @@
             <div v-if="msg.isContentDeleted" class="message_text isContentDeleted">
               {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
             </div>
-            <div v-else class="message_text roboto-vk">
+            <div v-else class="message_text">
               <VKText :inline="false" link mention="link">{{ msg.text }}</VKText>
             </div>
 

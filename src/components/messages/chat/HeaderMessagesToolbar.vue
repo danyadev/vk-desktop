@@ -9,7 +9,7 @@
       @click="cancelSelect"
     />
 
-    <div class="im_header_selected_count roboto-vk">
+    <div class="im_header_selected_count">
       {{ l('im_selected_messages_count', [messages.length], messages.length) }}
     </div>
 

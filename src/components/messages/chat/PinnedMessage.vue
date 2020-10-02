@@ -2,7 +2,7 @@
   <div v-if="!isHidden" class="im_pinned_msg_wrap" @click="openMessage">
     <Icon name="pin" color="var(--icon-dark-gray)" class="im_pinned_msg_icon" />
 
-    <div class="im_pinned_msg roboto-vk">
+    <div class="im_pinned_msg">
       <div class="im_pinned_msg_name_wrap text-overflow">
         <div class="im_pinned_msg_name">{{ name }}</div>
         <div class="im_pinned_msg_time">{{ time }}</div>

@@ -39,7 +39,7 @@
 }
 
 body {
-  font-family: BlinkMacSystemFont, Roboto;
+  font-family: BlinkMacSystemFont, Roboto VK;
   font-size: 15px;
   margin: 0;
   overflow: hidden;
@@ -76,8 +76,8 @@ img:not(.emoji) {
   letter-spacing: .03em;
 }
 
-.root:not(.mac) .roboto-vk {
-  font-family: Roboto VK;
+.root:not(.mac) .roboto-old {
+  font-family: Roboto;
 }
 
 .section_container {
