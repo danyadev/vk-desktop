@@ -7,6 +7,7 @@ export const state = reactive({
   activeUserID: computed(() => store.state.users.activeUserID),
   userPhoto: computed(() => getPhoto(store.getters['users/user'])),
   counters: computed(() => store.state.menuCounters),
+  route: computed(() => router.currentRoute.value),
 
   routes: computed(() => (
     ['messages', 'audios'].map((route) => ({
@@ -16,12 +17,26 @@ export const state = reactive({
   ))
 });
 
-function isActiveRoute(route) {
-  return new RegExp(`${route}($|/)`).test(router.currentRoute.value.path);
+function getBaseRoutes(route) {
+  return [
+    state.route.path.split('/')[1],
+    route.split('/')[1]
+  ];
 }
 
+function isActiveRoute(route) {
+  const [oldBaseRoute, newBaseRoute] = getBaseRoutes(route);
+  return oldBaseRoute === newBaseRoute;
+}
+
+const lastRoutes = {};
+
 export function openPage(route) {
-  if (!isActiveRoute(route)) {
-    router.replace(route);
+  const [oldBaseRoute, newBaseRoute] = getBaseRoutes(route);
+
+  if (oldBaseRoute !== newBaseRoute) {
+    lastRoutes[oldBaseRoute] = state.route.path;
+
+    router.replace(lastRoutes[newBaseRoute] || route);
   }
 }

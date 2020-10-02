@@ -4,7 +4,12 @@
 
     <div class="app">
       <LeftMenu v-if="!isAuth" />
-      <RouterView />
+
+      <RouterView v-slot="{ Component }">
+        <KeepAlive>
+          <component :is="Component" :key="route.path.split('/')[1]" />
+        </KeepAlive>
+      </RouterView>
 
       <ModalsWrapper />
       <ContextMenuWrapper />
@@ -59,7 +64,8 @@ export default {
     const state = reactive({
       mac: process.platform === 'darwin',
       activeUserID: computed(() => store.state.users.activeUserID),
-      isAuth: computed(() => ['/', '/auth'].includes(router.currentRoute.value.path))
+      route: computed(() => router.currentRoute.value),
+      isAuth: computed(() => ['/', '/auth'].includes(state.route.path))
     });
 
     async function initUser() {
