@@ -74,7 +74,9 @@ module.exports = function(env, { mode = 'development' } = {}) {
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
-              options: { hmr: isDev }
+              options: {
+                esModule: false
+              }
             },
             'css-loader'
           ]
