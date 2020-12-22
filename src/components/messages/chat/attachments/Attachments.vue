@@ -88,7 +88,7 @@ export default {
   margin-top: 5px;
 }
 
-.message_bubble_content > .im_attachments > .im_attach_unknown:last-child {
+.message:not(.hasForward) .message_bubble_content > .im_attachments > .im_attach_unknown:last-child {
   /* Убираем слишком большой отступ от конца сообщения */
   margin-bottom: -5px;
 }

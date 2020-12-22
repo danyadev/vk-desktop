@@ -169,7 +169,7 @@ function parseLongPollMessage(data) {
   };
 }
 
-async function getLastMessage(peer_id) {
+async function getAndUpdateConversation(peer_id) {
   const { message, conversation } = await vkapi('execute.getLastMessage', {
     peer_id,
     func_v: 2
@@ -295,7 +295,7 @@ export default {
       }
     },
     async handler({ peer_id, items: msg_ids }) {
-      const { peer, msg } = await getLastMessage(peer_id);
+      const { peer, msg } = await getAndUpdateConversation(peer_id);
       const route = router.currentRoute.value;
 
       if (
@@ -341,7 +341,7 @@ export default {
       const messagesList = store.state.messages.messages[peer_id] || [];
       const [topMsg] = messagesList;
       const bottomMsg = messagesList[messagesList.length - 1];
-      const { msg } = await getLastMessage(peer_id);
+      const { msg } = await getAndUpdateConversation(peer_id);
       let unlockUp;
       let unlockDown;
 
@@ -414,7 +414,9 @@ export default {
       };
 
       const isChatLoadedBottom = wasOpened && (
+        // Нет сообщений и они не загружаются (беседа без сообщений)
         !lastLocalMsg && !loading ||
+        // Последнее загруженное сообщение совпадает с последним сообщением в беседе
         lastLocalMsg && conversation.peer.last_msg_id === lastLocalMsg.id
       );
 
@@ -429,7 +431,7 @@ export default {
       }
 
       for (const { msg, peer: { keyboard, mentions } } of items) {
-        if (hasSupportedAttachments(msg) && isChatLoadedBottom) {
+        if (isChatLoadedBottom && hasSupportedAttachments(msg)) {
           messagesWithAttachments.push(msg.id);
         }
 
@@ -449,9 +451,7 @@ export default {
             peerData.keyboard = keyboard;
           }
 
-          if (peerData.unread !== undefined) {
-            peerData.unread++;
-          } else if (conversation) {
+          if (conversation) {
             peerData.unread = (conversation.peer.unread || 0) + 1;
           }
 

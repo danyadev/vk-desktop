@@ -164,7 +164,7 @@ export default {
 .menu_item_counter {
   position: absolute;
   top: -3px;
-  left: 30px;
+  left: 28px;
   font-size: 12px;
   background: var(--red-light);
   color: var(--background);
