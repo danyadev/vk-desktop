@@ -1,7 +1,7 @@
 <template>
   <div :class="['titlebar', { maximized }]">
     <div ref="drag" class="titlebar_drag">{{ l('vk_desktop') }}</div>
-    <div v-if="!isMac" class="titlebar_buttons">
+    <div class="titlebar_buttons">
       <div
         v-for="button of ['minimize', 'maximize', 'restore', 'close']"
         :key="button"
@@ -53,7 +53,6 @@ export default {
     return {
       maximized,
       drag,
-      isMac: process.platform === 'darwin',
       click: (button) => currentWindow[button]()
     };
   }
@@ -68,12 +67,6 @@ export default {
   z-index: 5;
   background: var(--background);
   color: var(--text-primary);
-}
-
-.mac .titlebar {
-  background: var(--titlebar-background);
-  color: var(--text-secondary);
-  font-size: 13px;
 }
 
 .titlebar_drag {
@@ -123,10 +116,5 @@ export default {
 .titlebar.maximized .titlebar_button.maximize,
 .titlebar:not(.maximized) .titlebar_button.restore {
   display: none;
-}
-
-.mac .titlebar .titlebar_drag {
-  text-align: center;
-  line-height: 14px;
 }
 </style>
