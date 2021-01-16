@@ -66,6 +66,7 @@ import { parseMessage, parseConversation } from 'js/messages';
 import { modalsState } from 'js/modals';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
+import router from 'js/router';
 
 import Icon from '../../UI/Icon.vue';
 import Scrolly from '../../UI/Scrolly.vue';
@@ -601,7 +602,11 @@ export default {
     // Reading messages ===================================
 
     const checkReadMessages = callWithDelay(() => {
-      if (store.getters['settings/settings'].notRead || !currentWindow.isFocused()) {
+      if (
+        store.getters['settings/settings'].notRead ||
+        !currentWindow.isFocused() ||
+        +router.currentRoute.value.params.id !== props.peer_id
+      ) {
         return;
       }
 
