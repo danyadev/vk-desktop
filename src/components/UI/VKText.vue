@@ -8,17 +8,14 @@ import domains from 'js/json/domains.json';
 
 export default {
   props: {
-    // Заменять ли <br> на пробел, чтобы получить однострочный текст
-    inline: {
-      type: Boolean,
-      default: true
-    },
-    // Парсить ли ссылки и хештеги
+    // true - оставляет переносы строк, false (по умолчанию) - удаляет переносы строк
+    multiline: Boolean,
+    // Парсит ссылки и хештеги
     link: Boolean,
-    // text - преобразовать упоминание в нормальный вид ([id|text] -> text)
-    // attachment - выделить упоминание синим цветом
-    // link - выделить синим цветом и сделать кликабельным
-    mention: String
+    // Парсит упоминания
+    mention: Boolean,
+    // Выделяет ссылки, хештеги и упоминания синим цветом, но не делает их кликабельными
+    preview: Boolean
   },
 
   setup(props, { slots }) {
@@ -26,7 +23,7 @@ export default {
 
     function parseBlock(block) {
       if (block.type === 'mention') {
-        if (!props.mention) {
+        if (!props.mention && !props.preview) {
           return [block.raw];
         }
 
@@ -34,13 +31,9 @@ export default {
           [...blocks, ...parseBlock(mentionTextBlock)]
         ), []);
 
-        if (props.mention === 'text') {
-          return mentionContent;
-        }
-
         let attrs;
 
-        if (props.mention === 'link') {
+        if (props.mention) {
           attrs = {
             class: 'link',
             onClick() {
@@ -49,7 +42,7 @@ export default {
             }
           };
         } else {
-          attrs = { class: 'mention_attachment' };
+          attrs = { class: 'message_preview' };
         }
 
         return [h('div', attrs, mentionContent)];
@@ -60,29 +53,27 @@ export default {
       }
 
       if (block.type === 'br') {
-        return [props.inline ? ' ' : h('br')];
+        return [props.multiline ? h('br') : ' '];
       }
 
-      if (block.type === 'link' && props.link) {
-        return [
-          h('div', {
-            class: 'link',
-            onClick: () => internalLinkResolver(block.link)
-          }, [block.value])
-        ];
+      if (block.type === 'link' && (props.link || props.preview)) {
+        const params = props.link
+          ? { class: 'link', onClick: () => internalLinkResolver(block.link) }
+          : { class: 'message_preview' };
+
+        return [h('div', params, [block.value])];
       }
 
-      if (block.type === 'hashtag' && props.link) {
-        return [
-          h('div', {
-            class: 'link'
-            // onClick() {}
-          }, [block.value])
-        ];
+      if (block.type === 'hashtag' && (props.link || props.preview)) {
+        const params = props.link
+          ? { class: 'link' }
+          : { class: 'message_preview' };
+
+        return [h('div', params, [block.value])];
       }
 
-      if (block.type === 'massMention' && props.mention && props.mention !== 'text') {
-        return [h('div', { class: 'mention_attachment' }, block.value)];
+      if (block.type === 'massMention' && (props.mention || props.preview)) {
+        return [h('div', { class: 'message_preview' }, block.value)];
       }
 
       return [block.value];
@@ -194,7 +185,7 @@ const mentionParser = createParser({
 </script>
 
 <style>
-.mention_attachment {
+.message_preview {
   display: inline;
   color: var(--text-blue);
 }

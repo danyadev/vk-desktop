@@ -12,7 +12,7 @@
         />
 
         <div>
-          <VKText mention="attachment">{{ snackbar.text }}</VKText>
+          <VKText preview>{{ snackbar.text }}</VKText>
         </div>
 
         <Icon

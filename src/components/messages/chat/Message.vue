@@ -44,7 +44,7 @@
               {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
             </div>
             <div v-else class="message_text">
-              <VKText :inline="false" link mention="link">{{ msg.text }}</VKText>
+              <VKText multiline mention link>{{ msg.text }}</VKText>
             </div>
 
             <Attachments :attachments="msg.attachments" />

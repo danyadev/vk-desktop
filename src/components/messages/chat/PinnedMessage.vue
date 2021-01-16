@@ -8,7 +8,7 @@
         <div class="im_pinned_msg_time">{{ time }}</div>
       </div>
       <div :class="['im_pinned_msg_text text-overflow', { hasAttachment }]">
-        <VKText mention="attachment">{{ text }}</VKText>
+        <VKText preview>{{ text }}</VKText>
       </div>
     </div>
 

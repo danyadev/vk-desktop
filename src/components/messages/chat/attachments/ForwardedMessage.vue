@@ -20,7 +20,7 @@
       </div>
       <div v-else class="attach_fwd_msg_text">
         <ShortText>
-          <VKText :inline="false" mention="link" link>{{ msg.text }}</VKText>
+          <VKText multiline mention link>{{ msg.text }}</VKText>
         </ShortText>
       </div>
 
