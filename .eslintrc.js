@@ -55,6 +55,7 @@ module.exports = {
     }],
     'keyword-spacing': 'error',
     'lines-between-class-members': 'error',
+    // max-len работает через vue/max-len
     'new-cap': ['error', {
       properties: false
     }],
@@ -232,6 +233,10 @@ module.exports = {
     }],
 
     // Включаем правила, которые не указаны в рекомендуемых
+    'vue/block-tag-newline': ['error', {
+      singleline: 'always',
+      multiline: 'always'
+    }],
     'vue/component-name-in-template-casing': 'error',
     'vue/html-comment-content-newline': 'error',
     'vue/html-comment-content-spacing': 'error',
@@ -254,6 +259,7 @@ module.exports = {
     'vue/padding-line-between-blocks': 'error',
     'vue/require-direct-export': 'error',
     'vue/v-for-delimiter-style': ['error', 'of'],
+    'vue/v-on-event-hyphenation': ['error', 'never'],
 
     // Включаем правила, идентичные eslint-base, но которые направлены на выражения в template
     'vue/array-bracket-spacing': 'error',
