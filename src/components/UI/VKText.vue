@@ -94,9 +94,17 @@ export default {
   }
 };
 
+// Хештеги парсятся после масс меншнов потому что #abc@all
+// будет упоминать всю беседу, а не игнорировать @all
+const hashtagParser = createParser({
+  regexp: /#[a-zа-яё0-9_@]+/ig,
+  parseText: (value) => [{ type: 'text', value }],
+  parseElement: (value, match, isMention) => [{ type: isMention ? 'text' : 'hashtag', value }]
+});
+
 const massMentionParser = createParser({
   regexp: /(?:@|\*)(?:(all|everyone|все)|(online|here|здесь|тут))/ig,
-  parseText: (value) => [{ type: 'text', value }],
+  parseText: hashtagParser,
   parseElement: (value, match, isMention) => [{
     type: isMention ? 'text' : 'massMention',
     subtype: match[1] ? 'all' : 'online',
@@ -104,15 +112,9 @@ const massMentionParser = createParser({
   }]
 });
 
-const hashtagParser = createParser({
-  regexp: /#[a-zа-яё0-9_]+/ig,
-  parseText: massMentionParser,
-  parseElement: (value, match, isMention) => [{ type: isMention ? 'text' : 'hashtag', value }]
-});
-
 const linkParser = createParser({
   regexp: /((https?:\/\/)?([a-zа-яё0-9.\-@]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n\\ ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig,
-  parseText: hashtagParser,
+  parseText: massMentionParser,
   parseElement(value, match, isMention) {
     const { localhost, port, ip } = match.groups;
     const isValidIP = !ip || !ip.split('.').find((v) => v > 255);
