@@ -9,7 +9,7 @@ export default function Button(props, { slots }) {
     Ripple,
     {
       color: light.value ? 'var(--button-light-ripple)' : 'var(--background-blue-ripple)',
-      class: ['button roboto-old', {
+      class: ['button', {
         light: light.value,
         disabled: props.disabled
       }]

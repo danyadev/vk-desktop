@@ -12,7 +12,7 @@
     <div class="im_peer_content">
       <div class="im_peer_title">
         <div class="im_peer_name_wrap">
-          <div :class="['im_peer_name text-overflow roboto-old', { blueName }]">
+          <div :class="['im_peer_name text-overflow', { blueName }]">
             <VKText>{{ chatName }}</VKText>
           </div>
           <Icon v-if="owner && owner.verified" name="verified" class="verified" />
@@ -337,16 +337,21 @@ export default {
   color: var(--text-dark-steel-gray);
 }
 
-.im_peer_text b {
-  font-weight: 500;
-}
-
 .im_peer_text.hasAttachment {
   color: var(--text-blue);
 }
 
 .im_peer_text.isContentDeleted {
   color: var(--text-dark-steel-gray);
+}
+
+/* Сервисное сообщение */
+.im_peer_text span {
+  color: var(--text-dark-steel-gray);
+}
+
+.im_peer_text span b {
+  font-weight: 500;
 }
 
 .im_peer .message_dot {

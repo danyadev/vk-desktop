@@ -46,9 +46,12 @@
         width="28"
         height="28"
       />
-      <div v-if="counters[route]" class="menu_item_counter" :title="counters[route]">
-        {{ convertCount(counters[route]) }}
-      </div>
+      <div
+        v-if="counters[route]"
+        class="menu_item_counter"
+        :title="counters[route]"
+        :value="convertCount(counters[route])"
+      />
     </div>
 
     <div class="menu_grow"></div>
@@ -172,6 +175,14 @@ export default {
   padding: 2px 5px;
   min-width: 18px;
   text-align: center;
+}
+
+.menu_item_counter::before {
+  content: attr(value);
+  float: left;
+  max-width: 26px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .menu_grow {

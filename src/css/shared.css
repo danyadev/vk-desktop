@@ -11,20 +11,6 @@
 }
 
 @font-face {
-  font-family: Roboto;
-  font-weight: 400;
-  font-display: block;
-  src: url('~assets/Roboto.ttf');
-}
-
-@font-face {
-  font-family: Roboto;
-  font-weight: 500;
-  font-display: block;
-  src: url('~assets/RobotoMedium.ttf');
-}
-
-@font-face {
   font-family: Roboto VK;
   font-weight: 400;
   font-display: block;
@@ -71,13 +57,9 @@ img:not(.emoji) {
 }
 
 .root.mac {
-  --titlebar-height: 0;
+  --titlebar-height: 0px;
 
   letter-spacing: .03em;
-}
-
-.root:not(.mac) .roboto-old {
-  font-family: Roboto;
 }
 
 .section_container {
