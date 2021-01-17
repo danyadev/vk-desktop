@@ -130,7 +130,10 @@ class Longpoll {
     const filteredHistory = history.filter((item) => ![8, 9, 63, 64].includes(item[0]));
 
     if (filteredHistory.length) {
-      debug('[longpoll]\n' + JSON.stringify(filteredHistory, null, 2));
+      debug(
+        '[longpoll]',
+        JSON.stringify(filteredHistory)
+      );
     }
 
     const events = [];

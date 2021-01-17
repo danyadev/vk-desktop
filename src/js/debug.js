@@ -13,9 +13,13 @@ function genTime(isFilename) {
     : time;
 }
 
+if (!fs.existsSync('logs')) {
+  fs.mkdirSync('logs');
+}
+
 const path = `logs/${genDate()} ${genTime(true)}.log`;
 const fileDescriptor = fs.openSync(path, 'a');
 
-export default function(text) {
-  fs.appendFileSync(fileDescriptor, `[${genTime()}] ${text}\n`);
+export default function(...textChunks) {
+  fs.appendFileSync(fileDescriptor, `[${genTime()}] ${textChunks.join('\n')}\n`);
 }

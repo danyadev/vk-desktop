@@ -424,12 +424,12 @@ export default {
       if (!isChatLoadedBottom && wasOpened) {
         console.warn('Сообщение не добавилось в список');
         debug(
-          '[longpollEvents] Сообщение не было добавлено в список.\n' +
-          `peer_id: ${peer_id}\n` +
-          `lastLocalMsg: ${JSON.stringify(lastLocalMsg)}\n` +
-          `loading: ${loading}\n` +
+          '[longpollEvents] Сообщение не было добавлено в список.',
+          `peer_id: ${peer_id}`,
+          `loading: ${loading}`,
           'conversation.peer.last_msg_id === lastLocalMsg.id: ' +
-          conversation.peer.last_msg_id === lastLocalMsg.id
+          conversation.peer.last_msg_id === lastLocalMsg.id,
+          `lastLocalMsg: ${JSON.stringify(lastLocalMsg)}`
         );
       }
 
