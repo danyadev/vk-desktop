@@ -9,7 +9,7 @@ export default {
     const attachments = [];
     const attachNames = Object.keys(props.attachments);
     // Вложения, с которыми не будут отображаться другие вложения (будут скрыты)
-    const singleAttachments = ['sticker', 'gift', 'audio_message'];
+    const singleAttachments = ['sticker', 'gift'];
     const hasSingleAttach = singleAttachments.some((attach) => attachNames.includes(attach));
 
     const layoutAttachs = {};

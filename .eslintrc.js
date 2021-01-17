@@ -145,12 +145,6 @@ module.exports = {
     'object-shorthand': 'error',
     'one-var': ['error', 'never'],
     'operator-assignment': 'error',
-    'operator-linebreak': ['error', 'after', {
-      overrides: ['?', ':', '+', '>', '<', '>=', '<=']
-        .reduce((all, operator) => (
-          all[operator] = 'before', all
-        ), {})
-    }],
     'padded-blocks': ['error', 'never'],
     'prefer-arrow-callback': 'error',
     'prefer-const': ['error', {
@@ -287,12 +281,6 @@ module.exports = {
     'vue/no-useless-concat': 'error',
     'vue/object-curly-newline': 'error',
     'vue/object-curly-spacing': ['error', 'always'],
-    'vue/operator-linebreak': ['error', 'after', {
-      overrides: ['?', ':', '+', '>', '<', '>=', '<=']
-        .reduce((all, operator) => (
-          all[operator] = 'before', all
-        ), {})
-    }],
     'vue/space-in-parens': 'error',
     'vue/space-infix-ops': 'error',
     'vue/space-unary-ops': 'error',

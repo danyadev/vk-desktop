@@ -12,6 +12,7 @@ import { supportedAttachments } from '../components/messages/chat/attachments';
 import vkapi from './vkapi';
 import store from './store';
 import router from './router';
+import debug from './debug';
 
 function hasFlag(mask) {
   const flags = {
@@ -419,6 +420,18 @@ export default {
         // Последнее загруженное сообщение совпадает с последним сообщением в беседе
         lastLocalMsg && conversation.peer.last_msg_id === lastLocalMsg.id
       );
+
+      if (!isChatLoadedBottom && wasOpened) {
+        console.warn('Сообщение не добавилось в список');
+        debug(
+          '[longpollEvents] Сообщение не было добавлено в список.\n' +
+          `peer_id: ${peer_id}\n` +
+          `lastLocalMsg: ${JSON.stringify(lastLocalMsg)}\n` +
+          `loading: ${loading}\n` +
+          'conversation.peer.last_msg_id === lastLocalMsg.id: ' +
+          conversation.peer.last_msg_id === lastLocalMsg.id
+        );
+      }
 
       if (isChatLoadedBottom) {
         store.commit('messages/addMessages', {

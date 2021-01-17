@@ -4,6 +4,7 @@ import vkapi from './vkapi';
 import store from './store';
 import request from './request';
 import longpollEvents from './longpollEvents';
+import debug from './debug';
 
 class Longpoll {
   constructor() {
@@ -124,6 +125,12 @@ class Longpoll {
   async emitHistory(history = []) {
     if (!history.length) {
       return;
+    }
+
+    const filteredHistory = history.filter((item) => ![8, 9, 63, 64].includes(item[0]));
+
+    if (filteredHistory.length) {
+      debug('[longpoll]\n' + JSON.stringify(filteredHistory, null, 2));
     }
 
     const events = [];
