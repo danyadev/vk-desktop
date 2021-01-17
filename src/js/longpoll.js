@@ -4,6 +4,7 @@ import vkapi from './vkapi';
 import store from './store';
 import request from './request';
 import longpollEvents from './longpollEvents';
+import { copyArray } from './copyObject';
 import debug from './debug';
 
 class Longpoll {
@@ -127,13 +128,16 @@ class Longpoll {
       return;
     }
 
-    const filteredHistory = history.filter((item) => ![8, 9, 63, 64].includes(item[0]));
+    const filteredHistory = copyArray(history).filter((item) => {
+      if (item[0] === 4 || item[0] === 5) {
+        item[5] = ''; // текст сообщения
+      }
+
+      return ![8, 9, 63, 64].includes(item[0]);
+    });
 
     if (filteredHistory.length) {
-      debug(
-        '[longpoll]',
-        JSON.stringify(filteredHistory)
-      );
+      debug('[longpoll] ' + JSON.stringify(filteredHistory));
     }
 
     const events = [];
