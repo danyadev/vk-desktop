@@ -2,12 +2,17 @@
   "productName": "VK Desktop",
   "appId": "ru.danyadev.vkdesktop",
   "artifactName": "VK-Desktop-${os}-${arch}.${ext}",
-  "electronVersion": "8.5.1",
+  "electronVersion": "8.5.5",
   "npmRebuild": false,
   "directories": {
-    "output": "out"
+    "output": "build"
   },
-  "files": ["dist/**", "menu.js", "index.js"],
+  "files": [
+    "package.json",
+    { "from": "build/dist", "to": "dist", "filter": "**/*" },
+    "menu.js",
+    "index.js"
+  ],
   "win": {
     "target": [{
       "target": "dir",
