@@ -43,10 +43,10 @@ export default {
       }
 
       if (state.route.name === 'forward-to') {
-        return router.replace(`/messages/${state.route.params.fromId}`);
+        return router.push(`/messages/${state.route.params.fromId}`);
       }
 
-      router.replace('/messages');
+      router.back();
     }
 
     return {

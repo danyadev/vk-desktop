@@ -176,7 +176,9 @@ export default {
         });
       }
 
-      await router.replace({
+      const updateMethod = state.route.name === 'chat' ? 'replace' : 'push';
+
+      await router[updateMethod]({
         name: 'chat',
         params: {
           id: peer_id,

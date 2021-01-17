@@ -1,6 +1,6 @@
 <template>
   <div class="im_chat_container">
-    <Header :peer_id="peer_id" :peer="peer" @close="$router.replace('/messages')" />
+    <Header :peer_id="peer_id" :peer="peer" @close="$router.back()" />
     <div class="im_chat_wrap">
       <List :peer_id="peer_id" :peer="peer" />
       <Input :peer_id="peer_id" :peer="peer" />

@@ -28,6 +28,7 @@ import { getPhotoFromSizes, eventBus } from 'js/utils';
 import { getMessagePreview, getPeerTitle, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
+import router from 'js/router';
 
 import VKText from '../../../UI/VKText.vue';
 
@@ -101,6 +102,12 @@ export default {
       const messages = store.state.messages.messages[props.peer_id];
 
       if (messages.find((msg) => msg.id === props.msg.id)) {
+        const openedPeerId = router.currentRoute.value.params.id;
+
+        if (openedPeerId !== props.peer_id) {
+          await router.push(`/messages/${props.peer_id}`);
+        }
+
         return jumpToMsg();
       }
 

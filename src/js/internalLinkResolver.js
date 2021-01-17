@@ -4,7 +4,7 @@ import store from './store';
 import router from './router';
 
 function openChat(peer_id) {
-  router.replace(`/messages/${peer_id}`);
+  router.push(`/messages/${peer_id}`);
   return true;
 }
 

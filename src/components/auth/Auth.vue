@@ -4,7 +4,7 @@
     name="cancel"
     color="var(--icon-gray)"
     class="auth_cancel"
-    @click="$router.go(-1)"
+    @click="$router.back()"
   />
 
   <AuthForm v-if="!isConfirm" :onlyAddUser="onlyAddUser" @confirm="onConfirm" @auth="onAuth" />
