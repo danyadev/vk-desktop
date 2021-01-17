@@ -45,13 +45,14 @@ module.exports = function(env, { mode = 'development' } = {}) {
     entry: './src/main.js',
     output: {
       path: path.resolve(__dirname, 'build/dist'),
-      publicPath: 'http://localhost:8080/dist',
+      publicPath: 'http://localhost:9973/dist',
       pathinfo: false
     },
     devServer: {
       clientLogLevel: 'silent',
       compress: true,
       overlay: true,
+      port: 9973,
       before(app, { middleware }) {
         middleware.waitUntilValid(() => {
           spawn(
