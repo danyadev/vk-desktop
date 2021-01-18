@@ -94,6 +94,7 @@ export default async function sendMessage({
 
   await nextTick();
 
+  store.state.lockNextScrollyRender = true;
   eventBus.emit('messages:event', 'jump', {
     msg_id,
     peer_id,

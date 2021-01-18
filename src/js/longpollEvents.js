@@ -434,6 +434,7 @@ export default {
       }
 
       if (isChatLoadedBottom) {
+        store.state.lockNextScrollyRender = true;
         store.commit('messages/addMessages', {
           peer_id,
           addNew: true,

@@ -96,7 +96,12 @@ export default {
 
     function onScroll() {
       refreshScrollLayout();
-      activateScrollBars();
+
+      if (!store.state.lockNextScrollyRender) {
+        activateScrollBars();
+      } else {
+        store.state.lockNextScrollyRender = false;
+      }
     }
 
     function onBarWheel(event) {

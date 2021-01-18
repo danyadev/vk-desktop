@@ -1,7 +1,9 @@
 export default {
   state: {
     menuCounters: {},
-    profiles: {}
+    profiles: {},
+    // блокировать ли отображение изменения позиции скроллбара
+    lockNextScrollyRender: false
   },
 
   mutations: {
