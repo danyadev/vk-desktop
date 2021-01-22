@@ -506,6 +506,7 @@ export default {
 }
 
 /* Ограничение ширины сообщения со стикером ============ */
+
 .message:not(.hideBubble).isSticker .attach_reply,
 .message:not(.hideBubble).isSticker .message_text {
   width: 128px;
@@ -582,7 +583,7 @@ export default {
 }
 
 .message.removeTopMargin .message_bubble {
-  padding: 6px 6px 8px 6px;
+  padding: 6px 6px 9px 6px;
 }
 
 .message.removeBottomMargin .message_bubble {
@@ -590,7 +591,7 @@ export default {
 }
 
 .message.removeMiddleMargin .message_bubble {
-  padding: 8px 6px;
+  padding: 8px 6px 9px 6px;
 }
 
 .message.removeTopMargin:not(.flyTime) .message_time_wrap,

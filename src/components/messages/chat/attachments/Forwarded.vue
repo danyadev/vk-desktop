@@ -30,7 +30,7 @@ export default {
 <style>
 .attach_forwarded {
   position: relative;
-  padding-left: 10px;
+  padding-left: 8px;
 }
 
 .message_text + .attach_forwarded,
