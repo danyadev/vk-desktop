@@ -24,6 +24,11 @@ module.exports = {
     'plugin:vue/vue3-recommended'
   ],
 
+  globals: {
+    DEV_MODE: 'readonly',
+    API_HOST: 'readonly'
+  },
+
   rules: {
     'array-bracket-spacing': 'error',
     'arrow-body-style': 'error',

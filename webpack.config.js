@@ -97,6 +97,8 @@ module.exports = function(env, { mode = 'development' } = {}) {
     },
     plugins: [
       new DefinePlugin({
+        DEV_MODE: JSON.stringify(isDev),
+        API_HOST: JSON.stringify('vk-desktop.herokuapp.com'),
         __VUE_OPTIONS_API__: false,
         __VUE_PROD_DEVTOOLS__: false
       }),

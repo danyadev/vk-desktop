@@ -129,11 +129,11 @@ class Longpoll {
     }
 
     const filteredHistory = copyArray(history).filter((item) => {
-      if (item[0] === 4 || item[0] === 5) {
+      if ([4, 5, 18].includes(item[0])) {
         item[5] = ''; // текст сообщения
       }
 
-      return ![8, 9, 63, 64].includes(item[0]);
+      return ![6, 8, 9, 63, 64].includes(item[0]);
     });
 
     if (filteredHistory.length) {

@@ -12,7 +12,6 @@ import { supportedAttachments } from '../components/messages/chat/attachments';
 import vkapi from './vkapi';
 import store from './store';
 import router from './router';
-import debug from './debug';
 
 function hasFlag(mask) {
   const flags = {
@@ -418,20 +417,8 @@ export default {
         // Нет сообщений и они не загружаются (беседа без сообщений)
         !lastLocalMsg && !loading ||
         // Последнее загруженное сообщение совпадает с последним сообщением в беседе
-        lastLocalMsg && conversation.peer.last_msg_id === lastLocalMsg.id
+        lastLocalMsg && (conversation.peer.last_msg_id === lastLocalMsg.id)
       );
-
-      if (!isChatLoadedBottom && wasOpened) {
-        console.warn('Сообщение не добавилось в список');
-        debug(
-          '[longpollEvents] Сообщение не было добавлено в список.',
-          `peer_id: ${peer_id}`,
-          `loading: ${loading}`,
-          'conversation.peer.last_msg_id === lastLocalMsg.id: ' +
-          conversation.peer.last_msg_id === lastLocalMsg.id,
-          `lastLocalMsg: ${JSON.stringify(lastLocalMsg)}`
-        );
-      }
 
       if (isChatLoadedBottom) {
         store.state.lockNextScrollyRender = true;

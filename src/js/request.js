@@ -1,6 +1,7 @@
 import { promises as dns } from 'dns';
 import https from 'https';
 import { timer, isObject } from './utils';
+import debug from './debug';
 
 // Возможные варианты передачи параметров:
 // 1. request(paramsOrUrl, options?)
@@ -98,7 +99,6 @@ async function sendMultipart(req, files) {
 
     await new Promise((resolve) => {
       file.value
-        .pipe(req, { end: false })
         .on('end', () => {
           if (i === names.length - 1) {
             req.end(`\r\n--${boundary}--`);
@@ -107,7 +107,8 @@ async function sendMultipart(req, files) {
           }
 
           resolve();
-        });
+        })
+        .pipe(req, { end: false });
     });
   }
 }
@@ -150,7 +151,9 @@ export default async function(...data) {
         waitConnectionPromise = waitConnection();
       }
 
+      debug('[request] start: waitConnection');
       await waitConnectionPromise;
+      debug('[request] end: waitConnection');
     }
   }
 }

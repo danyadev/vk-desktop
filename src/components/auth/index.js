@@ -4,9 +4,12 @@ import vkapi, { version } from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
 import request from 'js/request';
+import debug from 'js/debug';
 
 export function getAndroidToken(login, password, params = {}) {
   return new Promise(async (resolve) => {
+    debug('[auth] start: getAndroidToken');
+
     const query = toUrlParams({
       scope: 'all',
       client_id: 2274003,
@@ -38,6 +41,7 @@ export function getAndroidToken(login, password, params = {}) {
       openModal('captcha', {
         src: data.captcha_img,
         send(code) {
+          debug('[auth] end: getAndroidToken (captcha)');
           resolve(
             getAndroidToken(login, password, {
               ...params,
@@ -47,15 +51,16 @@ export function getAndroidToken(login, password, params = {}) {
           );
         }
       });
-    } else if (data.ban_info) {
-      resolve({ error: 'account_banned' });
     } else {
-      resolve(data);
+      debug('[auth] end: getAndroidToken');
+      resolve(data.ban_info ? { error: 'account_banned' } : data);
     }
   });
 }
 
 async function getDesktopToken(androidToken) {
+  debug('[auth] start: getDesktopToken');
+
   const query = toUrlParams({
     redirect_uri: 'https://oauth.vk.com/blank.html',
     display: 'page',
@@ -77,6 +82,8 @@ async function getDesktopToken(androidToken) {
 
   const link = 'https://oauth.vk.com' + linkResponse.headers.location;
   const { headers } = await request(link, { raw: true });
+
+  debug('[auth] end: getDesktopToken');
 
   return headers.location.match(/#access_token=([a-z0-9]{85})/)[1];
 }

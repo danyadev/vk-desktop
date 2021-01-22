@@ -7,6 +7,15 @@ import { usersStorage } from './store/Storage';
 import vkapi from './vkapi';
 import store from './store';
 import copyObject from './copyObject';
+import debug from './debug';
+
+debug(
+  '[init] ' +
+  `os ${os.type()} (${os.platform()}) ${os.release()} ${os.arch()}; ` +
+  `electron ${process.versions.electron}; ` +
+  `app ${version}; ` +
+  `user_id ${store.state.users.activeUserID || '(не авторизован)'}\n`
+);
 
 // --- Переменные
 

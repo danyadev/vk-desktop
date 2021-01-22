@@ -37,6 +37,7 @@
 <script>
 import { reactive, toRefs, onMounted, onBeforeUnmount } from 'vue';
 import { debounce } from 'js/utils';
+import store from 'js/store';
 
 const waitAnimationFrame = () => new Promise(requestAnimationFrame);
 
