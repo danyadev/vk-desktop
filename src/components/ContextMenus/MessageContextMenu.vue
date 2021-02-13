@@ -102,9 +102,10 @@ export default {
     }
 
     async function reply() {
-      eventBus.emit('messages:replyOrForward', {
-        type: 'reply',
-        data: state.msg
+      store.commit('messages/updatePeerConfig', {
+        peer_id,
+        replyMsg: state.msg,
+        fwdMessages: null
       });
 
       await nextTick();

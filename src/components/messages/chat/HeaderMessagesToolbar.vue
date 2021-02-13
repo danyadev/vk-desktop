@@ -83,9 +83,10 @@ export default {
 
     async function forward(toThisChat) {
       if (toThisChat) {
-        eventBus.emit('messages:replyOrForward', {
-          type: 'forward',
-          data: props.messages.map((id) => getMessageById(id, props.peer_id))
+        store.commit('messages/updatePeerConfig', {
+          peer_id: props.peer_id,
+          replyMsg: null,
+          fwdMessages: props.messages.map((id) => getMessageById(id, props.peer_id))
         });
 
         await nextTick();
@@ -111,9 +112,10 @@ export default {
         return forward(true);
       }
 
-      eventBus.emit('messages:replyOrForward', {
-        type: 'reply',
-        data: getMessageById(props.messages[0], props.peer_id)
+      store.commit('messages/updatePeerConfig', {
+        peer_id: props.peer_id,
+        replyMsg: getMessageById(props.messages[0], props.peer_id),
+        fwdMessages: null
       });
 
       cancelSelect();

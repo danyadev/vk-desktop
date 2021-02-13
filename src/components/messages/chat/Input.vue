@@ -115,8 +115,8 @@ export default {
       hasKeyboard: computed(() => (state.keyboard.buttons || []).length),
       showKeyboard: false,
 
-      repliedMsg: null,
-      fwdMessages: [],
+      repliedMsg: computed(() => store.state.messages.peersConfig[props.peer_id]?.repliedMsg),
+      fwdMessages: computed(() => store.state.messages.peersConfig[props.peer_id]?.fwdMessages),
 
       canWrite: computed(() => {
         if (props.peer && props.peer.isWriteAllowed) {
@@ -134,31 +134,8 @@ export default {
     const focusInput = () => state.input && state.input.focus();
 
     onActivated(() => {
-      eventBus.on('messages:replyOrForward', onReplyOrForward);
       focusInput();
     });
-
-    onDeactivated(() => {
-      eventBus.removeListener('messages:replyOrForward', onReplyOrForward);
-    });
-
-    function onReplyOrForward({ type, data }) {
-      if (type === 'reply') {
-        if (state.fwdMessages) {
-          state.fwdMessages = [];
-        }
-
-        state.repliedMsg = data;
-      }
-
-      if (type === 'forward') {
-        if (state.repliedMsg) {
-          state.repliedMsg = null;
-        }
-
-        state.fwdMessages = data;
-      }
-    }
 
     watch(() => state.repliedMsg, (msg) => msg && focusInput());
     watch(() => state.fwdMessages, (fwd) => fwd.length && focusInput());

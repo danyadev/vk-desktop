@@ -188,9 +188,10 @@ export default {
       });
 
       if (isForwardTo) {
-        eventBus.emit('messages:replyOrForward', {
-          type: 'forward',
-          data: store.state.messages.tmpForwardingMessages
+        store.commit('messages/updatePeerConfig', {
+          peer_id,
+          replyMsg: null,
+          fwdMessages: store.state.messages.tmpForwardingMessages
         });
         store.state.messages.tmpForwardingMessages = [];
       }
