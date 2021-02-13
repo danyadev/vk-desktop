@@ -540,6 +540,9 @@ export default {
   margin: 0 5px 5px 5px;
 }
 
+/* stylelint-disable selector-combinator-space-before */
+/* ему не нравится, что комбинатор > находится на новой строке */
+
 .message.removeMargin:not(.showUserName) .message_bubble_content > .im_attachments
 > .attach_photos_wrap .attach_photo_wrap:first-child img,
 
@@ -577,6 +580,8 @@ export default {
 > .attach_photos_wrap .attach_photo_wrap.lastRow.lastColumn img {
   border-bottom-right-radius: 14px;
 }
+
+/* stylelint-enable selector-combinator-space-before */
 
 .message.removeMargin:not(.hideBubble) .message_bubble {
   padding: 6px;

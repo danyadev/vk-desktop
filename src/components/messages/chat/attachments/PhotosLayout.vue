@@ -227,7 +227,7 @@ export default {
   align-items: center;
   top: 5px;
   left: 5px;
-  background: #000000aa;
+  background: #000a;
   color: var(--text-white);
   font-size: 11px;
   border-radius: 8px;

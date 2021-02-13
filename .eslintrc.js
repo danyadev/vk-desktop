@@ -293,6 +293,9 @@ module.exports = {
 
     // Изменяем уже включенные правила для соответствия своему стилю
     'vue/attribute-hyphenation': ['error', 'never'],
+    'vue/comment-directive': ['error', {
+      reportUnusedDisableDirectives: true
+    }],
     'vue/component-tags-order': ['error', {
       order: ['template', 'script', 'style']
     }],

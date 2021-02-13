@@ -100,6 +100,7 @@ function calcTwoPhotosWidth(photos, ratios, maxWidth, margin) {
 // thumbs = [{ width, height, ...rest }]: массив фоток
 // margin: расстояние между фотками
 // maxWidth, maxHeight: максимальные размеры родителя
+// eslint-disable-next-line import/no-unused-modules
 export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
   // Копируем массив для предотвращения мутации оригинального массива
   thumbs = thumbs.map((thumb) => ({ ...thumb }));

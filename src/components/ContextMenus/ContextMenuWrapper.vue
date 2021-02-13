@@ -4,7 +4,7 @@
     @mousedown="tryCloseMenu"
     @click="tryCloseMenu"
   >
-    <component :is="menu.name" v-if="menu" v-bind="menu.data" />
+    <component :is="menu.name" v-bind="menu.data" v-if="menu" />
   </div>
 </template>
 
