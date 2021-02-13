@@ -409,7 +409,6 @@ export default {
       const messagesWithAttachments = [];
       const peerData = {
         id: peer_id,
-        last_msg_id: lastMsg.id,
         mentions: conversation && conversation.peer.mentions || []
       };
 
@@ -422,12 +421,19 @@ export default {
 
       if (isChatLoadedBottom) {
         store.state.lockNextScrollyRender = true;
+
         store.commit('messages/addMessages', {
           peer_id,
           addNew: true,
           messages: items
             .filter((item) => !hasPreloadMessages([item]))
             .map((item) => item.msg)
+        });
+
+        store.commit('messages/updateConversation', {
+          peer: {
+            last_msg_id: lastMsg.id
+          }
         });
       }
 
