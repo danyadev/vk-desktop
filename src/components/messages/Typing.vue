@@ -48,7 +48,6 @@ export default {
 
     const text = computed(() => {
       const typingIds = {};
-      let msg = '';
 
       for (const id in typing.value) {
         const { type } = typing.value[id];
@@ -56,11 +55,7 @@ export default {
         (typingIds[type] || (typingIds[type] = [])).push(id);
       }
 
-      for (const [type, ids] of Object.entries(typingIds)) {
-        msg += getText(type, ids);
-      }
-
-      return msg;
+      return Object.entries(typingIds).map(([type, ids]) => getText(type, ids)).join(', ');
     });
 
     return {
