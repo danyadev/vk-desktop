@@ -82,9 +82,9 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, onActivated, onDeactivated, watch } from 'vue';
+import { reactive, computed, toRefs, onActivated, watch } from 'vue';
 import electron from 'electron';
-import { throttle, escape, eventBus } from 'js/utils';
+import { throttle, escape } from 'js/utils';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';

@@ -34,41 +34,30 @@ export default {
       return user.name || `${user.first_name} ${user.last_name[0] + '.'}`;
     }
 
-    function getText(type, users) {
-      if (users.length === 1) {
-        return getTranslate(`im_typing_${type}`, 0, [name(users[0])]);
-      } else if (users.length === 2) {
-        return getTranslate(`im_typing_${type}`, 1, [name(users[0]), name(users[1])]);
+    function getText(type, ids) {
+      if (ids.length === 1) {
+        return getTranslate(`im_typing_${type}`, 0, [name(ids[0])]);
+      } else if (ids.length === 2) {
+        return getTranslate(`im_typing_${type}`, 1, [name(ids[0]), name(ids[1])]);
       }
 
-      return getTranslate(`im_typing_${type}`, 2, [name(users[0]), users.length - 1]);
+      return getTranslate(`im_typing_${type}`, 2, [name(ids[0]), ids.length - 1]);
     }
 
     const typing = computed(() => store.state.messages.typing[props.peer_id]);
 
     const text = computed(() => {
-      const typingText = [];
-      const typingAudio = [];
+      const typingIds = {};
       let msg = '';
 
       for (const id in typing.value) {
-        if (typing.value[id].type === 'text') {
-          typingText.push(id);
-        } else {
-          typingAudio.push(id);
-        }
+        const { type } = typing.value[id];
+
+        (typingIds[type] || (typingIds[type] = [])).push(id);
       }
 
-      if (typingText.length) {
-        msg += getText('text', typingText);
-      }
-
-      if (typingText.length && typingAudio.length) {
-        msg += ` ${getTranslate('and')} `;
-      }
-
-      if (typingAudio.length) {
-        msg += getText('audio', typingAudio);
+      for (const [type, ids] of Object.entries(typingIds)) {
+        msg += getText(type, ids);
       }
 
       return msg;

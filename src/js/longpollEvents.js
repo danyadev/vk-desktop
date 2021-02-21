@@ -266,6 +266,22 @@ function removeTyping(peer_id, user_id, clearChat) {
   }
 }
 
+function typingHandler(peer_id, ids, type) {
+  for (const id of ids) {
+    if (id === store.state.users.activeUserID) {
+      continue;
+    }
+
+    store.commit('messages/addUserTyping', {
+      type,
+      peer_id,
+      user_id: id
+    });
+
+    watchTyping(peer_id, id);
+  }
+}
+
 export default {
   2: {
     // 1) Пометка важным (important)
@@ -826,41 +842,31 @@ export default {
   63: {
     // Статус набора сообщения
     // [peer_id, [from_ids], ids_length, timestamp]
-    handler([peer_id, ids]) {
-      for (const id of ids) {
-        if (id === store.state.users.activeUserID) {
-          continue;
-        }
-
-        store.commit('messages/addUserTyping', {
-          peer_id,
-          user_id: id,
-          type: 'text'
-        });
-
-        watchTyping(peer_id, id);
-      }
-    }
+    handler: ([peer_id, ids]) => typingHandler(peer_id, ids, 'text')
   },
 
   64: {
     // Статус записи голосового сообщения
     // [peer_id, [from_ids], ids_length, timestamp]
-    handler([peer_id, ids]) {
-      for (const id of ids) {
-        if (id === store.state.users.activeUserID) {
-          continue;
-        }
+    handler: ([peer_id, ids]) => typingHandler(peer_id, ids, 'audio')
+  },
 
-        store.commit('messages/addUserTyping', {
-          peer_id,
-          user_id: id,
-          type: 'audio'
-        });
+  65: {
+    // Статус загрузки фото
+    // [peer_id, [from_ids], ids_length, timestamp]
+    handler: ([peer_id, ids]) => typingHandler(peer_id, ids, 'photo')
+  },
 
-        watchTyping(peer_id, id);
-      }
-    }
+  66: {
+    // Статус загрузки видео
+    // [peer_id, [from_ids], ids_length, timestamp]
+    handler: ([peer_id, ids]) => typingHandler(peer_id, ids, 'video')
+  },
+
+  67: {
+    // Статус загрузки файла
+    // [peer_id, [from_ids], ids_length, timestamp]
+    handler: ([peer_id, ids]) => typingHandler(peer_id, ids, 'file')
   },
 
   80: {
