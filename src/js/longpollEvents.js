@@ -429,13 +429,14 @@ export default {
             .filter((item) => !hasPreloadMessages([item]))
             .map((item) => item.msg)
         });
-
-        store.commit('messages/updateConversation', {
-          peer: {
-            last_msg_id: lastMsg.id
-          }
-        });
       }
+
+      store.commit('messages/updateConversation', {
+        peer: {
+          id: peer_id,
+          last_msg_id: lastMsg.id
+        }
+      });
 
       for (const { msg, peer: { keyboard, mentions } } of items) {
         if (isChatLoadedBottom && hasSupportedAttachments(msg)) {

@@ -115,8 +115,9 @@ export default {
       hasKeyboard: computed(() => (state.keyboard.buttons || []).length),
       showKeyboard: false,
 
-      repliedMsg: computed(() => store.state.messages.peersConfig[props.peer_id]?.repliedMsg),
-      fwdMessages: computed(() => store.state.messages.peersConfig[props.peer_id]?.fwdMessages),
+      peersConfig: computed(() => store.state.messages.peersConfig[props.peer_id]),
+      repliedMsg: computed(() => state.peersConfig && state.peersConfig.repliedMsg),
+      fwdMessages: computed(() => state.peersConfig && state.peersConfig.fwdMessages || []),
 
       canWrite: computed(() => {
         if (props.peer && props.peer.isWriteAllowed) {

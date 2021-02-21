@@ -88,8 +88,24 @@ export function parseAttachments(list) {
   const attachments = {};
 
   for (const attachDescription of list) {
-    const { type } = attachDescription;
+    let { type } = attachDescription;
     const attach = attachDescription[type];
+
+    if (type === 'link') {
+      const types = {
+        audio_playlist: 'https://m.vk.com/audio?act=audio_playlist',
+        narrative: 'https://m.vk.com/narrative',
+        article: 'https://m.vk.com/@',
+        artist: 'https://m.vk.com/artist/'
+      };
+
+      for (const [newType, startOfLink] of Object.entries(types)) {
+        if (attach.url.startsWith(startOfLink)) {
+          type = newType;
+          break;
+        }
+      }
+    }
 
     if (attachments[type]) {
       attachments[type].push(attach);

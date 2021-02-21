@@ -40,7 +40,7 @@ export default function debug(...textChunks) {
 
 const errorCache = new Set();
 
-async function onError(error) {
+async function showError(error) {
   let type = error.type === 'error' ? 'UncaughtError' : 'UnhandledRejection';
   let message;
 
@@ -105,8 +105,8 @@ async function onError(error) {
 }
 
 if (!DEV_MODE) {
-  window.addEventListener('error', onError);
-  window.addEventListener('unhandledrejection', onError);
+  window.addEventListener('error', showError);
+  window.addEventListener('unhandledrejection', showError);
 }
 
 // =================
