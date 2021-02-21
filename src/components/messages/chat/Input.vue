@@ -1,8 +1,8 @@
 <template>
   <div class="chat_input_container border-top-shadow">
     <template v-if="canWrite.allowed">
-      <div v-if="repliedMsg || fwdMessages.length" class="chat_input_reply">
-        <Reply v-if="repliedMsg" :peer_id="peer_id" :msg="repliedMsg" :ownerMsgId="repliedMsg.id" />
+      <div v-if="replyMsg || fwdMessages.length" class="chat_input_reply">
+        <Reply v-if="replyMsg" :peer_id="peer_id" :msg="replyMsg" :ownerMsgId="replyMsg.id" />
         <div v-else class="attach_reply attach_left_border" @click="openFwdMessages">
           <div class="attach_reply_content">
             <div class="attach_reply_name">{{ l('im_forwarded_some') }}</div>
@@ -116,7 +116,7 @@ export default {
       showKeyboard: false,
 
       peersConfig: computed(() => store.state.messages.peersConfig[props.peer_id]),
-      repliedMsg: computed(() => state.peersConfig && state.peersConfig.repliedMsg),
+      replyMsg: computed(() => state.peersConfig && state.peersConfig.replyMsg),
       fwdMessages: computed(() => state.peersConfig && state.peersConfig.fwdMessages || []),
 
       canWrite: computed(() => {
@@ -138,7 +138,7 @@ export default {
       focusInput();
     });
 
-    watch(() => state.repliedMsg, (msg) => msg && focusInput());
+    watch(() => state.replyMsg, (msg) => msg && focusInput());
     watch(() => state.fwdMessages, (fwd) => fwd.length && focusInput());
 
     function toggleNotifications() {
@@ -166,7 +166,7 @@ export default {
     }
 
     async function send() {
-      const reply_to = state.repliedMsg && state.repliedMsg.id;
+      const reply_to = state.replyMsg && state.replyMsg.id;
 
       // Функция не ждет отсылки сообщения через API.
       // Асинхронная функция потому, что там вызывается await nextTick();
@@ -245,8 +245,11 @@ export default {
     }
 
     function closeReply() {
-      state.repliedMsg = null;
-      state.fwdMessages = [];
+      store.commit('messages/updatePeerConfig', {
+        peer_id: props.peer_id,
+        replyMsg: null,
+        fwdMessages: null
+      });
     }
 
     function openFwdMessages() {

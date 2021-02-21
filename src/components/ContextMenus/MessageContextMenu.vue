@@ -46,9 +46,8 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, nextTick } from 'vue';
+import { reactive, computed, toRefs } from 'vue';
 import electron from 'electron';
-import { eventBus } from 'js/utils';
 import { deleteMessages } from 'js/messages';
 import { addSnackbar } from 'js/snackbars';
 import vkapi from 'js/vkapi';
@@ -101,18 +100,11 @@ export default {
       });
     }
 
-    async function reply() {
+    function reply() {
       store.commit('messages/updatePeerConfig', {
         peer_id,
         replyMsg: state.msg,
         fwdMessages: null
-      });
-
-      await nextTick();
-
-      eventBus.emit('messages:event', 'jump', {
-        peer_id,
-        bottom: true
       });
     }
 

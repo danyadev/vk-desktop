@@ -53,8 +53,6 @@
 </template>
 
 <script>
-import { nextTick } from 'vue';
-import { eventBus } from 'js/utils';
 import { getMessageById, deleteMessages } from 'js/messages';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
@@ -74,23 +72,13 @@ export default {
       store.commit('messages/removeSelectedMessages');
     }
 
-    function scrollToEnd() {
-      eventBus.emit('messages:event', 'jump', {
-        peer_id: props.peer_id,
-        bottom: true
-      });
-    }
-
-    async function forward(toThisChat) {
+    function forward(toThisChat) {
       if (toThisChat) {
         store.commit('messages/updatePeerConfig', {
           peer_id: props.peer_id,
           replyMsg: null,
           fwdMessages: props.messages.map((id) => getMessageById(id, props.peer_id))
         });
-
-        await nextTick();
-        scrollToEnd();
       } else {
         store.state.messages.tmpForwardingMessages = props.messages.map(
           (id) => getMessageById(id, props.peer_id)
@@ -107,7 +95,7 @@ export default {
       cancelSelect();
     }
 
-    async function reply() {
+    function reply() {
       if (props.messages.length > 1) {
         return forward(true);
       }
@@ -119,8 +107,6 @@ export default {
       });
 
       cancelSelect();
-      await nextTick();
-      scrollToEnd();
     }
 
     function markAsSpam() {
