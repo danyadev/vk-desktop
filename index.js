@@ -2,7 +2,7 @@
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
-const { app, BrowserWindow, shell, screen } = require('electron');
+const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
 
 // Выключаем предупреждение в консоли
 app.allowRendererProcessReuse = false;
@@ -23,6 +23,7 @@ app.once('ready', () => {
   });
 
   win.webContents.session.setSpellCheckerLanguages(['ru', 'en-US']);
+  nativeTheme.themeSource = 'light';
 
   win.webContents.once('dom-ready', async () => {
     const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
