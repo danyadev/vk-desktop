@@ -4,9 +4,7 @@ import Wall from './Wall.vue';
 import WallReply from './WallReply.vue';
 
 export const supportedAttachments = new Set([
-  'photo',
-  'video',
-  'doc',
+  'photo', 'video', 'doc',
   'sticker',
   'wall',
   'wall_reply'

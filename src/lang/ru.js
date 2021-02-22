@@ -160,6 +160,7 @@ export default {
     podcast: ['Подкаст'],
     curator: ['Куратор'],
     graffiti: ['Граффити'],
+    mini_app: ['Мини-приложение'],
     narrative: ['Сюжет'],
     wall_reply: ['Комментарий на стене'],
     audio_message: ['Голосовое сообщение'],

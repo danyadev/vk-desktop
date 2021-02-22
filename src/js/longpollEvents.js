@@ -112,6 +112,8 @@ function parseLongPollMessage(data) {
   const attachments = getAttachments(data[6]);
   const hasReplyMsg = flag('reply_msg');
   const hasAttachment = !!(hasReplyMsg || data[6].fwd || Object.keys(attachments).length);
+  const messagesList = store.state.messages.messages[data[2]];
+  let replyMsg = null;
   let mentions = [];
 
   if (keyboard) {
@@ -124,6 +126,15 @@ function parseLongPollMessage(data) {
     }
 
     // type 2 = бомбочка
+  }
+
+  if (hasReplyMsg && messagesList) {
+    const reply_id = JSON.parse(data[6].reply).conversation_message_id;
+    const msg = messagesList.find((msg) => msg.conversation_msg_id === reply_id);
+
+    if (msg) {
+      replyMsg = msg;
+    }
   }
 
   return {
@@ -154,7 +165,7 @@ function parseLongPollMessage(data) {
       fwdMessages: [],
       attachments,
       hasReplyMsg,
-      replyMsg: null,
+      replyMsg,
       keyboard: keyboard && keyboard.inline ? keyboard : null,
       hasTemplate: !!data[5].has_template,
       template: null,
@@ -213,7 +224,7 @@ async function loadMessages(peer_id, msg_ids, onlyReturnMessages) {
 // Проверяет, есть ли поддерживаемое вложение в сообщении,
 // чтобы в дальнейшем его получить через API
 function hasSupportedAttachments(msg) {
-  if (msg.hasReplyMsg || msg.fwdCount || msg.hasTemplate) {
+  if (msg.hasReplyMsg && !msg.replyMsg || msg.fwdCount || msg.hasTemplate) {
     return true;
   }
 
