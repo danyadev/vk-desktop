@@ -5,6 +5,7 @@ import electron from 'electron';
 import request from './request';
 import store from './store';
 import getTranslate from './getTranslate';
+import { format } from 'js/date/utils';
 
 const { app, dialog } = electron.remote;
 
@@ -28,12 +29,13 @@ if (!fs.existsSync(logsPath)) {
   fs.mkdirSync(logsPath, { recursive: true });
 }
 
-const logName = `${genDate()} ${genTime(true)}.log`;
+const logName = `${format(new Date(), 'dd.MM.yyyy')} ${format(new Date(), 'hh-mm-ss')}.log`;
 const logPath = path.join(logsPath, logName);
 const fileDescriptor = fs.openSync(logPath, 'a+');
 
 export default function debug(...textChunks) {
-  fs.appendFileSync(fileDescriptor, `[${genTime()}] ${textChunks.join('\n')}\n`);
+  const time = format(new Date(), 'hh:mm:ss');
+  fs.appendFileSync(fileDescriptor, `[${time}] ${textChunks.join('\n')}\n`);
 }
 
 // =================

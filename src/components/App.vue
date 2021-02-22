@@ -28,6 +28,7 @@ import store from 'js/store';
 import router from 'js/router';
 import request from 'js/request';
 import longpoll from 'js/longpoll';
+import * as dateUtils from 'js/date/utils';
 import * as auth from './auth';
 import * as emoji from 'js/emoji';
 
@@ -47,6 +48,7 @@ window.store = store;
 window.router = router;
 window.request = request;
 window.longpoll = longpoll;
+window.dateUtils = dateUtils;
 window.auth = auth;
 window.emoji = emoji;
 
