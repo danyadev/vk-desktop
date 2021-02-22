@@ -12,7 +12,9 @@ app.once('ready', () => {
     minWidth: 400,
     minHeight: 550,
     show: false,
-    frame: process.platform === 'darwin',
+    frame: false,
+    titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
