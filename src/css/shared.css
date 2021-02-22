@@ -57,7 +57,7 @@ img:not(.emoji) {
 }
 
 .root.mac {
-  --titlebar-height: 0px;
+  --titlebar-height: 24px;
 
   letter-spacing: .03em;
 }

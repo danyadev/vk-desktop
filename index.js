@@ -2,7 +2,7 @@
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
-const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
+const { app, BrowserWindow, shell, screen } = require('electron');
 
 // Выключаем предупреждение в консоли
 app.allowRendererProcessReuse = false;
@@ -12,7 +12,9 @@ app.once('ready', () => {
     minWidth: 400,
     minHeight: 550,
     show: false,
-    frame: process.platform === 'darwin',
+    frame: false,
+    titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
@@ -21,7 +23,6 @@ app.once('ready', () => {
   });
 
   win.webContents.session.setSpellCheckerLanguages(['ru', 'en-US']);
-  nativeTheme.themeSource = 'light';
 
   win.webContents.once('dom-ready', async () => {
     const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');

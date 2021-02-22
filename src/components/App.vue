@@ -1,6 +1,6 @@
 <template>
   <div :class="['root', { mac }]">
-    <Titlebar v-if="!isMac" />
+    <Titlebar />
 
     <div class="app">
       <LeftMenu v-if="!isAuth" />
@@ -67,8 +67,7 @@ export default {
       mac: process.platform === 'darwin',
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
-      isAuth: computed(() => ['/', '/auth'].includes(state.route.path)),
-      isMac: process.platform === 'darwin'
+      isAuth: computed(() => ['/', '/auth'].includes(state.route.path))
     });
 
     async function initUser() {
