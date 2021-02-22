@@ -127,7 +127,10 @@ export function getMessagePreview(msg) {
 
   if (attachName) {
     const count = attachments[attachName].length;
-    const translate = getTranslate('im_attachments', attachName, [count], count);
+    const translate = (
+      getTranslate('im_attachments', attachName, [count], count) ||
+      getTranslate('im_attachments', attachName, [1], 1)
+    );
 
     if (!translate) {
       console.warn('[im] Неизвестное вложение:', attachName, `(${count})`);
