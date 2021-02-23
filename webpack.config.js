@@ -44,7 +44,7 @@ module.exports = function(env, { mode = 'development' } = {}) {
     },
     entry: './src/main.js',
     output: {
-      path: path.resolve(__dirname, 'build/dist'),
+      path: path.resolve(__dirname, 'app/dist'),
       publicPath: 'http://localhost:9973/dist',
       pathinfo: false
     },

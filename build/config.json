@@ -5,11 +5,11 @@
   "electronVersion": "8.5.5",
   "npmRebuild": false,
   "directories": {
-    "output": "build"
+    "output": "app"
   },
   "files": [
     "package.json",
-    { "from": "build/dist", "to": "dist", "filter": "**/*" },
+    { "from": "app/dist", "to": "dist", "filter": "**/*" },
     "menu.js",
     "index.js"
   ],
@@ -28,6 +28,7 @@
   "mac": {
     "category": "public.app-category.social-networking",
     "gatekeeperAssess": true,
-    "target": "dmg"
+    "target": "dmg",
+    "electronLanguages": ["ru", "en", "uk"]
   }
 }

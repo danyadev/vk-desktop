@@ -9,7 +9,7 @@ AppUpdatesURL=https://github.com/danyadev/vk-desktop/releases
 DefaultDirName={localappdata}\VK Desktop
 DisableDirPage=yes
 DisableProgramGroupPage=yes
-OutputDir=..\build
+OutputDir=..\app
 OutputBaseFilename=VK-Desktop-Setup-x32
 SetupIconFile=.\icon.ico
 UninstallDisplayIcon={app}\VK Desktop.exe
@@ -26,7 +26,7 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\build\win-ia32-unpacked\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs allowunsafefiles
+Source: "..\app\win-ia32-unpacked\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs allowunsafefiles
 
 [Icons]
 Name: "{commonprograms}\VK Desktop"; Filename: "{app}\VK Desktop.exe"
