@@ -1,3 +1,4 @@
+import { nextTick } from 'vue';
 import { timer, eventBus } from './utils';
 import {
   parseMessage,
@@ -128,7 +129,7 @@ function parseLongPollMessage(data) {
     // type 2 = бомбочка
   }
 
-  if (hasReplyMsg && messagesList) {
+  if (data[6].reply && messagesList) {
     const reply_id = JSON.parse(data[6].reply).conversation_message_id;
     const msg = messagesList.find((msg) => msg.conversation_msg_id === reply_id);
 
@@ -369,10 +370,14 @@ export default {
       const [topMsg] = messagesList;
       const bottomMsg = messagesList[messagesList.length - 1];
       const { msg } = await getAndUpdateConversation(peer_id);
+      const isReturnToChannel = items[0].peer.isChannel;
       let unlockUp;
       let unlockDown;
 
-      if (!topMsg) {
+      if (isReturnToChannel) {
+        unlockUp = false;
+        unlockDown = false;
+      } else if (!topMsg) {
         unlockUp = true;
         unlockDown = true;
       } else {
@@ -416,6 +421,15 @@ export default {
         store.commit('messages/moveConversation', {
           peer_id,
           isRestoreMsg: true
+        });
+      }
+
+      if (isReturnToChannel) {
+        await nextTick();
+        eventBus.emit('messages:event', 'jump', {
+          peer_id,
+          bottom: true,
+          noSmooth: true
         });
       }
     }

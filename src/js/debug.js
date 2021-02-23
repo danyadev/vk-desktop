@@ -8,20 +8,6 @@ import getTranslate from './getTranslate';
 import { format } from 'js/date/utils';
 
 const { app, dialog } = electron.remote;
-
-function genDate() {
-  return new Date().toLocaleDateString();
-}
-
-function genTime(isFilename) {
-  const date = new Date();
-  const time = date.toLocaleTimeString();
-
-  return isFilename
-    ? time.replace(/:/g, '-')
-    : time;
-}
-
 const appName = 'vk-desktop';
 const logsPath = getLibraryDefaultDir();
 
