@@ -114,7 +114,7 @@ export default {
 .attach_doc_dot {
   width: 2px;
   height: 2px;
-  margin: 6px 3px 0 3px;
+  margin: 6px 4px 0 4px;
   border-radius: 50%;
   background-color: var(--text-dark-steel-gray);
 }
