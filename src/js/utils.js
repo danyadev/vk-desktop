@@ -1,9 +1,12 @@
+import fs from 'fs';
 import { EventEmitter } from 'events';
 import { reactive } from 'vue';
 import electron from 'electron';
 import os from 'os';
+import path from 'path';
 import { version } from '../../package.json';
 import { usersStorage } from './store/Storage';
+import request from './request';
 import vkapi from './vkapi';
 import store from './store';
 import copyObject from './copyObject';
@@ -404,6 +407,23 @@ export function getAppName(app_id) {
   }
 }
 
+export async function downloadFile({ getUrl, progress }) {
+  const files = electron.remote.dialog.showOpenDialogSync({
+    properties: ['openDirectory']
+  });
+
+  if (files) {
+    const url = await getUrl();
+    const [name] = (new URL(url)).pathname.split('/').reverse();
+
+    await request(url, {
+      raw: true,
+      pipe: fs.createWriteStream(path.join(files[0], name)),
+      progress
+    });
+  }
+}
+
 export const windowSize = reactive({
   width: window.innerWidth,
   height: window.innerHeight
@@ -427,26 +447,6 @@ window.addEventListener('resize', () => {
 //
 //     el.addEventListener('transitionend', onTransitionEndListener);
 //   });
-// }
-
-// export async function downloadFile(src, withRedirect, progress) {
-//   const files = electron.remote.dialog.showOpenDialogSync({
-//     properties: ['openDirectory']
-//   });
-//
-//   if (files) {
-//     if (withRedirect) {
-//       const { headers } = await request(src);
-//       src = headers.location;
-//     }
-//
-//     const [name] = (new URL(src)).pathname.split('/').reverse();
-//
-//     await request(src, {
-//       pipe: fs.createWriteStream(path.join(files[0], name)),
-//       progress
-//     });
-//   }
 // }
 
 // export function parseMp3Link(url) {

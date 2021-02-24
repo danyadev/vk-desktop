@@ -16,6 +16,8 @@ export default {
   add_account: 'Добавить аккаунт',
   delete_account: 'Удалить аккаунт',
   show_in_full: 'Показать полностью...',
+  download: 'Скачать',
+  downloaded: 'Скачано',
 
   // ----- Окно с ошибкой JS
   error_dialog_title: 'Произошла ошибка',

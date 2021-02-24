@@ -60,13 +60,13 @@ export default {
       );
     }
 
-    // if(documentAttachs.length) {
-    //   attachments.push(
-    //     ...documentAttachs.map((attach) => {
-    //       return h(components.doc, { attach });
-    //     })
-    //   );
-    // }
+    if (documentAttachs.length) {
+      attachments.push(
+        ...documentAttachs.map((attach) => (
+          h(components.doc, { attach })
+        ))
+      );
+    }
 
     if (attachments.length) {
       return h('div', { class: 'im_attachments' }, attachments);
@@ -88,7 +88,12 @@ export default {
   margin-top: 5px;
 }
 
-.message:not(.hasForward) .message_bubble_content > .im_attachments > .im_attach_unknown:last-child {
+.im_attachments > div:not(:first-child).attach_doc {
+  margin-top: 8px;
+}
+
+.message:not(.hasForward) .message_bubble_content > .im_attachments > .im_attach_unknown:last-child,
+.message:not(.hasForward) .message_bubble_content > .im_attachments > .attach_doc {
   /* Убираем слишком большой отступ от конца сообщения */
   margin-bottom: -5px;
 }
