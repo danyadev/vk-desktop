@@ -1,7 +1,12 @@
 <template>
-  <div class="settings_line clickable" @click="toggle('showObjectIds')">
-    {{ l('ml_settings_options', 'show_object_ids') }}
-    <Checkbox :active="settings.showObjectIds" />
+  <div class="settings_line clickable" @click="toggle('showAvatarAtBottom')">
+    {{ l('ml_settings_options', 'show_avatar_at_bottom') }}
+    <Checkbox :active="settings.showAvatarAtBottom" />
+  </div>
+
+  <div class="settings_line clickable" @click="toggle('useLightMessageColors')">
+    {{ l('ml_settings_options', 'use_light_message_colors') }}
+    <Checkbox :active="settings.useLightMessageColors" />
   </div>
 </template>
 

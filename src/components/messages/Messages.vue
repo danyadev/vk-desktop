@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['section_container messages_container', { hasChat }]"
+    :class="['section_container messages_container', settingsClasses, { hasChat }]"
     tabindex="-1"
     @keydown.esc="closeChat"
   >
@@ -30,7 +30,13 @@ export default {
     const state = reactive({
       route: router.currentRoute,
       peer_id: computed(() => +state.route.params.id || 0),
-      hasChat: computed(() => state.route.name === 'chat')
+      hasChat: computed(() => state.route.name === 'chat'),
+
+      settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
+      settingsClasses: computed(() => (
+        ['showAvatarAtBottom', 'useLightMessageColors']
+          .map((name) => state.settings[name] && `st-${name}`)
+      ))
     });
 
     function closeChat() {

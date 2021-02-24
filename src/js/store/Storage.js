@@ -32,8 +32,11 @@ export const defaultUserSettings = {
   hiddenPinnedMessages: {},
   typing: true,
   notRead: true,
-  devShowObjectIds: false,
-  deleteForAll: false
+  deleteForAll: false,
+
+  showAvatarAtBottom: false,
+  useLightMessageColors: false,
+  showObjectIds: false
 };
 
 export const usersStorage = new Storage({

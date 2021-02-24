@@ -7,6 +7,7 @@
           <CloseModal :closable="true" />
         </div>
       </div>
+
       <div class="settings_content">
         <div class="settings_left_panel">
           <Ripple
@@ -20,6 +21,7 @@
             <div class="settings_left_name">{{ l('ml_settings_sections', section.name) }}</div>
           </Ripple>
         </div>
+
         <div class="settings_right_panel">
           <KeepAlive>
             <component :is="activeSection" />
@@ -31,10 +33,13 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import CloseModal from './CloseModal.vue';
 import Icon from '../UI/Icon.vue';
 import Ripple from '../UI/Ripple.vue';
 
+import Interface from './settingsSections/Interface.vue';
 import Developers from './settingsSections/Developers.vue';
 
 export default {
@@ -43,13 +48,17 @@ export default {
     Icon,
     Ripple,
 
+    Interface,
     Developers
   },
 
   setup() {
+    const activeSection = ref('interface');
+
     return {
-      activeSection: 'developers',
+      activeSection,
       sections: [
+        { name: 'interface', icon: 'palette' },
         { name: 'developers', icon: 'bug' }
       ]
     };

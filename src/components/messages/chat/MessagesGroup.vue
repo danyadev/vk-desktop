@@ -70,6 +70,10 @@ export default {
   top: 5px;
 }
 
+.st-showAvatarAtBottom .message_photo {
+  top: calc(100% - 10px - 5px);
+}
+
 .messages_stack_list {
   width: 100%;
 }

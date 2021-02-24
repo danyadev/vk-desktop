@@ -60,3 +60,10 @@
 
   --attach-left-border: #7197c5;
 }
+
+.root .st-useLightMessageColors {
+  --message-bubble-background: #ebedf0;
+  --message-bubble-background-alpha: #ebedf0df;
+  --message-out-bubble-background: #cce4ff;
+  --message-out-bubble-background-alpha: #cce4ffdf;
+}
