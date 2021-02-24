@@ -96,19 +96,21 @@ export default {
 
     function togglePinPeer() {
       const peers = state.pinnedPeers.slice();
+      const isUnpin = state.isPinnedPeer;
 
-      if (state.isPinnedPeer) {
+      if (isUnpin) {
         peers.splice(peers.indexOf(peer_id), 1);
       } else {
-        peers.push(peer_id);
+        peers.unshift(peer_id);
       }
 
       store.state.messages.pinnedPeers = peers;
 
-      vkapi('storage.set', {
-        key: 'pinnedPeers',
-        value: peers.join()
-      });
+      vkapi(
+        isUnpin ? 'messages.unpinConversation' : 'messages.pinConversation',
+        { peer_id },
+        { android: true }
+      );
     }
 
     function markAsRead() {

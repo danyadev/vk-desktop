@@ -775,6 +775,20 @@ export default {
     }
   },
 
+  20: {
+    // Закрепление или открепление беседы
+    // [peer_id, major_id, 0]
+    handler([peer_id, major_id]) {
+      const { pinnedPeers, conversations } = store.state.messages;
+
+      if (major_id === 0) {
+        pinnedPeers.splice(pinnedPeers.indexOf(peer_id), 1);
+      } else if (!pinnedPeers.includes(peer_id)) {
+        pinnedPeers.unshift(peer_id);
+      }
+    }
+  },
+
   51: {
     // Изменение данных чата
     // [chat_id]
