@@ -118,8 +118,7 @@ export default {
 .im_header_name_wrap {
   display: flex;
   height: 16px;
-  margin-top: 2px;
-  margin-bottom: 1px;
+  margin: 2px 0 1px 0;
 }
 
 .im_header_name_wrap .verified {
@@ -144,7 +143,7 @@ export default {
 
 .im_header_online:not(:empty) {
   color: var(--text-dark-steel-gray);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .im_search_btn {
