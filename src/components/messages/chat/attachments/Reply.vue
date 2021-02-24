@@ -46,13 +46,10 @@ export default {
         const photoDoc = doc && doc.find((doc) => doc.preview);
         const videoImage = video && video[0].image;
         const storyImage = story && story[0] && story[0].photo;
-        const linkImage = link && link[0] && link[0].photo;
+        const linkImage = link && link[0].photo;
 
         // TODO Убрать, когда все вложения будут грузиться по умолчанию
-        if (
-          story && !story[0] ||
-          link && !link[0]
-        ) {
+        if (story && !story[0]) {
           vkapi('messages.getById', {
             message_ids: props.msg.id
           }).then(({ items: [msg] }) => {
