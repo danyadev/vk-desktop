@@ -100,5 +100,9 @@ export default {
   .menu.bottom {
     display: none;
   }
+
+  .im_peers_container .account_manager {
+    display: none;
+  }
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
   <div class="im_peers_container">
     <div :class="['header', { isScrolled }]">
+      <AccountManager />
       <SearchInput />
       <Icon name="write_square" color="var(--icon-blue)" class="im_create_chat_btn" />
       <MessagesListMenu />
@@ -37,6 +38,7 @@ import router from 'js/router';
 import Scrolly from '../UI/Scrolly.vue';
 import Icon from '../UI/Icon.vue';
 import SearchInput from '../UI/SearchInput.vue';
+import AccountManager from '../menu/AccountManager.vue';
 import BottomMenu from '../menu/BottomMenu.vue';
 import MessagesPeer from './MessagesPeer.vue';
 import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
@@ -48,6 +50,7 @@ export default {
     Scrolly,
     Icon,
     SearchInput,
+    AccountManager,
     BottomMenu,
     MessagesPeer,
     MessagesListMenu
@@ -169,6 +172,17 @@ export default {
 .im_peers_container .header.isScrolled {
   position: relative;
   border-bottom-color: var(--separator);
+}
+
+.im_peers_container .account_manager {
+  margin: 0 -8px 0 0;
+  padding-left: 8px;
+}
+
+.im_peers_container .account_manager .account_users_list {
+  top: -3px;
+  left: -6px;
+  z-index: 5;
 }
 
 .im_create_chat_btn {
