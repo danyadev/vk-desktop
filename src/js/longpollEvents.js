@@ -779,10 +779,15 @@ export default {
     // Закрепление или открепление беседы
     // [peer_id, major_id, 0]
     handler([peer_id, major_id]) {
-      const { pinnedPeers, conversations } = store.state.messages;
+      const { pinnedPeers } = store.state.messages;
 
       if (major_id === 0) {
-        pinnedPeers.splice(pinnedPeers.indexOf(peer_id), 1);
+        const index = pinnedPeers.indexOf(peer_id);
+
+        // при откреплении диалога в самом приложении беседа сразу удаляется из списка
+        if (index !== -1) {
+          pinnedPeers.splice(index, 1);
+        }
       } else if (!pinnedPeers.includes(peer_id)) {
         pinnedPeers.unshift(peer_id);
       }
