@@ -753,13 +753,13 @@ export default {
 .im_scroll_end_btn div:not(:empty),
 .im_scroll_mention_btn div:not(:empty) {
   position: absolute;
-  top: -5px;
+  top: -7px;
   right: -3px;
   background-color: var(--background-blue);
   color: var(--background-blue-text);
   font-size: 12px;
   border-radius: 10px;
-  padding: 2px 5px 1px 5px;
+  padding: 3px 6px 2px 6px;
 }
 
 .im_scroll_mention_btn {

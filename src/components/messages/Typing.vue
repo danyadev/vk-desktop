@@ -72,8 +72,7 @@ export default {
 }
 
 .typing_wrap.isChat {
-  font-size: 14px;
-  margin-top: 1px;
+  font-size: 13px;
 }
 
 .typing {
