@@ -1,5 +1,5 @@
 <template>
-  <div :class="['attach_link', { horizontalPhoto }]" @click="openPage(url)">
+  <div :class="['attach_link', { horizontalPhoto, hasButton: !!button }]" @click="openPage(url)">
     <img v-if="photo" :src="photo">
     <div class="attach_link_content">
       <div class="attach_link_content_title">{{ title }}</div>
@@ -75,6 +75,8 @@ export default {
 }
 
 .attach_link_content {
+  display: flex;
+  flex-direction: column;
   margin: 10px;
 }
 
@@ -91,6 +93,10 @@ export default {
   font-weight: 500;
 }
 
+.hasButton .attach_link_content_title {
+  -webkit-line-clamp: 1;
+}
+
 .attach_link_content_caption {
   -webkit-line-clamp: 1;
   color: var(--text-dark-steel-gray);
@@ -103,7 +109,8 @@ export default {
 }
 
 .attach_link_content .button {
-  padding: 6px 8px;
-  margin-top: 5px;
+  padding: 6px 10px;
+  margin-top: auto;
+  width: fit-content;
 }
 </style>
