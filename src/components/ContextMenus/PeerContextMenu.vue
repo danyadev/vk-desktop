@@ -95,16 +95,14 @@ export default {
     }
 
     function togglePinPeer() {
-      const peers = state.pinnedPeers.slice();
-      const isUnpin = state.isPinnedPeer;
+      const { pinnedPeers, isPinnedPeer: isUnpin } = state;
 
       if (isUnpin) {
-        peers.splice(peers.indexOf(peer_id), 1);
+        pinnedPeers.splice(pinnedPeers.indexOf(peer_id), 1);
+        store.commit('messages/moveConversation', { peer_id });
       } else {
-        peers.unshift(peer_id);
+        pinnedPeers.unshift(peer_id);
       }
-
-      store.state.messages.pinnedPeers = peers;
 
       vkapi(
         isUnpin ? 'messages.unpinConversation' : 'messages.pinConversation',

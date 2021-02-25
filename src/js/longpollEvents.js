@@ -787,6 +787,7 @@ export default {
         // при откреплении диалога в самом приложении беседа сразу удаляется из списка
         if (index !== -1) {
           pinnedPeers.splice(index, 1);
+          store.commit('messages/moveConversation', { peer_id });
         }
       } else if (!pinnedPeers.includes(peer_id)) {
         pinnedPeers.unshift(peer_id);
