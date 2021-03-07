@@ -1,6 +1,6 @@
 {
   "name": "vk-desktop",
-  "version": "0.3.0-alpha.4",
+  "version": "0.3.0",
   "description": "Клиент ВКонтакте",
   "scripts": {
     "dev": "webpack-dev-server --mode development --hot",
