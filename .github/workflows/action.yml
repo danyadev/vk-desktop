@@ -12,11 +12,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            glob: out/VK-Desktop-linux-*.zip
+            glob: app/VK-Desktop-linux-*.zip
           - os: windows-latest
-            glob: out/VK-Desktop-Setup-*.exe
+            glob: app/VK-Desktop-Setup-*.exe
           - os: macos-latest
-            glob: out/VK-Desktop-mac.dmg
+            glob: app/VK-Desktop-mac.dmg
 
     steps:
     - uses: actions/checkout@master
