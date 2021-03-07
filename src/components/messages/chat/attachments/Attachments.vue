@@ -100,7 +100,9 @@ export default {
 }
 
 .message.hasPhoto .message_bubble_content > .attach_forwarded,
-.message.hasPhoto .message_bubble_content > .im_attachments > div:not(.attach_photos_wrap) {
+
+.message.hasPhoto .message_bubble_content > .im_attachments
+> div:not(.attach_photos_wrap):not(.attach_link:not(.-short)) {
   margin-left: 5px;
   margin-right: 5px;
 }
