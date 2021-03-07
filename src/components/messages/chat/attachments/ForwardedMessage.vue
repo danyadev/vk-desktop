@@ -19,7 +19,7 @@
         {{ l('im_attachment_deleted') }}
       </div>
       <div v-else-if="msg.text" class="attach_fwd_msg_text">
-        <ShortText>
+        <ShortText :key="msg.id">
           <VKText multiline mention link>{{ msg.text }}</VKText>
         </ShortText>
       </div>

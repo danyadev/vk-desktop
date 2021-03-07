@@ -60,7 +60,7 @@ export default {
           });
         }
 
-        if (photo) return getPhotoFromSizes(photo[0].sizes, 'o').url;
+        if (photo) return getPhotoFromSizes(photo[0].sizes, ['o', 'x']).url;
         if (sticker) return sticker[0].images[devicePixelRatio > 1 ? 1 : 0].url;
         if (photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'o').src;
         if (videoImage) return (videoImage[6] || videoImage[videoImage.length - 1]).url;

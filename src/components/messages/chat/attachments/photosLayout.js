@@ -110,6 +110,11 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
   let photoRatioSum = 0;
 
   for (const thumb of thumbs) {
+    if (thumb.width === 0 && thumb.height === 0) {
+      thumb.width = 100;
+      thumb.height = 100;
+    }
+
     const ratio = Math.max(thumb.width / thumb.height, .3);
 
     photoRatioTypes += ratio > 1.2 ? 'w' : (ratio < .8 ? 'n' : 'q');
