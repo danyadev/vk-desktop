@@ -278,6 +278,7 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
     let optimalPhotosLayout = null;
     let minHeightDiff = 0;
     let reservedMaxWidthAndLayout = [];
+    const minPhotoWidth = 65;
 
     for (const key in photosLayoutVariants) {
       const photosHeight = photosLayoutVariants[key];
@@ -295,7 +296,7 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
         for (let column = 0; column < photosInRows[row]; column++) {
           const width = photoRatios[index++] * photosHeight[row];
 
-          if (width < 50) {
+          if (width < minPhotoWidth) {
             const [prevWidth] = reservedMaxWidthAndLayout;
 
             if (!prevWidth || width > prevWidth) {

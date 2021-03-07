@@ -98,7 +98,7 @@ export default {
 
 .attach_doc_info {
   font-size: 13px;
-  padding-top: 2px;
+  padding-top: 3px;
 }
 
 .attach_doc_name {
