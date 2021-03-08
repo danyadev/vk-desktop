@@ -65,7 +65,7 @@ export default {
         if (photoDoc) return getPhotoFromSizes(photoDoc.preview.photo.sizes, 'o').src;
         if (videoImage) return (videoImage[6] || videoImage[videoImage.length - 1]).url;
         if (storyImage) return getPhotoFromSizes(storyImage.sizes, ['o', 'j', 'm', 'x']).url;
-        if (linkImage) return getPhotoFromSizes(linkImage.sizes, 'o').url;
+        if (linkImage) return getPhotoFromSizes(linkImage.sizes, ['o', 'x']).url;
       }),
 
       user: computed(() => store.state.profiles[props.msg.from]),

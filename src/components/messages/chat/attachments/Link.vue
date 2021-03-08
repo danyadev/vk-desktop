@@ -78,6 +78,7 @@ export default {
   background-position: 50% 50%;
   background-size: cover;
   background-repeat: no-repeat;
+  min-height: 95px;
   width: 110px;
   flex: none;
   border-right: 1px solid var(--separator-dark);

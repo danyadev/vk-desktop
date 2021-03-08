@@ -38,6 +38,7 @@ export default {
       if (activeGroup.length) {
         children.push(
           h(MessagesGroup, {
+            key: activeGroup.map((msg) => msg.id).join(','),
             peer_id: props.peer_id,
             peer: props.peer,
             messages: activeGroup,
