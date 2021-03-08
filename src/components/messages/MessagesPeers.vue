@@ -28,8 +28,9 @@
 </template>
 
 <script>
-import { reactive, toRefs, computed, onMounted, nextTick, watch } from 'vue';
-import { fields, concatProfiles, timer, endScroll } from 'js/utils';
+import { reactive, toRefs, computed, onMounted, onActivated, nextTick, watch } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
+import { fields, concatProfiles, endScroll } from 'js/utils';
 import { parseConversation, parseMessage } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -92,6 +93,34 @@ export default {
       })
     });
 
+    onMounted(() => {
+      // Обнаруживаем первую загрузку
+      // До этого момента LongPoll не запустится, так что проблем не будет
+      const stop = watch(() => state.peersList, async () => {
+        state.loading = false;
+        stop();
+        await nextTick();
+        onScroll(state.scrolly);
+      });
+
+      setInterval(() => {
+        state.nowDate = new Date();
+      }, 10 * 1000);
+    });
+
+    onBeforeRouteLeave(() => {
+      state.scrollTop = state.scrolly.viewport.scrollTop;
+    });
+
+    onActivated(() => {
+      // Блокируем отображение скроллинга при переключении на эту вкладку
+      store.state.lockNextScrollyRender = true;
+
+      if (state.scrollTop) {
+        state.scrolly.viewport.scrollTop = state.scrollTop;
+      }
+    });
+
     async function load() {
       const { items, profiles, groups } = await vkapi('messages.getConversations', {
         offset: state.peerIds.length,
@@ -105,15 +134,13 @@ export default {
         msg: item.last_message ? parseMessage(item.last_message) : {}
       }));
 
-      state.lockScroll = true;
-
       store.commit('addProfiles', concatProfiles(profiles, groups));
       store.commit('messages/addConversations', conversations);
 
+      state.lockScroll = true;
       await nextTick();
-      await timer(0);
+      requestIdleCallback(() => (state.lockScroll = false));
 
-      state.lockScroll = false;
       state.loading = false;
 
       if (items.length < 40) {
@@ -131,21 +158,6 @@ export default {
         state.loading = true;
         load();
       }
-    });
-
-    onMounted(() => {
-      // Обнаруживаем первую загрузку
-      // До этого момента LongPoll не запустится, так что проблем не будет
-      const stop = watch(() => state.peersList, async () => {
-        state.loading = false;
-        stop();
-        await nextTick();
-        onScroll(state.scrolly);
-      });
-
-      setInterval(() => {
-        state.nowDate = new Date();
-      }, 10 * 1000);
     });
 
     return {

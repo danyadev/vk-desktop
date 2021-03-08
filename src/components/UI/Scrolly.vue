@@ -227,6 +227,11 @@ export default {
         scrollTop, scrollHeight, offsetHeight
       } = viewport;
 
+      // Компонент был скрыт
+      if (!scrollWidth && !scrollHeight) {
+        return;
+      }
+
       const width = toPercent(offsetWidth / scrollWidth);
       const height = toPercent(offsetHeight / scrollHeight);
 

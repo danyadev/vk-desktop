@@ -96,7 +96,7 @@ export default {
 
       isScrolledDownOnClose: false,
       isUnreadOnClose: false,
-      savePositionOnOpen: null,
+      savedPositionBeforeClose: null,
 
       topTime: null,
       showTopTime: false,
@@ -144,7 +144,7 @@ export default {
 
       // Сообщения еще загружаются, но пользователь уже вышел из беседы
       if (state.loadingUp) {
-        state.savePositionOnOpen = { scrollTop, scrollHeight };
+        state.savedPositionBeforeClose = { scrollTop, scrollHeight };
       }
     }
 
@@ -154,6 +154,8 @@ export default {
     onBeforeRouteUpdate(saveScrollData);
 
     onActivated(() => {
+      store.state.lockNextScrollyRender = true;
+
       state.startInRead = props.peer && props.peer.in_read;
 
       // Первый запуск, вместо onMounted
@@ -164,12 +166,11 @@ export default {
       }
 
       // Сохраняем позицию после закрытия беседы до загрузки сообщений
-      if (state.savePositionOnOpen) {
-        const { scrollTop, scrollHeight } = state.savePositionOnOpen;
+      if (state.savedPositionBeforeClose) {
+        const { scrollTop, scrollHeight } = state.savedPositionBeforeClose;
 
-        state.list.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
-        state.scrollTop = state.list.scrollTop;
-        state.savePositionOnOpen = null;
+        state.scrollTop = state.list.scrollHeight - scrollHeight + scrollTop;
+        state.savedPositionBeforeClose = null;
       }
 
       const unread = state.list.querySelector('.message_unreaded_messages');

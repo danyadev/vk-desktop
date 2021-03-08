@@ -178,7 +178,6 @@ export default {
 
       const updateMethod = state.route.name === 'chat' ? 'replace' : 'push';
 
-      store.state.lockNextScrollyRender = true;
       await router[updateMethod]({
         name: 'chat',
         params: {
