@@ -255,6 +255,16 @@ export function getPhotoFromSizes(sizes, size, isDoc) {
   const find = (type) => sizes.find((photo) => photo.type === type);
   const optionalTypes = isDoc ? ['z', 'y', 'x', 'm', 's'] : ['w', 'z', 'y'];
 
+  function fallback() {
+    const sizesObj = sizes.reduce((acc, val) => {
+      acc[val.width + val.height] = val;
+      return acc;
+    }, {});
+    const optimalSize = Object.keys(sizesObj).sort((a, b) => b - a)[0];
+
+    return sizesObj[optimalSize];
+  }
+
   if (Array.isArray(size)) {
     for (let i = 0; i < size.length; i++) {
       const photo = find(size[i]);
@@ -264,7 +274,7 @@ export function getPhotoFromSizes(sizes, size, isDoc) {
       }
     }
 
-    return;
+    return fallback();
   }
 
   const index = optionalTypes.indexOf(size);
@@ -278,10 +288,10 @@ export function getPhotoFromSizes(sizes, size, isDoc) {
       }
     }
 
-    return isDoc ? find('o') : find('x');
+    return fallback();
   }
 
-  return find(size);
+  return find(size) || fallback();
 }
 
 // Собирает массивы профилей и групп в единый массив, где у групп отрицательный id
