@@ -84,11 +84,9 @@ export default {
 }
 
 .attach_link.horizontalPhoto img {
-  width: 100%;
-  min-height: 100px;
-  max-height: 200px;
-  border-bottom: 1px solid var(--separator-dark);
+  height: 200px;
   object-fit: cover;
+  border-bottom: 1px solid var(--separator-dark);
 }
 
 .attach_link:not(.-short) .attach_link_content {

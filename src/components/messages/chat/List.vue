@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { reactive, computed, onActivated, nextTick, toRefs } from 'vue';
+import { reactive, computed, onActivated, nextTick, toRefs, provide } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import {
   createQueueManager,
@@ -115,6 +115,22 @@ export default {
       )),
       hasMessages: computed(() => !!state.messagesWithLoading.length)
     });
+
+    const intersectionObserver = (() => {
+      const callbacks = new Set();
+
+      const addCallback = (cb) => callbacks.add(cb);
+      const removeCallback = (cb) => callbacks.delete(cb);
+
+      const observer = new IntersectionObserver(
+        (...args) => callbacks.forEach((cb) => cb(...args)),
+        { root: state.list, threshold: .5 }
+      );
+
+      return { observer, addCallback, removeCallback };
+    })();
+
+    provide('intersectionObserver', intersectionObserver);
 
     // Event listener =====================================
 

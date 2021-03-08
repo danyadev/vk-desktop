@@ -24,7 +24,15 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import {
+  reactive,
+  toRefs,
+  inject,
+  onMounted,
+  onActivated,
+  onBeforeUnmount,
+  onDeactivated
+} from 'vue';
 import lottie from 'lottie-web/build/player/lottie_light';
 import { mouseOverWrapper, mouseOutWrapper } from 'js/utils';
 
@@ -32,20 +40,76 @@ export default {
   props: ['attach'],
 
   setup(props) {
+    const intersectionObserver = inject('intersectionObserver');
+
     // eslint-disable-next-line vue/no-setup-props-destructure
     const [sticker] = props.attach;
     const image = sticker.images[devicePixelRatio > 1 ? 2 : 1].url;
     const { animation_url } = sticker;
 
-    const transparent = ref(null);
-    const container = ref(null);
-    const isAnimationLoaded = ref(false);
+    const state = reactive({
+      transparent: null,
+      container: null,
+      isAnimation: !!animation_url,
+      isAnimationLoaded: false
+    });
+
     let animation;
     let isHovered = true;
+    let isFirstAnimated = false;
+
+    function onObserve(entries) {
+      requestIdleCallback(() => {
+        for (const entry of entries) {
+          if (entry.target === state.transparent) {
+            if (entry.isIntersecting && !isFirstAnimated) {
+              if (!animation) {
+                isHovered = false;
+                initAnimation();
+              } else if (state.isAnimationLoaded && animation.isPaused) {
+                animation.goToAndPlay(0);
+              }
+
+              isFirstAnimated = true;
+            }
+
+            if (!entry.isIntersecting) {
+              isHovered = false;
+
+              if (state.isAnimationLoaded && !animation.isPaused) {
+                animation.goToAndStop(0);
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function onShow() {
+      intersectionObserver.addCallback(onObserve);
+      intersectionObserver.observer.observe(state.transparent);
+    }
+
+    function onHide() {
+      intersectionObserver.removeCallback(onObserve);
+      intersectionObserver.observer.unobserve(state.transparent);
+
+      if (isHovered) {
+        state.transparent.removeEventListener('mouseout', onMouseOut);
+        isHovered = false;
+      }
+    }
+
+    if (state.isAnimation) {
+      onMounted(onShow);
+      onActivated(onShow);
+      onBeforeUnmount(onHide);
+      onDeactivated(onHide);
+    }
 
     function initAnimation() {
       animation = lottie.loadAnimation({
-        container: container.value,
+        container: state.container,
         path: animation_url,
         renderer: 'svg',
         autoplay: false,
@@ -56,9 +120,10 @@ export default {
         }
       });
 
-      animation.addEventListener('data_ready', () => {
+      const stopDataReady = animation.addEventListener('data_ready', () => {
+        stopDataReady();
         requestIdleCallback(() => {
-          isAnimationLoaded.value = true;
+          state.isAnimationLoaded = true;
           animation.play();
         });
       });
@@ -74,29 +139,27 @@ export default {
     }
 
     const onMouseOver = mouseOverWrapper(() => {
-      transparent.value.addEventListener('mouseout', onMouseOut);
+      state.transparent.addEventListener('mouseout', onMouseOut);
       isHovered = true;
 
       if (!animation && animation_url) {
         initAnimation();
       }
 
-      if (isAnimationLoaded.value && animation.isPaused) {
+      if (state.isAnimationLoaded && animation.isPaused) {
         animation.goToAndPlay(0);
       }
     });
 
     const onMouseOut = mouseOutWrapper(() => {
-      transparent.value.removeEventListener('mouseout', onMouseOut);
+      state.transparent.removeEventListener('mouseout', onMouseOut);
       isHovered = false;
     });
 
     return {
-      transparent,
-      container,
+      ...toRefs(state),
+
       image,
-      isAnimation: !!animation_url,
-      isAnimationLoaded,
       onMouseOver
     };
   }
