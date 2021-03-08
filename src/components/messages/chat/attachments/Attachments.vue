@@ -99,6 +99,8 @@ export default {
   margin-bottom: -5px;
 }
 
+/* stylelint-disable selector-combinator-space-before */
+
 .message.hasPhoto .message_bubble_content > .attach_forwarded,
 
 .message.hasPhoto .message_bubble_content > .im_attachments
@@ -106,6 +108,8 @@ export default {
   margin-left: 5px;
   margin-right: 5px;
 }
+
+/* stylelint-enable selector-combinator-space-before */
 
 .attach_left_border::before {
   content: '';

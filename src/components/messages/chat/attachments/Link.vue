@@ -1,6 +1,7 @@
 <template>
   <div v-if="photo" :class="['attach_link', { horizontalPhoto, hasButton: !!button }]">
-    <img :src="photo">
+    <img v-if="horizontalPhoto" :src="photo">
+    <span v-else :style="{ backgroundImage: `url(${photo})` }"></span>
     <div class="attach_link_content">
       <div class="attach_link_content_title" @click="openPage(url)">{{ title }}</div>
       <div v-if="caption" class="attach_link_content_caption">{{ caption }}</div>
@@ -53,6 +54,7 @@ export default {
 <style>
 .attach_link {
   display: flex;
+  min-height: 70px;
 }
 
 .attach_link:not(.-short) {
@@ -72,13 +74,12 @@ export default {
   flex-direction: column;
 }
 
-.attach_link img {
-  object-fit: cover;
-}
-
-.attach_link:not(.horizontalPhoto) img {
-  min-width: 100px;
-  max-height: 100px;
+.attach_link span {
+  background-position: 50% 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 110px;
+  flex: none;
   border-right: 1px solid var(--separator-dark);
 }
 
@@ -87,11 +88,13 @@ export default {
   min-height: 100px;
   max-height: 200px;
   border-bottom: 1px solid var(--separator-dark);
+  object-fit: cover;
 }
 
 .attach_link:not(.-short) .attach_link_content {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   margin: 10px;
   user-select: text;
 }
