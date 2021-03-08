@@ -28,7 +28,7 @@ export default function debug(...textChunks) {
 
 const errorCache = new Set();
 
-async function showError(error) {
+export async function showError(error) {
   let type = error.type === 'error' ? 'UncaughtError' : 'UnhandledRejection';
   let message;
 

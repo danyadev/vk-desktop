@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { debounce, currentWindow } from 'js/utils';
+import { showError } from 'js/debug';
 import store from 'js/store';
 import router from 'js/router';
 import getTranslate from 'js/getTranslate';
@@ -15,6 +16,10 @@ app.use(store);
 app.use(router);
 
 app.config.globalProperties.l = getTranslate;
+
+if (!DEV_MODE) {
+  app.config.erorHandler = showError;
+}
 
 app.component('ForwardedMessage', ForwardedMessage);
 app.component('Attachments', Attachments);
