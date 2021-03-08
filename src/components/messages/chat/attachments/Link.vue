@@ -54,7 +54,6 @@ export default {
 <style>
 .attach_link {
   display: flex;
-  min-height: 70px;
 }
 
 .attach_link:not(.-short) {
@@ -62,6 +61,7 @@ export default {
   border: 1px solid var(--separator-dark);
   border-radius: 10px;
   overflow: hidden;
+  min-height: 70px;
 }
 
 .attach_link.-short {

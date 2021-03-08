@@ -43,7 +43,10 @@ export default {
         }
       } else if (component) {
         attachments.push(
-          h(component, { attach })
+          h(component, {
+            key: attach,
+            attach
+          })
         );
       } else {
         attachments.push(
@@ -54,6 +57,8 @@ export default {
 
     if (Object.keys(layoutAttachs).length) {
       attachments.unshift(
+        // key не нужен, так как содержимое автоматически обновляется
+        // используя render-функции
         h(components.photosLayout, {
           attachments: layoutAttachs
         })
@@ -63,7 +68,10 @@ export default {
     if (documentAttachs.length) {
       attachments.push(
         ...documentAttachs.map((attach) => (
-          h(components.doc, { attach })
+          h(components.doc, {
+            key: attach,
+            attach
+          })
         ))
       );
     }
