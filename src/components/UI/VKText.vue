@@ -3,6 +3,7 @@ import { h, Fragment, computed } from 'vue';
 import electron from 'electron';
 import { createParser, unescape } from 'js/utils';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
+import store from 'js/store';
 import internalLinkResolver from 'js/internalLinkResolver';
 import domains from 'js/json/domains.json';
 
@@ -20,6 +21,7 @@ export default {
 
   setup(props, { slots }) {
     const text = computed(() => slots.default()[0].children);
+    const useNativeEmoji = computed(() => store.getters['settings/settings'].useNativeEmoji);
 
     function parseBlock(block) {
       if (block.type === 'mention') {
@@ -49,7 +51,9 @@ export default {
       }
 
       if (block.type === 'emoji') {
-        return [generateEmojiImageVNode(h, block.value)];
+        return useNativeEmoji.value
+          ? block.value
+          : [generateEmojiImageVNode(h, block.value)];
       }
 
       if (block.type === 'br') {

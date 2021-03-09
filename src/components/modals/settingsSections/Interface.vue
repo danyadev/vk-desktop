@@ -13,6 +13,11 @@
     {{ l('ml_settings_options', 'animate_stickers_on_first_appear') }}
     <Checkbox :active="settings.animateStickersOnFirstAppear" />
   </div>
+
+  <div class="settings_line clickable" @click="toggle('useNativeEmoji')">
+    {{ l('ml_settings_options', 'use_native_emoji') }}
+    <Checkbox :active="settings.useNativeEmoji" />
+  </div>
 </template>
 
 <script>
