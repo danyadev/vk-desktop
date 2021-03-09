@@ -279,7 +279,6 @@ export default {
   display: flex;
   flex-direction: column;
   flex: none;
-  background: var(--background-gray-overlight);
 }
 
 .chat_input_wrap {
@@ -301,7 +300,7 @@ export default {
   flex-grow: 1;
   overflow: auto;
   margin: 6px 0;
-  background: var(--background);
+  background: var(--field-background);
   border: 1px solid var(--separator-dark);
   border-radius: 20px;
 }
