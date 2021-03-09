@@ -35,6 +35,7 @@ import {
 } from 'vue';
 import lottie from 'lottie-web/build/player/lottie_light';
 import { mouseOverWrapper, mouseOutWrapper } from 'js/utils';
+import store from 'js/store';
 
 export default {
   props: ['attach'],
@@ -62,7 +63,10 @@ export default {
       requestIdleCallback(() => {
         for (const entry of entries) {
           if (entry.target === state.transparent) {
-            if (entry.isIntersecting && !isFirstAnimated) {
+            if (
+              entry.isIntersecting && !isFirstAnimated &&
+              store.getters['settings/settings'].animateStickersOnFirstAppear
+            ) {
               if (!animation) {
                 isHovered = false;
                 initAnimation();

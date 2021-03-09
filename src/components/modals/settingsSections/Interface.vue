@@ -8,6 +8,11 @@
     {{ l('ml_settings_options', 'use_light_message_colors') }}
     <Checkbox :active="settings.useLightMessageColors" />
   </div>
+
+  <div class="settings_line clickable" @click="toggle('animateStickersOnFirstAppear')">
+    {{ l('ml_settings_options', 'animate_stickers_on_first_appear') }}
+    <Checkbox :active="settings.animateStickersOnFirstAppear" />
+  </div>
 </template>
 
 <script>
