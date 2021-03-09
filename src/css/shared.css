@@ -59,7 +59,7 @@ img:not(.emoji) {
 .root.mac {
   --titlebar-height: 24px;
 
-  letter-spacing: .03em;
+  letter-spacing: .02em;
 }
 
 .section_container {
