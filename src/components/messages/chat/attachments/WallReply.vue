@@ -15,6 +15,7 @@
 <script>
 import electron from 'electron';
 import { parseAttachments } from 'js/messages';
+import getTranslate from 'js/getTranslate';
 
 export default {
   props: ['attach'],
@@ -37,11 +38,13 @@ export default {
       openComment,
 
       fakeMsg: {
-        from: attach.from_id,
+        from: attach.from_id || 100,
         date: attach.date,
-        text: attach.text.replace(/\n/g, '<br>'),
+        text: attach.deleted
+          ? getTranslate('im_deleted_comment')
+          : attach.text.replace(/\n/g, '<br>'),
         attachments: parseAttachments(attach.attachments || []),
-        isContentDeleted: !attach.text && !attach.attachments
+        isContentDeleted: !attach.deleted && !attach.text && !attach.attachments
       }
     };
   }

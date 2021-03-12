@@ -398,6 +398,10 @@ export default {
   user-select: none;
 }
 
+.root.mac .message_time_wrap {
+  letter-spacing: .01em;
+}
+
 .message:not(.hideBubble) .message_time_wrap {
   bottom: -5px;
   margin: 5px 0 0 6px;

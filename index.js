@@ -4,9 +4,6 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
 
-// Выключаем предупреждение в консоли
-app.allowRendererProcessReuse = false;
-
 app.once('ready', () => {
   const win = new BrowserWindow({
     minWidth: 400,
@@ -18,7 +15,8 @@ app.once('ready', () => {
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
-      spellcheck: true
+      spellcheck: true,
+      enableRemoteModule: true
     }
   });
 
