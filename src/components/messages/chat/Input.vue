@@ -282,6 +282,10 @@ export default {
   background: var(--background-gray-overlight);
 }
 
+.root[theme="dark"] .chat_input_container {
+  background: none;
+}
+
 .chat_input_wrap {
   display: flex;
   flex-direction: row;
@@ -304,6 +308,10 @@ export default {
   background: var(--background);
   border: 1px solid var(--separator-dark);
   border-radius: 20px;
+}
+
+.root[theme="dark"] .chat_input {
+  background: var(--field-background)
 }
 
 .chat_input_area {
