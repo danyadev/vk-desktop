@@ -1,62 +1,62 @@
 .root[theme="dark"] {
-    --background: #191919;
-    /* Используется для времени у стикеров в сообщении */
-    --background-alpha: #2C2D2EDF;
-    --background-blue: #71AAEB;
-    /* Используется для точки, которая означает, что сообщение еще не прочитано*/
-    --background-blue-overlight: #a0c3eb;
-    --background-blue-text: var(--background);
-    --background-blue-ripple: #ffffff26;
-    --background-light-steel-gray: #77787A;
-    --background-steel-gray: #9099a3;
-    /* Используется для окраски фона поля для ввода текста (deprecated) */
-    --background-gray-overlight: #191919;
-    --background-black-alpha: rgba(255, 255, 255, .08);
+  --background: #191919;
+  /* Используется для времени у стикеров в сообщении */
+  --background-alpha: #2C2D2EDF;
+  --background-blue: #71AAEB;
+  /* Используется для точки, которая означает, что сообщение еще не прочитано*/
+  --background-blue-overlight: #a0c3eb;
+  --background-blue-text: var(--background);
+  --background-blue-ripple: #ffffff26;
+  --background-light-steel-gray: #77787A;
+  --background-steel-gray: #9099a3;
+  /* Используется для окраски фона поля для ввода текста (deprecated) */
+  --background-gray-overlight: #191919;
+  --background-black-alpha: rgba(255, 255, 255, .08);
 
-    --text-white: #FFFFFF;
-    --text-primary: #e1e3e6;
-    --text-primary-alpha: rgba(225, 227, 230, .75);
-    --text-secondary: #909499;
-    --text-steel-gray: #76787A;
-    --text-dark-steel-gray: #99A2AD;
-    --text-gray: #6D7885;
-    --text-blue: #71aaeb;
-    --text-light-blue: #E1E3E6;
+  --text-white: #FFFFFF;
+  --text-primary: #e1e3e6;
+  --text-primary-alpha: rgba(225, 227, 230, .75);
+  --text-secondary: #909499;
+  --text-steel-gray: #76787A;
+  --text-dark-steel-gray: #99A2AD;
+  --text-gray: #6D7885;
+  --text-blue: #71aaeb;
+  --text-light-blue: #E1E3E6;
 
-    --accent: #71AAEB;
-    --red: #FF3347;
-    --red-light: #FF5C5C;
-    --green: #4BB34B;
-    --separator: #363738;
-    --separator-dark: #232324;
+  --accent: #71AAEB;
+  --red: #FF3347;
+  --red-light: #FF5C5C;
+  --green: #4BB34B;
+  --separator: #363738;
+  --separator-dark: #232324;
 
-    --titlebar-background: #19191A;
+  --titlebar-background: #19191A;
 
-    --button-light-background: #454647;
-    --button-light-color: #E1E3E6;
-    --button-light-ripple: #8a8b8c99;
+  --button-light-background: #454647;
+  --button-light-color: #E1E3E6;
+  --button-light-ripple: #8a8b8c99;
 
-    --field-background: #232324;
-    --field-placeholder: #AAAEB3;
-    --field-border: #FFFFFF26;
-    --field-color: #E1E3E6;
+  --field-background: #232324;
+  --field-placeholder: #9d9d9d;
+  --field-border: #FFFFFF26;
+  --field-color: #E1E3E6;
 
-    --icon-gray: #76787A;
-    --icon-dark-gray: #5D5F61;
-    --icon-blue: #E1E3E6;
-    --icon-dark-blue: #3F8AE0;
+  --icon-gray: #9d9d9d;
+  --icon-dark-gray: #5D5F61;
+  --icon-blue: #E1E3E6;
+  --icon-dark-blue: #3F8AE0;
 
-    --hover-background: rgba(255, 255, 255, 0.04);
-    --hover-background-ripple: rgba(255, 255, 255, 0.08);
-    --hover-background-gray: rgba(255, 255, 255, 0.04);
+  --hover-background: rgba(255, 255, 255, .04);
+  --hover-background-ripple: rgba(255, 255, 255, .08);
+  --hover-background-gray: rgba(255, 255, 255, .04);
 
-    --messages-peer-active: rgba(255, 255, 255, 0.08);
-    --messages-peer-hover: rgba(255, 255, 255, 0.04);
+  --messages-peer-active: rgba(255, 255, 255, .08);
+  --messages-peer-hover: rgba(255, 255, 255, .04);
 
-    --message-bubble-background: #2C2D2E;
-    --message-bubble-background-alpha: #5D5F61;
-    --message-out-bubble-background: #454647;
-    --message-out-bubble-background-alpha: #5D5F61;
+  --message-bubble-background: #2C2D2E;
+  --message-bubble-background-alpha: #5D5F61;
+  --message-out-bubble-background: #454647;
+  --message-out-bubble-background-alpha: #5D5F61;
 
-    --attach-left-border: #AAAEB3;
+  --attach-left-border: #AAAEB3;
 }

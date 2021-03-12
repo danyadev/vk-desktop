@@ -24,7 +24,7 @@
       </div>
 
       <div class="chat_input_wrap">
-        <img class="attachments_btn icon-hover" src="~assets/attachments_icon.svg">
+        <Icon class="attachments_btn icon-hover" name="attachments_icon"/>
 
         <div :class="['chat_input', { hasKeyboard }]">
           <div
@@ -49,10 +49,14 @@
             @click="showKeyboard = !showKeyboard"
           />
 
-          <img class="input_emoji_btn icon-hover" src="~assets/emoji_icon.svg">
+          <Icon class="input_emoji_btn icon-hover" name="emoji_icon"/>
         </div>
 
-        <img class="send_btn icon-hover" src="~assets/im_send.svg" @click="send">
+        <Icon
+          class="send_btn icon-hover"
+          name="im_send"
+          @click="send"
+        />
       </div>
 
       <Keyboard v-if="hasKeyboard && showKeyboard" :peer_id="peer_id" :keyboard="keyboard" />
