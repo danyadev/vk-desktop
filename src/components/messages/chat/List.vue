@@ -1,36 +1,38 @@
 <template>
-  <Scrolly
-    ref="scrollyRef"
-    class="messages_list_wrap"
-    :vclass="['messages_list', { empty: !hasMessages }]"
-    :lock="lockScroll"
-    @scroll="onScroll"
-  >
+  <div class="messages_list_viewport">
     <div :class="['im_top_time', { active: showTopTime }]">{{ topTime }}</div>
 
-    <div v-if="hasMessages" class="messages_empty_block"></div>
-    <div v-if="loadingUp" class="loading"></div>
+    <Scrolly
+      ref="scrollyRef"
+      class="messages_list_wrap"
+      :vclass="['messages_list', { empty: !hasMessages }]"
+      :lock="lockScroll"
+      @scroll="onScroll"
+    >
+      <div v-if="hasMessages" class="messages_empty_block"></div>
+      <div v-if="loadingUp" class="loading"></div>
 
-    <MessagesList
-      :peer_id="peer_id"
-      :peer="peer"
-      :list="messagesWithLoading"
-      :startInRead="startInRead"
-    />
+      <MessagesList
+        :peer_id="peer_id"
+        :peer="peer"
+        :list="messagesWithLoading"
+        :startInRead="startInRead"
+      />
 
-    <div v-if="loadingDown" class="loading"></div>
+      <div v-if="loadingDown" class="loading"></div>
 
-    <div v-if="!hasMessages && !loadingUp && !loadingDown" class="messages_empty_dialog">
-      <template v-if="peer && peer.isCasperChat && peer.isWriteAllowed">
-        <Icon name="ghost_outline" color="var(--icon-gray)" />
-        {{ l('im_empty_casper_dialog', 0) }}<br>
-        {{ l('im_empty_casper_dialog', 1) }}
-      </template>
-      <template v-else>
-        <img src="~assets/placeholder_empty_messages.webp">
-        {{ l('im_empty_dialog') }}
-      </template>
-    </div>
+      <div v-if="!hasMessages && !loadingUp && !loadingDown" class="messages_empty_dialog">
+        <template v-if="peer && peer.isCasperChat && peer.isWriteAllowed">
+          <Icon name="ghost_outline" color="var(--icon-gray)" />
+          {{ l('im_empty_casper_dialog', 0) }}<br>
+          {{ l('im_empty_casper_dialog', 1) }}
+        </template>
+        <template v-else>
+          <img src="~assets/placeholder_empty_messages.webp">
+          {{ l('im_empty_dialog') }}
+        </template>
+      </div>
+    </Scrolly>
 
     <div
       :class="['im_scroll_mention_btn', { hidden: !showEndBtn || !peer || !peer.mentions.length }]"
@@ -44,7 +46,7 @@
       <div>{{ peer && convertCount(peer.unread) || '' }}</div>
       <img src="~assets/dropdown.webp">
     </div>
-  </Scrolly>
+  </div>
 </template>
 
 <script>
@@ -670,14 +672,19 @@ export default {
 </script>
 
 <style>
+.messages_list_viewport {
+  position: relative;
+  height: 0;
+  flex-grow: 1;
+}
+
 .messages_list_wrap, .messages_list {
   display: flex;
   flex-direction: column;
 }
 
 .messages_list_wrap {
-  height: 0;
-  flex: 1;
+  height: 100%;
 }
 
 .messages_list {

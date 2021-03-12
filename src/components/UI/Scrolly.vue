@@ -68,6 +68,9 @@ export default {
       lastScrollTop: 0,
       lastScrollLeft: 0,
 
+      barOffsetTop: 0,
+      barOffsetLeft: 0,
+
       isActive: false,
       isScrolling: false,
 
@@ -106,15 +109,17 @@ export default {
     }
 
     function onBarWheel(event) {
-      state.viewport.scrollLeft += event.deltaX;
-      state.viewport.scrollTop += event.deltaY;
+      requestAnimationFrame(() => {
+        state.viewport.scrollLeft += event.deltaX;
+        state.viewport.scrollTop += event.deltaY;
+      });
     }
 
     function onMouseDown({ target: clickTarget, pageX: initialPageX, pageY: initialPageY }) {
       const { viewport } = state;
       const bar = clickTarget.matches('.scrolly-bar') ? clickTarget : clickTarget.firstChild;
-      const initialBarTop = bar.offsetTop;
-      const initialBarLeft = bar.offsetLeft;
+      const initialBarTop = state.barOffsetTop;
+      const initialBarLeft = state.barOffsetLeft;
 
       async function onMouseMove({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
         if (props.lock) {
@@ -171,7 +176,9 @@ export default {
             });
           } else {
             viewport.scrollTop = scrollTop;
-            bar.style.top = toPercent(barTop / offsetHeight);
+
+            bar.style.transform = `translateY(${barTop}px)`;
+            state.barOffsetTop = barTop;
           }
         }
 
@@ -245,7 +252,9 @@ export default {
       const barTop = scrollTop / (scrollHeight - offsetHeight) * (offsetHeight - barY.offsetHeight);
 
       barX.style.left = toPercent(barLeft / offsetWidth);
-      barY.style.top = toPercent(barTop / offsetHeight);
+
+      barY.style.transform = `translateY(${barTop}px)`;
+      state.barOffsetTop = barTop;
 
       if (!isMutationObserver) {
         emit('scroll', {
@@ -316,6 +325,7 @@ export default {
 .scrolly-viewport {
   overflow: auto;
   height: 100%;
+  will-change: transform;
 }
 
 .scrolly-viewport.lock {
@@ -325,6 +335,7 @@ export default {
 .scrolly-bar-wrap {
   position: absolute;
   z-index: 1;
+  will-change: transform;
 }
 
 .scrolly-bar-wrap.axis-x {
@@ -343,11 +354,11 @@ export default {
 
 .scrolly-bar {
   box-sizing: content-box;
-  position: absolute;
   border: 4px solid transparent;
   cursor: pointer;
   opacity: 0;
   transition: opacity .3s;
+  will-change: transform, opacity;
 }
 
 .scrolly.isActive > .scrolly-bar-wrap .scrolly-bar {
@@ -370,13 +381,11 @@ export default {
 }
 
 .scrolly-bar-wrap.axis-x .scrolly-bar {
-  bottom: 0;
   height: 7px;
   min-width: 20%;
 }
 
 .scrolly-bar-wrap.axis-y .scrolly-bar {
-  right: 0;
   width: 7px;
   min-height: 20%;
 }
