@@ -320,6 +320,7 @@ export default {
     use_light_message_colors: 'Использовать более светлые тона для сообщений',
     animate_stickers_on_first_appear: 'Анимировать стикеры при первом появлении',
     use_native_emoji: 'Использовать системные эмодзи',
+    use_dark_theme: 'Использовать тёмную тему',
 
     show_object_ids: 'Отображать id бесед и сообщений в контекстном меню'
   }

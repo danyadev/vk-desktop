@@ -1,5 +1,5 @@
 <template>
-  <div :class="['root', { mac }]">
+  <div :theme="dark ? 'dark' : 'light'" :class="['root', { mac }]">
     <Titlebar />
 
     <div class="app">
@@ -34,6 +34,7 @@ import * as emoji from 'js/emoji';
 
 import 'css/shared.css';
 import 'css/colors.css';
+import 'css/colors_dark.css';
 
 import Titlebar from './Titlebar.vue';
 import LeftMenu from './menu/LeftMenu.vue';
@@ -67,7 +68,8 @@ export default {
       mac: process.platform === 'darwin',
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
-      isAuth: computed(() => ['/', '/auth'].includes(state.route.path))
+      isAuth: computed(() => ['/', '/auth'].includes(state.route.path)),
+      dark: computed(() => store.getters['settings/settings'].useDarkTheme)
     });
 
     async function initUser() {

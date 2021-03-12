@@ -18,6 +18,11 @@
     {{ l('ml_settings_options', 'use_native_emoji') }}
     <Checkbox :active="settings.useNativeEmoji" />
   </div>
+
+  <div class="settings_line clickable" @click="toggle('useDarkTheme')">
+    {{ l('ml_settings_options', 'use_dark_theme') }}
+    <Checkbox :active="settings.useDarkTheme" />
+  </div>
 </template>
 
 <script>
