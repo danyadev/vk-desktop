@@ -148,6 +148,7 @@ img:not(.emoji) {
 .header {
   display: flex;
   align-items: center;
+  flex: none;
   background: var(--background);
   color: var(--text-primary);
   width: 100%;

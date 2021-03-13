@@ -71,6 +71,9 @@ export default {
       barOffsetTop: 0,
       barOffsetLeft: 0,
 
+      barXDisplay: 'none',
+      barYDisplay: 'none',
+
       isActive: false,
       isScrolling: false,
 
@@ -242,19 +245,38 @@ export default {
       const width = toPercent(offsetWidth / scrollWidth);
       const height = toPercent(offsetHeight / scrollHeight);
 
-      barX.style.width = width;
-      barY.style.height = height;
+      const barXDisplay = (width === '100%') ? 'none' : 'block';
+      const barYDisplay = (height === '100%') ? 'none' : 'block';
 
-      barX.parentElement.style.display = (width === '100%') ? 'none' : 'block';
-      barY.parentElement.style.display = (height === '100%') ? 'none' : 'block';
+      if (width !== '100%') {
+        const barLeft = scrollLeft / (scrollWidth - offsetWidth) * (offsetWidth - barX.offsetWidth);
 
-      const barLeft = scrollLeft / (scrollWidth - offsetWidth) * (offsetWidth - barX.offsetWidth);
-      const barTop = scrollTop / (scrollHeight - offsetHeight) * (offsetHeight - barY.offsetHeight);
+        barX.style.width = width;
+        barX.style.transform = `translateX(${barLeft}px)`;
 
-      barX.style.left = toPercent(barLeft / offsetWidth);
+        state.barOffsetLeft = barLeft;
+      }
 
-      barY.style.transform = `translateY(${barTop}px)`;
-      state.barOffsetTop = barTop;
+      if (barXDisplay !== state.barXDisplay) {
+        barX.parentElement.style.display = barXDisplay;
+        state.barXDisplay = barXDisplay;
+      }
+
+      if (height !== '100%') {
+        const barTop = (
+          scrollTop / (scrollHeight - offsetHeight) * (offsetHeight - barY.offsetHeight)
+        );
+
+        barY.style.height = height;
+        barY.style.transform = `translateY(${barTop}px)`;
+
+        state.barOffsetTop = barTop;
+      }
+
+      if (barYDisplay !== state.barYDisplay) {
+        barY.parentElement.style.display = barYDisplay;
+        state.barYDisplay = barYDisplay;
+      }
 
       if (!isMutationObserver) {
         emit('scroll', {
@@ -333,6 +355,8 @@ export default {
 }
 
 .scrolly-bar-wrap {
+  /* переопределяется в JS */
+  display: none;
   position: absolute;
   z-index: 1;
   will-change: transform;

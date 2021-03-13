@@ -288,6 +288,12 @@ export default {
       await nextTick();
       requestIdleCallback(() => (state.lockScroll = false));
 
+      // Форсируем репаинт чтобы предотвратить прыжок скролла
+      state.list.style.display = 'none';
+      // eslint-disable-next-line no-unused-expressions
+      state.list.offsetHeight;
+      state.list.style.display = '';
+
       if (!config.isDown) {
         if (state.list.scrollHeight) {
           // Сохраняем старую позицию скролла
