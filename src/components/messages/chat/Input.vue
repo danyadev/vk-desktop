@@ -24,7 +24,7 @@
       </div>
 
       <div class="chat_input_wrap">
-        <Icon class="attachments_btn icon-hover" name="attachments_icon"/>
+        <Icon class="attachments_btn icon-hover" name="attachments_icon" />
 
         <div :class="['chat_input', { hasKeyboard }]">
           <div
@@ -49,7 +49,7 @@
             @click="showKeyboard = !showKeyboard"
           />
 
-          <Icon class="input_emoji_btn icon-hover" name="emoji_icon"/>
+          <Icon class="input_emoji_btn icon-hover" name="emoji_icon" />
         </div>
 
         <Icon

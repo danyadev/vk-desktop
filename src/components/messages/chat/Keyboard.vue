@@ -19,7 +19,7 @@
         </div>
 
         <template v-else-if="action.type === 'open_app'">
-          <Icon class="keyboard_services_icon" name="services"/>
+          <Icon class="keyboard_services_icon" name="services" />
           <div class="keyboard_service_key"><VKText>{{ action.label }}</VKText></div>
         </template>
 
