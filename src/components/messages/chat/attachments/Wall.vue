@@ -30,7 +30,7 @@ export default {
     const [attach] = props.attach;
 
     function openWall() {
-      electron.shell.openItem(`https://vk.com/wall${attach.to_id}_${attach.id}`);
+      electron.shell.openExternal(`https://vk.com/wall${attach.to_id}_${attach.id}`);
     }
 
     function generateMessage(attach) {

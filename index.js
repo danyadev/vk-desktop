@@ -48,7 +48,7 @@ app.once('ready', () => {
 
   win.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    shell.openItem(url);
+    shell.openExternal(url);
   });
 
   if (process.platform === 'darwin') {

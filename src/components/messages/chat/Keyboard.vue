@@ -108,11 +108,11 @@ export default {
           break;
 
         case 'open_link':
-          shell.openItem(data.action.link);
+          shell.openExternal(data.action.link);
           break;
 
         case 'open_app':
-          shell.openItem(getAppLink(data.action));
+          shell.openExternal(getAppLink(data.action));
           break;
 
         default:
@@ -147,15 +147,15 @@ export default {
           break;
 
         case 'open_app':
-          shell.openItem(getAppLink(action));
+          shell.openExternal(getAppLink(action));
           break;
 
         case 'vkpay':
-          shell.openItem(`https://vk.com/app6217559${hash}`);
+          shell.openExternal(`https://vk.com/app6217559${hash}`);
           break;
 
         case 'open_link':
-          shell.openItem(action.link);
+          shell.openExternal(action.link);
           break;
 
         case 'callback':

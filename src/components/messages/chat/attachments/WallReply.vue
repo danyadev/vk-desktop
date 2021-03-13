@@ -31,7 +31,7 @@ export default {
         link += `&thread=${attach.parents_stack[0]}`;
       }
 
-      electron.shell.openItem(link);
+      electron.shell.openExternal(link);
     }
 
     return {
