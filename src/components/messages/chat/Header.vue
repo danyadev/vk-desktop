@@ -109,6 +109,7 @@ export default {
   height: 35px;
   border-radius: 50%;
   margin-right: 10px;
+  background: white;
 }
 
 .im_header_center {

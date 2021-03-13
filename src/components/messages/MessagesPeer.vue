@@ -234,6 +234,7 @@ export default {
 .im_peer_photo,
 .im_peer_photo img {
   border-radius: 50%;
+  background: white;
 }
 
 .im_peer_photo.mobile::after,
