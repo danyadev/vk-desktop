@@ -44,7 +44,7 @@ export default {
       button: attach.button,
 
       openPage(url) {
-        electron.shell.openItem(url);
+        electron.shell.openExternal(url);
       }
     };
   }

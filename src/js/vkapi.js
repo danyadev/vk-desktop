@@ -87,7 +87,7 @@ function handleError({ user, params, error, ...context }) {
       if (!goCaptchaLinkMatch) {
         // Когда будет нужно, можно переделать это в модальное окно электрона
         // и реализовать ожидание выхода из него, чтобы продолжить уже в клиенте.
-        electron.shell.openItem(redirectUri);
+        electron.shell.openExternal(redirectUri);
 
         context.resolve({
           type: 'redirect',

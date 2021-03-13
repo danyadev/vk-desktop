@@ -47,7 +47,7 @@ export default {
     }
 
     function openInBrowser() {
-      electron.shell.openItem(props.attach.url.replace('&no_preview=1', ''));
+      electron.shell.openExternal(props.attach.url.replace('&no_preview=1', ''));
     }
 
     async function download() {
