@@ -490,7 +490,7 @@ export default {
 
     const checkShowEndBtn = callWithDelay((scrollyEvent) => {
       state.showEndBtn =
-        canShowScrollBtn() && (props.peer && props.peer.unread || scrollyEvent.dy > 0);
+        (props.peer && props.peer.unread || scrollyEvent.dy > 0) && canShowScrollBtn();
     }, 150);
 
     const checkScrolling = endScroll(({ isUp, isDown }) => {
