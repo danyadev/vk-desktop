@@ -161,6 +161,13 @@ export default {
           doc && doc.find((doc) => doc.preview)
         );
 
+        /**
+         * Порядок следования вложений:
+         * 1. фотографии, видео, фотодокументы
+         * 2. все остальные вложения
+         * 3. файлы
+         */
+
         if (attachNames.length) classes.push('hasAttachment');
         if (hasPhoto) classes.push('hasPhoto');
         if (sticker) classes.push('isSticker');
@@ -177,8 +184,8 @@ export default {
           classes.push('removeTopMargin');
         } else if (onlyPhotoAttachs && !fwdCount) {
           // Фотографии находятся в самом верху сообщения, значит
-          // отступы можно уменьшить только когда в сообщении есть
-          // только фотографии (+ текст или ответ на сообщение).
+          // отступ снизу можно уменьшить только когда в сообщении есть
+          // только фотографии (+ text || reply).
           // Уменьшаем отступы слева, снизу и справа
           classes.push('removeBottomMargin');
           flyTime = true;
