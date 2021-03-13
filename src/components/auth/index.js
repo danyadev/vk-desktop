@@ -66,6 +66,7 @@ async function getDesktopToken(androidToken) {
     display: 'page',
     response_type: 'token',
     access_token: androidToken,
+    revoke: 1,
     lang: 'ru',
     scope: 136297695,
     client_id: 6717234,
@@ -80,7 +81,7 @@ async function getDesktopToken(androidToken) {
     }
   }, { raw: true });
 
-  const link = 'https://oauth.vk.com' + linkResponse.headers.location;
+  const link = 'https://oauth.vk.com' + linkResponse.data.match(/(\/auth_by_token.+?)"/)[1];
   const { headers } = await request(link, { raw: true });
 
   debug('[auth] end: getDesktopToken');
