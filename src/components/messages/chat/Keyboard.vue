@@ -253,20 +253,20 @@ export default {
 
 .keyboard_button.default,
 .keyboard_button.secondary {
-  background: #004a961f;
+  background: var(--keyboard-button-default);
   color: var(--button-light-color);
 }
 
 .keyboard_button.primary {
-  background: #5181b8;
+  background: var(--keyboard-button-primary);
 }
 
 .keyboard_button.positive {
-  background: #4bb34b;
+  background: var(--keyboard-button-positive);
 }
 
 .keyboard_button.negative {
-  background: #e64646;
+  background: var(--keyboard-button-negative);
 }
 
 .keyboard_button > img:not(.emoji) {

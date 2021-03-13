@@ -59,4 +59,9 @@
   --message-out-bubble-background-alpha: #5d5f61;
 
   --attach-left-border: #aaaeb3;
+
+  --keyboard-button-default: var(--hover-background);
+  --keyboard-button-primary: #5181b8;
+  --keyboard-button-positive: #63b963;
+  --keyboard-button-negative: #e76666;
 }

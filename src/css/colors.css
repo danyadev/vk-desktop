@@ -59,6 +59,11 @@
   --message-out-bubble-background-alpha: #c7dff9df;
 
   --attach-left-border: #7197c5;
+
+  --keyboard-button-default: #004a961f;
+  --keyboard-button-primary: #5181b8;
+  --keyboard-button-positive: #4bb34b;
+  --keyboard-button-negative: #e64646;
 }
 
 .root .st-useLightMessageColors {
