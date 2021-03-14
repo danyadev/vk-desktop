@@ -73,7 +73,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: 100%;
-  /* - 40px вместо margin 20px 0  */
+  /* - 40px вместо margin: 20px 0  */
   height: calc(100% - 40px);
   margin: 0 20px;
   max-width: 700px;
@@ -128,6 +128,9 @@ export default {
   height: 36px;
   border-radius: 8px;
   margin-bottom: 5px;
+}
+
+.settings_left_item:not(.active) {
   transition: background-color .3s;
 }
 
