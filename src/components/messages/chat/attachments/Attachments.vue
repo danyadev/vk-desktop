@@ -137,7 +137,7 @@ export default {
 }
 
 .outline_button {
-  color: var(--text-light-blue);
+  color: var(--text-blue);
   border: 1px solid var(--accent);
   border-radius: 8px;
   padding: 3px 16px;

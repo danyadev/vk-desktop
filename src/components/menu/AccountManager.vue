@@ -189,6 +189,6 @@ export default {
 }
 
 .account_user.add-profile .account_user_name {
-  color: var(--text-light-blue);
+  color: var(--text-blue);
 }
 </style>
