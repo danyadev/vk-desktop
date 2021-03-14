@@ -1,6 +1,6 @@
 .root[theme="dark"] {
   --background: #191919;
-  /* Используется для времени у стикеров в сообщении */
+  /* Используется для времени у стикеров в сообщении без ответа на сообщение */
   --background-alpha: #2c2d2edf;
   --background-blue: #71aaeb;
   /* Используется для точки, которая означает, что сообщение еще не прочитано */
@@ -9,7 +9,7 @@
   --background-blue-ripple: #ffffff26;
   --background-light-steel-gray: #77787a;
   --background-steel-gray: #9099a3;
-  /* Используется для окраски фона поля для ввода текста (deprecated) */
+  /* Используется для окраски фона поля для ввода текста */
   --background-gray-overlight: #191919;
   --background-black-alpha: rgba(255, 255, 255, .08);
 
@@ -53,10 +53,11 @@
   --messages-peer-active: rgba(255, 255, 255, .08);
   --messages-peer-hover: rgba(255, 255, 255, .04);
 
+  /* alpha спользуются для времени у стикеров в сообщении с ответом на сообщение */
   --message-bubble-background: #2c2d2e;
-  --message-bubble-background-alpha: #5d5f61;
+  --message-bubble-background-alpha: #2c2d2edf;
   --message-out-bubble-background: #454647;
-  --message-out-bubble-background-alpha: #5d5f61;
+  --message-out-bubble-background-alpha: #454647df;
 
   --attach-left-border: #aaaeb3;
 
