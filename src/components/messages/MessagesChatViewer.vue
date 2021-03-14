@@ -63,7 +63,7 @@ export default {
 
 .im_chat_viewer_title {
   padding-left: 10px;
-  color: var(--text-light-blue);
+  color: var(--text-blue);
 }
 
 /* Здесь снимается ограничение на ширину сообщения, потому что здесь */
