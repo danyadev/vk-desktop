@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import electron from 'electron';
 import { reactive, computed, watch } from 'vue';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
@@ -73,6 +74,10 @@ export default {
     });
 
     async function initUser() {
+      electron.remote.nativeTheme.themeSource = state.dark
+        ? 'dark'
+        : 'light';
+
       if (!state.activeUserID) {
         return;
       }

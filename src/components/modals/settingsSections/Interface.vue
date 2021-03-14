@@ -19,13 +19,14 @@
     <Checkbox :active="settings.useNativeEmoji" />
   </div>
 
-  <div class="settings_line clickable" @click="toggle('useDarkTheme')">
+  <div class="settings_line clickable" @click="toggleDarkTheme">
     {{ l('ml_settings_options', 'use_dark_theme') }}
     <Checkbox :active="settings.useDarkTheme" />
   </div>
 </template>
 
 <script>
+import electron from 'electron';
 import { computed } from 'vue';
 import store from 'js/store';
 
@@ -45,9 +46,18 @@ export default {
       });
     }
 
+    function toggleDarkTheme() {
+      toggle('useDarkTheme');
+
+      electron.remote.nativeTheme.themeSource = settings.value.useDarkTheme
+        ? 'dark'
+        : 'light';
+    }
+
     return {
       settings,
-      toggle
+      toggle,
+      toggleDarkTheme
     };
   }
 };
