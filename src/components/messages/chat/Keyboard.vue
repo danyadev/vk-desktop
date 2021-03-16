@@ -274,7 +274,7 @@ export default {
 }
 
 .keyboard_service_key {
-  color: var(--text-blue);
+  color: var(--text-light-blue);
 }
 
 .keyboard_services_icon {

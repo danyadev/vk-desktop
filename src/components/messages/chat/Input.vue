@@ -362,7 +362,7 @@ export default {
 }
 
 .chat_input_error.isChannel {
-  color: var(--text-blue);
+  color: var(--text-light-blue);
   cursor: pointer;
   transition: background-color .2s;
 }
