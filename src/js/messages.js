@@ -164,9 +164,9 @@ export function getPeerOnline(peer_id, peer, owner) {
     const { chatState, members, isChannel, left } = peer;
 
     if (chatState === 'kicked') {
-      return getTranslate('im_chat_kicked');
+      return getTranslate('im_chat_kicked', isChannel);
     } else if (left) {
-      return getTranslate(isChannel ? 'im_chat_left_channel' : 'im_chat_left');
+      return getTranslate('im_chat_left', isChannel);
     } else {
       return getTranslate('im_chat_members', [members], members);
     }

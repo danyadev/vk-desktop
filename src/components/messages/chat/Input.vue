@@ -59,7 +59,7 @@
     </template>
 
     <Ripple
-      v-else-if="canWrite.isChannel"
+      v-else-if="canWrite.isChannel && peer.chatState !== 'kicked'"
       color="var(--messages-peer-active)"
       class="chat_input_error isChannel"
       @click="toggleNotifications"
@@ -127,7 +127,11 @@ export default {
         return {
           allowed: false,
           isChannel: props.peer && props.peer.isChannel,
-          text: props.peer ? getTranslate('im_chat_cant_write') : getTranslate('loading')
+          text: props.peer
+            ? props.peer.chatState === 'kicked'
+              ? getTranslate('im_chat_kicked', props.peer.isChannel)
+              : getTranslate('im_chat_cant_write')
+            : getTranslate('loading')
         };
       })
     });
