@@ -10,6 +10,7 @@ app.once('ready', () => {
     minHeight: 550,
     show: false,
     frame: false,
+    backgroundColor: '#fff',
     titleBarStyle: 'hidden',
     trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
