@@ -156,7 +156,7 @@ function vkapi(name, params, { android } = {}) {
     const startTime = Date.now();
     const debugParams = { ...params };
     delete debugParams.fields;
-    debug(`[API request ${name}]`, JSON.stringify(debugParams));
+    debug(`[API request ${name}] ${JSON.stringify(debugParams)}`);
 
     params = {
       ...(user && { access_token: android ? user.android_token : user.access_token }),
