@@ -5,7 +5,7 @@
     <div class="modal_footer">
       <Button v-if="fromAuth" right @click="close">{{ l('close') }}</Button>
       <template v-else>
-        <Button class="right" @click="logout">{{ l('ml_blocked_account_logout') }}</Button>
+        <Button class="right" @click="logout">{{ l('logout_account') }}</Button>
         <Button v-if="id === 1" class="right" @click="closeApp">
           {{ l('ml_blocked_account_close_app') }}
         </Button>

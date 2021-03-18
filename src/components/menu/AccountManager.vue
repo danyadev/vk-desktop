@@ -30,6 +30,15 @@
           {{ l('add_account') }}
         </div>
       </div>
+
+      <div class="account_user remove-profile" @click="exitFromAccount">
+        <div class="account_photo">
+          <Icon name="exit_outline" color="var(--red)" />
+        </div>
+        <div class="account_user_name text-overflow">
+          {{ l('logout_account') }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -38,6 +47,7 @@
 import { computed, ref, toRefs } from 'vue';
 import { getPhoto, moveArrItem, mouseOutWrapper } from 'js/utils';
 import { usersStorage } from 'js/store/Storage';
+import { openModal } from 'js/modals';
 import { state } from '.';
 import store from 'js/store';
 import router from 'js/router';
@@ -87,6 +97,11 @@ export default {
       });
     }
 
+    function exitFromAccount() {
+      isUsersListActive.value = false;
+      openModal('logout');
+    }
+
     return {
       ...toRefs(state),
 
@@ -105,7 +120,8 @@ export default {
       onMouseOut,
       onClick,
       getPhoto,
-      openAuth
+      openAuth,
+      exitFromAccount
     };
   }
 };
@@ -184,11 +200,16 @@ export default {
   margin-left: 10px;
 }
 
-.account_user.add-profile .account_photo {
+.account_user.add-profile .account_photo,
+.account_user.remove-profile .account_photo {
   padding: 4px;
 }
 
 .account_user.add-profile .account_user_name {
   color: var(--text-light-blue);
+}
+
+.account_user.remove-profile .account_user_name {
+  color: var(--red-dark);
 }
 </style>

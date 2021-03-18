@@ -10,6 +10,7 @@ app.once('ready', () => {
     minHeight: 550,
     show: false,
     frame: false,
+    backgroundColor: '#fff',
     titleBarStyle: 'hidden',
     trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
@@ -48,7 +49,7 @@ app.once('ready', () => {
 
   win.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    shell.openItem(url);
+    shell.openExternal(url);
   });
 
   if (process.platform === 'darwin') {

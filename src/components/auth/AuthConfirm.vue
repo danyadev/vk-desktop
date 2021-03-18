@@ -9,7 +9,7 @@
       <Button :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
     </div>
 
-    <div class="auth_use_sms link" :class="{ hidden: disableForceSMS }" @click="enableForceSms">
+    <div class="auth_use_sms link" @click="sendSms">
       {{
         timeToSendSMS
           ? l('retry_send_sms', [format(timeToSendSMS, 'mm:ss')])
@@ -45,13 +45,15 @@ export default {
       code: '',
       canAuth: computed(() => !state.loading && state.code.trim()),
       timeToSendSMS: null,
-      disableForceSMS: false,
       input: null
     });
 
     onMounted(() => {
-      updateTimer(120);
       state.input.focus();
+
+      if (!state.isAppCode) {
+        sendSms();
+      }
     });
 
     async function auth() {
@@ -67,10 +69,7 @@ export default {
 
       if (data.error === 'invalid_request') {
         state.loading = false;
-
-        addSnackbar({
-          text: getTranslate('wrong_code')
-        });
+        addSnackbar({ text: getTranslate('wrong_code') });
       } else {
         emit('auth', data.access_token);
       }
@@ -88,7 +87,7 @@ export default {
       }
     }
 
-    async function enableForceSms() {
+    async function sendSms() {
       if (state.timeToSendSMS) {
         return;
       }
@@ -97,16 +96,17 @@ export default {
 
       try {
         const data = await vkapi('auth.validatePhone', {
-          client_secret: 'hHbZxrka2uZ6jB1inYsH',
-          client_id: 2274003,
-          api_id: 2274003,
           sid: props.params.validation_sid
         });
 
         state.isAppCode = false;
         updateTimer(data.delay);
-      } catch {
-        state.disableForceSMS = true;
+      } catch (err) {
+        if (err.error_text) {
+          addSnackbar({ text: err.error_text });
+        } else {
+          throw err;
+        }
       }
 
       state.loading = false;
@@ -116,7 +116,7 @@ export default {
       ...toRefs(state),
 
       auth,
-      enableForceSms,
+      sendSms,
       format
     };
   }
@@ -148,11 +148,5 @@ export default {
   bottom: 10px;
   width: 100%;
   text-align: center;
-  transition: opacity .3s;
-}
-
-.auth_use_sms.hidden {
-  opacity: 0;
-  pointer-events: none;
 }
 </style>

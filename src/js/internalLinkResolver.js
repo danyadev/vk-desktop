@@ -28,7 +28,7 @@ export default async function(link) {
   }
 
   if (!result) {
-    electron.shell.openItem(link);
+    electron.shell.openExternal(link);
   }
 }
 

@@ -3,17 +3,22 @@ import { VKDesktopUserAgent, AndroidUserAgent, toUrlParams } from './utils';
 import { openModal } from './modals';
 import store from './store';
 import request from './request';
+import debug from './debug';
 
-export const version = '5.148';
+export const version = '5.149';
 
 let handleErrorPromise;
+const clearHandleError = () => (handleErrorPromise = null);
 
 function handleError({ user, params, error, ...context }) {
+  debug(`[API error ${context.name}]`, JSON.stringify(error));
+
   return new Promise(async (resolve) => {
     // Сессия устарела
     if (error.error_code === 5) {
       // Был передан другой токен
       if (!user || ![user.access_token, user.android_token].includes(params.access_token)) {
+        resolve();
         return context.reject(error);
       }
 
@@ -87,7 +92,7 @@ function handleError({ user, params, error, ...context }) {
       if (!goCaptchaLinkMatch) {
         // Когда будет нужно, можно переделать это в модальное окно электрона
         // и реализовать ожидание выхода из него, чтобы продолжить уже в клиенте.
-        electron.shell.openItem(redirectUri);
+        electron.shell.openExternal(redirectUri);
 
         context.resolve({
           type: 'redirect',
@@ -148,12 +153,13 @@ function vkapi(name, params, { android } = {}) {
   return new Promise(async (resolve, reject) => {
     const user = store.getters['users/user'];
 
-    // const debugParams = { ...params };
-    // delete debugParams.fields;
-    // console.log('[API]', name, debugParams);
+    const startTime = Date.now();
+    const debugParams = { ...params };
+    delete debugParams.fields;
+    debug(`[API request ${name}] ${JSON.stringify(debugParams)}`);
 
     params = {
-      access_token: user && (android ? user.android_token : user.access_token),
+      ...(user && { access_token: android ? user.android_token : user.access_token }),
       lang: 'ru',
       v: version,
       ...params
@@ -181,16 +187,18 @@ function vkapi(name, params, { android } = {}) {
     if (data.execute_errors) {
       const [error] = data.execute_errors;
       handleErrorPromise = handleError({ name, params, error, user, resolve, reject });
-      handleErrorPromise.then(() => (handleErrorPromise = null));
+      handleErrorPromise.then(clearHandleError);
       return;
     }
+
+    debug(`[API request ${name}] ${Date.now() - startTime}ms`);
 
     if (data.response !== undefined) {
       return resolve(data.response);
     }
 
     handleErrorPromise = handleError({ name, params, error: data.error, user, resolve, reject });
-    handleErrorPromise.then(() => (handleErrorPromise = null));
+    handleErrorPromise.then(clearHandleError);
   });
 }
 

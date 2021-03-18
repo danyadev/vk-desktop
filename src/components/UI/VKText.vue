@@ -40,7 +40,7 @@ export default {
             class: 'link',
             onClick() {
               const path = block.id > 0 ? `id${block.id}` : `club${-block.id}`;
-              electron.shell.openItem(`https://vk.com/${path}`);
+              electron.shell.openExternal(`https://vk.com/${path}`);
             }
           };
         } else {

@@ -44,7 +44,7 @@ export default {
       button: attach.button,
 
       openPage(url) {
-        electron.shell.openItem(url);
+        electron.shell.openExternal(url);
       }
     };
   }
@@ -78,10 +78,13 @@ export default {
   background-position: 50% 50%;
   background-size: cover;
   background-repeat: no-repeat;
-  min-height: 95px;
   width: 110px;
   flex: none;
   border-right: 1px solid var(--separator-dark);
+}
+
+.attach_link.hasButton span {
+  min-height: 95px;
 }
 
 .attach_link.horizontalPhoto img {

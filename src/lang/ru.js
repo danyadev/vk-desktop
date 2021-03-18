@@ -15,6 +15,7 @@ export default {
   search: 'Поиск',
   add_account: 'Добавить аккаунт',
   delete_account: 'Удалить аккаунт',
+  logout_account: 'Выйти из аккаунта',
   show_in_full: 'Показать полностью...',
   download: 'Скачать',
   downloaded: 'Скачано',
@@ -63,9 +64,8 @@ export default {
   im_chat_members: ['{0} участник', '{0} участника', '{0} участников'],
   im_chat_group: 'Сообщество',
   im_chat_cant_write: 'Отправка сообщений ограничена',
-  im_chat_left: 'Вы вышли из беседы',
-  im_chat_left_channel: 'Вы отписаны от канала',
-  im_chat_kicked: 'Вы исключены из беседы',
+  im_chat_left: ['Вы вышли из беседы', 'Вы отписаны от канала'],
+  im_chat_kicked: ['Вы исключены из беседы', 'Вы исключены из канала'],
   im_user_deleted: 'Страница удалена',
   im_input_placeholder: 'Введите сообщение...',
   im_empty_dialog: 'Ваш список сообщений пуст',
@@ -289,7 +289,6 @@ export default {
     `Ваша страница была заблокирована.<br><br>
     Восстановите аккаунт и вернитесь позже.`
   ],
-  ml_blocked_account_logout: 'Выйти из аккаунта',
   ml_blocked_account_close_app: 'Закрыть приложение',
 
   ml_captcha_header: 'Введите капчу',

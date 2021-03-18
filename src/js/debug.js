@@ -26,8 +26,6 @@ export default function debug(...textChunks) {
 
 // =================
 
-const errorCache = new Set();
-
 export async function showError(error) {
   let type = error.type === 'error' ? 'UncaughtError' : 'UnhandledRejection';
   let message;
@@ -46,20 +44,18 @@ export async function showError(error) {
       }
     }
   } else if (error.reason) {
-    message = error.reason.stack;
-    type = error.reason.name;
+    if (error.reason.stack) {
+      message = error.reason.stack;
+      type = error.reason.name;
+    } else {
+      message = JSON.stringify(error.reason);
+    }
   } else {
     // eslint-disable-next-line prefer-destructuring
     message = error.message;
   }
 
   debug(`[${type}] ${message}`);
-
-  if (errorCache.has(message)) {
-    return;
-  } else {
-    errorCache.add(message);
-  }
 
   const { response } = await dialog.showMessageBox({
     type: 'error',

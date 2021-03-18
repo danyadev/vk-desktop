@@ -62,9 +62,7 @@ function request(paramsOrUrl, paramsOrOptions = {}, options) {
 
     req.on('error', reject);
 
-    if (options.timeout) {
-      req.setTimeout(options.timeout, req.abort);
-    }
+    req.setTimeout(options.timeout || 6000, req.destroy);
 
     if (options.multipart) {
       sendMultipart(req, options.multipart);
@@ -140,6 +138,8 @@ export default async function(...data) {
     try {
       return await request(...data);
     } catch (err) {
+      debug(`[request] error: ${err.code}`, err, JSON.stringify(data));
+
       // Если ошибка не относится к проблемам с сетью, то выкидываем ошибку
       if (
         !['ETIMEDOUT', 'ECONNRESET', 'ENOTFOUND', 'ENETUNREACH', 'ECONNABORTED'].includes(err.code)

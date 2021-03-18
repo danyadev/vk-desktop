@@ -189,13 +189,13 @@ export default {
 }
 
 .im_peers_container .account_manager {
-  margin: 0 -8px 0 0;
-  padding-left: 8px;
+  margin: 0 -4px 0 0;
+  padding-left: 12px;
 }
 
 .im_peers_container .account_manager .account_users_list {
   top: -3px;
-  left: -6px;
+  left: -2px;
   z-index: 5;
 }
 

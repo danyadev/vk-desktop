@@ -10,7 +10,7 @@ module.exports = function(mainWindow) {
         {
           label: 'О программе VK Desktop',
           click() {
-            shell.openItem('https://vk.com/vk_desktop_app');
+            shell.openExternal('https://vk.com/vk_desktop_app');
           }
         },
         { type: 'separator' },
@@ -176,7 +176,7 @@ module.exports = function(mainWindow) {
         {
           label: 'Узнать больше',
           click() {
-            shell.openItem('https://vk.com/vk_desktop_app');
+            shell.openExternal('https://vk.com/vk_desktop_app');
           }
         }
       ]
