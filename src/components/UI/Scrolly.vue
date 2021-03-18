@@ -1,7 +1,7 @@
 <template>
   <div
     ref="scrolly"
-    :class="['scrolly', { isActive, isScrolling }]"
+    :class="['scrolly', { isActive, isManualScrolling }]"
     tabindex="-1"
   >
     <div
@@ -76,6 +76,7 @@ export default {
 
       isActive: false,
       isScrolling: false,
+      isManualScrolling: false,
 
       mutationObserver: null,
       resizeObserver: null,
@@ -189,7 +190,7 @@ export default {
       }
 
       function onMouseUp(event) {
-        state.isScrolling = false;
+        state.isManualScrolling = false;
 
         if (initialPageX === event.pageX && initialPageY === event.pageY) {
           onMouseMove(event, true);
@@ -201,7 +202,7 @@ export default {
         window.removeEventListener('mouseup', onMouseUp);
       }
 
-      state.isScrolling = true;
+      state.isManualScrolling = true;
       state.isActive = true;
       clearTimer();
 
@@ -220,7 +221,7 @@ export default {
     }
 
     const hideScrollBars = modifiedDebounce(() => {
-      if (!state.isScrolling) {
+      if (!state.isManualScrolling) {
         state.isActive = false;
       }
     });
@@ -340,14 +341,13 @@ export default {
   position: relative;
 }
 
-.scrolly.isScrolling {
+.scrolly.isManualScrolling {
   -webkit-user-drag: none;
 }
 
 .scrolly-viewport {
   overflow: auto;
   height: 100%;
-  will-change: transform;
 }
 
 .scrolly-viewport.lock {
@@ -400,7 +400,7 @@ export default {
 }
 
 .scrolly-bar:hover::before,
-.scrolly.isScrolling > .scrolly-bar-wrap .scrolly-bar::before {
+.scrolly.isManualScrolling > .scrolly-bar-wrap .scrolly-bar::before {
   background: rgba(0, 0, 0, .4);
 }
 
