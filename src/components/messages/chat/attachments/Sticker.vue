@@ -38,7 +38,7 @@ import { mouseOverWrapper, mouseOutWrapper } from 'js/utils';
 import store from 'js/store';
 
 export default {
-  props: ['attach'],
+  props: ['attach', 'msg'],
 
   setup(props) {
     const intersectionObserver = inject('intersectionObserver');
@@ -57,7 +57,7 @@ export default {
 
     let animation;
     let isHovered = true;
-    let isFirstAnimated = false;
+    let isFirstAnimated = !props.msg.fromLongPoll;
 
     function onObserve(entries) {
       requestIdleCallback(() => {
