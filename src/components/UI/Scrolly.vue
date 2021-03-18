@@ -358,7 +358,6 @@ export default {
   display: none;
   position: absolute;
   z-index: 1;
-  will-change: transform;
 }
 
 .scrolly-bar-wrap.axis-x {
