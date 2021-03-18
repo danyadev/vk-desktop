@@ -138,7 +138,7 @@ export default async function(...data) {
     try {
       return await request(...data);
     } catch (err) {
-      debug(`[request] error: ${err.code}`, err);
+      debug(`[request] error: ${err.code}`, err, JSON.stringify(data));
 
       // Если ошибка не относится к проблемам с сетью, то выкидываем ошибку
       if (
