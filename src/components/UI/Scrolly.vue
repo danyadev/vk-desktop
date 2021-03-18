@@ -39,8 +39,6 @@ import { reactive, toRefs, onMounted, onBeforeUnmount } from 'vue';
 import { debounce } from 'js/utils';
 import store from 'js/store';
 
-const waitAnimationFrame = () => new Promise(requestAnimationFrame);
-
 function normalize(num, max) {
   return Math.max(0, Math.min(num, max));
 }
@@ -113,8 +111,8 @@ export default {
 
     function onBarWheel(event) {
       requestAnimationFrame(() => {
-        state.viewport.scrollLeft += event.deltaX;
-        state.viewport.scrollTop += event.deltaY;
+        event.deltaX && (state.viewport.scrollLeft += event.deltaX);
+        event.deltaY && (state.viewport.scrollTop += event.deltaY);
       });
     }
 
@@ -124,15 +122,13 @@ export default {
       const initialBarTop = state.barOffsetTop;
       const initialBarLeft = state.barOffsetLeft;
 
-      async function onMouseMove({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
+      function onMouseMove({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
         if (props.lock) {
           return;
         }
 
         const isMoveToPoint = isMouseUp && target.matches('.scrolly-bar-wrap');
         const { scrollWidth, offsetWidth, scrollHeight, offsetHeight } = viewport;
-
-        await waitAnimationFrame();
 
         const prevScrollLeft = viewport.scrollLeft;
         const prevScrollTop = viewport.scrollTop;
@@ -151,15 +147,19 @@ export default {
 
           dx = scrollLeft - prevScrollLeft;
 
-          if (isMoveToPoint) {
-            viewport.scrollTo({
-              left: scrollLeft,
-              behavior: 'smooth'
-            });
-          } else {
-            viewport.scrollLeft = scrollLeft;
-            bar.style.left = toPercent(barLeft / offsetWidth);
-          }
+          requestAnimationFrame(() => {
+            if (isMoveToPoint) {
+              viewport.scrollTo({
+                left: scrollLeft,
+                behavior: 'smooth'
+              });
+            } else {
+              viewport.scrollLeft = scrollLeft;
+
+              bar.style.transform = `translateX(${barLeft}px)`;
+              state.barOffsetLeft = barLeft;
+            }
+          });
         } else {
           const maxBarTop = offsetHeight - bar.offsetHeight;
           const barTop = normalize(
@@ -172,17 +172,19 @@ export default {
 
           dy = scrollTop - prevScrollTop;
 
-          if (isMoveToPoint) {
-            viewport.scrollTo({
-              top: scrollTop,
-              behavior: 'smooth'
-            });
-          } else {
-            viewport.scrollTop = scrollTop;
+          requestAnimationFrame(() => {
+            if (isMoveToPoint) {
+              viewport.scrollTo({
+                top: scrollTop,
+                behavior: 'smooth'
+              });
+            } else {
+              viewport.scrollTop = scrollTop;
 
-            bar.style.transform = `translateY(${barTop}px)`;
-            state.barOffsetTop = barTop;
-          }
+              bar.style.transform = `translateY(${barTop}px)`;
+              state.barOffsetTop = barTop;
+            }
+          });
         }
 
         emit('scroll', { viewport, dx, dy });
@@ -248,7 +250,7 @@ export default {
       const barXDisplay = (width === '100%') ? 'none' : 'block';
       const barYDisplay = (height === '100%') ? 'none' : 'block';
 
-      if (width !== '100%') {
+      if (barXDisplay === 'block') {
         const barLeft = scrollLeft / (scrollWidth - offsetWidth) * (offsetWidth - barX.offsetWidth);
 
         barX.style.width = width;
@@ -262,7 +264,7 @@ export default {
         state.barXDisplay = barXDisplay;
       }
 
-      if (height !== '100%') {
+      if (barYDisplay === 'block') {
         const barTop = (
           scrollTop / (scrollHeight - offsetHeight) * (offsetHeight - barY.offsetHeight)
         );
