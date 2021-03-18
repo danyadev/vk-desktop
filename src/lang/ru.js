@@ -15,6 +15,7 @@ export default {
   search: 'Поиск',
   add_account: 'Добавить аккаунт',
   delete_account: 'Удалить аккаунт',
+  logout_account: 'Выйти из аккаунта',
   show_in_full: 'Показать полностью...',
   download: 'Скачать',
   downloaded: 'Скачано',
@@ -288,7 +289,6 @@ export default {
     `Ваша страница была заблокирована.<br><br>
     Восстановите аккаунт и вернитесь позже.`
   ],
-  ml_blocked_account_logout: 'Выйти из аккаунта',
   ml_blocked_account_close_app: 'Закрыть приложение',
 
   ml_captcha_header: 'Введите капчу',
