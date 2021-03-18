@@ -75,7 +75,6 @@ export default {
       barYDisplay: 'none',
 
       isActive: false,
-      isScrolling: false,
       isManualScrolling: false,
 
       mutationObserver: null,
