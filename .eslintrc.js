@@ -160,14 +160,13 @@ module.exports = {
       // Для массивов я считаю нормальным многие варианты использования:
       // const id = match[1];
       // const [, type, id] = match;
-      // [item] = await fn();
       VariableDeclarator: {
         array: false,
         object: true
       },
       AssignmentExpression: {
         array: false,
-        object: true
+        object: false
       }
     }],
     'prefer-exponentiation-operator': 'error',

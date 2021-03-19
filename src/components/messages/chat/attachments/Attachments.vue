@@ -3,11 +3,11 @@ import { h } from 'vue';
 import components from '.';
 
 export default {
-  props: ['attachments'],
+  props: ['msg'],
 
   render(props) {
     const attachments = [];
-    const attachNames = Object.keys(props.attachments);
+    const attachNames = Object.keys(props.msg.attachments);
     // Вложения, с которыми не будут отображаться другие вложения (будут скрыты)
     const singleAttachments = ['sticker', 'gift'];
     const hasSingleAttach = singleAttachments.some((attach) => attachNames.includes(attach));
@@ -15,8 +15,8 @@ export default {
     const layoutAttachs = {};
     const documentAttachs = [];
 
-    for (const type in props.attachments) {
-      const attach = props.attachments[type];
+    for (const type in props.msg.attachments) {
+      const attach = props.msg.attachments[type];
       const component = components[type];
 
       if (hasSingleAttach && !singleAttachments.includes(type)) {
@@ -45,7 +45,8 @@ export default {
         attachments.push(
           h(component, {
             key: attach,
-            attach
+            attach,
+            msg: props.msg
           })
         );
       } else {

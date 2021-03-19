@@ -8,7 +8,7 @@ module.exports = function(mainWindow) {
       label: 'VK Desktop',
       submenu: [
         {
-          label: 'О программе VK Desktop',
+          label: 'О программе',
           click() {
             shell.openExternal('https://vk.com/vk_desktop_app');
           }

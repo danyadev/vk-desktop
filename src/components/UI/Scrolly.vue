@@ -1,7 +1,7 @@
 <template>
   <div
     ref="scrolly"
-    :class="['scrolly', { isActive, isScrolling }]"
+    :class="['scrolly', { isActive, isManualScrolling }]"
     tabindex="-1"
   >
     <div
@@ -39,8 +39,6 @@ import { reactive, toRefs, onMounted, onBeforeUnmount } from 'vue';
 import { debounce } from 'js/utils';
 import store from 'js/store';
 
-const waitAnimationFrame = () => new Promise(requestAnimationFrame);
-
 function normalize(num, max) {
   return Math.max(0, Math.min(num, max));
 }
@@ -68,8 +66,14 @@ export default {
       lastScrollTop: 0,
       lastScrollLeft: 0,
 
+      barOffsetTop: 0,
+      barOffsetLeft: 0,
+
+      barXDisplay: 'none',
+      barYDisplay: 'none',
+
       isActive: false,
-      isScrolling: false,
+      isManualScrolling: false,
 
       mutationObserver: null,
       resizeObserver: null,
@@ -106,25 +110,25 @@ export default {
     }
 
     function onBarWheel(event) {
-      state.viewport.scrollLeft += event.deltaX;
-      state.viewport.scrollTop += event.deltaY;
+      requestAnimationFrame(() => {
+        event.deltaX && (state.viewport.scrollLeft += event.deltaX);
+        event.deltaY && (state.viewport.scrollTop += event.deltaY);
+      });
     }
 
     function onMouseDown({ target: clickTarget, pageX: initialPageX, pageY: initialPageY }) {
       const { viewport } = state;
       const bar = clickTarget.matches('.scrolly-bar') ? clickTarget : clickTarget.firstChild;
-      const initialBarTop = bar.offsetTop;
-      const initialBarLeft = bar.offsetLeft;
+      const initialBarTop = state.barOffsetTop;
+      const initialBarLeft = state.barOffsetLeft;
 
-      async function onMouseMove({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
+      function onMouseMove({ target, pageX, pageY, offsetX, offsetY }, isMouseUp) {
         if (props.lock) {
           return;
         }
 
         const isMoveToPoint = isMouseUp && target.matches('.scrolly-bar-wrap');
         const { scrollWidth, offsetWidth, scrollHeight, offsetHeight } = viewport;
-
-        await waitAnimationFrame();
 
         const prevScrollLeft = viewport.scrollLeft;
         const prevScrollTop = viewport.scrollTop;
@@ -143,15 +147,19 @@ export default {
 
           dx = scrollLeft - prevScrollLeft;
 
-          if (isMoveToPoint) {
-            viewport.scrollTo({
-              left: scrollLeft,
-              behavior: 'smooth'
-            });
-          } else {
-            viewport.scrollLeft = scrollLeft;
-            bar.style.left = toPercent(barLeft / offsetWidth);
-          }
+          requestAnimationFrame(() => {
+            if (isMoveToPoint) {
+              viewport.scrollTo({
+                left: scrollLeft,
+                behavior: 'smooth'
+              });
+            } else {
+              viewport.scrollLeft = scrollLeft;
+
+              bar.style.transform = `translateX(${barLeft}px)`;
+              state.barOffsetLeft = barLeft;
+            }
+          });
         } else {
           const maxBarTop = offsetHeight - bar.offsetHeight;
           const barTop = normalize(
@@ -164,22 +172,26 @@ export default {
 
           dy = scrollTop - prevScrollTop;
 
-          if (isMoveToPoint) {
-            viewport.scrollTo({
-              top: scrollTop,
-              behavior: 'smooth'
-            });
-          } else {
-            viewport.scrollTop = scrollTop;
-            bar.style.top = toPercent(barTop / offsetHeight);
-          }
+          requestAnimationFrame(() => {
+            if (isMoveToPoint) {
+              viewport.scrollTo({
+                top: scrollTop,
+                behavior: 'smooth'
+              });
+            } else {
+              viewport.scrollTop = scrollTop;
+
+              bar.style.transform = `translateY(${barTop}px)`;
+              state.barOffsetTop = barTop;
+            }
+          });
         }
 
         emit('scroll', { viewport, dx, dy });
       }
 
       function onMouseUp(event) {
-        state.isScrolling = false;
+        state.isManualScrolling = false;
 
         if (initialPageX === event.pageX && initialPageY === event.pageY) {
           onMouseMove(event, true);
@@ -191,7 +203,7 @@ export default {
         window.removeEventListener('mouseup', onMouseUp);
       }
 
-      state.isScrolling = true;
+      state.isManualScrolling = true;
       state.isActive = true;
       clearTimer();
 
@@ -210,7 +222,7 @@ export default {
     }
 
     const hideScrollBars = modifiedDebounce(() => {
-      if (!state.isScrolling) {
+      if (!state.isManualScrolling) {
         state.isActive = false;
       }
     });
@@ -235,17 +247,38 @@ export default {
       const width = toPercent(offsetWidth / scrollWidth);
       const height = toPercent(offsetHeight / scrollHeight);
 
-      barX.style.width = width;
-      barY.style.height = height;
+      const barXDisplay = (width === '100%') ? 'none' : 'block';
+      const barYDisplay = (height === '100%') ? 'none' : 'block';
 
-      barX.parentElement.style.display = (width === '100%') ? 'none' : 'block';
-      barY.parentElement.style.display = (height === '100%') ? 'none' : 'block';
+      if (barXDisplay === 'block') {
+        const barLeft = scrollLeft / (scrollWidth - offsetWidth) * (offsetWidth - barX.offsetWidth);
 
-      const barLeft = scrollLeft / (scrollWidth - offsetWidth) * (offsetWidth - barX.offsetWidth);
-      const barTop = scrollTop / (scrollHeight - offsetHeight) * (offsetHeight - barY.offsetHeight);
+        barX.style.width = width;
+        barX.style.transform = `translateX(${barLeft}px)`;
 
-      barX.style.left = toPercent(barLeft / offsetWidth);
-      barY.style.top = toPercent(barTop / offsetHeight);
+        state.barOffsetLeft = barLeft;
+      }
+
+      if (barXDisplay !== state.barXDisplay) {
+        barX.parentElement.style.display = barXDisplay;
+        state.barXDisplay = barXDisplay;
+      }
+
+      if (barYDisplay === 'block') {
+        const barTop = (
+          scrollTop / (scrollHeight - offsetHeight) * (offsetHeight - barY.offsetHeight)
+        );
+
+        barY.style.height = height;
+        barY.style.transform = `translateY(${barTop}px)`;
+
+        state.barOffsetTop = barTop;
+      }
+
+      if (barYDisplay !== state.barYDisplay) {
+        barY.parentElement.style.display = barYDisplay;
+        state.barYDisplay = barYDisplay;
+      }
 
       if (!isMutationObserver) {
         emit('scroll', {
@@ -309,7 +342,7 @@ export default {
   position: relative;
 }
 
-.scrolly.isScrolling {
+.scrolly.isManualScrolling {
   -webkit-user-drag: none;
 }
 
@@ -323,6 +356,8 @@ export default {
 }
 
 .scrolly-bar-wrap {
+  /* переопределяется в JS */
+  display: none;
   position: absolute;
   z-index: 1;
 }
@@ -343,11 +378,11 @@ export default {
 
 .scrolly-bar {
   box-sizing: content-box;
-  position: absolute;
   border: 4px solid transparent;
   cursor: pointer;
   opacity: 0;
   transition: opacity .3s;
+  will-change: transform, opacity;
 }
 
 .scrolly.isActive > .scrolly-bar-wrap .scrolly-bar {
@@ -365,18 +400,16 @@ export default {
 }
 
 .scrolly-bar:hover::before,
-.scrolly.isScrolling > .scrolly-bar-wrap .scrolly-bar::before {
+.scrolly.isManualScrolling > .scrolly-bar-wrap .scrolly-bar::before {
   background: rgba(0, 0, 0, .4);
 }
 
 .scrolly-bar-wrap.axis-x .scrolly-bar {
-  bottom: 0;
   height: 7px;
   min-width: 20%;
 }
 
 .scrolly-bar-wrap.axis-y .scrolly-bar {
-  right: 0;
   width: 7px;
   min-height: 20%;
 }

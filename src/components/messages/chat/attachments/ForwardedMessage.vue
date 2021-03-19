@@ -24,7 +24,7 @@
         </ShortText>
       </div>
 
-      <Attachments :attachments="msg.attachments" />
+      <Attachments :msg="msg" />
 
       <template v-if="msg.fwdCount || msg.hasReplyMsg">
         <div

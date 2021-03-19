@@ -1,36 +1,38 @@
 <template>
-  <Scrolly
-    ref="scrollyRef"
-    class="messages_list_wrap"
-    :vclass="['messages_list', { empty: !hasMessages }]"
-    :lock="lockScroll"
-    @scroll="onScroll"
-  >
+  <div class="messages_list_viewport">
     <div :class="['im_top_time', { active: showTopTime }]">{{ topTime }}</div>
 
-    <div v-if="hasMessages" class="messages_empty_block"></div>
-    <div v-if="loadingUp" class="loading"></div>
+    <Scrolly
+      ref="scrollyRef"
+      class="messages_list_wrap"
+      :vclass="['messages_list', { empty: !hasMessages }]"
+      :lock="lockScroll"
+      @scroll="onScroll"
+    >
+      <div v-if="hasMessages" class="messages_empty_block"></div>
+      <div v-if="loadingUp" class="loading"></div>
 
-    <MessagesList
-      :peer_id="peer_id"
-      :peer="peer"
-      :list="messagesWithLoading"
-      :startInRead="startInRead"
-    />
+      <MessagesList
+        :peer_id="peer_id"
+        :peer="peer"
+        :list="messagesWithLoading"
+        :startInRead="startInRead"
+      />
 
-    <div v-if="loadingDown" class="loading"></div>
+      <div v-if="loadingDown" class="loading"></div>
 
-    <div v-if="!hasMessages && !loadingUp && !loadingDown" class="messages_empty_dialog">
-      <template v-if="peer && peer.isCasperChat && peer.isWriteAllowed">
-        <Icon name="ghost_outline" color="var(--icon-gray)" />
-        {{ l('im_empty_casper_dialog', 0) }}<br>
-        {{ l('im_empty_casper_dialog', 1) }}
-      </template>
-      <template v-else>
-        <img src="~assets/placeholder_empty_messages.webp">
-        {{ l('im_empty_dialog') }}
-      </template>
-    </div>
+      <div v-if="!hasMessages && !loadingUp && !loadingDown" class="messages_empty_dialog">
+        <template v-if="peer && peer.isCasperChat && peer.isWriteAllowed">
+          <Icon name="ghost_outline" color="var(--icon-gray)" />
+          {{ l('im_empty_casper_dialog', 0) }}<br>
+          {{ l('im_empty_casper_dialog', 1) }}
+        </template>
+        <template v-else>
+          <img src="~assets/placeholder_empty_messages.webp">
+          {{ l('im_empty_dialog') }}
+        </template>
+      </div>
+    </Scrolly>
 
     <div
       :class="['im_scroll_mention_btn', { hidden: !showEndBtn || !peer || !peer.mentions.length }]"
@@ -44,7 +46,7 @@
       <div>{{ peer && convertCount(peer.unread) || '' }}</div>
       <img src="~assets/dropdown.webp">
     </div>
-  </Scrolly>
+  </div>
 </template>
 
 <script>
@@ -155,7 +157,6 @@ export default {
 
     onActivated(() => {
       store.state.lockNextScrollyRender = true;
-
       state.startInRead = props.peer && props.peer.in_read;
 
       // Первый запуск, вместо onMounted
@@ -199,7 +200,9 @@ export default {
           if (data.unlockUp) state.loadedUp = false;
           if (data.unlockDown) state.loadedDown = false;
 
-          checkScrolling({ viewport: state.list });
+          requestAnimationFrame(() => {
+            checkScrolling({ viewport: state.list });
+          });
           break;
 
         case 'changeLoadedState':
@@ -270,8 +273,14 @@ export default {
         fields,
         ...params
       });
+      let scrollTop;
+      let scrollHeight;
 
-      const { scrollTop, scrollHeight } = state.list;
+      if (!config.isDown) {
+        scrollTop = state.list.scrollTop;
+        scrollHeight = state.list.scrollHeight;
+      }
+
       const peer = parseConversation(conversations[0]);
 
       store.commit('messages/updateConversation', { peer });
@@ -318,10 +327,11 @@ export default {
       setPeerLoading(false);
 
       if (state.list) {
-        state.showEndBtn = canShowScrollBtn();
-        checkReadMessages();
-        checkTopTime();
-        checkScrolling({ viewport: state.list });
+        requestAnimationFrame(() => {
+          checkReadMessages();
+          checkTopTime();
+          checkScrolling({ viewport: state.list });
+        });
       }
 
       return items;
@@ -470,19 +480,32 @@ export default {
     // Scroll actions =====================================
 
     function onScroll(scrollyEvent) {
-      if (!scrollyEvent.viewport.scrollHeight) {
-        return;
-      }
+      requestAnimationFrame(() => {
+        if (!scrollyEvent.viewport.scrollHeight) {
+          return;
+        }
 
-      checkShowEndBtn(scrollyEvent);
-      checkScrolling(scrollyEvent);
-      checkTopTime();
-      checkReadMessages();
+        checkShowEndBtn(scrollyEvent);
+        checkScrolling(scrollyEvent);
+        checkTopTime();
+        checkReadMessages();
+      });
     }
 
     const checkShowEndBtn = callWithDelay((scrollyEvent) => {
-      state.showEndBtn =
-        canShowScrollBtn() && (props.peer && props.peer.unread || scrollyEvent.dy > 0);
+      const isScrollDown = state.showEndBtn
+        ? scrollyEvent.dy >= 0
+        // При скролле вверх иногда dy поднимается выше 0
+        : scrollyEvent.dy > 5;
+
+      state.showEndBtn = (
+        state.hasMessages &&
+        (props.peer && props.peer.unread || isScrollDown) &&
+        (
+          !state.loadedDown ||
+          (state.list.scrollTop + state.list.offsetHeight + 100 < state.list.scrollHeight)
+        )
+      );
     }, 150);
 
     const checkScrolling = endScroll(({ isUp, isDown }) => {
@@ -519,20 +542,17 @@ export default {
     }, -1);
 
     function afterUpdateScrollTop() {
-      // Это нужно, чтобы showEndBtn был изменен после
-      // его изменения на false в функции onScroll
-      setTimeout(() => {
-        state.showEndBtn = canShowScrollBtn();
+      requestAnimationFrame(() => {
+        checkScrolling({ viewport: state.list });
+        checkReadMessages();
       });
-
-      checkScrolling({ viewport: state.list });
-      checkReadMessages();
     }
 
     // Time bubble ========================================
 
     function checkTopTime() {
       const dates = state.list.querySelectorAll('.message_date');
+      const { scrollTop } = state.list;
       let value;
 
       for (let i = 0; i < dates.length; i++) {
@@ -540,8 +560,8 @@ export default {
         const nextEl = dates[i + 1];
 
         if (
-          el.offsetTop <= state.list.scrollTop &&
-          (!nextEl || nextEl.offsetTop > state.list.scrollTop)
+          el.offsetTop <= scrollTop &&
+          (!nextEl || nextEl.offsetTop > scrollTop)
         ) {
           value = el.innerText;
           break;
@@ -563,13 +583,6 @@ export default {
     }, 500);
 
     // Scroll to end & mention buttons ====================
-
-    function canShowScrollBtn() {
-      return state.hasMessages && !(
-        state.loadedDown &&
-        !(state.list.scrollTop + state.list.offsetHeight + 100 < state.list.scrollHeight)
-      );
-    }
 
     function scrollToEnd() {
       if (state.replyHistory.length) {
@@ -627,33 +640,36 @@ export default {
         return;
       }
 
-      let lastReadedMsgId;
-      const messages = state.list.querySelectorAll(
-        '.message:not(.out), .message_expired_wrap, .im_service_message'
-      );
+      requestAnimationFrame(() => {
+        let lastReadedMsgId;
+        const messages = state.list.querySelectorAll(
+          '.message:not(.out), .message_expired_wrap, .im_service_message'
+        );
+        const { offsetHeight, scrollTop } = state.list;
 
-      for (const msg of messages) {
-        if (
-          state.list.offsetHeight + state.list.scrollTop - msg.offsetHeight / 2 >= msg.offsetTop
-        ) {
-          lastReadedMsgId = +msg.dataset.id || +msg.dataset.lastId;
-        } else {
-          break;
-        }
-      }
-
-      if (lastReadedMsgId) {
-        if (state.lastReadedMsgId >= lastReadedMsgId) {
-          return;
+        for (const msg of messages) {
+          if (
+            offsetHeight + scrollTop - msg.offsetHeight / 2 >= msg.offsetTop
+          ) {
+            lastReadedMsgId = +msg.dataset.id || +msg.dataset.lastId;
+          } else {
+            break;
+          }
         }
 
-        state.lastReadedMsgId = lastReadedMsgId;
+        if (lastReadedMsgId) {
+          if (state.lastReadedMsgId >= lastReadedMsgId) {
+            return;
+          }
 
-        vkapi('messages.markAsRead', {
-          start_message_id: lastReadedMsgId,
-          peer_id: props.peer_id
-        });
-      }
+          state.lastReadedMsgId = lastReadedMsgId;
+
+          vkapi('messages.markAsRead', {
+            start_message_id: lastReadedMsgId,
+            peer_id: props.peer_id
+          });
+        }
+      });
     }, 200);
 
     return {
@@ -670,14 +686,19 @@ export default {
 </script>
 
 <style>
+.messages_list_viewport {
+  position: relative;
+  height: 0;
+  flex-grow: 1;
+}
+
 .messages_list_wrap, .messages_list {
   display: flex;
   flex-direction: column;
 }
 
 .messages_list_wrap {
-  height: 0;
-  flex: 1;
+  height: 100%;
 }
 
 .messages_list {

@@ -149,8 +149,10 @@ export default {
     }
 
     function onScroll(scrollyEvent) {
-      state.isScrolled = !!scrollyEvent.viewport.scrollTop;
-      checkScroll(scrollyEvent);
+      requestAnimationFrame(() => {
+        state.isScrolled = !!scrollyEvent.viewport.scrollTop;
+        checkScroll(scrollyEvent);
+      });
     }
 
     const checkScroll = endScroll(() => {

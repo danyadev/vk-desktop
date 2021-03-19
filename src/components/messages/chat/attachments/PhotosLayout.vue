@@ -79,8 +79,9 @@ function generateLayout(photos) {
   return { children, height };
 }
 
-// el.outerWidth возвращает сильно округленное значение,
+// el.clientWidth возвращает сильно округленное значение,
 // что время от времени смещает фотографии вниз
+// Оданако разница в производительности практически отсутствует
 function getWidth(el) {
   return parseFloat(getComputedStyle(el).width);
 }
@@ -93,11 +94,12 @@ export default {
     let root;
 
     function calcMaxWidth() {
-      // Ширина сообщения без фотографии и отступов вне bubble
-      const msgOuterWidth = getWidth(root.closest('.messages_stack_list'));
-
+      const messagesStack = root.closest('.messages_stack_list');
       const bubble = root.closest('.message_bubble');
       const attachments = root.closest('.im_attachments');
+
+      // Ширина сообщения без фотографии и отступов вне bubble
+      const msgOuterWidth = getWidth(messagesStack);
       // Отступ внутри bubble от начала фона до старта вложения
       const bubblePadding = getWidth(bubble) - getWidth(attachments);
 

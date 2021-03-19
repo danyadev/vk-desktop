@@ -47,7 +47,7 @@
               <VKText multiline mention link>{{ msg.text }}</VKText>
             </div>
 
-            <Attachments :attachments="msg.attachments" />
+            <Attachments :msg="msg" />
 
             <Forwarded
               v-if="msg.fwdCount"

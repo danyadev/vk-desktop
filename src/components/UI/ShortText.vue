@@ -14,6 +14,7 @@
 
 <script>
 import { reactive, onMounted, onUnmounted } from 'vue';
+import { debounce } from 'js/utils';
 
 export default {
   props: {
@@ -36,14 +37,14 @@ export default {
 
     let lineHeight;
 
-    function checkHeight() {
+    const checkHeight = debounce(() => {
       const lines = state.root.offsetHeight / lineHeight;
 
       if (lines > props.maxLines) {
         state.short = true;
         window.removeEventListener('resize', checkHeight);
       }
-    }
+    }, 250);
 
     onMounted(() => {
       const style = getComputedStyle(state.root);
