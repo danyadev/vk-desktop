@@ -28,9 +28,10 @@ export default {
   setup() {
     const maximized = ref(currentWindow.isMaximized());
     const drag = ref(null);
+    const isMac = process.platform === 'darwin';
 
     onMounted(() => {
-      if (process.platform === 'darwin') {
+      if (isMac) {
         drag.value.addEventListener('dblclick', () => {
           if (!currentWindow.isFullScreen()) {
             currentWindow.emit(maximized.value ? 'unmaximize' : 'maximize');
@@ -53,7 +54,7 @@ export default {
     return {
       maximized,
       drag,
-      isMac: process.platform === 'darwin',
+      isMac,
       click: (button) => currentWindow[button]()
     };
   }

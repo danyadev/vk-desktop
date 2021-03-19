@@ -51,7 +51,6 @@ export async function showError(error) {
       message = JSON.stringify(error.reason);
     }
   } else {
-    // eslint-disable-next-line prefer-destructuring
     message = error.message;
   }
 

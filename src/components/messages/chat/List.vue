@@ -273,8 +273,14 @@ export default {
         fields,
         ...params
       });
+      let scrollTop;
+      let scrollHeight;
 
-      const { scrollTop, scrollHeight } = state.list;
+      if (!config.isDown) {
+        scrollTop = state.list.scrollTop;
+        scrollHeight = state.list.scrollHeight;
+      }
+
       const peer = parseConversation(conversations[0]);
 
       store.commit('messages/updateConversation', { peer });
@@ -546,6 +552,7 @@ export default {
 
     function checkTopTime() {
       const dates = state.list.querySelectorAll('.message_date');
+      const { scrollTop } = state.list;
       let value;
 
       for (let i = 0; i < dates.length; i++) {
@@ -553,8 +560,8 @@ export default {
         const nextEl = dates[i + 1];
 
         if (
-          el.offsetTop <= state.list.scrollTop &&
-          (!nextEl || nextEl.offsetTop > state.list.scrollTop)
+          el.offsetTop <= scrollTop &&
+          (!nextEl || nextEl.offsetTop > scrollTop)
         ) {
           value = el.innerText;
           break;

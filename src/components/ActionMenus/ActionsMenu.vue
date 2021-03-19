@@ -29,11 +29,11 @@ export default {
       hideTimeout: null
     });
 
-    const setActive = (value) => {
+    function setActive(value) {
       state.active = value;
       clearTimeout(state.hideTimeout);
       state.hideTimeout = null;
-    };
+    }
 
     const onMouseOver = mouseOverWrapper(() => {
       if (state.active) {
