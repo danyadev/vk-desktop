@@ -43,17 +43,21 @@ export default {
       const { offsetWidth, offsetHeight } = state.outer;
       const rippleWidth = offsetWidth > offsetHeight ? offsetWidth : offsetHeight;
       const halfRippleWidth = rippleWidth / 2;
+      const now = Date.now();
 
       state.ripples.push({
         width: `${rippleWidth}px`,
         height: `${rippleWidth}px`,
         left: `${event.clientX - left - halfRippleWidth}px`,
         top: `${event.clientY - top - halfRippleWidth}px`,
-        id: Date.now()
+        id: now
       });
 
       window.addEventListener('mouseup', () => {
-        state.ripples = [];
+        setTimeout(
+          () => (state.ripples = []),
+          Math.max(250 - (Date.now() - now), 0)
+        );
       }, { once: true });
     }
 
