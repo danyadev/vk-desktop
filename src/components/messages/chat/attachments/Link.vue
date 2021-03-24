@@ -3,7 +3,9 @@
     <img v-if="horizontalPhoto" :src="photo">
     <span v-else :style="{ backgroundImage: `url(${photo})` }"></span>
     <div class="attach_link_content">
-      <div class="attach_link_content_title" @click="openPage(url)">{{ title }}</div>
+      <div class="attach_link_content_title" @click="openPage(url)">
+        <VKText>{{ title }}</VKText>
+      </div>
       <div v-if="caption" class="attach_link_content_caption">{{ caption }}</div>
 
       <Button v-if="button" @click="openPage(button.action.url)">{{ button.title }}</Button>
@@ -11,7 +13,7 @@
   </div>
   <div v-else class="attach_link -short attach_left_border" @click="openPage(url)">
     <div class="attach_link_content">
-      <div class="attach_link_content_title">{{ title }}</div>
+      <div class="attach_link_content_title"><VKText>{{ title }}</VKText></div>
       <div v-if="caption" class="attach_link_content_caption">{{ caption }}</div>
     </div>
   </div>
@@ -21,12 +23,14 @@
 import electron from 'electron';
 import { getPhotoFromSizes } from 'js/utils';
 
+import VKText from '../../../UI/VKText.vue';
 import Button from '../../../UI/Button.vue';
 
 export default {
   props: ['attach'],
 
   components: {
+    VKText,
     Button
   },
 
@@ -38,7 +42,9 @@ export default {
     return {
       url: attach.url,
       photo: photo && photo.url,
-      horizontalPhoto: photo && (photo.width / photo.height >= 3 / 2) && photo.width > 300,
+      horizontalPhoto: !attach.forceLeftPhoto && (
+        photo && (photo.width / photo.height >= 3 / 2) && photo.width > 300
+      ),
       title: attach.title,
       caption: attach.caption || attach.description,
       button: attach.button,
@@ -139,5 +145,9 @@ export default {
   padding: 6px 10px;
   margin-top: auto;
   width: fit-content;
+}
+
+.attach_link.horizontalPhoto .button {
+  margin-top: 5px;
 }
 </style>

@@ -19,6 +19,7 @@ export default {
   show_in_full: 'Показать полностью...',
   download: 'Скачать',
   downloaded: 'Скачано',
+  listen: 'Слушать',
 
   // ----- Окно с ошибкой JS
   error_dialog_title: 'Произошла ошибка',
