@@ -103,7 +103,7 @@ export default {
 
 .message:not(.hasForward) .message_bubble_content > .im_attachments > .im_attach_unknown:last-child,
 .message:not(.hasForward) .message_bubble_content > .im_attachments > .attach_doc:last-child,
-.message:not(.hasForward) .message_bubble_content > .im_attachments > .attach_link.-short:last-child {
+.message:not(.hasForward) .message_bubble_content > .im_attachments > .attach_link:last-child {
   /* Убираем слишком большой отступ от конца сообщения */
   margin-bottom: -5px;
 }

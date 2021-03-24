@@ -1,7 +1,12 @@
 <template>
   <div v-if="photo" :class="['attach_link', { horizontalPhoto, hasButton: !!button }]">
-    <img v-if="horizontalPhoto" :src="photo">
-    <span v-else :style="{ backgroundImage: `url(${photo})` }"></span>
+    <img
+      v-if="horizontalPhoto"
+      :src="photo.url"
+      :style="{ aspectRatio: `${photo.width} / ${photo.height}` }"
+      :width="photo.width"
+    >
+    <span v-else :style="{ backgroundImage: `url(${photo.url})` }"></span>
     <div class="attach_link_content">
       <div class="attach_link_content_title" @click="openPage(url)">
         <VKText>{{ title }}</VKText>
@@ -41,12 +46,12 @@ export default {
 
     return {
       url: attach.url,
-      photo: photo && photo.url,
+      photo,
       horizontalPhoto: !attach.forceLeftPhoto && (
         photo && (photo.width / photo.height >= 3 / 2) && photo.width > 300
       ),
-      title: attach.title,
-      caption: attach.caption || attach.description,
+      title: attach.title || attach.url,
+      caption: attach.caption || attach.description || attach.url,
       button: attach.button,
 
       openPage(url) {
@@ -68,6 +73,10 @@ export default {
   border-radius: 10px;
   overflow: hidden;
   min-height: 70px;
+}
+
+.message.removeTopMargin .message_bubble_content > .im_attachments > .attach_link:not(.-short) {
+  border-radius: 14px 14px 10px 10px;
 }
 
 .attach_link.-short {
@@ -94,7 +103,8 @@ export default {
 }
 
 .attach_link.horizontalPhoto img {
-  height: 200px;
+  max-width: 100%;
+  max-height: 200px;
   object-fit: cover;
   border-bottom: 1px solid var(--separator-dark);
 }

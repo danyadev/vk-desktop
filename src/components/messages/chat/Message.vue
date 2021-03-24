@@ -147,20 +147,23 @@ export default {
         let flyTime = false;
 
         const { text, attachments, hasReplyMsg, fwdCount } = props.msg;
-        const { sticker, photo, video, doc, article } = attachments;
+        const { sticker, photo, video, doc, link, article } = attachments;
         const attachNames = Object.keys(attachments);
         const oneAttachType = attachNames.length === 1;
+        const noReplyOrFwd = !hasReplyMsg && !fwdCount;
 
         const onlyPhotoAttachs = (
           (photo || video || doc) && (!doc || doc.every((doc) => doc.preview)) &&
           attachNames.every((attach) => ['photo', 'video', 'doc'].includes(attach))
         );
-        const onlyPhotos = onlyPhotoAttachs && !hasReplyMsg && !fwdCount;
+        const onlyPhotos = onlyPhotoAttachs && noReplyOrFwd;
         const hasPhoto = (
           attachNames.find((attach) => ['photo', 'video'].includes(attach)) ||
           doc && doc.find((doc) => doc.preview)
         );
-        const onlyArticle = oneAttachType && article && !hasReplyMsg && !fwdCount;
+        const onlyArticle = oneAttachType && article && noReplyOrFwd;
+        const hasLink = link && link[0].photo || attachments.curator || attachments.narrative;
+        const onlyLink = hasLink && oneAttachType && noReplyOrFwd;
 
         /**
          * Порядок следования вложений:
@@ -180,21 +183,21 @@ export default {
           // Уменьшаем отступы со всех сторон
           classes.push('removeMargin');
           flyTime = true;
-        } else if ((hasPhoto || oneAttachType && article) && !text && !hasReplyMsg) {
+        } else if ((hasPhoto || onlyLink || oneAttachType && article) && !text && !hasReplyMsg) {
           // Уменьшаем отступы сверху, справа и слева
           classes.push('removeTopMargin');
         } else if ((onlyPhotoAttachs || oneAttachType && article) && !fwdCount) {
           // Уменьшаем отступы слева, снизу и справа
           classes.push('removeBottomMargin');
           flyTime = true;
-        } else if (hasPhoto || article) {
+        } else if (hasPhoto || hasLink || article) {
           // Уменьшаем отступы слева и справа
           classes.push('removeMiddleMargin');
         }
 
         if (
           sticker && !hasReplyMsg && !text ||
-          article && !hasReplyMsg && !text && !fwdCount ||
+          article && !hasReplyMsg && !text && !fwdCount && oneAttachType ||
 
           !text && onlyPhotos && oneAttachType &&
           (photo && photo.length === 1 || video && video.length === 1 || doc && doc.length === 1)

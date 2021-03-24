@@ -17,7 +17,10 @@ app.once('ready', () => {
       webSecurity: false,
       nodeIntegration: true,
       spellcheck: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      // или перейти на 88+ версию хрома
+      // https://caniuse.com/mdn-css_properties_aspect-ratio
+      experimentalFeatures: true
     }
   });
 

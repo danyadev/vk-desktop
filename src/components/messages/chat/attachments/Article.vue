@@ -1,6 +1,10 @@
 <template>
   <div class="attach_article">
-    <img :src="photo.url" :width="photo.width">
+    <img
+      :src="photo.url"
+      :style="{ aspectRatio: `${photo.width} / ${photo.height}` }"
+      :width="photo.width"
+    >
     <div class="attach_article_content">
       <div class="attach_article_title">{{ title }}</div>
       <div class="attach_article_author text-overflow">
@@ -117,12 +121,12 @@ export default {
 
 .attach_article .verified {
   color: #fff;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .attach_article_title,
 .attach_article_author {
-  text-shadow: 0 4px 12px rgba(0, 0, 0, .4);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, .4);
   text-align: center;
 }
 
@@ -130,6 +134,6 @@ export default {
   background: #fff;
   color: #000;
   line-height: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .4);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .4);
 }
 </style>
