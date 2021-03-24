@@ -53,7 +53,6 @@ function getEmojiAndStyle(emoji) {
     const isRetina = devicePixelRatio > 1;
     const x2 = isRetina ? '_2x' : '';
     const pos = isRetina ? `/ ${posX}px ${posY}px` : '';
-    // console.log([id, x, y, posX, posY]);
     style = `background: url('assets/emoji_sprites/sprite_${id}${x2}.webp') -${x}px -${y}px ${pos}`;
   }
 
