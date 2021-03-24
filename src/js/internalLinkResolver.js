@@ -1,4 +1,5 @@
 import electron from 'electron';
+import { resolveScreenName } from './utils';
 import vkapi from './vkapi';
 import store from './store';
 import router from './router';
@@ -114,18 +115,9 @@ async function resolveVKMe(url) {
     return openChat(localProfile.id);
   }
 
-  const profileInfo = await vkapi('utils.resolveScreenName', {
-    screen_name: domain
-  });
+  const resolvedId = await resolveScreenName(domain);
 
-  // В случае, когда домен неверный, приходит []
-  if (!Array.isArray(profileInfo)) {
-    if (profileInfo.type === 'user') {
-      return openChat(+profileInfo.object_id);
-    }
-
-    if (profileInfo.type === 'group') {
-      return openChat(-profileInfo.object_id);
-    }
+  if (resolvedId) {
+    openChat(resolvedId);
   }
 }

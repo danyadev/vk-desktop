@@ -5,15 +5,19 @@ import Wall from './Wall.vue';
 import WallReply from './WallReply.vue';
 import Link from './Link.vue';
 import Curator from './Curator.vue';
+import Article from './Article.vue';
 
 export const supportedAttachments = new Set([
-  'photo', 'video', 'doc',
+  'photo',
+  'video',
+  'doc',
   'sticker',
   'wall',
   'wall_reply',
   'link',
   'curator',
-  'narrative'
+  'narrative',
+  'article'
 ]);
 
 export default {
@@ -24,5 +28,6 @@ export default {
   wall_reply: WallReply,
   link: Link,
   curator: Curator,
-  narrative: Link
+  narrative: Link,
+  article: Article
 };

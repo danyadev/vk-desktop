@@ -349,6 +349,19 @@ export function logout() {
   window.location.reload();
 }
 
+export async function resolveScreenName(screen_name) {
+  const profileInfo = await vkapi('utils.resolveScreenName', { screen_name });
+
+  // В случае, когда домен неверный, приходит []
+  if (!Array.isArray(profileInfo)) {
+    if (profileInfo.type === 'group') {
+      return -profileInfo.object_id;
+    }
+
+    return +profileInfo.object_id;
+  }
+}
+
 const loadingProfiles = [];
 let isLoadingProfiles = false;
 
@@ -356,6 +369,16 @@ export async function loadProfile(id) {
   if (loadingProfiles.includes(id)) {
     return;
   } else if (id) {
+    if (isNaN(+id)) {
+      const resolvedId = await resolveScreenName(id);
+
+      if (!resolvedId) {
+        return;
+      }
+
+      id = resolvedId;
+    }
+
     loadingProfiles.push(id);
   }
 

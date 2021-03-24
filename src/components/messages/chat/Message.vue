@@ -147,7 +147,7 @@ export default {
         let flyTime = false;
 
         const { text, attachments, hasReplyMsg, fwdCount } = props.msg;
-        const { sticker, photo, video, doc } = attachments;
+        const { sticker, photo, video, doc, article } = attachments;
         const attachNames = Object.keys(attachments);
         const oneAttachType = attachNames.length === 1;
 
@@ -160,12 +160,15 @@ export default {
           attachNames.find((attach) => ['photo', 'video'].includes(attach)) ||
           doc && doc.find((doc) => doc.preview)
         );
+        const onlyArticle = oneAttachType && article && !hasReplyMsg && !fwdCount;
 
         /**
          * Порядок следования вложений:
+         * <> ответ на сообщение
          * 1. фотографии, видео, фотодокументы
          * 2. все остальные вложения
          * 3. файлы
+         * <> пересланные сообщения
          */
 
         if (attachNames.length) classes.push('hasAttachment');
@@ -173,30 +176,25 @@ export default {
         if (sticker) classes.push('isSticker');
         if (sticker) flyTime = true;
 
-        if (onlyPhotos && !text) {
-          // Только фотографии.
+        if ((onlyPhotos || onlyArticle) && !text) {
           // Уменьшаем отступы со всех сторон
           classes.push('removeMargin');
           flyTime = true;
-        } else if (!text && !hasReplyMsg && hasPhoto) {
-          // С фото, но без текста и ответа на сообщение (без контента над фотками).
+        } else if ((hasPhoto || oneAttachType && article) && !text && !hasReplyMsg) {
           // Уменьшаем отступы сверху, справа и слева
           classes.push('removeTopMargin');
-        } else if (onlyPhotoAttachs && !fwdCount) {
-          // Фотографии находятся в самом верху сообщения, значит
-          // отступ снизу можно уменьшить только когда в сообщении есть
-          // только фотографии (+ text || reply).
+        } else if ((onlyPhotoAttachs || oneAttachType && article) && !fwdCount) {
           // Уменьшаем отступы слева, снизу и справа
           classes.push('removeBottomMargin');
           flyTime = true;
-        } else if (hasPhoto) {
-          // возможно текст сверху и остальные вложения снизу
+        } else if (hasPhoto || article) {
           // Уменьшаем отступы слева и справа
           classes.push('removeMiddleMargin');
         }
 
         if (
           sticker && !hasReplyMsg && !text ||
+          article && !hasReplyMsg && !text && !fwdCount ||
 
           !text && onlyPhotos && oneAttachType &&
           (photo && photo.length === 1 || video && video.length === 1 || doc && doc.length === 1)
@@ -391,6 +389,12 @@ export default {
   color: var(--text-dark-steel-gray);
 }
 
+.message.removeMargin .message_text:not(:empty),
+.message.removeMiddleMargin .message_text:not(:empty),
+.message.removeBottomMargin .message_text:not(:empty) {
+  margin: 0 5px 5px 5px;
+}
+
 /* Message time wrap =================================== */
 
 .message_time_wrap {
@@ -538,17 +542,15 @@ export default {
   background: var(--text-white);
 }
 
-.message.hasPhoto .message_name {
+.message.removeMargin .message_name,
+.message.removeMiddleMargin .message_name,
+.message.removeBottomMargin .message_name {
   margin-left: 5px;
 }
 
 .message.removeMargin .message_name,
 .message.removeTopMargin .message_name {
   margin-bottom: 5px;
-}
-
-.message.hasPhoto .message_text:not(:empty) {
-  margin: 0 5px 5px 5px;
 }
 
 /* stylelint-disable selector-combinator-space-before */
