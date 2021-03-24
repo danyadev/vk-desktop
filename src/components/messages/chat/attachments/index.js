@@ -12,7 +12,8 @@ export const supportedAttachments = new Set([
   'wall',
   'wall_reply',
   'link',
-  'curator'
+  'curator',
+  'narrative'
 ]);
 
 export default {
@@ -22,5 +23,6 @@ export default {
   wall: Wall,
   wall_reply: WallReply,
   link: Link,
-  curator: Curator
+  curator: Curator,
+  narrative: Link
 };
