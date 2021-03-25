@@ -5,6 +5,7 @@
     :class="['message', ...attachmentClasses, {
       isUnread,
       out: msg.out,
+      noText: !msg.text,
       fwdOverflow,
       showUserName,
       isLoading: msg.isLoading,

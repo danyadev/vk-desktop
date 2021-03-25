@@ -150,12 +150,8 @@ export default {
   margin-left: 5px;
 }
 
-.message.hasPhoto .attach_reply {
+.message.noText .attach_reply {
   margin-bottom: 8px;
-}
-
-.message.hasPhoto .attach_reply + .message_text:not(:empty) {
-  margin-top: -4px;
 }
 
 .attach_reply.attach_left_border::before {
