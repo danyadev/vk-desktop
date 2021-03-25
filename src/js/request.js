@@ -47,9 +47,19 @@ function request(paramsOrUrl, paramsOrOptions = {}, options) {
 
       res.on('end', () => {
         const raw = String(Buffer.concat(chunks));
+        let data = raw;
+
+        if (!options.raw) {
+          try {
+            data = JSON.parse(raw);
+          } catch (err) {
+            debug('[request] JSON parse error', raw);
+            throw err;
+          }
+        }
 
         resolve({
-          data: options.raw ? raw : JSON.parse(raw),
+          data,
           headers: res.headers,
           statusCode: res.statusCode
         });
@@ -138,7 +148,12 @@ export default async function(...data) {
     try {
       return await request(...data);
     } catch (err) {
-      debug(`[request] error: ${err.code}`, err, JSON.stringify(data));
+      // Нужно получить только основную информацию о запросе, параметры не нужны
+      const debugData = data.length === 3
+        ? [data[0], data[2]]
+        : [data[0]];
+
+      debug(`[request] error: ${err.code}`, err, JSON.stringify(debugData));
 
       // Если ошибка не относится к проблемам с сетью, то выкидываем ошибку
       if (
