@@ -280,32 +280,31 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
     // Все возможные положения находятся в photosLayoutVariants.
     let optimalPhotosLayout = null;
     let minHeightDiff = 0;
-    let reservedMaxWidthAndLayout = [];
     const minPhotoWidth = 65;
+    const reservedLayoutVariants = [];
 
     for (const key in photosLayoutVariants) {
       const photosHeight = photosLayoutVariants[key];
       const photosInRows = key.split(',');
-      // Math.abs нужен для того, чтобы считать размеры, максимально приближенные
-      // к максимальной высоте сетки. Например, при выборе между
-      // [-500, 50, 500] победит именно 50, так как он ближе всего к 0
-      const heightDiff = Math.abs(
-        (getArraySum(photosHeight) + margin * (photosHeight.length - 1)) - maxHeight
-      );
+      const origDiff =
+        (getArraySum(photosHeight) + margin * (photosHeight.length - 1)) - maxHeight;
+      // Слишком большая высота стоит дороже, потому что выглядит не очень красиво
+      const heightDiff = origDiff > 0 ? origDiff + 50 : -origDiff;
       let index = 0;
       let isPhotoWidthLessThanMin = false;
+
+      const reverseIndex = reservedLayoutVariants.push({
+        key,
+        widths: []
+      }) - 1;
 
       for (let row = 0; row < photosInRows.length; row++) {
         for (let column = 0; column < photosInRows[row]; column++) {
           const width = photoRatios[index++] * photosHeight[row];
 
+          reservedLayoutVariants[reverseIndex].widths.push(width);
+
           if (width < minPhotoWidth) {
-            const [prevWidth] = reservedMaxWidthAndLayout;
-
-            if (!prevWidth || width > prevWidth) {
-              reservedMaxWidthAndLayout = [width, key, heightDiff];
-            }
-
             isPhotoWidthLessThanMin = true;
           }
         }
@@ -322,7 +321,14 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
     }
 
     if (!optimalPhotosLayout) {
-      [, optimalPhotosLayout, minHeightDiff] = reservedMaxWidthAndLayout;
+      const bestVariant = reservedLayoutVariants
+        .map(({ key, widths }) => {
+          const minWidth = widths.sort((a, b) => a - b)[0];
+          return { key, minWidth };
+        })
+        .sort((a, b) => b.minWidth - a.minWidth)[0];
+
+      optimalPhotosLayout = bestVariant.key;
     }
 
     const rowHeights = photosLayoutVariants[optimalPhotosLayout];
