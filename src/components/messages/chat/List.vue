@@ -399,8 +399,10 @@ export default {
         state.loadedDown = false;
       }
 
-      state.showEndBtn = false;
-      state.showTopTime = false;
+      function hideElements() {
+        state.showEndBtn = false;
+        state.showTopTime = false;
+      }
 
       if (top) {
         state.replyHistory.length = 0;
@@ -408,6 +410,8 @@ export default {
         if (state.loadedUp) {
           onLoad();
         } else {
+          hideElements();
+
           load({
             params: { start_message_id: 0, offset: -40 },
             config: { beforeLoad }
@@ -432,6 +436,8 @@ export default {
             }
           }
         } else {
+          hideElements();
+
           const [lastMsg] = await load({
             config: {
               isDown: true,
@@ -446,6 +452,8 @@ export default {
       } else if (state.messages.find((msg) => msg.id === msg_id)) {
         onLoad();
       } else {
+        hideElements();
+
         load({
           params: { start_message_id: msg_id, offset: -20 },
           config: { beforeLoad }
@@ -496,7 +504,7 @@ export default {
       const isScrollDown = state.showEndBtn
         ? scrollyEvent.dy >= 0
         // При скролле вверх иногда dy поднимается выше 0
-        : scrollyEvent.dy > 5;
+        : scrollyEvent.dy > 3;
 
       state.showEndBtn = (
         state.hasMessages &&
