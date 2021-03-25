@@ -592,17 +592,41 @@ export default {
 
     // Scroll to end & mention buttons ====================
 
+    function isMessageHigher(msg_id) {
+      // Сообщение находится выше загруженного списка сообщений
+      if (state.messages.length) {
+        const higherId = state.messages[0].id;
+
+        if (msg_id < higherId) {
+          return true;
+        }
+      }
+
+      const msg = state.list.querySelector(`[data-id="${msg_id}"], [data-last-id="${msg_id}"]`);
+
+      // Сообщение находится выше видимого вьюпорта
+      return msg && state.list.scrollTop >= msg.offsetTop;
+    }
+
     function scrollToEnd() {
       if (state.replyHistory.length) {
         // Возвращаемся на сообщение с ответом
-        const msg_id = state.replyHistory.pop();
+        let msg_id = state.replyHistory.pop();
 
         if (typeof msg_id === 'string') {
           // msg_id = loadingX
           jumpTo({ bottom: true });
           state.replyHistory.length = 0;
         } else {
-          jumpTo({ msg_id, mark: true });
+          while (msg_id && isMessageHigher(msg_id)) {
+            msg_id = state.replyHistory.pop();
+          }
+
+          jumpTo(
+            msg_id
+              ? { msg_id, mark: true }
+              : { bottom: true }
+          );
         }
       } else if (props.peer && props.peer.unread) {
         const unread = state.list.querySelector('.message_unreaded_messages');
