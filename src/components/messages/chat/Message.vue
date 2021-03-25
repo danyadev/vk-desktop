@@ -216,7 +216,12 @@ export default {
     let timer;
 
     function onMouseDown(event) {
-      if (event.button !== 0 || props.isCustomView || props.msg.attachments.call) {
+      if (
+        event.button !== 0 ||
+        props.isCustomView ||
+        props.msg.attachments.call ||
+        props.msg.isLoading
+      ) {
         return;
       }
 
