@@ -587,10 +587,15 @@ export default {
     function scrollToEnd() {
       if (state.replyHistory.length) {
         // Возвращаемся на сообщение с ответом
-        jumpTo({
-          msg_id: state.replyHistory.pop(),
-          mark: true
-        });
+        const msg_id = state.replyHistory.pop();
+
+        if (typeof msg_id === 'string') {
+          // msg_id = loadingX
+          jumpTo({ bottom: true });
+          state.replyHistory.length = 0;
+        } else {
+          jumpTo({ msg_id, mark: true });
+        }
       } else if (props.peer && props.peer.unread) {
         const unread = state.list.querySelector('.message_unreaded_messages');
 
