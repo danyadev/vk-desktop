@@ -46,6 +46,13 @@ function request(paramsOrUrl, paramsOrOptions = {}, options) {
       });
 
       res.on('end', () => {
+        if (!res.complete) {
+          return reject({
+            code: 'ETIMEDOUT',
+            reason: 'request not completed'
+          });
+        }
+
         const raw = String(Buffer.concat(chunks));
         let data = raw;
 
@@ -54,7 +61,7 @@ function request(paramsOrUrl, paramsOrOptions = {}, options) {
             data = JSON.parse(raw);
           } catch (err) {
             debug('[request] JSON parse error', raw);
-            throw err;
+            return reject(err);
           }
         }
 
