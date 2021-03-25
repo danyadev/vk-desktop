@@ -15,7 +15,10 @@ module.exports = {
   plugins: ['import'],
 
   settings: {
-    'import/resolver': 'webpack',
+    'import/resolver': {
+      webpack: { paths: ['./src'] },
+      node: { paths: ['./src'] }
+    },
     'import/ignore': []
   },
 

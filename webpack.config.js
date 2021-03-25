@@ -49,11 +49,15 @@ module.exports = function(env, { mode = 'development' } = {}) {
       pathinfo: false
     },
     devServer: {
-      clientLogLevel: 'silent',
       compress: true,
-      overlay: true,
       port: 9973,
-      before(app, { middleware }) {
+
+      client: {
+        logging: 'warn',
+        overlay: true
+      },
+
+      onBeforeSetupMiddleware ({ middleware }) {
         middleware.waitUntilValid(() => {
           spawn(
             electron,

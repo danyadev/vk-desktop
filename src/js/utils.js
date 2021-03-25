@@ -4,7 +4,7 @@ import { reactive } from 'vue';
 import electron from 'electron';
 import os from 'os';
 import path from 'path';
-import { version } from '../../package.json';
+import pkg from '../../package.json';
 import { usersStorage } from './store/Storage';
 import request from './request';
 import vkapi from './vkapi';
@@ -16,14 +16,14 @@ debug(
   '[init] ' +
   `os ${os.type()} (${os.platform()}) ${os.release()} ${os.arch()}; ` +
   `electron ${process.versions.electron}; ` +
-  `app ${version}; ` +
+  `app ${pkg.version}; ` +
   `user_id ${store.state.users.activeUserID || '(не авторизован)'}\n`
 );
 
 // --- Переменные
 
 export const VKDesktopUserAgent =
-  `VKDesktop/${version} (${os.platform()}; ${os.release()}; ${os.arch()})`;
+  `VKDesktop/${pkg.version} (${os.platform()}; ${os.release()}; ${os.arch()})`;
 export const AndroidUserAgent =
   'VKAndroidApp/6.7-5621 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 1920x720)';
 
