@@ -9,7 +9,7 @@ export default {
     peerIds: [],
 
     // Некоторая информация о беседах, необходимая вне компонента чата
-    // { peer_id: { wasOpened, loading } }
+    // { peer_id: { wasOpened, loading, replyMsg, fwdMessages } }
     peersConfig: {},
 
     // Список закрепленных бесед

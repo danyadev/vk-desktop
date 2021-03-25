@@ -18,13 +18,8 @@ function parseInputText(nodes) {
   return text.trim().replace(/\n/g, '<br>');
 }
 
-function getMessage(peer_id, msg_id) {
-  const messages = store.state.messages.messages[peer_id];
-  return messages && messages.find((msg) => msg.id === msg_id);
-}
-
 export default async function sendMessage({
-  peer_id, input, keyboardButton, reply_to, fwdMessages = []
+  peer_id, input, keyboardButton, replyMsg, fwdMessages = []
 }) {
   const random_id = random(-2e9, 2e9);
   let message;
@@ -48,7 +43,7 @@ export default async function sendMessage({
     message = parseInputText(input.childNodes);
   }
 
-  if (!message && (!fwdMessages.length || reply_to)) {
+  if (!message && (!fwdMessages.length || replyMsg)) {
     return false;
   }
 
@@ -65,8 +60,7 @@ export default async function sendMessage({
   };
 
   if (payload) params.payload = payload;
-  if (reply_to) params.reply_to = reply_to;
-
+  if (replyMsg) params.reply_to = replyMsg.id;
   if (fwdMessages.length) {
     params.forward_messages = fwdMessages.map((msg) => msg.id).join(',');
   }
@@ -83,8 +77,8 @@ export default async function sendMessage({
       fwdCount: fwdMessages.length,
       fwdMessages,
       attachments: {},
-      hasReplyMsg: !!params.reply_to,
-      replyMsg: params.reply_to && getMessage(peer_id, params.reply_to),
+      hasReplyMsg: !!replyMsg,
+      replyMsg,
       editTime: 0,
 
       isLoading: true,
