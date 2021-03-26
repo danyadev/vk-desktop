@@ -255,7 +255,7 @@ export function deleteMessages(message_ids, peer, needCancelSelect) {
 
       if (isChatOwner) {
         for (const msg of messages) {
-          if (peer.admin_ids.includes(msg.from)) {
+          if (peer.admin_ids.includes(msg.from) && !chatAdmins.includes(msg.from)) {
             chatAdmins.push(msg.from);
           }
         }
