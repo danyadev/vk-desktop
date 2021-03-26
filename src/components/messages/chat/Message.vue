@@ -163,7 +163,13 @@ export default {
           doc && doc.find((doc) => doc.preview)
         );
         const onlyArticle = oneAttachType && article && noReplyOrFwd;
-        const hasLink = link && link[0].photo || attachments.curator || attachments.narrative;
+        const hasLink = (
+          link && link[0].photo ||
+          attachments.narrative ||
+          attachments.artist ||
+          attachments.audio_playlist ||
+          attachments.curator
+        );
         const onlyLink = hasLink && oneAttachType && noReplyOrFwd;
 
         /**

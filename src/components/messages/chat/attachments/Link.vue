@@ -102,7 +102,7 @@ export default {
   min-height: 95px;
 }
 
-.attach_link.horizontalPhoto img {
+.attach_link img {
   max-width: 100%;
   max-height: 200px;
   object-fit: cover;
