@@ -6,6 +6,7 @@ import WallReply from './WallReply.vue';
 import Link from './Link.vue';
 import Curator from './Curator.vue';
 import Artist from './Artist.vue';
+import Podcast from './Podcast.vue';
 import Article from './Article.vue';
 
 export const supportedAttachments = new Set([
@@ -20,6 +21,7 @@ export const supportedAttachments = new Set([
   'audio_playlist',
   'curator',
   'artist',
+  'podcast',
   'article'
 ]);
 
@@ -34,5 +36,6 @@ export default {
   audio_playlist: Link,
   curator: Curator,
   artist: Artist,
+  podcast: Podcast,
   article: Article
 };

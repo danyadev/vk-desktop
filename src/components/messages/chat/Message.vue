@@ -166,9 +166,10 @@ export default {
         const hasLink = (
           link && link[0].photo ||
           attachments.narrative ||
-          attachments.artist ||
           attachments.audio_playlist ||
-          attachments.curator
+          attachments.curator ||
+          attachments.artist ||
+          attachments.podcast
         );
         const onlyLink = hasLink && oneAttachType && noReplyOrFwd;
 
