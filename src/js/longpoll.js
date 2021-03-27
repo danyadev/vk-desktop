@@ -38,7 +38,7 @@ class Longpoll {
         wait: 10,
         mode: 2 | 8 | 32 | 64 | 128,
         version: this.version
-      }), { timeout: 11000 });
+      }), { timeout: 15000 });
 
       if (data.failed) await this.catchErrors(data);
       if (data.ts) this.ts = data.ts;

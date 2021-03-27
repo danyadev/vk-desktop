@@ -169,6 +169,14 @@ export default async function(...data) {
         throw err;
       }
 
+      // ENOTFOUND сильно флудит запросами за счет
+      // - моментального ответа при попытке подключиться к серверу
+      // - моментального пинга (waitConnectionPromise)
+      // Во время "приступа" за 30 секунд может быть сделано несколько тысяч запросов
+      if (err.code === 'ENOTFOUND') {
+        await timer(5000);
+      }
+
       if (!waitConnectionPromise) {
         waitConnectionPromise = waitConnection();
       }
