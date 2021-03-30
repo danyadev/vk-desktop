@@ -58,12 +58,12 @@ export async function showError(error) {
 
   const { response } = await dialog.showMessageBox({
     type: 'error',
-    title: getTranslate('error_dialog_title'),
+    title: type,
     message: getTranslate('error_dialog_message'),
     detail: message,
     cancelId: 1,
 
-    buttons: ['Отправить отчет', 'Закрыть']
+    buttons: [getTranslate('send_report'), getTranslate('close')]
   });
 
   if (response === 0) {
