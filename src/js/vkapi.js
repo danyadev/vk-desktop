@@ -10,8 +10,8 @@ export const version = '5.149';
 let handleErrorPromise;
 const clearHandleError = () => (handleErrorPromise = null);
 
-function handleError({ user, params, error, ...context }) {
-  debug(`[API error ${context.name}]`, JSON.stringify(error));
+function handleError({ user, method, params, error, ...context }) {
+  debug(`[API error ${method}]`, JSON.stringify(error));
 
   return new Promise(async (resolve) => {
     // Сессия устарела
@@ -54,7 +54,7 @@ function handleError({ user, params, error, ...context }) {
     // Internal Server Error
     if (error.error_code === 10) {
       return openModal('error-api', {
-        method: context.name,
+        method,
         error,
         retry() {
           context.reject();
@@ -68,7 +68,7 @@ function handleError({ user, params, error, ...context }) {
       return openModal('captcha', {
         src: error.captcha_img,
         send(code) {
-          if (context.name === 'captcha.force') {
+          if (method === 'captcha.force') {
             context.resolve(1);
             return resolve();
           }
@@ -149,14 +149,14 @@ function handleError({ user, params, error, ...context }) {
   });
 }
 
-function vkapi(name, params, { android } = {}) {
+function vkapi(method, params, { android } = {}) {
   return new Promise(async (resolve, reject) => {
     const user = store.getters['users/user'];
 
     const startTime = Date.now();
     const debugParams = { ...params };
     delete debugParams.fields;
-    debug(`[API request ${name}] ${JSON.stringify(debugParams)}`);
+    debug(`[API request ${method}] ${JSON.stringify(debugParams)}`);
 
     params = {
       ...(user && { access_token: android ? user.android_token : user.access_token }),
@@ -171,7 +171,7 @@ function vkapi(name, params, { android } = {}) {
 
     const { data } = await request({
       host: 'api.vk.com',
-      path: `/method/${name}`,
+      path: `/method/${method}`,
       method: 'POST',
       headers: {
         'User-Agent': android ? AndroidUserAgent : VKDesktopUserAgent
@@ -186,30 +186,30 @@ function vkapi(name, params, { android } = {}) {
 
     if (data.execute_errors) {
       const [error] = data.execute_errors;
-      handleErrorPromise = handleError({ name, params, error, user, resolve, reject });
+      handleErrorPromise = handleError({ method, params, error, user, resolve, reject });
       handleErrorPromise.then(clearHandleError);
       return;
     }
 
-    debug(`[API request ${name}] ${Date.now() - startTime}ms`);
+    debug(`[API request ${method}] ${Date.now() - startTime}ms`);
 
     if (data.response !== undefined) {
       return resolve(data.response);
     }
 
-    handleErrorPromise = handleError({ name, params, error: data.error, user, resolve, reject });
+    handleErrorPromise = handleError({ name: method, params, error: data.error, user, resolve, reject });
     handleErrorPromise.then(clearHandleError);
   });
 }
 
-export default async function executeMethod(...data) {
+export default async function executeMethod(...args) {
   try {
-    return await vkapi(...data);
+    return await vkapi(...args);
   } catch (err) {
     if (err) {
       throw err;
     } else {
-      return executeMethod(...data);
+      return executeMethod(...args);
     }
   }
 }
