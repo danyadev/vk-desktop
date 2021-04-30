@@ -164,7 +164,9 @@ export default async function(...data) {
 
       // Если ошибка не относится к проблемам с сетью, то выкидываем ошибку
       if (
-        !['ETIMEDOUT', 'ECONNRESET', 'ENOTFOUND', 'ENETUNREACH', 'ECONNABORTED'].includes(err.code)
+        ![
+          'ETIMEDOUT', 'ECONNRESET', 'ENOTFOUND', 'ENETUNREACH', 'ECONNABORTED', 'EAI_AGAIN'
+        ].includes(err.code)
       ) {
         throw err;
       }
