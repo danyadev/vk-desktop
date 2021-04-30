@@ -197,7 +197,14 @@ function vkapi(method, params, { android } = {}) {
       return resolve(data.response);
     }
 
-    handleErrorPromise = handleError({ name: method, params, error: data.error, user, resolve, reject });
+    handleErrorPromise = handleError({
+      name: method,
+      params,
+      error: data.error,
+      user,
+      resolve,
+      reject
+    });
     handleErrorPromise.then(clearHandleError);
   });
 }
