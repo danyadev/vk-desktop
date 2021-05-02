@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import { closeModal } from 'js/modals';
 
 import ModalHeader from './ModalHeader.vue';

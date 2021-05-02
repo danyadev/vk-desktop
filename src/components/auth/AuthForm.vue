@@ -8,6 +8,7 @@
       class="input"
       type="text"
       :placeholder="l('enter_login')"
+      spellcheck="false"
     >
     <div class="auth_password_wrap">
       <input
@@ -15,6 +16,7 @@
         class="input"
         :type="hidePassword ? 'password' : 'text'"
         :placeholder="l('enter_password')"
+        spellcheck="false"
       >
       <div
         :class="['auth_password_switch', { hidden: hidePassword }]"
@@ -168,6 +170,7 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+  cursor: pointer;
   opacity: .8;
   width: 36px;
   height: 36px;

@@ -127,8 +127,8 @@ img:not(.emoji) {
   border: 1px solid var(--field-border);
   border-radius: 7px;
   background: var(--field-background);
-  font-size: 15px;
-  color: var(--field-color);
+  font: inherit;
+  color: var(--text-primary);
   line-height: 36px;
   height: 36px;
   padding: 0 9px;
@@ -262,7 +262,7 @@ img:not(.emoji) {
 }
 
 .im_search_input {
-  color: var(--field-color);
+  color: var(--text-primary);
   border: none;
   border-radius: 24px;
   height: 36px;
