@@ -1,7 +1,7 @@
 <template>
   <div class="im_chat_container">
     <Header :peer_id="peer_id" :peer="peer" @close="$router.back()" />
-    <div class="im_chat_wrap">
+    <div :class="['im_chat_wrap', { hasChatViewer: viewer.messages.length }]">
       <List :peer_id="peer_id" :peer="peer" />
       <Input :peer_id="peer_id" :peer="peer" />
     </div>
@@ -88,5 +88,12 @@ export default {
   flex-direction: column;
   flex-grow: 1;
   overflow: auto;
+}
+
+.im_chat_wrap.hasChatViewer .message_photo {
+  /* Наложение блока (просмотрщика фотографий) на элемент с position: sticky */
+  /* выносит этот блок на новый слой, что делает невозможным поддержку */
+  /* субпиксельного антиалиасинга текста */
+  position: unset;
 }
 </style>

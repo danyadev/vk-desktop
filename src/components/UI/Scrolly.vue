@@ -382,7 +382,6 @@ export default {
   cursor: pointer;
   opacity: 0;
   transition: opacity .3s;
-  will-change: transform, opacity;
 }
 
 .scrolly.isActive > .scrolly-bar-wrap .scrolly-bar {
