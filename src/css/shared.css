@@ -183,6 +183,10 @@ img:not(.emoji) {
   background: url('~assets/spinner.webp') 0 / contain;
 }
 
+.hasModals .loading::after {
+  animation: none;
+}
+
 .verified {
   display: inline-block;
   width: 12px;

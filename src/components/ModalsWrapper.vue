@@ -24,6 +24,7 @@ const modalNames = [
   'DeleteMessages',
   'ErrorApi',
   'Logout',
+  'MarkAsSpam',
   // 'MediaViewer',
   'Settings'
 ];
@@ -44,7 +45,7 @@ export default {
       const [modal] = target.children;
       const header = modal.querySelector('.modal_header');
 
-      if (!header || header.getAttribute('closable') !== 'false') {
+      if (!header || header.getAttribute('unclosable') === null) {
         closeModal(modal.dataset.name);
       }
     }
@@ -54,7 +55,7 @@ export default {
       const name = keys[keys.length - 1];
       const header = document.querySelector(`.modal[data-name="${name}"] .modal_header`);
 
-      if (!header || header.getAttribute('closable') !== 'false') {
+      if (!header || header.getAttribute('unclosable') === null) {
         closeModal(name);
       }
     }
@@ -104,44 +105,41 @@ export default {
 }
 
 .modal {
-  position: absolute;
   overflow: hidden;
   max-width: 92vw;
   max-height: 92vh;
+  background: var(--background);
+  padding: 12px 24px;
   border-radius: 7px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
+}
+
+.modal_header, .modal_content {
+  user-select: text;
 }
 
 .modal_content {
   /* <modal-max-height> - <modal-header> - <modal-footer> */
   max-height: calc(92vh - 48px - 56px);
+  padding: 12px 0;
   background: var(--background);
 }
 
 .modal_footer {
-  height: 56px;
-  border-top: 1px solid var(--separator);
-  background: var(--field-background);
+  padding-top: 8px;
 }
 
 .modal_footer .button {
-  min-width: 110px;
-  margin: 9px 5px;
-}
-
-.modal_footer .button.left:first-child {
-  margin-left: 9px;
-}
-
-.modal_footer .button.right:last-child {
-  margin-right: 9px;
+  min-width: 100px;
+  margin: 4px 0;
 }
 
 .modal_footer .button.right {
   float: right;
 }
 
-.modal_footer .button.right:first-child {
-  margin-right: 10px;
+.modal_footer .button:not(.right):not(:first-child),
+.modal_footer .button.right:not(:last-child) {
+  margin-left: 8px;
 }
 </style>

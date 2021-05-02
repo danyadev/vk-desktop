@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['section_container messages_container', settingsClasses, { hasChat }]"
+    :class="['section_container messages_container', settingsClasses, { hasChat, hasModals }]"
     tabindex="-1"
     @keydown.esc="closeChat"
   >
@@ -16,6 +16,7 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
+import { modalsState } from 'js/modals';
 import store from 'js/store';
 import router from 'js/router';
 
@@ -31,6 +32,7 @@ export default {
       route: router.currentRoute,
       peer_id: computed(() => +state.route.params.id || 0),
       hasChat: computed(() => state.route.name === 'chat'),
+      hasModals: computed(() => modalsState.hasModals),
 
       settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
       settingsClasses: computed(() => (

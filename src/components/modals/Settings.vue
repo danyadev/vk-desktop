@@ -4,7 +4,12 @@
       <div class="settings_header">
         <div class="settings_header_text text-overflow">{{ l('ml_settings_header') }}</div>
         <div class="settings_header_close">
-          <CloseModal :closable="true" />
+          <Icon
+            name="close"
+            color="var(--icon-dark-gray)"
+            class="settings_header_close_icon icon-hover"
+            @click.stop="closeModal()"
+          />
         </div>
       </div>
 
@@ -34,8 +39,8 @@
 
 <script>
 import { ref } from 'vue';
+import { closeModal } from 'js/modals';
 
-import CloseModal from './CloseModal.vue';
 import Icon from '../UI/Icon.vue';
 import Ripple from '../UI/Ripple.vue';
 
@@ -44,7 +49,6 @@ import Developers from './settingsSections/Developers.vue';
 
 export default {
   components: {
-    CloseModal,
     Icon,
     Ripple,
 
@@ -56,6 +60,7 @@ export default {
     const activeSection = ref('interface');
 
     return {
+      closeModal,
       activeSection,
       sections: [
         { name: 'interface', icon: 'palette' },
@@ -105,8 +110,11 @@ export default {
   width: 64px;
 }
 
-.settings_header .modal_header_close {
-  color: var(--icon-dark-gray);
+.settings_header_close_icon {
+  width: 40px;
+  height: 40px;
+  padding: 12px;
+  border-radius: 50%;
 }
 
 .settings_content {

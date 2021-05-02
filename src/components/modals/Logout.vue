@@ -34,9 +34,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.modal[data-name=logout] .modal_content {
-  padding: 25px;
-}
-</style>

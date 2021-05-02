@@ -10,7 +10,7 @@
     />
 
     <div class="im_header_selected_count">
-      {{ l('im_selected_messages_count', [messages.length], messages.length) }}
+      {{ l('im_messages_count', [messages.length], messages.length) }}
     </div>
 
     <div class="im_header_selected_actions">
@@ -54,6 +54,7 @@
 
 <script>
 import { getMessageById, deleteMessages } from 'js/messages';
+import { openModal } from 'js/modals';
 import store from 'js/store';
 import vkapi from 'js/vkapi';
 import router from 'js/router';
@@ -110,12 +111,17 @@ export default {
     }
 
     function markAsSpam() {
-      vkapi('messages.delete', {
-        message_ids: props.messages.join(','),
-        spam: 1
-      });
+      openModal('mark-as-spam', {
+        count: props.messages.length,
+        submit() {
+          vkapi('messages.delete', {
+            message_ids: props.messages.join(','),
+            spam: 1
+          });
 
-      cancelSelect();
+          cancelSelect();
+        }
+      });
     }
 
     return {

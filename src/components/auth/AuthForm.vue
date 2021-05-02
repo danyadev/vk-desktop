@@ -97,6 +97,7 @@ export default {
         case 'account_banned':
           state.loading = false;
           openModal('blocked-account', {
+            type: 2,
             fromAuth: true
           });
           break;

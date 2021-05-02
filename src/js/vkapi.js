@@ -22,7 +22,7 @@ function handleError({ user, method, params, error, ...context }) {
         return context.reject(error);
       }
 
-      const id = ({
+      const type = ({
         // Была принудительно завершена сессия
         'user revoke access for this token.': 0,
         // Закончилось время действия токена
@@ -33,11 +33,11 @@ function handleError({ user, method, params, error, ...context }) {
         'invalid access_token (2).': 2
       })[error.error_msg.slice(27)];
 
-      if (id === undefined) {
+      if (type === undefined) {
         context.reject(error);
         resolve();
       } else {
-        openModal('blocked-account', { id });
+        openModal('blocked-account', { type });
       }
 
       return;
@@ -56,8 +56,8 @@ function handleError({ user, method, params, error, ...context }) {
       return openModal('error-api', {
         method,
         error,
-        retry() {
-          context.reject();
+        retry(err) {
+          context.reject(err);
           resolve();
         }
       });
@@ -197,14 +197,7 @@ function vkapi(method, params, { android } = {}) {
       return resolve(data.response);
     }
 
-    handleErrorPromise = handleError({
-      name: method,
-      params,
-      error: data.error,
-      user,
-      resolve,
-      reject
-    });
+    handleErrorPromise = handleError({ method, params, error: data.error, user, resolve, reject });
     handleErrorPromise.then(clearHandleError);
   });
 }

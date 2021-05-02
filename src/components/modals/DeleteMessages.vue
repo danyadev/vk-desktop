@@ -1,8 +1,9 @@
 <template>
   <div class="modal">
     <ModalHeader>{{ l('ml_delete_messages_header') }}</ModalHeader>
+
     <div class="modal_content">
-      {{ l('ml_delete_messages_text', [l('ml_delete_messages_count', [count], count)]) }}
+      {{ l('ml_delete_messages_text', [l('im_messages_count', [count], count)]) }}
 
       <div
         v-if="canDeleteForAll"
@@ -13,6 +14,7 @@
         {{ l('ml_delete_messages_for_all') }}
       </div>
     </div>
+
     <div class="modal_footer">
       <Button class="right" @click="deleteMsg">{{ l('delete') }}</Button>
       <Button class="right" light @click="close">{{ l('cancel') }}</Button>
@@ -70,15 +72,11 @@ export default {
 </script>
 
 <style>
-.modal[data-name=delete-messages] .modal_content {
-  padding: 25px;
-}
-
 .ml_delete_messages_checkbox {
   display: flex;
   align-items: center;
-  margin-top: 15px;
   cursor: pointer;
+  margin-top: 15px;
 }
 
 .ml_delete_messages_checkbox .checkbox {

@@ -50,6 +50,7 @@ import { reactive, computed, toRefs } from 'vue';
 import electron from 'electron';
 import { deleteMessages } from 'js/messages';
 import { addSnackbar } from 'js/snackbars';
+import { openModal } from 'js/modals';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
@@ -134,9 +135,14 @@ export default {
     }
 
     function markAsSpam() {
-      vkapi('messages.delete', {
-        message_ids: state.msg.id,
-        spam: 1
+      openModal('mark-as-spam', {
+        count: 1,
+        submit() {
+          vkapi('messages.delete', {
+            message_ids: state.msg.id,
+            spam: 1
+          });
+        }
       });
     }
 

@@ -20,6 +20,7 @@ export default {
   download: 'Скачать',
   downloaded: 'Скачано',
   listen: 'Слушать',
+  spam: 'Спам',
 
   // ----- Окно с ошибкой JS
   error_dialog_message: 'В ходе работы приложения произошла ошибка.',
@@ -77,6 +78,7 @@ export default {
   im_no_messages: 'Сообщений нет',
   im_messages_disappeared: 'Сообщения исчезли',
   im_messages_expired: ['{0} сообщение исчезло', '{0} сообщения исчезло', '{0} сообщений исчезло'],
+  im_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
   keyboard_button_not_supported: 'Клавиша не поддерживается',
 
   // im_search_dialogs: 'Диалоги',
@@ -132,8 +134,6 @@ export default {
   im_delete_msg: 'Удалить сообщение',
   im_delete_messages: 'Удалить сообщения',
   im_mark_msg_as_spam: 'Пометить как спам',
-
-  im_selected_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
 
   // Вложения в сообщениях
   im_attachment_deleted: 'Вложение удалено',
@@ -300,7 +300,6 @@ export default {
 
   ml_delete_messages_header: 'Удаление сообщения',
   ml_delete_messages_text: 'Вы действительно хотите удалить {0}?',
-  ml_delete_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
   ml_delete_messages_for_all: 'Удалить для всех',
 
   ml_error_api_header: 'Internal Server Error',
@@ -309,6 +308,9 @@ export default {
 
   ml_logout_header: 'Выход из аккаунта',
   ml_logout_sure: 'Вы действительно хотите выйти из аккаунта?',
+
+  ml_mark_as_spam_header: 'Пометить как спам',
+  ml_mark_as_spam_text: 'Вы действительно хотите пометить как спам и удалить {0}?',
 
   ml_settings_header: 'Настройки',
   ml_settings_sections: {

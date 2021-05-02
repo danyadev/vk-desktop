@@ -1,23 +1,27 @@
 <template>
   <div class="modal">
-    <ModalHeader>{{ l('ml_clear_history_header') }}</ModalHeader>
-    <div class="modal_content">{{ l('ml_clear_history_text') }}</div>
+    <ModalHeader>{{ l('ml_mark_as_spam_header') }}</ModalHeader>
+
+    <div class="modal_content">
+      {{ l('ml_mark_as_spam_text', [l('im_messages_count', [count], count)]) }}
+    </div>
+
     <div class="modal_footer">
-      <Button class="right" @click="clear">{{ l('yes') }}</Button>
+      <Button class="right" @click="markAsSpam">{{ l('spam') }}</Button>
       <Button class="right" light @click="close">{{ l('cancel') }}</Button>
     </div>
   </div>
 </template>
 
 <script>
+import { computed } from 'vue';
 import { closeModal } from 'js/modals';
-import vkapi from 'js/vkapi';
 
 import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';
 
 export default {
-  props: ['peer_id'],
+  props: ['count', 'submit'],
 
   components: {
     ModalHeader,
@@ -25,18 +29,17 @@ export default {
   },
 
   setup(props) {
-    function clear() {
-      vkapi('messages.deleteConversation', {
-        peer_id: props.peer_id
-      }).then(close);
+    function markAsSpam() {
+      props.submit();
+      close();
     }
 
     function close() {
-      closeModal('clear-history');
+      closeModal('mark-as-spam');
     }
 
     return {
-      clear,
+      markAsSpam,
       close
     };
   }

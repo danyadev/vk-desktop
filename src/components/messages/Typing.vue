@@ -81,9 +81,7 @@ export default {
 }
 
 @keyframes typing {
-  0% { opacity: 1 }
   30% { opacity: .5 }
-  100% { opacity: 1 }
 }
 
 .typing_item {
@@ -94,6 +92,11 @@ export default {
   width: 5px;
   height: 5px;
   border-radius: 50%;
+}
+
+.hasModals .typing_item {
+  animation: none;
+  opacity: .9;
 }
 
 .typing_item:not(:last-child) {

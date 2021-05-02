@@ -1,7 +1,7 @@
 <template>
   <div class="im_chat_container">
     <Header :peer_id="peer_id" :peer="peer" @close="$router.back()" />
-    <div :class="['im_chat_wrap', { hasChatViewer: viewer.messages.length }]">
+    <div :class="['im_chat_wrap', { disablePhotoSticking }]">
       <List :peer_id="peer_id" :peer="peer" />
       <Input :peer_id="peer_id" :peer="peer" />
     </div>
@@ -17,10 +17,11 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted, onActivated } from 'vue';
+import { reactive, computed, watch, nextTick, onMounted, onActivated } from 'vue';
 import { loadConversation, loadConversationMembers } from 'js/messages';
 import store from 'js/store';
 import router from 'js/router';
+import { modalsState } from 'js/modals';
 
 import MessagesChatViewer from './MessagesChatViewer.vue';
 import Header from './chat/Header.vue';
@@ -51,8 +52,49 @@ export default {
         if (state.peer && state.peer.pinnedMsg) {
           return !store.getters['settings/settings'].hiddenPinnedMessages[state.peer_id];
         }
-      })
+      }),
+
+      disablePhotoSticking: computed(() => (
+        state.viewer.messages.length || modalsState.hasModals
+      ))
     });
+
+    let photoEl;
+
+    // Если во время отключения прилипания одна из аватарок была уже "летающей", мы
+    // подменяем прилипание на вычисленное значение top, чтобы визуально ничего не поменялось
+    watch(() => state.disablePhotoSticking, async (value) => {
+      if (value) {
+        const slice = (val) => [].slice.call(val);
+        let top;
+
+        let photosBefore = slice(document.querySelectorAll('.message_photo'))
+          .map((el) => ({ el, offsetTop: el.offsetTop }))
+          .reverse();
+        await nextTick();
+        let photosAfter = slice(document.querySelectorAll('.message_photo')).reverse();
+
+        photosBefore = photosBefore.filter(({ el }) => photosAfter.includes(el));
+        photosAfter = photosAfter.filter((aEl) => photosBefore.find(({ el }) => el === aEl));
+
+        for (const i in photosBefore) {
+          if (photosBefore[i].offsetTop > photosAfter[i].offsetTop) {
+            photoEl = photosAfter[i];
+            top = photosBefore[i].offsetTop - photosAfter[i].offsetTop;
+            break;
+          }
+        }
+
+        if (photoEl) {
+          photoEl.style.position = 'relative';
+          photoEl.style.top = top + 'px';
+        }
+      } else if (photoEl) {
+        photoEl.style.position = '';
+        photoEl.style.top = '';
+        photoEl = null;
+      }
+    }, { flush: 'pre' });
 
     onMounted(() => {
       if (state.peer_id > 2e9) {
@@ -90,8 +132,8 @@ export default {
   overflow: auto;
 }
 
-.im_chat_wrap.hasChatViewer .message_photo {
-  /* Наложение блока (просмотрщика фотографий) на элемент с position: sticky */
+.im_chat_wrap.disablePhotoSticking .message_photo {
+  /* Наложение блока (модалка; просмотрщик фотографий) на элемент с position: sticky */
   /* выносит этот блок на новый слой, что делает невозможным поддержку */
   /* субпиксельного антиалиасинга текста */
   position: unset;

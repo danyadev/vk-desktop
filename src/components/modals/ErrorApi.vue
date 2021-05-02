@@ -52,8 +52,7 @@ export default {
 
 <style>
 .modal[data-name=error-api] .modal_content {
-  max-width: 600px;
-  padding: 25px;
+  max-width: 480px;
   word-break: break-word;
 }
 

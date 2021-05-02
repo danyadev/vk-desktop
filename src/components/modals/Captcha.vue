@@ -74,14 +74,10 @@ export default {
 </script>
 
 <style>
-.modal[data-name=captcha] .modal_content {
-  width: 300px;
-}
-
 .captcha_img {
   display: flex;
   justify-content: center;
-  padding-top: 15px;
+  padding-top: 10px;
 }
 
 .captcha_img img {
@@ -93,6 +89,6 @@ export default {
 .captcha_key {
   display: flex;
   justify-content: center;
-  padding: 20px 0;
+  padding-top: 20px;
 }
 </style>
