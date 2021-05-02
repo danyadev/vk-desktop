@@ -1,7 +1,7 @@
 <template>
   <div
     ref="scrolly"
-    :class="['scrolly', { isActive, isManualScrolling }]"
+    :class="['scrolly', { isActive, isManualScrolling, willChange }]"
     tabindex="-1"
   >
     <div
@@ -74,29 +74,33 @@ export default {
 
       isActive: false,
       isManualScrolling: false,
+      willChange: false,
 
       mutationObserver: null,
       resizeObserver: null,
 
-      timerId: null
+      timerIds: {
+        hideScrollBars: null,
+        willChange: null
+      }
     });
 
-    function modifiedDebounce(fn) {
+    function modifiedDebounce(name, fn, delay) {
       return function(...args) {
-        if (state.timerId) {
-          clearTimeout(state.timerId);
+        if (state.timerIds[name]) {
+          clearTimeout(state.timerIds[name]);
         }
 
-        state.timerId = setTimeout(() => {
+        state.timerIds[name] = setTimeout(() => {
           fn.apply(this, args);
-          state.timerId = null;
-        }, 500);
+          state.timerIds[name] = null;
+        }, delay);
       };
     }
 
     function clearTimer() {
-      clearTimeout(state.timerId);
-      state.timerId = null;
+      clearTimeout(state.timerIds.hideScrollBars);
+      state.timerIds.hideScrollBars = null;
     }
 
     function onScroll() {
@@ -215,17 +219,21 @@ export default {
       if (enter) {
         state.isActive = true;
         clearTimer();
-      } else if (force || !state.isActive || state.timerId) {
+      } else if (force || !state.isActive || state.timerIds.hideScrollBars) {
         state.isActive = true;
         hideScrollBars();
       }
     }
 
-    const hideScrollBars = modifiedDebounce(() => {
+    const hideScrollBars = modifiedDebounce('hideScrollBars', () => {
       if (!state.isManualScrolling) {
         state.isActive = false;
       }
-    });
+    }, 500);
+
+    const removeWillChange = modifiedDebounce('willChange', () => {
+      state.willChange = false;
+    }, 2000);
 
     function refreshScrollLayout(isMutationObserver) {
       const { viewport, barX, barY } = state;
@@ -243,6 +251,9 @@ export default {
       if (!scrollWidth && !scrollHeight) {
         return;
       }
+
+      state.willChange = true;
+      removeWillChange();
 
       const width = toPercent(offsetWidth / scrollWidth);
       const height = toPercent(offsetHeight / scrollHeight);
@@ -382,6 +393,10 @@ export default {
   cursor: pointer;
   opacity: 0;
   transition: opacity .3s;
+}
+
+.scrolly.willChange .scrolly-bar {
+  will-change: transform, opacity;
 }
 
 .scrolly.isActive > .scrolly-bar-wrap .scrolly-bar {
