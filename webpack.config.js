@@ -53,11 +53,10 @@ module.exports = function(env, { mode = 'development' } = {}) {
       port: 9973,
 
       client: {
-        logging: 'warn',
-        overlay: true
+        logging: 'warn'
       },
 
-      onBeforeSetupMiddleware ({ middleware }) {
+      onBeforeSetupMiddleware({ middleware }) {
         middleware.waitUntilValid(() => {
           spawn(
             electron,
