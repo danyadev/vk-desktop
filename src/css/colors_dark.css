@@ -1,0 +1,67 @@
+.root[theme="dark"] {
+  --background: #191919;
+  /* Используется для времени у стикеров в сообщении без ответа на сообщение */
+  --background-alpha: #2c2d2edf;
+  --background-blue: #71aaeb;
+  /* Используется для точки, которая означает, что сообщение еще не прочитано */
+  --background-blue-overlight: #a0c3eb;
+  --background-blue-text: var(--background);
+  --background-blue-ripple: #ffffff26;
+  --background-light-steel-gray: #77787a;
+  --background-steel-gray: #9099a3;
+  /* Используется для окраски фона поля для ввода текста */
+  --background-gray-overlight: #191919;
+  --background-black-alpha: rgba(255, 255, 255, .08);
+
+  --text-white: #fff;
+  --text-primary: #e1e3e6;
+  --text-primary-alpha: rgba(225, 227, 230, .75);
+  --text-secondary: #909499;
+  --text-steel-gray: #76787a;
+  --text-dark-steel-gray: #99a2ad;
+  --text-gray: #909499;
+  --text-blue: #71aaeb;
+
+  --accent: #71aaeb;
+  --red: #ff3347;
+  --red-light: #ff5c5c;
+  --green: #4bb34b;
+  --separator: #363738;
+  --separator-dark: #232324;
+
+  --titlebar-background: #19191a;
+
+  --button-light-background: #454647;
+  --button-light-color: #e1e3e6;
+  --button-light-ripple: #8a8b8c99;
+
+  --field-background: #232324;
+  --field-placeholder: #9d9d9d;
+  --field-border: #ffffff26;
+  --field-color: #e1e3e6;
+
+  --icon-gray: #9d9d9d;
+  --icon-dark-gray: #5d5f61;
+  --icon-blue: #e1e3e6;
+  --icon-dark-blue: #3f8ae0;
+
+  --hover-background: rgba(255, 255, 255, .04);
+  --hover-background-ripple: rgba(255, 255, 255, .08);
+  --hover-background-gray: rgba(255, 255, 255, .04);
+
+  --messages-peer-active: rgba(255, 255, 255, .08);
+  --messages-peer-hover: rgba(255, 255, 255, .04);
+
+  /* alpha спользуются для времени у стикеров в сообщении с ответом на сообщение */
+  --message-bubble-background: #2c2d2e;
+  --message-bubble-background-alpha: #2c2d2edf;
+  --message-out-bubble-background: #454647;
+  --message-out-bubble-background-alpha: #454647df;
+
+  --attach-left-border: #aaaeb3;
+
+  --keyboard-button-default: var(--hover-background);
+  --keyboard-button-primary: #5181b8;
+  --keyboard-button-positive: #63b963;
+  --keyboard-button-negative: #e76666;
+}

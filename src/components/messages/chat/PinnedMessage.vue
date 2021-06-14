@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isHidden" class="im_pinned_msg_wrap" @click="openMessage">
-    <Icon name="pin" color="var(--icon-dark-gray)" class="im_pinned_msg_icon" />
+    <Icon name="pin" class="im_pinned_msg_icon" />
 
     <div class="im_pinned_msg">
       <div class="im_pinned_msg_name_wrap text-overflow">
@@ -101,6 +101,7 @@ export default {
   width: 20px;
   height: 20px;
   margin: 0 20px;
+  color: var(--icon-gray)
 }
 
 .im_pinned_msg {

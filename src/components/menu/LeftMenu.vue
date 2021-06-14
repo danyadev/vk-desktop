@@ -90,6 +90,10 @@ export default {
   text-align: center;
 }
 
+.root[theme="dark"] .menu_item_counter {
+  color: var(--text-white);
+}
+
 .menu_item_counter::before {
   content: attr(value);
   float: left;

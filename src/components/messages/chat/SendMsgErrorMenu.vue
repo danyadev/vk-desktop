@@ -6,11 +6,11 @@
   >
     <div :class="['message_loading_menu', { active }]">
       <div class="act_menu_item" @click="click(true)">
-        <Icon name="replay" color="var(--icon-dark-gray)" class="act_menu_icon" />
+        <Icon name="replay" class="act_menu_icon" />
         <div class="act_menu_data">{{ l('im_retry_send') }}</div>
       </div>
       <div class="act_menu_item" @click="click()">
-        <Icon name="trash" color="var(--icon-dark-gray)" class="act_menu_icon" />
+        <Icon name="trash" class="act_menu_icon" />
         <div class="act_menu_data">{{ l('im_delete_message') }}</div>
       </div>
     </div>

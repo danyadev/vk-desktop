@@ -38,6 +38,7 @@ export const defaultUserSettings = {
   useLightMessageColors: false,
   animateStickersOnFirstAppear: true,
   useNativeEmoji: false,
+  useDarkTheme: false,
 
   showObjectIds: false
 };
