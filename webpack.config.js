@@ -83,7 +83,12 @@ module.exports = function(env, { mode = 'development' } = {}) {
                 esModule: false
               }
             },
-            'css-loader'
+            {
+              loader: 'css-loader',
+              options: {
+                esModule: false
+              }
+            }
           ]
         },
         {
