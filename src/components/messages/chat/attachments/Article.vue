@@ -121,7 +121,6 @@ export default {
 
 .attach_article .verified {
   color: #fff;
-  margin-bottom: 4px;
 }
 
 .attach_article_title,

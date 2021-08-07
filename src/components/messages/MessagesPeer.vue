@@ -299,7 +299,11 @@ export default {
   flex: none;
   width: 13px;
   height: 13px;
-  margin: 3px 0 0 3px;
+  margin: 3px 0 0 4px;
+}
+
+.mac .im_peer_muted {
+  margin-top: 4px;
 }
 
 .im_peer_pinned {
@@ -360,13 +364,17 @@ export default {
 
 .im_peer .message_dot {
   flex: none;
-  margin: 8px 4px 0 4px;
+  margin: 9px 4px 0 4px;
   background: var(--background-steel-gray);
+}
+
+.mac .im_peer .message_dot {
+  margin-top: 10px;
 }
 
 .im_peer_short_time {
   font-size: 13px;
-  line-height: 18px;
+  line-height: 20px;
   color: var(--text-steel-gray);
 }
 
@@ -379,6 +387,10 @@ export default {
   font-size: 12px;
   line-height: 18px;
   height: 19px;
+}
+
+.mac .im_peer_unread:not(:empty) {
+  margin-top: 2px;
 }
 
 .im_peer_unread:not(.outread).muted {

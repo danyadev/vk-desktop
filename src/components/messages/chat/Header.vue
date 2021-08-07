@@ -118,12 +118,13 @@ export default {
 .im_header_name_wrap {
   display: flex;
   height: 16px;
+  line-height: 15px;
   margin: 2px 0 1px 0;
 }
 
 .im_header_name_wrap .verified {
   flex: none;
-  margin: 0 0 0 4px;
+  margin: 1px 0 0 4px;
 }
 
 .im_header_ghost {
@@ -132,13 +133,9 @@ export default {
 
 .im_header_muted {
   opacity: .8;
-  width: 14px;
-  height: 16px;
-  margin-left: 3px;
-}
-
-.im_header_name {
-  line-height: 14px;
+  width: 13px;
+  height: 13px;
+  margin: 2px 0 0 4px;
 }
 
 .im_header_online:not(:empty) {

@@ -43,12 +43,6 @@ img:not(.emoji) {
   user-select: none;
 }
 
-.app {
-  display: flex;
-  position: relative;
-  height: calc(100vh - var(--titlebar-height));
-}
-
 .root {
   --titlebar-height: 32px;
 
@@ -58,8 +52,12 @@ img:not(.emoji) {
 
 .root.mac {
   --titlebar-height: 24px;
+}
 
-  letter-spacing: .02em;
+.app {
+  display: flex;
+  position: relative;
+  height: calc(100vh - var(--titlebar-height));
 }
 
 .section_container {
@@ -188,10 +186,8 @@ img:not(.emoji) {
 }
 
 .verified {
-  display: inline-block;
   width: 12px;
   height: 12px;
-  vertical-align: middle;
   color: var(--icon-blue);
 }
 

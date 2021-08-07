@@ -184,6 +184,10 @@ export default {
   margin: 4px 0 2px 0;
 }
 
+.mac .attach_reply_name {
+  margin-bottom: 1px;
+}
+
 .attach_reply_text.hasAttachment {
   color: var(--text-blue);
 }

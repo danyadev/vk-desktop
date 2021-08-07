@@ -420,17 +420,12 @@ export default {
   color: var(--text-dark-steel-gray);
   font-weight: 500;
   font-size: 11px;
-  line-height: 13px;
   pointer-events: none;
   user-select: none;
 }
 
-.root.mac .message_time_wrap {
-  letter-spacing: .01em;
-}
-
 .message:not(.hideBubble) .message_time_wrap {
-  bottom: -5px;
+  bottom: -4px;
   margin: 5px 0 0 6px;
 }
 
@@ -439,9 +434,13 @@ export default {
   bottom: 0;
   right: 0;
   background-color: var(--background-alpha);
-  border-radius: 9px;
+  border-radius: 10px;
   padding: 2px 6px;
   width: fit-content;
+}
+
+.mac .message.flyTime .message_time_wrap {
+  line-height: 14px;
 }
 
 .message.isSticker:not(.hideBubble) .message_time_wrap {
@@ -552,6 +551,10 @@ export default {
   bottom: 11px;
   padding: 3px 6px;
   font-weight: normal;
+}
+
+.mac .message.flyTime:not(.isSticker) .message_time_wrap {
+  background: #00000090;
 }
 
 .message.flyTime:not(.isSticker) .message_dot {
