@@ -107,7 +107,7 @@ const hashtagParser = createParser({
 });
 
 const massMentionParser = createParser({
-  regexp: /(?:@|\*)(?:(all|everyone|все)|(online|here|здесь|тут))/ig,
+  regexp: /(?:[@*])(?:(all|everyone|все)|(online|here|здесь|тут))/ig,
   parseText: hashtagParser,
   parseElement: (value, match, isMention) => [{
     type: isMention ? 'text' : 'massMention',
@@ -133,7 +133,7 @@ const linkParser = createParser({
 
     // Удаляем из ссылки все, что находится после ) или ",
     // чтобы не ломать отображение ссылок в сжатом JSON или при закрытии скобки
-    const removeTextMatch = value.match(/((?:\)|"|\\).+)/);
+    const removeTextMatch = value.match(/((?:[)"\\]).+)/);
     let textAfterLink;
 
     if (removeTextMatch) {

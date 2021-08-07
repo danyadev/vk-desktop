@@ -276,7 +276,7 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
 
     // Оптимальное расположение фотографий рассчитывается путем
     // нахождения положения фотографий с наименьшей разницей между
-    // высотой родилетя и высотой своей сетки.
+    // высотой родителя и высотой своей сетки.
     // Все возможные положения находятся в photosLayoutVariants.
     let optimalPhotosLayout = null;
     let minHeightDiff = 0;

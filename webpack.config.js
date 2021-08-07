@@ -1,6 +1,6 @@
 const { spawn } = require('child_process');
-const electron = require('electron');
 const path = require('path');
+const electron = require('electron');
 
 const { DefinePlugin } = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
@@ -117,10 +117,12 @@ module.exports = function(env, { mode = 'development' } = {}) {
     resolve: {
       extensions: ['.js'],
       symlinks: false,
-      alias: ['assets', 'css', 'js', 'lang'].reduce((alias, name) => {
-        alias[name] = path.resolve(__dirname, 'src/' + name);
-        return alias;
-      }, {})
+      alias: {
+        assets: path.resolve(__dirname, 'src/assets'),
+        css: path.resolve(__dirname, 'src/css'),
+        js: path.resolve(__dirname, 'src/js'),
+        lang: path.resolve(__dirname, 'src/lang')
+      }
     }
   };
 };

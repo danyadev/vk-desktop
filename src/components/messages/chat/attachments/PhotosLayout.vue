@@ -81,7 +81,7 @@ function generateLayout(photos) {
 
 // el.clientWidth возвращает сильно округленное значение,
 // что время от времени смещает фотографии вниз
-// Оданако разница в производительности практически отсутствует
+// Однако разница в производительности практически отсутствует
 function getWidth(el) {
   return parseFloat(getComputedStyle(el).width);
 }

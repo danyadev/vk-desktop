@@ -12,8 +12,8 @@ export default {
     const singleAttachments = ['sticker', 'gift'];
     const hasSingleAttach = singleAttachments.some((attach) => attachNames.includes(attach));
 
-    const layoutAttachs = {};
-    const documentAttachs = [];
+    const layoutAttaches = {};
+    const documentAttaches = [];
 
     for (const type in props.msg.attachments) {
       const attach = props.msg.attachments[type];
@@ -31,15 +31,15 @@ export default {
             if (doc.preview && doc.preview.photo) {
               photoDocs.push(doc);
             } else {
-              documentAttachs.push(doc);
+              documentAttaches.push(doc);
             }
           }
 
           if (photoDocs.length) {
-            layoutAttachs.doc = photoDocs;
+            layoutAttaches.doc = photoDocs;
           }
         } else {
-          layoutAttachs[type] = attach;
+          layoutAttaches[type] = attach;
         }
       } else if (component) {
         attachments.push(
@@ -56,19 +56,19 @@ export default {
       }
     }
 
-    if (Object.keys(layoutAttachs).length) {
+    if (Object.keys(layoutAttaches).length) {
       attachments.unshift(
         // key не нужен, так как содержимое автоматически обновляется
         // используя render-функции
         h(components.photosLayout, {
-          attachments: layoutAttachs
+          attachments: layoutAttaches
         })
       );
     }
 
-    if (documentAttachs.length) {
+    if (documentAttaches.length) {
       attachments.push(
-        ...documentAttachs.map((attach) => (
+        ...documentAttaches.map((attach) => (
           h(components.doc, {
             key: attach,
             attach

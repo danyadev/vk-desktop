@@ -1,3 +1,5 @@
+/* eslint-disable quote-props */
+
 module.exports = {
   root: true,
 
@@ -331,7 +333,6 @@ module.exports = {
     'vue/singleline-html-element-content-newline': 'off',
 
     // Отключаем правила, которые не имеют смысла, чтобы увеличить скорость проверки
-    'vue/comment-directive': 'off', // Это правило включает комментарии типа eslint-disable
     'vue/jsx-uses-vars': 'off', // Это правило включает поддержку импорта компонентов для JSX
     'vue/no-arrow-functions-in-watch': 'off',
     'vue/no-async-in-computed-properties': 'off',

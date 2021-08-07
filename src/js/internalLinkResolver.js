@@ -79,7 +79,7 @@ async function resolveVKMe(url) {
 
   const domain = url.pathname.slice(1);
 
-  // vk.me/<ник или idxxx> означает лс определенного пользователя
+  // vk.me/<ник или id> означает лс определенного пользователя
   if (domain.includes('/')) {
     return;
   }

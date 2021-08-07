@@ -172,16 +172,16 @@ export default {
     async function send() {
       // Функция не ждет отсылки сообщения через API.
       // Асинхронная функция потому, что там вызывается await nextTick();
-      // isSended означает, что сообщение содержит необходимую для отправки информацию
+      // isSent означает, что сообщение содержит необходимую для отправки информацию
       // и можно очищать поле ввода и удалять весь вложенный в инпут контент
-      const isSended = await sendMessage({
+      const isSent = await sendMessage({
         peer_id: props.peer_id,
         input: state.input,
         replyMsg: state.replyMsg,
         fwdMessages: state.fwdMessages
       });
 
-      if (isSended && (state.replyMsg || state.fwdMessages.length)) {
+      if (isSent && (state.replyMsg || state.fwdMessages.length)) {
         closeReply();
       }
     }

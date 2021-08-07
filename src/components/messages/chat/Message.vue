@@ -153,11 +153,11 @@ export default {
         const oneAttachType = attachNames.length === 1;
         const noReplyOrFwd = !hasReplyMsg && !fwdCount;
 
-        const onlyPhotoAttachs = (
+        const onlyPhotoAttaches = (
           (photo || video || doc) && (!doc || doc.every((doc) => doc.preview)) &&
           attachNames.every((attach) => ['photo', 'video', 'doc'].includes(attach))
         );
-        const onlyPhotos = onlyPhotoAttachs && noReplyOrFwd;
+        const onlyPhotos = onlyPhotoAttaches && noReplyOrFwd;
         const hasPhoto = (
           attachNames.find((attach) => ['photo', 'video'].includes(attach)) ||
           doc && doc.find((doc) => doc.preview)
@@ -194,7 +194,7 @@ export default {
         } else if ((hasPhoto || onlyLink || oneAttachType && article) && !text && !hasReplyMsg) {
           // Уменьшаем отступы сверху, справа и слева
           classes.push('removeTopMargin');
-        } else if ((onlyPhotoAttachs || oneAttachType && article) && !fwdCount) {
+        } else if ((onlyPhotoAttaches || oneAttachType && article) && !fwdCount) {
           // Уменьшаем отступы слева, снизу и справа
           classes.push('removeBottomMargin');
           flyTime = true;
