@@ -34,7 +34,7 @@ export default {
       if (isMac) {
         drag.value.addEventListener('dblclick', () => {
           if (!currentWindow.isFullScreen()) {
-            currentWindow.emit(maximized.value ? 'unmaximize' : 'maximize');
+            currentWindow[maximized.value ? 'unmaximize' : 'maximize']();
           }
         });
       }
