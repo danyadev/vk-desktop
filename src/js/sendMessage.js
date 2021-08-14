@@ -15,7 +15,10 @@ function parseInputText(nodes) {
     else text += node.innerText;
   }
 
-  return text.trim().replace(/\n/g, '<br>');
+  return text.trim()
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\n/g, '<br>');
 }
 
 export default async function sendMessage({
