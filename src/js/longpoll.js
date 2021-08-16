@@ -1,3 +1,4 @@
+import electron from 'electron';
 import { concatProfiles, fields, toUrlParams } from './utils';
 import { parseConversation, parseMessage } from './messages';
 import vkapi from './vkapi';
@@ -6,6 +7,10 @@ import request from './request';
 import longpollEvents from './longpollEvents';
 import { copyArray } from './copyObject';
 import debug from './debug';
+
+const { isPackaged } = electron.remote.app;
+const IGNORED_DEBUG_EVENTS = [6, 8, 9, 63, 64, 65, 66, 67];
+const EVENTS_WITH_MESSAGE = [3, 4, 5, 18];
 
 class Longpoll {
   constructor() {
@@ -101,7 +106,7 @@ class Longpoll {
     for (const item of history.history) {
       const msg = messages[item[1]];
 
-      if ([3, 4, 5, 18].includes(item[0])) {
+      if (EVENTS_WITH_MESSAGE.includes(item[0])) {
         // 18 событие не содержит peer_id (т.е. там есть только ID сообщения)
         const peer_id = item[3] || msg.peer_id;
 
@@ -129,11 +134,11 @@ class Longpoll {
     }
 
     const filteredHistory = copyArray(history).filter((item) => {
-      if ([4, 5, 18].includes(item[0])) {
+      if (isPackaged && EVENTS_WITH_MESSAGE.includes(item[0]) && item.length > 4) {
         item[5] = ''; // текст сообщения
       }
 
-      return ![6, 8, 9, 63, 64].includes(item[0]);
+      return !IGNORED_DEBUG_EVENTS.includes(item[0]);
     });
 
     if (filteredHistory.length) {
@@ -143,7 +148,7 @@ class Longpoll {
     const events = [];
 
     for (const rawEvent of history) {
-      if (this.debug && ![8, 9, 63, 64].includes(rawEvent[0])) {
+      if (this.debug && !IGNORED_DEBUG_EVENTS.includes(rawEvent[0])) {
         console.log('[lp]', rawEvent.slice());
       }
 

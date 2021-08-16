@@ -15,7 +15,7 @@ if (!fs.existsSync(logsPath)) {
   fs.mkdirSync(logsPath, { recursive: true });
 }
 
-const logName = `${format(new Date(), 'dd.MM.yyyy')} ${format(new Date(), 'hh-mm-ss')}.log`;
+const logName = `${format(new Date(), 'dd.MM.yyyy hh-mm-ss')}.log`;
 const logPath = path.join(logsPath, logName);
 const fileDescriptor = fs.openSync(logPath, 'a+');
 
@@ -103,7 +103,7 @@ function getLibraryDefaultDir() {
 }
 
 function getUserData() {
-  if (app.name !== appName) {
+  if (!app.isPackaged) {
     return path.join(app.getPath('appData'), appName);
   }
 

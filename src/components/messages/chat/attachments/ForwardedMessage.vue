@@ -107,7 +107,7 @@ export default {
   border-radius: 50%;
   width: 35px;
   height: 35px;
-  margin-right: 10px;
+  margin-right: 8px;
   flex: none;
 }
 
@@ -126,7 +126,7 @@ export default {
 .attach_fwd_msg_name {
   color: var(--text-blue);
   font-weight: 500;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .attach_fwd_msg_date {

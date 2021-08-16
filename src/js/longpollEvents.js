@@ -13,6 +13,7 @@ import { supportedAttachments } from '../components/messages/chat/attachments';
 import vkapi from './vkapi';
 import store from './store';
 import router from './router';
+import debug from './debug';
 
 function hasFlag(mask) {
   const flags = {
@@ -98,8 +99,11 @@ function getAttachments(data) {
 
 // https://github.com/danyadev/longpoll-doc#структура-сообщения
 function parseLongPollMessage(data) {
-  // Если это 2 событие прочтения сообщения или пометки его важным
-  if (!data[3]) {
+  // Иногда прилетает массив только с msg_id и flags
+  // TODO: научиться обрабатывать такие случаи
+  if (data.length === 2) {
+    console.error('[lp] invalid message', data);
+    debug('[longpoll parseError] ' + JSON.stringify(data));
     return;
   }
 
@@ -360,7 +364,13 @@ export default {
     // Приходит сообщение (пункты 3 и 4)
     // [msg_id, flags, peer_id] (пункты 1 и 2)
     pack: true,
-    parser: parseLongPollMessage,
+    parser(data) {
+      if (data.length === 3) {
+        return;
+      }
+
+      return parseLongPollMessage(data);
+    },
     preload: hasPreloadMessages,
     async handler({ peer_id, items }) {
       const conversation = store.state.messages.conversations[peer_id];
