@@ -101,23 +101,21 @@ export default {
   margin-top: 8px;
 }
 
+/* Убираем слишком большой отступ от конца сообщения */
 .message:not(.hasForward) .message_bubble_content > .im_attachments > .im_attach_unknown:last-child,
 .message:not(.hasForward) .message_bubble_content > .im_attachments > .attach_doc:last-child,
-.message:not(.hasForward) .message_bubble_content > .im_attachments > .attach_link:last-child {
-  /* Убираем слишком большой отступ от конца сообщения */
+.message:not(.hasForward) .message_bubble_content > .im_attachments > .attach_link:last-child,
+.message:not(.hasForward) .message_bubble_content > .im_attachments > .attach_wall:last-child {
   margin-bottom: -5px;
 }
 
 /* stylelint-disable selector-combinator-space-before */
-
 .message.hasPhoto .message_bubble_content > .attach_forwarded,
-
 .message.hasPhoto .message_bubble_content > .im_attachments
 > div:not(.attach_photos_wrap):not(.attach_link:not(.-short)) {
   margin-left: 5px;
   margin-right: 5px;
 }
-
 /* stylelint-enable selector-combinator-space-before */
 
 .attach_left_border::before {
