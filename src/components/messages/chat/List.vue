@@ -156,7 +156,6 @@ export default {
     onBeforeRouteUpdate(saveScrollData);
 
     onActivated(() => {
-      store.state.lockNextScrollyRender = true;
       state.startInRead = props.peer && props.peer.in_read;
 
       // Первый запуск, вместо onMounted

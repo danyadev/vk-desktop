@@ -113,9 +113,6 @@ export default {
     });
 
     onActivated(() => {
-      // Блокируем отображение скроллинга при переключении на эту вкладку
-      store.state.lockNextScrollyRender = true;
-
       if (state.scrollTop) {
         state.scrolly.viewport.scrollTop = state.scrollTop;
       }

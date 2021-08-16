@@ -8,6 +8,7 @@
       ref="viewport"
       :class="['scrolly-viewport', vclass, lock && 'lock']"
       @scroll.passive.stop="onScroll"
+      @wheel.passive="onWheel"
     >
       <slot />
     </div>
@@ -105,12 +106,10 @@ export default {
 
     function onScroll() {
       refreshScrollLayout();
+    }
 
-      if (!store.state.lockNextScrollyRender) {
-        activateScrollBars();
-      } else {
-        store.state.lockNextScrollyRender = false;
-      }
+    function onWheel() {
+      activateScrollBars();
     }
 
     function onBarWheel(event) {
@@ -339,6 +338,7 @@ export default {
       ...toRefs(state),
 
       onScroll,
+      onWheel,
       onBarWheel,
       onMouseDown,
       activateScrollBars,
