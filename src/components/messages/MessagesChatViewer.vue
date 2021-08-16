@@ -9,7 +9,7 @@
         class="im_header_back"
         @click="close"
       />
-      <div class="im_chat_viewer_title">{{ l('im_messages_view') }}</div>
+      <div class="im_chat_viewer_title">{{ l('im_messages_view', messages.length > 1) }}</div>
     </div>
     <div class="im_chat_wrap">
       <Scrolly class="messages_list_wrap" vclass="messages_list">

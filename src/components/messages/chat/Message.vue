@@ -562,6 +562,7 @@ export default {
 }
 
 .message.removeMargin .message_name,
+.message.removeTopMargin .message_name,
 .message.removeMiddleMargin .message_name,
 .message.removeBottomMargin .message_name {
   margin-left: 5px;
