@@ -35,8 +35,8 @@ export const defaultUserSettings = {
   deleteForAll: false,
 
   showAvatarAtBottom: false,
-  useLightMessageColors: false,
   animateStickersOnFirstAppear: true,
+  useMoreSaturatedColors: process.platform === 'darwin',
   useNativeEmoji: false,
 
   showObjectIds: false

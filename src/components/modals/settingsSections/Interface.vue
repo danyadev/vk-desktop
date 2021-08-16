@@ -4,14 +4,14 @@
     <Checkbox :active="settings.showAvatarAtBottom" />
   </div>
 
-  <div class="settings_line clickable" @click="toggle('useLightMessageColors')">
-    {{ l('ml_settings_options', 'use_light_message_colors') }}
-    <Checkbox :active="settings.useLightMessageColors" />
-  </div>
-
   <div class="settings_line clickable" @click="toggle('animateStickersOnFirstAppear')">
     {{ l('ml_settings_options', 'animate_stickers_on_first_appear') }}
     <Checkbox :active="settings.animateStickersOnFirstAppear" />
+  </div>
+
+  <div class="settings_line clickable" @click="toggle('useMoreSaturatedColors')">
+    {{ l('ml_settings_options', 'use_more_saturated_colors') }}
+    <Checkbox :active="settings.useMoreSaturatedColors" />
   </div>
 
   <div class="settings_line clickable" @click="toggle('useNativeEmoji')">

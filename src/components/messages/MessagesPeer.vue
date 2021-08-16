@@ -394,7 +394,7 @@ export default {
 }
 
 .im_peer_unread:not(.outread).muted {
-  background: var(--background-light-steel-gray);
+  background: var(--background-medium-steel-gray);
 }
 
 .im_peer_unread.outread {

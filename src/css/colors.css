@@ -8,6 +8,7 @@
   --background-blue-text: #fff;
   --background-blue-ripple: #00000026;
   --background-light-steel-gray: #aeb7c2;
+  --background-medium-steel-gray: #99a2ad;
   --background-steel-gray: #9099a3;
   /* Используется для окраски фона поля для ввода текста (deprecated) */
   --background-gray-overlight: #fbfbfb;
@@ -61,7 +62,7 @@
   --attach-left-border: #7197c5;
 }
 
-.root .st-useLightMessageColors {
+.root.st-useMoreSaturatedColors {
   --message-bubble-background: #ebedf0;
   --message-bubble-background-alpha: #ebedf0df;
   --message-out-bubble-background: #cce4ff;

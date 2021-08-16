@@ -1,5 +1,5 @@
 <template>
-  <div :class="['root', { mac }]">
+  <div :class="['root', { mac }, settingsClasses]">
     <Titlebar />
 
     <div class="app">
@@ -67,7 +67,13 @@ export default {
       mac: process.platform === 'darwin',
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
-      isAuth: computed(() => ['/', '/auth'].includes(state.route.path))
+      isAuth: computed(() => ['/', '/auth'].includes(state.route.path)),
+
+      settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
+      settingsClasses: computed(() => (
+        ['showAvatarAtBottom', 'useMoreSaturatedColors']
+          .map((name) => state.settings[name] && `st-${name}`)
+      ))
     });
 
     async function initUser() {

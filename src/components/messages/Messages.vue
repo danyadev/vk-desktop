@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['section_container messages_container', settingsClasses, { hasChat, hasModals }]"
+    :class="['section_container messages_container', { hasChat, hasModals }]"
     tabindex="-1"
     @keydown.esc="closeChat"
   >
@@ -32,13 +32,7 @@ export default {
       route: router.currentRoute,
       peer_id: computed(() => +state.route.params.id || 0),
       hasChat: computed(() => state.route.name === 'chat'),
-      hasModals: computed(() => modalsState.hasModals),
-
-      settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
-      settingsClasses: computed(() => (
-        ['showAvatarAtBottom', 'useLightMessageColors']
-          .map((name) => state.settings[name] && `st-${name}`)
-      ))
+      hasModals: computed(() => modalsState.hasModals)
     });
 
     function closeChat() {
