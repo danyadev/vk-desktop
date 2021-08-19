@@ -37,7 +37,7 @@
 
 <script>
 import { reactive, toRefs, onMounted, onBeforeUnmount } from 'vue';
-import { throttle } from 'js/utils';
+import { debounce } from 'js/utils';
 import store from 'js/store';
 
 function normalize(num, max) {
@@ -86,7 +86,7 @@ export default {
       }
     });
 
-    function modifiedThrottle(name, fn, delay) {
+    function modifiedDebounce(name, fn, delay) {
       return function(...args) {
         if (state.timerIds[name]) {
           clearTimeout(state.timerIds[name]);
@@ -224,13 +224,13 @@ export default {
       }
     }
 
-    const hideScrollBars = modifiedThrottle('hideScrollBars', () => {
+    const hideScrollBars = modifiedDebounce('hideScrollBars', () => {
       if (!state.isManualScrolling) {
         state.isActive = false;
       }
     }, 500);
 
-    const removeWillChange = modifiedThrottle('willChange', () => {
+    const removeWillChange = modifiedDebounce('willChange', () => {
       state.willChange = false;
     }, 2000);
 
@@ -321,7 +321,7 @@ export default {
       });
 
       state.resizeObserver = new ResizeObserver(
-        throttle(refreshScrollLayout, 250)
+        debounce(refreshScrollLayout, 250)
       );
 
       state.resizeObserver.observe(state.viewport, {

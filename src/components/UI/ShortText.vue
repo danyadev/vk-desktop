@@ -14,7 +14,7 @@
 
 <script>
 import { reactive, onMounted, onUnmounted } from 'vue';
-import { throttle } from 'js/utils';
+import { debounce } from 'js/utils';
 
 export default {
   props: {
@@ -46,7 +46,7 @@ export default {
       }
     }
 
-    const checkHeight = throttle(rawCheckHeight, 250);
+    const checkHeight = debounce(rawCheckHeight, 250);
 
     onMounted(() => {
       const style = getComputedStyle(state.root);

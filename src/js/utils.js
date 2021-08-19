@@ -73,8 +73,8 @@ export function toUrlParams(object) {
 
 // --- Функции-обертки
 
-// Вызывает переданную функцию через delay мс после последнего вызова
-export function throttle(fn, delay) {
+// Вызывает целевую функцию через delay мс после последнего вызова обертки
+export function debounce(fn, delay) {
   let timerId;
 
   return function(...args) {
@@ -89,9 +89,9 @@ export function throttle(fn, delay) {
   };
 }
 
-// Вызывает переданную функцию, если после последнего вызова прошло более delay мс.
-// Это значит, что функция может вообще не вызваться, что не всегда нужно
-export function debounce(fn, delay) {
+// Вызывает целевую функцию, если после последнего вызова обертки прошло более delay мс
+// Это означает, что вызов обертки не гарантирует дальнейший вызов целевой функции
+export function throttle(fn, delay) {
   let lastCall = 0;
 
   return function(...args) {

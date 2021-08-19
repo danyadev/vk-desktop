@@ -84,7 +84,7 @@
 <script>
 import { reactive, computed, toRefs, onActivated, watch } from 'vue';
 import electron from 'electron';
-import { debounce, escape } from 'js/utils';
+import { throttle, escape } from 'js/utils';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
@@ -224,7 +224,7 @@ export default {
       }
     }
 
-    const sendTyping = debounce(() => {
+    const sendTyping = throttle(() => {
       vkapi('messages.setActivity', {
         peer_id: props.peer_id,
         type: 'typing'
