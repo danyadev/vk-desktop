@@ -25,7 +25,7 @@ debug(
 export const VKDesktopUserAgent =
   `VKDesktop/${pkg.version} (${os.platform()}; ${os.release()}; ${os.arch()})`;
 export const AndroidUserAgent =
-  'VKAndroidApp/6.7-5621 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 1920x720)';
+  'VKAndroidApp/6.50-8952 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 2340x1080)';
 
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
@@ -74,7 +74,7 @@ export function toUrlParams(object) {
 // --- Функции-обертки
 
 // Вызывает переданную функцию через delay мс после последнего вызова
-export function debounce(fn, delay) {
+export function throttle(fn, delay) {
   let timerId;
 
   return function(...args) {
@@ -91,7 +91,7 @@ export function debounce(fn, delay) {
 
 // Вызывает переданную функцию, если после последнего вызова прошло более delay мс.
 // Это значит, что функция может вообще не вызваться, что не всегда нужно
-export function throttle(fn, delay) {
+export function debounce(fn, delay) {
   let lastCall = 0;
 
   return function(...args) {

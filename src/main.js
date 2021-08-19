@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import { debounce, currentWindow } from 'js/utils';
+import { throttle, currentWindow } from 'js/utils';
 import { showError } from 'js/debug';
 import store from 'js/store';
 import router from 'js/router';
@@ -34,6 +34,6 @@ shortcut(['Control+Shift+I', 'F12'], () => {
   }
 });
 
-window.addEventListener('resize', debounce(() => {
+window.addEventListener('resize', throttle(() => {
   store.commit('settings/setWindowBounds', currentWindow.getBounds());
 }, 2000));

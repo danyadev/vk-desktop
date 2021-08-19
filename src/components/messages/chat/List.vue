@@ -55,7 +55,7 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import {
   createQueueManager,
   callWithDelay,
-  debounce,
+  throttle,
   endScroll,
   fields,
   eventBus,
@@ -585,7 +585,7 @@ export default {
       }
     }
 
-    const hideTopTime = debounce(() => {
+    const hideTopTime = throttle(() => {
       state.showTopTime = false;
     }, 500);
 
