@@ -25,12 +25,15 @@ class Longpoll {
     });
   }
 
-  start(data) {
+  saveServer(data) {
     this.server = data.server;
     this.key = data.key;
     this.ts = data.ts;
     this.pts = data.pts;
+  }
 
+  start(data) {
+    this.saveServer(data);
     this.loop();
   }
 
@@ -58,8 +61,7 @@ class Longpoll {
 
     switch (data.failed) {
       case 1:
-        await this.getHistory();
-        this.ts = data.ts;
+        await this.getHistory(true);
         break;
 
       case 2:
@@ -68,11 +70,7 @@ class Longpoll {
         break;
 
       case 3:
-        await this.getHistory();
-
-        const server = await this.getServer();
-        this.key = server.key;
-        this.ts = server.ts;
+        await this.getHistory(true);
         break;
 
       case 4:
@@ -80,13 +78,18 @@ class Longpoll {
     }
   }
 
-  async getHistory() {
+  async getHistory(credentials) {
     const history = await vkapi('messages.getLongPollHistory', {
+      credentials: credentials ? 1 : 0,
       pts: this.pts,
       msgs_limit: 500,
       lp_version: this.version,
       fields
     });
+
+    if (history.credentials) {
+      this.saveServer(history.credentials);
+    }
 
     store.commit('addProfiles', concatProfiles(history.profiles, history.groups));
     this.pts = history.new_pts;
@@ -124,7 +127,7 @@ class Longpoll {
     this.emitHistory(events);
 
     if (history.more) {
-      await this.getHistory();
+      return this.getHistory(credentials);
     }
   }
 
