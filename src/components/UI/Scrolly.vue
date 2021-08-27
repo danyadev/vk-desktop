@@ -38,7 +38,6 @@
 <script>
 import { reactive, toRefs, onMounted, onBeforeUnmount } from 'vue';
 import { debounce } from 'js/utils';
-import store from 'js/store';
 
 function normalize(num, max) {
   return Math.max(0, Math.min(num, max));
