@@ -150,6 +150,16 @@ async function waitConnection() {
   }
 }
 
+const NETWORK_ERROR_CODES = [
+  'ETIMEDOUT',
+  'ECONNRESET',
+  'ENOTFOUND',
+  'ENETUNREACH',
+  'ECONNABORTED',
+  'EAI_AGAIN',
+  'EHOSTUNREACH'
+];
+
 export default async function(...data) {
   while (true) {
     try {
@@ -163,11 +173,7 @@ export default async function(...data) {
       debug(`[request] error: ${err.code}`, err, JSON.stringify(debugData));
 
       // Если ошибка не относится к проблемам с сетью, то выкидываем ошибку
-      if (
-        ![
-          'ETIMEDOUT', 'ECONNRESET', 'ENOTFOUND', 'ENETUNREACH', 'ECONNABORTED', 'EAI_AGAIN'
-        ].includes(err.code)
-      ) {
+      if (!NETWORK_ERROR_CODES.includes(err.code)) {
         throw err;
       }
 
