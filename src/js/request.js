@@ -157,7 +157,8 @@ const NETWORK_ERROR_CODES = [
   'ENETUNREACH',
   'ECONNABORTED',
   'EAI_AGAIN',
-  'EHOSTUNREACH'
+  'EHOSTUNREACH',
+  'EADDRNOTAVAIL'
 ];
 
 export default async function(...data) {
