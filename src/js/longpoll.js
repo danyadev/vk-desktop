@@ -9,7 +9,7 @@ import { copyArray } from './copyObject';
 import debug from './debug';
 
 const { isPackaged } = electron.remote.app;
-const IGNORED_DEBUG_EVENTS = [6, 8, 9, 63, 64, 65, 66, 67];
+const IGNORED_DEBUG_EVENTS = [6, 8, 9, 63, 64, 65, 66, 67, 80];
 const EVENTS_WITH_MESSAGE = [3, 4, 5, 18];
 
 class Longpoll {

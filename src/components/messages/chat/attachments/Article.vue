@@ -44,8 +44,12 @@ export default {
       const { profiles } = store.state;
 
       return profiles[domain] || Object.values(profiles).find((profile) => (
+        // юзеры и сообщества
         profile.screen_name === domain ||
+        // юзеры и сообщества
+        // + приходит для заблокированных юзеров (и сообществ?)
         profile.domain === domain ||
+        // @88262293 тоже является валидной ссылкой на статьи
         profile.id === domain
       ));
     });
@@ -53,7 +57,7 @@ export default {
     const ownerName = computed(() => {
       const author = owner.value;
       return author
-        ? author.name || (`${author.first_name} ${author.last_name}`)
+        ? author.name || `${author.first_name} ${author.last_name}`
         : (loadProfile(domain), '...');
     });
 
@@ -86,6 +90,7 @@ export default {
   max-width: 100%;
   min-height: 180px;
   max-height: 250px;
+  object-fit: cover;
 }
 
 .attach_article_content {
@@ -104,7 +109,7 @@ export default {
 }
 
 .attach_article_title {
-  margin-bottom: 10px;
+  padding-bottom: 10px;
   font-weight: 500;
   font-size: 18px;
 
@@ -115,8 +120,7 @@ export default {
 }
 
 .attach_article_author {
-  margin-bottom: 20px;
-  width: 100%;
+  padding-bottom: 20px;
 }
 
 .attach_article .verified {
@@ -127,12 +131,13 @@ export default {
 .attach_article_author {
   text-shadow: 0 2px 6px rgba(0, 0, 0, .4);
   text-align: center;
+  width: 100%;
 }
 
 .attach_article_button {
   background: #fff;
   color: #000;
   line-height: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, .4);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
 }
 </style>

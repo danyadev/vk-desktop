@@ -1,3 +1,4 @@
+import electron from 'electron';
 import { nextTick } from 'vue';
 import { timer, eventBus } from './utils';
 import {
@@ -15,26 +16,62 @@ import store from './store';
 import router from './router';
 import debug from './debug';
 
-function hasFlag(mask) {
-  const flags = {
-    unread:         1,       // Непрочитанное сообщение
-    outbox:         1 << 1,  // Исходящее сообщение
-    important:      1 << 3,  // Важное сообщение
-    chat:           1 << 4,  // Отправка сообщения в беседу через vk.com
-    friends:        1 << 5,  // Исходящее; входящее от друга в лс
-    spam:           1 << 6,  // Пометка сообщения как спам
-    deleted:        1 << 7,  // Удаление сообщения локально
-    audio_listened: 1 << 12, // Прослушано голосовое сообщение
-    chat2:          1 << 13, // Отправка в беседу через клиенты
-    cancel_spam:    1 << 15, // Отмена пометки как спам
-    hidden:         1 << 16, // Приветственное сообщение от группы
-    deleted_all:    1 << 17, // Удаление сообщения для всех
-    chat_in:        1 << 19, // Входящее сообщение в беседе
-    silent:         1 << 20, // messages.send silent: true; выход из беседы
-    reply_msg:      1 << 21  // Ответ на сообщение
-  };
+const messageFlagsMap = {
+  unread:         1 << 0,  // Непрочитанное сообщение
+  outbox:         1 << 1,  // Исходящее сообщение
+  important:      1 << 3,  // Важное сообщение
+  chat_vkcom:     1 << 4,  // Отправка сообщения в беседу через vk.com
+  friends:        1 << 5,  // Исходящее; входящее от друга в лс
+  spam:           1 << 6,  // Пометка сообщения как спам
+  deleted:        1 << 7,  // Удаление сообщения локально
+  audio_listened: 1 << 12, // Прослушано голосовое сообщение
+  chat:           1 << 13, // Отправка сообщения в беседу
+  cancel_spam:    1 << 15, // Отмена пометки как спам
+  old_minor_id:   1 << 16, // Сообщение не поднимает диалог вверх
+  deleted_all:    1 << 17, // Удаление сообщения для всех
+  not_delivered:  1 << 18, // Внутренний флаг (приходит вместе с бизнес-уведомлением)
+  chat_in:        1 << 19, // Входящее сообщение в беседе
+  silent:         1 << 20, // Сообщение без уведомления
+  reply_msg:      1 << 21, // Ответ на сообщение
+  auto_read:      1 << 23, // Сообщение пришло сразу прочитанным
+  has_ttl:        1 << 26  // Внутренний флаг (приходит вместе с бизнес-уведомлением)
+};
 
+const conversationFlagsMap = {
+  push_disabled:              1 << 4,  // Беседа замьючена
+  sound_disabled:             1 << 5,  // Звук в беседе выключен (сомнительный флаг)
+  incoming_message_request:   1 << 8,  // Входящий запрос на переписку / вступление в беседу
+  rejected_message_request:   1 << 9,  // Отклоненный запрос на переписку / вступление в беседу
+  has_mention:                1 << 10, // Наличие упоминания
+  no_search:                  1 << 11, // Не отображать беседу при поиске
+  special_service:            1 << 12, // Внутренний флаг
+  business_notification:      1 << 13, // Бизнес-уведомление
+  has_marked_message:         1 << 14, // Наличие маркированного сообщения
+  casper_chat:                1 << 16, // Фантомный чат
+  massmentions_push_disabled: 1 << 18, // Не присылать уведомлений о @all и @online
+  mentions_push_disabled:     1 << 19, // Не присылать уведомлений о всех упоминаниях
+  marked_as_unread:           1 << 20, // Беседа помечена как непрочитанная
+  message_request:            1 << 22, // Беседа в статусе входящего запроса на переписку
+  has_active_call:            1 << 24, // Беседа, в которой идет звонок
+  is_chat:                    1 << 26  // Признак того, что это чат
+};
+
+function hasFlag(mask, flags = messageFlagsMap) {
   return (flag) => !!(flags[flag] & mask);
+}
+
+function getAllFlags(mask, flags = messageFlagsMap) {
+  const flagToName = Object.fromEntries(
+    Object.entries(flags).map(([a, b]) => [b, a])
+  );
+
+  return mask
+    .toString(2)
+    .split('')
+    .reverse()
+    .map((value, index) => value * 2 ** index)
+    .filter(Boolean)
+    .map((flag) => flagToName[flag] || flag);
 }
 
 function getServiceMessage(data) {
@@ -174,7 +211,7 @@ function parseLongPollMessage(data) {
       keyboard: keyboard && keyboard.inline ? keyboard : null,
       hasTemplate: !!data[5].has_template,
       template: null,
-      hidden: flag('hidden'),
+      hidden: flag('old_minor_id'),
       editTime: data[9],
       was_listened: false,
       isContentDeleted: !data[4] && !action && !hasAttachment,
@@ -698,13 +735,25 @@ export default {
   },
 
   10: {
-    // Просмотрено упоминание, исчезающее сообщение или беседа была отмечена снова прочитанной
-    // [peer_id, flag]
+    // Сброс флагов беседы
+    // [peer_id, flags]
+    handler([peer_id, flags]) {
+      if (!electron.remote.app.isPackaged) {
+        const flagsList = getAllFlags(flags, conversationFlagsMap).join(', ');
+        console.log('[lp flag-]', peer_id, flagsList);
+      }
+    }
   },
 
   12: {
-    // Появилось упоминание, исчезающее сообщение или беседа была отмечена непрочитанной
-    // [peer_id, flag]
+    // Установка флагов беседы
+    // [peer_id, flags]
+    handler([peer_id, flags]) {
+      if (!electron.remote.app.isPackaged) {
+        const flagsList = getAllFlags(flags, conversationFlagsMap).join(', ');
+        console.log('[lp flag+]', peer_id, flagsList);
+      }
+    }
   },
 
   13: {
