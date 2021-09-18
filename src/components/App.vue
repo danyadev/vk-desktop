@@ -72,7 +72,7 @@ export default {
       settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
       settingsClasses: computed(() => (
         ['showAvatarAtBottom', 'useMoreSaturatedColors']
-          .map((name) => state.settings[name] && `st-${name}`)
+          .map((name) => state.settings && state.settings[name] && `st-${name}`)
       ))
     });
 
