@@ -16,13 +16,13 @@ jobs:
           - os: windows-latest
             glob: app/VK-Desktop-Setup-*.exe
           - os: macos-latest
-            glob: app/VK-Desktop-mac.dmg
+            glob: app/VK-Desktop-mac-*.dmg
 
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-node@master
       with:
-        node-version: 12.16.3
+        node-version: 12.18.3
     - name: Install dependencies
       run: yarn
     - name: Build Electron app

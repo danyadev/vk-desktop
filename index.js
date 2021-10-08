@@ -15,12 +15,13 @@ app.once('ready', () => {
     trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
       webSecurity: false,
+      contextIsolation: false,
       nodeIntegration: true,
-      spellcheck: true,
       enableRemoteModule: true,
       // или перейти на 88+ версию хрома
       // https://caniuse.com/mdn-css_properties_aspect-ratio
-      experimentalFeatures: true
+      experimentalFeatures: true,
+      spellcheck: true
     }
   });
 

@@ -2,7 +2,7 @@
   "productName": "VK Desktop",
   "appId": "ru.danyadev.vkdesktop",
   "artifactName": "VK-Desktop-${os}-${arch}.${ext}",
-  "electronVersion": "10.4.0",
+  "electronVersion": "11.4.8",
   "npmRebuild": false,
   "directories": {
     "output": "app"
@@ -28,7 +28,10 @@
   "mac": {
     "category": "public.app-category.social-networking",
     "gatekeeperAssess": true,
-    "target": "dmg",
+    "target": {
+      "target": "dmg",
+      "arch": ["arm64", "x64"]
+    },
     "electronLanguages": ["ru", "en", "uk"]
   }
 }
