@@ -20,8 +20,7 @@ app.once('ready', () => {
       enableRemoteModule: true,
       // или перейти на 88+ версию хрома
       // https://caniuse.com/mdn-css_properties_aspect-ratio
-      experimentalFeatures: true,
-      spellcheck: true
+      experimentalFeatures: true
     }
   });
 
