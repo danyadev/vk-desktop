@@ -11,8 +11,8 @@
         {{ ownerName }}
         <Icon v-if="owner && owner.verified" name="verified" class="verified" />
       </div>
-      <Button class="attach_article_button" @click="openPage(button.action.url)">
-        {{ button.title }}
+      <Button class="attach_article_button" @click="openPage(attach.url)">
+        {{ l('im_article_read') }}
       </Button>
     </div>
   </div>
@@ -66,7 +66,6 @@ export default {
       title: attach.title,
       owner,
       ownerName,
-      button: attach.button,
 
       openPage(url) {
         electron.shell.openExternal(url);
