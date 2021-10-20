@@ -17,21 +17,21 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@vue/compiler-dom": "3.2.20",
-    "lottie-web": "5.7.13",
+    "lottie-web": "5.7.14",
     "vue": "3.2.20",
-    "vue-router": "4.0.11",
+    "vue-router": "4.0.12",
     "vue-svg-loader": "danyadev/vue-svg-loader#next",
     "vuex": "4.0.2"
   },
   "devDependencies": {
     "copy-webpack-plugin": "9.0.1",
-    "css-loader": "6.3.0",
+    "css-loader": "6.4.0",
     "electron": "11.5.0",
     "electron-builder": "22.14.4",
-    "eslint": "7.32.0",
+    "eslint": "8.0.1",
     "eslint-import-resolver-webpack": "0.13.1",
-    "eslint-plugin-import": "2.24.2",
-    "eslint-plugin-vue": "7.19.1",
+    "eslint-plugin-import": "2.25.2",
+    "eslint-plugin-vue": "7.20.0",
     "file-loader": "6.2.0",
     "innosetup-compiler": "5.6.1",
     "mini-css-extract-plugin": "2.4.2",
@@ -39,8 +39,8 @@
     "stylelint-config-standard": "22.0.0",
     "terser-webpack-plugin": "5.2.4",
     "vue-loader": "16.8.1",
-    "webpack": "5.58.1",
-    "webpack-cli": "4.9.0",
+    "webpack": "5.59.0",
+    "webpack-cli": "4.9.1",
     "webpack-dev-server": "4.3.1"
   }
 }
