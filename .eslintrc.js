@@ -40,7 +40,6 @@ module.exports = {
     'arrow-parens': 'error',
     'arrow-spacing': 'error',
     'block-scoped-var': 'error',
-    'brace-style': 'error',
     'comma-dangle': 'error',
     'comma-spacing': 'error',
     'comma-style': 'error',

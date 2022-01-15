@@ -26,6 +26,7 @@ const modalNames = [
   'Logout',
   'MarkAsSpam',
   // 'MediaViewer',
+  'ReloadApp',
   'Settings'
 ];
 

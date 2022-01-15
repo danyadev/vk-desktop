@@ -54,6 +54,10 @@ img:not(.emoji) {
   --titlebar-height: 24px;
 }
 
+.root.st-useNativeTitlebar {
+  --titlebar-height: 0px;
+}
+
 .app {
   display: flex;
   position: relative;

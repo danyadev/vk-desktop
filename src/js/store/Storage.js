@@ -1,10 +1,13 @@
 import electron from 'electron';
+import path from 'path';
+import fs from 'fs';
+import { callWithDelay } from '../utils';
 
 // Здесь нельзя импортировать currentWindow из js/utils, потому что
 // в том файле импортируется этот файл
 const currentWindow = electron.remote.getCurrentWindow();
 
-class Storage {
+class RendererStorage {
   constructor({ name, defaults, beforeSave }) {
     const storageData = JSON.parse(localStorage.getItem(name) || '{}');
 
@@ -28,6 +31,34 @@ class Storage {
   }
 }
 
+class MainStorage {
+  constructor(defaults) {
+    this.path = path.join(electron.remote.app.getPath('appData'), 'vk-desktop', 'store.json');
+
+    let storageData = {};
+    try {
+      storageData = JSON.parse(fs.readFileSync(this.path));
+    } catch {}
+
+    this.data = {
+      ...defaults,
+      ...storageData
+    };
+  }
+
+  update(data) {
+    this.data = data;
+    this.save();
+  }
+
+  // Чтобы реже обращаться к системе при частом сохранении
+  save = callWithDelay(this._save, 100)
+
+  _save() {
+    fs.writeFileSync(this.path, JSON.stringify(this.data));
+  }
+}
+
 export const defaultUserSettings = {
   hiddenPinnedMessages: {},
   typing: true,
@@ -42,7 +73,7 @@ export const defaultUserSettings = {
   showObjectIds: false
 };
 
-export const usersStorage = new Storage({
+export const usersStorage = new RendererStorage({
   name: 'users',
 
   defaults: {
@@ -52,7 +83,7 @@ export const usersStorage = new Storage({
   }
 });
 
-export const settingsStorage = new Storage({
+export const settingsStorage = new RendererStorage({
   name: 'settings',
 
   defaults: {
@@ -70,3 +101,7 @@ export const settingsStorage = new Storage({
     }
   }
 });
+
+export const mainSettingsStorage = new MainStorage({
+  useNativeTitlebar: false
+})

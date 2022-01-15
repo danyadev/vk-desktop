@@ -103,6 +103,7 @@ function getLibraryDefaultDir() {
 }
 
 function getUserData() {
+  // может быть юзать всегда appData/appName?
   if (!app.isPackaged) {
     return path.join(app.getPath('appData'), appName);
   }

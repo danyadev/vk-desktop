@@ -18,11 +18,17 @@
     {{ l('ml_settings_options', 'use_native_emoji') }}
     <Checkbox :active="settings.useNativeEmoji" />
   </div>
+
+  <div class="settings_line clickable" @click="toggleMain('useNativeTitlebar')">
+    {{ l('ml_settings_options', 'use_native_titlebar') }}
+    <Checkbox :active="mainSettings.useNativeTitlebar" />
+  </div>
 </template>
 
 <script>
 import { computed } from 'vue';
 import store from 'js/store';
+import { openModal } from 'js/modals';
 
 import Checkbox from '../../UI/Checkbox.vue';
 
@@ -33,6 +39,7 @@ export default {
 
   setup() {
     const settings = computed(() => store.getters['settings/settings']);
+    const { mainSettings } = store.state;
 
     function toggle(name) {
       store.commit('settings/updateUserSettings', {
@@ -40,9 +47,19 @@ export default {
       });
     }
 
+    function toggleMain(name) {
+      store.commit('mainSettings/updateSettings', {
+        [name]: !mainSettings[name]
+      });
+
+      openModal('reload-app');
+    }
+
     return {
       settings,
-      toggle
+      toggle,
+      mainSettings,
+      toggleMain
     };
   }
 };

@@ -21,6 +21,7 @@ export default {
   downloaded: 'Скачано',
   listen: 'Слушать',
   spam: 'Спам',
+  later: 'Позже',
 
   // ----- Окно с ошибкой JS
   error_dialog_message: 'В ходе работы приложения произошла ошибка.',
@@ -313,6 +314,10 @@ export default {
   ml_mark_as_spam_header: 'Пометить как спам',
   ml_mark_as_spam_text: 'Вы действительно хотите пометить как спам и удалить {0}?',
 
+  ml_reload_app_header: 'Необходима перезагрузка приложения',
+  ml_reload_app_text: 'Для вступления изменения в силу необходимо перезагрузить приложение',
+  ml_reload_app_button: 'Перезагрузить',
+
   ml_settings_header: 'Настройки',
   ml_settings_sections: {
     interface: 'Интерфейс',
@@ -323,6 +328,7 @@ export default {
     animate_stickers_on_first_appear: 'Анимировать стикеры при первом появлении',
     use_more_saturated_colors: 'Использовать более насыщенные цвета',
     use_native_emoji: 'Использовать системные эмодзи',
+    use_native_titlebar: 'Использовать системный тайтлбар',
 
     show_object_ids: 'Отображать id бесед и сообщений в контекстном меню'
   }

@@ -3,15 +3,28 @@
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
+const path = require('path');
+const fs = require('fs');
+
+const storePath = path.join(app.getPath('appData'), 'vk-desktop', 'store.json');
+let store = {
+  useNativeTitlebar: false
+};
+
+try {
+  store = JSON.parse(fs.readFileSync(storePath));
+} catch {
+  fs.writeFileSync(storePath, '{}');
+}
 
 app.once('ready', () => {
   const win = new BrowserWindow({
     minWidth: 400,
     minHeight: 550,
     show: false,
-    frame: false,
+    frame: store.useNativeTitlebar,
     backgroundColor: '#fff',
-    titleBarStyle: 'hidden',
+    titleBarStyle: store.useNativeTitlebar ? 'default' : 'hidden',
     trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
       webSecurity: false,

@@ -1,7 +1,10 @@
+import { mainSettingsStorage } from '../Storage';
+
 export default {
   state: {
     menuCounters: {},
-    profiles: {}
+    profiles: {},
+    hasWindowFrame: mainSettingsStorage.data.useNativeTitlebar
   },
 
   mutations: {
