@@ -313,11 +313,9 @@ module.exports = {
     }],
     'vue/max-attributes-per-line': ['error', {
       singleline: 4,
-      multiline: {
-        allowFirstLine: true,
-        max: 1
-      }
+      multiline: 1
     }],
+    'vue/multi-word-component-names': 'off',
     'vue/no-v-html': 'off',
     'vue/order-in-components': ['error', {
       order: [

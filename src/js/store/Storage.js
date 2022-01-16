@@ -1,7 +1,6 @@
-import electron from 'electron';
 import path from 'path';
 import fs from 'fs';
-import { callWithDelay } from '../utils';
+import electron from 'electron';
 
 // Здесь нельзя импортировать currentWindow из js/utils, потому что
 // в том файле импортируется этот файл
@@ -38,7 +37,10 @@ class MainStorage {
     let storageData = {};
     try {
       storageData = JSON.parse(fs.readFileSync(this.path));
-    } catch {}
+    } catch {
+      // Файлик криво записался и перезапишется при следующем сохранении
+      // или при запуске приложения в main процессе
+    }
 
     this.data = {
       ...defaults,
@@ -51,10 +53,7 @@ class MainStorage {
     this.save();
   }
 
-  // Чтобы реже обращаться к системе при частом сохранении
-  save = callWithDelay(this._save, 100)
-
-  _save() {
+  save() {
     fs.writeFileSync(this.path, JSON.stringify(this.data));
   }
 }
@@ -104,4 +103,4 @@ export const settingsStorage = new RendererStorage({
 
 export const mainSettingsStorage = new MainStorage({
   useNativeTitlebar: false
-})
+});

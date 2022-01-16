@@ -4,7 +4,7 @@ const electron = require('electron');
 
 const { DefinePlugin } = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { default: MiniCssExtractPlugin } = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 
@@ -56,7 +56,7 @@ module.exports = function(env, { mode = 'development' } = {}) {
         logging: 'warn'
       },
 
-      onBeforeSetupMiddleware({ middleware }) {
+      setupMiddlewares(middlewares, { middleware }) {
         middleware.waitUntilValid(() => {
           spawn(
             electron,
@@ -64,6 +64,8 @@ module.exports = function(env, { mode = 'development' } = {}) {
             { stdio: 'inherit' }
           ).on('close', process.exit);
         });
+
+        return middlewares;
       }
     },
     devtool: isDev ? 'eval-source-map' : false,

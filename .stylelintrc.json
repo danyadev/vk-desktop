@@ -1,18 +1,25 @@
 {
-  "extends": "stylelint-config-standard",
+  "extends": ["stylelint-config-standard", "stylelint-config-html"],
 
   "rules": {
     "font-family-no-missing-generic-family-keyword": null,
+    "shorthand-property-no-redundant-values": null,
     "declaration-block-trailing-semicolon": null,
     "selector-list-comma-newline-after": null,
-    "selector-max-empty-lines": 1,
     "custom-property-empty-line-before": null,
     "declaration-colon-newline-after": null,
     "declaration-empty-line-before": null,
+    "selector-no-vendor-prefix": null,
     "no-descending-specificity": null,
     "comment-empty-line-before": null,
+    "selector-class-pattern": null,
     "length-zero-no-unit": null,
+    "font-family-name-quotes": "always-where-required",
+    "color-function-notation": "legacy",
+    "alpha-value-notation": "number",
     "number-leading-zero": "never",
+    "selector-max-empty-lines": 1,
+    "string-quotes": "single",
     "indentation": [2, {
       "ignore": ["value"]
     }]

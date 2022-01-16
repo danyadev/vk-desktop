@@ -75,7 +75,7 @@ export default {
         const settingsClasses = ['showAvatarAtBottom', 'useMoreSaturatedColors']
           .map((name) => state.settings && state.settings[name] && `st-${name}`);
 
-        return [...settingsClasses, ...[state.hasWindowFrame && 'st-useNativeTitlebar']];
+        return [...settingsClasses, state.hasWindowFrame && 'st-useNativeTitlebar'];
       })
     });
 
