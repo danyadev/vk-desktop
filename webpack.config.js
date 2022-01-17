@@ -4,7 +4,7 @@ const electron = require('electron');
 
 const { DefinePlugin } = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
-const { default: MiniCssExtractPlugin } = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin').default;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 

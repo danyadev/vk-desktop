@@ -14,7 +14,7 @@ let store = {
 try {
   store = JSON.parse(fs.readFileSync(storePath));
 } catch {
-  fs.writeFileSync(storePath, '{}');
+  fs.writeFileSync(storePath, JSON.stringify(store));
 }
 
 app.once('ready', () => {
