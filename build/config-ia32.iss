@@ -16,11 +16,12 @@ UninstallDisplayIcon={app}\VK Desktop.exe
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
-PrivilegesRequired=none
+PrivilegesRequired=lowest
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
