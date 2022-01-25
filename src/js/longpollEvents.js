@@ -866,9 +866,13 @@ export default {
       const conversation = store.state.messages.conversations[peer_id];
       const peer = conversation && conversation.peer;
 
-      // Изменение названия беседы (1) и вкл/выкл клавиатуры (11) обрабатываются в 4 событии.
-      // 19 событие (вкл/выкл группового звонка) пока не нужно обрабатывать
-      if (!peer || [1, 11, 19].includes(type)) {
+      if (!peer) {
+        return;
+      }
+
+      // Типы 1, 10-19, 22 не нужно обрабатывать
+      // Изменение названия беседы (1) и show/hide клавиатуры (11) обрабатываются в 4 событии
+      if ([1, 22].includes(type) || type >= 10 && type <= 19) {
         return;
       }
 
@@ -987,6 +991,11 @@ export default {
     // Изменение состояния невидимки друга
     // [-user_id, state, ts, -1, 0]
     // state: 1 - включена, 0 - выключена
+  },
+
+  90: {
+    // Добавление или удаление из друзей
+    // [2 | 3, user_id]
   },
 
   114: {
