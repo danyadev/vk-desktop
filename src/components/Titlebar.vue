@@ -77,6 +77,10 @@ export default {
   font-size: 13px;
 }
 
+.st-useNativeTitlebar .titlebar {
+  display: none;
+}
+
 .titlebar_drag {
   -webkit-app-region: drag;
   flex-grow: 1;
