@@ -1,6 +1,6 @@
 <template>
   <div :class="['root', { mac }, settingsClasses]">
-    <Titlebar v-if="!hasWindowFrame" />
+    <Titlebar />
 
     <div class="app">
       <LeftMenu v-if="!isAuth" />
@@ -69,13 +69,12 @@ export default {
       route: computed(() => router.currentRoute.value),
       isAuth: computed(() => ['/', '/auth'].includes(state.route.path)),
 
-      hasWindowFrame: store.state.hasWindowFrame,
       settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
       settingsClasses: computed(() => {
         const settingsClasses = ['showAvatarAtBottom', 'useMoreSaturatedColors']
           .map((name) => state.settings && state.settings[name] && `st-${name}`);
 
-        return [...settingsClasses, state.hasWindowFrame && 'st-useNativeTitlebar'];
+        return [...settingsClasses, store.state.hasWindowFrame && 'st-useNativeTitlebar'];
       })
     });
 

@@ -30,7 +30,7 @@ export default {
 
   setup() {
     function reload() {
-      app.relaunch();
+      if (app.isPackaged) app.relaunch();
       app.quit();
     }
 
