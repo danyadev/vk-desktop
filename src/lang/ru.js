@@ -159,6 +159,7 @@ export default {
     event: ['Мероприятие'],
     market: ['Товар'],
     artist: ['Музыкант'],
+    widget: ['Виджет'],
     sticker: ['Стикер'],
     article: ['Статья'],
     podcast: ['Подкаст'],
