@@ -420,6 +420,7 @@ export default {
   color: var(--text-dark-steel-gray);
   font-weight: 500;
   font-size: 11px;
+  z-index: 1;
   pointer-events: none;
   user-select: none;
 }
@@ -528,7 +529,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, .12);
+  background: var(--message-selected-overlay);
   border-radius: 18px;
   top: 0;
   left: 0;

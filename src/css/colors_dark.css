@@ -8,6 +8,7 @@
   --background-blue-text: var(--background);
   --background-blue-ripple: #ffffff26;
   --background-light-steel-gray: #77787a;
+  --background-medium-steel-gray: #9099a3;
   --background-steel-gray: #9099a3;
   /* Используется для окраски фона поля для ввода текста */
   --background-gray-overlight: #191919;
@@ -21,10 +22,12 @@
   --text-dark-steel-gray: #99a2ad;
   --text-gray: #909499;
   --text-blue: #71aaeb;
+  --text-light-blue: #71aaeb;
 
   --accent: #71aaeb;
   --red: #ff3347;
   --red-light: #ff5c5c;
+  --red-dark: #ff5c5c;
   --green: #4bb34b;
   --separator: #363738;
   --separator-dark: #232324;
@@ -38,7 +41,6 @@
   --field-background: #232324;
   --field-placeholder: #9d9d9d;
   --field-border: #ffffff26;
-  --field-color: #e1e3e6;
 
   --icon-gray: #9d9d9d;
   --icon-dark-gray: #5d5f61;
@@ -52,11 +54,11 @@
   --messages-peer-active: rgba(255, 255, 255, .08);
   --messages-peer-hover: rgba(255, 255, 255, .04);
 
-  /* alpha спользуются для времени у стикеров в сообщении с ответом на сообщение */
   --message-bubble-background: #2c2d2e;
   --message-bubble-background-alpha: #2c2d2edf;
   --message-out-bubble-background: #454647;
   --message-out-bubble-background-alpha: #454647df;
+  --message-selected-overlay: rgba(255, 255, 255, .12);
 
   --attach-left-border: #aaaeb3;
 
