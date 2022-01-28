@@ -23,9 +23,15 @@
     {{ l('ml_settings_options', 'use_native_titlebar') }}
     <Checkbox :active="mainSettings.useNativeTitlebar" />
   </div>
+
+  <div class="settings_line clickable" @click="toggleDarkTheme">
+    {{ l('ml_settings_options', 'use_dark_theme') }}
+    <Checkbox :active="settings.useDarkTheme" />
+  </div>
 </template>
 
 <script>
+import electron from 'electron';
 import { computed } from 'vue';
 import store from 'js/store';
 import { openModal } from 'js/modals';
@@ -55,11 +61,20 @@ export default {
       openModal('reload-app');
     }
 
+    function toggleDarkTheme() {
+      toggle('useDarkTheme');
+
+      electron.remote.nativeTheme.themeSource = settings.value.useDarkTheme
+        ? 'dark'
+        : 'light';
+    }
+
     return {
       settings,
       toggle,
       mainSettings,
-      toggleMain
+      toggleMain,
+      toggleDarkTheme
     };
   }
 };

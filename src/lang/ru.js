@@ -330,6 +330,7 @@ export default {
     use_more_saturated_colors: 'Использовать более насыщенные цвета',
     use_native_emoji: 'Использовать системные эмодзи',
     use_native_titlebar: 'Использовать системный тайтлбар',
+    use_dark_theme: 'Использовать тёмную тему',
 
     show_object_ids: 'Отображать id бесед и сообщений в контекстном меню'
   }

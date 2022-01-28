@@ -199,6 +199,8 @@ img:not(.emoji) {
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;
+  flex-shrink: 0;
+  color: var(--icon-gray);
 }
 
 .icon-hover:hover {
@@ -225,6 +227,7 @@ img:not(.emoji) {
   width: 24px;
   height: 24px;
   pointer-events: none;
+  color: var(--icon-dark-gray);
 }
 
 .act_menu_close_icon {

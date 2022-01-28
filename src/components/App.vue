@@ -1,5 +1,5 @@
 <template>
-  <div :class="['root', { mac }, settingsClasses]">
+  <div :class="['root', { mac }, settingsClasses]" :theme="dark ? 'dark' : 'light'">
     <Titlebar />
 
     <div class="app">
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import electron from 'electron';
 import { reactive, computed, watch } from 'vue';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
@@ -34,6 +35,7 @@ import * as emoji from 'js/emoji';
 
 import 'css/shared.css';
 import 'css/colors.css';
+import 'css/colors_dark.css';
 
 import Titlebar from './Titlebar.vue';
 import LeftMenu from './menu/LeftMenu.vue';
@@ -68,6 +70,7 @@ export default {
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
       isAuth: computed(() => ['/', '/auth'].includes(state.route.path)),
+      dark: computed(() => store.getters['settings/settings'].useDarkTheme),
 
       settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
       settingsClasses: computed(() => {
@@ -79,6 +82,10 @@ export default {
     });
 
     async function initUser() {
+      electron.remote.nativeTheme.themeSource = state.dark
+        ? 'dark'
+        : 'light';
+
       if (!state.activeUserID) {
         return;
       }

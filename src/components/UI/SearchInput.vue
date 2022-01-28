@@ -40,6 +40,10 @@ export default {
   height: 100%;
 }
 
+.root[theme="dark"] .search_input input {
+  color: var(--text-primary);
+}
+
 .search_input input::-webkit-input-placeholder {
   color: var(--text-steel-gray);
 }

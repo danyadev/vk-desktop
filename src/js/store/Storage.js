@@ -68,6 +68,7 @@ export const defaultUserSettings = {
   animateStickersOnFirstAppear: true,
   useMoreSaturatedColors: process.platform === 'darwin',
   useNativeEmoji: false,
+  useDarkTheme: false,
 
   showObjectIds: false
 };

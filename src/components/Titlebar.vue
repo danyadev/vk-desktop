@@ -117,12 +117,12 @@ export default {
   background: var(--red);
 }
 
-.titlebar_button.close svg {
+.root[theme="light"] .titlebar_button.close svg {
   transition: color .2s;
 }
 
 .titlebar_button.close:hover svg {
-  color: #fff;
+  color: var(--text-white);
 }
 
 .titlebar.maximized .titlebar_button.maximize,
