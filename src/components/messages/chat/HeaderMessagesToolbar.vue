@@ -43,7 +43,7 @@
       />
 
       <Icon
-        name="spam"
+        name="restrict"
         color="var(--icon-gray)"
         data-tooltip="im_mark_msg_as_spam"
         @click="markAsSpam"

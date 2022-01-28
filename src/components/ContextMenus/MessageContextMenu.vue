@@ -39,7 +39,7 @@
     </div>
 
     <div class="act_menu_item" @click="markAsSpam">
-      <Icon name="spam" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="restrict" color="var(--icon-dark-gray)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_mark_msg_as_spam') }}</div>
     </div>
   </ContextMenu>
