@@ -1,6 +1,7 @@
 .root[theme="dark"] {
   --background: #191919;
-  /* Используется для времени у стикеров в сообщении без ответа на сообщение */
+  --background-accent: #2c2d2f;
+  /* Используется для времени у стикеров в сообщении */
   --background-alpha: #2c2d2edf;
   --background-blue: #71aaeb;
   /* Используется для точки, которая означает, что сообщение еще не прочитано */
@@ -10,7 +11,7 @@
   --background-light-steel-gray: #77787a;
   --background-medium-steel-gray: #9099a3;
   --background-steel-gray: #9099a3;
-  /* Используется для окраски фона поля для ввода текста */
+  /* Используется для окраски фона поля для ввода текста (deprecated) */
   --background-gray-overlight: #191919;
   --background-black-alpha: rgba(255, 255, 255, .08);
 
@@ -45,7 +46,10 @@
   --icon-gray: #9d9d9d;
   --icon-dark-gray: #5d5f61;
   --icon-blue: #e1e3e6;
+  /* оставить синий везде или сделать -accent версию? */
+  --icon-blue: #70a8e7;
   --icon-dark-blue: #3f8ae0;
+  --icon-red: #fa5f5e;
 
   --hover-background: rgba(255, 255, 255, .04);
   --hover-background-ripple: rgba(255, 255, 255, .08);

@@ -52,7 +52,7 @@ export default {
   position: relative;
   width: 250px;
   padding: 5px 0;
-  background: var(--background);
+  background: var(--background-accent);
   border-radius: 6px;
   box-shadow: 0 0 4px rgba(0, 0, 0, .2),
               0 4px 36px -6px rgba(0, 0, 0, .4);

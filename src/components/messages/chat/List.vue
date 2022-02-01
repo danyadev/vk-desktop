@@ -802,7 +802,7 @@ export default {
   bottom: 30px;
   width: 40px;
   height: 40px;
-  background: var(--background);
+  background: var(--background-accent);
   border: solid 1px var(--separator-dark);
   border-radius: 50%;
   opacity: 1;

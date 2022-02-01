@@ -98,7 +98,7 @@ export default {
   opacity: 0;
   pointer-events: none;
   z-index: 2;
-  background: var(--background);
+  background: var(--background-accent);
   border-radius: 6px;
   box-shadow: 0 0 4px rgba(0, 0, 0, .2),
               0 4px 36px -6px rgba(0, 0, 0, .4);
@@ -109,5 +109,38 @@ export default {
   margin-top: 6px;
   opacity: 1;
   pointer-events: all;
+}
+
+.act_menu_item {
+  display: flex;
+  align-items: center;
+  padding: 9px 12px;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: background-color .3s;
+}
+
+.act_menu_item:hover {
+  background: var(--hover-background-gray);
+}
+
+.act_menu_icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.act_menu_data {
+  margin-left: 12px;
+  line-height: 18px;
+}
+
+.act_menu_icon.-door_in {
+  margin: 0 2px 0 -2px;
+}
+
+.act_menu_icon.-door_out {
+  margin: 0 -2px 0 2px;
 }
 </style>

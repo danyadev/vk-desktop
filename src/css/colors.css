@@ -1,5 +1,6 @@
 .root {
   --background: #fff;
+  --background-accent: #fff;
   /* Используется для времени у стикеров в сообщении */
   --background-alpha: #ffffffdf;
   --background-blue: #5181b8;
@@ -46,6 +47,7 @@
   --icon-dark-gray: #828a99;
   --icon-blue: #3f8ae0;
   --icon-dark-blue: #648fc1;
+  --icon-red: var(--red-light);
 
   --hover-background: #edf2f8;
   --hover-background-ripple: #e1ebf4;
