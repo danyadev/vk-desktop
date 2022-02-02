@@ -70,4 +70,7 @@
   --keyboard-button-primary: #5181b8;
   --keyboard-button-positive: #63b963;
   --keyboard-button-negative: #e76666;
+
+  --scrolly-background: rgba(255, 255, 255, .3);
+  --scrolly-hover-background: rgba(255, 255, 255, .4);
 }

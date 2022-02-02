@@ -407,14 +407,14 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, .3);
+  background: var(--scrolly-background);
   border-radius: 7px;
   transition: background-color .3s;
 }
 
 .scrolly-bar:hover::before,
 .scrolly.isManualScrolling > .scrolly-bar-wrap .scrolly-bar::before {
-  background: rgba(0, 0, 0, .4);
+  background: var(--scrolly-hover-background);
 }
 
 .scrolly-bar-wrap.axis-x .scrolly-bar {

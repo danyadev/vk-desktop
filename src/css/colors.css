@@ -68,6 +68,9 @@
   --keyboard-button-primary: #5181b8;
   --keyboard-button-positive: #4bb34b;
   --keyboard-button-negative: #e64646;
+
+  --scrolly-background: rgba(0, 0, 0, .3);
+  --scrolly-hover-background: rgba(0, 0, 0, .4);
 }
 
 .root.st-useMoreSaturatedColors {
