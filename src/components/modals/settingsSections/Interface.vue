@@ -1,7 +1,7 @@
 <template>
-  <div class="settings_line clickable" @click="toggle('showAvatarAtBottom')">
+  <div class="settings_line clickable" @click="toggle('showAvatarsAtBottom')">
     {{ l('ml_settings_options', 'show_avatar_at_bottom') }}
-    <Checkbox :active="settings.showAvatarAtBottom" />
+    <Checkbox :active="settings.showAvatarsAtBottom" />
   </div>
 
   <div class="settings_line clickable" @click="toggle('animateStickersOnFirstAppear')">
@@ -48,7 +48,7 @@ export default {
     const { mainSettings } = store.state;
 
     function toggle(name) {
-      store.commit('settings/updateUserSettings', {
+      store.commit('settings/updateCommonSettings', {
         [name]: !settings.value[name]
       });
     }

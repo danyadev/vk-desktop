@@ -9,7 +9,6 @@ import { usersStorage } from './store/Storage';
 import request from './request';
 import vkapi from './vkapi';
 import store from './store';
-import copyObject from './copyObject';
 import debug from './debug';
 
 debug(
@@ -338,13 +337,10 @@ export function endScroll(callback, reverse) {
 }
 
 export function logout() {
-  const { activeUserID } = store.state.users;
-  const usersData = copyObject(usersStorage.data);
-
-  usersData.activeUserID = null;
-  delete usersData.users[activeUserID];
-
-  usersStorage.update(usersData);
+  usersStorage.update({
+    ...usersStorage.data,
+    activeUserID: null
+  });
 
   window.location.reload();
 }

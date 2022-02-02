@@ -70,11 +70,11 @@ export default {
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
       isAuth: computed(() => ['/', '/auth'].includes(state.route.path)),
-      dark: computed(() => store.getters['settings/settings'].useDarkTheme),
+      dark: computed(() => state.settings.useDarkTheme),
 
-      settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
+      settings: computed(() => store.getters['settings/settings']),
       settingsClasses: computed(() => {
-        const settingsClasses = ['showAvatarAtBottom', 'useMoreSaturatedColors']
+        const settingsClasses = ['showAvatarsAtBottom', 'useMoreSaturatedColors']
           .map((name) => state.settings && state.settings[name] && `st-${name}`);
 
         return [...settingsClasses, store.state.hasWindowFrame && 'st-useNativeTitlebar'];

@@ -7,7 +7,7 @@ import electron from 'electron';
 const currentWindow = electron.remote.getCurrentWindow();
 
 class RendererStorage {
-  constructor({ name, defaults, beforeSave }) {
+  constructor({ name, defaults, init }) {
     const storageData = JSON.parse(localStorage.getItem(name) || '{}');
 
     this.name = name;
@@ -16,7 +16,7 @@ class RendererStorage {
       ...storageData
     };
 
-    beforeSave && beforeSave(this.data);
+    init && init(this.data);
     this.save();
   }
 
@@ -62,15 +62,7 @@ export const defaultUserSettings = {
   hiddenPinnedMessages: {},
   typing: true,
   notRead: true,
-  deleteForAll: false,
-
-  showAvatarAtBottom: false,
-  animateStickersOnFirstAppear: true,
-  useMoreSaturatedColors: process.platform === 'darwin',
-  useNativeEmoji: false,
-  useDarkTheme: false,
-
-  showObjectIds: false
+  deleteForAll: false
 };
 
 export const usersStorage = new RendererStorage({
@@ -89,10 +81,20 @@ export const settingsStorage = new RendererStorage({
   defaults: {
     window: currentWindow.getBounds(),
     langName: 'ru',
-    userSettings: {}
+
+    userSettings: {},
+    commonSettings: {
+      showAvatarsAtBottom: false,
+      animateStickersOnFirstAppear: true,
+      useMoreSaturatedColors: process.platform === 'darwin',
+      useNativeEmoji: false,
+      useDarkTheme: false,
+
+      showObjectIds: false
+    }
   },
 
-  beforeSave({ userSettings }) {
+  init({ userSettings }) {
     for (const id in usersStorage.data.users) {
       userSettings[id] = {
         ...defaultUserSettings,

@@ -14,12 +14,12 @@
     "comment-empty-line-before": null,
     "selector-class-pattern": null,
     "length-zero-no-unit": null,
+    "string-quotes": null,
     "font-family-name-quotes": "always-where-required",
     "color-function-notation": "legacy",
     "alpha-value-notation": "number",
     "number-leading-zero": "never",
     "selector-max-empty-lines": 1,
-    "string-quotes": "single",
     "indentation": [2, {
       "ignore": ["value"]
     }]

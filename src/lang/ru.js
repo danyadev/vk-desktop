@@ -14,7 +14,6 @@ export default {
   delete: 'Удалить',
   search: 'Поиск',
   add_account: 'Добавить аккаунт',
-  delete_account: 'Удалить аккаунт',
   logout_account: 'Выйти из аккаунта',
   show_in_full: 'Показать полностью...',
   download: 'Скачать',
@@ -309,8 +308,8 @@ export default {
   ml_error_api: 'При вызове метода {0} произошла ошибка со стороны API. Подождите немного и повторите вызов.',
   ml_error_cancel_warn: 'Отмена вызова метода может поломать работу приложения.',
 
-  ml_logout_header: 'Выход из аккаунта',
-  ml_logout_sure: 'Вы действительно хотите выйти из аккаунта?',
+  ml_delete_account_header: 'Удаление аккаунта',
+  ml_delete_account_sure: 'Вы действительно хотите удалить аккаунт?',
 
   ml_mark_as_spam_header: 'Пометить как спам',
   ml_mark_as_spam_text: 'Вы действительно хотите пометить как спам и удалить {0}?',

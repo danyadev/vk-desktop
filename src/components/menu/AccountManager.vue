@@ -31,7 +31,7 @@
         </div>
       </div>
 
-      <div class="account_user remove-profile" @click="exitFromAccount">
+      <div class="account_user remove-profile" @click="logout">
         <div class="account_photo">
           <Icon name="door_out" color="var(--icon-red)" class="-door_out" />
         </div>
@@ -45,9 +45,8 @@
 
 <script>
 import { computed, ref, toRefs } from 'vue';
-import { getPhoto, moveArrItem, mouseOutWrapper } from 'js/utils';
+import { getPhoto, moveArrItem, mouseOutWrapper, logout } from 'js/utils';
 import { usersStorage } from 'js/store/Storage';
-import { openModal } from 'js/modals';
 import { state } from '.';
 import store from 'js/store';
 import router from 'js/router';
@@ -97,11 +96,6 @@ export default {
       });
     }
 
-    function exitFromAccount() {
-      isUsersListActive.value = false;
-      openModal('logout');
-    }
-
     return {
       ...toRefs(state),
 
@@ -121,7 +115,7 @@ export default {
       onClick,
       getPhoto,
       openAuth,
-      exitFromAccount
+      logout
     };
   }
 };
@@ -149,7 +143,7 @@ export default {
 .account_users_list {
   position: absolute;
   z-index: 2;
-  background: var(--background);
+  background: var(--background-accent);
   width: 250px;
   padding: 7px 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .15),

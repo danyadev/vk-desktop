@@ -31,11 +31,12 @@
         class="auth_user"
         @click="setAccount(user.id)"
       >
-        <img
-          :src="getPhoto(user)"
-          data-context-menu="account"
-          :data-id="user.id"
-        >
+        <Icon
+          name="dismiss"
+          color="var(--background-medium-steel-gray)"
+          @click.stop="openModal('delete-account', { id: user.id })"
+        />
+        <img :src="getPhoto(user)">
         {{ user.first_name }}
       </div>
     </div>
@@ -126,6 +127,7 @@ export default {
     return {
       ...toRefs(state),
 
+      openModal,
       setAccount,
       getPhoto,
       auth
@@ -150,8 +152,8 @@ export default {
 }
 
 .auth_logo {
-  width: 125px;
-  height: 125px;
+  width: 128px;
+  height: 128px;
 }
 
 .auth_name {
@@ -197,6 +199,7 @@ export default {
 }
 
 .auth_user {
+  position: relative;
   border-radius: 10px;
 }
 
@@ -207,5 +210,13 @@ export default {
   height: 50px;
   margin-bottom: 4px;
   cursor: pointer;
+}
+
+.auth_user svg {
+  position: absolute;
+  cursor: pointer;
+  left: 35px;
+  width: 16px;
+  height: 16px;
 }
 </style>
