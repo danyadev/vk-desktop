@@ -418,7 +418,6 @@ export default {
   display: flex;
   float: right;
   color: var(--text-dark-steel-gray);
-  font-weight: 500;
   font-size: 11px;
   z-index: 1;
   pointer-events: none;

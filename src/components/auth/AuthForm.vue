@@ -18,10 +18,9 @@
         :placeholder="l('enter_password')"
         spellcheck="false"
       >
-      <div
-        :class="['auth_password_switch', { hidden: hidePassword }]"
-        @click="hidePassword = !hidePassword"
-      />
+      <div class="auth_password_switch" @click="hidePassword = !hidePassword">
+        <Icon :name="hidePassword ? 'hide' : 'show'" color="var(--icon-dark-gray)" />
+      </div>
     </div>
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
 
@@ -53,13 +52,15 @@ import getTranslate from 'js/getTranslate';
 import { getAndroidToken } from '.';
 
 import Button from '../UI/Button.vue';
+import Icon from '../UI/Icon.vue';
 
 export default {
   props: ['onlyAddUser'],
   emits: ['confirm', 'auth'],
 
   components: {
-    Button
+    Button,
+    Icon
   },
 
   setup(props, { emit }) {
@@ -170,20 +171,14 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+  padding: 6px;
   cursor: pointer;
   opacity: .8;
-  width: 36px;
-  height: 36px;
-  background: url('~assets/show.svg') 50% no-repeat;
   transition: opacity .3s;
 }
 
 .auth_password_switch:hover {
   opacity: 1;
-}
-
-.auth_password_switch.hidden {
-  background-image: url('~assets/hide.svg');
 }
 
 .auth_button {

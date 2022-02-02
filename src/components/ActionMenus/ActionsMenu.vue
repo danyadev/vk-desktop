@@ -135,12 +135,4 @@ export default {
   margin-left: 12px;
   line-height: 18px;
 }
-
-.act_menu_icon.-door_in {
-  margin: 0 2px 0 -2px;
-}
-
-.act_menu_icon.-door_out {
-  margin: 0 -2px 0 2px;
-}
 </style>

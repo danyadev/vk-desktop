@@ -2,7 +2,7 @@
   <div class="header header_messages_toolbar">
     <Icon
       name="close"
-      color="var(--icon-gray)"
+      color="var(--icon-dark-gray)"
       width="16"
       height="16"
       class="im_header_cancel_select"
@@ -21,7 +21,7 @@
           )
         "
         name="reply"
-        color="var(--icon-gray)"
+        color="var(--icon-dark-gray)"
         :data-tooltip="messages.length === 1 ? 'im_reply_msg' : 'im_forward_messages_here'"
         @click="reply"
       />
@@ -29,7 +29,7 @@
       <Icon
         v-if="peer && !peer.isChannel"
         name="trash"
-        color="var(--icon-gray)"
+        color="var(--icon-dark-gray)"
         :data-tooltip="messages.length === 1 ? 'im_delete_msg' : 'im_delete_messages'"
         @click="deleteMessages(messages, peer, true)"
       />
@@ -37,14 +37,14 @@
       <Icon
         v-if="messages.length && !peer.isCasperChat"
         name="forward"
-        color="var(--icon-gray)"
+        color="var(--icon-dark-gray)"
         :data-tooltip="messages.length === 1 ? 'im_forward_message' : 'im_forward_messages'"
         @click="forward()"
       />
 
       <Icon
         name="restrict"
-        color="var(--icon-gray)"
+        color="var(--icon-dark-gray)"
         data-tooltip="im_mark_msg_as_spam"
         @click="markAsSpam"
       />
@@ -139,12 +139,18 @@ export default {
 .im_header_cancel_select,
 .im_header_selected_actions svg {
   cursor: pointer;
+  opacity: .75;
+  transition: opacity .3s;
+}
+
+.im_header_cancel_select:hover,
+.im_header_selected_actions svg:hover {
+  opacity: 1;
 }
 
 .im_header_cancel_select {
   box-sizing: content-box;
   padding: 15px;
-  transition: color .3s;
 }
 
 .im_header_selected_count {
@@ -157,11 +163,5 @@ export default {
 
 .im_header_selected_actions svg {
   margin-right: 15px;
-  transition: color .3s;
-}
-
-.im_header_selected_actions svg:hover,
-.im_header_cancel_select:hover {
-  color: var(--icon-dark-gray);
 }
 </style>

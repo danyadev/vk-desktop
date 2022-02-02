@@ -33,7 +33,7 @@
 
       <div class="account_user remove-profile" @click="exitFromAccount">
         <div class="account_photo">
-          <Icon name="exit_outline" color="var(--red)" />
+          <Icon name="door_out" color="var(--icon-red)" class="-door_out" />
         </div>
         <div class="account_user_name text-overflow">
           {{ l('logout_account') }}

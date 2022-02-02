@@ -44,12 +44,11 @@
   --field-border: #ffffff26;
 
   --icon-gray: #9d9d9d;
-  --icon-dark-gray: #5d5f61;
-  --icon-blue: #e1e3e6;
-  /* оставить синий везде или сделать -accent версию? */
+  --icon-dark-gray: #9d9d9d;
   --icon-blue: #70a8e7;
   --icon-dark-blue: #3f8ae0;
   --icon-red: #fa5f5e;
+  --icon-red-light: var(--icon-red);
 
   --hover-background: rgba(255, 255, 255, .04);
   --hover-background-ripple: rgba(255, 255, 255, .08);

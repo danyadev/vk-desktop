@@ -48,6 +48,7 @@
   --icon-blue: #3f8ae0;
   --icon-dark-blue: #648fc1;
   --icon-red: var(--red-light);
+  --icon-red-light: #fc3d39;
 
   --hover-background: #edf2f8;
   --hover-background-ripple: #e1ebf4;

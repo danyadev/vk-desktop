@@ -6,7 +6,8 @@ const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-const storePath = path.join(app.getPath('appData'), 'vk-desktop', 'store.json');
+const vkdPath = path.join(app.getPath('appData'), 'vk-desktop');
+const storePath = path.join(vkdPath, 'store.json');
 let store = {
   useNativeTitlebar: false
 };
@@ -14,6 +15,7 @@ let store = {
 try {
   store = JSON.parse(fs.readFileSync(storePath));
 } catch {
+  if (!fs.existsSync(vkdPath)) fs.mkdirSync(vkdPath);
   fs.writeFileSync(storePath, JSON.stringify(store));
 }
 
@@ -25,7 +27,7 @@ app.once('ready', () => {
     frame: store.useNativeTitlebar,
     backgroundColor: '#fff',
     titleBarStyle: store.useNativeTitlebar ? 'default' : 'hidden',
-    trafficLightPosition: { x: 8, y: 8 },
+    trafficLightPosition: store.useNativeTitlebar ? null : { x: 8, y: 8 },
     webPreferences: {
       webSecurity: false,
       contextIsolation: false,

@@ -1,16 +1,20 @@
 <template>
   <div
     :class="['message_loading', { error: msg.error }]"
+    :style="{ '--offset': menuOffset + 'px' }"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
-    <div :class="['message_loading_menu', { active }]">
+    <Icon v-if="!msg.error" name="recent" color="var(--icon-blue)" />
+    <Icon v-else name="recent_error" color="var(--icon-red-light)" />
+
+    <div ref="menu" :class="['message_loading_menu', { active }]">
       <div class="act_menu_item" @click="click(true)">
-        <Icon name="replay" class="act_menu_icon" />
+        <Icon name="replay" color="var(--icon-blue)" class="act_menu_icon" />
         <div class="act_menu_data">{{ l('im_retry_send') }}</div>
       </div>
       <div class="act_menu_item" @click="click()">
-        <Icon name="trash" class="act_menu_icon" />
+        <Icon name="trash" color="var(--icon-red)" class="act_menu_icon" />
         <div class="act_menu_data">{{ l('im_delete_message') }}</div>
       </div>
     </div>
@@ -33,14 +37,30 @@ export default {
 
   setup(props) {
     const state = reactive({
+      menu: null,
+      menuOffset: 0,
+
       active: false,
       timeout: null
     });
 
-    async function click(retry) {
+    function closeMenu() {
       clearTimeout(state.timeout);
       state.timeout = null;
       state.active = false;
+
+      function onTransitionEnd(event) {
+        if (event.propertyName === 'background-color') return;
+        if (!state.active) state.menuOffset = 0;
+
+        state.menu.removeEventListener('transitionend', onTransitionEnd);
+      }
+
+      state.menu.addEventListener('transitionend', onTransitionEnd);
+    }
+
+    async function click(retry) {
+      closeMenu();
 
       const msgParams = {
         peer_id: props.msg.params.peer_id,
@@ -87,6 +107,9 @@ export default {
         return;
       }
 
+      const { x } = state.menu.getBoundingClientRect();
+      if (x < 0) state.menuOffset = -x + 20;
+
       state.active = true;
 
       if (state.timeout) {
@@ -96,10 +119,7 @@ export default {
     }
 
     function onMouseLeave() {
-      state.timeout = setTimeout(() => {
-        state.active = false;
-        state.timeout = null;
-      }, 500);
+      state.timeout = setTimeout(closeMenu, 250);
     }
 
     return {
@@ -116,31 +136,26 @@ export default {
 <style>
 .message_loading {
   position: absolute;
-  background: url(~assets/recent.svg) center / contain;
-  width: 18px;
-  height: 18px;
-  left: -21px;
-  bottom: 7px;
+  left: -22px;
+  bottom: 5px;
   user-select: none;
 }
 
 .message_loading.error {
-  background: url(~assets/recent_error.svg);
-  width: 16px;
-  height: 16px;
-  bottom: 8px;
+  left: -21px;
+  bottom: 6px;
   cursor: pointer;
 }
 
 .message_loading_menu {
   position: absolute;
   bottom: calc(100% + 16px);
-  right: calc(100% - 20px);
-  width: max-content;
+  right: calc(100% - 20px - var(--offset));
+  width: 210px;
   opacity: 0;
   pointer-events: none;
-  padding: 6px 0;
-  background: var(--background);
+  padding: 5px 0;
+  background: var(--background-accent);
   border-radius: 6px;
   box-shadow: 0 0 4px rgba(0, 0, 0, .2),
               0 4px 36px -6px rgba(0, 0, 0, .4);
