@@ -307,7 +307,7 @@ export default {
 <style>
 .message {
   display: flex;
-  background-color: var(--background);
+  background: var(--background);
   user-select: text;
 }
 
@@ -324,11 +324,11 @@ export default {
 }
 
 .message[active]:not(.hideBubble) .message_bubble {
-  background-color: var(--message-out-bubble-background);
+  background: var(--message-out-bubble-background);
 }
 
 .message[active]:not(.hideBubble).out .message_bubble {
-  background-color: var(--message-bubble-background);
+  background: var(--message-bubble-background);
 }
 
 .message_bubble_pre_wrap {
@@ -364,14 +364,14 @@ export default {
 }
 
 .message:not(.hideBubble) .message_bubble {
-  background-color: var(--message-bubble-background);
+  background: var(--message-bubble-background);
   padding: 8px 12px 9px 12px;
   border-radius: 18px;
   word-break: break-word;
 }
 
 .message:not(.hideBubble).out .message_bubble {
-  background-color: var(--message-out-bubble-background);
+  background: var(--message-out-bubble-background);
 }
 
 .message.hideBubble.isDisappearing:not(.out) .message_bubble {
@@ -430,7 +430,7 @@ export default {
   position: absolute;
   bottom: 0;
   right: 0;
-  background-color: var(--background-alpha);
+  background: var(--background-alpha);
   border-radius: 10px;
   padding: 2px 6px;
   width: fit-content;
@@ -451,11 +451,11 @@ export default {
 }
 
 .message.isSticker:not(.hideBubble).out .message_time_wrap {
-  background-color: var(--message-out-bubble-background-alpha);
+  background: var(--message-out-bubble-background-alpha);
 }
 
 .message.isSticker:not(.hideBubble):not(.out) .message_time_wrap {
-  background-color: var(--message-bubble-background-alpha);
+  background: var(--message-bubble-background-alpha);
 }
 
 .message_edited {
@@ -467,7 +467,7 @@ export default {
   height: 2px;
   margin: 6px 3px 0 3px;
   border-radius: 50%;
-  background-color: var(--text-dark-steel-gray);
+  background: var(--text-dark-steel-gray);
 }
 
 /* Unread dot ========================================== */
@@ -479,7 +479,7 @@ export default {
   height: 8px;
   bottom: 12px;
   border-radius: 50%;
-  background-color: var(--background-blue-overlight);
+  background: var(--background-blue-overlight);
 
   --offset: calc(-16px - var(--unread-offset));
 }

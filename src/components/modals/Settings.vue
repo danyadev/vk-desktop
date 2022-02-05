@@ -163,9 +163,14 @@ export default {
 }
 
 @media screen and (max-width: 650px) {
-  .settings_wrap, .settings {
+  .settings_wrap {
     margin: 0;
     height: 100%;
+  }
+
+  .settings {
+    border-radius: 0;
+    box-sizing: unset;
   }
 
   .settings_left_item svg {

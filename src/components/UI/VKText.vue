@@ -62,7 +62,7 @@ export default {
 
       if (block.type === 'link' && (props.link || props.preview)) {
         const params = props.link
-          ? { class: 'link', onClick: () => internalLinkResolver(block.link) }
+          ? { class: 'link', title: block.link, onClick: () => internalLinkResolver(block.link) }
           : { class: 'message_preview' };
 
         return [h('div', params, [block.value])];

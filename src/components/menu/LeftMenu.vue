@@ -81,13 +81,15 @@ export default {
   position: absolute;
   top: -3px;
   left: 28px;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 20px;
+  line-height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  text-align: center;
   background: var(--red-light);
   color: var(--background);
-  border-radius: 10px;
-  padding: 2px 5px;
-  min-width: 18px;
-  text-align: center;
 }
 
 .root[theme="dark"] .menu_item_counter {

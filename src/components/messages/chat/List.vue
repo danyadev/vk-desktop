@@ -39,12 +39,12 @@
       @click="scrollToMention"
     >
       <div>{{ peer && peer.mentions.length }}</div>
-      <Icon name="mention" color="var(--icon-dark-gray)" width="24" height="30" />
+      <Icon name="mention" color="var(--icon-gray)" width="20" height="30" />
     </div>
 
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
       <div>{{ peer && convertCount(peer.unread) || '' }}</div>
-      <img src="~assets/dropdown.webp">
+      <Icon name="dropdown" color="var(--icon-gray)" width="32" height="32" />
     </div>
   </div>
 </template>
@@ -780,7 +780,7 @@ export default {
   width: fit-content;
   margin: 0 auto;
   z-index: 2;
-  background-color: var(--background);
+  background: var(--background);
   border: solid 1px var(--separator-dark);
   border-radius: 15px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
@@ -833,11 +833,15 @@ export default {
   position: absolute;
   top: -7px;
   right: -3px;
-  background-color: var(--background-blue);
-  color: var(--background-blue-text);
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 20px;
+  line-height: 20px;
+  padding: 0 6px;
   border-radius: 10px;
-  padding: 3px 6px 2px 6px;
+  text-align: center;
+  background: var(--background-blue);
+  color: var(--background-blue-text);
 }
 
 .im_scroll_mention_btn {
