@@ -67,7 +67,7 @@ export default {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  padding-bottom: 25px;
+  padding-bottom: 65px;
 }
 
 .snackbar {
@@ -78,11 +78,15 @@ export default {
   max-width: 80%;
   min-height: 45px;
   pointer-events: auto;
-  background: var(--background);
+  background: var(--background-accent);
   border: 1px solid var(--separator-dark);
   border-radius: 10px;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, .24),
               0 0 2px 0 rgba(0, 0, 0, .08);
+}
+
+.snackbar > div {
+  height: 20px;
 }
 
 .snackbar_icon {
@@ -94,5 +98,11 @@ export default {
   flex: none;
   margin-left: 10px;
   cursor: pointer;
+  opacity: .8;
+  transition: opacity .3s;
+}
+
+.snackbar_close_icon:hover {
+  opacity: 1;
 }
 </style>

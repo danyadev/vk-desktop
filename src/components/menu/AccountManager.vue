@@ -185,7 +185,7 @@ export default {
   bottom: 0;
   width: 18px;
   height: 18px;
-  background: var(--background);
+  background: var(--background-accent);
   border-radius: 50%;
   padding: 1px 0 0 1px;
 }

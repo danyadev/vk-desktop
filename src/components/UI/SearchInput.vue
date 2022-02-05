@@ -22,7 +22,7 @@ export default {
   height: 30px;
   margin: 10px 16px;
   border-radius: 8px;
-  background: var(--field-background);
+  background: var(--search-input-background);
 }
 
 .search_input svg {
@@ -45,6 +45,6 @@ export default {
 }
 
 .search_input input::-webkit-input-placeholder {
-  color: var(--text-steel-gray);
+  color: var(--search-input-placeholder);
 }
 </style>

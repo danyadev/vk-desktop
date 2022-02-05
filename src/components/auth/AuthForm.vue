@@ -1,5 +1,10 @@
 <template>
-  <div class="auth" @keydown.enter="auth">
+  <div
+    class="auth"
+    tabindex="-1"
+    @keydown.enter="auth"
+    @keydown.esc="onlyAddUser && $router.back()"
+  >
     <img src="~assets/logo.webp" class="auth_logo">
     <div class="auth_name">{{ l('vk_desktop') }}</div>
     <input
@@ -44,7 +49,7 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, onMounted } from 'vue';
+import { reactive, computed, toRefs, onActivated } from 'vue';
 import { getPhoto } from 'js/utils';
 import { openModal } from 'js/modals';
 import { addSnackbar } from 'js/snackbars';
@@ -77,7 +82,7 @@ export default {
       canAuth: computed(() => !state.loading && state.login && state.password)
     });
 
-    onMounted(() => {
+    onActivated(() => {
       state.input.focus();
     });
 

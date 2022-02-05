@@ -23,6 +23,7 @@
 
 <script>
 import { reactive, toRefs } from 'vue';
+import { addSnackbar } from 'js/snackbars';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 
@@ -96,6 +97,12 @@ export default {
           if ([900, 902].includes(err.error_code)) {
             setCanWrite(false);
           }
+
+          addSnackbar({
+            text: `Error ${err.error_code}. ${err.error_msg}`,
+            icon: 'error',
+            color: 'var(--icon-red)'
+          });
         }
       } else {
         store.commit('messages/removeLoadingMessage', msgParams);

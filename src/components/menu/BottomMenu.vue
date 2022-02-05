@@ -56,7 +56,7 @@ export default {
   flex: none;
   width: 100%;
   height: 50px;
-  background: var(--background);
+  background: var(--background-accent);
 }
 
 .menu.bottom .menu_icon {

@@ -9,7 +9,6 @@
       fwdOverflow,
       showUserName,
       isLoading: msg.isLoading,
-      isSelectMode,
       isSelected,
 
       isDisappearing: msg.expireTtl,
@@ -125,9 +124,7 @@ export default {
 
       selectedMessages: computed(() => store.state.messages.selectedMessages),
       isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
-      isSelectMode: computed(() => (
-        !!state.selectedMessages.length
-      )),
+      isSelectMode: computed(() => !!state.selectedMessages.length),
 
       expireIcon: !!props.msg.expireTtl, // Изначально true если сообщение фантомное
       expireHours: false,
@@ -314,7 +311,7 @@ export default {
   user-select: text;
 }
 
-.message.isSelectMode {
+.messages_list.isSelectMode .message {
   user-select: none;
 }
 
@@ -357,12 +354,12 @@ export default {
   margin-bottom: 2px;
 }
 
-.message.isSelectMode .message_bubble {
+.messages_list.isSelectMode .message_bubble {
   cursor: pointer;
 }
 
 /* Блокируем все кликабельные элементы во время выделения */
-.message.isSelectMode .message_bubble > * {
+.messages_list.isSelectMode .message_bubble > * {
   pointer-events: none;
 }
 

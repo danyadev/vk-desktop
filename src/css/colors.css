@@ -1,6 +1,6 @@
 .root {
   --background: #fff;
-  --background-accent: #fff;
+  --background-accent: var(--background);
   /* Используется для времени у стикеров в сообщении */
   --background-alpha: #ffffffdf;
   --background-blue: #5181b8;
@@ -8,9 +8,9 @@
   --background-blue-overlight: #92b2d6;
   --background-blue-text: #fff;
   --background-blue-ripple: #00000026;
+  --background-steel-gray: #9099a3;
   --background-light-steel-gray: #aeb7c2;
   --background-medium-steel-gray: #99a2ad;
-  --background-steel-gray: #9099a3;
   /* Используется для окраски фона поля для ввода текста (deprecated) */
   --background-gray-overlight: #fbfbfb;
   --background-black-alpha: rgba(0, 0, 0, .08);
@@ -30,10 +30,16 @@
   --red-light: #e64646;
   --red-dark: #d92c3a;
   --green: #4bb34b;
+
   --separator: #e7e8ec;
   --separator-dark: #d7d8d9;
 
-  --titlebar-background: #f5f5f5;
+  --icon-gray: #99a2ad;
+  --icon-dark-gray: #828a99;
+  --icon-blue: #3f8ae0;
+  --icon-dark-blue: #648fc1;
+  --icon-red: var(--red-light);
+  --icon-red-light: #fc3d39;
 
   --button-light-background: #e5ebf1;
   --button-light-color: #55677d;
@@ -43,12 +49,13 @@
   --field-placeholder: #818c99;
   --field-border: #0000001f;
 
-  --icon-gray: #99a2ad;
-  --icon-dark-gray: #828a99;
-  --icon-blue: #3f8ae0;
-  --icon-dark-blue: #648fc1;
-  --icon-red: var(--red-light);
-  --icon-red-light: #fc3d39;
+  --search-input-background: #edeff2; /* f0f2f5 */
+  --search-input-placeholder: var(--text-steel-gray);
+
+  --titlebar-background: #f5f5f5;
+
+  --scrolly-background: rgba(0, 0, 0, .3);
+  --scrolly-hover-background: rgba(0, 0, 0, .4);
 
   --hover-background: #edf2f8;
   --hover-background-ripple: #e1ebf4;
@@ -69,9 +76,6 @@
   --keyboard-button-primary: #5181b8;
   --keyboard-button-positive: #4bb34b;
   --keyboard-button-negative: #e64646;
-
-  --scrolly-background: rgba(0, 0, 0, .3);
-  --scrolly-hover-background: rgba(0, 0, 0, .4);
 }
 
 .root.st-useMoreSaturatedColors {

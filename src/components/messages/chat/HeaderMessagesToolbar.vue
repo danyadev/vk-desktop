@@ -1,16 +1,11 @@
 <template>
   <div class="header header_messages_toolbar">
-    <Icon
-      name="close"
-      color="var(--icon-dark-gray)"
-      width="16"
-      height="16"
-      class="im_header_cancel_select"
-      @click="cancelSelect"
-    />
+    <div class="im_header_cancel_select" @click="cancelSelect">
+      <Icon name="close" color="var(--icon-dark-gray)" width="16" height="16" />
 
-    <div class="im_header_selected_count">
-      {{ l('im_messages_count', [messages.length], messages.length) }}
+      <div class="im_header_selected_count">
+        {{ l('im_messages_count', [messages.length], messages.length) }}
+      </div>
     </div>
 
     <div class="im_header_selected_actions">
@@ -136,21 +131,27 @@ export default {
 </script>
 
 <style>
-.im_header_cancel_select,
+.im_header_cancel_select {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.im_header_cancel_select svg,
 .im_header_selected_actions svg {
   cursor: pointer;
   opacity: .75;
   transition: opacity .3s;
 }
 
-.im_header_cancel_select:hover,
+.im_header_cancel_select:hover svg,
 .im_header_selected_actions svg:hover {
   opacity: 1;
 }
 
-.im_header_cancel_select {
+.im_header_cancel_select svg {
   box-sizing: content-box;
-  padding: 15px;
+  padding: 16px 10px 15px 15px;
 }
 
 .im_header_selected_count {

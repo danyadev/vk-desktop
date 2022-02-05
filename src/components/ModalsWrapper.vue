@@ -108,7 +108,7 @@ export default {
   overflow: hidden;
   max-width: 92vw;
   max-height: 92vh;
-  background: var(--background);
+  background: var(--background-accent);
   padding: 12px 24px;
   border-radius: 7px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .26);
@@ -122,7 +122,7 @@ export default {
   /* <modal-max-height> - <modal-header> - <modal-footer> */
   max-height: calc(92vh - 48px - 56px);
   padding: 12px 0;
-  background: var(--background);
+  background: var(--background-accent);
 }
 
 .modal_footer {

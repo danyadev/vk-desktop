@@ -1,5 +1,6 @@
 import { nextTick } from 'vue';
 import { random, eventBus } from './utils';
+import { addSnackbar } from './snackbars';
 import vkapi from './vkapi';
 import store from './store';
 
@@ -115,6 +116,12 @@ export default async function sendMessage({
         }
       });
     }
+
+    addSnackbar({
+      text: `Error ${err.error_code}. ${err.error_msg}`,
+      icon: 'error',
+      color: 'var(--icon-red)'
+    });
   });
 
   return true;

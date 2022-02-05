@@ -87,7 +87,7 @@ export default {
 .settings {
   width: 100%;
   height: 100%;
-  background: var(--background);
+  background: var(--background-accent);
   border-radius: 10px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, .25);
 }

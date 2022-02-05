@@ -5,7 +5,7 @@
     <Scrolly
       ref="scrollyRef"
       class="messages_list_wrap"
-      :vclass="['messages_list', { empty: !hasMessages }]"
+      :vclass="['messages_list', { empty: !hasMessages, isSelectMode }]"
       :lock="lockScroll"
       @scroll="onScroll"
     >
@@ -115,7 +115,11 @@ export default {
       messagesWithLoading: computed(() => (
         state.messages.concat(state.loadedDown ? state.loadingMessages : [])
       )),
-      hasMessages: computed(() => !!state.messagesWithLoading.length)
+      hasMessages: computed(() => !!state.messagesWithLoading.length),
+
+      // Нужно только для добавления класса
+      selectedMessages: computed(() => store.state.messages.selectedMessages),
+      isSelectMode: computed(() => !!state.selectedMessages.length),
     });
 
     const intersectionObserver = (() => {
