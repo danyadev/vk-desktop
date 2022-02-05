@@ -117,7 +117,7 @@ const massMentionParser = createParser({
 });
 
 const linkParser = createParser({
-  regexp: /((https?:\/\/)?([a-zа-яё0-9.\-@_]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n\\ ])?)?)(?=$|\s|[^a-zа-яё0-9])/ig,
+  regexp: /((https?:\/\/)?([a-zа-яё0-9.\-@_]+\.([a-zа-яё]{2,18})|(?<localhost>(?<![a-zа-яё0-9])localhost)|(?<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(?<port>:\d{1,5})?(\/(\S*[^.,!?()"';\n\\ ])?)?)(?=$|\s|(?!\.[a-zа-яё0-9])[^a-zа-яё0-9])/ig,
   parseText: massMentionParser,
   parseElement(value, match, isMention) {
     const { localhost, port, ip } = match.groups;

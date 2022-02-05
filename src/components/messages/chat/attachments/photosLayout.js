@@ -47,49 +47,6 @@ function calcOnePhotoSize(photo, ratios, maxWidth, maxHeight) {
   return photo;
 }
 
-function calcTwoPhotosWidth(photos, ratios, maxWidth, margin) {
-  const minPhotoWidth = 100;
-
-  // 1. Каждая фотография должна быть больше минимального размера
-  if (photos[0].width < minPhotoWidth) {
-    photos[0].width = minPhotoWidth;
-    ratios[0] = photos[0].width / photos[0].height;
-  }
-
-  if (photos[1].width < minPhotoWidth) {
-    photos[1].width = minPhotoWidth;
-    ratios[1] = photos[1].width / photos[1].height;
-  }
-
-  let width1 = photos[0].width;
-  let width2 = photos[1].width;
-
-  // 2. Фотографии помещаются в сетку, их не нужно ресайзить
-  if (width1 + width2 + margin <= maxWidth) {
-    return [width1, width2];
-  }
-
-  // 3. Фотографии не помещаются в сетку, сжимаем их
-  const k = (width1 + width2) / (maxWidth - margin);
-
-  width1 /= k;
-  width2 /= k;
-
-  if (width1 < minPhotoWidth) {
-    const correction = minPhotoWidth - width1;
-    width1 += correction;
-    width2 -= correction;
-  }
-
-  if (width2 < minPhotoWidth) {
-    const correction = minPhotoWidth - width2;
-    width2 += correction;
-    width1 -= correction;
-  }
-
-  return [width1, width2];
-}
-
 /**
  * const newHeight = newWidth / ratio;
  * const newWidth = newHeight * ratio;
@@ -128,9 +85,10 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
     updateThumb(thumbs[0], width, height, true, true);
   } else if (thumbs.length === 2) {
     if (
-      photoRatioTypes === 'ww' &&
-      ratioAverage > 1.4 * parentRatio &&
-      Math.abs(photoRatios[1] - photoRatios[0]) < .3
+      photoRatioTypes === 'ww' && (
+        Math.abs(photoRatios[1] - photoRatios[0]) < .3 ||
+        photoRatios[0] >= 2 && photoRatios[1] >= 2
+      )
     ) {
       // Одинаковая высота и ширина
       // Только если фотографии похожи по соотношению
@@ -148,7 +106,18 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
     } else {
       // Одинаковая высота, но разная ширина
       // [photo][photo]
-      const [width1, width2] = calcTwoPhotosWidth(thumbs, photoRatios, maxWidth, margin);
+      const minWidth = Math.min(
+        Math.max((thumbs[0].width + thumbs[1].width) / 2, 200),
+        maxWidth
+      );
+      const widthModifier = (minWidth - margin) / (photoRatios[0] + photoRatios[1]);
+      let width1 = widthModifier * photoRatios[0];
+      let width2 = widthModifier * photoRatios[1];
+
+      // Одна из двух переменных точно > 100
+      if (width1 < 100) [width1, width2] = [100, width2 - (100 - width1)];
+      if (width2 < 100) [width1, width2] = [width1 - (100 - width2), 100];
+
       const height = Math.min(maxHeight, (width1 / photoRatios[0] + width2 / photoRatios[1]) / 2);
 
       updateThumb(thumbs[0], width1, height, false, true);
