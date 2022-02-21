@@ -1,4 +1,6 @@
 # VK Desktop
+<img width="1162" alt="image" src="https://user-images.githubusercontent.com/35631027/155030916-775ce8f8-27bd-41dd-991b-154769116e66.png">
+
 
 ## Скачать VK Desktop
 
