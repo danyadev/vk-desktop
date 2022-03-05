@@ -309,6 +309,7 @@ export default {
   display: flex;
   background: var(--background);
   user-select: text;
+  --message-current-bubble-background: var(--message-bubble-background);
 }
 
 .messages_list.isSelectMode .message {
@@ -321,6 +322,7 @@ export default {
 
 .message.out {
   justify-content: flex-end;
+  --message-current-bubble-background: var(--message-out-bubble-background);
 }
 
 .message[active]:not(.hideBubble) .message_bubble {
@@ -374,6 +376,11 @@ export default {
   background: var(--message-out-bubble-background);
 }
 
+.message:not(.hideBubble).isSticker .message_bubble {
+  background: none;
+  border: 1px solid var(--separator-dark);
+}
+
 .message.hideBubble.isDisappearing:not(.out) .message_bubble {
   /* Отступ справа нужен для того, чтобы иконка исчезающего сообщения не залезала на время */
   margin-right: 5px;
@@ -416,7 +423,7 @@ export default {
   float: right;
   color: var(--text-dark-steel-gray);
   font-size: 11px;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
   user-select: none;
 }
@@ -425,6 +432,14 @@ export default {
   bottom: -4px;
   margin: 5px 0 0 6px;
 }
+
+/* Возможные варианты:
+ * 1) :not(flyTime) => обычное сообщение; точно нет стикера
+ * 2) .flyTime:not(.isSticker):not(.hideBubble) => (bubble + photo) padding
+ * 3) .flyTime:not(.isSticker).hideBubble => only photo padding
+ * 4) .flyTime.isSticker:not(.hideBubble) => reply: minimal padding
+ * 5) .flyTime.isSticker.hideBubble => only sticker: no padding
+ */
 
 .message.flyTime .message_time_wrap {
   position: absolute;
@@ -440,22 +455,14 @@ export default {
   line-height: 14px;
 }
 
-.message.isSticker:not(.hideBubble) .message_time_wrap {
+.message.flyTime.isSticker:not(.hideBubble) .message_time_wrap {
   right: 4px;
   bottom: 4px;
 }
 
-.message.flyTime.hideBubble:not(.isSticker) .message_time_wrap {
+.message.flyTime:not(.isSticker).hideBubble .message_time_wrap {
   right: 5px;
   bottom: 5px;
-}
-
-.message.isSticker:not(.hideBubble).out .message_time_wrap {
-  background: var(--message-out-bubble-background-alpha);
-}
-
-.message.isSticker:not(.hideBubble):not(.out) .message_time_wrap {
-  background: var(--message-bubble-background-alpha);
 }
 
 .message_edited {

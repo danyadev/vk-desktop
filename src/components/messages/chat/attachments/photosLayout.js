@@ -62,7 +62,6 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
 
   const photoRatios = [];
   let photoRatioTypes = '';
-  let photoRatioSum = 0;
 
   for (const thumb of thumbs) {
     if (thumb.width === 0 && thumb.height === 0) {
@@ -73,12 +72,8 @@ export function calculatePhotosLayout({ thumbs, margin, maxWidth, maxHeight }) {
     const ratio = Math.max(thumb.width / thumb.height, .3);
 
     photoRatioTypes += ratio > 1.2 ? 'w' : (ratio < .8 ? 'n' : 'q');
-    photoRatioSum += ratio;
     photoRatios.push(ratio);
   }
-
-  const ratioAverage = photoRatioSum / photoRatios.length;
-  const parentRatio = maxWidth / maxHeight;
 
   if (thumbs.length === 1) {
     const { width, height } = calcOnePhotoSize(thumbs[0], photoRatios, maxWidth, maxHeight);

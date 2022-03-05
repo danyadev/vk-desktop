@@ -79,8 +79,8 @@
     </Ripple>
 
     <div v-else class="chat_input_error">
-      <img class="chat_input_error_img" src="~assets/error.svg">
-      <div class="chat_input_error_text">{{ canWrite.text }}</div>
+      <Icon name="error" color="var(--icon-red-light)" width="36" height="36" />
+      {{ canWrite.text }}
     </div>
   </div>
 </template>
@@ -381,17 +381,8 @@ export default {
   transition: background-color .2s;
 }
 
-.chat_input_error.isChannel svg {
+.chat_input_error svg {
   margin-right: 8px;
-}
-
-.chat_input_error_img {
-  width: 36px;
-  height: 36px;
-}
-
-.chat_input_error_text {
-  margin-left: 10px;
 }
 
 .chat_input_reply {

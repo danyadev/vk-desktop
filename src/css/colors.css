@@ -5,7 +5,7 @@
   --background-alpha: #ffffffdf;
   --background-blue: #5181b8;
   /* Используется для точки, которая означает, что сообщение еще не прочитано */
-  --background-blue-overlight: #92b2d6;
+  --background-blue-overlight: #7aa0cd;
   --background-blue-text: #fff;
   --background-blue-ripple: #00000026;
   --background-steel-gray: #9099a3;
@@ -69,6 +69,7 @@
   --message-out-bubble-background: #c7dff9;
   --message-out-bubble-background-alpha: #c7dff9df;
   --message-selected-overlay: rgba(0, 0, 0, .08);
+  /* --message-current-bubble-background внутри .message */
 
   --attach-left-border: #7197c5;
 

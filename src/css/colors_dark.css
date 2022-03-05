@@ -2,10 +2,10 @@
   --background: #191919;
   --background-accent: #2c2d2f;
   /* Используется для времени у стикеров в сообщении */
-  --background-alpha: #2c2d2edf;
-  --background-blue: #e2e3e7;
+  --background-alpha: #191919df;
+  --background-blue: var(--text-primary);
   /* Используется для точки, которая означает, что сообщение еще не прочитано */
-  --background-blue-overlight: #a0c3eb;
+  --background-blue-overlight: #7ba1c6;
   --background-blue-text: var(--background);
   --background-blue-ripple: #ffffff26;
   --background-steel-gray: #9099a3;
@@ -21,7 +21,7 @@
   --text-secondary: #909499;
   --text-steel-gray: #76787a;
   --text-dark-steel-gray: #99a2ad;
-  --text-gray: #909499;
+  --text-gray: var(--text-secondary);
   --text-blue: #71aaeb;
   --text-light-blue: var(--text-blue);
 
@@ -32,7 +32,7 @@
   --green: #4bb34b;
 
   --separator: #363738;
-  --separator-dark: #232324;
+  --separator-dark: var(--separator);
 
   --icon-gray: #9d9d9d;
   --icon-dark-gray: var(--icon-gray);
@@ -69,10 +69,11 @@
   --message-out-bubble-background: #454647;
   --message-out-bubble-background-alpha: #454647df;
   --message-selected-overlay: rgba(255, 255, 255, .12);
+  /* --message-current-bubble-background внутри .message */
 
   --attach-left-border: #808082;
 
-  --keyboard-button-default: var(--hover-background);
+  --keyboard-button-default: #454648;
   --keyboard-button-primary: #5181b8;
   --keyboard-button-positive: #63b963;
   --keyboard-button-negative: #e76666;

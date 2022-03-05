@@ -402,11 +402,11 @@ export default {
 
 .im_peer_unread.outread {
   flex: none;
-  margin: 7px 4px 0 6px;
+  margin: 9px 2px 0 6px;
   width: 8px;
   height: 8px;
   border-radius: 10px;
-  background: var(--background-blue-overlight);
+  background: var(--accent);
 }
 
 .im_peer_mentioned {

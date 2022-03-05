@@ -161,6 +161,7 @@ export default {
   width: 210px;
   opacity: 0;
   pointer-events: none;
+  z-index: 2;
   padding: 5px 0;
   background: var(--background-accent);
   border-radius: 6px;

@@ -79,7 +79,7 @@ export default {
   im_messages_disappeared: 'Сообщения исчезли',
   im_messages_expired: ['{0} сообщение исчезло', '{0} сообщения исчезло', '{0} сообщений исчезло'],
   im_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
-  keyboard_button_not_supported: 'Клавиша не поддерживается',
+  keyboard_button_not_supported: 'Не поддерживается',
 
   // im_search_dialogs: 'Диалоги',
   // im_search_placeholder: 'Здесь будут видны найденные беседы и сообщения',

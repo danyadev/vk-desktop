@@ -177,7 +177,6 @@ module.exports = {
     'prefer-numeric-literals': 'error',
     'prefer-object-spread': 'error',
     'prefer-regex-literals': 'error',
-    'prefer-rest-params': 'error',
     'prefer-spread': 'error',
     'quote-props': ['error', 'as-needed'],
     'quotes': ['error', 'single'],

@@ -220,8 +220,12 @@ export default {
 .auth_user svg {
   position: absolute;
   cursor: pointer;
+  top: -2px;
   left: 35px;
   width: 16px;
   height: 16px;
+  box-sizing: content-box;
+  border: 2px solid var(--background);
+  border-radius: 50%;
 }
 </style>

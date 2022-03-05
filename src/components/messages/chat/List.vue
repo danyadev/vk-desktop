@@ -44,7 +44,7 @@
 
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
       <div>{{ peer && convertCount(peer.unread) || '' }}</div>
-      <Icon name="dropdown" color="var(--icon-gray)" width="32" height="32" />
+      <Icon name="dropdown" color="var(--icon-gray)" width="30" height="30" />
     </div>
   </div>
 </template>
@@ -119,7 +119,7 @@ export default {
 
       // Нужно только для добавления класса
       selectedMessages: computed(() => store.state.messages.selectedMessages),
-      isSelectMode: computed(() => !!state.selectedMessages.length),
+      isSelectMode: computed(() => !!state.selectedMessages.length)
     });
 
     const intersectionObserver = (() => {
@@ -779,7 +779,7 @@ export default {
   right: 0;
   width: fit-content;
   margin: 0 auto;
-  z-index: 2;
+  z-index: 3;
   background: var(--background);
   border: solid 1px var(--separator-dark);
   border-radius: 15px;
@@ -811,14 +811,9 @@ export default {
   border-radius: 50%;
   opacity: 1;
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
   transition: background-color .3s, transform .2s, opacity .2s, visibility .2s;
-}
-
-.im_scroll_end_btn img {
-  width: 24px;
-  height: 24px;
 }
 
 .im_scroll_end_btn.hidden,

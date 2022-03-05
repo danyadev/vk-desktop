@@ -25,7 +25,7 @@
 
         <template v-else-if="action.type === 'vkpay'">
           <div>{{ l('im_keyboard_pay_with') }}</div>
-          <img src="~assets/vk_pay.svg">
+          <Icon name="vk_pay" />
         </template>
 
         <div v-else-if="action.type === 'open_link'" class="keyboard_service_key">
@@ -269,8 +269,9 @@ export default {
   background: var(--keyboard-button-negative);
 }
 
-.keyboard_button > img:not(.emoji) {
-  height: 24px;
+.keyboard_button > svg {
+  flex: none;
+  color: var(--icon-blue);
 }
 
 .keyboard_service_key {
