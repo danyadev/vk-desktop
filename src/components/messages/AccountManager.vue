@@ -44,10 +44,9 @@
 </template>
 
 <script>
-import { computed, ref, toRefs } from 'vue';
+import { reactive, computed, toRefs } from 'vue';
 import { getPhoto, moveArrItem, mouseOutWrapper, logout } from 'js/utils';
 import { usersStorage } from 'js/store/Storage';
-import { state } from '.';
 import store from 'js/store';
 import router from 'js/router';
 
@@ -59,10 +58,25 @@ export default {
   },
 
   setup() {
-    const isUsersListActive = ref(false);
+    const state = reactive({
+      activeUserID: computed(() => store.state.users.activeUserID),
+      userPhoto: computed(() => getPhoto(store.getters['users/user'])),
+      isUsersListActive: false,
+
+      usersList: computed(() => {
+        const usersList = Object.values(store.state.users.users);
+
+        // Перемещаем активного пользователя в начало массива
+        return moveArrItem(
+          usersList,
+          usersList.findIndex((user) => user.id === state.activeUserID),
+          0
+        );
+      })
+    });
 
     const onMouseOut = mouseOutWrapper(() => {
-      isUsersListActive.value = false;
+      state.isUsersListActive = false;
     });
 
     function setAccount(id) {
@@ -80,14 +94,14 @@ export default {
 
     function onClick(user_id) {
       if (user_id === state.activeUserID) {
-        isUsersListActive.value = false;
+        state.isUsersListActive = false;
       } else {
         setAccount(user_id);
       }
     }
 
     function openAuth() {
-      isUsersListActive.value = false;
+      state.isUsersListActive = false;
       router.push({
         path: '/auth',
         query: {
@@ -99,18 +113,6 @@ export default {
     return {
       ...toRefs(state),
 
-      usersList: computed(() => {
-        const usersList = Object.values(store.state.users.users);
-
-        // Перемещаем активного пользователя в начало массива
-        return moveArrItem(
-          usersList,
-          usersList.findIndex((user) => user.id === state.activeUserID),
-          0
-        );
-      }),
-
-      isUsersListActive,
       onMouseOut,
       onClick,
       getPhoto,

@@ -22,8 +22,6 @@
         :nowDate="nowDate"
       />
     </Scrolly>
-
-    <BottomMenu />
   </div>
 </template>
 
@@ -39,8 +37,7 @@ import router from 'js/router';
 import Scrolly from '../UI/Scrolly.vue';
 import Icon from '../UI/Icon.vue';
 import SearchInput from '../UI/SearchInput.vue';
-import AccountManager from '../menu/AccountManager.vue';
-import BottomMenu from '../menu/BottomMenu.vue';
+import AccountManager from './AccountManager.vue';
 import MessagesPeer from './MessagesPeer.vue';
 import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
 
@@ -52,7 +49,6 @@ export default {
     Icon,
     SearchInput,
     AccountManager,
-    BottomMenu,
     MessagesPeer,
     MessagesListMenu
   },

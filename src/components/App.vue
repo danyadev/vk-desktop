@@ -3,8 +3,6 @@
     <Titlebar />
 
     <div class="app">
-      <LeftMenu v-if="!isAuth" />
-
       <RouterView v-slot="{ Component }">
         <KeepAlive>
           <component :is="Component" :key="route.path.split('/')[1]" />
@@ -38,7 +36,6 @@ import 'css/colors.css';
 import 'css/colors_dark.css';
 
 import Titlebar from './Titlebar.vue';
-import LeftMenu from './menu/LeftMenu.vue';
 import ModalsWrapper from './ModalsWrapper.vue';
 import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
 import SnackbarsWrapper from './SnackbarsWrapper.vue';
@@ -57,7 +54,6 @@ window.emoji = emoji;
 export default {
   components: {
     Titlebar,
-    LeftMenu,
     ModalsWrapper,
     ContextMenuWrapper,
     SnackbarsWrapper,
@@ -69,7 +65,6 @@ export default {
       mac: process.platform === 'darwin',
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
-      isAuth: computed(() => ['/', '/auth'].includes(state.route.path)),
       dark: computed(() => state.settings.useDarkTheme),
 
       settings: computed(() => store.getters['settings/settings']),
