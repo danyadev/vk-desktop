@@ -10,25 +10,14 @@ module.exports = function(mainWindow) {
         {
           label: 'О программе',
           click() {
-            shell.openExternal('https://vk.com/vk_desktop_app');
+            app.showAboutPanel();
           }
         },
-        { type: 'separator' },
         {
           label: 'Настройки',
-          enabled: false,
           accelerator: 'Command+,',
           click() {
-            // TODO Настройки
-            // win.send('preferences');
-          }
-        },
-        {
-          label: 'Проверить обновления',
-          enabled: false,
-          click() {
-            // TODO Проверка обновлений
-            // win.send('updateCheck');
+            mainWindow.send('menu:preferences');
           }
         },
         { type: 'separator' },
@@ -57,6 +46,7 @@ module.exports = function(mainWindow) {
           label: 'Выйти',
           accelerator: 'Command+Q',
           click() {
+            mainWindow.forceClose = true;
             app.quit();
           }
         }
@@ -145,7 +135,7 @@ module.exports = function(mainWindow) {
             }
 
             function closeFunc() {
-              mainWindow.close();
+              mainWindow.hide();
               mainWindow.removeListener('leave-full-screen', closeFunc);
             }
 

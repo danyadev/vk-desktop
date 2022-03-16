@@ -19,8 +19,10 @@ try {
   fs.writeFileSync(storePath, JSON.stringify(store));
 }
 
+let win;
+
 app.once('ready', () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     minWidth: 400,
     minHeight: 550,
     show: false,
@@ -71,6 +73,14 @@ app.once('ready', () => {
   });
 
   if (process.platform === 'darwin') {
+    win.on('close', (event) => {
+      // forceClose определяется в menu.js
+      if (!win.forceClose) {
+        event.preventDefault();
+        win.hide();
+      }
+    });
+
     require('./menu')(win);
   } else {
     win.removeMenu();
@@ -83,4 +93,15 @@ app.once('ready', () => {
   );
 });
 
-app.on('window-all-closed', app.exit);
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('activate', (event, hasVisibleWindows) => {
+  // Приложение было закрыто через cmd + R
+  if (!hasVisibleWindows) {
+    win.show();
+  }
+});

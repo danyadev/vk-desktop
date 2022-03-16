@@ -5,6 +5,10 @@ export const modalsState = reactive({
   hasModals: computed(() => !!Object.keys(modalsState.modals).length)
 });
 
+export function isModalOpened(name) {
+  return Object.keys(modalsState.modals).includes(name);
+}
+
 export function openModal(name, props) {
   modalsState.modals[name] = {
     name,

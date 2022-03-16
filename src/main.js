@@ -1,5 +1,7 @@
+import electron from 'electron';
 import { createApp } from 'vue';
 import { debounce, currentWindow } from 'js/utils';
+import { isModalOpened, openModal, closeModal } from 'js/modals';
 import { showError } from 'js/debug';
 import store from 'js/store';
 import router from 'js/router';
@@ -9,6 +11,14 @@ import shortcut from 'js/shortcut';
 import App from './components/App.vue';
 import ForwardedMessage from './components/messages/chat/attachments/ForwardedMessage.vue';
 import Attachments from './components/messages/chat/attachments/Attachments.vue';
+
+electron.ipcRenderer.on('menu:preferences', () => {
+  if (isModalOpened('settings')) {
+    closeModal('settings');
+  } else {
+    openModal('settings');
+  }
+})
 
 const app = createApp(App);
 
