@@ -402,7 +402,7 @@ export default {
 
 .im_peer_unread.outread {
   flex: none;
-  margin: 9px 2px 0 6px;
+  margin: 9px 2px 0 8px;
   width: 8px;
   height: 8px;
   border-radius: 10px;

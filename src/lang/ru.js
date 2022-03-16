@@ -21,7 +21,7 @@ export default {
   listen: 'Слушать',
   spam: 'Спам',
   later: 'Позже',
-  settings: 'Настройки приложения',
+  app_settings: 'Настройки приложения',
 
   // ----- Окно с ошибкой JS
   error_dialog_message: 'В ходе работы приложения произошла ошибка.',

@@ -44,7 +44,7 @@
 
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
       <div>{{ peer && convertCount(peer.unread) || '' }}</div>
-      <Icon name="dropdown" color="var(--icon-gray)" width="30" height="30" />
+      <Icon name="dropdown" color="var(--icon-gray)" width="26" height="26" />
     </div>
   </div>
 </template>

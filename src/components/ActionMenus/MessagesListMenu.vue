@@ -12,7 +12,7 @@
 
     <div class="act_menu_item" @click="openModal('settings')">
       <Icon name="menu/settings" color="var(--icon-gray)" class="act_menu_icon" />
-      <div class="act_menu_data">{{ l('settings') }}</div>
+      <div class="act_menu_data">{{ l('app_settings') }}</div>
     </div>
   </ActionsMenu>
 </template>
