@@ -24,7 +24,7 @@
       </div>
 
       <div class="chat_input_wrap">
-        <img class="attachments_btn icon-hover" src="~assets/attachments_icon.svg">
+        <Icon class="attachments_btn icon-hover" name="attachments_icon" />
 
         <div :class="['chat_input', { hasKeyboard }]">
           <div
@@ -49,10 +49,14 @@
             @click="showKeyboard = !showKeyboard"
           />
 
-          <img class="input_emoji_btn icon-hover" src="~assets/emoji_icon.svg">
+          <Icon class="input_emoji_btn icon-hover" name="emoji_icon" />
         </div>
 
-        <img class="send_btn icon-hover" src="~assets/im_send.svg" @click="send">
+        <Icon
+          class="send_btn icon-hover"
+          name="im_send"
+          @click="send"
+        />
       </div>
 
       <Keyboard v-if="hasKeyboard && showKeyboard" :peer_id="peer_id" :keyboard="keyboard" />
@@ -75,8 +79,8 @@
     </Ripple>
 
     <div v-else class="chat_input_error">
-      <img class="chat_input_error_img" src="~assets/error.svg">
-      <div class="chat_input_error_text">{{ canWrite.text }}</div>
+      <Icon name="error" color="var(--icon-red-light)" width="36" height="36" />
+      {{ canWrite.text }}
     </div>
   </div>
 </template>
@@ -284,6 +288,10 @@ export default {
   background: var(--background-gray-overlight);
 }
 
+.root[theme="dark"] .chat_input_container {
+  background: none;
+}
+
 .chat_input_wrap {
   display: flex;
   flex-direction: row;
@@ -306,6 +314,10 @@ export default {
   background: var(--background);
   border: 1px solid var(--separator-dark);
   border-radius: 20px;
+}
+
+.root[theme="dark"] .chat_input {
+  background: var(--field-background)
 }
 
 .chat_input_area {
@@ -369,17 +381,8 @@ export default {
   transition: background-color .2s;
 }
 
-.chat_input_error.isChannel svg {
+.chat_input_error svg {
   margin-right: 8px;
-}
-
-.chat_input_error_img {
-  width: 36px;
-  height: 36px;
-}
-
-.chat_input_error_text {
-  margin-left: 10px;
 }
 
 .chat_input_reply {

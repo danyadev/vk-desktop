@@ -68,7 +68,7 @@ export default {
 }
 
 .attach_link:not(.-short) {
-  background-color: var(--background);
+  background: var(--background);
   border: 1px solid var(--separator-dark);
   border-radius: 10px;
   overflow: hidden;

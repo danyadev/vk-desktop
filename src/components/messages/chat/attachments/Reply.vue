@@ -155,7 +155,7 @@ export default {
 }
 
 .attach_reply.attach_left_border::before {
-  background: var(--background-blue);
+  background: var(--accent);
 }
 
 .attach_reply_photo {

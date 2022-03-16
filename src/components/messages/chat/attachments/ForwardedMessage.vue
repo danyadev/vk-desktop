@@ -140,7 +140,7 @@ export default {
   height: 2px;
   margin: 8px 4px 0 4px;
   border-radius: 50%;
-  background-color: var(--text-dark-steel-gray);
+  background: var(--text-dark-steel-gray);
 }
 
 .attach_fwd_msg_content {

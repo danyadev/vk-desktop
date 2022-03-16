@@ -5,7 +5,7 @@
     <Scrolly
       ref="scrollyRef"
       class="messages_list_wrap"
-      :vclass="['messages_list', { empty: !hasMessages }]"
+      :vclass="['messages_list', { empty: !hasMessages, isSelectMode }]"
       :lock="lockScroll"
       @scroll="onScroll"
     >
@@ -39,12 +39,12 @@
       @click="scrollToMention"
     >
       <div>{{ peer && peer.mentions.length }}</div>
-      <Icon name="mention" color="var(--icon-dark-gray)" width="24" height="30" />
+      <Icon name="mention" color="var(--icon-gray)" width="20" height="30" />
     </div>
 
     <div :class="['im_scroll_end_btn', { hidden: !showEndBtn }]" @click="scrollToEnd">
       <div>{{ peer && convertCount(peer.unread) || '' }}</div>
-      <img src="~assets/dropdown.webp">
+      <Icon name="dropdown" color="var(--icon-gray)" width="26" height="26" />
     </div>
   </div>
 </template>
@@ -115,7 +115,11 @@ export default {
       messagesWithLoading: computed(() => (
         state.messages.concat(state.loadedDown ? state.loadingMessages : [])
       )),
-      hasMessages: computed(() => !!state.messagesWithLoading.length)
+      hasMessages: computed(() => !!state.messagesWithLoading.length),
+
+      // Нужно только для добавления класса
+      selectedMessages: computed(() => store.state.messages.selectedMessages),
+      isSelectMode: computed(() => !!state.selectedMessages.length)
     });
 
     const intersectionObserver = (() => {
@@ -775,8 +779,8 @@ export default {
   right: 0;
   width: fit-content;
   margin: 0 auto;
-  z-index: 2;
-  background-color: var(--background);
+  z-index: 3;
+  background: var(--background);
   border: solid 1px var(--separator-dark);
   border-radius: 15px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1);
@@ -802,19 +806,14 @@ export default {
   bottom: 30px;
   width: 40px;
   height: 40px;
-  background: var(--background);
+  background: var(--background-accent);
   border: solid 1px var(--separator-dark);
   border-radius: 50%;
   opacity: 1;
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
   transition: background-color .3s, transform .2s, opacity .2s, visibility .2s;
-}
-
-.im_scroll_end_btn img {
-  width: 24px;
-  height: 24px;
 }
 
 .im_scroll_end_btn.hidden,
@@ -829,11 +828,15 @@ export default {
   position: absolute;
   top: -7px;
   right: -3px;
-  background-color: var(--background-blue);
-  color: var(--background-blue-text);
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 20px;
+  line-height: 20px;
+  padding: 0 6px;
   border-radius: 10px;
-  padding: 3px 6px 2px 6px;
+  text-align: center;
+  background: var(--background-blue);
+  color: var(--background-blue-text);
 }
 
 .im_scroll_mention_btn {

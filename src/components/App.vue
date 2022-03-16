@@ -1,10 +1,8 @@
 <template>
-  <div :class="['root', { mac }, settingsClasses]">
+  <div :class="['root', { mac }, settingsClasses]" :theme="dark ? 'dark' : 'light'">
     <Titlebar />
 
     <div class="app">
-      <LeftMenu v-if="!isAuth" />
-
       <RouterView v-slot="{ Component }">
         <KeepAlive>
           <component :is="Component" :key="route.path.split('/')[1]" />
@@ -20,6 +18,7 @@
 </template>
 
 <script>
+import electron from 'electron';
 import { reactive, computed, watch } from 'vue';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
@@ -34,9 +33,9 @@ import * as emoji from 'js/emoji';
 
 import 'css/shared.css';
 import 'css/colors.css';
+import 'css/colors_dark.css';
 
 import Titlebar from './Titlebar.vue';
-import LeftMenu from './menu/LeftMenu.vue';
 import ModalsWrapper from './ModalsWrapper.vue';
 import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
 import SnackbarsWrapper from './SnackbarsWrapper.vue';
@@ -55,7 +54,6 @@ window.emoji = emoji;
 export default {
   components: {
     Titlebar,
-    LeftMenu,
     ModalsWrapper,
     ContextMenuWrapper,
     SnackbarsWrapper,
@@ -67,11 +65,11 @@ export default {
       mac: process.platform === 'darwin',
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
-      isAuth: computed(() => ['/', '/auth'].includes(state.route.path)),
+      dark: computed(() => state.settings.useDarkTheme),
 
-      settings: computed(() => store.state.settings.userSettings[store.state.users.activeUserID]),
+      settings: computed(() => store.getters['settings/settings']),
       settingsClasses: computed(() => {
-        const settingsClasses = ['showAvatarAtBottom', 'useMoreSaturatedColors']
+        const settingsClasses = ['showAvatarsAtBottom', 'useMoreSaturatedColors']
           .map((name) => state.settings && state.settings[name] && `st-${name}`);
 
         return [...settingsClasses, store.state.hasWindowFrame && 'st-useNativeTitlebar'];
@@ -79,6 +77,10 @@ export default {
     });
 
     async function initUser() {
+      electron.remote.nativeTheme.themeSource = state.dark
+        ? 'dark'
+        : 'light';
+
       if (!state.activeUserID) {
         return;
       }

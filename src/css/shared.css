@@ -199,41 +199,20 @@ img:not(.emoji) {
   cursor: pointer;
   opacity: .7;
   transition: opacity .3s;
+  flex-shrink: 0;
+  color: var(--icon-dark-gray);
 }
 
 .icon-hover:hover {
   opacity: 1;
 }
 
-/* Action menu ============================== */
-
-.act_menu_item {
-  display: flex;
-  align-items: center;
-  padding: 9px 12px;
-  cursor: pointer;
-  color: var(--text-primary);
-  transition: background-color .3s;
+.-door_in {
+  margin: 0 2px 0 -2px;
 }
 
-.act_menu_item:hover {
-  background: var(--hover-background-gray);
-}
-
-.act_menu_icon {
-  flex: none;
-  width: 24px;
-  height: 24px;
-  pointer-events: none;
-}
-
-.act_menu_close_icon {
-  padding: 1px 2px 1px 1px;
-}
-
-.act_menu_data {
-  margin-left: 12px;
-  line-height: 18px;
+.-door_out {
+  margin: 0 -2px 0 2px;
 }
 
 /* Transition animations ====================== */

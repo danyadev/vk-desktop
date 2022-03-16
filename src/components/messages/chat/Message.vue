@@ -9,7 +9,6 @@
       fwdOverflow,
       showUserName,
       isLoading: msg.isLoading,
-      isSelectMode,
       isSelected,
 
       isDisappearing: msg.expireTtl,
@@ -125,9 +124,7 @@ export default {
 
       selectedMessages: computed(() => store.state.messages.selectedMessages),
       isSelected: computed(() => state.selectedMessages.includes(props.msg.id)),
-      isSelectMode: computed(() => (
-        !!state.selectedMessages.length
-      )),
+      isSelectMode: computed(() => !!state.selectedMessages.length),
 
       expireIcon: !!props.msg.expireTtl, // Изначально true если сообщение фантомное
       expireHours: false,
@@ -310,11 +307,12 @@ export default {
 <style>
 .message {
   display: flex;
-  background-color: var(--background);
+  background: var(--background);
   user-select: text;
+  --message-current-bubble-background: var(--message-bubble-background);
 }
 
-.message.isSelectMode {
+.messages_list.isSelectMode .message {
   user-select: none;
 }
 
@@ -324,14 +322,15 @@ export default {
 
 .message.out {
   justify-content: flex-end;
+  --message-current-bubble-background: var(--message-out-bubble-background);
 }
 
 .message[active]:not(.hideBubble) .message_bubble {
-  background-color: var(--message-out-bubble-background);
+  background: var(--message-out-bubble-background);
 }
 
 .message[active]:not(.hideBubble).out .message_bubble {
-  background-color: var(--message-bubble-background);
+  background: var(--message-bubble-background);
 }
 
 .message_bubble_pre_wrap {
@@ -357,24 +356,29 @@ export default {
   margin-bottom: 2px;
 }
 
-.message.isSelectMode .message_bubble {
+.messages_list.isSelectMode .message_bubble {
   cursor: pointer;
 }
 
 /* Блокируем все кликабельные элементы во время выделения */
-.message.isSelectMode .message_bubble > * {
+.messages_list.isSelectMode .message_bubble > * {
   pointer-events: none;
 }
 
 .message:not(.hideBubble) .message_bubble {
-  background-color: var(--message-bubble-background);
+  background: var(--message-bubble-background);
   padding: 8px 12px 9px 12px;
   border-radius: 18px;
   word-break: break-word;
 }
 
 .message:not(.hideBubble).out .message_bubble {
-  background-color: var(--message-out-bubble-background);
+  background: var(--message-out-bubble-background);
+}
+
+.message:not(.hideBubble).isSticker .message_bubble {
+  background: none;
+  border: 1px solid var(--separator-dark);
 }
 
 .message.hideBubble.isDisappearing:not(.out) .message_bubble {
@@ -418,8 +422,8 @@ export default {
   display: flex;
   float: right;
   color: var(--text-dark-steel-gray);
-  font-weight: 500;
   font-size: 11px;
+  z-index: 2;
   pointer-events: none;
   user-select: none;
 }
@@ -429,11 +433,19 @@ export default {
   margin: 5px 0 0 6px;
 }
 
+/* Возможные варианты:
+ * 1) :not(flyTime) => обычное сообщение; точно нет стикера
+ * 2) .flyTime:not(.isSticker):not(.hideBubble) => (bubble + photo) padding
+ * 3) .flyTime:not(.isSticker).hideBubble => only photo padding
+ * 4) .flyTime.isSticker:not(.hideBubble) => reply: minimal padding
+ * 5) .flyTime.isSticker.hideBubble => only sticker: no padding
+ */
+
 .message.flyTime .message_time_wrap {
   position: absolute;
   bottom: 0;
   right: 0;
-  background-color: var(--background-alpha);
+  background: var(--background-alpha);
   border-radius: 10px;
   padding: 2px 6px;
   width: fit-content;
@@ -443,22 +455,14 @@ export default {
   line-height: 14px;
 }
 
-.message.isSticker:not(.hideBubble) .message_time_wrap {
+.message.flyTime.isSticker:not(.hideBubble) .message_time_wrap {
   right: 4px;
   bottom: 4px;
 }
 
-.message.flyTime.hideBubble:not(.isSticker) .message_time_wrap {
+.message.flyTime:not(.isSticker).hideBubble .message_time_wrap {
   right: 5px;
   bottom: 5px;
-}
-
-.message.isSticker:not(.hideBubble).out .message_time_wrap {
-  background-color: var(--message-out-bubble-background-alpha);
-}
-
-.message.isSticker:not(.hideBubble):not(.out) .message_time_wrap {
-  background-color: var(--message-bubble-background-alpha);
 }
 
 .message_edited {
@@ -470,7 +474,7 @@ export default {
   height: 2px;
   margin: 6px 3px 0 3px;
   border-radius: 50%;
-  background-color: var(--text-dark-steel-gray);
+  background: var(--text-dark-steel-gray);
 }
 
 /* Unread dot ========================================== */
@@ -482,7 +486,7 @@ export default {
   height: 8px;
   bottom: 12px;
   border-radius: 50%;
-  background-color: var(--background-blue-overlight);
+  background: var(--background-blue-overlight);
 
   --offset: calc(-16px - var(--unread-offset));
 }
@@ -528,7 +532,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, .12);
+  background: var(--message-selected-overlay);
   border-radius: 18px;
   top: 0;
   left: 0;

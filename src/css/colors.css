@@ -1,15 +1,16 @@
 .root {
   --background: #fff;
+  --background-accent: var(--background);
   /* Используется для времени у стикеров в сообщении */
   --background-alpha: #ffffffdf;
   --background-blue: #5181b8;
   /* Используется для точки, которая означает, что сообщение еще не прочитано */
-  --background-blue-overlight: #92b2d6;
+  --background-blue-overlight: #7aa0cd;
   --background-blue-text: #fff;
   --background-blue-ripple: #00000026;
+  --background-steel-gray: #9099a3;
   --background-light-steel-gray: #aeb7c2;
   --background-medium-steel-gray: #99a2ad;
-  --background-steel-gray: #9099a3;
   /* Используется для окраски фона поля для ввода текста (deprecated) */
   --background-gray-overlight: #fbfbfb;
   --background-black-alpha: rgba(0, 0, 0, .08);
@@ -29,10 +30,16 @@
   --red-light: #e64646;
   --red-dark: #d92c3a;
   --green: #4bb34b;
+
   --separator: #e7e8ec;
   --separator-dark: #d7d8d9;
 
-  --titlebar-background: #f5f5f5;
+  --icon-gray: #99a2ad;
+  --icon-dark-gray: #828a99;
+  --icon-blue: #3f8ae0;
+  --icon-dark-blue: #648fc1;
+  --icon-red: var(--red-light);
+  --icon-red-light: #fc3d39;
 
   --button-light-background: #e5ebf1;
   --button-light-color: #55677d;
@@ -42,14 +49,17 @@
   --field-placeholder: #818c99;
   --field-border: #0000001f;
 
-  --icon-gray: #99a2ad;
-  --icon-dark-gray: #828a99;
-  --icon-blue: #3f8ae0;
-  --icon-dark-blue: #648fc1;
+  --search-input-background: #f0f2f5;
+  --search-input-placeholder: var(--text-steel-gray);
+
+  --titlebar-background: #f5f5f5;
+
+  --scrolly-background: rgba(0, 0, 0, .3);
+  --scrolly-hover-background: rgba(0, 0, 0, .4);
 
   --hover-background: #edf2f8;
   --hover-background-ripple: #e1ebf4;
-  --hover-background-gray: #ebedf0;
+  --hover-background-gray: #aeb7c22f;
 
   --messages-peer-active: #f0f1f2;
   --messages-peer-hover: #f8f8f8;
@@ -58,8 +68,15 @@
   --message-bubble-background-alpha: #dfe6eadf;
   --message-out-bubble-background: #c7dff9;
   --message-out-bubble-background-alpha: #c7dff9df;
+  --message-selected-overlay: rgba(0, 0, 0, .08);
+  /* --message-current-bubble-background внутри .message */
 
   --attach-left-border: #7197c5;
+
+  --keyboard-button-default: #004a961f;
+  --keyboard-button-primary: #5181b8;
+  --keyboard-button-positive: #4bb34b;
+  --keyboard-button-negative: #e64646;
 }
 
 .root.st-useMoreSaturatedColors {

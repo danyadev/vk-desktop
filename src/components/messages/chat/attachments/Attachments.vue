@@ -131,7 +131,7 @@ export default {
 
 .attach_title {
   font-size: 13px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   color: var(--text-dark-steel-gray);
 }
 

@@ -5,7 +5,7 @@
     :data-peer-id="peer.id"
     @click="openChat"
   >
-    <div :class="['im_peer_photo', online]">
+    <div :class="['im_peer_photo', online, photo.startsWith('assets') && 'local']">
       <img :src="photo" loading="lazy" width="50" height="50">
     </div>
 
@@ -69,7 +69,7 @@
         </div>
 
         <div v-if="peer.mentions.length" class="im_peer_mentioned">
-          <Icon name="mention" color="var(--background-blue-text)" width="20" height="18" />
+          <Icon name="mention" color="var(--background-blue-text)" />
         </div>
 
         <div
@@ -231,9 +231,12 @@ export default {
   margin: 8px 10px 8px 8px;
 }
 
-.im_peer_photo,
 .im_peer_photo img {
   border-radius: 50%;
+}
+
+.im_peer_photo.local img {
+  background: white;
 }
 
 .im_peer_photo.mobile::after,
@@ -379,18 +382,18 @@ export default {
 }
 
 .im_peer_unread:not(:empty) {
-  padding: 1px 6px 0 6px;
-  margin: 1px 0 0 6px;
-  border-radius: 10px;
+  flex: none;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 20px;
+  height: 20px;
+  line-height: 20px;
+  margin: 2px 0 0 6px;
+  padding: 0 6px;
+  border-radius: 12px;
+  text-align: center;
   background: var(--background-blue);
   color: var(--background-blue-text);
-  font-size: 12px;
-  line-height: 18px;
-  height: 19px;
-}
-
-.mac .im_peer_unread:not(:empty) {
-  margin-top: 2px;
 }
 
 .im_peer_unread:not(.outread).muted {
@@ -399,16 +402,19 @@ export default {
 
 .im_peer_unread.outread {
   flex: none;
-  margin: 7px 4px 0 6px;
+  margin: 9px 2px 0 8px;
   width: 8px;
   height: 8px;
   border-radius: 10px;
-  background: var(--background-blue-overlight);
+  background: var(--accent);
 }
 
 .im_peer_mentioned {
   position: relative;
-  bottom: -1px;
+  flex: none;
+  bottom: -2px;
+  text-align: center;
+  width: 20px;
   margin: 0 2px 0 6px;
   border-radius: 10px;
   background: var(--background-blue);

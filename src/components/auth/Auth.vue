@@ -2,7 +2,7 @@
   <Icon
     v-if="onlyAddUser"
     name="cancel"
-    color="var(--icon-gray)"
+    color="var(--icon-dark-gray)"
     class="auth_cancel"
     @click="$router.back()"
   />
@@ -63,11 +63,12 @@ export default {
   position: absolute;
   right: 20px;
   top: 20px;
-  transition: color .2s;
+  opacity: .75;
+  transition: opacity .2s;
   cursor: pointer;
 }
 
 .auth_cancel:hover {
-  color: var(--icon-dark-gray);
+  opacity: 1;
 }
 </style>

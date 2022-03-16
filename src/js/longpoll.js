@@ -153,7 +153,7 @@ class Longpoll {
     for (const rawEvent of history) {
       const shouldLogEvent = Array.isArray(this.debug)
         ? this.debug.includes(rawEvent[0])
-        : this.debug && !IGNORED_DEBUG_EVENTS.includes(rawEvent[0])
+        : this.debug && !IGNORED_DEBUG_EVENTS.includes(rawEvent[0]);
       if (shouldLogEvent) {
         console.log('[lp]', rawEvent.slice());
       }

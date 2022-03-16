@@ -70,7 +70,7 @@ export default {
   top: 5px;
 }
 
-.st-showAvatarAtBottom .message_photo {
+.st-showAvatarsAtBottom .message_photo {
   top: calc(100% - 10px - 5px);
 }
 

@@ -14,7 +14,6 @@ export default {
   delete: 'Удалить',
   search: 'Поиск',
   add_account: 'Добавить аккаунт',
-  delete_account: 'Удалить аккаунт',
   logout_account: 'Выйти из аккаунта',
   show_in_full: 'Показать полностью...',
   download: 'Скачать',
@@ -22,6 +21,7 @@ export default {
   listen: 'Слушать',
   spam: 'Спам',
   later: 'Позже',
+  app_settings: 'Настройки приложения',
 
   // ----- Окно с ошибкой JS
   error_dialog_message: 'В ходе работы приложения произошла ошибка.',
@@ -80,7 +80,7 @@ export default {
   im_messages_disappeared: 'Сообщения исчезли',
   im_messages_expired: ['{0} сообщение исчезло', '{0} сообщения исчезло', '{0} сообщений исчезло'],
   im_messages_count: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
-  keyboard_button_not_supported: 'Клавиша не поддерживается',
+  keyboard_button_not_supported: 'Не поддерживается',
 
   // im_search_dialogs: 'Диалоги',
   // im_search_placeholder: 'Здесь будут видны найденные беседы и сообщения',
@@ -276,9 +276,6 @@ export default {
     '{0} исключили из беседы'
   ],
 
-  // ----- Аудиозаписи
-  audios_not_implemented: 'Данный раздел не реализован.',
-
   // ----- Модалки
   ml_blocked_account_title: [
     'Сессия недействительна',
@@ -309,8 +306,8 @@ export default {
   ml_error_api: 'При вызове метода {0} произошла ошибка со стороны API. Подождите немного и повторите вызов.',
   ml_error_cancel_warn: 'Отмена вызова метода может поломать работу приложения.',
 
-  ml_logout_header: 'Выход из аккаунта',
-  ml_logout_sure: 'Вы действительно хотите выйти из аккаунта?',
+  ml_delete_account_header: 'Удаление аккаунта',
+  ml_delete_account_sure: 'Вы действительно хотите удалить аккаунт?',
 
   ml_mark_as_spam_header: 'Пометить как спам',
   ml_mark_as_spam_text: 'Вы действительно хотите пометить как спам и удалить {0}?',
@@ -330,6 +327,7 @@ export default {
     use_more_saturated_colors: 'Использовать более насыщенные цвета',
     use_native_emoji: 'Использовать системные эмодзи',
     use_native_titlebar: 'Использовать системный тайтлбар',
+    use_dark_theme: 'Использовать тёмную тему',
 
     show_object_ids: 'Отображать id бесед и сообщений в контекстном меню'
   }

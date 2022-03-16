@@ -20,7 +20,7 @@ export default {
     const settings = computed(() => store.getters['settings/settings']);
 
     function toggle(name) {
-      store.commit('settings/updateUserSettings', {
+      store.commit('settings/updateCommonSettings', {
         [name]: !settings.value[name]
       });
     }

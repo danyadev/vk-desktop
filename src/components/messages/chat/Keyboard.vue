@@ -19,13 +19,13 @@
         </div>
 
         <template v-else-if="action.type === 'open_app'">
-          <img class="keyboard_services_icon" src="~assets/services.svg">
+          <Icon class="keyboard_services_icon" name="services" />
           <div class="keyboard_service_key"><VKText>{{ action.label }}</VKText></div>
         </template>
 
         <template v-else-if="action.type === 'vkpay'">
           <div>{{ l('im_keyboard_pay_with') }}</div>
-          <img src="~assets/vk_pay.svg">
+          <Icon name="vk_pay" />
         </template>
 
         <div v-else-if="action.type === 'open_link'" class="keyboard_service_key">
@@ -253,24 +253,25 @@ export default {
 
 .keyboard_button.default,
 .keyboard_button.secondary {
-  background: #004a961f;
+  background: var(--keyboard-button-default);
   color: var(--button-light-color);
 }
 
 .keyboard_button.primary {
-  background: #5181b8;
+  background: var(--keyboard-button-primary);
 }
 
 .keyboard_button.positive {
-  background: #4bb34b;
+  background: var(--keyboard-button-positive);
 }
 
 .keyboard_button.negative {
-  background: #e64646;
+  background: var(--keyboard-button-negative);
 }
 
-.keyboard_button > img:not(.emoji) {
-  height: 24px;
+.keyboard_button > svg {
+  flex: none;
+  color: var(--icon-blue);
 }
 
 .keyboard_service_key {

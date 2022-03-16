@@ -78,7 +78,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: 100%;
-  /* - 40px вместо margin 20px 0  */
+  /* - 40px вместо margin: 20px 0  */
   height: calc(100% - 40px);
   margin: 0 20px;
   max-width: 700px;
@@ -87,7 +87,7 @@ export default {
 .settings {
   width: 100%;
   height: 100%;
-  background: var(--background);
+  background: var(--background-accent);
   border-radius: 10px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, .25);
 }
@@ -136,6 +136,9 @@ export default {
   height: 36px;
   border-radius: 8px;
   margin-bottom: 5px;
+}
+
+.settings_left_item:not(.active) {
   transition: background-color .3s;
 }
 
@@ -160,9 +163,14 @@ export default {
 }
 
 @media screen and (max-width: 650px) {
-  .settings_wrap, .settings {
+  .settings_wrap {
     margin: 0;
     height: 100%;
+  }
+
+  .settings {
+    border-radius: 0;
+    box-sizing: unset;
   }
 
   .settings_left_item svg {

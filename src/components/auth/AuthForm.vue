@@ -1,5 +1,10 @@
 <template>
-  <div class="auth" @keydown.enter="auth">
+  <div
+    class="auth"
+    tabindex="-1"
+    @keydown.enter="auth"
+    @keydown.esc="onlyAddUser && $router.back()"
+  >
     <img src="~assets/logo.webp" class="auth_logo">
     <div class="auth_name">{{ l('vk_desktop') }}</div>
     <input
@@ -18,10 +23,9 @@
         :placeholder="l('enter_password')"
         spellcheck="false"
       >
-      <div
-        :class="['auth_password_switch', { hidden: hidePassword }]"
-        @click="hidePassword = !hidePassword"
-      />
+      <div class="auth_password_switch" @click="hidePassword = !hidePassword">
+        <Icon :name="hidePassword ? 'hide' : 'show'" color="var(--icon-dark-gray)" />
+      </div>
     </div>
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>
 
@@ -32,11 +36,12 @@
         class="auth_user"
         @click="setAccount(user.id)"
       >
-        <img
-          :src="getPhoto(user)"
-          data-context-menu="account"
-          :data-id="user.id"
-        >
+        <Icon
+          name="dismiss"
+          color="var(--background-medium-steel-gray)"
+          @click.stop="openModal('delete-account', { id: user.id })"
+        />
+        <img :src="getPhoto(user)">
         {{ user.first_name }}
       </div>
     </div>
@@ -44,7 +49,7 @@
 </template>
 
 <script>
-import { reactive, computed, toRefs, onMounted } from 'vue';
+import { reactive, computed, toRefs, onActivated } from 'vue';
 import { getPhoto } from 'js/utils';
 import { openModal } from 'js/modals';
 import { addSnackbar } from 'js/snackbars';
@@ -53,13 +58,15 @@ import getTranslate from 'js/getTranslate';
 import { getAndroidToken } from '.';
 
 import Button from '../UI/Button.vue';
+import Icon from '../UI/Icon.vue';
 
 export default {
   props: ['onlyAddUser'],
   emits: ['confirm', 'auth'],
 
   components: {
-    Button
+    Button,
+    Icon
   },
 
   setup(props, { emit }) {
@@ -75,7 +82,7 @@ export default {
       canAuth: computed(() => !state.loading && state.login && state.password)
     });
 
-    onMounted(() => {
+    onActivated(() => {
       state.input.focus();
     });
 
@@ -125,6 +132,7 @@ export default {
     return {
       ...toRefs(state),
 
+      openModal,
       setAccount,
       getPhoto,
       auth
@@ -149,8 +157,8 @@ export default {
 }
 
 .auth_logo {
-  width: 125px;
-  height: 125px;
+  width: 128px;
+  height: 128px;
 }
 
 .auth_name {
@@ -170,20 +178,14 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+  padding: 6px;
   cursor: pointer;
   opacity: .8;
-  width: 36px;
-  height: 36px;
-  background: url('~assets/show.svg') 50% no-repeat;
   transition: opacity .3s;
 }
 
 .auth_password_switch:hover {
   opacity: 1;
-}
-
-.auth_password_switch.hidden {
-  background-image: url('~assets/hide.svg');
 }
 
 .auth_button {
@@ -202,6 +204,7 @@ export default {
 }
 
 .auth_user {
+  position: relative;
   border-radius: 10px;
 }
 
@@ -212,5 +215,17 @@ export default {
   height: 50px;
   margin-bottom: 4px;
   cursor: pointer;
+}
+
+.auth_user svg {
+  position: absolute;
+  cursor: pointer;
+  top: -2px;
+  left: 35px;
+  width: 16px;
+  height: 16px;
+  box-sizing: content-box;
+  border: 2px solid var(--background);
+  border-radius: 50%;
 }
 </style>

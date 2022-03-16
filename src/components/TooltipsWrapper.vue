@@ -1,6 +1,6 @@
 <template>
   <Transition name="fade-out">
-    <div v-if="text">
+    <div v-if="text" class="tooltip">
       <div class="tooltip_arrow" :style="arrowPosition"></div>
       <div ref="tooltip" class="tooltip_text" :style="textPosition">{{ text }}</div>
     </div>
@@ -72,6 +72,10 @@ export default {
 </script>
 
 <style>
+.tooltip {
+  z-index: 3;
+}
+
 .tooltip_text {
   position: absolute;
   margin-top: 8px;

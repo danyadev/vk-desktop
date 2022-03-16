@@ -102,7 +102,9 @@ export async function loadUser(android_token, onlyAddUser) {
     android_token
   });
 
-  store.commit('settings/setDefaultSettings', user.id);
+  if (!store.state.settings.userSettings[user.id]) {
+    store.commit('settings/setDefaultUserSettings', user.id);
+  }
 
   if (onlyAddUser) {
     router.back();

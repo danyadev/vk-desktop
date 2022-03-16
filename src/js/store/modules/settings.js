@@ -15,21 +15,31 @@ export default {
       state.window = bounds;
     },
 
-    setDefaultSettings(state, id) {
+    setDefaultUserSettings(state, id) {
       state.userSettings[id] = defaultUserSettings;
     },
 
-    updateUserSettings(state, settings) {
+    updateUserSettings(state, userSettings) {
       state.userSettings[this.state.users.activeUserID] = {
-        ...this.getters['settings/settings'],
-        ...settings
+        ...state.userSettings[this.state.users.activeUserID],
+        ...userSettings
+      };
+    },
+
+    updateCommonSettings(state, commonSettings) {
+      state.commonSettings = {
+        ...state.commonSettings,
+        ...commonSettings
       };
     }
   },
 
   getters: {
     settings(state, getters, { users }) {
-      return state.userSettings[users.activeUserID];
+      return {
+        ...state.userSettings[users.activeUserID],
+        ...state.commonSettings
+      };
     },
 
     lang({ langName }) {

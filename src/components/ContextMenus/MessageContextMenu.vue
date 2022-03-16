@@ -1,31 +1,31 @@
 <template>
   <ContextMenu :event="event">
     <div v-if="settings.showObjectIds" class="act_menu_item" @click="copyMsgId">
-      <Icon name="bug" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="bug" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_message_id') }}: {{ id }}</div>
     </div>
 
     <div v-if="peer.isWriteAllowed && !hasCallAttach" class="act_menu_item" @click="reply">
-      <Icon name="reply" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="reply" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_reply_msg') }}</div>
     </div>
 
     <div v-if="!hasCallAttach && !peer.isCasperChat" class="act_menu_item" @click="forward">
-      <Icon name="forward" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="forward" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_forward_message') }}</div>
     </div>
 
     <div v-if="peer.id > 2e9 && peer.acl.can_change_pin" class="act_menu_item" @click="togglePin">
       <Icon
         :name="isPinnedMessage ? 'unpin' : 'pin'"
-        color="var(--icon-dark-gray)"
+        color="var(--icon-blue)"
         class="act_menu_icon"
       />
       <div class="act_menu_data">{{ l('im_toggle_msg_pin', isPinnedMessage) }}</div>
     </div>
 
     <div v-if="msg && msg.id > peer.in_read" class="act_menu_item" @click="markAsRead">
-      <Icon name="show" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="show" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
 
@@ -34,12 +34,12 @@
       class="act_menu_item"
       @click="deleteMessages([msg.id], peer)"
     >
-      <Icon name="trash" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="trash" color="var(--icon-red)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_delete_msg') }}</div>
     </div>
 
     <div class="act_menu_item" @click="markAsSpam">
-      <Icon name="restrict" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="restrict" color="var(--icon-red)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_mark_msg_as_spam') }}</div>
     </div>
   </ContextMenu>

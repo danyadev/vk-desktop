@@ -1,10 +1,12 @@
 <template>
   <div class="attach_doc">
     <div class="attach_doc_icon">
-      <img src="~assets/document.svg">
+      <Icon name="document" color="var(--message-current-bubble-background)" />
     </div>
     <div class="attach_doc_info">
-      <div class="attach_doc_name link" @click="openInBrowser">{{ attach.title }}</div>
+      <div class="attach_doc_name link text-overflow" @click="openInBrowser">
+        {{ attach.title }}
+      </div>
       <div class="attach_doc_type">
         {{ size }}
         <div class="attach_doc_dot"></div>
@@ -22,8 +24,14 @@ import electron from 'electron';
 import request from 'js/request';
 import { downloadFile } from 'js/utils';
 
+import Icon from '../../../UI/Icon.vue';
+
 export default {
   props: ['attach'],
+
+  components: {
+    Icon
+  },
 
   setup(props) {
     const state = reactive({
@@ -97,11 +105,13 @@ export default {
 }
 
 .attach_doc_info {
+  width: calc(100% - 36px - 6px);
   font-size: 13px;
   padding-top: 3px;
 }
 
 .attach_doc_name {
+  display: block !important;
   font-weight: 500;
 }
 
@@ -114,8 +124,8 @@ export default {
 .attach_doc_dot {
   width: 2px;
   height: 2px;
-  margin: 6px 4px 0 4px;
+  margin: 7px 4px 0 4px;
   border-radius: 50%;
-  background-color: var(--text-dark-steel-gray);
+  background: var(--text-dark-steel-gray);
 }
 </style>

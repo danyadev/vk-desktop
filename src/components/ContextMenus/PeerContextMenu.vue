@@ -1,7 +1,7 @@
 <template>
   <ContextMenu :event="event">
     <div v-if="settings.showObjectIds" class="act_menu_item" @click="copyPeerId">
-      <Icon name="bug" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="bug" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_peer_id') }}: {{ peerId }}</div>
     </div>
 
@@ -12,42 +12,38 @@
     >
       <Icon
         :name="isPinnedPeer ? 'unpin' : 'pin'"
-        color="var(--icon-dark-gray)"
+        color="var(--icon-blue)"
         class="act_menu_icon"
       />
       <div class="act_menu_data">{{ l('im_toggle_pin_peer', isPinnedPeer) }}</div>
     </div>
 
     <div v-if="peer.unread" class="act_menu_item" @click="markAsRead">
-      <img src="assets/show.svg" class="act_menu_icon">
+      <Icon name="show" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
 
     <div class="act_menu_item" @click="toggleNotifications">
       <Icon
         :name="peer.muted ? 'volume_active' : 'volume_muted'"
-        color="var(--icon-dark-gray)"
+        color="var(--icon-blue)"
         class="act_menu_icon"
       />
       <div class="act_menu_data">{{ l('im_toggle_notifications', !peer.muted) }}</div>
     </div>
 
     <div v-if="!peer.isChannel" class="act_menu_item" @click="clearHistory">
-      <Icon name="trash" color="var(--icon-dark-gray)" class="act_menu_icon" />
+      <Icon name="trash" color="var(--icon-red)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_clear_history') }}</div>
     </div>
 
     <div v-if="peerId > 2e9" class="act_menu_item" @click="leftFromChat">
       <template v-if="peer.left">
-        <Icon name="forward" color="var(--icon-dark-gray)" class="act_menu_icon" />
+        <Icon name="door_in" color="var(--icon-blue)" class="act_menu_icon -door_in" />
         <div class="act_menu_data">{{ l('im_toggle_left_state', peer.isChannel ? 3 : 2) }}</div>
       </template>
       <template v-else>
-        <Icon
-          name="close"
-          color="var(--icon-dark-gray)"
-          class="act_menu_icon act_menu_close_icon"
-        />
+        <Icon name="door_out" color="var(--icon-red)" class="act_menu_icon -door_out" />
         <div class="act_menu_data">{{ l('im_toggle_left_state', peer.isChannel ? 1 : 0) }}</div>
       </template>
     </div>

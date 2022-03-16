@@ -64,11 +64,7 @@ export default {
   display: flex;
 }
 
-@media screen and (max-width: 719px) {
-  .menu.left {
-    display: none !important;
-  }
-
+@media screen and (max-width: 699px) {
   .im_peers_container {
     width: 100%;
     border-right: none;
@@ -81,24 +77,13 @@ export default {
   .messages_container.hasChat .im_header_back { display: block }
 }
 
-@media screen and (min-width: 720px) and (max-width: 850px) {
+@media screen and (min-width: 700px) and (max-width: 850px) {
   .im_peers_container { width: 44% }
   .messages_container > .im_chat_container { width: 56% }
 }
 
 @media screen and (min-width: 851px) {
-  /* 790px = 850px - 60px (ширина левого меню) */
-  .im_peers_container { width: calc(790px * .44) }
-  .messages_container > .im_chat_container { width: calc(100% - 790px * .44) }
-}
-
-@media screen and (min-width: 720px) {
-  .menu.bottom {
-    display: none;
-  }
-
-  .im_peers_container .account_manager {
-    display: none;
-  }
+  .im_peers_container { width: calc(850px * .44) }
+  .messages_container > .im_chat_container { width: calc(100% - 850px * .44) }
 }
 </style>

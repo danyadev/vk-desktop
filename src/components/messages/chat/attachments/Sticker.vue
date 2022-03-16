@@ -26,6 +26,7 @@
 <script>
 import {
   reactive,
+  computed,
   toRefs,
   inject,
   onMounted,
@@ -45,14 +46,22 @@ export default {
 
     // eslint-disable-next-line vue/no-setup-props-destructure
     const [sticker] = props.attach;
-    const image = sticker.images[devicePixelRatio > 1 ? 2 : 1].url;
     const { animation_url } = sticker;
 
     const state = reactive({
       transparent: null,
       container: null,
+
       isAnimation: !!animation_url,
-      isAnimationLoaded: false
+      isAnimationLoaded: false,
+
+      image: computed(() => {
+        const imagesKey = store.getters['settings/settings'].useDarkTheme
+          ? 'images_with_background'
+          : 'images';
+
+        return sticker[imagesKey][devicePixelRatio > 1 ? 2 : 1].url;
+      })
     });
 
     let animation;
@@ -162,8 +171,6 @@ export default {
 
     return {
       ...toRefs(state),
-
-      image,
       onMouseOver
     };
   }
