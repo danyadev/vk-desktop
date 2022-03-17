@@ -319,6 +319,7 @@ export default {
   ml_settings_header: 'Настройки',
   ml_settings_sections: {
     interface: 'Интерфейс',
+    notifications: 'Уведомления',
     developers: 'Для разработчиков'
   },
   ml_settings_options: {
@@ -328,6 +329,9 @@ export default {
     use_native_emoji: 'Использовать системные эмодзи',
     use_native_titlebar: 'Использовать системный тайтлбар',
     use_dark_theme: 'Использовать тёмную тему',
+
+    show_unread_count_badge: 'Показывать счетчик непрочитанных бесед в иконке приложения',
+    count_only_unmuted_chats: 'Не считать замьюченные беседы',
 
     show_object_ids: 'Отображать id бесед и сообщений в контекстном меню'
   }

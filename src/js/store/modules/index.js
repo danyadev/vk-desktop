@@ -1,19 +1,24 @@
+import electron from 'electron';
 import { mainSettingsStorage } from '../Storage';
 
 export default {
   state: {
-    menuCounters: {},
+    counters: {}, // { unread, unreadUnmuted }
     profiles: {},
     hasWindowFrame: mainSettingsStorage.data.useNativeTitlebar
   },
 
   mutations: {
-    setMenuCounters(state, counters) {
-      state.menuCounters = counters;
+    setCounters(state, counters) {
+      state.counters = counters;
     },
 
-    updateMenuCounters(state, { name, value }) {
-      state.menuCounters[name] = value;
+    updateCounters(state, newCounters) {
+      state.counters = {
+        ...state.counters,
+        ...newCounters
+      };
+      this.dispatch('setBadgeCount');
     },
 
     addProfiles(state, profiles) {
@@ -35,6 +40,19 @@ export default {
         ...old,
         ...profile
       };
+    }
+  },
+
+  actions: {
+    setBadgeCount({ state, getters }) {
+      const settings = getters['settings/settings'];
+      const badgeCount = settings.showUnreadCountBadge
+        ? settings.countOnlyUnmutedChats
+          ? state.counters.unreadUnmuted
+          : state.counters.unread
+        : 0;
+
+      electron.remote.app.setBadgeCount(badgeCount);
     }
   }
 };

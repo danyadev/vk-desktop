@@ -18,7 +18,7 @@ electron.ipcRenderer.on('menu:preferences', () => {
   } else {
     openModal('settings');
   }
-})
+});
 
 const app = createApp(App);
 

@@ -90,6 +90,9 @@ export const settingsStorage = new RendererStorage({
       useNativeEmoji: false,
       useDarkTheme: false,
 
+      showUnreadCountBadge: true,
+      countOnlyUnmutedChats: false,
+
       showObjectIds: false
     }
   },

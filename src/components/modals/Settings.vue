@@ -45,6 +45,7 @@ import Icon from '../UI/Icon.vue';
 import Ripple from '../UI/Ripple.vue';
 
 import Interface from './settingsSections/Interface.vue';
+import Notifications from './settingsSections/Notifications.vue';
 import Developers from './settingsSections/Developers.vue';
 
 export default {
@@ -53,6 +54,7 @@ export default {
     Ripple,
 
     Interface,
+    Notifications,
     Developers
   },
 
@@ -64,6 +66,7 @@ export default {
       activeSection,
       sections: [
         { name: 'interface', icon: 'palette' },
+        { name: 'notifications', icon: 'notification' },
         { name: 'developers', icon: 'bug' }
       ]
     };
@@ -158,7 +161,7 @@ export default {
 }
 
 .settings_right_panel {
-  padding: 14px 32px;
+  padding: 14px 28px;
   width: 100%;
 }
 
@@ -191,6 +194,15 @@ export default {
 
 .settings_line.clickable {
   cursor: pointer;
+}
+
+.settings_line.nested {
+  margin-left: 25px;
+}
+
+.settings_line.disabled {
+  pointer-events: none;
+  opacity: .5;
 }
 
 .settings_line .checkbox {

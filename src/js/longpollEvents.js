@@ -978,13 +978,18 @@ export default {
 
   80: {
     // Изменение количества непрочитанных диалогов
-    // [count, count_with_notifications, 0, 0]
-    // count_with_notifications: кол-во непрочитанных диалогов, в которых включены уведомления
-    handler([count]) {
-      store.commit('updateMenuCounters', {
-        name: 'messages',
-        value: count
+    handler([
+      unreadCount,
+      unreadUnmutedCount,
+      ,,,,
+      archiveUnreadCount,
+      archiveUnreadUnmutedCount
+    ]) {
+      store.commit('updateCounters', {
+        unread: unreadCount + archiveUnreadCount,
+        unreadUnmuted: unreadUnmutedCount + archiveUnreadUnmutedCount
       });
+      store.dispatch('setBadgeCount');
     }
   },
 

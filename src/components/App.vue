@@ -76,16 +76,18 @@ export default {
       })
     });
 
-    async function initUser() {
-      electron.remote.nativeTheme.themeSource = state.dark
-        ? 'dark'
-        : 'light';
+    electron.remote.nativeTheme.themeSource = state.dark
+      ? 'dark'
+      : 'light';
 
+    async function initUser() {
       if (!state.activeUserID) {
         return;
       }
 
       router.replace('/messages');
+
+      electron.remote.app.setBadgeCount(0);
 
       const {
         user,
@@ -101,8 +103,13 @@ export default {
         fields
       });
 
+      store.commit('setCounters', {
+        unread: counters.messages || 0,
+        unreadUnmuted: counters.messages_unread_unmuted
+      });
+      store.dispatch('setBadgeCount');
+
       store.commit('users/updateUser', user);
-      store.commit('setMenuCounters', counters);
       store.commit('addProfiles', concatProfiles(profiles, groups));
 
       for (const { peer, msg } of pinnedPeers) {
