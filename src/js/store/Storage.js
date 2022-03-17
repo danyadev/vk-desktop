@@ -61,7 +61,7 @@ class MainStorage {
 export const defaultUserSettings = {
   hiddenPinnedMessages: {},
   typing: true,
-  notRead: true,
+  notRead: false,
   deleteForAll: false
 };
 
