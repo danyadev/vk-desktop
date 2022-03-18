@@ -30,7 +30,7 @@
     "copy-webpack-plugin": "10.2.4",
     "css-loader": "6.7.1",
     "electron": "11.5.0",
-    "electron-builder": "22.14.13",
+    "electron-builder": "23.0.2",
     "eslint": "8.11.0",
     "eslint-import-resolver-webpack": "0.13.2",
     "eslint-plugin-import": "2.25.4",
