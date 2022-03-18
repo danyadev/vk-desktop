@@ -1,4 +1,3 @@
-import electron from 'electron';
 import { mainSettingsStorage } from '../Storage';
 
 export default {
@@ -55,7 +54,7 @@ export default {
           : state.counters.unread
         : 0;
 
-      electron.remote.app.setBadgeCount(badgeCount);
+      navigator.setAppBadge(badgeCount);
     }
   }
 };

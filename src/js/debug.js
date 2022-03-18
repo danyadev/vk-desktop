@@ -1,13 +1,12 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import electron from 'electron';
+import remoteElectron from '@electron/remote';
 import request from './request';
 import store from './store';
 import getTranslate from './getTranslate';
 import { format } from 'js/date/utils';
 
-const { app, dialog } = electron.remote;
 const appName = 'vk-desktop';
 const logsPath = getLibraryDefaultDir();
 
@@ -56,7 +55,7 @@ export async function showError(error) {
 
   debug(`[${type}] ${message}`);
 
-  const { response } = await dialog.showMessageBox({
+  const { response } = await remoteElectron.dialog.showMessageBox({
     type: 'error',
     title: type,
     message: getTranslate('error_dialog_message'),
@@ -103,5 +102,5 @@ function getLibraryDefaultDir() {
 }
 
 function getUserData() {
-  return path.join(app.getPath('appData'), appName);
+  return path.join(remoteElectron.app.getPath('appData'), appName);
 }

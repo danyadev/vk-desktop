@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import electron from 'electron';
+import remoteElectron from '@electron/remote';
 import { computed } from 'vue';
 import store from 'js/store';
 import { openModal } from 'js/modals';
@@ -64,7 +64,7 @@ export default {
     function toggleDarkTheme() {
       toggle('useDarkTheme');
 
-      electron.remote.nativeTheme.themeSource = settings.value.useDarkTheme
+      remoteElectron.nativeTheme.themeSource = settings.value.useDarkTheme
         ? 'dark'
         : 'light';
     }

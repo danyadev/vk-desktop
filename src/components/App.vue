@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import electron from 'electron';
+import remoteElectron from '@electron/remote';
 import { reactive, computed, watch } from 'vue';
 import { fields, concatProfiles } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
@@ -76,7 +76,7 @@ export default {
       })
     });
 
-    electron.remote.nativeTheme.themeSource = state.dark
+    remoteElectron.nativeTheme.themeSource = state.dark
       ? 'dark'
       : 'light';
 

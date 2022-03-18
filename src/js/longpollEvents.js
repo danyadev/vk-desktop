@@ -1,4 +1,3 @@
-import electron from 'electron';
 import { nextTick } from 'vue';
 import { timer, eventBus } from './utils';
 import {
@@ -739,7 +738,7 @@ export default {
     // Сброс флагов беседы
     // [peer_id, flags]
     handler([peer_id, flags]) {
-      if (!electron.remote.app.isPackaged) {
+      if (DEV_MODE) {
         const flagsList = getAllFlags(flags, conversationFlagsMap).join(', ');
         console.log('[lp flag-]', peer_id, flagsList);
       }
@@ -750,7 +749,7 @@ export default {
     // Установка флагов беседы
     // [peer_id, flags]
     handler([peer_id, flags]) {
-      if (!electron.remote.app.isPackaged) {
+      if (DEV_MODE) {
         const flagsList = getAllFlags(flags, conversationFlagsMap).join(', ');
         console.log('[lp flag+]', peer_id, flagsList);
       }

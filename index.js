@@ -6,6 +6,8 @@ const fs = require('fs');
 const path = require('path');
 const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
 
+require('@electron/remote/main').initialize();
+
 const vkdPath = path.join(app.getPath('appData'), 'vk-desktop');
 const storePath = path.join(vkdPath, 'store.json');
 let store = {
@@ -32,10 +34,8 @@ app.once('ready', () => {
       webSecurity: false,
       contextIsolation: false,
       nodeIntegration: true,
-      enableRemoteModule: true,
-      // или перейти на 88+ версию хрома
-      // https://caniuse.com/mdn-css_properties_aspect-ratio
-      experimentalFeatures: true
+      worldSafeExecuteJavaScript: false,
+      enableRemoteModule: true
     }
   });
 

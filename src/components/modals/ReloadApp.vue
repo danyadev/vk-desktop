@@ -14,13 +14,11 @@
 </template>
 
 <script>
-import electron from 'electron';
+import remoteElectron from '@electron/remote';
 import { closeModal } from 'js/modals';
 
 import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';
-
-const { app } = electron.remote;
 
 export default {
   components: {
@@ -30,8 +28,10 @@ export default {
 
   setup() {
     function reload() {
-      if (app.isPackaged) app.relaunch();
-      app.quit();
+      if (!DEV_MODE) {
+        remoteElectron.app.relaunch();
+      }
+      remoteElectron.app.quit();
     }
 
     function close() {

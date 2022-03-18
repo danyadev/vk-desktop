@@ -167,7 +167,7 @@ export default {
       const text = escape(
         typeof pasteText === 'string'
           ? pasteText
-          : electron.remote.clipboard.readText()
+          : electron.clipboard.readText()
       ).replace(/\n/g, '<br>');
 
       document.execCommand('insertHTML', false, emoji(text));

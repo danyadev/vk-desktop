@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import electron from 'electron';
+import remoteElectron from '@electron/remote';
 import { logout } from 'js/utils';
 import { closeModal } from 'js/modals';
 
@@ -36,7 +36,7 @@ export default {
 
   setup() {
     function closeApp() {
-      electron.remote.app.exit();
+      remoteElectron.app.quit();
     }
 
     function close() {

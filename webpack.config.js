@@ -121,6 +121,14 @@ module.exports = function(env, { mode = 'development' } = {}) {
         ]
       })
     ],
+
+    externals: {
+      '@electron/remote': `
+        /* module.exports = */ require('@electron/remote');
+        module.exports.default = require('@electron/remote');
+      `
+    },
+
     resolve: {
       extensions: ['.js'],
       symlinks: false,

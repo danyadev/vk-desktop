@@ -3,7 +3,7 @@ import os from 'os';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { reactive } from 'vue';
-import electron from 'electron';
+import remoteElectron from '@electron/remote';
 import pkg from '../../package.json';
 import { usersStorage } from './store/Storage';
 import request from './request';
@@ -30,7 +30,7 @@ export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,las
 
 export const eventBus = new EventEmitter();
 
-export const currentWindow = electron.remote.getCurrentWindow();
+export const currentWindow = remoteElectron.getCurrentWindow();
 
 // --- Основные утилиты
 
@@ -437,7 +437,7 @@ export function getAppName(app_id) {
 }
 
 export async function downloadFile({ getUrl, progress }) {
-  const files = electron.remote.dialog.showOpenDialogSync({
+  const files = remoteElectron.dialog.showOpenDialogSync({
     properties: ['openDirectory']
   });
 

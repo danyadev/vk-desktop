@@ -20,6 +20,9 @@
     "alpha-value-notation": "number",
     "number-leading-zero": "never",
     "selector-max-empty-lines": 1,
+    "value-keyword-case": ["lower", {
+      "ignoreKeywords": ["optimizeSpeed"]
+    }],
     "indentation": [2, {
       "ignore": ["value"]
     }]

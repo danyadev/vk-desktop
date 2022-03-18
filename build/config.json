@@ -2,12 +2,14 @@
   "productName": "VK Desktop",
   "appId": "ru.danyadev.vkdesktop",
   "artifactName": "VK Desktop ${os} ${arch}.${ext}",
-  "electronVersion": "11.5.0",
+  "electronVersion": "12.2.3",
   "npmRebuild": false,
   "directories": {
     "output": "app"
   },
   "files": [
+    "!node_modules/**/*",
+    "node_modules/@electron/remote",
     "package.json",
     { "from": "app/dist", "to": "dist", "filter": "**/*" },
     "menu.js",

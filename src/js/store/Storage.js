@@ -1,10 +1,10 @@
 import path from 'path';
 import fs from 'fs';
-import electron from 'electron';
+import remoteElectron from '@electron/remote';
 
 // Здесь нельзя импортировать currentWindow из js/utils, потому что
 // в том файле импортируется этот файл
-const currentWindow = electron.remote.getCurrentWindow();
+const currentWindow = remoteElectron.getCurrentWindow();
 
 class RendererStorage {
   constructor({ name, defaults, init }) {
@@ -32,7 +32,7 @@ class RendererStorage {
 
 class MainStorage {
   constructor(defaults) {
-    this.path = path.join(electron.remote.app.getPath('appData'), 'vk-desktop', 'store.json');
+    this.path = path.join(remoteElectron.app.getPath('appData'), 'vk-desktop', 'store.json');
 
     let storageData = {};
     try {

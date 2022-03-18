@@ -1,4 +1,3 @@
-import electron from 'electron';
 import { concatProfiles, fields, toUrlParams } from './utils';
 import { parseConversation, parseMessage } from './messages';
 import vkapi from './vkapi';
@@ -8,7 +7,6 @@ import longpollEvents from './longpollEvents';
 import { copyArray } from './copyObject';
 import debug from './debug';
 
-const { isPackaged } = electron.remote.app;
 const IGNORED_DEBUG_EVENTS = [6, 8, 9, 63, 64, 65, 66, 67, 80];
 const EVENTS_WITH_MESSAGE = [3, 4, 5, 18];
 
@@ -137,7 +135,7 @@ class Longpoll {
     }
 
     const filteredHistory = copyArray(history).filter((item) => {
-      if (isPackaged && EVENTS_WITH_MESSAGE.includes(item[0]) && item.length > 4) {
+      if (!DEV_MODE && EVENTS_WITH_MESSAGE.includes(item[0]) && item.length > 4) {
         item[5] = ''; // текст сообщения
       }
 

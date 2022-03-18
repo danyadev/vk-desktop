@@ -60,8 +60,6 @@ import Ripple from '../../UI/Ripple.vue';
 import VKText from '../../UI/VKText.vue';
 import Icon from '../../UI/Icon.vue';
 
-const { shell } = electron.remote;
-
 export default {
   props: ['peer_id', 'keyboard', 'msg_id'],
 
@@ -108,11 +106,11 @@ export default {
           break;
 
         case 'open_link':
-          shell.openExternal(data.action.link);
+          electron.shell.openExternal(data.action.link);
           break;
 
         case 'open_app':
-          shell.openExternal(getAppLink(data.action));
+          electron.shell.openExternal(getAppLink(data.action));
           break;
 
         default:
@@ -147,15 +145,15 @@ export default {
           break;
 
         case 'open_app':
-          shell.openExternal(getAppLink(action));
+          electron.shell.openExternal(getAppLink(action));
           break;
 
         case 'vkpay':
-          shell.openExternal(`https://vk.com/app6217559${hash}`);
+          electron.shell.openExternal(`https://vk.com/app6217559${hash}`);
           break;
 
         case 'open_link':
-          shell.openExternal(action.link);
+          electron.shell.openExternal(action.link);
           break;
 
         case 'callback':

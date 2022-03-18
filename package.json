@@ -19,6 +19,7 @@
     "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
   },
   "dependencies": {
+    "@electron/remote": "1.2.2",
     "@vue/compiler-dom": "3.2.31",
     "lottie-web": "5.9.1",
     "vue": "3.2.31",
@@ -29,7 +30,7 @@
   "devDependencies": {
     "copy-webpack-plugin": "10.2.4",
     "css-loader": "6.7.1",
-    "electron": "11.5.0",
+    "electron": "12.2.3",
     "electron-builder": "23.0.2",
     "eslint": "8.11.0",
     "eslint-import-resolver-webpack": "0.13.2",
