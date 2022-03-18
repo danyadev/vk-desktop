@@ -46,7 +46,6 @@ module.exports = function(mainWindow) {
           label: 'Выйти',
           accelerator: 'Command+Q',
           click() {
-            mainWindow.forceClose = true;
             app.quit();
           }
         }

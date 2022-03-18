@@ -3,7 +3,10 @@ import { mainSettingsStorage } from '../Storage';
 
 export default {
   state: {
-    counters: {}, // { unread, unreadUnmuted }
+    counters: {
+      unread: 0,
+      unreadUnmuted: 0
+    },
     profiles: {},
     hasWindowFrame: mainSettingsStorage.data.useNativeTitlebar
   },

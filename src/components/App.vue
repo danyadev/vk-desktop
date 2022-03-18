@@ -87,7 +87,8 @@ export default {
 
       router.replace('/messages');
 
-      electron.remote.app.setBadgeCount(0);
+      // Обнуляем счетчик, который может быть ненулевым после смены аккаунта
+      store.dispatch('setBadgeCount');
 
       const {
         user,
@@ -103,14 +104,14 @@ export default {
         fields
       });
 
+      store.commit('users/updateUser', user);
+      store.commit('addProfiles', concatProfiles(profiles, groups));
+
       store.commit('setCounters', {
         unread: counters.messages || 0,
         unreadUnmuted: counters.messages_unread_unmuted
       });
       store.dispatch('setBadgeCount');
-
-      store.commit('users/updateUser', user);
-      store.commit('addProfiles', concatProfiles(profiles, groups));
 
       for (const { peer, msg } of pinnedPeers) {
         store.commit('messages/updateConversation', {
@@ -134,6 +135,8 @@ export default {
     }
 
     initUser();
+    // Для переходов авторизация -> аккаунт и обратно
+    // При смене аккаунта приложение перезагружается
     watch(() => state.activeUserID, initUser);
 
     return state;

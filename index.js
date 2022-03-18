@@ -2,9 +2,9 @@
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
-const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
+const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
 
 const vkdPath = path.join(app.getPath('appData'), 'vk-desktop');
 const storePath = path.join(vkdPath, 'store.json');
@@ -19,10 +19,8 @@ try {
   fs.writeFileSync(storePath, JSON.stringify(store));
 }
 
-let win;
-
 app.once('ready', () => {
-  win = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     minWidth: 400,
     minHeight: 550,
     show: false,
@@ -41,18 +39,18 @@ app.once('ready', () => {
     }
   });
 
-  win.webContents.session.setSpellCheckerLanguages(['ru', 'en-US']);
+  mainWindow.webContents.session.setSpellCheckerLanguages(['ru', 'en-US']);
   nativeTheme.themeSource = 'light';
 
-  win.webContents.once('dom-ready', async () => {
-    const data = await win.webContents.executeJavaScript('localStorage.getItem("settings")');
+  mainWindow.webContents.once('dom-ready', async () => {
+    const data = await mainWindow.webContents.executeJavaScript('localStorage.getItem("settings")');
 
     if (data) {
       const { window } = JSON.parse(data);
       const { width, height } = screen.getPrimaryDisplay().workAreaSize;
       const isMaximized = window.width >= width && window.height >= height;
 
-      win.setBounds({
+      mainWindow.setBounds({
         x: window.x,
         y: window.y,
         width: isMaximized ? width : window.width,
@@ -60,48 +58,53 @@ app.once('ready', () => {
       });
 
       if (isMaximized) {
-        win.maximize();
+        mainWindow.maximize();
       }
     }
 
-    win.show();
+    mainWindow.show();
   });
 
-  win.webContents.on('new-window', (event, url) => {
-    event.preventDefault();
-    shell.openExternal(url);
-  });
-
-  if (process.platform === 'darwin') {
-    win.on('close', (event) => {
-      // forceClose определяется в menu.js
-      if (!win.forceClose) {
-        event.preventDefault();
-        win.hide();
-      }
-    });
-
-    require('./menu')(win);
-  } else {
-    win.removeMenu();
-  }
-
-  win.loadURL(
+  mainWindow.loadURL(
     process.argv.includes('dev-mode')
       ? 'http://localhost:9973/dist/index.html'
       : `file://${__dirname}/dist/index.html`
   );
+
+  mainWindow.webContents.on('new-window', (event, url) => {
+    event.preventDefault();
+    shell.openExternal(url);
+  });
+
+  if (process.platform !== 'darwin') {
+    mainWindow.removeMenu();
+  } else {
+    require('./menu')(mainWindow);
+
+    let forceClose = false;
+
+    app.on('before-quit', () => {
+      forceClose = true;
+    });
+
+    mainWindow.on('close', (event) => {
+      if (!forceClose) {
+        event.preventDefault();
+        mainWindow.hide();
+      }
+    });
+
+    app.on('activate', (event, hasVisibleWindows) => {
+      // Приложение было закрыто через ⌘ + W
+      if (!hasVisibleWindows) {
+        mainWindow.show();
+      }
+    });
+  }
 });
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
-  }
-});
-
-app.on('activate', (event, hasVisibleWindows) => {
-  // Приложение было закрыто через cmd + R
-  if (!hasVisibleWindows) {
-    win.show();
   }
 });
