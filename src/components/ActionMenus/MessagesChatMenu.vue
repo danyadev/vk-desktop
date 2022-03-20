@@ -7,7 +7,7 @@
 
     <div v-if="peer && peer.pinnedMsg" class="act_menu_item" @click="togglePinnedMsg">
       <Icon
-        :name="showPinnedMsg ? 'hide' : 'show'"
+        :name="showPinnedMsg ? 'eye_hide_outline' : 'eye_show_outline'"
         color="var(--icon-blue)"
         class="act_menu_icon"
       />
@@ -19,7 +19,7 @@
       class="act_menu_item"
       @click="unpinMsg"
     >
-      <Icon name="unpin" color="var(--icon-blue)" class="act_menu_icon" />
+      <Icon name="unpin_outline" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_unpin_msg') }}</div>
     </div>
 

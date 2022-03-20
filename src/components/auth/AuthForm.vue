@@ -24,7 +24,7 @@
         spellcheck="false"
       >
       <div class="auth_password_switch" @click="hidePassword = !hidePassword">
-        <Icon :name="hidePassword ? 'hide' : 'show'" color="var(--icon-dark-gray)" />
+        <Icon :name="hidePassword ? 'eye_hide' : 'eye_show'" color="var(--icon-dark-gray)" />
       </div>
     </div>
     <Button class="auth_button" :disabled="!canAuth" @click="auth">{{ l('login') }}</Button>

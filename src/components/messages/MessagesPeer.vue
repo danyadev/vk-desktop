@@ -25,6 +25,8 @@
           <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
         </div>
 
+        <div v-if="messageTime.type === 'long'" class="im_peer_time">{{ messageTime.text }}</div>
+
         <Icon
           v-if="isPinned"
           name="pin"
@@ -33,8 +35,6 @@
           height="16"
           class="im_peer_pinned"
         />
-
-        <div v-if="messageTime.type === 'long'" class="im_peer_time">{{ messageTime.text }}</div>
       </div>
 
       <div class="im_peer_message_wrap">

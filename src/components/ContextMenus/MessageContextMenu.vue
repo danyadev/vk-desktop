@@ -17,7 +17,7 @@
 
     <div v-if="peer.id > 2e9 && peer.acl.can_change_pin" class="act_menu_item" @click="togglePin">
       <Icon
-        :name="isPinnedMessage ? 'unpin' : 'pin'"
+        :name="isPinnedMessage ? 'unpin_outline' : 'pin_outline'"
         color="var(--icon-blue)"
         class="act_menu_icon"
       />
@@ -25,7 +25,7 @@
     </div>
 
     <div v-if="msg && msg.id > peer.in_read" class="act_menu_item" @click="markAsRead">
-      <Icon name="show" color="var(--icon-blue)" class="act_menu_icon" />
+      <Icon name="message" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
 

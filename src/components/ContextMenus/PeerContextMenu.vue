@@ -11,7 +11,7 @@
       @click="togglePinPeer"
     >
       <Icon
-        :name="isPinnedPeer ? 'unpin' : 'pin'"
+        :name="isPinnedPeer ? 'unpin_outline' : 'pin_outline'"
         color="var(--icon-blue)"
         class="act_menu_icon"
       />
@@ -19,7 +19,7 @@
     </div>
 
     <div v-if="peer.unread" class="act_menu_item" @click="markAsRead">
-      <Icon name="show" color="var(--icon-blue)" class="act_menu_icon" />
+      <Icon name="message" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
 
