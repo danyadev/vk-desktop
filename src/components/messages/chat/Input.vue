@@ -389,11 +389,11 @@ export default {
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--separator);
-  padding: 0 5%;
+  padding: 0 54px;
 }
 
 .chat_input_reply .attach_reply {
-  margin: 6px 0 8px 10px;
+  margin: 6px 0 8px 0;
   overflow: auto;
   flex-grow: 1;
 }
@@ -401,7 +401,8 @@ export default {
 .chat_input_reply svg {
   box-sizing: content-box;
   flex: none;
-  padding: 16px;
+  padding: 16px 10px;
+  margin-right: -10px;
   cursor: pointer;
 }
 </style>
