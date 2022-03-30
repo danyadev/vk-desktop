@@ -93,14 +93,10 @@ export default {
 </script>
 
 <style>
-.im_chat_container .header:not(.header_messages_toolbar) {
-  padding-left: 15px;
-}
-
 .im_header_back {
   display: none;
   flex: none;
-  margin: 0 6px 0 -6px;
+  margin: 0 -2px 0 10px;
   cursor: pointer;
 }
 
@@ -108,7 +104,7 @@ export default {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin: 0 10px;
   background: white;
 }
 

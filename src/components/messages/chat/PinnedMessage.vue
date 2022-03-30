@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isHidden" class="im_pinned_msg_wrap" @click="openMessage">
-    <Icon name="pin" class="im_pinned_msg_icon" />
+    <Icon name="pin" color="var(--icon-gray)" width="20" height="20" />
 
     <div class="im_pinned_msg">
       <div class="im_pinned_msg_name_wrap text-overflow">
@@ -15,7 +15,9 @@
     <Icon
       name="close"
       color="var(--icon-dark-gray)"
-      class="im_pinned_msg_close icon-hover"
+      width="16"
+      height="16"
+      class="icon-hover"
       @click.stop="hideMessage"
     />
   </div>
@@ -96,12 +98,9 @@ export default {
   cursor: pointer;
 }
 
-.im_pinned_msg_icon {
+.im_pinned_msg_wrap svg {
+  margin: 0 15px;
   flex: none;
-  width: 20px;
-  height: 20px;
-  margin: 0 20px;
-  color: var(--icon-gray)
 }
 
 .im_pinned_msg {
@@ -131,13 +130,5 @@ export default {
 
 .im_pinned_msg_text.hasAttachment {
   color: var(--text-blue);
-}
-
-.im_pinned_msg_close {
-  box-sizing: content-box;
-  flex: none;
-  width: 16px;
-  height: 16px;
-  padding: 16px 20px;
 }
 </style>

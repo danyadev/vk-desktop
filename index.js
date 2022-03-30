@@ -23,7 +23,7 @@ try {
 
 app.once('ready', () => {
   const mainWindow = new BrowserWindow({
-    minWidth: 400,
+    minWidth: 410,
     minHeight: 550,
     show: false,
     frame: store.useNativeTitlebar,

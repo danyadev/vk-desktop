@@ -68,7 +68,7 @@
   --message-bubble-background-alpha: #dfe6eadf;
   --message-out-bubble-background: #c7dff9;
   --message-out-bubble-background-alpha: #c7dff9df;
-  --message-selected-overlay: rgba(0, 0, 0, .08);
+  --message-selected-overlay: rgba(0, 0, 0, .065);
   /* --message-current-bubble-background внутри .message */
 
   --attach-left-border: #7197c5;

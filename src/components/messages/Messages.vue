@@ -77,13 +77,13 @@ export default {
   .messages_container.hasChat .im_header_back { display: block }
 }
 
-@media screen and (min-width: 700px) and (max-width: 850px) {
-  .im_peers_container { width: 44% }
-  .messages_container > .im_chat_container { width: 56% }
+@media screen and (min-width: 700px) and (max-width: 880px) {
+  .im_peers_container { width: 41% }
+  .messages_container > .im_chat_container { width: 59% }
 }
 
-@media screen and (min-width: 851px) {
-  .im_peers_container { width: calc(850px * .44) }
-  .messages_container > .im_chat_container { width: calc(100% - 850px * .44) }
+@media screen and (min-width: 881px) {
+  .im_peers_container { width: calc(880px * .41) }
+  .messages_container > .im_chat_container { width: calc(100% - 880px * .41) }
 }
 </style>

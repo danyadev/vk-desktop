@@ -1,26 +1,14 @@
 <template>
   <div class="header header_messages_toolbar">
-    <div class="im_header_cancel_select" @click="cancelSelect">
+    <div class="im_header_cancel_select text-overflow" @click="cancelSelect">
       <Icon name="close" color="var(--icon-dark-gray)" width="16" height="16" />
 
-      <div class="im_header_selected_count">
+      <div class="im_header_selected_count text-overflow">
         {{ l('im_messages_count', [messages.length], messages.length) }}
       </div>
     </div>
 
     <div class="im_header_selected_actions">
-      <Icon
-        v-if="
-          messages.length && peer.isWriteAllowed && (
-            !peer.isCasperChat || messages.length === 1
-          )
-        "
-        name="reply"
-        color="var(--icon-dark-gray)"
-        :data-tooltip="messages.length === 1 ? 'im_reply_msg' : 'im_forward_messages_here'"
-        @click="reply"
-      />
-
       <Icon
         v-if="peer && !peer.isChannel"
         name="trash"
@@ -30,19 +18,22 @@
       />
 
       <Icon
-        v-if="messages.length && !peer.isCasperChat"
-        name="forward"
-        color="var(--icon-dark-gray)"
-        :data-tooltip="messages.length === 1 ? 'im_forward_message' : 'im_forward_messages'"
-        @click="forward()"
-      />
-
-      <Icon
         name="restrict"
         color="var(--icon-dark-gray)"
         data-tooltip="im_mark_msg_as_spam"
         @click="markAsSpam"
       />
+
+      <Button
+        v-if="peer.isWriteAllowed && (!peer.isCasperChat || messages.length === 1)"
+        @click="reply"
+      >
+        {{ l(messages.length === 1 ? 'im_reply_msg_short' : 'im_forward_messages_here') }}
+      </Button>
+
+      <Button v-if="!peer.isCasperChat" @click="forward()">
+        {{ l('im_forward_messages_short') }}
+      </Button>
     </div>
   </div>
 </template>
@@ -55,12 +46,14 @@ import vkapi from 'js/vkapi';
 import router from 'js/router';
 
 import Icon from '../../UI/Icon.vue';
+import Button from '../../UI/Button.vue';
 
 export default {
   props: ['peer_id', 'peer', 'messages'],
 
   components: {
-    Icon
+    Icon,
+    Button
   },
 
   setup(props) {
@@ -134,11 +127,14 @@ export default {
 .im_header_cancel_select {
   display: flex;
   align-items: center;
+  margin-right: 5px;
+  flex: 1;
   cursor: pointer;
 }
 
 .im_header_cancel_select svg,
 .im_header_selected_actions svg {
+  flex: none;
   cursor: pointer;
   opacity: .75;
   transition: opacity .3s;
@@ -159,10 +155,21 @@ export default {
 }
 
 .im_header_selected_actions {
-  margin: 0 3px 0 auto;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
 }
 
 .im_header_selected_actions svg {
   margin-right: 15px;
+}
+
+.im_header_selected_actions .button {
+  padding: 0 10px;
+  margin-right: 8px;
+  height: 28px;
+  line-height: 28px;
+  font-size: 14px;
+  flex: none;
 }
 </style>

@@ -113,7 +113,7 @@ export default {
   im_retry_send: 'Повторить отправку',
   im_delete_message: 'Удалить сообщение',
   im_forward_message: 'Переслать сообщение',
-  im_forward_messages: 'Переслать сообщения',
+  im_forward_messages_short: 'Переслать',
   im_forward_messages_here: 'Переслать сюда',
 
   im_send_typing: 'Отправлять тайпинг',
@@ -131,6 +131,7 @@ export default {
   im_peer_id_copied: 'ID беседы скопирован',
 
   im_reply_msg: 'Ответить на сообщение',
+  im_reply_msg_short: 'Ответить',
   im_toggle_msg_pin: ['Закрепить сообщение', 'Открепить сообщение'],
   im_delete_msg: 'Удалить сообщение',
   im_delete_messages: 'Удалить сообщения',
