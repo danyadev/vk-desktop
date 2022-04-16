@@ -31,7 +31,7 @@ export default function(accelerators, callback) {
     callbacks.set(accelerator, callback);
   }
 
-  return function() {
+  return () => {
     for (const accelerator of accelerators) {
       callbacks.delete(accelerator);
     }

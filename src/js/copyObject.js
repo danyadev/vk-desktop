@@ -20,7 +20,7 @@ export function copyArray(arr) {
   return newArr;
 }
 
-function copyObject(obj) {
+export function copyObject(obj) {
   const newObj = {};
 
   for (const key in obj) {

@@ -67,7 +67,7 @@ export default {
       owner,
       ownerName,
 
-      openPage(url) {
+      openPage() {
         electron.shell.openExternal(attach.url);
       }
     };

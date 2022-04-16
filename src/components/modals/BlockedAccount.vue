@@ -3,7 +3,7 @@
     <ModalHeader unclosable>{{ l('ml_blocked_account_title', type) }}</ModalHeader>
     <div class="modal_content" v-html="l('ml_blocked_account_content', type)"></div>
     <div class="modal_footer">
-      <Button v-if="fromAuth" right @click="close">{{ l('close') }}</Button>
+      <Button v-if="fromAuth" right @click="closeModal">{{ l('close') }}</Button>
       <template v-else>
         <Button class="right" @click="logout">{{ l('logout_account') }}</Button>
         <Button v-if="type === 1" class="right" @click="closeApp">
@@ -16,15 +16,15 @@
 
 <script>
 import remoteElectron from '@electron/remote';
-import { logout } from 'js/utils';
 import { closeModal } from 'js/modals';
+import store from 'js/store';
 
 import ModalHeader from './ModalHeader.vue';
 import Button from '../UI/Button.vue';
 
 export default {
   // type:
-  // 0 - Сессия недействительна
+  // 0 - Сессия завершена
   // 1 - Страница удалена
   // 2 - Страница заблокирована
   props: ['type', 'fromAuth'],
@@ -34,26 +34,25 @@ export default {
     Button
   },
 
-  setup() {
-    function closeApp() {
-      remoteElectron.app.quit();
-    }
-
-    function close() {
+  setup: (props) => ({
+    closeModal() {
       closeModal('blocked-account');
-    }
+    },
 
-    return {
-      logout,
-      closeApp,
-      close
-    };
-  }
+    closeApp() {
+      remoteElectron.app.quit();
+    },
+
+    logout() {
+      const needRemoveUser = props.type === 0;
+      store.dispatch('users/logout', needRemoveUser);
+    }
+  })
 };
 </script>
 
 <style>
 .modal[data-name=blocked-account] .modal_content {
-  max-width: 400px;
+  max-width: 500px;
 }
 </style>

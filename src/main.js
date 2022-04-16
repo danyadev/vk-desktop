@@ -37,13 +37,9 @@ app.component('Attachments', Attachments);
 app.mount('body');
 
 shortcut(['Control+Shift+I', 'F12'], () => {
-  if (currentWindow.isDevToolsOpened()) {
-    currentWindow.closeDevTools();
-  } else {
-    currentWindow.openDevTools();
-  }
+  currentWindow.toggleDevTools();
 });
 
 window.addEventListener('resize', debounce(() => {
   store.commit('settings/setWindowBounds', currentWindow.getBounds());
-}, 2000));
+}, 1000));

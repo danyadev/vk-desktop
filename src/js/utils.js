@@ -5,7 +5,6 @@ import { EventEmitter } from 'events';
 import { reactive } from 'vue';
 import remoteElectron from '@electron/remote';
 import pkg from '../../package.json';
-import { usersStorage } from './store/Storage';
 import request from './request';
 import vkapi from './vkapi';
 import store from './store';
@@ -336,15 +335,6 @@ export function endScroll(callback, reverse) {
   };
 }
 
-export function logout() {
-  usersStorage.update({
-    ...usersStorage.data,
-    activeUserID: null
-  });
-
-  window.location.reload();
-}
-
 export async function resolveScreenName(screen_name) {
   const profileInfo = await vkapi('utils.resolveScreenName', { screen_name });
 
@@ -476,18 +466,4 @@ window.addEventListener('resize', () => {
 //
 //     el.addEventListener('transitionend', onTransitionEndListener);
 //   });
-// }
-
-// export function parseMp3Link(url) {
-//   if (url.includes('.mp3?')) {
-//     return url;
-//   }
-//
-//   const match = url.match(
-//     url.startsWith('https://ps')
-//       ? /(https:\/\/.+)\/.+?\/audios\/(.+?)\/index\.m3u8\?extra=(.+)/
-//       : /(https:\/\/.+)\/.+?\/(.+?)\/index\.m3u8\?extra=(.+)/
-//   );
-//
-//   return `${match[1]}/${match[2]}.mp3?extra=${match[3]}`;
 // }

@@ -30,6 +30,7 @@ import longpoll from 'js/longpoll';
 import * as dateUtils from 'js/date/utils';
 import * as auth from './auth';
 import * as emoji from 'js/emoji';
+import * as modals from 'js/modals';
 
 import 'css/shared.css';
 import 'css/colors.css';
@@ -50,6 +51,7 @@ window.longpoll = longpoll;
 window.dateUtils = dateUtils;
 window.auth = auth;
 window.emoji = emoji;
+window.modals = modals;
 
 export default {
   components: {

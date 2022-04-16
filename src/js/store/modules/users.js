@@ -1,4 +1,5 @@
 import { usersStorage } from '../Storage';
+import { copyObject } from '../../copyObject';
 
 export default {
   namespaced: true,
@@ -23,6 +24,21 @@ export default {
 
     setTrustedHash(state, { login, hash }) {
       state.trustedHashes[login] = hash;
+    }
+  },
+
+  actions: {
+    logout(context, needRemoveUser) {
+      const newState = copyObject(usersStorage.data);
+
+      newState.activeUserID = null;
+
+      if (needRemoveUser) {
+        delete newState.users[context.state.activeUserID];
+      }
+
+      usersStorage.update(newState);
+      window.location.reload();
     }
   },
 

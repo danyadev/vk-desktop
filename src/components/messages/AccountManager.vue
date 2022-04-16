@@ -45,7 +45,7 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { getPhoto, moveArrItem, mouseOutWrapper, logout } from 'js/utils';
+import { getPhoto, moveArrItem, mouseOutWrapper } from 'js/utils';
 import { usersStorage } from 'js/store/Storage';
 import store from 'js/store';
 import router from 'js/router';
@@ -108,6 +108,10 @@ export default {
           onlyAddUser: 1
         }
       });
+    }
+
+    function logout() {
+      store.dispatch('users/logout');
     }
 
     return {
