@@ -24,7 +24,7 @@ debug(
 export const VKDesktopUserAgent =
   `VKDesktop/${pkg.version} (${os.platform()}; ${os.release()}; ${os.arch()})`;
 export const AndroidUserAgent =
-  'VKAndroidApp/6.50-8952 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 2340x1080)';
+  'VKAndroidApp/7.20.1-11834 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 2340x1080)';
 
 export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
