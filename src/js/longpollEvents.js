@@ -5,7 +5,6 @@ import {
   parseAttachments,
   parseConversation,
   loadConversation,
-  loadConversationMembers,
   addNotificationsTimer,
   activeKeyboardCallbackButtons
 } from './messages';
@@ -911,7 +910,6 @@ export default {
 
             if (!peer.isChannel) {
               loadConversation(peer_id);
-              loadConversationMembers(peer.id, true);
             }
           }
           break;

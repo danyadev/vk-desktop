@@ -85,10 +85,9 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { convertCount, eventBus } from 'js/utils';
+import { convertCount, eventBus, loadProfile } from 'js/utils';
 import {
   getMessagePreview,
-  loadConversationMembers,
   getPeerAvatar,
   getPeerTitle
 } from 'js/messages';
@@ -156,7 +155,7 @@ export default {
           return `${state.author.name || state.author.first_name}:`;
         }
 
-        loadConversationMembers(props.peer.id);
+        loadProfile(props.msg.from);
 
         return '...:';
       })

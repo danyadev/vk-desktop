@@ -18,7 +18,7 @@
 
 <script>
 import { reactive, computed, watch, nextTick, onMounted, onActivated } from 'vue';
-import { loadConversation, loadConversationMembers } from 'js/messages';
+import { loadConversation } from 'js/messages';
 import store from 'js/store';
 import router from 'js/router';
 import { modalsState } from 'js/modals';
@@ -97,10 +97,6 @@ export default {
     }, { flush: 'pre' });
 
     onMounted(() => {
-      if (state.peer_id > 2e9) {
-        loadConversationMembers(state.peer_id, true);
-      }
-
       store.commit('messages/updatePeerConfig', {
         peer_id: state.peer_id,
         wasOpened: true

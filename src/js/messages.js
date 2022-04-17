@@ -298,32 +298,32 @@ export async function loadConversation(id) {
   loadingConversations.delete(id);
 }
 
-export const loadedConversationMembers = new Set();
+// export const loadedConversationMembers = new Set();
 
-export async function loadConversationMembers(id, force) {
-  if (loadedConversationMembers.has(id) && !force) {
-    return;
-  }
-
-  loadedConversationMembers.add(id);
-
-  try {
-    const { profiles, groups } = await vkapi('messages.getConversationMembers', {
-      peer_id: id,
-      fields
-    });
-
-    store.commit('addProfiles', concatProfiles(profiles, groups));
-  } catch (err) {
-    // Пользователь исключен/вышел из беседы, но т.к. юзер может вернуться,
-    // здесь удаляется пометка беседы как загруженная для возможности повторить попытку
-    if (err.error_code === 917) {
-      loadedConversationMembers.delete(id);
-    } else {
-      throw err;
-    }
-  }
-}
+// export async function loadConversationMembers(id, force) {
+//   if (loadedConversationMembers.has(id) && !force) {
+//     return;
+//   }
+//
+//   loadedConversationMembers.add(id);
+//
+//   try {
+//     const { profiles, groups } = await vkapi('messages.getConversationMembers', {
+//       peer_id: id,
+//       fields
+//     });
+//
+//     store.commit('addProfiles', concatProfiles(profiles, groups));
+//   } catch (err) {
+//     // Пользователь исключен/вышел из беседы, но т.к. юзер может вернуться,
+//     // здесь удаляется пометка беседы как загруженная для возможности повторить попытку
+//     if (err.error_code === 917) {
+//       loadedConversationMembers.delete(id);
+//     } else {
+//       throw err;
+//     }
+//   }
+// }
 
 const activeNotificationsTimers = new Map();
 

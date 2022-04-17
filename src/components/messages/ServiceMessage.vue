@@ -1,7 +1,6 @@
 <script>
 import { h, Fragment } from 'vue';
 import { loadProfile, createParser, getPhotoFromSizes } from 'js/utils';
-import { loadConversationMembers, loadedConversationMembers } from 'js/messages';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 
@@ -78,13 +77,7 @@ function getServiceMessage(msg, author, peer_id, isFull) {
         : `${user.first_name} ${user.last_name}`;
     }
 
-    if (loadedConversationMembers.has(peer_id)) {
-      // При добавлении нового юзера в беседу
-      loadProfile(user.id);
-    } else {
-      // В случае, когда юзеры в беседе не загружены
-      loadConversationMembers(peer_id);
-    }
+    loadProfile(user.id);
 
     return '...';
   }
