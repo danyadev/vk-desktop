@@ -1,0 +1,21 @@
+import vkapi from './vkapi';
+import store from './store';
+import router from './router';
+import request from './request';
+import longpoll from './longpoll';
+import * as dateUtils from './date/utils';
+import * as auth from '../components/auth';
+import * as emoji from './emoji';
+import * as modals from './modals';
+import { addSnackbar } from './snackbars';
+
+window.vkapi = vkapi;
+window.store = store;
+window.router = router;
+window.request = request;
+window.longpoll = longpoll;
+window.dateUtils = dateUtils;
+window.auth = auth;
+window.emoji = emoji;
+window.modals = modals;
+window.addSnackbar = addSnackbar;

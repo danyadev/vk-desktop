@@ -255,7 +255,7 @@ export function getPhotoFromSizes(sizes, size, isDoc) {
 
   function fallback() {
     const sizesObj = sizes.reduce((acc, val) => {
-      acc[val.width + val.height] = val;
+      acc[val.width * val.height] = val;
       return acc;
     }, {});
     const optimalSize = Object.keys(sizesObj).sort((a, b) => b - a)[0];
@@ -266,10 +266,7 @@ export function getPhotoFromSizes(sizes, size, isDoc) {
   if (Array.isArray(size)) {
     for (let i = 0; i < size.length; i++) {
       const photo = find(size[i]);
-
-      if (photo) {
-        return photo;
-      }
+      if (photo) return photo;
     }
 
     return fallback();
@@ -280,10 +277,7 @@ export function getPhotoFromSizes(sizes, size, isDoc) {
   if (index !== -1) {
     for (let i = index; i < optionalTypes.length; i++) {
       const photo = find(optionalTypes[i]);
-
-      if (photo) {
-        return photo;
-      }
+      if (photo) return photo;
     }
 
     return fallback();
@@ -351,21 +345,18 @@ export async function resolveScreenName(screen_name) {
 const loadingProfiles = [];
 let isLoadingProfiles = false;
 
-export async function loadProfile(id) {
-  if (loadingProfiles.includes(id)) {
+export async function loadProfile(profileId) {
+  if (loadingProfiles.includes(profileId)) {
     return;
-  } else if (id) {
-    if (isNaN(+id)) {
-      const resolvedId = await resolveScreenName(id);
+  }
 
-      if (!resolvedId) {
-        return;
-      }
-
-      id = resolvedId;
+  if (profileId) {
+    if (isNaN(+profileId)) {
+      profileId = await resolveScreenName(profileId);
+      if (!profileId) return;
     }
 
-    loadingProfiles.push(id);
+    loadingProfiles.push(profileId);
   }
 
   if (isLoadingProfiles) {

@@ -11,16 +11,31 @@ export const snackbarsState = reactive({
 let inWork = false;
 
 async function execute() {
-  const data = snackbars.shift();
+  const snackbar = snackbars.shift();
   const closePromise = createCallablePromise();
 
-  data.close = closePromise.resolve;
-  snackbarsState.snackbar = data;
+  snackbar.close = closePromise.resolve;
+  snackbarsState.snackbar = snackbar;
 
-  await Promise.race([
-    timer(data.duration || 2000),
-    closePromise
-  ]);
+  while (true) {
+    const onMouseEnterPromise = createCallablePromise();
+    const onMouseLeavePromise = createCallablePromise();
+
+    snackbar.onMouseEnter = onMouseEnterPromise.resolve;
+    snackbar.onMouseLeave = onMouseLeavePromise.resolve;
+
+    const fastestResult = await Promise.race([
+      onMouseEnterPromise.then(() => 'onMouseEnter'),
+      timer(snackbar.duration || 2000),
+      closePromise
+    ]);
+
+    if (fastestResult === 'onMouseEnter') {
+      await onMouseLeavePromise;
+    } else {
+      break;
+    }
+  }
 
   if (snackbars.length) {
     execute();

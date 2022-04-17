@@ -12,6 +12,8 @@ import App from './components/App.vue';
 import ForwardedMessage from './components/messages/chat/attachments/ForwardedMessage.vue';
 import Attachments from './components/messages/chat/attachments/Attachments.vue';
 
+import 'js/exposeFeatures';
+
 electron.ipcRenderer.on('menu:preferences', () => {
   if (isModalOpened('settings')) {
     closeModal('settings');

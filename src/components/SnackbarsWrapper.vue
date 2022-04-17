@@ -1,14 +1,20 @@
 <template>
   <div class="snackbars">
     <Transition name="snackbar" mode="out-in">
-      <div v-if="snackbar" :key="snackbar.id" class="snackbar">
+      <div
+        v-if="snackbar"
+        :key="snackbar.id"
+        class="snackbar"
+        @mouseenter="snackbar.onMouseEnter"
+        @mouseleave="snackbar.onMouseLeave"
+      >
         <Icon
           v-if="snackbar.icon"
           :name="snackbar.icon"
           :color="snackbar.color || 'var(--icon-blue)'"
           width="24"
           height="24"
-          class="snackbar_icon"
+          class="snackbar_action_icon"
         />
 
         <div>
@@ -74,10 +80,11 @@ export default {
   display: flex;
   align-items: center;
   text-align: center;
-  padding: 5px 12px;
+  padding: 0px 12px;
   max-width: 80%;
-  min-height: 45px;
+  min-height: 50px;
   pointer-events: auto;
+  user-select: text;
   background: var(--background-accent);
   border: 1px solid var(--separator-dark);
   border-radius: 10px;
@@ -86,10 +93,13 @@ export default {
 }
 
 .snackbar > div {
-  height: 20px;
+  overflow-wrap: break-word;
+  overflow: auto;
+  line-height: 20px;
+  margin: 5px 0;
 }
 
-.snackbar_icon {
+.snackbar_action_icon {
   flex: none;
   margin-right: 10px;
 }

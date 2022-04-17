@@ -25,12 +25,7 @@ import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messa
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
-import request from 'js/request';
 import longpoll from 'js/longpoll';
-import * as dateUtils from 'js/date/utils';
-import * as auth from './auth';
-import * as emoji from 'js/emoji';
-import * as modals from 'js/modals';
 
 import 'css/shared.css';
 import 'css/colors.css';
@@ -41,17 +36,6 @@ import ModalsWrapper from './ModalsWrapper.vue';
 import ContextMenuWrapper from './ContextMenus/ContextMenuWrapper.vue';
 import SnackbarsWrapper from './SnackbarsWrapper.vue';
 import TooltipsWrapper from './TooltipsWrapper.vue';
-
-// Для разработки / дебага
-window.vkapi = vkapi;
-window.store = store;
-window.router = router;
-window.request = request;
-window.longpoll = longpoll;
-window.dateUtils = dateUtils;
-window.auth = auth;
-window.emoji = emoji;
-window.modals = modals;
 
 export default {
   components: {
