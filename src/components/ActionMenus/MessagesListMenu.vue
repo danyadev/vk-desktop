@@ -23,8 +23,8 @@ import store from 'js/store';
 import { openModal } from 'js/modals';
 
 import ActionsMenu from './ActionsMenu.vue';
-import Checkbox from '../UI/Checkbox.vue';
-import Icon from '../UI/Icon.vue';
+import Checkbox from '@/UI/Checkbox.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   components: {

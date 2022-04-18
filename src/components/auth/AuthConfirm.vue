@@ -27,7 +27,7 @@ import vkapi from 'js/vkapi';
 import getTranslate from 'js/getTranslate';
 import { getAndroidToken } from '.';
 
-import Button from '../UI/Button.vue';
+import Button from '@/UI/Button.vue';
 
 export default {
   props: ['params'],

@@ -4,7 +4,7 @@ import { loadProfile, createParser, getPhotoFromSizes } from 'js/utils';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 
-import VKText from '../UI/VKText.vue';
+import VKText from '@/UI/VKText.vue';
 
 export default {
   props: ['msg', 'author', 'peer_id', 'isFull'],

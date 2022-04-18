@@ -133,6 +133,7 @@ module.exports = function(env, { mode = 'development' } = {}) {
       extensions: ['.js'],
       symlinks: false,
       alias: {
+        '@': path.resolve(__dirname, 'src/components'),
         assets: path.resolve(__dirname, 'src/assets'),
         css: path.resolve(__dirname, 'src/css'),
         js: path.resolve(__dirname, 'src/js'),

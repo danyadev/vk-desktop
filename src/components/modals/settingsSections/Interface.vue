@@ -36,7 +36,7 @@ import { computed } from 'vue';
 import store from 'js/store';
 import { openModal } from 'js/modals';
 
-import Checkbox from '../../UI/Checkbox.vue';
+import Checkbox from '@/UI/Checkbox.vue';
 
 export default {
   components: {

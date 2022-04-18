@@ -28,8 +28,8 @@ import { closeModal } from 'js/modals';
 import store from 'js/store';
 
 import ModalHeader from './ModalHeader.vue';
-import Checkbox from '../UI/Checkbox.vue';
-import Button from '../UI/Button.vue';
+import Checkbox from '@/UI/Checkbox.vue';
+import Button from '@/UI/Button.vue';
 
 export default {
   props: ['count', 'canDeleteForAll', 'submit'],

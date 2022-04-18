@@ -8,9 +8,9 @@ import router from 'js/router';
 import getTranslate from 'js/getTranslate';
 import shortcut from 'js/shortcut';
 
-import App from './components/App.vue';
-import ForwardedMessage from './components/messages/chat/attachments/ForwardedMessage.vue';
-import Attachments from './components/messages/chat/attachments/Attachments.vue';
+import App from '@/App.vue';
+import ForwardedMessage from '@/messages/chat/attachments/ForwardedMessage.vue';
+import Attachments from '@/messages/chat/attachments/Attachments.vue';
 
 import 'js/exposeFeatures';
 

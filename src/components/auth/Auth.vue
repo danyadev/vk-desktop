@@ -16,9 +16,9 @@ import { reactive, toRefs } from 'vue';
 import router from 'js/router';
 import { loadUser } from '.';
 
-import Icon from '../UI/Icon.vue';
 import AuthForm from './AuthForm.vue';
 import AuthConfirm from './AuthConfirm.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   components: {

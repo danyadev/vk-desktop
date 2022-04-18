@@ -12,7 +12,7 @@
 import { reactive, toRefs } from 'vue';
 import { mouseOverWrapper, mouseOutWrapper } from 'js/utils';
 
-import Icon from '../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['hideList'],

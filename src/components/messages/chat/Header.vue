@@ -53,12 +53,12 @@ import { reactive, computed } from 'vue';
 import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/messages';
 import store from 'js/store';
 
-import Icon from '../../UI/Icon.vue';
-import VKText from '../../UI/VKText.vue';
 import Typing from '../Typing.vue';
-import MessagesChatMenu from '../../ActionMenus/MessagesChatMenu.vue';
 import HeaderMessagesToolbar from './HeaderMessagesToolbar.vue';
 import PinnedMessage from './PinnedMessage.vue';
+import Icon from '@/UI/Icon.vue';
+import VKText from '@/UI/VKText.vue';
+import MessagesChatMenu from '@/ActionMenus/MessagesChatMenu.vue';
 
 export default {
   props: ['peer_id', 'peer'],

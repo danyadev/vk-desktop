@@ -32,9 +32,9 @@
 <script>
 import { getPhotoFromSizes } from 'js/utils';
 
-import Touch from '../../UI/Touch.vue';
-import VKText from '../../UI/VKText.vue';
 import Keyboard from './Keyboard.vue';
+import Touch from '@/UI/Touch.vue';
+import VKText from '@/UI/VKText.vue';
 
 export default {
   props: ['peer_id', 'msg'],

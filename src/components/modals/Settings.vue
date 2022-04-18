@@ -41,8 +41,8 @@
 import { ref } from 'vue';
 import { closeModal } from 'js/modals';
 
-import Icon from '../UI/Icon.vue';
-import Ripple from '../UI/Ripple.vue';
+import Icon from '@/UI/Icon.vue';
+import Ripple from '@/UI/Ripple.vue';
 
 import Interface from './settingsSections/Interface.vue';
 import Notifications from './settingsSections/Notifications.vue';

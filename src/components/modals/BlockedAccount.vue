@@ -20,7 +20,7 @@ import { closeModal } from 'js/modals';
 import store from 'js/store';
 
 import ModalHeader from './ModalHeader.vue';
-import Button from '../UI/Button.vue';
+import Button from '@/UI/Button.vue';
 
 export default {
   // type:

@@ -45,8 +45,8 @@ import store from 'js/store';
 import vkapi from 'js/vkapi';
 import router from 'js/router';
 
-import Icon from '../../UI/Icon.vue';
-import Button from '../../UI/Button.vue';
+import Icon from '@/UI/Icon.vue';
+import Button from '@/UI/Button.vue';
 
 export default {
   props: ['peer_id', 'peer', 'messages'],

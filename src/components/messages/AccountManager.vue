@@ -50,7 +50,7 @@ import { usersStorage } from 'js/store/Storage';
 import store from 'js/store';
 import router from 'js/router';
 
-import Icon from '../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   components: {

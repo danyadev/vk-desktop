@@ -57,8 +57,8 @@ import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 import { getAndroidToken } from '.';
 
-import Button from '../UI/Button.vue';
-import Icon from '../UI/Icon.vue';
+import Button from '@/UI/Button.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['onlyAddUser'],

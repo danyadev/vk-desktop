@@ -55,10 +55,10 @@ import { addSnackbar } from 'js/snackbars';
 import vkapi from 'js/vkapi';
 import sendMessage from 'js/sendMessage';
 
-import Scrolly from '../../UI/Scrolly.vue';
-import Ripple from '../../UI/Ripple.vue';
-import VKText from '../../UI/VKText.vue';
-import Icon from '../../UI/Icon.vue';
+import Scrolly from '@/UI/Scrolly.vue';
+import Ripple from '@/UI/Ripple.vue';
+import VKText from '@/UI/VKText.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['peer_id', 'keyboard', 'msg_id'],

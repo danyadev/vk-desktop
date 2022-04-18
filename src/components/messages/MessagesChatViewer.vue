@@ -28,9 +28,9 @@
 import { computed } from 'vue';
 import store from 'js/store';
 
-import Icon from '../UI/Icon.vue';
-import Scrolly from '../UI/Scrolly.vue';
 import MessagesList from './chat/MessagesList.vue';
+import Icon from '@/UI/Icon.vue';
+import Scrolly from '@/UI/Scrolly.vue';
 
 export default {
   props: ['peer_id', 'messages'],

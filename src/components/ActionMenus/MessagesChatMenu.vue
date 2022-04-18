@@ -58,7 +58,7 @@ import vkapi from 'js/vkapi';
 import store from 'js/store';
 
 import ActionsMenu from './ActionsMenu.vue';
-import Icon from '../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['peer_id', 'peer'],

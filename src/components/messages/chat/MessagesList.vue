@@ -8,7 +8,7 @@ import store from 'js/store';
 import MessagesGroup from './MessagesGroup.vue';
 import Carousel from './Carousel.vue';
 import ServiceMessage from '../ServiceMessage.vue';
-import Icon from '../../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['peer_id', 'peer', 'list', 'startInRead', 'isCustomView'],

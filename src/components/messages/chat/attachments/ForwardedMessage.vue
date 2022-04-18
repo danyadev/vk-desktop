@@ -56,8 +56,8 @@ import { getFullDate } from 'js/date';
 import store from 'js/store';
 
 import Forwarded from './Forwarded.vue';
-import VKText from '../../../UI/VKText.vue';
-import ShortText from '../../../UI/ShortText.vue';
+import VKText from '@/UI/VKText.vue';
+import ShortText from '@/UI/ShortText.vue';
 
 export default {
   props: ['peer_id', 'msg', 'isCustomView', 'fwdDepth'],

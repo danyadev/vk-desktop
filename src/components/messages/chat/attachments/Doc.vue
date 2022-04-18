@@ -24,7 +24,7 @@ import electron from 'electron';
 import request from 'js/request';
 import { downloadFile } from 'js/utils';
 
-import Icon from '../../../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['attach'],

@@ -34,12 +34,12 @@ import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
 
-import Scrolly from '../UI/Scrolly.vue';
-import Icon from '../UI/Icon.vue';
-import SearchInput from '../UI/SearchInput.vue';
 import AccountManager from './AccountManager.vue';
 import MessagesPeer from './MessagesPeer.vue';
-import MessagesListMenu from '../ActionMenus/MessagesListMenu.vue';
+import Scrolly from '@/UI/Scrolly.vue';
+import Icon from '@/UI/Icon.vue';
+import SearchInput from '@/UI/SearchInput.vue';
+import MessagesListMenu from '@/ActionMenus/MessagesListMenu.vue';
 
 export default {
   props: ['activeChat'],

@@ -57,7 +57,7 @@ import router from 'js/router';
 import getTranslate from 'js/getTranslate';
 
 import ContextMenu from './ContextMenu.vue';
-import Icon from '../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['event', 'id'],

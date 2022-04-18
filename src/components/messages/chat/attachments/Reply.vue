@@ -30,7 +30,7 @@ import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
 
-import VKText from '../../../UI/VKText.vue';
+import VKText from '@/UI/VKText.vue';
 
 export default {
   props: ['peer_id', 'msg', 'ownerMsgId'],

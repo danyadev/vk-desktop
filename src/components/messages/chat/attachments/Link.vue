@@ -28,8 +28,8 @@
 import electron from 'electron';
 import { getPhotoFromSizes } from 'js/utils';
 
-import VKText from '../../../UI/VKText.vue';
-import Button from '../../../UI/Button.vue';
+import VKText from '@/UI/VKText.vue';
+import Button from '@/UI/Button.vue';
 
 export default {
   props: ['attach'],

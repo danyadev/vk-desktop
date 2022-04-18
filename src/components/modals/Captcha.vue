@@ -26,7 +26,7 @@ import { reactive, computed, toRefs, onMounted } from 'vue';
 import { closeModal } from 'js/modals';
 
 import ModalHeader from './ModalHeader.vue';
-import Button from '../UI/Button.vue';
+import Button from '@/UI/Button.vue';
 
 export default {
   props: ['src', 'send'],

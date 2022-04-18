@@ -24,8 +24,8 @@ import { computed } from 'vue';
 import { loadProfile, getPhotoFromSizes } from 'js/utils';
 import store from 'js/store';
 
-import Icon from '../../../UI/Icon.vue';
-import Button from '../../../UI/Button.vue';
+import Icon from '@/UI/Icon.vue';
+import Button from '@/UI/Button.vue';
 
 export default {
   props: ['attach'],

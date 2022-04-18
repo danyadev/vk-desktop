@@ -70,9 +70,9 @@ import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
 
-import Icon from '../../UI/Icon.vue';
-import Scrolly from '../../UI/Scrolly.vue';
 import MessagesList from './MessagesList.vue';
+import Icon from '@/UI/Icon.vue';
+import Scrolly from '@/UI/Scrolly.vue';
 
 export default {
   props: ['peer_id', 'peer'],

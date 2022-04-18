@@ -17,7 +17,7 @@
 import { computed } from 'vue';
 import store from 'js/store';
 
-import Checkbox from '../../UI/Checkbox.vue';
+import Checkbox from '@/UI/Checkbox.vue';
 
 export default {
   components: {

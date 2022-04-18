@@ -1,12 +1,12 @@
 import { createRouter, createMemoryHistory } from 'vue-router';
 
-import Auth from '../components/auth/Auth.vue';
-import AuthConfirm from '../components/auth/AuthConfirm.vue';
+import Auth from '@/auth/Auth.vue';
+import AuthConfirm from '@/auth/AuthConfirm.vue';
 
-import Messages from '../components/messages/Messages.vue';
-import MessagesChat from '../components/messages/MessagesChat.vue';
-import MessagesChatEmpty from '../components/messages/MessagesChatEmpty.vue';
-import MessagesChatForward from '../components/messages/MessagesChatForward.vue';
+import Messages from '@/messages/Messages.vue';
+import MessagesChat from '@/messages/MessagesChat.vue';
+import MessagesChatEmpty from '@/messages/MessagesChatEmpty.vue';
+import MessagesChatForward from '@/messages/MessagesChatForward.vue';
 
 export default createRouter({
   history: createMemoryHistory(),

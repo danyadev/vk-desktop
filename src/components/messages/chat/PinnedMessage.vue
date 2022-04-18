@@ -30,8 +30,8 @@ import { getMessagePreview, getPeerTitle } from 'js/messages';
 import { getFullDate } from 'js/date';
 import store from 'js/store';
 
-import Icon from '../../UI/Icon.vue';
-import VKText from '../../UI/VKText.vue';
+import Icon from '@/UI/Icon.vue';
+import VKText from '@/UI/VKText.vue';
 
 export default {
   props: ['msg', 'peer_id'],

@@ -8,7 +8,7 @@ import {
   addNotificationsTimer,
   activeKeyboardCallbackButtons
 } from './messages';
-import { supportedAttachments } from '../components/messages/chat/attachments';
+import { supportedAttachments } from '@/messages/chat/attachments';
 import vkapi from './vkapi';
 import store from './store';
 import router from './router';

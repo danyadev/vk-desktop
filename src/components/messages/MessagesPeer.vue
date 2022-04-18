@@ -96,10 +96,10 @@ import store from 'js/store';
 import router from 'js/router';
 import getTranslate from 'js/getTranslate';
 
-import Icon from '../UI/Icon.vue';
-import VKText from '../UI/VKText.vue';
 import Typing from './Typing.vue';
 import ServiceMessage from './ServiceMessage.vue';
+import Icon from '@/UI/Icon.vue';
+import VKText from '@/UI/VKText.vue';
 
 export default {
   props: ['peer', 'msg', 'activeChat', 'nowDate'],

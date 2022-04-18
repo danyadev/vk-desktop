@@ -4,7 +4,7 @@ import router from './router';
 import request from './request';
 import longpoll from './longpoll';
 import * as dateUtils from './date/utils';
-import * as auth from '../components/auth';
+import * as auth from '@/auth';
 import * as emoji from './emoji';
 import * as modals from './modals';
 import { addSnackbar } from './snackbars';

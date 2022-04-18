@@ -93,12 +93,12 @@ import { getPeerTitle } from 'js/messages';
 import { getTime } from 'js/date';
 import store from 'js/store';
 
-import VKText from '../../UI/VKText.vue';
 import Keyboard from './Keyboard.vue';
 import SendMsgErrorMenu from './SendMsgErrorMenu.vue';
 import MessageExpireTime from './MessageExpireTime.vue';
 import Reply from './attachments/Reply.vue';
 import Forwarded from './attachments/Forwarded.vue';
+import VKText from '@/UI/VKText.vue';
 
 export default {
   props: ['peer_id', 'peer', 'msg', 'user', 'showUserData', 'isFirstItem', 'isCustomView'],

@@ -27,7 +27,7 @@ import { addSnackbar } from 'js/snackbars';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 
-import Icon from '../../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['msg'],

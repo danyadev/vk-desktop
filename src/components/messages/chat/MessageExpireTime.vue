@@ -10,7 +10,7 @@ import { ref, onUnmounted } from 'vue';
 import { format } from 'js/date/utils';
 import getTranslate from 'js/getTranslate';
 
-import Icon from '../../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   props: ['msg', 'expireIcon'],

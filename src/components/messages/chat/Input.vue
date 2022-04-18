@@ -96,10 +96,10 @@ import emoji, { isEmoji } from 'js/emoji';
 import getTranslate from 'js/getTranslate';
 import sendMessage from 'js/sendMessage';
 
-import Icon from '../../UI/Icon.vue';
-import Ripple from '../../UI/Ripple.vue';
 import Keyboard from './Keyboard.vue';
 import Reply from './attachments/Reply.vue';
+import Icon from '@/UI/Icon.vue';
+import Ripple from '@/UI/Ripple.vue';
 
 export default {
   props: ['peer_id', 'peer'],

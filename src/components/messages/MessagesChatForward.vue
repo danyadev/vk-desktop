@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Icon from '../UI/Icon.vue';
+import Icon from '@/UI/Icon.vue';
 
 export default {
   components: {
