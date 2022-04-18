@@ -67,10 +67,6 @@ class Longpoll {
         this.key = key;
         break;
 
-      case 3:
-        await this.getHistory(true);
-        break;
-
       case 4:
         throw new Error('[lp] Invalid LongPoll version');
     }
@@ -152,6 +148,7 @@ class Longpoll {
       const shouldLogEvent = Array.isArray(this.debug)
         ? this.debug.includes(rawEvent[0])
         : this.debug && !IGNORED_DEBUG_EVENTS.includes(rawEvent[0]);
+
       if (shouldLogEvent) {
         console.log('[lp]', rawEvent.slice());
       }
