@@ -14,7 +14,7 @@ import store from './store';
 import router from './router';
 import debug from './debug';
 
-const messageFlagsMap = {
+export const messageFlagsMap = {
   unread:         1 << 0,  // Непрочитанное сообщение
   outbox:         1 << 1,  // Исходящее сообщение
   important:      1 << 3,  // Важное сообщение
@@ -35,7 +35,7 @@ const messageFlagsMap = {
   has_ttl:        1 << 26  // Внутренний флаг (приходит вместе с бизнес-уведомлением)
 };
 
-const conversationFlagsMap = {
+export const conversationFlagsMap = {
   push_disabled:              1 << 4,  // Беседа замьючена
   sound_disabled:             1 << 5,  // Звук в беседе выключен (сомнительный флаг)
   incoming_message_request:   1 << 8,  // Входящий запрос на переписку / вступление в беседу
@@ -55,11 +55,11 @@ const conversationFlagsMap = {
   is_chat:                    1 << 26  // Признак того, что это чат
 };
 
-function hasFlag(mask, flags = messageFlagsMap) {
+export function hasFlag(mask, flags = messageFlagsMap) {
   return (flag) => !!(flags[flag] & mask);
 }
 
-function getAllFlags(mask, flags = messageFlagsMap) {
+export function getAllFlags(mask, flags = messageFlagsMap) {
   const flagToName = Object.fromEntries(
     Object.entries(flags).map(([a, b]) => [b, a])
   );
