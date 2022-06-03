@@ -351,7 +351,7 @@ export async function loadProfile(profileId) {
   }
 
   if (profileId) {
-    if (isNaN(+profileId)) {
+    if (Number.isNaN(+profileId)) {
       profileId = await resolveScreenName(profileId);
       if (!profileId) return;
     }

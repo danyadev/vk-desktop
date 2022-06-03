@@ -88,7 +88,7 @@ function getServiceMessage(data) {
     if (match) {
       const key = replaces[match[1]] || match[1];
 
-      source[key] = isNaN(data[item])
+      source[key] = Number.isNaN(+data[item])
         ? data[item]
         : +data[item];
     }
