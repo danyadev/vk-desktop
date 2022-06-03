@@ -187,7 +187,7 @@ function vkapi(method, params, { android } = {}) {
     if (data.execute_errors) {
       const [error] = data.execute_errors;
       handleErrorPromise = handleError({ method, params, error, user, resolve, reject });
-      handleErrorPromise.then(clearHandleError);
+      handleErrorPromise.finally(clearHandleError);
       return;
     }
 
@@ -197,8 +197,12 @@ function vkapi(method, params, { android } = {}) {
       return resolve(data.response);
     }
 
-    handleErrorPromise = handleError({ method, params, error: data.error, user, resolve, reject });
-    handleErrorPromise.then(clearHandleError);
+    // Некоторые методы криво отдают информацию об ошибке (например store.getStockItems),
+    // кладя ее не в поле error, а в корень ответа
+    const error = data.error || data;
+
+    handleErrorPromise = handleError({ method, params, error, user, resolve, reject });
+    handleErrorPromise.finally(clearHandleError);
   });
 }
 
