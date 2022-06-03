@@ -61,11 +61,15 @@ export default {
       }
 
       if (block.type === 'link' && (props.link || props.preview)) {
-        const params = props.link
-          ? { class: 'link', title: block.link, onClick: () => internalLinkResolver(block.link) }
-          : { class: 'message_preview' };
+        if (props.preview) {
+          return [h('div', { class: 'message_preview' }, block.preview)];
+        }
 
-        return [h('div', params, [block.value])];
+        return [h('div', {
+          class: 'link',
+          title: block.preview,
+          onClick: () => internalLinkResolver(block.link)
+        }, block.preview.replace(/(.{55}).+/, '$1..'))];
       }
 
       if (block.type === 'hashtag' && (props.link || props.preview)) {
@@ -152,7 +156,8 @@ const linkParser = createParser({
     return [
       {
         type: 'link',
-        value: decodedUri.replace(/(.{55}).+/, '$1..'),
+        value,
+        preview: decodedUri,
         link: (match[2] ? '' : 'http://') + value
       },
       ...(textAfterLink ? linkParser(textAfterLink) : [])
