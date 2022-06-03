@@ -144,7 +144,7 @@ const linkParser = createParser({
     let decodedUri = value;
 
     try {
-      decodedUri = decodeURI(value);
+      decodedUri = decodeURIComponent(value);
     } catch {
       // Попалась ссылка со сломанным закодированным текстом
     }
