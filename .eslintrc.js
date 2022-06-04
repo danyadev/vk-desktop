@@ -249,9 +249,6 @@ module.exports = {
     'vue/no-potential-component-option-typo': 'error',
     'vue/no-restricted-v-bind': ['error', '/^v-/', 'click'],
     'vue/no-static-inline-styles': 'error',
-    'vue/no-unregistered-components': ['error', {
-      ignorePatterns: ['(ForwardedMessage|RouterView|Attachments)']
-    }],
     'vue/no-unused-properties': ['error', {
       groups: ['props', 'setup']
     }],
@@ -315,6 +312,7 @@ module.exports = {
       multiline: 1
     }],
     'vue/multi-word-component-names': 'off',
+    'vue/no-reserved-component-names': 'off',
     'vue/no-v-html': 'off',
     'vue/order-in-components': ['error', {
       order: [
