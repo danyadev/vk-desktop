@@ -37,7 +37,11 @@
       <div class="act_menu_data">{{ l('im_clear_history') }}</div>
     </div>
 
-    <div v-if="peerId > 2e9" class="act_menu_item" @click="leftFromChat">
+    <div
+      v-if="peerId > 2e9 && peer.chatState !== 'kicked'"
+      class="act_menu_item"
+      @click="leftFromChat"
+    >
       <template v-if="peer.left">
         <Icon name="door_in" color="var(--icon-blue)" class="act_menu_icon -door_in" />
         <div class="act_menu_data">{{ l('im_toggle_left_state', peer.isChannel ? 3 : 2) }}</div>

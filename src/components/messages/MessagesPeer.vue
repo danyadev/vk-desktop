@@ -22,6 +22,7 @@
             color="var(--icon-dark-blue)"
             class="im_peer_ghost"
           />
+          <Icon v-if="peer.isDonut" name="donut_fill_20" width="13" class="im_peer_donut" />
           <Icon v-if="peer.muted" name="muted" color="var(--icon-gray)" class="im_peer_muted" />
         </div>
 
@@ -295,6 +296,11 @@ export default {
 .im_peer_ghost {
   flex: none;
   margin: 1px 0 0 3px;
+}
+
+.im_peer_donut {
+  flex: none;
+  margin-left: 4px;
 }
 
 .im_peer_muted {

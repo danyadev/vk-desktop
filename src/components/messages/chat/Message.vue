@@ -365,14 +365,10 @@ export default {
 }
 
 .message:not(.hideBubble) .message_bubble {
-  background: var(--message-bubble-background);
+  background: var(--message-current-bubble-background);
   padding: 8px 12px 9px 12px;
   border-radius: 18px;
   word-break: break-word;
-}
-
-.message:not(.hideBubble).out .message_bubble {
-  background: var(--message-out-bubble-background);
 }
 
 .message:not(.hideBubble).isSticker .message_bubble {

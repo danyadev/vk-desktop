@@ -1,5 +1,6 @@
 .root[theme="dark"] {
-  --background: #191919;
+  --background: #19191a;
+  --background-light: #232324;
   --background-accent: #2c2d2f;
   /* Используется для времени у стикеров в сообщении */
   --background-alpha: #191919df;

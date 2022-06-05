@@ -1,5 +1,6 @@
 .root {
   --background: #fff;
+  --background-light: #fff;
   --background-accent: var(--background);
   /* Используется для времени у стикеров в сообщении */
   --background-alpha: #ffffffdf;

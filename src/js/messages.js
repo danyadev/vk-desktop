@@ -9,13 +9,20 @@ export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;
   const { push_settings, chat_settings } = conversation;
   const isCasperChat = isChat && !!chat_settings.is_disappearing;
+  const chatState = isChat
+    // 962 - исключен из беседы из-за окончания платной подписки
+    ? conversation.can_write.reason === 962
+        ? 'kicked'
+        : chat_settings.state
+    : null;
 
   return {
     id: conversation.peer.id,
     isChannel: isChat && !!chat_settings.is_group_channel,
     isCasperChat,
+    isDonut: isChat && !!chat_settings.is_donut,
     members: isChat ? chat_settings.members_count : null,
-    left: isChat && ['left', 'kicked'].includes(chat_settings.state),
+    left: isChat && ['left', 'kicked'].includes(chatState),
     muted: !!(push_settings && (push_settings.disabled_forever || push_settings.disabled_until)),
     unread: conversation.unread_count || 0,
     photo: isChat ? getPhoto(chat_settings.photo) : null,
@@ -35,9 +42,10 @@ export function parseConversation(conversation) {
       ? parseMessage(chat_settings.pinned_message)
       : null,
     acl: isChat ? chat_settings.acl : null,
-    chatState: isChat ? chat_settings.state : null,
+    chatState,
     owner_id: isChat ? chat_settings.owner_id : null,
     admin_ids: isChat && chat_settings.admin_ids || [],
+    // TODO: создать внешний список загружающихся бесед?
     loaded: true
   };
 }
