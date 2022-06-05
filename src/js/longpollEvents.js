@@ -834,8 +834,9 @@ export default {
   20: {
     // Закрепление или открепление беседы
     // [peer_id, major_id, 0]
-    handler([peer_id, major_id]) {
-      const { pinnedPeers } = store.state.messages;
+    preload: () => true,
+    async handler([peer_id, major_id]) {
+      const { pinnedPeers, conversations } = store.state.messages;
 
       if (major_id === 0) {
         const index = pinnedPeers.indexOf(peer_id);
@@ -846,6 +847,10 @@ export default {
           store.commit('messages/moveConversation', { peer_id });
         }
       } else if (!pinnedPeers.includes(peer_id)) {
+        if (!conversations[peer_id]) {
+          await loadConversation(peer_id);
+        }
+
         pinnedPeers.unshift(peer_id);
       }
     }

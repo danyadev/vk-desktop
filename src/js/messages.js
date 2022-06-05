@@ -12,8 +12,8 @@ export function parseConversation(conversation) {
   const chatState = isChat
     // 962 - исключен из беседы из-за окончания платной подписки
     ? conversation.can_write.reason === 962
-        ? 'kicked'
-        : chat_settings.state
+      ? 'kicked'
+      : chat_settings.state
     : null;
 
   return {
@@ -283,55 +283,36 @@ export function deleteMessages(message_ids, peer, needCancelSelect) {
   });
 }
 
-const loadingConversations = new Set();
+const loadingConversations = new Map();
 
-export async function loadConversation(id) {
+export function loadConversation(id) {
   if (loadingConversations.has(id)) {
-    return;
+    return promise;
   }
 
-  loadingConversations.add(id);
+  const promise = new Promise(async (resolve, reject) => {
+    loadingConversations.set(id, promise);
 
-  const { items: [conversation], profiles, groups } = await vkapi('messages.getConversationsById', {
-    peer_ids: id,
-    extended: 1,
-    fields
+    const {
+      items: [conversation],
+      profiles,
+      groups
+    } = await vkapi('messages.getConversationsById', {
+      peer_ids: id,
+      extended: 1,
+      fields
+    }).catch(reject);
+
+    store.commit('addProfiles', concatProfiles(profiles, groups));
+    store.commit('messages/updateConversation', {
+      peer: parseConversation(conversation)
+    });
+
+    loadingConversations.delete(id);
   });
 
-  store.commit('addProfiles', concatProfiles(profiles, groups));
-  store.commit('messages/updateConversation', {
-    peer: parseConversation(conversation)
-  });
-
-  loadingConversations.delete(id);
+  return promise;
 }
-
-// export const loadedConversationMembers = new Set();
-
-// export async function loadConversationMembers(id, force) {
-//   if (loadedConversationMembers.has(id) && !force) {
-//     return;
-//   }
-//
-//   loadedConversationMembers.add(id);
-//
-//   try {
-//     const { profiles, groups } = await vkapi('messages.getConversationMembers', {
-//       peer_id: id,
-//       fields
-//     });
-//
-//     store.commit('addProfiles', concatProfiles(profiles, groups));
-//   } catch (err) {
-//     // Пользователь исключен/вышел из беседы, но т.к. юзер может вернуться,
-//     // здесь удаляется пометка беседы как загруженная для возможности повторить попытку
-//     if (err.error_code === 917) {
-//       loadedConversationMembers.delete(id);
-//     } else {
-//       throw err;
-//     }
-//   }
-// }
 
 const activeNotificationsTimers = new Map();
 
@@ -359,4 +340,5 @@ export function addNotificationsTimer({ peer_id, disabled_until }, remove) {
   );
 }
 
+// TODO: почему не в сторе?
 export const activeKeyboardCallbackButtons = {};
