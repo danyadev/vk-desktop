@@ -53,9 +53,8 @@
               v-if="msg.fwdCount"
               ref="forwarded"
               :peer_id="peer_id"
-              :msg="msg"
+              :messages="msg.fwdMessages"
               :isCustomView="isCustomView"
-              :fwdDepth="1"
             />
 
             <div class="message_time_wrap">

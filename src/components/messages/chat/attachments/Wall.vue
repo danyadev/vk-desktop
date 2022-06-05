@@ -2,19 +2,15 @@
   <div class="attach_wall">
     <div class="attach_title">{{ l('im_attachments', 'wall', [], 1) }}</div>
 
-    <div class="attach_forwarded attach_left_border">
-      <ForwardedMessage :msg="fakeMsg">
-        <template v-if="postReply" #afterContent>
-          <div class="attach_forwarded attach_left_border">
-            <ForwardedMessage :msg="postReply" />
-          </div>
-        </template>
-      </ForwardedMessage>
+    <Forwarded :messages="[fakeMsg]">
+      <template #afterContent>
+        <Forwarded v-if="postReply" :messages="[postReply]" />
 
-      <div class="outline_button" @click="openWall">
-        {{ l('im_open_wall') }}
-      </div>
-    </div>
+        <div class="outline_button" @click="openWall">
+          {{ l('im_open_wall') }}
+        </div>
+      </template>
+    </Forwarded>
   </div>
 </template>
 
@@ -22,8 +18,14 @@
 import electron from 'electron';
 import { parseAttachments } from 'js/messages';
 
+import Forwarded from './Forwarded.vue';
+
 export default {
   props: ['attach'],
+
+  components: {
+    Forwarded
+  },
 
   setup(props) {
     // eslint-disable-next-line vue/no-setup-props-destructure

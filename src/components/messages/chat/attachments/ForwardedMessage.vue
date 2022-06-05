@@ -37,13 +37,11 @@
         <Forwarded
           v-else
           :peer_id="peer_id"
-          :msg="msg"
+          :messages="msg.fwdCount ? msg.fwdMessages : [msg.replyMsg]"
           :isCustomView="isCustomView"
           :fwdDepth="fwdDepth + 1"
         />
       </template>
-
-      <slot name="afterContent" />
     </div>
   </div>
 </template>
