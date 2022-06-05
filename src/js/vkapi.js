@@ -5,7 +5,7 @@ import store from './store';
 import request from './request';
 import debug from './debug';
 
-export const version = '5.149';
+export const version = '5.183';
 
 let handleErrorPromise;
 const clearHandleError = () => (handleErrorPromise = null);
