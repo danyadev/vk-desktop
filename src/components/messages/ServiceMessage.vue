@@ -87,15 +87,15 @@ function getServiceMessage(msg, author, peer_id, isFull) {
       return getVNode('im_chat_create', type(0), [name(0), msg.action.text]);
 
     case 'chat_photo_update':
-      const [attach] = msg.attachments.photo;
+      const photoAttaches = msg.attachments.photo;
       let photo;
 
-      if (isFull) {
+      if (isFull && photoAttaches) {
         photo = h('img', {
           class: 'service_message_photo',
-          src: getPhotoFromSizes(attach.sizes, 'p').url,
+          src: getPhotoFromSizes(photoAttaches[0].sizes, 'p').url,
           onClick() {
-            //
+            // TODO: просмотр фотографии
           }
         });
       }
@@ -106,9 +106,14 @@ function getServiceMessage(msg, author, peer_id, isFull) {
       return getVNode('im_chat_photo_remove', type(0), [name(0)]);
 
     case 'chat_title_update':
-      return getVNode('im_chat_title_update', type(0), [name(0), msg.action.text]);
+      return getVNode(
+        'im_chat_title_update',
+        type(0),
+        [name(0), msg.action.old_text, msg.action.text]
+      );
 
     case 'chat_pin_message':
+      // Сообщение может не содержать текста (например, если в нем только вложения)
       if (msg.action.message) {
         return getVNode('im_chat_pin_message', type(1), [name(1), msg.action.message]);
       } else {
@@ -139,6 +144,9 @@ function getServiceMessage(msg, author, peer_id, isFull) {
         return getVNode('im_chat_kick_user_short', type(1), [name(1, 1)]);
       }
 
+    case 'chat_kick_don':
+      return getVNode('im_chat_kick_don', null, [name(0)]);
+
     case 'chat_screenshot':
       return getVNode('im_chat_screenshot', type(0), [name(0)]);
 
@@ -150,6 +158,17 @@ function getServiceMessage(msg, author, peer_id, isFull) {
 
     case 'chat_invite_user_by_call_join_link':
       return getVNode('im_chat_invite_user_by_call_join_link', type(0), [name(0)]);
+
+    case 'conversation_style_update':
+      if (msg.action.style) {
+        return getVNode(
+          'im_conversation_style_update',
+          type(0),
+          [name(0), getTranslate('im_chat_themes', msg.action.style)]
+        );
+      } else {
+        return getVNode('im_conversation_style_reset', type(0), [name(0)]);
+      }
 
     default:
       console.warn('[im] Неизвестное действие:', msg.action.type);
@@ -166,6 +185,6 @@ function getServiceMessage(msg, author, peer_id, isFull) {
   border-radius: 50%;
   object-fit: cover;
   background: var(--background-black-alpha);
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 </style>
