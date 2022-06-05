@@ -1,4 +1,12 @@
-import { escape, getPhoto, fields, concatProfiles, capitalize, getAppName } from './utils';
+import {
+  escape,
+  getPhoto,
+  fields,
+  concatProfiles,
+  capitalize,
+  getAppName,
+  createCallablePromise
+} from './utils';
 import { openModal } from 'js/modals';
 import { getLastOnlineDate } from './date';
 import vkapi from './vkapi';
@@ -285,33 +293,33 @@ export function deleteMessages(message_ids, peer, needCancelSelect) {
 
 const loadingConversations = new Map();
 
-export function loadConversation(id) {
-  if (loadingConversations.has(id)) {
-    return promise;
+export async function loadConversation(id) {
+  const savedPromise = loadingConversations.get(id);
+
+  if (savedPromise) {
+    return savedPromise;
   }
 
-  const promise = new Promise(async (resolve, reject) => {
-    loadingConversations.set(id, promise);
+  const promise = createCallablePromise();
+  loadingConversations.set(id, promise);
 
-    const {
-      items: [conversation],
-      profiles,
-      groups
-    } = await vkapi('messages.getConversationsById', {
-      peer_ids: id,
-      extended: 1,
-      fields
-    }).catch(reject);
-
-    store.commit('addProfiles', concatProfiles(profiles, groups));
-    store.commit('messages/updateConversation', {
-      peer: parseConversation(conversation)
-    });
-
-    loadingConversations.delete(id);
+  const {
+    items: [conversation],
+    profiles,
+    groups
+  } = await vkapi('messages.getConversationsById', {
+    peer_ids: id,
+    extended: 1,
+    fields
   });
 
-  return promise;
+  store.commit('addProfiles', concatProfiles(profiles, groups));
+  store.commit('messages/updateConversation', {
+    peer: parseConversation(conversation)
+  });
+
+  loadingConversations.delete(id);
+  promise.resolve();
 }
 
 const activeNotificationsTimers = new Map();

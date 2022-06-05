@@ -80,7 +80,7 @@ export default {
   align-items: center;
   text-align: center;
   margin: auto;
-  padding: 20px 0;
+  padding: 40px 20px;
   color: var(--text-dark-steel-gray);
   background: var(--background-light);
   border-radius: 5px;
