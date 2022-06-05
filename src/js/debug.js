@@ -25,7 +25,7 @@ export default function debug(...textChunks) {
 
 // =================
 
-export async function showError(error) {
+export async function sendError(error) {
   let type = error.type === 'error' ? 'UncaughtError' : 'UnhandledRejection';
   let message;
 
@@ -61,7 +61,6 @@ export async function showError(error) {
     message: getTranslate('error_dialog_message'),
     detail: message,
     cancelId: 1,
-
     buttons: [getTranslate('send_report'), getTranslate('close')]
   });
 
@@ -87,8 +86,8 @@ export async function showError(error) {
 }
 
 if (!DEV_MODE) {
-  window.addEventListener('error', showError);
-  window.addEventListener('unhandledrejection', showError);
+  window.addEventListener('error', sendError);
+  window.addEventListener('unhandledrejection', sendError);
 }
 
 // =================

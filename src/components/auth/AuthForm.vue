@@ -53,6 +53,7 @@ import { reactive, computed, toRefs, onActivated } from 'vue';
 import { getPhoto } from 'js/utils';
 import { openModal } from 'js/modals';
 import { addSnackbar } from 'js/snackbars';
+import { sendError } from 'js/debug';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 import { getAndroidToken } from '.';
@@ -95,6 +96,11 @@ export default {
 
       const data = await getAndroidToken(state.login, state.password);
 
+      if (data.access_token) {
+        emit('auth', data.access_token);
+        return;
+      }
+
       switch (data.error) {
         case 'invalid_client':
           state.loading = false;
@@ -120,7 +126,8 @@ export default {
           break;
 
         default:
-          emit('auth', data.access_token);
+          state.loading = false;
+          sendError(new Error('Error getting android token\n\n' + JSON.stringify(data)));
           break;
       }
     }

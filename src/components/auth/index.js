@@ -86,7 +86,11 @@ async function getDesktopToken(androidToken) {
 
   debug('[auth] end: getDesktopToken');
 
-  return headers.location.match(/#access_token=([a-z0-9]{85})/)[1];
+  const accessTokenAnchor = '#access_token=';
+  return headers.location.slice(
+    headers.location.indexOf(accessTokenAnchor) + accessTokenAnchor.length,
+    headers.location.indexOf('&')
+  );
 }
 
 export async function loadUser(android_token, onlyAddUser) {
