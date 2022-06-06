@@ -115,7 +115,6 @@ export default {
             h(ServiceMessage, {
               msg,
               author: store.state.profiles[msg.from],
-              peer_id: props.peer_id,
               isFull: true
             })
           ])

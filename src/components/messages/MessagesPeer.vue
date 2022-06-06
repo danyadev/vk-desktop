@@ -49,12 +49,7 @@
               {{ l(msg.isExpired ? 'is_message_expired' : 'im_attachment_deleted') }}
             </div>
             <div v-else :class="['im_peer_text', { hasAttachment }]">
-              <ServiceMessage
-                v-if="msg.action"
-                :msg="msg"
-                :author="author"
-                :peer_id="peer.id"
-              />
+              <ServiceMessage v-if="msg.action" :msg="msg" :author="author" />
               <VKText v-else preview>{{ message }}</VKText>
             </div>
           </div>

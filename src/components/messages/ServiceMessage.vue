@@ -7,13 +7,12 @@ import getTranslate from 'js/getTranslate';
 import VKText from '@/UI/VKText.vue';
 
 export default {
-  props: ['msg', 'author', 'peer_id', 'isFull'],
+  props: ['msg', 'author', 'isFull'],
 
   setup(props) {
     return () => getServiceMessage(
       props.msg,
       props.author || { id: props.msg.from },
-      props.peer_id,
       props.isFull
     );
   }
@@ -44,7 +43,7 @@ function getVNode(name, key, replaces, photo) {
   );
 }
 
-function getServiceMessage(msg, author, peer_id, isFull) {
+function getServiceMessage(msg, author, isFull) {
   const actID = msg.action.member_id;
   const actUser = store.state.profiles[actID] || { id: actID };
   const { activeUserID } = store.state.users;
