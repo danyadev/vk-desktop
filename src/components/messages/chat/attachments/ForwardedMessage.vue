@@ -10,6 +10,7 @@
             <div class="attach_fwd_msg_dot"></div>
             {{ l('im_msg_edited') }}.
           </template>
+          <Icon v-if="msg.isDonut" name="donut_fill_20" class="attach_fwd_donut" />
         </div>
       </div>
     </div>
@@ -54,6 +55,7 @@ import { getFullDate } from 'js/date';
 import store from 'js/store';
 
 import Forwarded from './Forwarded.vue';
+import Icon from '@/UI/Icon.vue';
 import VKText from '@/UI/VKText.vue';
 import ShortText from '@/UI/ShortText.vue';
 
@@ -62,6 +64,7 @@ export default {
 
   components: {
     Forwarded,
+    Icon,
     VKText,
     ShortText
   },
@@ -139,6 +142,12 @@ export default {
   margin: 8px 4px 0 4px;
   border-radius: 50%;
   background: var(--text-dark-steel-gray);
+}
+
+.attach_fwd_donut {
+  width: 13px;
+  height: 13px;
+  margin: 2px 0 0 4px;
 }
 
 .attach_fwd_msg_content {

@@ -6,9 +6,9 @@
       <template #afterContent>
         <Forwarded v-if="postReply" :messages="[postReply]" />
 
-        <div v-if="donutText" class="attach_wall_donut">
+        <div v-if="donutPlaceholder" class="attach_wall_donut">
           <Icon name="donut_outline_56" color="var(--icon-gray)" />
-          <span class="attach_wall_donut_text">{{ donutText }}</span>
+          <span class="attach_wall_donut_placeholder">{{ donutPlaceholder }}</span>
         </div>
 
         <div class="outline_button" @click="openWall">
@@ -47,27 +47,38 @@ export default {
       });
     }
 
-    function openWall() {
-      electron.shell.openExternal(`https://vk.com/wall${attach.to_id}_${attach.id}`);
+    function getDonutStatus(attach) {
+      const isDonut = !!attach.donut && attach.donut.is_donut;
+      const isDonutNeedSubscription = isDonut && !!attach.donut.placeholder;
+
+      return { isDonut, isDonutNeedSubscription };
     }
 
     function generateMessage(attach) {
+      const { isDonut, isDonutNeedSubscription } = getDonutStatus(attach);
+
       return {
         from: attach.from_id,
         date: attach.date,
         text: (attach.text || '').replace(/\n/g, '<br>'),
         attachments: parseAttachments(attach.attachments || []),
         isContentDeleted: (
-          !attach.text && !attach.attachments && !attach.copy_history && !attach.donut
-        )
+          !attach.text && !attach.attachments && !postReply && !isDonutNeedSubscription
+        ),
+        isDonut
       };
     }
 
+    const { isDonutNeedSubscription } = getDonutStatus(attach);
+
     return {
       fakeMsg: generateMessage(attach),
-      donutText: attach.donut.is_donut && attach.donut.placeholder.text,
       postReply: postReply && generateMessage(postReply),
-      openWall
+      donutPlaceholder: isDonutNeedSubscription && attach.donut.placeholder.text,
+
+      openWall() {
+        electron.shell.openExternal(`https://vk.com/wall${attach.to_id}_${attach.id}`);
+      }
     };
   }
 };
@@ -90,7 +101,7 @@ export default {
   margin-bottom: 20px;
 }
 
-.attach_wall_donut_text {
+.attach_wall_donut_placeholder {
   max-width: 300px;
 }
 </style>
