@@ -95,7 +95,7 @@ export default {
   im_chat_online_long_ago: ['Был в сети давно', 'Была в сети давно'],
   im_chat_online_not_show: ['Был в сети давно', 'Была в сети давно'],
 
-  im_go_to_first_msg: 'Перейти в начало беседы',
+  im_go_to_first_msg: 'Перейти к началу беседы',
   im_toggle_pinned_msg: ['Показать закрепл. сообщ.', 'Скрыть закрепл. сообщ.'],
   im_unpin_msg: 'Открепить сообщение',
   im_toggle_notifications: ['Включить уведомления', 'Отключить уведомления'],
