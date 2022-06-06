@@ -1,5 +1,5 @@
 <script>
-import { h, reactive, computed, onMounted, onActivated, getCurrentInstance, watch } from 'vue';
+import { h, reactive, computed, onMounted, onActivated, getCurrentInstance, watch, nextTick } from 'vue';
 import { getPhotoFromSizes, windowSize } from 'js/utils';
 import { format, createDateFrom } from 'js/date/utils';
 import { calculatePhotosLayout } from './photosLayout';
@@ -115,8 +115,14 @@ export default {
       calcMaxHeight();
     }
 
-    onMounted(() => {
+    onMounted(async () => {
       root = instance.vnode.el;
+
+      // TODO: завести issue во вью и/или дождаться фикса
+      if (!document.body.contains(root)) {
+        await nextTick();
+      }
+
       calcMaxSize();
     });
 
