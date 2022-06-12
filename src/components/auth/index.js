@@ -86,11 +86,9 @@ async function getDesktopToken(androidToken) {
 
   debug('[auth] end: getDesktopToken');
 
-  const accessTokenAnchor = '#access_token=';
-  return headers.location.slice(
-    headers.location.indexOf(accessTokenAnchor) + accessTokenAnchor.length,
-    headers.location.indexOf('&')
-  );
+  const linkWithToken = headers.location;
+  const hashValue = linkWithToken.slice(linkWithToken.indexOf('#') + 1);
+  return new URLSearchParams(hashValue).get('access_token');
 }
 
 export async function loadUser(android_token, onlyAddUser) {
