@@ -72,6 +72,11 @@ module.exports = function(env, { mode = 'development' } = {}) {
     module: {
       rules: [
         {
+          test: /\.js$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/
+        },
+        {
           test: /\.vue$/,
           loader: 'vue-loader',
           exclude: /node_modules/
