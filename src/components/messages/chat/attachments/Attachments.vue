@@ -43,7 +43,7 @@ export default {
         } else {
           layoutAttaches[type] = attach;
         }
-      } else if (component) {
+      } else if (Component) {
         attachments.push(
           <Component key={attach} attach={attach} msg={props.msg} />
         );
