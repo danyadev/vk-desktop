@@ -64,23 +64,18 @@ function generateEmojiImageText(emoji) {
   const [validEmoji, style] = getEmojiAndStyle(emoji);
 
   if (style) {
-    return `<img class="emoji" src="assets/blank.gif" style="${style}" alt="${validEmoji}">`;
+    return `<img class="emoji" src="assets/blank.gif" alt="${validEmoji}" style="${style}">`;
   }
 
   return validEmoji;
 }
 
 // Генерирует из эмодзи VNode img элемент
-export function generateEmojiImageVNode(createElement, emoji) {
+export function generateEmojiImageVNode(emoji) {
   const [validEmoji, style] = getEmojiAndStyle(emoji);
 
   if (style) {
-    return createElement('img', {
-      class: 'emoji',
-      src: 'assets/blank.gif',
-      alt: validEmoji,
-      style
-    });
+    return <img class="emoji" src="assets/blank.gif" alt={validEmoji} style={style} />;
   }
 
   return validEmoji;

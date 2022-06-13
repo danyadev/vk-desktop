@@ -1,5 +1,4 @@
 <script>
-import { h, Fragment } from 'vue';
 import { capitalize } from 'js/utils';
 import { getDay } from 'js/date';
 import { isSameDay } from 'js/date/utils';
@@ -37,12 +36,12 @@ export default {
     function closeGroup() {
       if (activeGroup.length) {
         children.push(
-          h(MessagesGroup, {
-            peer_id: props.peer_id,
-            peer: props.peer,
-            messages: activeGroup,
-            isCustomView: props.isCustomView
-          })
+          <MessagesGroup
+            peer_id={props.peer_id}
+            peer={props.peer}
+            isCustomView={props.isCustomView}
+            messages={activeGroup}
+          />
         );
 
         activeGroup = [];
@@ -53,21 +52,15 @@ export default {
       closeGroup();
 
       children.push(
-        h(
-          'div',
-          {
-            // isUnread добавляется, если не прочтено минимум одно сообщение
-            class: ['message_expired_wrap', { isUnread }],
-            // Для прочтения сообщений
-            'data-last-id': expiredMessages[expiredMessages.length - 1]
-          },
-          [
-            h('div', { class: 'message_expired' }, [
-              h(Icon, { name: 'bomb', color: 'var(--icon-gray)' }),
-              this.l('im_messages_expired', [expiredMessages.length], expiredMessages.length)
-            ])
-          ]
-        )
+        <div
+          class={['message_expired_wrap', { isUnread }]}
+          data-last-id={expiredMessages[expiredMessages.length - 1]}
+        >
+          <div class="message_expired">
+            <Icon name="bomb" color="var(--icon-gray)" />
+            {this.l('im_messages_expired', [expiredMessages.length], expiredMessages.length)}
+          </div>
+        </div>
       );
 
       expiredMessages = [];
@@ -90,7 +83,7 @@ export default {
         closeGroup();
 
         children.push(
-          h('div', { class: 'message_date' }, messageDate)
+          <div class="message_date">{messageDate}</div>
         );
       }
 
@@ -98,9 +91,9 @@ export default {
         closeGroup();
 
         children.push(
-          h('div', { class: 'message_unreaded_messages' }, [
-            h('span', this.l('im_unread_messages'))
-          ])
+          <div class="message_unreaded_messages">
+            <span>{this.l('im_unread_messages')}</span>
+          </div>
         );
       }
 
@@ -108,16 +101,9 @@ export default {
         closeGroup();
 
         children.push(
-          h('div', {
-            class: ['im_service_message', { isUnread }],
-            'data-id': msg.id
-          }, [
-            h(ServiceMessage, {
-              msg,
-              author: store.state.profiles[msg.from],
-              isFull: true
-            })
-          ])
+          <div class={['im_service_message', { isUnread }]} data-id={msg.id}>
+            <ServiceMessage msg={msg} author={store.state.profiles[msg.from]} isFull={true} />
+          </div>
         );
 
         continue;
@@ -134,10 +120,7 @@ export default {
           closeGroup();
 
           children.push(
-            h(Carousel, {
-              peer_id: props.peer_id,
-              msg
-            })
+            <Carousel peer_id={props.peer_id} msg={msg} />
           );
         }
       } else {
@@ -151,7 +134,7 @@ export default {
 
     closeGroup();
 
-    return h(Fragment, children);
+    return <>{children}</>;
   }
 };
 </script>

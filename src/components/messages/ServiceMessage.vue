@@ -1,5 +1,4 @@
 <script>
-import { h, Fragment } from 'vue';
 import { loadProfile, createParser, getPhotoFromSizes } from 'js/utils';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
@@ -26,21 +25,18 @@ const translateParser = createParser({
     const text = replaces[id];
 
     return [
-      h('b', { key: text }, [
-        h(VKText, () => [text])
-      ])
+      <b key={text}>
+        <VKText>{text}</VKText>
+      </b>
     ];
   }
 });
 
 function getVNode(name, key, replaces, photo) {
   const translate = getTranslate(name, key);
-  const message = h('span', translateParser(translate, replaces));
+  const message = <span>{translateParser(translate, replaces)}</span>;
 
-  return h(
-    Fragment,
-    photo ? [message, photo] : message
-  );
+  return <>{message}{photo}</>;
 }
 
 function getServiceMessage(msg, author, isFull) {
@@ -90,13 +86,10 @@ function getServiceMessage(msg, author, isFull) {
       let photo;
 
       if (isFull && photoAttaches) {
-        photo = h('img', {
-          class: 'service_message_photo',
-          src: getPhotoFromSizes(photoAttaches[0].sizes, 'p').url,
-          onClick() {
-            // TODO: просмотр фотографии
-          }
-        });
+        photo = <img
+          class="service_message_photo"
+          src={getPhotoFromSizes(photoAttaches[0].sizes, 'p').url}
+        />;
       }
 
       return getVNode('im_chat_photo_update', type(0), [name(0)], photo);

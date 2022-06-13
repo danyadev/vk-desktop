@@ -1,5 +1,5 @@
 <script>
-import { h, Fragment, computed } from 'vue';
+import { computed } from 'vue';
 import electron from 'electron';
 import { createParser, unescape } from 'js/utils';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
@@ -26,70 +26,75 @@ export default {
     function parseBlock(block) {
       if (block.type === 'mention') {
         if (!props.mention && !props.preview) {
-          return [block.raw];
+          return block.raw;
         }
 
         const mentionContent = block.value.reduce((blocks, mentionTextBlock) => (
           [...blocks, ...parseBlock(mentionTextBlock)]
         ), []);
 
-        let attrs;
-
         if (props.mention) {
-          attrs = {
-            class: 'link',
-            onClick() {
-              const path = block.id > 0 ? `id${block.id}` : `club${-block.id}`;
-              electron.shell.openExternal(`https://vk.com/${path}`);
-            }
-          };
-        } else {
-          attrs = { class: 'message_preview' };
+          return (
+            <div
+              class="link"
+              onClick={() => {
+                const path = block.id > 0 ? `id${block.id}` : `club${-block.id}`;
+                electron.shell.openExternal(`https://vk.com/${path}`);
+              }}
+            >
+              {mentionContent}
+            </div>
+          );
         }
 
-        return [h('div', attrs, mentionContent)];
+        return <div class="message_preview">{mentionContent}</div>;
       }
 
       if (block.type === 'emoji') {
         return useNativeEmoji.value
           ? block.value
-          : [generateEmojiImageVNode(h, block.value)];
+          : generateEmojiImageVNode(block.value);
       }
 
       if (block.type === 'br') {
-        return [props.multiline ? h('br') : ' '];
+        return props.multiline ? <br /> : ' ';
       }
 
       if (block.type === 'link' && (props.link || props.preview)) {
         if (props.preview) {
-          return [h('div', { class: 'message_preview' }, block.preview)];
+          return <div class="message_preview">{block.preview}</div>;
         }
 
-        return [h('div', {
-          class: 'link',
-          title: block.preview,
-          onClick: () => internalLinkResolver(block.link)
-        }, block.preview.replace(/(.{55}).+/, '$1..'))];
+        return (
+          <div class="link" title={block.preview} onClick={() => internalLinkResolver(block.link)}>
+            {block.preview.replace(/(.{55}).+/, '$1..')}
+          </div>
+        );
       }
 
       if (block.type === 'hashtag' && (props.link || props.preview)) {
-        const params = props.link
-          ? { class: 'link' }
-          : { class: 'message_preview' };
+        const className = props.link ? 'link' : 'message_preview';
 
-        return [h('div', params, [block.value])];
+        return <div class={className}>{block.value}</div>;
       }
 
       if (block.type === 'massMention' && (props.mention || props.preview)) {
-        return [h('div', { class: 'message_preview' }, block.value)];
+        return <div class="message_preview">{block.preview}</div>;
       }
 
-      return [block.value];
+      return block.value;
     }
 
     return () => {
       const children = mentionParser(unescape(text.value)).reduce((blocks, block) => {
-        blocks.push(...parseBlock(block));
+        const blockVNodes = parseBlock(block);
+
+        if (Array.isArray(blockVNodes)) {
+          blocks.push(...blockVNodes);
+        } else {
+          blocks.push(blockVNodes);
+        }
+
         return blocks;
       }, []);
 
@@ -97,7 +102,7 @@ export default {
         children.push('');
       }
 
-      return h(Fragment, children);
+      return <>{children}</>;
     };
   }
 };

@@ -1,6 +1,8 @@
 <script>
-import { h } from 'vue';
 import components from '.';
+
+const Doc = components.doc;
+const PhotosLayout = components.photosLayout;
 
 export default {
   props: ['msg'],
@@ -17,7 +19,7 @@ export default {
 
     for (const type in props.msg.attachments) {
       const attach = props.msg.attachments[type];
-      const component = components[type];
+      const Component = components[type];
 
       if (hasSingleAttach && !singleAttachments.includes(type)) {
         continue;
@@ -43,15 +45,11 @@ export default {
         }
       } else if (component) {
         attachments.push(
-          h(component, {
-            key: attach,
-            attach,
-            msg: props.msg
-          })
+          <Component key={attach} attach={attach} msg={props.msg} />
         );
       } else {
         attachments.push(
-          h('div', { class: 'im_attach_unknown' }, `(${type})`)
+          <div class="im_attach_unknown">({type})</div>
         );
       }
     }
@@ -60,25 +58,20 @@ export default {
       attachments.unshift(
         // key не нужен, так как содержимое автоматически обновляется
         // используя render-функции
-        h(components.photosLayout, {
-          attachments: layoutAttaches
-        })
+        <PhotosLayout attachments={layoutAttaches} />
       );
     }
 
     if (documentAttaches.length) {
       attachments.push(
         ...documentAttaches.map((attach) => (
-          h(components.doc, {
-            key: attach,
-            attach
-          })
+          <Doc key={attach} attach={attach} />
         ))
       );
     }
 
     if (attachments.length) {
-      return h('div', { class: 'im_attachments' }, attachments);
+      return <div class="im_attachments">{attachments}</div>;
     }
   }
 };

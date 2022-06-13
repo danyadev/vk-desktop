@@ -1,5 +1,5 @@
 <script>
-import { h, ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 export default {
   props: ['event'],
@@ -38,11 +38,11 @@ export default {
       };
     });
 
-    return () => h('div', {
-      class: 'context_menu',
-      style: style.value,
-      ref: menu
-    }, slots);
+    return () => (
+      <div class="context_menu" style={style.value} ref={menu}>
+        {slots.default()}
+      </div>
+    );
   }
 };
 </script>

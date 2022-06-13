@@ -1,20 +1,17 @@
 <script>
-import { h, computed } from 'vue';
+import { computed } from 'vue';
 import Ripple from './Ripple.vue';
 
 export default function Button(props, { slots }) {
   const light = computed(() => ('light' in props) && props.light !== false);
 
-  return h(
-    Ripple,
-    {
-      color: light.value ? 'var(--button-light-ripple)' : 'var(--background-blue-ripple)',
-      class: ['button', {
-        light: light.value,
-        disabled: props.disabled
-      }]
-    },
-    slots
+  return (
+    <Ripple
+      color={light.value ? 'var(--button-light-ripple)' : 'var(--background-blue-ripple)'}
+      class={['button', { light: light.value, disabled: props.disabled }]}
+    >
+      {slots.default && slots.default()}
+    </Ripple>
   );
 }
 </script>

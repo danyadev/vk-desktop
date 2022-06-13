@@ -1,41 +1,38 @@
 <script>
-import { h, reactive, computed, onMounted, onActivated, getCurrentInstance, watch, nextTick } from 'vue';
+import { reactive, computed, onMounted, onActivated, getCurrentInstance, watch, nextTick } from 'vue';
 import { getPhotoFromSizes, windowSize } from 'js/utils';
 import { format, createDateFrom } from 'js/date/utils';
 import { calculatePhotosLayout } from './photosLayout';
 
 function generateImage(photo) {
-  const durationOrExt = (photo.isVideo || photo.isDoc) && h(
-    'div',
-    { class: 'attach_photo_type' },
-    photo.isVideo ? photo.duration : photo.ext.toUpperCase()
+  return (
+    <div
+      class={['attach_photo_wrap', {
+        isVideo: photo.isVideo,
+        lastColumn: photo.lastColumn,
+        lastRow: photo.lastRow,
+        endFirstRow: photo.endFirstRow
+      }]}
+      style={{
+        width: `${photo.width}px`,
+        height: `${photo.height}px`
+      }}
+    >
+      {(photo.isVideo || photo.isDoc) && (
+        <div class="attach_photo_type">
+          {photo.isVideo ? photo.duration : photo.ext.toUpperCase()}
+        </div>
+      )}
+
+      <img
+        class="attach_photo"
+        src={photo.url || photo.src}
+        loading="lazy"
+        width={photo.width}
+        height={photo.height}
+      />
+    </div>
   );
-
-  return h('div', {
-    class: ['attach_photo_wrap', {
-      isVideo: photo.isVideo,
-      lastColumn: photo.lastColumn,
-      lastRow: photo.lastRow,
-      endFirstRow: photo.endFirstRow
-    }],
-    style: {
-      width: `${photo.width}px`,
-      height: `${photo.height}px`
-    },
-    onClick() {
-      // ...
-    }
-  }, [
-    durationOrExt,
-
-    h('img', {
-      class: ['attach_photo'],
-      src: photo.url || photo.src,
-      loading: 'lazy',
-      width: photo.width,
-      height: photo.height
-    })
-  ]);
 }
 
 function generateLayout(photos) {
@@ -61,7 +58,9 @@ function generateLayout(photos) {
       generatedColumn = true;
 
       children.push(
-        h('span', photos.filter((photo) => photo.columnItem).map(generateImage))
+        <span>
+          {photos.filter((photo) => photo.columnItem).map(generateImage)}
+        </span>
       );
     } else {
       if (photo.lastColumn || nextPhoto.columnItem) {
@@ -72,7 +71,7 @@ function generateLayout(photos) {
     }
 
     if (photo.lastColumn && !photo.lastRow) {
-      children.push(h('br'));
+      children.push(<br />);
     }
   }
 
@@ -193,12 +192,13 @@ export default {
     return () => {
       const { height, children } = generateLayout(state.photos);
 
-      return h('div', { class: 'attach_photos_wrap' }, [
-        h('div', {
-          class: 'attach_photos',
-          style: { height: `${height}px` }
-        }, children)
-      ]);
+      return (
+        <div class="attach_photos_wrap">
+          <div class="attach_photos" style={{ height: `${height}px` }}>
+            {children}
+          </div>
+        </div>
+      );
     };
   }
 };
