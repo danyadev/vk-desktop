@@ -21,26 +21,44 @@ try {
   fs.writeFileSync(storePath, JSON.stringify(store));
 }
 
-app.once('ready', () => {
-  const mainWindow = new BrowserWindow({
+nativeTheme.themeSource = 'light';
+
+function createWindow(params = {}) {
+  const isFrameEnabled = 'frame' in params
+    ? params.frame
+    : store.useNativeTitlebar;
+
+  const win = new BrowserWindow({
     minWidth: 410,
     minHeight: 550,
     show: false,
-    frame: store.useNativeTitlebar,
+    frame: isFrameEnabled,
+    titleBarStyle: isFrameEnabled ? 'default' : 'hidden',
+    trafficLightPosition: isFrameEnabled ? null : { x: 8, y: 8 },
     backgroundColor: '#fff',
-    titleBarStyle: store.useNativeTitlebar ? 'default' : 'hidden',
-    trafficLightPosition: store.useNativeTitlebar ? null : { x: 8, y: 8 },
     webPreferences: {
       webSecurity: false,
       contextIsolation: false,
       nodeIntegration: true,
       worldSafeExecuteJavaScript: false,
       enableRemoteModule: true
-    }
+    },
+    ...params
   });
 
-  mainWindow.webContents.session.setSpellCheckerLanguages(['ru', 'en-US']);
-  nativeTheme.themeSource = 'light';
+  win.webContents.session.setSpellCheckerLanguages(['ru', 'en-US']);
+
+  return win;
+}
+
+function getLoadURL(entry) {
+  return process.argv.includes('dev-mode')
+    ? `http://localhost:9973/dist/${entry}.html`
+    : `file://${__dirname}/dist/${entry}.html`;
+}
+
+app.once('ready', () => {
+  const mainWindow = createWindow();
 
   mainWindow.webContents.once('dom-ready', async () => {
     const data = await mainWindow.webContents.executeJavaScript('localStorage.getItem("settings")');
@@ -65,11 +83,16 @@ app.once('ready', () => {
     mainWindow.show();
   });
 
-  mainWindow.loadURL(
-    process.argv.includes('dev-mode')
-      ? 'http://localhost:9973/dist/index.html'
-      : `file://${__dirname}/dist/index.html`
-  );
+  mainWindow.loadURL(getLoadURL('main'));
+
+  // const photoViewer = createWindow({
+  //   fullscreen: true,
+  //   transparent: true,
+  //   show: true,
+  //   frame: true,
+  //   modal: true
+  // });
+  // photoViewer.loadURL(getLoadURL('photoViewer'));
 
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();

@@ -4,6 +4,7 @@
   "artifactName": "VK Desktop ${os} ${arch}.${ext}",
   "electronVersion": "12.2.3",
   "npmRebuild": false,
+  "asar": true,
   "directories": {
     "output": "app"
   },
@@ -11,9 +12,8 @@
     "!node_modules/**/*",
     "node_modules/@electron/remote",
     "package.json",
-    { "from": "app/dist", "to": "dist", "filter": "**/*" },
-    "menu.js",
-    "index.js"
+    { "from": "main-process", "to": "", "filter": "**/*" },
+    { "from": "app/dist", "to": "dist", "filter": "**/*" }
   ],
   "win": {
     "target": [{

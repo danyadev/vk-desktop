@@ -42,7 +42,10 @@ module.exports = function(env, { mode = 'development' } = {}) {
     optimization: {
       minimizer
     },
-    entry: './src/main.js',
+    entry: {
+      main: './src/main.js',
+      photoViewer: './src/photoViewer.js'
+    },
     output: {
       path: path.resolve(__dirname, 'app/dist/'),
       publicPath: 'http://localhost:9973/dist/',
@@ -60,7 +63,7 @@ module.exports = function(env, { mode = 'development' } = {}) {
         middleware.waitUntilValid(() => {
           spawn(
             electron,
-            [path.join(__dirname, './index.js'), 'dev-mode'],
+            [path.join(__dirname, './main-process/index.js'), 'dev-mode'],
             { stdio: 'inherit' }
           ).on('close', process.exit);
         });
@@ -121,7 +124,8 @@ module.exports = function(env, { mode = 'development' } = {}) {
       new MiniCssExtractPlugin({ filename: '[name].css' }),
       new CopyWebpackPlugin({
         patterns: [
-          { from: 'index.html', to: 'index.html' },
+          { from: 'main-process/main.html', to: 'main.html' },
+          { from: 'main-process/photoViewer.html', to: 'photoViewer.html' },
           { from: 'src/assets', to: 'assets' }
         ]
       })
