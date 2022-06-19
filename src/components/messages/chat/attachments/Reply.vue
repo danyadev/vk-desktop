@@ -24,8 +24,9 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { getPhotoFromSizes, eventBus } from 'js/utils';
-import { getMessagePreview, getPeerTitle, parseMessage } from 'js/messages';
+import { eventBus } from 'js/utils';
+import { getPhotoFromSizes } from 'js/api/utils';
+import { getMessagePreview, getPeerTitle, parseMessage } from 'js/api/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';

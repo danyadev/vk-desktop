@@ -28,8 +28,9 @@
 <script>
 import { reactive, toRefs, computed, onMounted, onActivated, nextTick, watch } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
-import { fields, concatProfiles, endScroll } from 'js/utils';
-import { parseConversation, parseMessage } from 'js/messages';
+import { endScroll } from 'js/utils';
+import { fields, concatProfiles } from 'js/api/utils';
+import { parseConversation, parseMessage } from 'js/api/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';

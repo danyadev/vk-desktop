@@ -1,6 +1,7 @@
 <script>
 import { reactive, computed, onMounted, onActivated, getCurrentInstance, watch, nextTick } from 'vue';
-import { getPhotoFromSizes, windowSize } from 'js/utils';
+import { windowSize } from 'js/utils';
+import { getPhotoFromSizes } from 'js/api/utils';
 import { format, createDateFrom } from 'js/date/utils';
 import { calculatePhotosLayout } from './photosLayout';
 

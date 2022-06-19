@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { getMessageById, deleteMessages } from 'js/messages';
+import { getMessageById, deleteMessages } from 'js/api/messages';
 import { openModal } from 'js/modals';
 import store from 'js/store';
 import vkapi from 'js/vkapi';

@@ -88,7 +88,7 @@
 
 <script>
 import { reactive, computed, toRefs, onMounted } from 'vue';
-import { getPeerTitle } from 'js/messages';
+import { getPeerTitle } from 'js/api/messages';
 import { getTime } from 'js/date';
 import store from 'js/store';
 

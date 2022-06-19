@@ -50,7 +50,7 @@
 
 <script>
 import { reactive, computed, toRefs, onActivated } from 'vue';
-import { getPhoto } from 'js/utils';
+import { getPhoto } from 'js/api/utils';
 import { openModal } from 'js/modals';
 import { addSnackbar } from 'js/snackbars';
 import { sendError } from 'js/debug';

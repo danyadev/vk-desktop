@@ -7,7 +7,7 @@ import {
   loadConversation,
   addNotificationsTimer,
   activeKeyboardCallbackButtons
-} from './messages';
+} from './api/messages';
 import { supportedAttachments } from '@/messages/chat/attachments';
 import vkapi from './vkapi';
 import store from './store';

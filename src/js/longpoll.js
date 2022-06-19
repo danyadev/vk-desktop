@@ -1,5 +1,6 @@
-import { concatProfiles, fields, toUrlParams } from './utils';
-import { parseConversation, parseMessage } from './messages';
+import { toUrlParams } from './utils';
+import { fields, concatProfiles } from './api/utils';
+import { parseConversation, parseMessage } from './api/messages';
 import vkapi from './vkapi';
 import store from './store';
 import request from './request';

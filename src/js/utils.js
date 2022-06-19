@@ -1,20 +1,11 @@
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { reactive } from 'vue';
 import remoteElectron from '@electron/remote';
-import pkg from '../../package.json';
 import request from './request';
 
 // --- Переменные
-
-export const VKDesktopUserAgent =
-  `VKDesktop/${pkg.version} (${os.platform()}; ${os.release()}; ${os.arch()})`;
-export const AndroidUserAgent =
-  'VKAndroidApp/7.20.1-11834 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 2340x1080)';
-
-export const fields = 'photo_50,photo_100,verified,sex,status,first_name_acc,last_name_acc,online,last_seen,online_info,domain';
 
 export const eventBus = new EventEmitter();
 
@@ -233,62 +224,6 @@ export function convertCount(count) {
   }
 
   return count;
-}
-
-export function getPhoto(obj) {
-  return obj && (devicePixelRatio > 1 ? obj.photo_100 : obj.photo_50);
-}
-
-// Возвращает фотографию нужного размера из объекта фотографий
-export function getPhotoFromSizes(sizes, size, isDoc) {
-  const find = (type) => sizes.find((photo) => photo.type === type);
-  const optionalTypes = isDoc ? ['z', 'y', 'x', 'm', 's'] : ['w', 'z', 'y'];
-
-  function fallback() {
-    const sizesObj = sizes.reduce((acc, val) => {
-      acc[val.width * val.height] = val;
-      return acc;
-    }, {});
-    const optimalSize = Object.keys(sizesObj).sort((a, b) => b - a)[0];
-
-    return sizesObj[optimalSize];
-  }
-
-  if (Array.isArray(size)) {
-    for (let i = 0; i < size.length; i++) {
-      const photo = find(size[i]);
-      if (photo) return photo;
-    }
-
-    return fallback();
-  }
-
-  const index = optionalTypes.indexOf(size);
-
-  if (index !== -1) {
-    for (let i = index; i < optionalTypes.length; i++) {
-      const photo = find(optionalTypes[i]);
-      if (photo) return photo;
-    }
-
-    return fallback();
-  }
-
-  return find(size) || fallback();
-}
-
-// Собирает массивы профилей и групп в единый массив, где у групп отрицательный id
-export function concatProfiles(profiles, groups) {
-  profiles = profiles || [];
-  groups = groups || [];
-
-  return profiles.concat(
-    groups.reduce((list, group) => {
-      group.id = -group.id;
-      list.push(group);
-      return list;
-    }, [])
-  );
 }
 
 // Возвращает функцию, которая вызывает колбэк, если юзер долистал

@@ -20,8 +20,9 @@
 <script>
 import remoteElectron from '@electron/remote';
 import { reactive, computed, watch } from 'vue';
-import { fields, concatProfiles, isMacOS } from 'js/utils';
-import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
+import { isMacOS } from 'js/utils';
+import { fields, concatProfiles } from 'js/api/utils';
+import { addNotificationsTimer, parseMessage, parseConversation } from 'js/api/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';

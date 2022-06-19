@@ -1,17 +1,10 @@
-import {
-  escape,
-  getPhoto,
-  fields,
-  concatProfiles,
-  capitalize,
-  createCallablePromise
-} from './utils';
-import { getAppName } from './apiUtils';
+import { escape, capitalize, createCallablePromise } from 'js/utils';
+import { fields, getPhoto, getAppName, concatProfiles } from 'js/api/utils';
 import { openModal } from 'js/modals';
-import { getLastOnlineDate } from './date';
-import vkapi from './vkapi';
-import store from './store';
-import getTranslate from './getTranslate';
+import { getLastOnlineDate } from 'js/date';
+import vkapi from 'js/vkapi';
+import store from 'js/store';
+import getTranslate from 'js/getTranslate';
 
 export function parseConversation(conversation) {
   const isChat = conversation.peer.id > 2e9;

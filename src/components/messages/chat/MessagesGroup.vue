@@ -27,7 +27,7 @@
 
 <script>
 import { computed, reactive } from 'vue';
-import { getPhoto } from 'js/utils';
+import { getPhoto } from 'js/api/utils';
 import store from 'js/store';
 
 import Message from './Message.vue';

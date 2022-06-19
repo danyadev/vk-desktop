@@ -18,7 +18,7 @@
 
 <script>
 import { reactive, computed, watch, nextTick, onMounted, onActivated } from 'vue';
-import { loadConversation } from 'js/messages';
+import { loadConversation } from 'js/api/messages';
 import store from 'js/store';
 import router from 'js/router';
 import { modalsState } from 'js/modals';

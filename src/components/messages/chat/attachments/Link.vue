@@ -26,7 +26,7 @@
 
 <script>
 import electron from 'electron';
-import { getPhotoFromSizes } from 'js/utils';
+import { getPhotoFromSizes } from 'js/api/utils';
 
 import VKText from '@/UI/VKText.vue';
 import Button from '@/UI/Button.vue';

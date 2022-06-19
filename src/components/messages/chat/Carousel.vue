@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { getPhotoFromSizes } from 'js/utils';
+import { getPhotoFromSizes } from 'js/api/utils';
 
 import Keyboard from './Keyboard.vue';
 import Touch from '@/UI/Touch.vue';

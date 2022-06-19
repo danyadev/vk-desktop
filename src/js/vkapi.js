@@ -1,5 +1,6 @@
 import electron from 'electron';
-import { VKDesktopUserAgent, AndroidUserAgent, toUrlParams } from './utils';
+import { toUrlParams } from './utils';
+import { VKDesktopUserAgent, AndroidUserAgent } from './api/utils';
 import { openModal } from './modals';
 import store from './store';
 import request from './request';

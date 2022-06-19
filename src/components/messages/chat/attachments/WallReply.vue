@@ -14,7 +14,7 @@
 
 <script>
 import electron from 'electron';
-import { parseAttachments } from 'js/messages';
+import { parseAttachments } from 'js/api/messages';
 import getTranslate from 'js/getTranslate';
 
 import Forwarded from './Forwarded.vue';

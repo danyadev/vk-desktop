@@ -45,7 +45,8 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { getPhoto, moveArrItem, mouseOutWrapper } from 'js/utils';
+import { moveArrItem, mouseOutWrapper } from 'js/utils';
+import { getPhoto } from 'js/api/utils';
 import { usersStorage } from 'js/store/Storage';
 import store from 'js/store';
 import router from 'js/router';

@@ -49,9 +49,9 @@
 
 <script>
 import { reactive, computed, toRefs } from 'vue';
-import { getPhoto, capitalize } from 'js/utils';
-import { loadProfile } from 'js/apiUtils';
-import { getPeerTitle } from 'js/messages';
+import { capitalize } from 'js/utils';
+import { getPhoto, loadProfile } from 'js/api/utils';
+import { getPeerTitle } from 'js/api/messages';
 import { getFullDate } from 'js/date';
 import store from 'js/store';
 

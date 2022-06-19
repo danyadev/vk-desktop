@@ -57,14 +57,13 @@ import {
   callWithDelay,
   debounce,
   endScroll,
-  fields,
   eventBus,
   timer,
-  concatProfiles,
   convertCount,
   currentWindow
 } from 'js/utils';
-import { parseMessage, parseConversation } from 'js/messages';
+import { fields, concatProfiles } from 'js/api/utils';
+import { parseMessage, parseConversation } from 'js/api/messages';
 import { modalsState } from 'js/modals';
 import vkapi from 'js/vkapi';
 import store from 'js/store';

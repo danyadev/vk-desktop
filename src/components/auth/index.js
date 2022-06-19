@@ -1,4 +1,5 @@
-import { AndroidUserAgent, VKDesktopUserAgent, fields, toUrlParams } from 'js/utils';
+import { toUrlParams } from 'js/utils';
+import { AndroidUserAgent, VKDesktopUserAgent, fields } from 'js/api/utils';
 import { openModal } from 'js/modals';
 import vkapi, { version } from 'js/vkapi';
 import store from 'js/store';

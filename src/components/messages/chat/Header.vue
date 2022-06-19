@@ -51,7 +51,7 @@
 
 <script>
 import { reactive, computed } from 'vue';
-import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/messages';
+import { getPeerAvatar, getPeerTitle, getPeerOnline } from 'js/api/messages';
 import store from 'js/store';
 
 import Typing from '../Typing.vue';

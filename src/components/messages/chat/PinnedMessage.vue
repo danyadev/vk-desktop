@@ -26,7 +26,7 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import { eventBus } from 'js/utils';
-import { getMessagePreview, getPeerTitle } from 'js/messages';
+import { getMessagePreview, getPeerTitle } from 'js/api/messages';
 import { getFullDate } from 'js/date';
 import store from 'js/store';
 

@@ -50,7 +50,7 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import electron from 'electron';
-import { activeKeyboardCallbackButtons } from 'js/messages';
+import { activeKeyboardCallbackButtons } from 'js/api/messages';
 import { addSnackbar } from 'js/snackbars';
 import vkapi from 'js/vkapi';
 import sendMessage from 'js/sendMessage';
