@@ -1,172 +1,76 @@
 'use strict';
 
-const { app, Menu, shell, BrowserWindow } = require('electron');
+const { Menu, shell } = require('electron');
 
-module.exports = function(mainWindow) {
+module.exports = function(mainWindow, labels) {
   const menu = [
     {
-      label: 'VK Desktop',
+      label: labels.appMenuTitle,
       submenu: [
+        { role: 'about', label: labels.about },
         {
-          label: 'О программе',
-          click() {
-            app.showAboutPanel();
-          }
-        },
-        {
-          label: 'Настройки',
+          label: labels.settings,
           accelerator: 'Command+,',
-          click() {
-            mainWindow.send('menu:preferences');
-          }
+          click: () => mainWindow.send('menu:open-preferences')
         },
         { type: 'separator' },
-        {
-          label: 'Сервисы',
-          role: 'services',
-          submenu: []
-        },
+        { role: 'services', label: labels.services },
         { type: 'separator' },
-        {
-          label: 'Скрыть VK Desktop',
-          accelerator: 'Command+H',
-          role: 'hide'
-        },
-        {
-          label: 'Скрыть остальные',
-          accelerator: 'Command+Shift+H',
-          role: 'hideothers'
-        },
-        {
-          label: 'Показать все',
-          role: 'unhide'
-        },
+        { role: 'hide', label: labels.hideApp },
+        { role: 'hideothers', label: labels.hideOthers },
+        { role: 'unhide', label: labels.showAllApps },
         { type: 'separator' },
-        {
-          label: 'Выйти',
-          accelerator: 'Command+Q',
-          click() {
-            app.quit();
-          }
-        }
+        { role: 'quit', label: labels.quit }
       ]
     },
+
     {
-      label: 'Правка',
+      label: labels.editMenuTitle,
       submenu: [
-        {
-          label: 'Отменить',
-          accelerator: 'CmdOrCtrl+Z',
-          role: 'undo'
-        },
-        {
-          label: 'Повторить',
-          accelerator: 'Shift+CmdOrCtrl+Z',
-          role: 'redo'
-        },
+        { role: 'undo', label: labels.undo },
+        { role: 'redo', label: labels.redo },
         { type: 'separator' },
-        {
-          label: 'Вырезать',
-          accelerator: 'CmdOrCtrl+X',
-          role: 'cut'
-        },
-        {
-          label: 'Скопировать',
-          accelerator: 'CmdOrCtrl+C',
-          role: 'copy'
-        },
-        {
-          label: 'Вставить',
-          accelerator: 'CmdOrCtrl+V',
-          role: 'paste'
-        },
-        {
-          label: 'Выбрать все',
-          accelerator: 'CmdOrCtrl+A',
-          role: 'selectall'
-        }
+        { role: 'cut', label: labels.cut },
+        { role: 'copy', label: labels.copy },
+        { role: 'paste', label: labels.paste },
+        { role: 'selectall', label: labels.selectAll }
       ]
     },
+
     {
-      label: 'Вид',
+      label: labels.viewMenuTitle,
       submenu: [
-        {
-          label: 'Перейти в полноэкранный режим',
-          accelerator: 'Ctrl+Command+F',
-          click(item, focusedWindow) {
-            if (focusedWindow) {
-              focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-            }
-          }
-        },
-        {
-          label: 'Toggle Developer Tools',
-          accelerator: 'Alt+Command+I',
-          click(item, focusedWindow) {
-            if (focusedWindow) {
-              focusedWindow.toggleDevTools();
-            }
-          }
-        }
+        { role: 'reload', label: labels.reload },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom', label: labels.resetZoom },
+        { role: 'zoomIn', label: labels.zoomIn },
+        { role: 'zoomOut', label: labels.zoomOut },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
       ]
     },
+
     {
-      label: 'Окно',
       role: 'window',
+      label: labels.windowMenuTitle,
       submenu: [
-        {
-          label: 'Свернуть',
-          accelerator: 'CmdOrCtrl+M',
-          role: 'minimize'
-        },
-        {
-          label: 'Закрыть',
-          role: 'close',
-          click() {
-            const focusedWin = BrowserWindow.getFocusedWindow();
-
-            if (!focusedWin) {
-              return;
-            }
-
-            if (focusedWin !== mainWindow) {
-              return focusedWin.close();
-            }
-
-            function closeFunc() {
-              mainWindow.hide();
-              mainWindow.removeListener('leave-full-screen', closeFunc);
-            }
-
-            if (mainWindow.isFullScreen()) {
-              mainWindow.setFullScreen(false);
-              mainWindow.on('leave-full-screen', closeFunc);
-            } else {
-              closeFunc();
-            }
-          }
-        },
-        { type: 'separator' },
-        {
-          label: 'Все окна — на передний план',
-          click() {
-            if (mainWindow) {
-              mainWindow.show();
-              mainWindow.focus();
-            }
-          }
-        }
+        { role: 'minimize', label: labels.minimize },
+        { role: 'close', label: labels.close }
       ]
     },
+
     {
-      label: 'Справка',
       role: 'help',
+      label: labels.helpMenuTitle,
       submenu: [
         {
-          label: 'Узнать больше',
-          click() {
-            shell.openExternal('https://vk.com/vk_desktop_app');
-          }
+          label: labels.vkPage,
+          click: () => shell.openExternal('https://vk.com/vk_desktop_app')
+        },
+        {
+          label: labels.githubPage,
+          click: () => shell.openExternal('https://github.com/danyadev/vk-desktop')
         }
       ]
     }

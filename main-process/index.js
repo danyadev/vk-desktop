@@ -4,7 +4,7 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 const fs = require('fs');
 const path = require('path');
-const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
+const { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } = require('electron');
 
 const isMacOS = process.platform === 'darwin';
 
@@ -102,7 +102,9 @@ app.once('ready', () => {
   });
 
   if (isMacOS) {
-    require('./menu')(mainWindow);
+    ipcMain.on('menu:create', (event, labels) => {
+      require('./menu')(mainWindow, labels);
+    });
 
     let forceClose = false;
 
@@ -113,7 +115,13 @@ app.once('ready', () => {
     mainWindow.on('close', (event) => {
       if (!forceClose) {
         event.preventDefault();
-        mainWindow.hide();
+
+        if (mainWindow.isFullScreen()) {
+          mainWindow.setFullScreen(false);
+          mainWindow.once('leave-full-screen', () => mainWindow.hide());
+        } else {
+          mainWindow.hide();
+        }
       }
     });
 

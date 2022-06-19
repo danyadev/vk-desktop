@@ -1,7 +1,7 @@
 import os from 'os';
 import electron from 'electron';
 import { createApp } from 'vue';
-import { debounce, currentWindow } from 'js/utils';
+import { debounce, currentWindow, isMacOS } from 'js/utils';
 import { isModalOpened, openModal, closeModal } from 'js/modals';
 import debug, { sendError } from 'js/debug';
 import store from 'js/store';
@@ -16,13 +16,17 @@ import Attachments from '@/messages/chat/attachments/Attachments.vue';
 
 import 'js/exposeFeatures';
 
-electron.ipcRenderer.on('menu:preferences', () => {
+electron.ipcRenderer.on('menu:open-preferences', () => {
   if (isModalOpened('settings')) {
     closeModal('settings');
   } else {
     openModal('settings');
   }
 });
+
+if (isMacOS) {
+  electron.ipcRenderer.send('menu:create', getTranslate('app_menu_labels'));
+}
 
 debug(
   '[init] ' +
