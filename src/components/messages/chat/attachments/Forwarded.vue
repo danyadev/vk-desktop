@@ -29,6 +29,6 @@ export default {
 
 .message_text + .attach_forwarded,
 .im_attachments + .attach_forwarded {
-  margin-top: 5px;
+  margin-top: 6px;
 }
 </style>

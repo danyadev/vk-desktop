@@ -11,7 +11,7 @@
           <span class="attach_wall_donut_placeholder">{{ donutPlaceholder }}</span>
         </div>
 
-        <div class="outline_button" @click="openWall">
+        <div class="attach_wall_outline_button" @click="openWall">
           {{ l('im_open_wall') }}
         </div>
       </template>

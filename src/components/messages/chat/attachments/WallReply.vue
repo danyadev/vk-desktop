@@ -4,7 +4,7 @@
 
     <Forwarded :messages="[fakeMsg]">
       <template #afterContent>
-        <div class="outline_button" @click="openComment">
+        <div class="attach_wall_outline_button" @click="openComment">
           {{ l('im_open_comment') }}
         </div>
       </template>

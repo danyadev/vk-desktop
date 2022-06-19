@@ -87,7 +87,7 @@ export default {
 }
 
 .im_attachments > div:not(:first-child) {
-  margin-top: 5px;
+  margin-top: 6px;
 }
 
 .im_attachments > div:not(:first-child).attach_doc {
@@ -128,15 +128,20 @@ export default {
   color: var(--text-dark-steel-gray);
 }
 
-.outline_button {
+.attach_wall_outline_button {
   color: var(--text-light-blue);
   border: 1px solid var(--accent);
   border-radius: 8px;
   padding: 3px 16px;
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 13px;
   line-height: 18px;
   text-align: center;
   cursor: pointer;
+}
+
+.isMacOS .attach_wall_outline_button {
+  padding-bottom: 4px;
+  line-height: 17px;
 }
 </style>

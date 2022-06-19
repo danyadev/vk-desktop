@@ -397,7 +397,7 @@ export default {
 
 .message.hasAttachment .message_text:not(:empty) {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .message_text.isContentDeleted {
@@ -407,7 +407,7 @@ export default {
 .message.removeMargin .message_text:not(:empty),
 .message.removeMiddleMargin .message_text:not(:empty),
 .message.removeBottomMargin .message_text:not(:empty) {
-  margin: 0 5px 5px 5px;
+  margin: 0 5px 6px 5px;
 }
 
 /* Message time wrap =================================== */
@@ -442,22 +442,37 @@ export default {
   right: 0;
   background: var(--background-alpha);
   border-radius: 10px;
-  padding: 2px 6px;
+  padding: 4px 6px 3px 6px;
   width: fit-content;
 }
 
 .isMacOS .message.flyTime .message_time_wrap {
   line-height: 14px;
+  padding: 3px 6px;
+  /* Более прозрачный цвет лучше выглядит на маке */
+  background: #00000090;
 }
 
-.message.flyTime.isSticker:not(.hideBubble) .message_time_wrap {
-  right: 4px;
-  bottom: 4px;
+.message.flyTime:not(.isSticker) .message_time_wrap {
+  background: #000000a0;
+  color: var(--text-white);
+  right: 11px;
+  bottom: 11px;
+  font-weight: normal;
+}
+
+.message.flyTime:not(.isSticker) .message_dot {
+  background: var(--text-white);
 }
 
 .message.flyTime:not(.isSticker).hideBubble .message_time_wrap {
   right: 5px;
   bottom: 5px;
+}
+
+.message.flyTime.isSticker:not(.hideBubble) .message_time_wrap {
+  right: 4px;
+  bottom: 4px;
 }
 
 .message_edited {
@@ -542,24 +557,6 @@ export default {
 }
 
 /* Фотографии ========================================== */
-
-.message.flyTime:not(.isSticker) .message_time_wrap {
-  background: #000000a0;
-  color: var(--text-white);
-  right: 11px;
-  bottom: 11px;
-  padding: 3px 6px;
-  font-weight: normal;
-}
-
-.isMacOS .message.flyTime:not(.isSticker) .message_time_wrap {
-  /* TODO: зачем это? */
-  background: #00000090;
-}
-
-.message.flyTime:not(.isSticker) .message_dot {
-  background: var(--text-white);
-}
 
 .message.removeMargin .message_name,
 .message.removeTopMargin .message_name,

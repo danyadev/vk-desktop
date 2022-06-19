@@ -137,7 +137,7 @@ export default {
   display: flex;
   position: relative;
   height: 40px;
-  margin-bottom: 4px;
+  margin: 1px 0 5px 0;
   cursor: pointer;
   user-select: none;
 }

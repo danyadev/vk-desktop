@@ -274,6 +274,10 @@ export default {
 
 .im_peer_name {
   height: 20px;
+  line-height: 20px;
+}
+
+.isMacOS .im_peer_name {
   line-height: 18px;
 }
 
@@ -283,7 +287,7 @@ export default {
 
 .im_peer_title .verified {
   flex: none;
-  margin: 3px 0 0 4px;
+  margin: 4px 0 0 5px;
 }
 
 .im_peer_ghost {
@@ -300,11 +304,7 @@ export default {
   flex: none;
   width: 13px;
   height: 13px;
-  margin: 3px 0 0 4px;
-}
-
-.isMacOS .im_peer_muted {
-  margin-top: 4px;
+  margin: 4px 0 0 5px;
 }
 
 .im_peer_pinned {
@@ -385,13 +385,17 @@ export default {
   font-weight: 500;
   min-width: 20px;
   height: 20px;
-  line-height: 20px;
+  line-height: 22px;
   margin: 2px 0 0 6px;
   padding: 0 6px;
   border-radius: 12px;
   text-align: center;
   background: var(--background-blue);
   color: var(--background-blue-text);
+}
+
+.isMacOS .im_peer_unread:not(:empty) {
+  line-height: 20px;
 }
 
 .im_peer_unread:not(.outread).muted {
