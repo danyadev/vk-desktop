@@ -1,5 +1,5 @@
 <template>
-  <div :class="['root', { mac }, settingsClasses]" :theme="dark ? 'dark' : 'light'">
+  <div :class="['root', { isMacOS }, settingsClasses]" :theme="dark ? 'dark' : 'light'">
     <Titlebar />
 
     <div class="app">
@@ -49,7 +49,7 @@ export default {
 
   setup() {
     const state = reactive({
-      mac: isMacOS,
+      isMacOS,
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
       dark: computed(() => state.settings.useDarkTheme),

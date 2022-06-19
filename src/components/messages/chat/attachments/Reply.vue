@@ -185,7 +185,7 @@ export default {
   margin: 4px 0 2px 0;
 }
 
-.mac .attach_reply_name {
+.isMacOS .attach_reply_name {
   margin-bottom: 1px;
 }
 

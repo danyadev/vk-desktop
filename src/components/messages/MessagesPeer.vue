@@ -303,7 +303,7 @@ export default {
   margin: 3px 0 0 4px;
 }
 
-.mac .im_peer_muted {
+.isMacOS .im_peer_muted {
   margin-top: 4px;
 }
 
@@ -369,7 +369,7 @@ export default {
   background: var(--background-steel-gray);
 }
 
-.mac .im_peer .message_dot {
+.isMacOS .im_peer .message_dot {
   margin-top: 10px;
 }
 

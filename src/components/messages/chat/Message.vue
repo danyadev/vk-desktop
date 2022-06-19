@@ -446,7 +446,7 @@ export default {
   width: fit-content;
 }
 
-.mac .message.flyTime .message_time_wrap {
+.isMacOS .message.flyTime .message_time_wrap {
   line-height: 14px;
 }
 
@@ -552,7 +552,8 @@ export default {
   font-weight: normal;
 }
 
-.mac .message.flyTime:not(.isSticker) .message_time_wrap {
+.isMacOS .message.flyTime:not(.isSticker) .message_time_wrap {
+  /* TODO: зачем это? */
   background: #00000090;
 }
 

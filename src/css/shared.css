@@ -50,7 +50,7 @@ img:not(.emoji) {
   color: var(--text-primary);
 }
 
-.root.mac {
+.root.isMacOS {
   --titlebar-height: 24px;
 }
 

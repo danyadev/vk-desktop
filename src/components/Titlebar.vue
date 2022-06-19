@@ -69,7 +69,7 @@ export default {
   color: var(--text-primary);
 }
 
-.mac .titlebar {
+.isMacOS .titlebar {
   background: var(--titlebar-background);
   color: var(--text-secondary);
   font-size: 13px;
@@ -92,6 +92,11 @@ export default {
 .titlebar.maximized .titlebar_drag {
   padding: 4px 0 0 8px;
   margin: 0;
+}
+
+.isMacOS .titlebar .titlebar_drag {
+  text-align: center;
+  line-height: 16px;
 }
 
 .titlebar_buttons {
@@ -126,10 +131,5 @@ export default {
 .titlebar.maximized .titlebar_button.maximize,
 .titlebar:not(.maximized) .titlebar_button.restore {
   display: none;
-}
-
-.mac .titlebar .titlebar_drag {
-  text-align: center;
-  line-height: 16px;
 }
 </style>
