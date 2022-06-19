@@ -4,9 +4,9 @@ import {
   fields,
   concatProfiles,
   capitalize,
-  getAppName,
   createCallablePromise
 } from './utils';
+import { getAppName } from './apiUtils';
 import { openModal } from 'js/modals';
 import { getLastOnlineDate } from './date';
 import vkapi from './vkapi';
@@ -168,7 +168,7 @@ export function getMessagePreview(msg) {
 }
 
 export function getPeerOnline(peer_id, peer, owner) {
-  if (!peer || !peer.left && peer_id > 2e9 && peer.members == null) {
+  if (!peer || peer_id > 2e9 && !peer.left && peer.members == null) {
     return getTranslate('loading');
   }
 
@@ -244,29 +244,49 @@ export function getMessageById(msg_id, peer_id) {
   return store.state.messages.messages[peer_id].find((msg) => msg.id === msg_id);
 }
 
-export function deleteMessages(message_ids, peer, needCancelSelect) {
+function canDeleteMessageForAll(message, peer) {
   const { activeUserID } = store.state.users;
   const DAY = 1000 * 60 * 60 * 24;
-  const messages = message_ids.map((id) => getMessageById(id, peer.id));
+
+  if (peer.id === activeUserID) {
+    return false;
+  }
+
+  if (Date.now() - message.date * 1000 > DAY) {
+    return false;
+  }
+
+  if (message.from === activeUserID) {
+    return true;
+  }
+
+  if (peer.id < 2e9 || !peer.acl.can_moderate) {
+    return false;
+  }
+
+  if (peer.owner_id === activeUserID) {
+    return true;
+  }
+
+  if (message.from !== peer.owner_id && !peer.admin_ids.includes(message.from)) {
+    return true;
+  }
+
+  return false;
+}
+
+export function deleteMessages(messageIds, peer, needCancelSelect) {
+  const { activeUserID } = store.state.users;
   const isChatOwner = peer.owner_id === activeUserID;
 
-  const canDeleteForAll = (
-    activeUserID !== peer.id &&
-    messages.every((msg) => (
-      Date.now() - msg.date * 1000 < DAY &&
-      (isChatOwner || !peer.admin_ids.includes(msg.from) && msg.from !== peer.owner_id) &&
-      (
-        msg.from === activeUserID ||
-        peer.id > 2e9 && peer.acl.can_moderate
-      )
-    ))
-  );
+  const messages = messageIds.map((id) => getMessageById(id, peer.id));
+  const canDeleteForAll = messages.every((msg) => canDeleteMessageForAll(msg, peer));
 
   openModal('delete-messages', {
-    count: message_ids.length,
+    count: messageIds.length,
     canDeleteForAll,
 
-    async submit(deleteForAll) {
+    async onSubmit(deleteForAll) {
       const chatAdmins = [];
 
       if (isChatOwner) {
@@ -279,7 +299,7 @@ export function deleteMessages(message_ids, peer, needCancelSelect) {
 
       await vkapi('execute.deleteMessages', {
         peer_id: peer.id,
-        message_ids: message_ids.join(','),
+        message_ids: messageIds.join(','),
         for_all: deleteForAll ? 1 : 0,
         admins: chatAdmins.join(',')
       });
@@ -330,7 +350,8 @@ export function addNotificationsTimer({ peer_id, disabled_until }, remove) {
   }
 
   if (remove) {
-    return activeNotificationsTimers.delete(peer_id);
+    activeNotificationsTimers.delete(peer_id);
+    return;
   }
 
   activeNotificationsTimers.set(

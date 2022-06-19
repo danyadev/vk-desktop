@@ -1,5 +1,5 @@
 import electron from 'electron';
-import { resolveScreenName } from './utils';
+import { resolveScreenName } from './apiUtils';
 import vkapi from './vkapi';
 import store from './store';
 import router from './router';

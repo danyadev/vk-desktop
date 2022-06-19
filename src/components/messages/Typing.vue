@@ -11,7 +11,7 @@
 
 <script>
 import { computed } from 'vue';
-import { loadProfile } from 'js/utils';
+import { loadProfile } from 'js/apiUtils';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 

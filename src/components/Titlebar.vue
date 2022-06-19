@@ -1,7 +1,7 @@
 <template>
   <div :class="['titlebar', { maximized }]">
     <div ref="drag" class="titlebar_drag">{{ l('vk_desktop') }}</div>
-    <div v-if="!isMac" class="titlebar_buttons">
+    <div v-if="!isMacOS" class="titlebar_buttons">
       <div
         v-for="button of ['minimize', 'maximize', 'restore', 'close']"
         :key="button"
@@ -16,7 +16,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { currentWindow } from 'js/utils';
+import { currentWindow, isMacOS } from 'js/utils';
 
 import Icon from './UI/Icon.vue';
 
@@ -28,10 +28,8 @@ export default {
   setup() {
     const maximized = ref(currentWindow.isMaximized());
     const drag = ref(null);
-    const isMac = process.platform === 'darwin';
-
     onMounted(() => {
-      if (isMac) {
+      if (isMacOS) {
         drag.value.addEventListener('dblclick', () => {
           if (!currentWindow.isFullScreen()) {
             currentWindow[maximized.value ? 'unmaximize' : 'maximize']();
@@ -54,7 +52,7 @@ export default {
     return {
       maximized,
       drag,
-      isMac,
+      isMacOS,
       click: (button) => currentWindow[button]()
     };
   }

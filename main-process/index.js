@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { app, BrowserWindow, shell, screen, nativeTheme } = require('electron');
 
-require('@electron/remote/main').initialize();
+const isMacOS = process.platform === 'darwin';
 
 const vkdPath = path.join(app.getPath('appData'), 'vk-desktop');
 const storePath = path.join(vkdPath, 'store.json');
@@ -20,6 +20,8 @@ try {
   if (!fs.existsSync(vkdPath)) fs.mkdirSync(vkdPath);
   fs.writeFileSync(storePath, JSON.stringify(store));
 }
+
+require('@electron/remote/main').initialize();
 
 nativeTheme.themeSource = 'light';
 
@@ -99,9 +101,7 @@ app.once('ready', () => {
     shell.openExternal(url);
   });
 
-  if (process.platform !== 'darwin') {
-    mainWindow.removeMenu();
-  } else {
+  if (isMacOS) {
     require('./menu')(mainWindow);
 
     let forceClose = false;
@@ -123,11 +123,13 @@ app.once('ready', () => {
         mainWindow.show();
       }
     });
+  } else {
+    mainWindow.removeMenu();
   }
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+if (!isMacOS) {
+  app.on('window-all-closed', () => {
     app.quit();
-  }
-});
+  });
+}

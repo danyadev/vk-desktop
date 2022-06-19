@@ -1,5 +1,6 @@
 <script>
-import { loadProfile, createParser, getPhotoFromSizes } from 'js/utils';
+import { createParser, getPhotoFromSizes } from 'js/utils';
+import { loadProfile } from 'js/apiUtils';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 

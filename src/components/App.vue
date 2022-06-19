@@ -20,7 +20,7 @@
 <script>
 import remoteElectron from '@electron/remote';
 import { reactive, computed, watch } from 'vue';
-import { fields, concatProfiles } from 'js/utils';
+import { fields, concatProfiles, isMacOS } from 'js/utils';
 import { addNotificationsTimer, parseMessage, parseConversation } from 'js/messages';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -48,7 +48,7 @@ export default {
 
   setup() {
     const state = reactive({
-      mac: process.platform === 'darwin',
+      mac: isMacOS,
       activeUserID: computed(() => store.state.users.activeUserID),
       route: computed(() => router.currentRoute.value),
       dark: computed(() => state.settings.useDarkTheme),

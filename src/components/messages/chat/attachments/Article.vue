@@ -21,7 +21,8 @@
 <script>
 import electron from 'electron';
 import { computed } from 'vue';
-import { loadProfile, getPhotoFromSizes } from 'js/utils';
+import { getPhotoFromSizes } from 'js/utils';
+import { loadProfile } from 'js/apiUtils';
 import store from 'js/store';
 
 import Icon from '@/UI/Icon.vue';

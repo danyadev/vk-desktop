@@ -32,7 +32,7 @@ import Checkbox from '@/UI/Checkbox.vue';
 import Button from '@/UI/Button.vue';
 
 export default {
-  props: ['count', 'canDeleteForAll', 'submit'],
+  props: ['count', 'canDeleteForAll', 'onSubmit'],
 
   components: {
     ModalHeader,
@@ -52,7 +52,7 @@ export default {
     }
 
     function deleteMsg() {
-      props.submit(props.canDeleteForAll && deleteForAll.value);
+      props.onSubmit(props.canDeleteForAll && deleteForAll.value);
       close();
     }
 

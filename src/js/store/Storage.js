@@ -1,10 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import remoteElectron from '@electron/remote';
-
-// Здесь нельзя импортировать currentWindow из js/utils, потому что
-// в том файле импортируется этот файл
-const currentWindow = remoteElectron.getCurrentWindow();
+import { currentWindow, isMacOS } from 'js/utils';
 
 class RendererStorage {
   constructor({ name, defaults, init }) {
@@ -86,7 +83,7 @@ export const settingsStorage = new RendererStorage({
     commonSettings: {
       showAvatarsAtBottom: false,
       animateStickersOnFirstAppear: true,
-      useMoreSaturatedColors: process.platform === 'darwin',
+      useMoreSaturatedColors: isMacOS,
       useNativeEmoji: false,
       useDarkTheme: false,
 

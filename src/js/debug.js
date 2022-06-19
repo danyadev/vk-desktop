@@ -5,6 +5,7 @@ import remoteElectron from '@electron/remote';
 import request from './request';
 import store from './store';
 import getTranslate from './getTranslate';
+import { isMacOS } from './utils';
 import { format } from 'js/date/utils';
 
 const appName = 'vk-desktop';
@@ -93,7 +94,7 @@ if (!DEV_MODE) {
 // =================
 
 function getLibraryDefaultDir() {
-  if (process.platform === 'darwin') {
+  if (isMacOS) {
     return path.join(os.homedir(), 'Library/Logs', appName);
   }
 
