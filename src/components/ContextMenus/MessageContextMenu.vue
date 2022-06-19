@@ -1,6 +1,6 @@
 <template>
   <ContextMenu :event="event">
-    <div v-if="settings.showObjectIds" class="act_menu_item" @click="copyMsgId">
+    <div v-if="settings.showObjectIds" class="act_menu_item" @click="copyMessageId">
       <Icon name="bug" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_message_id') }}: {{ id }}</div>
     </div>
@@ -15,7 +15,7 @@
       <div class="act_menu_data">{{ l('im_forward_message') }}</div>
     </div>
 
-    <div v-if="peer.id > 2e9 && peer.acl.can_change_pin" class="act_menu_item" @click="togglePin">
+    <div v-if="isChat && peer.acl.can_change_pin" class="act_menu_item" @click="togglePin">
       <Icon
         :name="isPinnedMessage ? 'unpin_outline' : 'pin_outline'"
         color="var(--icon-blue)"
@@ -24,15 +24,16 @@
       <div class="act_menu_data">{{ l('im_toggle_msg_pin', isPinnedMessage) }}</div>
     </div>
 
-    <div v-if="msg && msg.id > peer.in_read" class="act_menu_item" @click="markAsRead">
+    <div v-if="message && message.id > peer.in_read" class="act_menu_item" @click="markAsRead">
       <Icon name="message" color="var(--icon-blue)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_mark_as_read') }}</div>
     </div>
 
+    <!-- TODO убрать hasCallAttach -->
     <div
       v-if="!peer.isChannel && !hasCallAttach"
       class="act_menu_item"
-      @click="deleteMessages([msg.id], peer)"
+      @click="deleteMessages([message.id], peer)"
     >
       <Icon name="trash" color="var(--icon-red)" class="act_menu_icon" />
       <div class="act_menu_data">{{ l('im_delete_msg') }}</div>
@@ -48,6 +49,7 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import electron from 'electron';
+import { isChatPeerId } from 'js/api/ranges';
 import { deleteMessages } from 'js/api/messages';
 import { addSnackbar } from 'js/snackbars';
 import { openModal } from 'js/modals';
@@ -68,32 +70,33 @@ export default {
   },
 
   setup(props) {
-    const peer_id = +router.currentRoute.value.params.id;
-    const msg_id = +props.id;
+    const peerId = +router.currentRoute.value.params.id;
+    const messageId = +props.id;
 
     const state = reactive({
       settings: computed(() => store.getters['settings/settings']),
-      peer: computed(() => store.state.messages.conversations[peer_id].peer),
+      peer: computed(() => store.state.messages.conversations[peerId].peer),
+      isChat: isChatPeerId(peerId),
 
-      msg: computed(() => {
-        const messages = store.state.messages.messages[peer_id];
-        return messages.find((msg) => msg.id === msg_id);
+      message: computed(() => {
+        const messages = store.state.messages.messages[peerId];
+        return messages.find((msg) => msg.id === messageId);
       }),
 
       isPinnedMessage: computed(() => {
         const { pinnedMsg } = state.peer;
         return (
           !!pinnedMsg &&
-          state.msg &&
-          pinnedMsg.conversation_msg_id === state.msg.conversation_msg_id
+          state.message &&
+          pinnedMsg.conversation_msg_id === state.message.conversation_msg_id
         );
       }),
 
-      hasCallAttach: computed(() => state.msg && !!state.msg.attachments.call)
+      hasCallAttach: computed(() => state.message && !!state.message.attachments.call)
     });
 
-    function copyMsgId() {
-      electron.clipboard.writeText(props.id);
+    function copyMessageId() {
+      electron.clipboard.writeText(messageId);
 
       addSnackbar({
         text: getTranslate('im_message_id_copied'),
@@ -103,34 +106,34 @@ export default {
 
     function reply() {
       store.commit('messages/updatePeerConfig', {
-        peer_id,
-        replyMsg: state.msg,
+        peer_id: peerId,
+        replyMsg: state.message,
         fwdMessages: null
       });
     }
 
     function forward() {
-      store.state.messages.tmpForwardingMessages = [state.msg];
+      store.state.messages.tmpForwardingMessages = [state.message];
 
       router.replace({
         name: 'forward-to',
         params: {
-          fromId: peer_id
+          fromId: peerId
         }
       });
     }
 
     function togglePin() {
       vkapi(state.isPinnedMessage ? 'messages.unpin' : 'messages.pin', {
-        peer_id,
-        message_id: msg_id
+        peer_id: peerId,
+        message_id: messageId
       });
     }
 
     function markAsRead() {
       vkapi('messages.markAsRead', {
-        start_message_id: state.msg.id,
-        peer_id
+        start_message_id: messageId,
+        peer_id: peerId
       });
     }
 
@@ -139,7 +142,7 @@ export default {
         count: 1,
         submit() {
           vkapi('messages.delete', {
-            message_ids: state.msg.id,
+            message_ids: messageId,
             spam: 1
           });
         }
@@ -149,7 +152,7 @@ export default {
     return {
       ...toRefs(state),
 
-      copyMsgId,
+      copyMessageId,
       reply,
       forward,
       togglePin,

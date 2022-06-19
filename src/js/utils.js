@@ -1,9 +1,6 @@
-import fs from 'fs';
-import path from 'path';
 import { EventEmitter } from 'events';
 import { reactive } from 'vue';
 import remoteElectron from '@electron/remote';
-import request from './request';
 
 // --- Переменные
 
@@ -253,23 +250,6 @@ export function endScroll(callback, reverse) {
       });
     }
   };
-}
-
-export async function downloadFile({ getUrl, progress }) {
-  const files = remoteElectron.dialog.showOpenDialogSync({
-    properties: ['openDirectory']
-  });
-
-  if (files) {
-    const url = await getUrl();
-    const [name] = (new URL(url)).pathname.split('/').reverse();
-
-    await request(url, {
-      raw: true,
-      pipe: fs.createWriteStream(path.join(files[0], name)),
-      progress
-    });
-  }
 }
 
 export const windowSize = reactive({

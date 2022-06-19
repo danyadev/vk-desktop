@@ -5,7 +5,7 @@
       <div class="act_menu_data">{{ l('im_go_to_first_msg') }}</div>
     </div>
 
-    <div v-if="peer && peer.pinnedMsg" class="act_menu_item" @click="togglePinnedMsg">
+    <div v-if="peer.pinnedMsg" class="act_menu_item" @click="togglePinnedMsg">
       <Icon
         :name="showPinnedMsg ? 'eye_hide_outline' : 'eye_show_outline'"
         color="var(--icon-blue)"
@@ -15,7 +15,7 @@
     </div>
 
     <div
-      v-if="peer && peer.pinnedMsg && peer.acl.can_change_pin"
+      v-if="peer.pinnedMsg && peer.acl.can_change_pin"
       class="act_menu_item"
       @click="unpinMsg"
     >
@@ -38,7 +38,7 @@
     </div>
 
     <div
-      v-if="peer_id > 2e9 && peer.chatState !== 'kicked'"
+      v-if="isChat && peer.chatState !== 'kicked'"
       class="act_menu_item"
       @click="leftFromChat"
     >
@@ -57,6 +57,7 @@
 <script>
 import { reactive, computed, toRefs } from 'vue';
 import { eventBus } from 'js/utils';
+import { isChatPeerId, convertChatPeerIdToChatId } from 'js/api/ranges';
 import { openModal } from 'js/modals';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
@@ -73,23 +74,26 @@ export default {
   },
 
   setup(props) {
+    const peerId = +props.peer_id;
+
     const state = reactive({
       actionsMenu: null,
 
       muted: computed(() => props.peer && props.peer.muted),
       left: computed(() => props.peer && props.peer.left),
+      isChat: isChatPeerId(peerId),
       isChannel: computed(() => props.peer && props.peer.isChannel),
       hiddenPinnedMessages: computed(() => ({
         ...store.getters['settings/settings'].hiddenPinnedMessages
       })),
-      showPinnedMsg: computed(() => !state.hiddenPinnedMessages[props.peer_id])
+      showPinnedMsg: computed(() => !state.hiddenPinnedMessages[peerId])
     });
 
     function goToFirstMsg() {
       state.actionsMenu.setActive(false);
 
       eventBus.emit('messages:event', 'jump', {
-        peer_id: props.peer_id,
+        peer_id: peerId,
         top: true
       });
     }
@@ -100,9 +104,9 @@ export default {
       const { hiddenPinnedMessages } = state;
 
       if (state.showPinnedMsg) {
-        hiddenPinnedMessages[props.peer_id] = true;
+        hiddenPinnedMessages[peerId] = true;
       } else {
-        delete hiddenPinnedMessages[props.peer_id];
+        delete hiddenPinnedMessages[peerId];
       }
 
       store.commit('settings/updateUserSettings', {
@@ -114,7 +118,7 @@ export default {
       state.actionsMenu.setActive(false);
 
       vkapi('messages.unpin', {
-        peer_id: props.peer_id
+        peer_id: peerId
       });
     }
 
@@ -122,7 +126,7 @@ export default {
       state.actionsMenu.setActive(false);
 
       vkapi('account.setSilenceMode', {
-        peer_id: props.peer_id,
+        peer_id: peerId,
         time: state.muted ? 0 : -1
       });
     }
@@ -131,7 +135,7 @@ export default {
       state.actionsMenu.setActive(false);
 
       openModal('clear-history', {
-        peer_id: props.peer_id
+        peer_id: peerId
       });
     }
 
@@ -140,14 +144,14 @@ export default {
 
       if (state.isChannel) {
         eventBus.emit('messages:event', 'changeLoadedState', {
-          peer_id: props.peer_id,
+          peer_id: peerId,
           loadedUp: !state.left,
           loadedDown: !state.left
         });
       }
 
       vkapi(state.left ? 'messages.addChatUser' : 'messages.removeChatUser', {
-        chat_id: props.peer_id - 2e9,
+        chat_id: convertChatPeerIdToChatId(peerId),
         user_id: store.state.users.activeUserID
       });
     }

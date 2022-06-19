@@ -4,6 +4,7 @@
       <Icon name="actions_icon" color="var(--icon-blue)" class="act_menu_btn" />
     </div>
 
+    <!-- TODO: spinner if !hideList -->
     <div :class="['act_menu', { active }]"><slot v-if="!hideList" /></div>
   </div>
 </template>

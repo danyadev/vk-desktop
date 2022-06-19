@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import electron from 'electron';
 import { createParser, unescape } from 'js/utils';
+import { isUserId, convertGroupIdToOwnerId } from 'js/api/ranges';
 import { emojiRegex, generateEmojiImageVNode } from 'js/emoji';
 import store from 'js/store';
 import internalLinkResolver from 'js/internalLinkResolver';
@@ -38,7 +39,10 @@ export default {
             <div
               class="link"
               onClick={() => {
-                const path = block.id > 0 ? `id${block.id}` : `club${-block.id}`;
+                const path = isUserId(block.id)
+                  ? `id${block.id}`
+                  : `club${convertGroupIdToOwnerId(block.id)}`;
+
                 electron.shell.openExternal(`https://vk.com/${path}`);
               }}
             >
@@ -193,7 +197,7 @@ const mentionParser = createParser({
     return [{
       type: 'mention',
       value: emojiParser(text, true),
-      id: type === 'id' ? +id : -id,
+      id: type === 'id' ? +id : convertGroupIdToOwnerId(+id),
       raw: mentionText
     }];
   }

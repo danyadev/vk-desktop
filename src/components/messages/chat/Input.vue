@@ -89,6 +89,7 @@
 import { reactive, computed, toRefs, onActivated, watch } from 'vue';
 import electron from 'electron';
 import { throttle, escape } from 'js/utils';
+import { convertChatPeerIdToChatId } from 'js/api/ranges';
 import vkapi from 'js/vkapi';
 import store from 'js/store';
 import router from 'js/router';
@@ -152,7 +153,7 @@ export default {
     function toggleNotifications() {
       if (props.peer.left) {
         vkapi('messages.addChatUser', {
-          chat_id: props.peer_id - 2e9,
+          chat_id: convertChatPeerIdToChatId(props.peer_id),
           user_id: store.state.users.activeUserID
         });
       } else {

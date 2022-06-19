@@ -1,5 +1,6 @@
 import { nextTick } from 'vue';
 import { random, eventBus } from './utils';
+import { isChatPeerId } from './api/ranges';
 import { addSnackbar } from './snackbars';
 import vkapi from './vkapi';
 import store from './store';
@@ -23,7 +24,11 @@ function parseInputText(nodes) {
 }
 
 export default async function sendMessage({
-  peer_id, input, keyboardButton, replyMsg, fwdMessages = []
+  peer_id,
+  input,
+  keyboardButton,
+  replyMsg,
+  fwdMessages = []
 }) {
   const random_id = random(-2e9, 2e9);
   let message;
@@ -42,7 +47,7 @@ export default async function sendMessage({
       });
     }
 
-    message = peer_id > 2e9 ? `@${screen_name} ${action.label}` : action.label;
+    message = isChatPeerId(peer_id) ? `@${screen_name} ${action.label}` : action.label;
   } else {
     message = parseInputText(input.childNodes);
   }

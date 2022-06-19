@@ -1,5 +1,6 @@
 import electron from 'electron';
 import { resolveScreenName } from './api/utils';
+import { convertChatIdToChatPeerId } from './api/ranges';
 import vkapi from './vkapi';
 import store from './store';
 import router from './router';
@@ -38,7 +39,8 @@ export default async function(link) {
 function resolveMVKCom(url, params) {
   if (params.get('act') === 'show') {
     if (params.has('chat')) {
-      return openChat(2e9 + +params.get('chat'));
+      const peerId = convertChatIdToChatPeerId(+params.get('chat'));
+      return openChat(peerId);
     }
 
     if (params.has('peer')) {
@@ -58,7 +60,8 @@ function resolveVKCom(url, params) {
     const sel = params.get('sel');
 
     if (sel.startsWith('c')) {
-      return openChat(2e9 + +sel.slice(1));
+      const peerId = convertChatIdToChatPeerId(+sel.slice(1));
+      return openChat(peerId);
     }
 
     return openChat(sel);

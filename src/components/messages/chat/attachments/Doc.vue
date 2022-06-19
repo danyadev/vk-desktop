@@ -21,8 +21,7 @@
 <script>
 import { reactive, toRefs } from 'vue';
 import electron from 'electron';
-import request from 'js/request';
-import { downloadFile } from 'js/utils';
+import request, { downloadFile } from 'js/request';
 
 import Icon from '@/UI/Icon.vue';
 

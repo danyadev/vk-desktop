@@ -38,7 +38,7 @@
     </div>
 
     <div
-      v-if="peerId > 2e9 && peer.chatState !== 'kicked'"
+      v-if="isChat && peer.chatState !== 'kicked'"
       class="act_menu_item"
       @click="leftFromChat"
     >
@@ -58,6 +58,7 @@
 import { reactive, computed, toRefs } from 'vue';
 import electron from 'electron';
 import { eventBus } from 'js/utils';
+import { isChatPeerId, convertChatPeerIdToChatId } from 'js/api/ranges';
 import { openModal } from 'js/modals';
 import { addSnackbar } from 'js/snackbars';
 import vkapi from 'js/vkapi';
@@ -76,13 +77,14 @@ export default {
   },
 
   setup(props) {
-    const peer_id = +props.peerId;
+    const peerId = +props.peerId;
 
     const state = reactive({
       settings: computed(() => store.getters['settings/settings']),
-      peer: computed(() => store.state.messages.conversations[peer_id].peer),
+      peer: computed(() => store.state.messages.conversations[peerId].peer),
       pinnedPeers: computed(() => store.state.messages.pinnedPeers),
-      isPinnedPeer: computed(() => state.pinnedPeers.includes(peer_id))
+      isPinnedPeer: computed(() => state.pinnedPeers.includes(peerId)),
+      isChat: isChatPeerId(peerId)
     });
 
     function copyPeerId() {
@@ -98,49 +100,49 @@ export default {
       const { pinnedPeers, isPinnedPeer: isUnpin } = state;
 
       if (isUnpin) {
-        pinnedPeers.splice(pinnedPeers.indexOf(peer_id), 1);
-        store.commit('messages/moveConversation', { peer_id });
+        pinnedPeers.splice(pinnedPeers.indexOf(peerId), 1);
+        store.commit('messages/moveConversation', { peer_id: peerId });
       } else {
-        pinnedPeers.unshift(peer_id);
+        pinnedPeers.unshift(peerId);
       }
 
       vkapi(
         isUnpin ? 'messages.unpinConversation' : 'messages.pinConversation',
-        { peer_id },
+        { peer_id: peerId },
         { android: true }
       );
     }
 
     function markAsRead() {
       vkapi('messages.markAsRead', {
-        peer_id
+        peer_id: peerId
       });
     }
 
     function toggleNotifications() {
       vkapi('account.setSilenceMode', {
-        peer_id,
+        peer_id: peerId,
         time: state.peer.muted ? 0 : -1
       });
     }
 
     function clearHistory() {
       openModal('clear-history', {
-        peer_id
+        peer_id: peerId
       });
     }
 
     function leftFromChat() {
       if (state.peer.isChannel) {
         eventBus.emit('messages:event', 'changeLoadedState', {
-          peer_id,
+          peer_id: peerId,
           loadedUp: !state.peer.left,
           loadedDown: !state.peer.left
         });
       }
 
       vkapi(state.peer.left ? 'messages.addChatUser' : 'messages.removeChatUser', {
-        chat_id: peer_id - 2e9,
+        chat_id: convertChatPeerIdToChatId(peerId),
         user_id: store.state.users.activeUserID
       });
     }

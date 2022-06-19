@@ -1,5 +1,6 @@
 import { escape, capitalize, createCallablePromise } from 'js/utils';
 import { fields, getPhoto, getAppName, concatProfiles } from 'js/api/utils';
+import { isChatPeerId, isGroupId } from 'js/api/ranges';
 import { openModal } from 'js/modals';
 import { getLastOnlineDate } from 'js/date';
 import vkapi from 'js/vkapi';
@@ -7,7 +8,7 @@ import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 
 export function parseConversation(conversation) {
-  const isChat = conversation.peer.id > 2e9;
+  const isChat = isChatPeerId(conversation.peer.id);
   const { push_settings, chat_settings } = conversation;
   const isCasperChat = isChat && !!chat_settings.is_disappearing;
   const chatState = isChat
@@ -161,15 +162,15 @@ export function getMessagePreview(msg) {
 }
 
 export function getPeerOnline(peer_id, peer, owner) {
-  if (!peer || peer_id > 2e9 && !peer.left && peer.members == null) {
+  if (!peer || isChatPeerId(peer_id) && !peer.left && peer.members == null) {
     return getTranslate('loading');
   }
 
-  if (peer_id < 0) {
+  if (isGroupId(peer_id)) {
     return getTranslate('im_chat_group');
   }
 
-  if (peer_id > 2e9) {
+  if (isChatPeerId(peer_id)) {
     const { chatState, members, isChannel, left } = peer;
 
     if (chatState === 'kicked') {
@@ -216,7 +217,7 @@ export function getPeerOnline(peer_id, peer, owner) {
 }
 
 export function getPeerAvatar(peer_id, peer, owner) {
-  if (peer_id > 2e9) {
+  if (isChatPeerId(peer_id)) {
     return peer && !peer.left && peer.photo || 'assets/im_chat_photo.png';
   } else {
     return getPhoto(owner) || 'assets/blank.gif';
@@ -224,7 +225,7 @@ export function getPeerAvatar(peer_id, peer, owner) {
 }
 
 export function getPeerTitle(peer_id, peer, owner) {
-  if (peer_id > 2e9) {
+  if (isChatPeerId(peer_id)) {
     return peer && peer.title || '...';
   } else if (owner) {
     return owner.name || `${owner.first_name} ${owner.last_name}`;
@@ -253,7 +254,7 @@ function canDeleteMessageForAll(message, peer) {
     return true;
   }
 
-  if (peer.id < 2e9 || !peer.acl.can_moderate) {
+  if (!isChatPeerId(peer.id) || !peer.acl.can_moderate) {
     return false;
   }
 

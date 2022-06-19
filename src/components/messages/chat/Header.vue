@@ -23,7 +23,7 @@
             color="var(--icon-dark-blue)"
             class="im_header_ghost"
           />
-          <Icon v-if="peer.isDonut" name="donut_fill_20" class="im_header_donut" />
+          <Icon v-if="peer && peer.isDonut" name="donut_fill_20" class="im_header_donut" />
           <Icon
             v-if="peer && peer.muted"
             name="muted"

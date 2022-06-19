@@ -83,6 +83,7 @@
 import { reactive, computed, toRefs } from 'vue';
 import { convertCount, eventBus } from 'js/utils';
 import { loadProfile } from 'js/api/utils';
+import { isChatPeerId } from 'js/api/ranges';
 import { getMessagePreview, getPeerAvatar, getPeerTitle } from 'js/api/messages';
 import { getShortTime } from 'js/date';
 import store from 'js/store';
@@ -108,7 +109,7 @@ export default {
     const state = reactive({
       route: router.currentRoute,
 
-      isChat: props.peer.id > 2e9,
+      isChat: isChatPeerId(props.peer.id),
       owner: computed(() => store.state.profiles[props.peer.id]),
       author: computed(() => store.state.profiles[props.msg.from]),
       blueName: computed(() => [100, 101, 333].includes(Number(props.peer.id))),

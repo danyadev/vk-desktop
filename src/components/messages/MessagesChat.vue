@@ -18,6 +18,7 @@
 
 <script>
 import { reactive, computed, watch, nextTick, onMounted, onActivated } from 'vue';
+import { isChatPeerId } from 'js/api/ranges';
 import { loadConversation } from 'js/api/messages';
 import store from 'js/store';
 import router from 'js/router';
@@ -104,7 +105,7 @@ export default {
     });
 
     onActivated(() => {
-      if (!state.peer || !state.peer.loaded || state.peer_id < 2e9) {
+      if (!state.peer || !state.peer.loaded || !isChatPeerId(state.peer_id)) {
         loadConversation(state.peer_id);
       }
     });

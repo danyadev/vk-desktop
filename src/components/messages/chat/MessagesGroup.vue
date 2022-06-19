@@ -28,6 +28,7 @@
 <script>
 import { computed, reactive } from 'vue';
 import { getPhoto } from 'js/api/utils';
+import { isChatPeerId } from 'js/api/ranges';
 import store from 'js/store';
 
 import Message from './Message.vue';
@@ -45,7 +46,7 @@ export default {
       user: computed(() => store.state.profiles[state.msg.from]),
       photo: computed(() => getPhoto(state.user) || 'assets/blank.gif'),
       showUserData: computed(() => (
-        !state.msg.out && props.peer_id > 2e9 && !(props.peer && props.peer.isChannel)
+        !state.msg.out && isChatPeerId(props.peer_id) && !(props.peer && props.peer.isChannel)
       ))
     });
 

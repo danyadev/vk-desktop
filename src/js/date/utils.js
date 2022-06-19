@@ -136,8 +136,10 @@ export function formatDistance(d1, d2) {
   }
 
   if (seconds < 3600) {
+    // минуту назад / 2 минуты назад / 5 минут назад
     return getDistanceTranslate('minutes_ago', Math.round(seconds / 60));
   } else {
+    // час назад / 2 часа назад / 5 часов назад
     return getDistanceTranslate('hours_ago', Math.round(seconds / 3600));
   }
 }

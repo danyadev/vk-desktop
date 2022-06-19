@@ -12,6 +12,7 @@
 <script>
 import { computed } from 'vue';
 import { loadProfile } from 'js/api/utils';
+import { isChatPeerId } from 'js/api/ranges';
 import store from 'js/store';
 import getTranslate from 'js/getTranslate';
 
@@ -22,7 +23,7 @@ export default {
     function name(id) {
       const user = store.state.profiles[id];
 
-      if (props.peer_id < 2e9) {
+      if (!isChatPeerId(props.peer_id)) {
         return '';
       }
 
