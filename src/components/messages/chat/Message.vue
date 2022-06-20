@@ -449,16 +449,18 @@ export default {
 .isMacOS .message.flyTime .message_time_wrap {
   line-height: 14px;
   padding: 3px 6px;
-  /* Более прозрачный цвет лучше выглядит на маке */
-  background: #00000090;
 }
 
 .message.flyTime:not(.isSticker) .message_time_wrap {
-  background: #000000a0;
-  color: var(--text-white);
   right: 11px;
   bottom: 11px;
-  font-weight: normal;
+  color: var(--text-white);
+  background: #000000a0;
+}
+
+.isMacOS .message.flyTime:not(.isSticker) .message_time_wrap {
+  /* Более прозрачный цвет лучше выглядит на маке */
+  background: #00000090;
 }
 
 .message.flyTime:not(.isSticker) .message_dot {
@@ -468,6 +470,10 @@ export default {
 .message.flyTime:not(.isSticker).hideBubble .message_time_wrap {
   right: 5px;
   bottom: 5px;
+}
+
+.message.flyTime.isSticker .message_time_wrap {
+  color: var(--sticker-fly-time-color);
 }
 
 .message.flyTime.isSticker:not(.hideBubble) .message_time_wrap {

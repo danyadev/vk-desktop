@@ -73,6 +73,7 @@
   /* --message-current-bubble-background внутри .message */
 
   --attach-left-border: #808082;
+  --sticker-fly-time-color: var(--text-primary);
 
   --keyboard-button-default: #454648;
   --keyboard-button-primary: #5181b8;

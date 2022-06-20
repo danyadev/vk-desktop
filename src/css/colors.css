@@ -3,7 +3,7 @@
   --background-light: #fff;
   --background-accent: var(--background);
   /* Используется для времени у стикеров в сообщении */
-  --background-alpha: #ffffffdf;
+  --background-alpha: #ffffffea;
   --background-blue: #5181b8;
   /* Используется для точки, которая означает, что сообщение еще не прочитано */
   --background-blue-overlight: #7aa0cd;
@@ -73,6 +73,8 @@
   /* --message-current-bubble-background внутри .message */
 
   --attach-left-border: #7197c5;
+
+  --sticker-fly-time-color: var(--text-dark-steel-gray);
 
   --keyboard-button-default: #004a961f;
   --keyboard-button-primary: #5181b8;
