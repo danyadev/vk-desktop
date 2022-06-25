@@ -20,7 +20,8 @@ function handleError({ user, method, params, error, ...context }) {
       // Был передан другой токен
       if (!user || ![user.access_token, user.android_token].includes(params.access_token)) {
         resolve();
-        return context.reject(error);
+        context.reject(error);
+        return;
       }
 
       const type = ({
@@ -28,6 +29,8 @@ function handleError({ user, method, params, error, ...context }) {
         'user revoke access for this token.': 0,
         // Закончилось время действия токена
         'invalid session.': 0,
+        // Невалидный access_token
+        'invalid access_token (4).': 0,
         // Страница удалена
         'user is deactivated.': 1,
         // Страница заблокирована
