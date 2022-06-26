@@ -208,10 +208,7 @@ export default {
 
 .message_bubble .keyboard.inline {
   padding: 8px 0 0 0;
-  /* Нужно для того, чтобы время у сообщения (если оно не вмещается после текста) не отнимало */
-  /* место у клавиатуры */
-  width: calc(100% + 3px * 2);
-  margin-left: -3px;
+  width: 100%;
 }
 
 .keyboard_line {

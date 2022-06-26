@@ -148,6 +148,7 @@ export default {
         const attachNames = Object.keys(attachments);
         const oneAttachType = attachNames.length === 1;
         const noReplyOrFwd = !hasReplyMsg && !fwdCount;
+        const hasInlineKeyboard = !!props.msg.keyboard;
 
         const onlyPhotoAttaches = (
           (photo || video || doc) && (!doc || doc.every((doc) => doc.preview)) &&
@@ -191,8 +192,14 @@ export default {
           // Уменьшаем отступы сверху, справа и слева
           classes.push('removeTopMargin');
         } else if ((onlyPhotoAttaches || oneAttachType && article) && !fwdCount) {
-          // Уменьшаем отступы слева, снизу и справа
-          classes.push('removeBottomMargin');
+          if (hasInlineKeyboard) {
+            // Уменьшаем отступы слева и справа
+            classes.push('removeMiddleMargin');
+          } else {
+            // Уменьшаем отступы слева, снизу и справа
+            classes.push('removeBottomMargin');
+          }
+
           flyTime = true;
         } else if (hasPhoto || hasLink || article) {
           // Уменьшаем отступы слева и справа
@@ -390,6 +397,10 @@ export default {
   --unread-offset: 5px;
 }
 
+.message_bubble_content {
+  position: relative;
+}
+
 .message_text {
   display: inline;
   line-height: 18px;
@@ -452,8 +463,8 @@ export default {
 }
 
 .message.flyTime:not(.isSticker) .message_time_wrap {
-  right: 11px;
-  bottom: 11px;
+  right: 5px;
+  bottom: 5px;
   color: var(--text-white);
   background: #000000a0;
 }
