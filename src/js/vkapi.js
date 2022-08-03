@@ -210,14 +210,14 @@ function vkapi(method, params, { android } = {}) {
   });
 }
 
-export default async function executeMethod(...args) {
+export default async function executeMethod(method, params, platform) {
   try {
-    return await vkapi(...args);
+    return await vkapi(method, params, platform);
   } catch (err) {
     if (err) {
       throw err;
     } else {
-      return executeMethod(...args);
+      return executeMethod(method, params, platform);
     }
   }
 }
