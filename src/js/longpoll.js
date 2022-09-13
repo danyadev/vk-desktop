@@ -11,6 +11,18 @@ import debug from './debug';
 const IGNORED_DEBUG_EVENTS = [6, 8, 9, 63, 64, 65, 66, 67, 80];
 const EVENTS_WITH_MESSAGE = [3, 4, 5, 18];
 
+function shouldLogEvent(eventId, debugValue) {
+  if (Array.isArray(debugValue)) {
+    if (debugValue.length === 0) {
+      return true;
+    }
+
+    return debugValue.includes(eventId);
+  }
+
+  return debugValue && !IGNORED_DEBUG_EVENTS.includes(eventId);
+}
+
 class Longpoll {
   constructor() {
     this.version = 10;
@@ -146,11 +158,7 @@ class Longpoll {
     const events = [];
 
     for (const rawEvent of history) {
-      const shouldLogEvent = Array.isArray(this.debug)
-        ? this.debug.includes(rawEvent[0])
-        : this.debug && !IGNORED_DEBUG_EVENTS.includes(rawEvent[0]);
-
-      if (shouldLogEvent) {
+      if (shouldLogEvent(rawEvent[0], this.debug)) {
         console.log('[lp]', rawEvent.slice());
       }
 
