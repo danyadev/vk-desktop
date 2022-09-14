@@ -2,7 +2,11 @@
   <div class="attach_article">
     <img
       :src="photo.url"
-      :style="{ aspectRatio: `${photo.width} / ${photo.height}` }"
+      :style="{
+        aspectRatio: photo.width / photo.height < 1.5
+          ? `3 / 2`
+          : `${photo.width} / ${photo.height}`
+      }"
       :width="photo.width"
     >
     <div class="attach_article_content">
@@ -79,7 +83,6 @@ export default {
 .attach_article {
   position: relative;
   width: 100%;
-  max-width: 415px;
   overflow: hidden;
   border-radius: 14px;
 }
@@ -88,7 +91,7 @@ export default {
   display: block;
   max-width: 100%;
   min-height: 180px;
-  max-height: 250px;
+  max-height: 320px;
   object-fit: cover;
 }
 
@@ -136,7 +139,12 @@ export default {
 .attach_article_button {
   background: #fff;
   color: #000;
-  line-height: 10px;
+  padding: 6px 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+  transition: opacity .2s;
+}
+
+.attach_article_button:hover {
+  opacity: .9;
 }
 </style>

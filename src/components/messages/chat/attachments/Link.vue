@@ -65,6 +65,7 @@ export default {
 <style>
 .attach_link {
   display: flex;
+  margin-top: 1px;
 }
 
 .attach_link:not(.-short) {
