@@ -12,11 +12,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            glob: app/VK Desktop linux *.zip
+            files: '"app/VK Desktop linux x64.zip" "app/VK Desktop linux ia32.zip"'
           - os: windows-latest
-            glob: app/VK Desktop Setup *.exe
+            files: '"app/VK Desktop Setup x64.exe" "app/VK Desktop Setup x32.exe"'
           - os: macos-latest
-            glob: app/VK Desktop mac *.dmg
+            files: '"app/VK Desktop mac x64.dmg" "app/VK Desktop mac arm64.dmg"'
 
     steps:
     - uses: actions/checkout@master
@@ -33,7 +33,6 @@ jobs:
       if: startsWith(matrix.os, 'windows')
       run: yarn win-setup
     - name: Upload binaries to release
-      shell: bash
-      run: gh release upload ${{ github.event.release.tag_name }} ${{ matrix.glob }}
+      run: gh release upload ${{ github.event.release.tag_name }} ${{ matrix.files }}
       env:
         GITHUB_TOKEN: ${{ github.token }}
