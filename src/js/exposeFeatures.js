@@ -9,6 +9,7 @@ import * as auth from '@/auth';
 import * as emoji from './emoji';
 import * as modals from './modals';
 import { addSnackbar } from './snackbars';
+import Queue from './Queue';
 
 window.vkapi = vkapi;
 window.store = store;
@@ -20,6 +21,7 @@ window.auth = auth;
 window.emoji = emoji;
 window.modals = modals;
 window.addSnackbar = addSnackbar;
+window.Queue = Queue;
 
 window.messageFlagsMap = messageFlagsMap;
 window.conversationFlagsMap = conversationFlagsMap;
