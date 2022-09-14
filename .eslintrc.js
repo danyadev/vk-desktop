@@ -182,7 +182,9 @@ module.exports = {
     'prefer-regex-literals': 'error',
     'prefer-spread': 'error',
     'quote-props': ['error', 'as-needed'],
-    'quotes': ['error', 'single'],
+    'quotes': ['error', 'single', {
+      avoidEscape: true
+    }],
     'require-await': 'error',
     'require-yield': 'error',
     'rest-spread-spacing': 'error',
