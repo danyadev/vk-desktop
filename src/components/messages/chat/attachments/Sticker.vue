@@ -56,11 +56,16 @@ export default {
       isAnimationLoaded: false,
 
       image: computed(() => {
-        const imagesKey = store.getters['settings/settings'].useDarkTheme
-          ? 'images_with_background'
-          : 'images';
+        const images = store.getters['settings/settings'].useDarkTheme
+          ? sticker.images_with_background
+          : sticker.images;
 
-        return sticker[imagesKey][devicePixelRatio > 1 ? 2 : 1].url;
+        const image = images
+          .slice()
+          .sort((a, b) => a.width - b.width)
+          .find((image) => image.width >= (devicePixelRatio > 1 ? 256 : 128));
+
+        return image.url;
       })
     });
 
