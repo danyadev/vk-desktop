@@ -96,7 +96,7 @@ export default {
     });
 
     function copyMessageId() {
-      electron.clipboard.writeText(messageId);
+      electron.clipboard.writeText(String(messageId));
 
       addSnackbar({
         text: getTranslate('im_message_id_copied'),

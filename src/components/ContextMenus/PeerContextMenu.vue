@@ -88,7 +88,7 @@ export default {
     });
 
     function copyPeerId() {
-      electron.clipboard.writeText(props.peerId);
+      electron.clipboard.writeText(String(peerId));
 
       addSnackbar({
         text: getTranslate('im_peer_id_copied'),
