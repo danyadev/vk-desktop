@@ -38,13 +38,14 @@ module.exports = function(env, { mode = 'development' } = {}) {
   return {
     mode,
     target: 'electron-renderer',
-    stats: { children: false },
+    stats: {
+      children: false
+    },
     optimization: {
       minimizer
     },
     entry: {
-      main: './src/main.js',
-      photoViewer: './src/photoViewer.js'
+      main: './src/main.ts'
     },
     output: {
       path: path.resolve(__dirname, 'app/dist/'),
@@ -77,6 +78,14 @@ module.exports = function(env, { mode = 'development' } = {}) {
         {
           test: /\.js$/,
           loader: 'babel-loader',
+          exclude: /node_modules/
+        },
+        {
+          test: /\.ts$/,
+          loader: 'ts-loader',
+          options: {
+            appendTsSuffixTo: [/\.vue$/]
+          },
           exclude: /node_modules/
         },
         {
@@ -121,12 +130,13 @@ module.exports = function(env, { mode = 'development' } = {}) {
         __VUE_PROD_DEVTOOLS__: false
       }),
       new VueLoaderPlugin(),
-      new MiniCssExtractPlugin({ filename: '[name].css' }),
+      new MiniCssExtractPlugin({
+        filename: '[name].css'
+      }),
       new CopyWebpackPlugin({
         patterns: [
-          { from: 'main-process/main.html', to: 'main.html' },
-          { from: 'main-process/photoViewer.html', to: 'photoViewer.html' },
-          { from: 'src/assets', to: 'assets' }
+          { from: 'main-process/main.html', to: 'main.html' }
+          // { from: 'src/assets', to: 'assets' }
         ]
       })
     ],
@@ -139,7 +149,7 @@ module.exports = function(env, { mode = 'development' } = {}) {
     },
 
     resolve: {
-      extensions: ['.js'],
+      extensions: ['.js', '.ts'],
       symlinks: false,
       alias: {
         '@': path.resolve(__dirname, 'src/components'),

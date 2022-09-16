@@ -8,23 +8,32 @@ const { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } = require('ele
 
 const isMacOS = process.platform === 'darwin';
 
-const vkdPath = path.join(app.getPath('appData'), 'vk-desktop');
-const storePath = path.join(vkdPath, 'store.json');
+const appDataPath = path.join(app.getPath('appData'), 'vk-desktop');
+const storePath = path.join(appDataPath, 'store.json');
+
+/** @type {{ useNativeTitlebar: boolean }} */
 let store = {
   useNativeTitlebar: false
 };
 
 try {
-  store = JSON.parse(fs.readFileSync(storePath));
+  store = JSON.parse(fs.readFileSync(storePath, 'utf-8'));
 } catch {
-  if (!fs.existsSync(vkdPath)) fs.mkdirSync(vkdPath);
+  if (!fs.existsSync(appDataPath)) {
+    fs.mkdirSync(appDataPath);
+  }
   fs.writeFileSync(storePath, JSON.stringify(store));
 }
 
 require('@electron/remote/main').initialize();
 
+// TODO: Поддержать тему при инициализации
 nativeTheme.themeSource = 'light';
 
+/**
+ * @param params {Electron.BrowserWindowConstructorOptions}
+ * @returns {Electron.BrowserWindow}
+ */
 function createWindow(params = {}) {
   const isFrameEnabled = 'frame' in params
     ? params.frame
@@ -53,6 +62,10 @@ function createWindow(params = {}) {
   return win;
 }
 
+/**
+ * @param entry {string}
+ * @returns {string}
+ */
 function getLoadURL(entry) {
   return process.argv.includes('dev-mode')
     ? `http://localhost:9973/dist/${entry}.html`
@@ -87,18 +100,9 @@ app.once('ready', () => {
 
   mainWindow.loadURL(getLoadURL('main'));
 
-  // const photoViewer = createWindow({
-  //   fullscreen: true,
-  //   transparent: true,
-  //   show: true,
-  //   frame: true,
-  //   modal: true
-  // });
-  // photoViewer.loadURL(getLoadURL('photoViewer'));
-
-  mainWindow.webContents.on('new-window', (event, url) => {
-    event.preventDefault();
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
+    return { action: 'deny' };
   });
 
   if (isMacOS) {
@@ -113,15 +117,18 @@ app.once('ready', () => {
     });
 
     mainWindow.on('close', (event) => {
-      if (!forceClose) {
-        event.preventDefault();
+      // Позволяем полностью закрыть приложение
+      if (forceClose) {
+        return;
+      }
 
-        if (mainWindow.isFullScreen()) {
-          mainWindow.setFullScreen(false);
-          mainWindow.once('leave-full-screen', () => mainWindow.hide());
-        } else {
-          mainWindow.hide();
-        }
+      event.preventDefault();
+
+      if (mainWindow.isFullScreen()) {
+        mainWindow.setFullScreen(false);
+        mainWindow.once('leave-full-screen', () => mainWindow.hide());
+      } else {
+        mainWindow.hide();
       }
     });
 

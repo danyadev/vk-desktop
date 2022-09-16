@@ -2,6 +2,10 @@
 
 const { Menu, shell } = require('electron');
 
+/**
+ * @param mainWindow {import('electron').BrowserWindow}
+ * @param labels {Record<string, string>}
+ */
 module.exports = function(mainWindow, labels) {
   const menu = [
     {

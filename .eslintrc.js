@@ -6,9 +6,15 @@ module.exports = {
   parser: 'vue-eslint-parser',
 
   parserOptions: {
-    parser: '@babel/eslint-parser',
-    requireConfigFile: false,
-    ecmaVersion: 2019
+    parser: '@typescript-eslint/parser',
+    ecmaFeatures: {
+      jsx: true // имеет ли смысл?
+    },
+    ecmaVersion: 2021,
+    jsxPragma: null, // точно?
+    lib: ['es2021'], // ?
+    project: './tsconfig.json',
+    extraFileExtensions: ['.vue']
   },
 
   env: {
@@ -29,7 +35,10 @@ module.exports = {
 
   extends: [
     // Включает максимальное количество правил
-    'plugin:vue/vue3-recommended'
+    'plugin:vue/vue3-recommended',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/recommended'
+    // 'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
 
   globals: {
@@ -215,7 +224,8 @@ module.exports = {
     'import/default': 'error',
     'import/export': 'error',
     'import/extensions': ['error', 'always', {
-      js: 'never'
+      js: 'never',
+      ts: 'never'
     }],
     'import/first': 'error',
     'import/named': 'error',
@@ -237,6 +247,9 @@ module.exports = {
         ['internal', 'parent', 'sibling', 'index']
       ]
     }],
+
+    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
 
     // Включаем правила, которые не указаны в рекомендуемых
     'vue/block-tag-newline': ['error', {
