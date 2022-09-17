@@ -1,8 +1,14 @@
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import './App.css';
 
-export default defineComponent({
-  setup() {
-    return () => <div class="App">Hello, world!</div>;
-  }
+export default defineComponent(() => {
+  const counter = ref(0);
+
+  return () => (
+    <div class="App">
+      <button onClick={() => counter.value++}>
+        Counter: {counter.value}
+      </button>
+    </div>
+  );
 });
