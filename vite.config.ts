@@ -19,7 +19,7 @@ export default defineConfig({
         vite: {
           build: {
             // sourcemap: 'inline',
-            outDir: 'app/dist'
+            outDir: 'app'
           }
         }
       },

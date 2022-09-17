@@ -9,12 +9,14 @@
     "output": "app"
   },
   "files": [
-    "!node_modules/**/*",
-    "node_modules/@electron/remote",
     "package.json",
-    { "from": "main-process", "to": "", "filter": "**/*" },
+    "!node_modules",
+    { "from": "app", "to": "", "filter": "index.js" },
     { "from": "app/dist", "to": "dist", "filter": "**/*" }
   ],
+  "extraMetadata": {
+    "main": "index.js"
+  },
   "win": {
     "target": [{
       "target": "dir",
