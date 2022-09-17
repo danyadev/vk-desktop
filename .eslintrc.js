@@ -22,7 +22,6 @@ module.exports = {
 
   settings: {
     'import/resolver': {
-      webpack: { paths: ['./src'] },
       node: { paths: ['./src'] }
     },
     'import/ignore': []

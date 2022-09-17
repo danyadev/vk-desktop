@@ -1,17 +1,17 @@
-'use strict';
+import fs from 'fs';
+import path from 'path';
+import type Electron from 'electron';
+import { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } from 'electron';
+import electronMain from '@electron/remote/main';
+import buildMacOSMenu from './buildMacOSMenu';
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
-
-const fs = require('fs');
-const path = require('path');
-const { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } = require('electron');
 
 const isMacOS = process.platform === 'darwin';
 
 const appDataPath = path.join(app.getPath('appData'), 'vk-desktop');
 const storePath = path.join(appDataPath, 'store.json');
 
-/** @type {{ useNativeTitlebar: boolean }} */
 let store = {
   useNativeTitlebar: false
 };
@@ -25,16 +25,12 @@ try {
   fs.writeFileSync(storePath, JSON.stringify(store));
 }
 
-require('@electron/remote/main').initialize();
+electronMain.initialize();
 
 // TODO: Поддержать тему при инициализации
 nativeTheme.themeSource = 'light';
 
-/**
- * @param params {Electron.BrowserWindowConstructorOptions}
- * @returns {Electron.BrowserWindow}
- */
-function createWindow(params = {}) {
+function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
   const isFrameEnabled = 'frame' in params
     ? params.frame
     : store.useNativeTitlebar;
@@ -45,7 +41,7 @@ function createWindow(params = {}) {
     show: false,
     frame: isFrameEnabled,
     titleBarStyle: isFrameEnabled ? 'default' : 'hidden',
-    trafficLightPosition: isFrameEnabled ? null : { x: 8, y: 8 },
+    trafficLightPosition: isFrameEnabled ? undefined : { x: 8, y: 8 },
     backgroundColor: '#fff',
     webPreferences: {
       webSecurity: false,
@@ -62,24 +58,26 @@ function createWindow(params = {}) {
   return win;
 }
 
-/**
- * @param entry {string}
- * @returns {string}
- */
-function getLoadURL(entry) {
-  return process.argv.includes('dev-mode')
-    ? `http://localhost:9973/dist/${entry}.html`
-    : `file://${__dirname}/dist/${entry}.html`;
+function getLoadURL(entry: string) {
+  const devServerUrl = process.env.VITE_DEV_SERVER_URL;
+  return devServerUrl || `file://${__dirname}/dist/${entry}.html`;
+}
+
+type PartialSettings = {
+  window: Electron.Rectangle
 }
 
 app.once('ready', () => {
   const mainWindow = createWindow();
 
   mainWindow.webContents.once('dom-ready', async () => {
-    const data = await mainWindow.webContents.executeJavaScript('localStorage.getItem("settings")');
+    const storedSettings: string | null = await mainWindow.webContents.executeJavaScript(
+      'localStorage.getItem("settings")'
+    );
 
-    if (data) {
-      const { window } = JSON.parse(data);
+    if (storedSettings) {
+      const settings: PartialSettings = JSON.parse(storedSettings);
+      const { window } = settings;
       const { width, height } = screen.getPrimaryDisplay().workAreaSize;
       const isMaximized = window.width >= width && window.height >= height;
 
@@ -98,7 +96,7 @@ app.once('ready', () => {
     mainWindow.show();
   });
 
-  mainWindow.loadURL(getLoadURL('main'));
+  mainWindow.loadURL(getLoadURL('index'));
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
@@ -106,8 +104,8 @@ app.once('ready', () => {
   });
 
   if (isMacOS) {
-    ipcMain.on('menu:create', (event, labels) => {
-      require('./menu')(mainWindow, labels);
+    ipcMain.on('menu:create', (event, labels: Record<string, string>) => {
+      buildMacOSMenu(mainWindow, labels);
     });
 
     let forceClose = false;

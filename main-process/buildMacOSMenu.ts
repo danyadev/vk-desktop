@@ -1,13 +1,8 @@
-'use strict';
+import { Menu, shell } from 'electron';
+import type Electron from 'electron';
 
-const { Menu, shell } = require('electron');
-
-/**
- * @param mainWindow {import('electron').BrowserWindow}
- * @param labels {Record<string, string>}
- */
-module.exports = function(mainWindow, labels) {
-  const menu = [
+export default function(mainWindow: Electron.BrowserWindow, labels: Record<string, string>) {
+  const menu: Electron.MenuItemConstructorOptions[] = [
     {
       label: labels.appMenuTitle,
       submenu: [
@@ -15,13 +10,13 @@ module.exports = function(mainWindow, labels) {
         {
           label: labels.settings,
           accelerator: 'Command+,',
-          click: () => mainWindow.send('menu:open-preferences')
+          click: () => mainWindow.webContents.send('menu:open-preferences')
         },
         { type: 'separator' },
         { role: 'services', label: labels.services },
         { type: 'separator' },
         { role: 'hide', label: labels.hideApp },
-        { role: 'hideothers', label: labels.hideOthers },
+        { role: 'hideOthers', label: labels.hideOthers },
         { role: 'unhide', label: labels.showAllApps },
         { type: 'separator' },
         { role: 'quit', label: labels.quit }
@@ -37,7 +32,7 @@ module.exports = function(mainWindow, labels) {
         { role: 'cut', label: labels.cut },
         { role: 'copy', label: labels.copy },
         { role: 'paste', label: labels.paste },
-        { role: 'selectall', label: labels.selectAll }
+        { role: 'selectAll', label: labels.selectAll }
       ]
     },
 
@@ -81,4 +76,4 @@ module.exports = function(mainWindow, labels) {
   ];
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
-};
+}

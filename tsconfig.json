@@ -5,6 +5,7 @@
     "target": "es2020",
     "moduleResolution": "node",
     "jsx": "preserve",
+    "types": ["vite/client"],
 
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -13,6 +14,6 @@
     "strict": true
   },
 
-  "include": ["src/**/*", "main-process/**/*", ".eslintrc.js", "webpack.config.js"],
+  "include": ["src/**/*", "main-process/**/*", ".eslintrc.js", "webpack.config.js", "vite.config.ts"],
   "exclude": ["node_modules"]
 }
