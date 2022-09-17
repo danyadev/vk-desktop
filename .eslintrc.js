@@ -45,7 +45,6 @@ module.exports = {
 
   rules: {
     'array-bracket-spacing': 'error',
-    'arrow-body-style': 'error',
     'arrow-parens': 'error',
     'arrow-spacing': 'error',
     'block-scoped-var': 'error',
@@ -201,7 +200,7 @@ module.exports = {
     'rest-spread-spacing': 'error',
     'semi-spacing': 'error',
     'semi-style': 'error',
-    'semi': 'error',
+    'semi': ['error', 'never'],
     'space-before-blocks': 'error',
     'space-before-function-paren': ['error', {
       anonymous: 'never',
@@ -328,4 +327,4 @@ module.exports = {
     'vue/valid-v-pre': 'off',
     'vue/valid-v-text': 'off'
   }
-};
+}

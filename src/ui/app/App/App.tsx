@@ -1,14 +1,11 @@
-import { defineComponent, ref } from 'vue';
-import './App.css';
+import { defineComponent } from 'vue'
+import './App.css'
+import { Titlebar } from '../Titlebar/Titlebar'
 
-export default defineComponent(() => {
-  const counter = ref(0);
-
+export const App = defineComponent(() => {
   return () => (
     <div class="App">
-      <button onClick={() => counter.value++}>
-        Counter: {counter.value}
-      </button>
+      <Titlebar />
     </div>
-  );
-});
+  )
+})

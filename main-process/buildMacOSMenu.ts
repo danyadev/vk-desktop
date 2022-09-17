@@ -1,5 +1,5 @@
-import { Menu, shell } from 'electron';
-import type Electron from 'electron';
+import { Menu, shell } from 'electron'
+import type Electron from 'electron'
 
 export default function(mainWindow: Electron.BrowserWindow, labels: Record<string, string>) {
   const menu: Electron.MenuItemConstructorOptions[] = [
@@ -73,7 +73,7 @@ export default function(mainWindow: Electron.BrowserWindow, labels: Record<strin
         }
       ]
     }
-  ];
+  ]
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 }

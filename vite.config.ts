@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
-import vueJsx from '@vitejs/plugin-vue-jsx';
-import electron from 'vite-plugin-electron';
+import { defineConfig } from 'vite'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+import electron from 'vite-plugin-electron'
 
 // eslint-disable-next-line import/no-unused-modules
 export default defineConfig({
@@ -26,4 +26,4 @@ export default defineConfig({
       renderer: {}
     })
   ]
-});
+})
