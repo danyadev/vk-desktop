@@ -661,6 +661,10 @@
     "@babel/plugin-transform-typescript" "^7.18.12"
     "@vue/babel-plugin-jsx" "^1.1.1"
 
+"@vkontakte/appearance@https://github.com/VKCOM/Appearance#9.51.0":
+  version "1.0.0"
+  resolved "https://github.com/VKCOM/Appearance#f82ecfbc533fd7334b412205724c4f4c32413707"
+
 "@vue/babel-helper-vue-transform-on@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@vue/babel-helper-vue-transform-on/-/babel-helper-vue-transform-on-1.0.2.tgz#9b9c691cd06fc855221a2475c3cc831d774bc7dc"
@@ -3027,7 +3031,7 @@ lodash.truncate@^4.4.2:
   resolved "https://registry.yarnpkg.com/lodash.truncate/-/lodash.truncate-4.4.2.tgz#5a350da0b1113b837ecfffd5812cbe58d6eae193"
   integrity sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==
 
-lodash@>=4.17.21, lodash@^4.17.10, lodash@^4.17.15, lodash@^4.17.21:
+lodash@^4.17.10, lodash@^4.17.15, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -3173,7 +3177,7 @@ minimatch@3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimatch@^3.0.3, minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
+minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.2.tgz#19cd194bfd3e428f049a70817c038d89ab4be35b"
   integrity sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==
@@ -3493,11 +3497,6 @@ pend@~1.2.0:
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
   integrity sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==
 
-picocolors@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-0.2.1.tgz#570670f793646851d1ba135996962abad587859f"
-  integrity sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==
-
 picocolors@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
@@ -3525,15 +3524,6 @@ plist@^3.0.1, plist@^3.0.4:
   dependencies:
     base64-js "^1.5.1"
     xmlbuilder "^15.1.1"
-
-postcss-bem-linter@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/postcss-bem-linter/-/postcss-bem-linter-3.3.0.tgz#497915a61e5e1909f4cc141b02b090b162498f30"
-  integrity sha512-qfgbgf6JmSpJEdglPOsx6GXkQg+dyHRGkflFoACZYL1dVFqoN5O3KhynuCvZFZ1DVfCFCuqEFgnwn8AyN+4qeQ==
-  dependencies:
-    minimatch "^3.0.3"
-    postcss "^7.0.14"
-    postcss-resolve-nested-selector "^0.1.1"
 
 postcss-html@1.5.0:
   version "1.5.0"
@@ -3573,15 +3563,7 @@ postcss-value-parser@^4.2.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^7.0.14:
-  version "7.0.39"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.39.tgz#9624375d965630e2e1f2c02a935c82a59cb48309"
-  integrity sha512-yioayjNbHn6z1/Bywyb2Y4s3yvDAeXGOyxqD+LnVOinq6Mdmd++SW2wUNVzavyyHxd6+DxzWGIuosg6P1Rj8uA==
-  dependencies:
-    picocolors "^0.2.1"
-    source-map "^0.6.1"
-
-postcss@^8.1.10, postcss@^8.3.6, postcss@^8.4.0, postcss@^8.4.16:
+postcss@^8.1.10, postcss@^8.4.0, postcss@^8.4.16:
   version "8.4.16"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.16.tgz#33a1d675fac39941f5f445db0de4db2b6e01d43c"
   integrity sha512-ipHE1XBvKzm5xI7hiHCZJCSugxvsdq2mPnsq5+UF+VHCjiBvtDrlxJfMBToWaP9D5XlgNmcFGqoHmUn0EYEaRQ==
@@ -4087,17 +4069,7 @@ stylelint-config-standard@28.0.0:
   dependencies:
     stylelint-config-recommended "^9.0.0"
 
-stylelint-selector-bem-pattern@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/stylelint-selector-bem-pattern/-/stylelint-selector-bem-pattern-2.1.1.tgz#905a42675466c49f0d095d3c6879862ccbffd59a"
-  integrity sha512-zLaK/aMwUqLxR86CpFNsfelwCTdDw3kdtWbtAKEch6bpOQvYvKmFFfvMRCGjeKwylWgTRRrZA11okZw5WK0IOw==
-  dependencies:
-    lodash ">=4.17.21"
-    postcss "^8.3.6"
-    postcss-bem-linter "^3.3.0"
-    stylelint ">=13.13.1"
-
-stylelint@14.11.0, stylelint@>=13.13.1:
+stylelint@14.11.0:
   version "14.11.0"
   resolved "https://registry.yarnpkg.com/stylelint/-/stylelint-14.11.0.tgz#e2ecb28bbacab05e1fbeb84cbba23883b27499cc"
   integrity sha512-OTLjLPxpvGtojEfpESWM8Ir64Z01E89xsisaBMUP/ngOx1+4VG2DPRcUyCCiin9Rd3kPXPsh/uwHd9eqnvhsYA==

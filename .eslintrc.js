@@ -76,7 +76,8 @@ module.exports = {
     'max-len': ['error', {
       code: 100,
       ignoreStrings: true,
-      ignoreRegExpLiterals: true
+      ignoreRegExpLiterals: true,
+      ignoreUrls: true
     }],
     'new-cap': ['error', {
       properties: false

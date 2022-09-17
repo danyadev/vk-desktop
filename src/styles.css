@@ -1,0 +1,49 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: Roboto VK;
+  font-weight: 400;
+  font-display: block;
+  src: url('assets/Roboto-VK-400.woff2');
+}
+
+@font-face {
+  font-family: Roboto VK;
+  font-weight: 500;
+  font-display: block;
+  src: url('assets/Roboto-VK-500.woff2');
+}
+
+:root {
+  /**
+   * TODO: возможно нужны переменные для размеров текста
+   */
+}
+
+body {
+  font-family: Roboto VK;
+  font-size: 14px;
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  -webkit-rtl-ordering: visual;
+  text-rendering: optimizeSpeed;
+  user-select: none;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+:focus {
+  outline: none;
+}
+
+/*
+::-webkit-scrollbar {
+display: none;
+}
+*/
