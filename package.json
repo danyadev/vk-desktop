@@ -5,12 +5,15 @@
   "scripts": {
     "dev": "webpack serve --mode development",
     "build": "yarn run dist && yarn run pack",
-    "lint": "eslint src main-process .eslintrc.js webpack.config.js --ext .vue,.js,.ts && stylelint src/**/*.{vue,css}",
+    "lint:eslint": "eslint src main-process .eslintrc.js webpack.config.js --ext .vue,.js,.ts",
+    "lint:stylelint": "stylelint src/**/*.{vue,css}",
+    "lint": "yarn lint:eslint && yarn lint:stylelint",
     "dist": "webpack --mode production",
     "pack": "electron-builder --config build/config.json",
     "win-setup": "yarn win-setup64 && yarn win-setup32",
     "win-setup64": "innosetup-compiler build/config-x64.iss --verbose",
-    "win-setup32": "innosetup-compiler build/config-ia32.iss --verbose"
+    "win-setup32": "innosetup-compiler build/config-ia32.iss --verbose",
+    "postinstall": "husky install"
   },
   "repository": "https://github.com/danyadev/vk-desktop",
   "author": "danyadev <danyadev@mail.ru>",
@@ -43,6 +46,7 @@
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-vue": "9.5.1",
     "file-loader": "6.2.0",
+    "husky": "8.0.1",
     "innosetup-compiler": "6.2.0",
     "mini-css-extract-plugin": "2.6.1",
     "postcss-html": "1.5.0",
