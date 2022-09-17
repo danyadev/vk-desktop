@@ -76,16 +76,13 @@ module.exports = function(env, { mode = 'development' } = {}) {
     module: {
       rules: [
         {
-          test: /\.js$/,
+          test: /\.[jt]sx?$/,
           loader: 'babel-loader',
           exclude: /node_modules/
         },
         {
-          test: /\.ts$/,
+          test: /\.tsx?$/,
           loader: 'ts-loader',
-          options: {
-            appendTsSuffixTo: [/\.vue$/]
-          },
           exclude: /node_modules/
         },
         {
@@ -149,15 +146,8 @@ module.exports = function(env, { mode = 'development' } = {}) {
     },
 
     resolve: {
-      extensions: ['.js', '.ts'],
-      symlinks: false,
-      alias: {
-        '@': path.resolve(__dirname, 'src/components'),
-        assets: path.resolve(__dirname, 'src/assets'),
-        css: path.resolve(__dirname, 'src/css'),
-        js: path.resolve(__dirname, 'src/js'),
-        lang: path.resolve(__dirname, 'src/lang')
-      }
+      extensions: ['.ts', '.tsx', '.js'],
+      symlinks: false
     }
   };
 };

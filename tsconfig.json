@@ -10,6 +10,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "sourceMap": true,
+    "strict": true
   },
 
   "include": ["src/**/*", "main-process/**/*", ".eslintrc.js", "webpack.config.js"],

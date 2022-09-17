@@ -1,8 +1,5 @@
-const text = 'Hello, world!';
+import { createApp } from 'vue';
+import App from './ui/app/App/App';
 
-function testTypescript(text: string) {
-  console.log(text);
-  document.body.innerHTML = text;
-}
-
-testTypescript(text);
+const app = createApp(App);
+app.mount('body');

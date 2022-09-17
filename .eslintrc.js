@@ -7,12 +7,7 @@ module.exports = {
 
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    ecmaFeatures: {
-      jsx: true // имеет ли смысл?
-    },
     ecmaVersion: 2021,
-    jsxPragma: null, // точно?
-    lib: ['es2021'], // ?
     project: './tsconfig.json',
     extraFileExtensions: ['.vue']
   },
@@ -225,7 +220,8 @@ module.exports = {
     'import/export': 'error',
     'import/extensions': ['error', 'always', {
       js: 'never',
-      ts: 'never'
+      ts: 'never',
+      tsx: 'never'
     }],
     'import/first': 'error',
     'import/named': 'error',
