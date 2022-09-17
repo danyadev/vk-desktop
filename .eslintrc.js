@@ -49,6 +49,7 @@ module.exports = {
     'arrow-parens': 'error',
     'arrow-spacing': 'error',
     'block-scoped-var': 'error',
+    'brace-style': 'error',
     'comma-dangle': 'error',
     'comma-spacing': 'error',
     'comma-style': 'error',
@@ -73,7 +74,11 @@ module.exports = {
     }],
     'keyword-spacing': 'error',
     'lines-between-class-members': 'error',
-    // max-len работает через vue/max-len
+    'max-len': ['error', {
+      code: 100,
+      ignoreStrings: true,
+      ignoreRegExpLiterals: true
+    }],
     'new-cap': ['error', {
       properties: false
     }],
@@ -274,37 +279,6 @@ module.exports = {
     'vue/require-direct-export': 'error',
     'vue/v-for-delimiter-style': ['error', 'of'],
     'vue/v-on-event-hyphenation': ['error', 'never'],
-
-    // Включаем правила, идентичные eslint-base, но которые направлены на выражения в template
-    'vue/array-bracket-spacing': 'error',
-    'vue/arrow-spacing': 'error',
-    'vue/brace-style': 'error',
-    'vue/comma-dangle': 'error',
-    'vue/comma-spacing': 'error',
-    'vue/comma-style': 'error',
-    'vue/dot-notation': 'error',
-    'vue/eqeqeq': ['error', 'always', {
-      null: 'ignore'
-    }],
-    'vue/func-call-spacing': 'error',
-    'vue/key-spacing': ['error', {
-      mode: 'minimum'
-    }],
-    'vue/keyword-spacing': 'error',
-    'vue/max-len': ['error', {
-      code: 100,
-      ignoreStrings: true,
-      ignoreRegExpLiterals: true
-    }],
-    'vue/no-empty-pattern': 'error',
-    'vue/no-irregular-whitespace': 'error',
-    'vue/no-useless-concat': 'error',
-    'vue/object-curly-newline': 'error',
-    'vue/object-curly-spacing': ['error', 'always'],
-    'vue/space-in-parens': 'error',
-    'vue/space-infix-ops': 'error',
-    'vue/space-unary-ops': 'error',
-    'vue/template-curly-spacing': 'error',
 
     // Изменяем уже включенные правила для соответствия своему стилю
     'vue/attribute-hyphenation': ['error', 'never'],

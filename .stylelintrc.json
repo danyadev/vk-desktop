@@ -1,7 +1,15 @@
 {
   "extends": ["stylelint-config-standard", "stylelint-config-html"],
 
+  "plugins": ["stylelint-selector-bem-pattern"],
+
   "rules": {
+    "plugin/selector-bem-pattern": {
+      "componentName": "^[A-Z][a-zA-Z0-9]+$",
+      "componentSelectors": "^\\.{componentName}(?:__[a-z][a-zA-Z0-9]*)?(?:--[a-z][a-zA-Z0-9]*)?$",
+      "implicitComponents": true,
+      "ignoreCustomProperties": ".*"
+    },
     "font-family-no-missing-generic-family-keyword": null,
     "shorthand-property-no-redundant-values": null,
     "declaration-block-trailing-semicolon": null,
