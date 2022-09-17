@@ -3,13 +3,11 @@
 module.exports = {
   root: true,
 
-  parser: 'vue-eslint-parser',
+  parser: '@typescript-eslint/parser',
 
   parserOptions: {
-    parser: '@typescript-eslint/parser',
     ecmaVersion: 2021,
-    project: './tsconfig.json',
-    extraFileExtensions: ['.vue']
+    project: './tsconfig.json'
   },
 
   env: {
@@ -22,7 +20,12 @@ module.exports = {
 
   settings: {
     'import/resolver': {
-      node: { paths: ['./src'] }
+      typescript: {
+        project: 'tsconfig.json'
+      },
+      node: {
+        paths: ['./src']
+      }
     },
     'import/ignore': []
   },

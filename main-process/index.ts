@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type Electron from 'electron';
 import { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } from 'electron';
-import electronMain from '@electron/remote/main';
+import * as electronMain from '@electron/remote/main';
 import buildMacOSMenu from './buildMacOSMenu';
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';

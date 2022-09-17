@@ -4,6 +4,11 @@ import electron from 'vite-plugin-electron';
 
 // eslint-disable-next-line import/no-unused-modules
 export default defineConfig({
+  build: {
+    target: 'es2021',
+    polyfillModulePreload: false,
+    outDir: 'app/dist'
+  },
   plugins: [
     vueJsx({
       include: /\.[jt]sx$/
