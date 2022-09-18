@@ -7,11 +7,9 @@ import path from 'path'
  */
 
 /**
- * @param {object} palette палитра цветов
- * @param {Object} clusterData
- * @param {string} clusterData.color_identifier
- * @param {number} clusterData.alpha_multiplier
- * @return {string} color цвет в браузерном представлении
+ * @param palette {object} палитра цветов
+ * @param clusterData {{ color_identifier: string, alpha_multiplier: number }}
+ * @return {string} цвет в браузерном представлении
  */
 function resolveColor(palette, clusterData) {
   const color = palette[clusterData.color_identifier]
@@ -32,34 +30,34 @@ function resolveColor(palette, clusterData) {
 }
 
 /**
- * @param {string} ahex цвет в формате ahex: 00ffffff
- * @param {number} multiplier
+ * @param ahex {string} цвет в формате ahex: 00ffffff
+ * @param multiplier {number}
  * @return {string} цвет в формате rgba
  */
-function ahex2rgba(ahex, multiplier = 1) {
+function ahex2rgba(ahex, multiplier) {
   const opacity = parseInt(ahex.slice(0, 2), 16) / 255 * multiplier
   const colorHex = ahex.slice(2)
   return opacify(colorHex, opacity)
 }
 
 /**
- * @param {string} hex цвет в формате hex: ffffff
- * @param {number} opacity прозрачность в диапазоне [0, 1]
+ * @param hex {string} цвет в формате hex: ffffff
+ * @param opacity {number} прозрачность в диапазоне [0, 1]
  * @return {string} цвет в формате rgba
  */
 function opacify(hex, opacity) {
   const r = parseInt(hex.slice(0, 2), 16)
   const g = parseInt(hex.slice(2, 4), 16)
   const b = parseInt(hex.slice(4), 16)
-  const a = opacity.toFixed(2)
+  const a = +opacity.toFixed(2)
 
   return `rgba(${[r, g, b, a].join(', ')})`
 }
 
 /**
- * @param {object} scheme схема
- * @param {object} palette палитра
- * @param {string} targetDir папка сохранения схемы
+ * @param scheme {object} схема
+ * @param palette {object} палитра
+ * @param targetDir {string} папка сохранения схемы
  */
 function generateScheme(scheme, palette, targetDir) {
   for (const schemeId in scheme) {
@@ -81,6 +79,10 @@ function generateScheme(scheme, palette, targetDir) {
   }
 }
 
+/**
+ * @param filename {string}
+ * @returns {Object}
+ */
 function getStyleObject(filename) {
   const fileContents = fs.readFileSync(
     path.resolve(
