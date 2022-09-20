@@ -661,9 +661,9 @@
     "@babel/plugin-transform-typescript" "^7.18.12"
     "@vue/babel-plugin-jsx" "^1.1.1"
 
-"@vkontakte/appearance@https://github.com/VKCOM/Appearance#9.51.0":
+"@vkontakte/appearance@https://github.com/VKCOM/Appearance#9.51.1":
   version "1.0.0"
-  resolved "https://github.com/VKCOM/Appearance#f82ecfbc533fd7334b412205724c4f4c32413707"
+  resolved "https://github.com/VKCOM/Appearance#00b9c0712711669727fed97f1073e85d2483f930"
 
 "@vue/babel-helper-vue-transform-on@^1.0.2":
   version "1.0.2"
