@@ -2,7 +2,7 @@
 /**
  * Этот файл сгенерирован автоматически. Не нужно править его руками.
  */
-body[scheme="vkcom_dark"], [scheme="vkcom_dark"] {
+[data-scheme="vkcom_dark"] {
   --accent: #71aaeb;
   --accent_alternate: #ffffff;
   --action_sheet_action_foreground: #ffffff;

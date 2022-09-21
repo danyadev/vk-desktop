@@ -2,7 +2,7 @@
 /**
  * Этот файл сгенерирован автоматически. Не нужно править его руками.
  */
-body[scheme="vkcom_light"], [scheme="vkcom_light"] {
+[data-scheme="vkcom_light"] {
   --accent: #447bba;
   --accent_alternate: #0077ff;
   --action_sheet_action_foreground: #447bba;

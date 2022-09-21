@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 import type Electron from 'electron'
 import { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } from 'electron'
 import * as electronMain from '@electron/remote/main'
@@ -13,7 +14,8 @@ const appDataPath = path.join(app.getPath('appData'), 'vk-desktop')
 const storePath = path.join(appDataPath, 'store.json')
 
 let store = {
-  useNativeTitlebar: false
+  // Включаем кастомный тайтлбар только для винды < 10 версии
+  useNativeTitlebar: !(process.platform === 'win32' && parseInt(os.release()) < 10)
 }
 
 try {

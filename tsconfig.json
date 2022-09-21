@@ -10,8 +10,16 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "assets/*": ["./assets/*"],
+      "env/*": ["./env/*"],
+      "misc/*": ["./misc/*"],
+      "model/*": ["./model/*"],
+      "ui/*": ["./ui/*"]
+    }
   },
 
   "include": ["src/**/*", "main-process/**/*", "scripts/*", ".eslintrc.js", "vite.config.ts"],

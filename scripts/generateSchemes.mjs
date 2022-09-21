@@ -67,7 +67,7 @@ function generateScheme(scheme, palette, targetDir) {
       '/**',
       ' * Этот файл сгенерирован автоматически. Не нужно править его руками.',
       ' */',
-      `body[scheme="${schemeId}"], [scheme="${schemeId}"] {`
+      `[data-scheme="${schemeId}"] {`
     ]
     Object.keys(clusters).sort((a, b) => a.localeCompare(b)).forEach((clusterId) => {
       cssLines.push(

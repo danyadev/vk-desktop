@@ -17,14 +17,12 @@
 }
 
 :root {
-  /**
-   * TODO: возможно нужны переменные для размеров текста
-   */
+  --white: #fff;
 }
 
 body {
-  font-family: Roboto VK;
-  font-size: 14px;
+  font-family: BlinkMacSystemFont, Roboto VK;
+  font-size: 15px;
   margin: 0;
   overflow: hidden;
   height: 100vh;

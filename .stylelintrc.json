@@ -15,6 +15,7 @@
     "selector-class-pattern": null,
     "length-zero-no-unit": null,
     "string-quotes": null,
+    "custom-property-pattern": "[a-z][a-zA-Z0-9_-]",
     "font-family-name-quotes": "always-where-required",
     "color-function-notation": "legacy",
     "alpha-value-notation": "number",

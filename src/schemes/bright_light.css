@@ -2,7 +2,7 @@
 /**
  * Этот файл сгенерирован автоматически. Не нужно править его руками.
  */
-body[scheme="bright_light"], [scheme="bright_light"] {
+[data-scheme="bright_light"] {
   --accent: #2688eb;
   --accent_alternate: #0077ff;
   --action_sheet_action_foreground: #2688eb;

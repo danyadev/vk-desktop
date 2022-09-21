@@ -1,3 +1,54 @@
 .Titlebar {
-  display: block;
+  --titlebarHeight: 32px;
+  display: flex;
+  height: var(--titlebarHeight);
+  color: var(--text_secondary);
+}
+
+.Titlebar--macOS {
+  --titlebarHeight: 24px;
+  background: var(--content_tint_background);
+}
+
+.Titlebar__dragZone {
+  -webkit-app-region: drag;
+  flex-grow: 1;
+}
+
+.Titlebar--macOS .Titlebar__dragZone {
+  text-align: center;
+  font-size: 13px;
+  line-height: var(--titlebarHeight);
+}
+
+.Titlebar__buttons {
+  display: flex;
+}
+
+.Titlebar--macOS .Titlebar__buttons {
+  display: none;
+}
+
+.Titlebar__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  cursor: pointer;
+  color: var(--text_primary);
+  transition: background-color .2s, color .2s;
+}
+
+.Titlebar__button:hover {
+  background: rgba(0, 0, 0, .1);
+}
+
+.Titlebar__button--close:hover {
+  background: var(--dynamic_red);
+  color: var(--white);
+}
+
+.Titlebar--maximized .Titlebar__button--maximize,
+.Titlebar:not(.Titlebar--maximized) .Titlebar__button--restore {
+  display: none;
 }
