@@ -49,12 +49,10 @@ module.exports = {
     'arrow-spacing': 'error',
     'block-scoped-var': 'error',
     'brace-style': 'error',
-    'comma-dangle': 'error',
     'comma-spacing': 'error',
     'comma-style': 'error',
     'computed-property-spacing': 'error',
     'dot-notation': 'error',
-    'eol-last': 'error',
     'eqeqeq': ['error', 'always', {
       null: 'ignore'
     }],
@@ -141,7 +139,6 @@ module.exports = {
     'no-shadow-restricted-names': 'error',
     'no-this-before-super': 'error',
     'no-throw-literal': 'error',
-    'no-trailing-spaces': 'error',
     'no-undef-init': 'error',
     'no-undef': 'error',
     'no-unneeded-ternary': 'error',
@@ -151,7 +148,6 @@ module.exports = {
     'no-unused-expressions': ['error', {
       allowShortCircuit: true
     }],
-    'no-unused-vars': 'error',
     'no-useless-catch': 'error',
     'no-useless-computed-key': ['error', {
       enforceForClassMembers: true
@@ -253,6 +249,8 @@ module.exports = {
 
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-empty-function': 'off',
+    // Включено в .eslintrc.prepush.js
+    '@typescript-eslint/no-unused-vars': 'off',
 
     // Включаем правила, которые не указаны в рекомендуемых
     'vue/block-tag-newline': ['error', {

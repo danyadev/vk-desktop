@@ -22,6 +22,6 @@
     }
   },
 
-  "include": ["src/**/*", "main-process/**/*", "scripts/*", ".eslintrc.js", "vite.config.ts"],
+  "include": ["src/**/*", "main-process/**/*", "scripts/*", ".eslintrc.js", ".eslintrc.prepush.js", "vite.config.ts"],
   "exclude": ["node_modules"]
 }

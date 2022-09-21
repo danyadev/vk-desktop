@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "yarn run dist && yarn run pack",
-    "lint:eslint": "eslint src main-process scripts .eslintrc.js vite.config.ts --ext .js,.ts,.tsx,.mjs",
+    "lint:eslint": "eslint src main-process scripts * --ext .js,.ts,.tsx,.mjs",
     "lint:stylelint": "stylelint src/**/*.css",
     "lint": "yarn lint:eslint && yarn lint:stylelint",
     "generate-schemes": "node ./scripts/generateSchemes.mjs",
@@ -24,7 +24,7 @@
     "node": "^14.17.0 || >=16.0.0"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,mjs}": "eslint",
+    "*.{js,ts,tsx,mjs}": "eslint -c .eslintrc.prepush.js",
     "*.css": "stylelint"
   },
   "dependencies": {
