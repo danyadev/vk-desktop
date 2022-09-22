@@ -1,5 +1,5 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-config-html"],
+  "extends": ["stylelint-config-standard"],
 
   "rules": {
     "font-family-no-missing-generic-family-keyword": null,

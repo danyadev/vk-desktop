@@ -13,7 +13,7 @@ module.exports = {
   env: {
     browser: true,
     node: true,
-    es2020: true
+    es2021: true
   },
 
   plugins: ['import'],
@@ -31,17 +31,10 @@ module.exports = {
   },
 
   extends: [
-    // Включает максимальное количество правил
-    'plugin:vue/vue3-recommended',
     'plugin:import/typescript',
     'plugin:@typescript-eslint/recommended'
     // 'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
-
-  globals: {
-    DEV_MODE: 'readonly',
-    API_HOST: 'readonly'
-  },
 
   rules: {
     'array-bracket-spacing': 'error',
@@ -250,80 +243,6 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     // Включено в .eslintrc.prepush.js
-    '@typescript-eslint/no-unused-vars': 'off',
-
-    // Включаем правила, которые не указаны в рекомендуемых
-    'vue/block-tag-newline': ['error', {
-      singleline: 'always',
-      multiline: 'always'
-    }],
-    'vue/component-name-in-template-casing': 'error',
-    'vue/html-comment-content-newline': 'error',
-    'vue/html-comment-content-spacing': 'error',
-    'vue/html-comment-indent': 'error',
-    'vue/no-bare-strings-in-template': 'error',
-    'vue/no-duplicate-attr-inheritance': 'error',
-    'vue/no-empty-component-block': 'error',
-    'vue/no-multiple-objects-in-class': 'error',
-    'vue/no-potential-component-option-typo': 'error',
-    'vue/no-restricted-v-bind': ['error', '/^v-/', 'click'],
-    'vue/no-static-inline-styles': 'error',
-    'vue/no-unused-properties': ['error', {
-      groups: ['props', 'setup']
-    }],
-    'vue/no-useless-mustaches': 'error',
-    'vue/no-useless-v-bind': 'error',
-    'vue/padding-line-between-blocks': 'error',
-    'vue/require-direct-export': 'error',
-    'vue/v-for-delimiter-style': ['error', 'of'],
-    'vue/v-on-event-hyphenation': ['error', 'never'],
-
-    // Изменяем уже включенные правила для соответствия своему стилю
-    'vue/attribute-hyphenation': ['error', 'never'],
-    'vue/comment-directive': ['error', {
-      reportUnusedDisableDirectives: true
-    }],
-    'vue/component-tags-order': ['error', {
-      order: ['template', 'script', 'style']
-    }],
-    'vue/html-self-closing': ['error', {
-      html: {
-        void: 'never',
-        normal: 'any',
-        component: 'always'
-      },
-      svg: 'always',
-      math: 'always'
-    }],
-    'vue/max-attributes-per-line': ['error', {
-      singleline: 4,
-      multiline: 1
-    }],
-    'vue/multi-word-component-names': 'off',
-    'vue/no-reserved-component-names': 'off',
-    'vue/no-v-html': 'off',
-    'vue/order-in-components': ['error', {
-      order: [
-        'props',
-        'components',
-        'setup'
-      ]
-    }],
-    'vue/prop-name-casing': 'off',
-    'vue/require-prop-types': 'off',
-    'vue/require-render-return': 'off',
-    'vue/singleline-html-element-content-newline': 'off',
-
-    // Отключаем правила, которые не имеют смысла, чтобы увеличить скорость проверки
-    'vue/no-arrow-functions-in-watch': 'off',
-    'vue/no-async-in-computed-properties': 'off',
-    'vue/no-deprecated-data-object-declaration': 'off',
-    'vue/no-shared-component-data': 'off',
-    'vue/return-in-computed-property': 'off',
-    'vue/require-default-prop': 'off',
-    'vue/valid-v-on': 'off',
-    'vue/valid-v-once': 'off',
-    'vue/valid-v-pre': 'off',
-    'vue/valid-v-text': 'off'
+    '@typescript-eslint/no-unused-vars': 'off'
   }
 }
