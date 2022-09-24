@@ -22,7 +22,7 @@ export default defineConfig({
   },
   plugins: [
     vueJsx({
-      include: /\.[jt]sx$/
+      include: /\.tsx$/
     }),
     svgLoader({
       defaultImport: 'component'

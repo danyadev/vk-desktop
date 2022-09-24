@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "yarn run dist && yarn run pack",
-    "lint:eslint": "eslint src main-process scripts * --ext .js,.ts,.tsx,.mjs",
+    "lint:eslint": "eslint src main-process scripts .eslintrc.js .eslintrc.prepush.js vite.config.ts --ext .js,.ts,.tsx,.mjs",
     "lint:stylelint": "stylelint src/**/*.css",
     "lint": "yarn lint:eslint && yarn lint:stylelint",
     "generate-schemes": "node ./scripts/generateSchemes.mjs",
@@ -40,7 +40,7 @@
     "@vkontakte/appearance": "https://github.com/VKCOM/Appearance#9.51.3",
     "electron": "12.2.3",
     "electron-builder": "23.5.1",
-    "eslint": "8.23.1",
+    "eslint": "8.22.0",
     "eslint-import-resolver-typescript": "3.5.1",
     "eslint-plugin-import": "npm:eslint-plugin-i",
     "husky": "8.0.1",

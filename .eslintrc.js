@@ -33,8 +33,27 @@ module.exports = {
   extends: [
     'plugin:import/typescript',
     'plugin:@typescript-eslint/recommended'
-    // 'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
+
+  overrides: [{
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      'plugin:@typescript-eslint/recommended-requiring-type-checking'
+    ],
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-misused-promises': ['error', {
+        checksVoidReturn: {
+          // fn(async () => {}), ожидая () => void
+          arguments: false,
+          // <div fn={async () => {}} />, ожидая () => void
+          attributes: false,
+          // fn: async () => {}, ожидая () => void
+          properties: false
+        }
+      }]
+    }
+  }],
 
   rules: {
     'array-bracket-spacing': 'error',
@@ -242,6 +261,7 @@ module.exports = {
 
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-empty-function': 'off',
+
     // Включено в .eslintrc.prepush.js
     '@typescript-eslint/no-unused-vars': 'off'
   }

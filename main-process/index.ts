@@ -19,7 +19,7 @@ let store = {
 }
 
 try {
-  store = JSON.parse(fs.readFileSync(storePath, 'utf-8'))
+  store = JSON.parse(fs.readFileSync(storePath, 'utf-8')) as typeof store
 } catch {
   if (!fs.existsSync(appDataPath)) {
     fs.mkdirSync(appDataPath)
@@ -73,12 +73,12 @@ app.once('ready', () => {
   const mainWindow = createWindow()
 
   mainWindow.webContents.once('dom-ready', async () => {
-    const storedSettings: string | null = await mainWindow.webContents.executeJavaScript(
+    const storedSettings = await mainWindow.webContents.executeJavaScript(
       'localStorage.getItem("settings")'
-    )
+    ) as string | null
 
     if (storedSettings) {
-      const settings: PartialSettings = JSON.parse(storedSettings)
+      const settings = JSON.parse(storedSettings) as PartialSettings
       const { window } = settings
       const { width, height } = screen.getPrimaryDisplay().workAreaSize
       const isMaximized = window.width >= width && window.height >= height
