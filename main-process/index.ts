@@ -13,29 +13,44 @@ const isMacOS = process.platform === 'darwin'
 const appDataPath = path.join(app.getPath('appData'), 'vk-desktop')
 const storePath = path.join(appDataPath, 'store.json')
 
-let store = {
+type MainSettings = {
+  useCustomTitlebar: boolean,
+  appearance: {
+    scheme: 'vkcom' | 'vkui'
+    theme: 'light' | 'dark' | 'system'
+  }
+}
+
+let mainSettings: MainSettings = {
   // Включаем кастомный тайтлбар только для винды < 10 версии
-  useCustomTitlebar: process.platform === 'win32' && parseInt(os.release()) < 10
+  useCustomTitlebar: process.platform === 'win32' && parseInt(os.release()) < 10,
+  appearance: {
+    scheme: 'vkcom',
+    theme: 'system'
+  }
 }
 
 try {
-  store = JSON.parse(fs.readFileSync(storePath, 'utf-8')) as typeof store
+  const localMainSettings = JSON.parse(fs.readFileSync(storePath, 'utf-8')) as MainSettings
+  mainSettings = {
+    ...mainSettings,
+    ...localMainSettings
+  }
 } catch {
   if (!fs.existsSync(appDataPath)) {
     fs.mkdirSync(appDataPath)
   }
-  fs.writeFileSync(storePath, JSON.stringify(store))
+  fs.writeFileSync(storePath, JSON.stringify(mainSettings))
 }
 
 electronMain.initialize()
 
-// TODO: Поддержать тему при инициализации
-nativeTheme.themeSource = 'light'
+nativeTheme.themeSource = mainSettings.appearance.theme
 
 function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
   const isFrameEnabled = 'frame' in params
     ? params.frame
-    : !store.useCustomTitlebar
+    : !mainSettings.useCustomTitlebar
 
   const win = new BrowserWindow({
     minWidth: 410,
@@ -44,7 +59,7 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
     frame: isFrameEnabled,
     titleBarStyle: isFrameEnabled ? 'default' : 'hidden',
     trafficLightPosition: isFrameEnabled ? undefined : { x: 8, y: 8 },
-    backgroundColor: '#fff',
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#222' : '#fff',
     webPreferences: {
       webSecurity: false,
       contextIsolation: false,

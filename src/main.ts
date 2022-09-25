@@ -1,5 +1,7 @@
 import './schemes/bright_light.css'
 import './schemes/space_gray.css'
+import './schemes/vkcom_light.css'
+import './schemes/vkcom_dark.css'
 import './styles.css'
 
 import { createApp } from 'vue'

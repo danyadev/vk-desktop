@@ -1,18 +1,14 @@
 import { defineStore } from 'pinia'
+import type Electron from 'electron'
 import { RendererStorage } from 'model/Storage'
+import { currentWindow } from 'misc/utils'
 
 type Settings = {
-  appearance: {
-    theme: 'light' | 'dark',
-    scheme: 'vkcom' | 'vkui'
-  }
+  window: Electron.Rectangle
 }
 
 const settingsStorage = new RendererStorage<Settings>('settings', {
-  appearance: {
-    theme: 'light',
-    scheme: 'vkcom'
-  }
+  window: currentWindow.getBounds()
 })
 
 export const useSettingsStore = defineStore('settings', {
