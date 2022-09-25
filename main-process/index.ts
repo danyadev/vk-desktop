@@ -15,7 +15,7 @@ const storePath = path.join(appDataPath, 'store.json')
 
 let store = {
   // Включаем кастомный тайтлбар только для винды < 10 версии
-  useNativeTitlebar: !(process.platform === 'win32' && parseInt(os.release()) < 10)
+  useCustomTitlebar: process.platform === 'win32' && parseInt(os.release()) < 10
 }
 
 try {
@@ -35,7 +35,7 @@ nativeTheme.themeSource = 'light'
 function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
   const isFrameEnabled = 'frame' in params
     ? params.frame
-    : store.useNativeTitlebar
+    : !store.useCustomTitlebar
 
   const win = new BrowserWindow({
     minWidth: 410,

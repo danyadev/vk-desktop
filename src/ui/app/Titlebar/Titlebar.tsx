@@ -6,15 +6,17 @@ import Icon12TitlebarMinimize from 'assets/Icon12TitlebarMinimize.svg'
 import Icon10TitlebarMaximize from 'assets/Icon10TitlebarMaximize.svg'
 import Icon12TitlebarRestore from 'assets/Icon12TitlebarRestore.svg'
 import Icon10TitlebarClose from 'assets/Icon10TitlebarClose.svg'
+import { useMainSettingsStore } from 'store/mainSettings'
+
+const buttons = [
+  { action: 'minimize' as const, icon: <Icon12TitlebarMinimize /> },
+  { action: 'maximize' as const, icon: <Icon10TitlebarMaximize /> },
+  { action: 'restore' as const, icon: <Icon12TitlebarRestore /> },
+  { action: 'close' as const, icon: <Icon10TitlebarClose /> }
+]
 
 export const Titlebar = defineComponent(() => {
-  const buttons = [
-    { action: 'minimize' as const, icon: <Icon12TitlebarMinimize /> },
-    { action: 'maximize' as const, icon: <Icon10TitlebarMaximize /> },
-    { action: 'restore' as const, icon: <Icon12TitlebarRestore /> },
-    { action: 'close' as const, icon: <Icon10TitlebarClose /> }
-  ]
-
+  const mainSettingsStore = useMainSettingsStore()
   const isMaximized = ref(currentWindow.isMaximized())
 
   const onMaximize = () => (isMaximized.value = true)
@@ -31,8 +33,9 @@ export const Titlebar = defineComponent(() => {
   return () => (
     <div
       class={['Titlebar', {
-        'Titlebar--macOS': isMacOS,
-        'Titlebar--maximized': isMaximized.value
+        'Titlebar--disabled': !mainSettingsStore.useCustomTitlebar,
+        'Titlebar--maximized': isMaximized.value,
+        'Titlebar--macOS': isMacOS
       }]}
       onDblclick={() => {
         if (isMacOS && !currentWindow.isFullScreen()) {

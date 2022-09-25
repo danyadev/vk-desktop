@@ -17,6 +17,7 @@ export default defineConfig({
       env: path.resolve(__dirname, './src/env'),
       misc: path.resolve(__dirname, './src/misc'),
       model: path.resolve(__dirname, './src/model'),
+      store: path.resolve(__dirname, './src/store'),
       ui: path.resolve(__dirname, './src/ui')
     }
   },

@@ -18,10 +18,11 @@
       "env/*": ["./env/*"],
       "misc/*": ["./misc/*"],
       "model/*": ["./model/*"],
+      "store/*": ["./store/*"],
       "ui/*": ["./ui/*"]
     }
   },
 
-  "include": ["src/**/*", "main-process/**/*", "scripts/*", ".eslintrc.js", ".eslintrc.prepush.js", "vite.config.ts"],
+  "include": ["src/**/*", "main-process/**/*", "scripts/*", ".eslintrc.js", ".eslintrc.full.js", "vite.config.ts"],
   "exclude": ["node_modules"]
 }

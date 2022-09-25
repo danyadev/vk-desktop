@@ -5,6 +5,10 @@
   color: var(--text_secondary);
 }
 
+.Titlebar--disabled {
+  display: none;
+}
+
 .Titlebar--macOS {
   --titlebarHeight: 24px;
   background: var(--content_tint_background);

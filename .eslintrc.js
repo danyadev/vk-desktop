@@ -82,7 +82,6 @@ module.exports = {
       mode: 'minimum'
     }],
     'keyword-spacing': 'error',
-    'lines-between-class-members': 'error',
     'max-len': ['error', {
       code: 100,
       ignoreStrings: true,
@@ -262,7 +261,7 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-empty-function': 'off',
 
-    // Включено в .eslintrc.prepush.js
+    // Включено в .eslintrc.full.js
     '@typescript-eslint/no-unused-vars': 'off'
   }
 }
