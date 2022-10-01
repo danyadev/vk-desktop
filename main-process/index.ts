@@ -58,19 +58,18 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
     show: false,
     frame: isFrameEnabled,
     titleBarStyle: isFrameEnabled ? 'default' : 'hidden',
-    trafficLightPosition: isFrameEnabled ? undefined : { x: 8, y: 8 },
+    trafficLightPosition: isFrameEnabled ? undefined : { x: 8, y: 4 },
     backgroundColor: nativeTheme.shouldUseDarkColors ? '#222' : '#fff',
     webPreferences: {
       webSecurity: false,
       contextIsolation: false,
-      nodeIntegration: true,
-      worldSafeExecuteJavaScript: false,
-      enableRemoteModule: true
+      nodeIntegration: true
     },
     ...params
   })
 
   win.webContents.session.setSpellCheckerLanguages(['ru', 'en-US'])
+  electronMain.enable(win.webContents)
 
   return win
 }

@@ -15,7 +15,7 @@
 }
 
 .Titlebar__dragZone {
-  -webkit-app-region: drag;
+  app-region: drag;
   flex-grow: 1;
 }
 
