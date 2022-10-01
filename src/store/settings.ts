@@ -3,12 +3,14 @@ import type Electron from 'electron'
 import { RendererStorage } from 'model/Storage'
 import { currentWindow } from 'misc/utils'
 
-type Settings = {
+export type Settings = {
   window: Electron.Rectangle
+  lang: 'ru'
 }
 
 const settingsStorage = new RendererStorage<Settings>('settings', {
-  window: currentWindow.getBounds()
+  window: currentWindow.getBounds(),
+  lang: 'ru'
 })
 
 export const useSettingsStore = defineStore('settings', {

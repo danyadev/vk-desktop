@@ -15,11 +15,15 @@ export default defineConfig({
     alias: {
       assets: path.resolve(__dirname, './src/assets'),
       env: path.resolve(__dirname, './src/env'),
+      lang: path.resolve(__dirname, './src/lang'),
       misc: path.resolve(__dirname, './src/misc'),
       model: path.resolve(__dirname, './src/model'),
       store: path.resolve(__dirname, './src/store'),
       ui: path.resolve(__dirname, './src/ui')
     }
+  },
+  define: {
+    __VUE_OPTIONS_API__: false
   },
   plugins: [
     vueJsx({
@@ -33,7 +37,6 @@ export default defineConfig({
         entry: 'main-process/index.ts',
         vite: {
           build: {
-            // sourcemap: 'inline',
             outDir: 'app'
           }
         }

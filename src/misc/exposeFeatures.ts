@@ -10,12 +10,12 @@ import { useSettingsStore } from 'store/settings'
  */
 
 type ExposedFeatures = {
-  mainSettings: ReturnType<typeof useMainSettingsStore>
-  settings: ReturnType<typeof useSettingsStore>
+  mainSettingsStore: ReturnType<typeof useMainSettingsStore>
+  settingsStore: ReturnType<typeof useSettingsStore>
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 
 export function exposeFeatures() {
-  exposedWindow.mainSettings = useMainSettingsStore()
-  exposedWindow.settings = useSettingsStore()
+  exposedWindow.mainSettingsStore = useMainSettingsStore()
+  exposedWindow.settingsStore = useSettingsStore()
 }

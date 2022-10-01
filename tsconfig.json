@@ -16,6 +16,7 @@
     "paths": {
       "assets/*": ["./assets/*"],
       "env/*": ["./env/*"],
+      "lang/*": ["./lang/*"],
       "misc/*": ["./misc/*"],
       "model/*": ["./model/*"],
       "store/*": ["./store/*"],

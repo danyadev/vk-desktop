@@ -120,7 +120,7 @@ app.once('ready', () => {
   })
 
   if (isMacOS) {
-    ipcMain.on('menu:create', (event, labels: Record<string, string>) => {
+    ipcMain.on('menu:build', (event, labels: Record<string, string>) => {
       buildMacOSMenu(mainWindow, labels)
     })
 

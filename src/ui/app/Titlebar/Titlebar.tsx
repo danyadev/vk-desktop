@@ -7,6 +7,7 @@ import Icon10TitlebarMaximize from 'assets/Icon10TitlebarMaximize.svg'
 import Icon12TitlebarRestore from 'assets/Icon12TitlebarRestore.svg'
 import Icon10TitlebarClose from 'assets/Icon10TitlebarClose.svg'
 import { useMainSettingsStore } from 'store/mainSettings'
+import { useEnv } from 'misc/hooks'
 
 const buttons = [
   { action: 'minimize' as const, icon: <Icon12TitlebarMinimize /> },
@@ -16,6 +17,7 @@ const buttons = [
 ]
 
 export const Titlebar = defineComponent(() => {
+  const { lang } = useEnv()
   const mainSettingsStore = useMainSettingsStore()
   const isMaximized = ref(currentWindow.isMaximized())
 
@@ -47,7 +49,7 @@ export const Titlebar = defineComponent(() => {
         }
       }}
     >
-      <div class="Titlebar__dragZone">VK Desktop</div>
+      <div class="Titlebar__dragZone">{lang.use('vk_desktop_label')}</div>
       <div class="Titlebar__buttons">
         {buttons.map(({ action, icon }) => (
           <div

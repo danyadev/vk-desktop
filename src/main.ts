@@ -6,7 +6,7 @@ import './styles.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { initStores } from 'store'
+import { initStores } from 'store/init'
 import { exposeFeatures } from 'misc/exposeFeatures'
 import { App } from 'ui/app/App/App'
 
