@@ -1,32 +1,41 @@
 import * as electron from '@electron/remote'
-import { computed, ref } from 'vue'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import { useMainSettingsStore, AppearanceScheme, AppearanceTheme } from 'store/mainSettings'
 import { exhaustivenessCheck } from 'misc/utils'
 
 export function useThemeScheme() {
   const { appearance } = useMainSettingsStore()
 
-  const systemTheme = ref(getSystemTheme())
+  const actualAppTheme = ref(getAppTheme())
   const scheme = computed(
-    () => getFullScheme(appearance.theme, appearance.scheme, systemTheme.value)
+    () => getFullScheme(appearance.theme, appearance.scheme, actualAppTheme.value)
   )
 
-  electron.nativeTheme.on('updated', () => {
-    systemTheme.value = getSystemTheme()
+  watch(() => appearance.theme, () => {
+    electron.nativeTheme.themeSource = appearance.theme
+  })
+
+  function onThemeUpdate() {
+    actualAppTheme.value = getAppTheme()
+  }
+
+  electron.nativeTheme.on('updated', onThemeUpdate)
+  onScopeDispose(() => {
+    electron.nativeTheme.off('updated', onThemeUpdate)
   })
 
   return scheme
 }
 
-type SystemTheme = 'light' | 'dark'
-function getSystemTheme(): SystemTheme {
+type ActualTheme = 'light' | 'dark'
+function getAppTheme(): ActualTheme {
   return electron.nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
 }
 
 function getFullScheme(
   theme: AppearanceTheme,
   scheme: AppearanceScheme,
-  systemTheme: SystemTheme
+  actualAppTheme: ActualTheme
 ): string {
   switch (theme) {
     case 'light':
@@ -41,9 +50,9 @@ function getFullScheme(
 
     case 'system':
       return getFullScheme(
-        systemTheme,
+        actualAppTheme,
         scheme,
-        systemTheme
+        actualAppTheme
       )
 
     default:
