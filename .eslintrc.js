@@ -210,11 +210,6 @@ module.exports = {
     'semi-style': 'error',
     'semi': ['error', 'never'],
     'space-before-blocks': 'error',
-    'space-before-function-paren': ['error', {
-      anonymous: 'never',
-      named: 'never',
-      asyncArrow: 'always'
-    }],
     'space-in-parens': 'error',
     'space-infix-ops': 'error',
     'space-unary-ops': 'error',
@@ -256,6 +251,18 @@ module.exports = {
         'external',
         ['internal', 'parent', 'sibling', 'index']
       ]
+    }],
+
+    '@typescript-eslint/space-before-function-paren': ['error', {
+      anonymous: 'never',
+      named: 'never',
+      asyncArrow: 'always'
+    }],
+    '@typescript-eslint/ban-types': ['error', {
+      extendDefaults: true,
+      types: {
+        Function: false
+      }
     }],
 
     '@typescript-eslint/no-var-requires': 'off',

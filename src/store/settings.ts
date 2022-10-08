@@ -14,7 +14,12 @@ const settingsStorage = new RendererStorage<Settings>('settings', {
 })
 
 export const useSettingsStore = defineStore('settings', {
-  state: () => settingsStorage.data
+  state: () => settingsStorage.data,
+  actions: {
+    setWindowBounds() {
+      this.window = currentWindow.getBounds()
+    }
+  }
 })
 
 export function init() {

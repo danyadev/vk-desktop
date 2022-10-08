@@ -1,6 +1,7 @@
 import { useMainSettingsStore } from 'store/mainSettings'
 import { useSettingsStore } from 'store/settings'
-import { request } from 'env/request'
+import { useEnv } from 'misc/hooks'
+import type { Api } from 'env/Api'
 
 /**
  * Вытаскиваем полезные функции/переменные/etc в глобальную область видимости,
@@ -13,12 +14,14 @@ import { request } from 'env/request'
 type ExposedFeatures = {
   mainSettingsStore: ReturnType<typeof useMainSettingsStore>
   settingsStore: ReturnType<typeof useSettingsStore>
-  request: typeof request
+  api: Api
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 
 export function exposeFeatures() {
+  const { api } = useEnv()
+
   exposedWindow.mainSettingsStore = useMainSettingsStore()
   exposedWindow.settingsStore = useSettingsStore()
-  exposedWindow.request = request
+  exposedWindow.api = api
 }

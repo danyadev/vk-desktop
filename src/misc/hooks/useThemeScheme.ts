@@ -1,7 +1,7 @@
 import * as electron from '@electron/remote'
 import { computed, onScopeDispose, ref, watch } from 'vue'
 import { useMainSettingsStore, AppearanceScheme, AppearanceTheme } from 'store/mainSettings'
-import { exhaustivenessCheck } from 'misc/utils'
+import { currentWindow, exhaustivenessCheck } from 'misc/utils'
 
 export function useThemeScheme() {
   const { appearance } = useMainSettingsStore()
@@ -17,6 +17,8 @@ export function useThemeScheme() {
 
   function onThemeUpdate() {
     actualAppTheme.value = getAppTheme()
+    // см. main-process/index.ts
+    currentWindow.setBackgroundColor(actualAppTheme.value === 'dark' ? '#222' : '#fff')
   }
 
   electron.nativeTheme.on('updated', onThemeUpdate)
