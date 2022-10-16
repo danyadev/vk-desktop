@@ -1,4 +1,11 @@
 .App {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  color: var(--text_primary);
   background: var(--background_content);
+  user-select: none;
+  font: var(--font);
+  text-rendering: optimizeSpeed;
+  -webkit-rtl-ordering: visual;
 }

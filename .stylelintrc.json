@@ -19,7 +19,7 @@
     "font-family-name-quotes": "always-where-required",
     "color-function-notation": "legacy",
     "alpha-value-notation": "number",
-    "number-leading-zero": "never",
+    "number-leading-zero": "always",
     "selector-max-empty-lines": 1,
     "value-keyword-case": ["lower", {
       "ignoreKeywords": ["optimizeSpeed"]

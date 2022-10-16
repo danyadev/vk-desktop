@@ -18,17 +18,31 @@
 
 :root {
   --white: #fff;
+
+  --fontFamily: 'BlinkMacSystemFont', 'Roboto VK';
+  --fontSize: 15px;
+  --font: var(--fontSize) var(--fontFamily);
+
+  --fastTransition: 0.15s;
+
+  --thinBorder: 1px;
+}
+
+@media (min-resolution: 2dppx) {
+  :root {
+    --thinBorder: 0.5px;
+  }
+}
+
+@media (min-resolution: 3dppx) {
+  :root {
+    --thinBorder: 0.33px;
+  }
 }
 
 body {
-  font-family: BlinkMacSystemFont, Roboto VK;
-  font-size: 15px;
   margin: 0;
-  overflow: hidden;
   height: 100vh;
-  -webkit-rtl-ordering: visual;
-  text-rendering: optimizeSpeed;
-  user-select: none;
 }
 
 img {

@@ -1,5 +1,6 @@
 import { useMainSettingsStore } from 'store/mainSettings'
 import { useSettingsStore } from 'store/settings'
+import { useViewerStore } from 'store/viewer'
 import { useEnv } from 'misc/hooks'
 import type { Api } from 'env/Api'
 
@@ -12,8 +13,9 @@ import type { Api } from 'env/Api'
  */
 
 type ExposedFeatures = {
-  mainSettingsStore: ReturnType<typeof useMainSettingsStore>
-  settingsStore: ReturnType<typeof useSettingsStore>
+  mainSettings: ReturnType<typeof useMainSettingsStore>
+  settings: ReturnType<typeof useSettingsStore>
+  viewer: ReturnType<typeof useViewerStore>
   api: Api
 }
 const exposedWindow = window as typeof window & ExposedFeatures
@@ -21,7 +23,8 @@ const exposedWindow = window as typeof window & ExposedFeatures
 export function exposeFeatures() {
   const { api } = useEnv()
 
-  exposedWindow.mainSettingsStore = useMainSettingsStore()
-  exposedWindow.settingsStore = useSettingsStore()
+  exposedWindow.mainSettings = useMainSettingsStore()
+  exposedWindow.settings = useSettingsStore()
+  exposedWindow.viewer = useViewerStore()
   exposedWindow.api = api
 }

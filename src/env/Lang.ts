@@ -1,5 +1,5 @@
 import ru from 'lang/ru'
-import { Settings } from 'store/settings'
+import type { Settings } from 'store/settings'
 
 const langMap = {
   ru

@@ -1,0 +1,21 @@
+.Auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.Auth__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 250px;
+  gap: 10px;
+}
+
+.Auth__logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+}

@@ -4,9 +4,9 @@ import { Api } from 'env/Api'
 import { useSettingsStore } from 'store/settings'
 
 export function useEnv() {
-  const settingsStore = useSettingsStore()
+  const settings = useSettingsStore()
 
-  const lang = computed(() => new Lang(settingsStore.lang))
+  const lang = computed(() => new Lang(settings.lang))
   const api = computed(() => new Api())
 
   return reactive({

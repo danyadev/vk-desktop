@@ -18,7 +18,7 @@ const buttons = [
 
 export const Titlebar = defineComponent(() => {
   const { lang } = useEnv()
-  const mainSettingsStore = useMainSettingsStore()
+  const mainSettings = useMainSettingsStore()
   const isMaximized = ref(currentWindow.isMaximized())
 
   const onMaximize = () => (isMaximized.value = true)
@@ -35,7 +35,7 @@ export const Titlebar = defineComponent(() => {
   return () => (
     <div
       class={['Titlebar', {
-        'Titlebar--disabled': !mainSettingsStore.useCustomTitlebar,
+        'Titlebar--disabled': !mainSettings.useCustomTitlebar,
         'Titlebar--maximized': isMaximized.value,
         'Titlebar--macOS': isMacOS
       }]}

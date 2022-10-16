@@ -7,8 +7,8 @@ import { Semaphore } from 'misc/Semaphore'
  */
 const version = '5.131'
 
-const API_DEFAULT_TIMEOUT = 10 * 1000
-const API_MIN_RETRY_TIMEOUT = 500
+const API_DEFAULT_FETCH_TIMEOUT = 10 * 1000
+const API_MIN_RETRY_DELAY = 1000
 
 type FetchOptions = {
   retries?: number
@@ -81,7 +81,7 @@ export class Api {
           throw err
         }
 
-        await timer(API_MIN_RETRY_TIMEOUT * 2 ** Math.min(attempts, 5))
+        await timer(API_MIN_RETRY_DELAY * 2 ** Math.min(attempts, 4))
       }
     }
   }
@@ -126,7 +126,7 @@ export class Api {
       const abortController = new AbortController()
       const abortTimeoutId = window.setTimeout(
         () => abortController.abort(),
-        fetchOptions.timeout || API_DEFAULT_TIMEOUT
+        fetchOptions.timeout || API_DEFAULT_FETCH_TIMEOUT
       )
 
       const result = await fetch(`https://api.vk.com/method/${method}`, {

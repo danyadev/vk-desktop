@@ -1,6 +1,10 @@
 export default {
   vk_desktop_label: 'VK Desktop',
 
+  auth_login_placeholder: 'Телефон или почта',
+  auth_password_placeholder: 'Пароль',
+  auth_submit: 'Войти',
+
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',
     about: 'О программе',

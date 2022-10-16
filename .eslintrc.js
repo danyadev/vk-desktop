@@ -132,9 +132,6 @@ module.exports = {
       ignoreEOLComments: true
     }],
     'no-multi-str': 'error',
-    'no-multiple-empty-lines': ['error', {
-      max: 1
-    }],
     'no-new-object': 'error',
     'no-new-symbol': 'error',
     'no-new-wrappers': 'error',
