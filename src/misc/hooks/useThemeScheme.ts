@@ -38,7 +38,7 @@ function getFullScheme(
   theme: AppearanceTheme,
   scheme: AppearanceScheme,
   actualAppTheme: ActualTheme
-): string {
+): 'vkcom_light' | 'vkcom_dark' | 'bright_light' | 'space_gray' {
   switch (theme) {
     case 'light':
       return scheme === 'vkcom'

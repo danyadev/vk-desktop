@@ -172,7 +172,6 @@ module.exports = {
     'object-shorthand': 'error',
     'one-var': ['error', 'never'],
     'operator-assignment': 'error',
-    'padded-blocks': ['error', 'never'],
     'prefer-arrow-callback': 'error',
     'prefer-const': ['error', {
       destructuring: 'all'

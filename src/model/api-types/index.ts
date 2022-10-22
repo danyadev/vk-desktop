@@ -1,4 +1,8 @@
-import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/UsersGet'
+import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
+import {
+  MessagesGetConversationsParams,
+  MessagesGetConversationsResponse
+} from 'model/api-types/methods/Messages'
 
 /**
  * Disclaimer:
@@ -23,5 +27,10 @@ export type Methods = {
   'users.get': {
     params: UsersGetParams
     response: UsersGetResponse
+  }
+
+  'messages.getConversations': {
+    params: MessagesGetConversationsParams
+    response: MessagesGetConversationsResponse
   }
 }

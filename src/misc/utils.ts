@@ -30,10 +30,11 @@ export function toUrlParams(object: Record<string, string | number | null | unde
 /**
  * Создает хук, который возвращает один и тот же результат, кешируемый при первом использовании хука
  *
- * Для корректной работы передаваемый хук должен возвращать либо ref, либо computed
+ * Для корректной работы передаваемый хук должен возвращать реактивный объект
+ * (ref / reactive / computed)
  */
 export function createSingletonHook<R extends object>(hook: (() => R)) {
-  let hookResult: R
+  let hookResult: R | undefined
   return () => hookResult || (hookResult = hook())
 }
 

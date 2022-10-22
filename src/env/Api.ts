@@ -1,6 +1,7 @@
 import { CommonParams, Methods } from 'model/api-types'
 import { timer, toUrlParams } from 'misc/utils'
 import { Semaphore } from 'misc/Semaphore'
+import { useSettingsStore } from 'store/settings'
 
 /**
  * В случае повышения версии необходимо описать, какое поле понадобилось из новой версии
@@ -51,12 +52,14 @@ function isApiError(error: unknown): error is ApiError {
   return !!error && 'type' in error
 }
 
+type MethodParams<Method extends keyof Methods> = Methods[Method]['params'] & CommonParams
+
 export class Api {
   private semaphore = new Semaphore(3, 1000)
 
   async fetch<Method extends keyof Methods>(
     method: Method,
-    params: Methods[Method]['params'] & CommonParams = {},
+    params: MethodParams<Method> = {},
     fetchOptions: FetchOptions = {}
   ): Promise<Methods[Method]['response']> {
     const { retries = 0 } = fetchOptions
@@ -86,7 +89,64 @@ export class Api {
     }
   }
 
-  // TODO: fetchMany/Parallel
+  buildMethod<Method extends keyof Methods>(
+    method: Method,
+    params: MethodParams<Method> = {}
+  ): [Method, MethodParams<Method>] {
+    return [method, params]
+  }
+
+  fetchMany<
+    CurrentMethodsList extends {
+      readonly [Index in keyof AllMethodsList]: [
+        AllMethodsList[Index],
+        MethodParams<AllMethodsList[Index]>
+      ]
+    },
+    AllMethodsList extends Array<keyof Methods>
+  >(methods: CurrentMethodsList, fetchOptions: FetchOptions = {}): Promise<{
+    [Index in keyof CurrentMethodsList]: Methods[CurrentMethodsList[Index][0]]['response']
+  }> {
+    const methodsCalls = methods.map(([method, params]) => {
+      return `API.${method}(${JSON.stringify(params)})`
+    })
+
+    return this.fetch('execute', {
+      code: [
+        'return [',
+        methodsCalls.join(',\n'),
+        '];'
+      ].join('\n')
+    }, fetchOptions) as Promise<never>
+  }
+
+  fetchParallel<
+    CurrentMethodsList extends {
+      readonly [Index in keyof AllMethodsList]: [
+        AllMethodsList[Index],
+        MethodParams<AllMethodsList[Index]>
+      ]
+    },
+    AllMethodsList extends Array<keyof Methods>
+  >(methods: CurrentMethodsList, fetchOptions: FetchOptions = {}): Promise<{
+    [Index in keyof CurrentMethodsList]: Methods[CurrentMethodsList[Index][0]]['response']
+  }> {
+    const forkDeclarations = methods.map(([method, params], index) => {
+      return `var m_${index} = fork(API.${method}(${JSON.stringify(params)}));`
+    })
+    const waitExpressions = methods.map((data, index) => {
+      return `wait(m_${index})`
+    })
+
+    return this.fetch('execute', {
+      code: [
+        forkDeclarations.join('\n'),
+        'return [',
+        waitExpressions.join(',\n'),
+        '];'
+      ].join('\n')
+    }, fetchOptions) as Promise<never>
+  }
 
   private handleErrors(apiError: ApiMethodError | ApiExecuteError) {
     const error = apiError.type === 'MethodError' ? apiError : apiError.errors[0]
@@ -116,9 +176,11 @@ export class Api {
       })
     }
 
+    const { lang } = useSettingsStore()
+
     params = {
       v: version,
-      lang: 'ru',
+      lang,
       ...params
     }
 
