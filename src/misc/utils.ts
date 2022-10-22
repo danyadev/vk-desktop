@@ -27,6 +27,16 @@ export function toUrlParams(object: Record<string, string | number | null | unde
   }, new URLSearchParams())
 }
 
+/**
+ * Создает хук, который возвращает один и тот же результат, кешируемый при первом использовании хука
+ *
+ * Для корректной работы передаваемый хук должен возвращать либо ref, либо computed
+ */
+export function createSingletonHook<R extends object>(hook: (() => R)) {
+  let hookResult: R
+  return () => hookResult || (hookResult = hook())
+}
+
 // Вызывает целевую функцию через delay мс после последнего вызова обертки
 export function debounce<T extends Function>(fn: T, delay: number) {
   let timerId: NodeJS.Timeout | null = null
