@@ -5,13 +5,18 @@ import * as electron from '@electron/remote'
 export class MainStorage<T extends Record<string, unknown>> {
   path: string
   data: T
+  version = 1
 
   constructor(defaults: T) {
-    this.path = path.join(electron.app.getPath('appData'), 'vk-desktop', 'store.json')
+    this.path = path.join(
+      electron.app.getPath('appData'),
+      'vk-desktop',
+      `storage-v${this.version}.json`
+    )
 
     let storageData: Partial<T> = {}
     try {
-      storageData = JSON.parse(fs.readFileSync(this.path, 'utf-8')) as T
+      storageData = JSON.parse(fs.readFileSync(this.path, 'utf-8')) as Partial<T>
     } catch {
       // Файл криво записался и перезапишется при следующем сохранении
       // или при запуске приложения в main процессе
@@ -36,12 +41,14 @@ export class MainStorage<T extends Record<string, unknown>> {
 export class RendererStorage<T extends Record<string, unknown>> {
   name: string
   data: T
+  version = 1
 
   constructor(name: string, defaults: T | (() => T)) {
-    const defaultValue = typeof defaults === 'function' ? defaults() : defaults
-    const storageData = JSON.parse(localStorage.getItem(name) || '{}') as Partial<T>
+    this.name = `${name}-v${this.version}`
 
-    this.name = name
+    const defaultValue = typeof defaults === 'function' ? defaults() : defaults
+    const storageData = JSON.parse(localStorage.getItem(this.name) || '{}') as Partial<T>
+
     this.data = {
       ...defaultValue,
       ...storageData

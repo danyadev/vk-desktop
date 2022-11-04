@@ -11,9 +11,12 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 const isMacOS = process.platform === 'darwin'
 
 const appDataPath = path.join(app.getPath('appData'), 'vk-desktop')
-const storePath = path.join(appDataPath, 'store.json')
+const storePath = path.join(appDataPath, 'storage-v1.json')
 
+// Нужно держать синхронизированным с типом из store/mainSettings.ts
 type MainSettings = {
+  // Определяется на стороне рендерера
+  bounds: Electron.Rectangle | null
   useCustomTitlebar: boolean,
   appearance: {
     scheme: 'vkcom' | 'vkui'
@@ -22,6 +25,7 @@ type MainSettings = {
 }
 
 let mainSettings: MainSettings = {
+  bounds: null,
   // Включаем кастомный тайтлбар только для винды < 10 версии
   useCustomTitlebar: process.platform === 'win32' && parseInt(os.release()) < 10,
   appearance: {
@@ -79,29 +83,20 @@ function getLoadURL(entry: string) {
   return devServerUrl || `file://${__dirname}/dist/${entry}.html`
 }
 
-type PartialSettings = {
-  window: Electron.Rectangle
-}
-
 app.once('ready', () => {
   const mainWindow = createWindow()
 
-  mainWindow.webContents.once('dom-ready', async () => {
-    const storedSettings = await mainWindow.webContents.executeJavaScript(
-      'localStorage.getItem("settings")'
-    ) as string | null
-
-    if (storedSettings) {
-      const settings = JSON.parse(storedSettings) as PartialSettings
-      const { window } = settings
+  mainWindow.webContents.once('dom-ready', () => {
+    if (mainSettings.bounds) {
+      const { bounds } = mainSettings
       const { width, height } = screen.getPrimaryDisplay().workAreaSize
-      const isMaximized = window.width >= width && window.height >= height
+      const isMaximized = bounds.width >= width && bounds.height >= height
 
       mainWindow.setBounds({
-        x: window.x,
-        y: window.y,
-        width: isMaximized ? width : window.width,
-        height: isMaximized ? height : window.height
+        x: bounds.x,
+        y: bounds.y,
+        width: isMaximized ? width : bounds.width,
+        height: isMaximized ? height : bounds.height
       })
 
       if (isMaximized) {
@@ -120,7 +115,7 @@ app.once('ready', () => {
   })
 
   if (isMacOS) {
-    ipcMain.on('menu:build', (event, labels: Record<string, string>) => {
+    ipcMain.once('menu:build', (event, labels: Record<string, string>) => {
       buildMacOSMenu(mainWindow, labels)
     })
 

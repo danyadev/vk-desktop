@@ -1,7 +1,12 @@
 import * as electron from '@electron/remote'
-import { computed, onScopeDispose, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useMainSettingsStore, AppearanceScheme, AppearanceTheme } from 'store/mainSettings'
-import { createSingletonHook, currentWindow, exhaustivenessCheck } from 'misc/utils'
+import {
+  createSingletonHook,
+  currentWindow,
+  exhaustivenessCheck,
+  subscribeToElectronEvent
+} from 'misc/utils'
 
 export const useThemeScheme = createSingletonHook(() => {
   const { appearance } = useMainSettingsStore()
@@ -21,9 +26,9 @@ export const useThemeScheme = createSingletonHook(() => {
     currentWindow.setBackgroundColor(actualAppTheme.value === 'dark' ? '#222' : '#fff')
   }
 
-  electron.nativeTheme.on('updated', onThemeUpdate)
-  onScopeDispose(() => {
-    electron.nativeTheme.off('updated', onThemeUpdate)
+  subscribeToElectronEvent({
+    on: () => electron.nativeTheme.on('updated', onThemeUpdate),
+    off: () => electron.nativeTheme.off('updated', onThemeUpdate)
   })
 
   return scheme

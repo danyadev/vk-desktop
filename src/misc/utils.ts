@@ -1,4 +1,5 @@
 import * as electron from '@electron/remote'
+import { onScopeDispose } from 'vue'
 
 export const currentWindow = electron.getCurrentWindow()
 
@@ -40,7 +41,31 @@ export function createSingletonHook<R extends object>(hook: (() => R)) {
   return () => hookResult || (hookResult = hook())
 }
 
-// Вызывает целевую функцию через delay мс после последнего вызова обертки
+export function subscribeToElectronEvent({ on, off }: { on: Function, off: Function }) {
+  on()
+
+  /**
+   * Подписываемся на событие в компоненте или эффект скоупе ->
+   *   при анмаунте компонента или инвалидации скоупа отписываемся от события
+   *
+   * В режиме разработки к этому прибавляется перезагрузка страницы.
+   * Если инвалидировался скоуп, (а это значит, что не было перезагрузки),
+   * то дополнительно отписываемся от события beforeunload
+   */
+  const { DEV } = import.meta.env
+
+  function removeListener() {
+    off()
+    DEV && window.removeEventListener('beforeunload', removeListener)
+  }
+
+  onScopeDispose(removeListener)
+  DEV && window.addEventListener('beforeunload', removeListener)
+}
+
+/**
+ * Вызывает целевую функцию через delay мс после последнего вызова обертки
+ */
 export function debounce<T extends Function>(fn: T, delay: number) {
   let timerId: NodeJS.Timeout | null = null
 
