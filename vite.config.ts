@@ -7,9 +7,16 @@ import electron from 'vite-plugin-electron'
 // eslint-disable-next-line import/no-unused-modules
 export default defineConfig({
   build: {
-    target: 'es2021',
-    polyfillModulePreload: false,
-    outDir: 'app/dist'
+    target: 'esnext',
+    modulePreload: {
+      polyfill: false
+    },
+    outDir: 'app/dist',
+    reportCompressedSize: false
+  },
+  esbuild: {
+    charset: 'utf8',
+    legalComments: 'none'
   },
   resolve: {
     alias: {
@@ -37,10 +44,16 @@ export default defineConfig({
         entry: 'main-process/index.ts',
         vite: {
           build: {
-            outDir: 'app'
+            outDir: 'app',
+            reportCompressedSize: false
+          },
+          esbuild: {
+            charset: 'utf8',
+            legalComments: 'none'
           }
         }
       },
+      // Нужен именно пустой объект
       renderer: {}
     })
   ]
