@@ -17,6 +17,8 @@ export type Opaque<Type, Token = unknown> = Type & {
 
 export type JSXElement = JSX.Element | string | number | null
 
+export type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T
+
 export function toUrlParams(object: Record<string, string | number | null | undefined>) {
   return Object.keys(object).reduce((params, key) => {
     const value = object[key]
@@ -24,7 +26,7 @@ export function toUrlParams(object: Record<string, string | number | null | unde
       params.append(key, value.toString())
     }
     return params
-  }, new URLSearchParams())
+  }, new URLSearchParams()).toString()
 }
 
 /**

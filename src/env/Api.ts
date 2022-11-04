@@ -1,5 +1,5 @@
 import { CommonParams, Methods } from 'model/api-types'
-import { timer, toUrlParams } from 'misc/utils'
+import { timer, toUrlParams, Truthy } from 'misc/utils'
 import { Semaphore } from 'misc/Semaphore'
 import { useSettingsStore } from 'store/settings'
 
@@ -54,6 +54,15 @@ function isApiError(error: unknown): error is ApiError {
 
 type MethodParams<Method extends keyof Methods> = Methods[Method]['params'] & CommonParams
 
+type FetchManyRequestMethod<Method extends keyof Methods = keyof Methods> = [
+  Method,
+  MethodParams<Method>
+] | false | null | undefined
+type FetchManyResponseMethod<RequestMethod extends FetchManyRequestMethod> =
+  RequestMethod extends Truthy<RequestMethod>
+    ? Methods[RequestMethod[0]]['response']
+    : null
+
 export class Api {
   private semaphore = new Semaphore(3, 1000)
 
@@ -96,18 +105,29 @@ export class Api {
     return [method, params]
   }
 
-  fetchMany<
-    CurrentMethodsList extends {
-      readonly [Index in keyof AllMethodsList]: [
-        AllMethodsList[Index],
-        MethodParams<AllMethodsList[Index]>
-      ]
-    },
-    AllMethodsList extends Array<keyof Methods>
-  >(methods: CurrentMethodsList, fetchOptions: FetchOptions = {}): Promise<{
-    [Index in keyof CurrentMethodsList]: Methods[CurrentMethodsList[Index][0]]['response']
+  /**
+   * Последовательно с помощью execute выполняет переданные методы
+   *
+   * Использование:
+   * ```ts
+   * const [users, groups] = await api.fetchMany([
+   *   api.buildMethod('users.get', { user_ids: 1 }),
+   *   groupId !== 0 && api.buildMethod('groups.get', { group_ids: groupId })
+   * ])
+   * ```
+   */
+  fetchMany<CurrentMethodsList extends FetchManyRequestMethod[]>(
+    methods: [...CurrentMethodsList],
+    fetchOptions: FetchOptions = {}
+  ): Promise<{
+    [Index in keyof CurrentMethodsList]: FetchManyResponseMethod<CurrentMethodsList[Index]>
   }> {
-    const methodsCalls = methods.map(([method, params]) => {
+    const methodsCalls = methods.map((methodInfo) => {
+      if (!methodInfo) {
+        return 'null'
+      }
+
+      const [method, params] = methodInfo
       return `API.${method}(${JSON.stringify(params)})`
     })
 
@@ -120,22 +140,33 @@ export class Api {
     }, fetchOptions) as Promise<never>
   }
 
-  fetchParallel<
-    CurrentMethodsList extends {
-      readonly [Index in keyof AllMethodsList]: [
-        AllMethodsList[Index],
-        MethodParams<AllMethodsList[Index]>
-      ]
-    },
-    AllMethodsList extends Array<keyof Methods>
-  >(methods: CurrentMethodsList, fetchOptions: FetchOptions = {}): Promise<{
-    [Index in keyof CurrentMethodsList]: Methods[CurrentMethodsList[Index][0]]['response']
+  /**
+   * Параллельно с помощью execute выполняет переданные методы
+   *
+   * Использование:
+   * ```ts
+   * const [users, groups] = await api.fetchParallel([
+   *   api.buildMethod('users.get', { user_ids: 1 }),
+   *   groupId !== 0 && api.buildMethod('groups.get', { group_ids: groupId })
+   * ])
+   * ```
+   */
+  fetchParallel<CurrentMethodsList extends FetchManyRequestMethod[]>(
+    methods: [...CurrentMethodsList],
+    fetchOptions: FetchOptions = {}
+  ): Promise<{
+    [Index in keyof CurrentMethodsList]: FetchManyResponseMethod<CurrentMethodsList[Index]>
   }> {
-    const forkDeclarations = methods.map(([method, params], index) => {
-      return `var m_${index} = fork(API.${method}(${JSON.stringify(params)}));`
+    const forkDeclarations = methods.map((methodInfo, index) => {
+      if (!methodInfo) {
+        return ''
+      }
+
+      const [method, params] = methodInfo
+      return `var m${index} = fork(API.${method}(${JSON.stringify(params)}));`
     })
-    const waitExpressions = methods.map((data, index) => {
-      return `wait(m_${index})`
+    const waitExpressions = methods.map((methodInfo, index) => {
+      return methodInfo ? `wait(m${index})` : 'null'
     })
 
     return this.fetch('execute', {
@@ -198,17 +229,17 @@ export class Api {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         signal: abortController.signal
-      }).then<ApiResult<Methods[Method]['response']>>((res) => {
+      }).then<ApiResult<Methods[Method]['response']>>((response) => {
         clearTimeout(abortTimeoutId)
 
-        if (!res.ok) {
+        if (!response.ok) {
           return Promise.reject({
             type: 'FetchError',
             kind: 'ServerError'
           })
         }
 
-        return res.json()
+        return response.json()
       })
 
       if ('error' in result) {
