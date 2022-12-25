@@ -3,6 +3,7 @@ import {
   MessagesGetConversationsParams,
   MessagesGetConversationsResponse
 } from 'model/api-types/methods/Messages'
+import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
 
 /**
  * Disclaimer:
@@ -32,5 +33,10 @@ export type Methods = {
   'messages.getConversations': {
     params: MessagesGetConversationsParams
     response: MessagesGetConversationsResponse
+  }
+
+  'groups.getById': {
+    params: GroupsGetByIdParams
+    response: GroupsGetByIdResponse
   }
 }

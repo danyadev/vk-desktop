@@ -7,7 +7,6 @@ export function timer(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function exhaustivenessCheck(_unused: never): never {
   throw new Error('Exhaustiveness failure! This should never happen.')
 }
@@ -19,6 +18,19 @@ export type Opaque<Type, Token = unknown> = Type & {
 export type JSXElement = JSX.Element | string | number | null
 
 export type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T
+
+/**
+ * Позволяет отфильтровать массив от falsy значений и убрать нежелательные
+ * варианты значений из типов
+ *
+ * Использование:
+ * array.filter(isTruthy)
+ * как аналог
+ * array.filter(Boolean)
+ */
+// export function isTruthy<T>(value: T): value is Truthy<T> {
+//   return !!value
+// }
 
 export function toUrlParams(object: Record<string, string | number | null | undefined>) {
   return Object.keys(object).reduce((params, key) => {
@@ -41,8 +53,8 @@ export function createSingletonHook<R extends object>(hook: (() => R)) {
   return () => hookResult || (hookResult = hook())
 }
 
-export function subscribeToElectronEvent({ on, off }: { on: Function, off: Function }) {
-  on()
+export function subscribeToElectronEvent(subscribe: (() => Function)) {
+  const unsubscribe = subscribe()
 
   /**
    * Подписываемся на событие в компоненте или эффект скоупе ->
@@ -55,7 +67,7 @@ export function subscribeToElectronEvent({ on, off }: { on: Function, off: Funct
   const { DEV } = import.meta.env
 
   function removeListener() {
-    off()
+    unsubscribe()
     DEV && window.removeEventListener('beforeunload', removeListener)
   }
 

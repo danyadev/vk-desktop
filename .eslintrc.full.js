@@ -12,6 +12,9 @@ module.exports = {
     }],
     'padded-blocks': ['error', 'never'],
 
-    '@typescript-eslint/no-unused-vars': 'error'
+    '@typescript-eslint/no-unused-vars': ['error', {
+      varsIgnorePattern: '^_typeguard\\d?$',
+      argsIgnorePattern: '^_unused\\d?$'
+    }]
   }
 }

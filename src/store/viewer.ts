@@ -11,15 +11,23 @@ type Viewer = {
     photo100: string
     accessToken: string
   }>
+  /** Record<login, hash> */
+  trustedHashes: Record<string, string>
 }
 
 const viewerStorage = new RendererStorage<Viewer>('viewer', {
   id: resolveZeroUserId(),
-  accounts: []
+  accounts: [],
+  trustedHashes: {}
 })
 
 export const useViewerStore = defineStore('viewer', {
-  state: () => viewerStorage.data
+  state: () => viewerStorage.data,
+  actions: {
+    setTrustedHash(login: string, hash: string) {
+      this.trustedHashes[login] = hash
+    }
+  }
 })
 
 export function init() {

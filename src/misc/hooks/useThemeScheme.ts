@@ -26,9 +26,9 @@ export const useThemeScheme = createSingletonHook(() => {
     currentWindow.setBackgroundColor(actualAppTheme.value === 'dark' ? '#222' : '#fff')
   }
 
-  subscribeToElectronEvent({
-    on: () => electron.nativeTheme.on('updated', onThemeUpdate),
-    off: () => electron.nativeTheme.off('updated', onThemeUpdate)
+  subscribeToElectronEvent(() => {
+    electron.nativeTheme.on('updated', onThemeUpdate)
+    return () => electron.nativeTheme.off('updated', onThemeUpdate)
   })
 
   return scheme

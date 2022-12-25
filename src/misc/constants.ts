@@ -1,1 +1,4 @@
 export const isMacOS = process.platform === 'darwin'
+
+export const androidUserAgent =
+  'VKAndroidApp/7.43-14005 (Android 10; SDK 29; arm64-v8a; VK Desktop; ru; 2340x1080)'

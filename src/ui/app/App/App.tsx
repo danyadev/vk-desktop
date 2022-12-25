@@ -21,12 +21,11 @@ export const App = defineComponent(() => {
     mainSettings.setWindowBounds()
   }, 500)
 
-  subscribeToElectronEvent({
-    on() {
-      currentWindow.on('move', updateWindowBounds)
-      currentWindow.on('resize', updateWindowBounds)
-    },
-    off() {
+  subscribeToElectronEvent(() => {
+    currentWindow.on('move', updateWindowBounds)
+    currentWindow.on('resize', updateWindowBounds)
+
+    return () => {
       currentWindow.off('move', updateWindowBounds)
       currentWindow.off('resize', updateWindowBounds)
     }
