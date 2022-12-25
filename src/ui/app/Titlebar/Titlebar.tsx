@@ -2,10 +2,12 @@ import './Titlebar.css'
 import { defineComponent, ref } from 'vue'
 import { isMacOS } from 'misc/constants'
 import { currentWindow } from 'misc/utils'
-import Icon12TitlebarMinimize from 'assets/Icon12TitlebarMinimize.svg'
-import Icon10TitlebarMaximize from 'assets/Icon10TitlebarMaximize.svg'
-import Icon12TitlebarRestore from 'assets/Icon12TitlebarRestore.svg'
-import Icon10TitlebarClose from 'assets/Icon10TitlebarClose.svg'
+import {
+  Icon12TitlebarMinimize,
+  Icon10TitlebarMaximize,
+  Icon12TitlebarRestore,
+  Icon10TitlebarClose
+} from 'assets/icons'
 import { useMainSettingsStore } from 'store/mainSettings'
 import { useEnv } from 'misc/hooks'
 
