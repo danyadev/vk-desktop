@@ -1,6 +1,7 @@
 import './Button.css'
 import { defineComponent, ButtonHTMLAttributes } from 'vue'
 import { JSXElement } from 'misc/utils'
+import { Spinner } from 'ui/ui/Spinner/Spinner'
 
 type Props = {
   size?: 'small' | 'medium' | 'large'
@@ -8,6 +9,7 @@ type Props = {
   wide?: boolean
   before?: JSXElement
   after?: JSXElement
+  loading?: boolean
 } & ButtonHTMLAttributes
 
 export const Button = defineComponent<Props>((props, { slots }) => {
@@ -16,7 +18,10 @@ export const Button = defineComponent<Props>((props, { slots }) => {
 
     return (
       <button
-        class={['Button', `Button--${size}`, `Button--${mode}`, props.wide && 'Button--wide']}
+        class={['Button', `Button--${size}`, `Button--${mode}`, {
+          'Button--wide': props.wide,
+          'Button--loading': props.loading
+        }]}
         type="button"
       >
         <span class="Button__in">
@@ -24,9 +29,10 @@ export const Button = defineComponent<Props>((props, { slots }) => {
           {slots.default?.()}
           {props.after}
         </span>
+        {props.loading && <Spinner class="Button__spinner" />}
       </button>
     )
   }
 })
 
-Button.props = ['size', 'mode', 'wide', 'before', 'after']
+Button.props = ['size', 'mode', 'wide', 'before', 'after', 'loading']

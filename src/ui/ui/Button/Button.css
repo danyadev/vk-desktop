@@ -1,4 +1,5 @@
 .Button {
+  position: relative;
   font: var(--font);
   border: none;
   border-radius: 8px;
@@ -21,6 +22,19 @@
 .Button:not([disabled]):active .Button__in {
   position: relative;
   top: 1px;
+}
+
+.Button--loading .Button__in {
+  visibility: hidden;
+}
+
+.Button__spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
 }
 
 .Button--wide {
