@@ -15,7 +15,6 @@ export default defineConfig({
     reportCompressedSize: false
   },
   esbuild: {
-    charset: 'utf8',
     legalComments: 'none'
   },
   resolve: {

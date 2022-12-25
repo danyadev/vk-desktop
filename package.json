@@ -28,30 +28,29 @@
     "*.css": "stylelint"
   },
   "dependencies": {
-    "@electron/remote": "2.0.8",
-    "lottie-web": "5.9.6",
-    "pinia": "2.0.23",
-    "vue": "3.2.41",
+    "@electron/remote": "2.0.9",
+    "pinia": "2.0.28",
+    "vue": "3.2.45",
     "vue-router": "4.1.6"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "5.42.0",
-    "@typescript-eslint/parser": "5.42.0",
-    "@vitejs/plugin-vue-jsx": "2.1.0",
+    "@typescript-eslint/eslint-plugin": "5.47.0",
+    "@typescript-eslint/parser": "5.47.0",
+    "@vitejs/plugin-vue-jsx": "3.0.0",
     "@vkontakte/appearance": "https://github.com/VKCOM/Appearance#9.51.4",
     "electron": "18.3.15",
     "electron-builder": "23.6.0",
-    "eslint": "8.26.0",
+    "eslint": "8.30.0",
     "eslint-import-resolver-typescript": "3.5.2",
     "eslint-plugin-import": "npm:eslint-plugin-i",
-    "husky": "8.0.1",
+    "husky": "8.0.2",
     "innosetup-compiler": "6.2.0",
-    "lint-staged": "13.0.3",
-    "stylelint": "14.14.1",
+    "lint-staged": "13.1.0",
+    "stylelint": "14.16.0",
     "stylelint-config-standard": "29.0.0",
-    "typescript": "4.8.4",
-    "vite": "3.2.2",
+    "typescript": "4.9.4",
+    "vite": "4.0.3",
     "vite-plugin-electron": "0.9.3",
-    "vite-svg-loader": "3.6.0"
+    "vite-svg-loader": "4.0.0"
   }
 }
