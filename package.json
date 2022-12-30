@@ -1,6 +1,6 @@
 {
   "name": "vk-desktop",
-  "version": "0.3.3",
+  "version": "1.0.0-dev.0",
   "description": "Мессенджер ВКонтакте",
   "main": "app/index.js",
   "scripts": {
