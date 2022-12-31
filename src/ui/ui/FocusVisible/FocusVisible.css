@@ -1,0 +1,47 @@
+.FocusVisible {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 2px var(--accent);
+  user-select: none;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.FocusVisible--active {
+  display: inherit;
+}
+
+.FocusVisible:not(.FocusVisible--outside) {
+  opacity: 0;
+  animation: animation-focus-visible 0.15s ease-in-out forwards;
+}
+
+.FocusVisible--outside {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  animation: animation-focus-visible-outside 0.15s ease-in-out forwards;
+  will-change: top, left, bottom, right;
+}
+
+@keyframes animation-focus-visible {
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes animation-focus-visible-outside {
+  100% {
+    top: -2px;
+    left: -2px;
+    bottom: -2px;
+    right: -2px;
+    will-change: auto;
+  }
+}

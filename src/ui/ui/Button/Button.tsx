@@ -2,6 +2,8 @@ import './Button.css'
 import { defineComponent, ButtonHTMLAttributes } from 'vue'
 import { JSXElement } from 'misc/utils'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
+import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
+import { useFocusVisible } from 'misc/hooks/useFocusVisible'
 
 type Props = {
   size?: 'small' | 'medium' | 'large'
@@ -13,6 +15,8 @@ type Props = {
 } & ButtonHTMLAttributes
 
 export const Button = defineComponent<Props>((props, { slots }) => {
+  const { isFocused, onBlur, onFocus } = useFocusVisible()
+
   return () => {
     const { size = 'medium', mode = 'primary' } = props
 
@@ -23,6 +27,8 @@ export const Button = defineComponent<Props>((props, { slots }) => {
           'Button--loading': props.loading
         }]}
         type="button"
+        onBlur={onBlur}
+        onFocus={onFocus}
       >
         <span class="Button__in">
           {props.before}
@@ -30,6 +36,7 @@ export const Button = defineComponent<Props>((props, { slots }) => {
           {props.after}
         </span>
         {props.loading && <Spinner class="Button__spinner" />}
+        <FocusVisible isFocused={isFocused.value} />
       </button>
     )
   }
