@@ -48,10 +48,6 @@ type ApiExecuteError = {
 }
 type ApiError = ApiFetchError | ApiMethodError | ApiExecuteError
 
-function isApiError(error: unknown): error is ApiError {
-  return !!error && 'type' in error
-}
-
 type MethodParams<Method extends keyof Methods> = Methods[Method]['params'] & CommonParams
 
 type FetchManyRequestMethod<Method extends keyof Methods = keyof Methods> = [
@@ -81,7 +77,7 @@ export class Api {
       try {
         return await this.doFetch(method, params, fetchOptions)
       } catch (err) {
-        if (!isApiError(err)) {
+        if (!this.isApiError(err)) {
           throw err
         }
 
@@ -96,13 +92,6 @@ export class Api {
         await timer(API_MIN_RETRY_DELAY * 2 ** Math.min(attempts, 4))
       }
     }
-  }
-
-  buildMethod<Method extends keyof Methods>(
-    method: Method,
-    params: MethodParams<Method> = {}
-  ): [Method, MethodParams<Method>] {
-    return [method, params]
   }
 
   /**
@@ -177,6 +166,16 @@ export class Api {
         '];'
       ].join('\n')
     }, fetchOptions) as Promise<never>
+  }
+
+  isApiError(error: unknown): error is ApiError {
+    return (
+      !!error &&
+      typeof error === 'object' &&
+      'type' in error &&
+      typeof error.type === 'string' &&
+      ['FetchError', 'MethodError', 'ExecuteError'].includes(error.type)
+    )
   }
 
   private handleErrors(apiError: ApiMethodError | ApiExecuteError) {

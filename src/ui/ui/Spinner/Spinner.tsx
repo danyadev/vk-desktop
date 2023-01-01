@@ -11,7 +11,7 @@ type Props = {
   size?: 'small' | 'regular' | 'medium' | 'large'
 }
 
-export const Spinner = defineComponent<Props>(({ size = 'regular' }) => {
+export const Spinner = defineComponent<Props>(({ size = 'small' }) => {
   const SpinnerIcon = {
     small: Icon16Spinner,
     regular: Icon24Spinner,

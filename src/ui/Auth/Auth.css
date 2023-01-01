@@ -19,3 +19,15 @@
   height: 100px;
   margin-bottom: 10px;
 }
+
+.Auth__footerLinks {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  margin: 12px 0;
+  gap: 12px;
+}
+
+.Auth__footerLinks, .Auth__footerLinks a {
+  color: var(--text_tertiary);
+}

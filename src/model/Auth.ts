@@ -67,7 +67,7 @@ type GetAndroidTokenResult =
       phoneMask: string
       validationType: '2fa_sms' | '2fa_app'
       validationSid: string
-      needResendSms: boolean
+      needValidateSendSms: boolean
     }
   | { kind: 'InvalidTwoFactorCode', errorMessage: string }
   | { kind: 'Captcha', captchaImg: string, captchaSid: string }
@@ -127,20 +127,12 @@ export function getAndroidToken(
               })
             }
 
-            if (
-              !['2fa_sms', '2fa_app'].includes(result.validation_type) ||
-              result.validation_resend && result.validation_resend !== 'sms'
-            ) {
-              // TODO: логирование на сервер неизвестного типа
-              console.error('invalid data', result)
-            }
-
             return resolve({
               kind: 'RequireTwoFactor',
               phoneMask: result.phone_mask,
               validationType: result.validation_type,
               validationSid: result.validation_sid,
-              needResendSms: result.validation_resend === 'sms'
+              needValidateSendSms: result.validation_resend === 'sms'
             })
           }
 

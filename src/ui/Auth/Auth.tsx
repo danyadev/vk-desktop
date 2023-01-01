@@ -1,20 +1,21 @@
 import './Auth.css'
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive } from 'vue'
 import { useEnv } from 'misc/hooks'
 import logo from 'assets/logo512.png'
 import { Input } from 'ui/ui/Input/Input'
 import { Button } from 'ui/ui/Button/Button'
+import { Link } from 'ui/ui/Link/Link'
 import { getAndroidToken } from 'model/Auth'
+import { exhaustivenessCheck } from 'misc/utils'
 
 /**
  * Чеклист по готовности авторизации:
- * 1) кнопки "Зарегистрироваться" и "Забыли пароль?", ведущие на сайт
- * 2) поддержать флоу Логин -> СМС
- * 3) поддержать флоу Логин -> Код из приложения
- * 4) поддержать флоу Логин -> Код из приложения -> форс СМС
- * 5) научиться отображать ошибки в целом
- * 6) правильно показывать ошибку ввода логина/пароля; кода; о бане аккаунта
- * 7) научиться обрабатывать капчу
+ * - поддержать флоу Логин -> СМС
+ * - поддержать флоу Логин -> Код из приложения
+ * - поддержать флоу Логин -> Код из приложения -> форс СМС
+ * - научиться отображать ошибки в целом
+ * - правильно показывать ошибку ввода логина/пароля; кода; о бане аккаунта
+ * - научиться обрабатывать капчу
  */
 
 type AuthState = {
@@ -26,6 +27,8 @@ type AuthState = {
 }
 
 export const Auth = defineComponent(() => {
+  const { lang } = useEnv()
+
   const state = reactive<AuthState>({
     login: '',
     password: '',
@@ -38,7 +41,21 @@ export const Auth = defineComponent(() => {
     state.loading = true
 
     const result = await getAndroidToken(state.login, state.password)
-    console.log(result)
+
+    switch (result.kind) {
+      case 'Success':
+      case 'InvalidCredentials':
+      case 'RequireTwoFactor':
+      case 'InvalidTwoFactorCode':
+      case 'Captcha':
+      case 'UserBanned':
+      case 'UnknownError':
+        console.log(result)
+        break
+
+      default:
+        exhaustivenessCheck(result)
+    }
 
     state.loading = false
   }
@@ -49,6 +66,14 @@ export const Auth = defineComponent(() => {
         <AuthConfirmCode validationSid={state.validationSid} />
       ) : (
         <AuthMain authState={state} onSubmit={auth} />
+      )}
+
+      {!state.validationSid && (
+        <div class="Auth__footerLinks">
+          <Link href="https://vk.com/join">{lang.use('auth_register')}</Link>
+          •
+          <Link href="https://vk.com/restore">{lang.use('auth_forgot_password')}</Link>
+        </div>
       )}
     </div>
   )
@@ -61,7 +86,6 @@ type AuthMainProps = {
 
 const AuthMain = defineComponent<AuthMainProps>(({ authState, onSubmit }) => {
   const { lang } = useEnv()
-  const loading = ref(false)
 
   return () => (
     <div class="Auth__content">
@@ -79,7 +103,7 @@ const AuthMain = defineComponent<AuthMainProps>(({ authState, onSubmit }) => {
         size="large"
         wide
         disabled={!authState.login || !authState.password}
-        loading={loading.value}
+        loading={authState.loading}
         onClick={onSubmit}
       >
         {lang.use('auth_submit')}

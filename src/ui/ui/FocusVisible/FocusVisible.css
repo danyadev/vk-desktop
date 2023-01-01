@@ -23,9 +23,9 @@
 
 .FocusVisible--outside {
   top: 0;
-  left: 0;
+  left: -2px;
   bottom: 0;
-  right: 0;
+  right: -2px;
   animation: animation-focus-visible-outside 0.15s ease-in-out forwards;
   will-change: top, left, bottom, right;
 }
@@ -39,9 +39,9 @@
 @keyframes animation-focus-visible-outside {
   100% {
     top: -2px;
-    left: -2px;
+    left: -4px;
     bottom: -2px;
-    right: -2px;
+    right: -4px;
     will-change: auto;
   }
 }

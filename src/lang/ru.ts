@@ -4,6 +4,8 @@ export default {
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
   auth_submit: 'Войти',
+  auth_register: 'Зарегистрироваться',
+  auth_forgot_password: 'Забыли пароль?',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',
