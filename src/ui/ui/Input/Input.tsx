@@ -23,8 +23,6 @@ export const Input = defineComponent<Props>((props, { attrs }) => {
         {before && <div class="Input__before">{before}</div>}
         <input class="Input__el" type={type} {...restProps} />
         {after && <div class="Input__after">{after}</div>}
-
-        <div class="Input__border"></div>
       </div>
     )
   }

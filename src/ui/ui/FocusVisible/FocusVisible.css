@@ -18,7 +18,7 @@
 
 .FocusVisible:not(.FocusVisible--outside) {
   opacity: 0;
-  animation: animation-focus-visible 0.15s ease-in-out forwards;
+  animation: animation-focus-visible var(--fastTransition) ease-in-out forwards;
 }
 
 .FocusVisible--outside {
@@ -26,7 +26,7 @@
   left: -2px;
   bottom: 0;
   right: -2px;
-  animation: animation-focus-visible-outside 0.15s ease-in-out forwards;
+  animation: animation-focus-visible-outside var(--fastTransition) ease-in-out forwards;
   will-change: top, left, bottom, right;
 }
 

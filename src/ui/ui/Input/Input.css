@@ -4,7 +4,17 @@
   align-items: center;
   width: 100%;
   background: var(--field_background);
+  border: 1px solid var(--field_border);
   border-radius: 8px;
+  transition: border-color var(--fastTransition);
+}
+
+.Input:hover {
+  border-color: var(--field_border_hover);
+}
+
+.Input:focus-within {
+  border-color: var(--accent);
 }
 
 .Input__el {
@@ -14,8 +24,7 @@
   color: var(--text_primary);
   font: var(--font);
   line-height: 22px;
-  padding: 8px 10px;
-  z-index: 1;
+  padding: 7px 10px;
 }
 
 .Input__el:disabled {
@@ -45,30 +54,4 @@
   justify-content: center;
   flex-shrink: 0;
   color: var(--icon_secondary);
-  z-index: 1;
-}
-
-/**
- * Бордер в зависимости от плотности пикселей на экране может быть разных размеров: 0.33px, 0.5px или 1px,
- * и чтобы Input не имел такую необычную высоту с долей пикселя, был сделан отдельный блок с бордером,
- * который накладывается поверх Input
- */
-.Input__border {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  border: var(--thinBorder) solid var(--field_border);
-  border-radius: 8px;
-  transition: border-color var(--fastTransition);
-}
-
-.Input:hover .Input__border {
-  border-color: var(--icon_tertiary_alpha);
-}
-
-.Input:focus-within .Input__border {
-  border-color: var(--accent);
 }

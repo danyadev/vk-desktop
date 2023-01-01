@@ -16,30 +16,6 @@
   src: url('assets/Roboto-VK-500.woff2');
 }
 
-:root {
-  --white: #fff;
-
-  --fontFamily: 'BlinkMacSystemFont', 'Roboto VK';
-  --fontSize: 15px;
-  --font: var(--fontSize) var(--fontFamily);
-
-  --fastTransition: 0.15s;
-
-  --thinBorder: 1px;
-}
-
-@media (min-resolution: 2dppx) {
-  :root {
-    --thinBorder: 0.5px;
-  }
-}
-
-@media (min-resolution: 3dppx) {
-  :root {
-    --thinBorder: 0.33px;
-  }
-}
-
 body {
   margin: 0;
   height: 100vh;
@@ -59,3 +35,21 @@ img {
 display: none;
 }
 */
+
+:root {
+  --fontFamily: 'BlinkMacSystemFont', 'Roboto VK';
+  --fontSize: 15px;
+  --font: var(--fontSize) var(--fontFamily);
+
+  --fastTransition: 0.15s;
+}
+
+[data-scheme="vkcom_dark"], [data-scheme="space_gray"] {
+  --white: #fff;
+  --field_border_hover: rgba(255, 255, 255, 0.2);
+}
+
+[data-scheme="vkcom_light"], [data-scheme="bright_light"] {
+  --white: #fff;
+  --field_border_hover: rgba(0, 0, 0, 0.2);
+}
