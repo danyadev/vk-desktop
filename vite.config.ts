@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import svgLoader from 'vite-svg-loader'
 import electron from 'vite-plugin-electron'
+import electronRenderer from 'vite-plugin-electron-renderer'
 
 // eslint-disable-next-line import/no-unused-modules
 export default defineConfig({
@@ -39,21 +40,19 @@ export default defineConfig({
       defaultImport: 'component'
     }),
     electron({
-      main: {
-        entry: 'main-process/index.ts',
-        vite: {
-          build: {
-            outDir: 'app',
-            reportCompressedSize: false
-          },
-          esbuild: {
-            charset: 'utf8',
-            legalComments: 'none'
-          }
+      entry: 'main-process/index.ts',
+      vite: {
+        build: {
+          outDir: 'app',
+          reportCompressedSize: false
+        },
+        esbuild: {
+          legalComments: 'none'
         }
-      },
-      // Нужен именно пустой объект
-      renderer: {}
+      }
+    }),
+    electronRenderer({
+      nodeIntegration: true
     })
   ]
 })
