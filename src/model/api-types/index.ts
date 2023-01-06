@@ -4,6 +4,7 @@ import {
   MessagesGetConversationsResponse
 } from 'model/api-types/methods/Messages'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
+import { AuthValidatePhoneParams, AuthValidatePhoneResponse } from 'model/api-types/methods/Auth'
 
 /**
  * Disclaimer:
@@ -38,5 +39,10 @@ export type Methods = {
   'groups.getById': {
     params: GroupsGetByIdParams
     response: GroupsGetByIdResponse
+  }
+
+  'auth.validatePhone': {
+    params: AuthValidatePhoneParams
+    response: AuthValidatePhoneResponse
   }
 }

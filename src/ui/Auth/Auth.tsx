@@ -1,57 +1,128 @@
 import './Auth.css'
-import { defineComponent, reactive } from 'vue'
+import { computed, defineComponent, reactive, ref } from 'vue'
 import { useEnv } from 'misc/hooks'
 import logo from 'assets/logo512.png'
 import { Input } from 'ui/ui/Input/Input'
 import { Button } from 'ui/ui/Button/Button'
 import { Link } from 'ui/ui/Link/Link'
-import { getAndroidToken } from 'model/Auth'
+import { getAndroidToken, GetAndroidTokenPayload } from 'model/Auth'
 import { exhaustivenessCheck } from 'misc/utils'
+import { useViewerStore } from 'store/viewer'
+import { userFields } from 'misc/constants'
+import { fromApiUser } from 'misc/converter/PeerConverter'
 
 /**
  * Чеклист по готовности авторизации:
- * - поддержать флоу Логин -> СМС
- * - поддержать флоу Логин -> Код из приложения
+ * - поддержать флоу Логин -> СМС -> повторная отправка СМС
  * - поддержать флоу Логин -> Код из приложения -> форс СМС
- * - научиться отображать ошибки в целом
- * - правильно показывать ошибку ввода логина/пароля; кода; о бане аккаунта
  * - научиться обрабатывать капчу
  */
+
+type TwoFactorState = {
+  phoneMask: string
+  validationType: '2fa_sms' | '2fa_app'
+  validationSid: string
+  needValidateSendSms: boolean
+}
 
 type AuthState = {
   login: string
   password: string
   loading: boolean
-  validationSid: string | null
   error: string | null
+  twoFactorState: TwoFactorState | null
 }
 
 export const Auth = defineComponent(() => {
-  const { lang } = useEnv()
+  const { api, lang, router } = useEnv()
+  const viewer = useViewerStore()
 
   const state = reactive<AuthState>({
     login: '',
     password: '',
     loading: false,
-    validationSid: null,
-    error: null
+    error: null,
+    twoFactorState: null
   })
 
-  async function auth() {
+  function onSubmitAuth(login: string, password: string) {
+    state.login = login
+    state.password = password
+    performAuth()
+  }
+
+  function onSubmitCode(code: string) {
+    performAuth({ code })
+  }
+
+  function onCancelCode() {
+    state.error = null
+    state.twoFactorState = null
+  }
+
+  async function performAuth(payload: GetAndroidTokenPayload = {}) {
+    state.error = null
     state.loading = true
 
-    const result = await getAndroidToken(state.login, state.password)
+    const result = await getAndroidToken(state.login, state.password, payload)
+    console.log(result)
 
     switch (result.kind) {
-      case 'Success':
-      case 'InvalidCredentials':
-      case 'RequireTwoFactor':
-      case 'InvalidTwoFactorCode':
-      case 'Captcha':
-      case 'UserBanned':
-      case 'UnknownError':
-        console.log(result)
+      case 'Success': {
+        if (result.trustedHash) {
+          viewer.addTrustedHash(state.login, result.trustedHash)
+        }
+
+        try {
+          const [apiUser] = await api.fetch('users.get', {
+            access_token: result.accessToken,
+            fields: userFields
+          }, { retries: Infinity })
+          const user = fromApiUser(apiUser)
+
+          viewer.addAccount({
+            ...user,
+            accessToken: result.accessToken
+          })
+          viewer.setDefaultAccount(user.id)
+
+          router.push('/')
+        } catch (err) {
+          console.error(err)
+          // TODO
+          state.error = api.isApiError(err) ? 'Ошибка апи' : 'Неизвестная ошибка'
+        }
         break
+      }
+
+      case 'InvalidCredentials': {
+        state.error = result.errorMessage
+        break
+      }
+
+      case 'RequireTwoFactor':
+        state.twoFactorState = result
+        break
+
+      case 'InvalidTwoFactorCode': {
+        state.error = result.errorMessage
+        break
+      }
+
+      case 'Captcha': {
+        state.error = 'Captcha'
+        break
+      }
+
+      case 'UserBanned': {
+        state.error = result.banMessage
+        break
+      }
+
+      case 'UnknownError': {
+        state.error = 'UnknownError'
+        break
+      }
 
       default:
         exhaustivenessCheck(result)
@@ -62,13 +133,25 @@ export const Auth = defineComponent(() => {
 
   return () => (
     <div class="Auth">
-      {state.validationSid ? (
-        <AuthConfirmCode validationSid={state.validationSid} />
-      ) : (
-        <AuthMain authState={state} onSubmit={auth} />
-      )}
+      <div class="Auth__content">
+        {!state.twoFactorState ? (
+          <AuthMain
+            loading={state.loading}
+            error={state.error}
+            onSubmit={onSubmitAuth}
+          />
+        ) : (
+          <AuthTwoFactor
+            twoFactorState={state.twoFactorState}
+            loading={state.loading}
+            error={state.error}
+            onSubmit={onSubmitCode}
+            onCancel={onCancelCode}
+          />
+        )}
+      </div>
 
-      {!state.validationSid && (
+      {!state.twoFactorState && (
         <div class="Auth__footerLinks">
           <Link href="https://vk.com/join">{lang.use('auth_register')}</Link>
           •
@@ -80,51 +163,111 @@ export const Auth = defineComponent(() => {
 })
 
 type AuthMainProps = {
-  authState: AuthState
-  onSubmit: () => void
+  loading: boolean
+  error: string | null
+  onSubmit: (login: string, password: string) => void
 }
 
-const AuthMain = defineComponent<AuthMainProps>(({ authState, onSubmit }) => {
+const AuthMain = defineComponent<AuthMainProps>((props) => {
   const { lang } = useEnv()
 
+  const state = reactive({
+    login: '',
+    password: ''
+  })
+  const canSubmit = computed(() => !props.loading && state.login && state.password)
+
+  function onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && canSubmit.value) {
+      props.onSubmit(state.login, state.password)
+    }
+  }
+
   return () => (
-    <div class="Auth__content">
+    <div class="Auth__content" onKeydown={onKeyDown}>
       <img class="Auth__logo" src={logo} />
       <Input
         placeholder={lang.use('auth_login_placeholder')}
-        onInput={(event) => (authState.login = event.target.value)}
+        onInput={(event) => (state.login = event.target.value)}
+        autofocus
       />
       <Input
         type="password"
         placeholder={lang.use('auth_password_placeholder')}
-        onInput={(event) => (authState.password = event.target.value)}
+        onInput={(event) => (state.password = event.target.value)}
       />
       <Button
         size="large"
         wide
-        disabled={!authState.login || !authState.password}
-        loading={authState.loading}
-        onClick={onSubmit}
+        disabled={!canSubmit.value}
+        loading={props.loading}
+        onClick={() => props.onSubmit(state.login, state.password)}
       >
         {lang.use('auth_submit')}
       </Button>
+      {props.error && <div class="Auth__error">{props.error}</div>}
     </div>
   )
 })
 
-AuthMain.props = ['authState', 'onSubmit']
+AuthMain.props = ['loading', 'error', 'onSubmit']
 
-type AuthConfirmCodeProps = {
-  validationSid: string
+type AuthTwoFactorProps = {
+  twoFactorState: TwoFactorState
+  loading: boolean
+  error: string | null
+  onSubmit: (code: string) => void
+  onCancel: () => void
 }
 
-const AuthConfirmCode = defineComponent<AuthConfirmCodeProps>(({ validationSid }) => {
+const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
+  const { lang } = useEnv()
+  const code = ref('')
+
+  function onKeyUp() {
+    if (!props.loading && code.value.length === 6) {
+      props.onSubmit(code.value)
+    }
+  }
+
   return () => (
-    <div class="Auth__content">
-      ты не пройдешь
-      {validationSid}
+    <div class="Auth__content" onKeyup={onKeyUp}>
+      <div class="Auth__twoFactorHeader">
+        {lang.use('auth_confirm_login')}
+      </div>
+      <div class="Auth__twoFactorDescription">
+        {props.twoFactorState.validationType === '2fa_sms'
+          ? lang.use('auth_sms_with_code_sent', [props.twoFactorState.phoneMask])
+          : lang.use('auth_enter_code_from_code_gen_app')}
+      </div>
+      <Input
+        placeholder={lang.use('auth_enter_code')}
+        onInput={(event) => (code.value = event.target.value)}
+        autofocus
+      />
+      <div class="Auth__twoFactorButtonsWrapper">
+        <Button
+          mode="secondary"
+          size="large"
+          wide
+          disabled={props.loading}
+          onClick={props.onCancel}
+        >
+          {lang.use('cancel')}
+        </Button>
+        <Button
+          size="large"
+          wide
+          disabled={props.loading || code.value.length === 0}
+          loading={props.loading}
+          onClick={() => props.onSubmit(code.value)}
+        >
+          {lang.use('auth_submit')}
+        </Button>
+      </div>
+      {props.error && <div class="Auth__error">{props.error}</div>}
     </div>
   )
 })
 
-AuthConfirmCode.props = ['validationSid']
+AuthTwoFactor.props = ['twoFactorState', 'loading', 'error', 'onSubmit', 'onCancel']

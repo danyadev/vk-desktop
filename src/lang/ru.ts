@@ -1,11 +1,17 @@
 export default {
   vk_desktop_label: 'VK Desktop',
+  cancel: 'Отмена',
 
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
   auth_submit: 'Войти',
   auth_register: 'Зарегистрироваться',
   auth_forgot_password: 'Забыли пароль?',
+
+  auth_confirm_login: 'Подтвердите вход',
+  auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {0}',
+  auth_enter_code_from_code_gen_app: 'Введите код из приложения генератора кодов',
+  auth_enter_code: 'Введите код',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',

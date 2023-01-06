@@ -71,11 +71,11 @@ type GetAndroidTokenResult =
     }
   | { kind: 'InvalidTwoFactorCode', errorMessage: string }
   | { kind: 'Captcha', captchaImg: string, captchaSid: string }
-  | { kind: 'UserBanned', accessToken: string }
+  | { kind: 'UserBanned', banMessage: string, accessToken: string }
   | { kind: 'UnknownError', payload: unknown }
 
-type GetAndroidTokenPayload = {
-  code?: number
+export type GetAndroidTokenPayload = {
+  code?: string
   captcha_sid?: string
   captcha_key?: string
 }
@@ -123,6 +123,7 @@ export function getAndroidToken(
             if ('ban_info' in result) {
               return resolve({
                 kind: 'UserBanned',
+                banMessage: result.ban_info.message,
                 accessToken: result.ban_info.access_token
               })
             }

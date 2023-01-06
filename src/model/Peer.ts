@@ -22,9 +22,13 @@ type ChatId = Opaque<number, Chat>
 type Peer = User | Group | Chat
 type Id = Peer['id']
 
-type User = {
+export type User = {
   kind: 'User'
   id: UserId
+  firstName: string
+  lastName: string
+  photo50: string
+  photo100: string
 }
 
 type Group = {
@@ -56,8 +60,6 @@ export function resolveZeroUserId(): UserId {
   return 0 as UserId
 }
 
-// временно неиспользуемые функции
-/* eslint-disable */
 /**
  * Конвертит realId в указанную сущность, входящую в PeerId
  */
@@ -77,6 +79,8 @@ export function resolveRealId(realId: number, kind: Peer['kind']): Id {
   }
 }
 
+// временно неиспользуемая функция
+/* eslint-disable */
 function toRealId(peerId: Id): number {
   if (isUserPeerId(peerId)) {
     return peerId

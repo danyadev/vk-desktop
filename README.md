@@ -1,15 +1,19 @@
 # VK Desktop
-<img width="1162" alt="image" src="https://user-images.githubusercontent.com/35631027/155030916-775ce8f8-27bd-41dd-991b-154769116e66.png">
 
+Вы находитесь на ветке, в которой приложение переписывается с нуля.  
+Посмотреть на список изменений можно
+[здесь](https://github.com/danyadev/vk-desktop/blob/netflixAdaptation/CHANGELOG.md).
 
 ## Скачать VK Desktop
+
+__Новых версий переписанного приложения на данный момент нет.__
 
 Скачать последнюю версию приложения всегда можно [здесь](https://github.com/danyadev/vk-desktop/releases).
 
 ## Сборка приложения
 
 У вас должен быть установлен [Node.js](http://nodejs.org) и [Git](https://git-scm.com/downloads).  
-Поддерживаемые версии Node.js: `14.17.x`, `16.x` и выше
+Поддерживаемые версии Node.js: `14.18+`, `16+` и выше
 
 Для установки пакетов используется yarn, который можно установить с помощью npm:
 ```bash
@@ -19,11 +23,16 @@ npm i -g yarn
 ```bash
 $ git clone https://github.com/danyadev/vk-desktop.git # Клонирование репозитория
 $ cd vk-desktop # Переход в папку приложения
+$ git checkout netflixAdaptation
 $ yarn # Установка всех зависимостей в проекте
 $ yarn build # Сборка клиента
-# Только для Windows:
-# Здесь можно указать 32, 64 или ничего, чтобы собрать под все разрядности
-$ yarn win-setup[32|64] # Сборка установщика
+
+# Так же можно собрать установщик для Windows:
+$ yarn win-setup64 # Сборка для x64 разрядности
+# Или
+$ yarn win-setup32 # Сборка для x32 (ia32) разрядности
+# Или
+$ yarn win-setup # Сборка для обеих разрядностей
 ```
 
 После сборки все файлы будут находиться в папке `app`.

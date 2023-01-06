@@ -7,4 +7,7 @@ export type UsersUser = {
   /** Есть ли доступ к странице. Не возвращается, если пользователь удален или заблокирован */
   can_access_closed?: boolean
   deactivated?: 'deleted' | 'banned'
+
+  photo_50: string
+  photo_100: string
 }

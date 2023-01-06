@@ -14,7 +14,7 @@ export const App = defineComponent(() => {
   const mainSettings = useMainSettingsStore()
 
   if (isMacOS) {
-    electron.ipcRenderer.send('menu:build', lang.use('app_menu_labels'))
+    electron.ipcRenderer.send('menu:build', lang.useRaw('app_menu_labels'))
   }
 
   const updateWindowBounds = debounce(() => {

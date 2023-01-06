@@ -168,6 +168,13 @@ export class Api {
     }, fetchOptions) as Promise<never>
   }
 
+  buildMethod<Method extends keyof Methods>(
+    method: Method,
+    params: MethodParams<Method> = {}
+  ): [Method, MethodParams<Method>] {
+    return [method, params]
+  }
+
   isApiError(error: unknown): error is ApiError {
     return (
       !!error &&

@@ -7,55 +7,43 @@ import 'vue'
  * https://github.com/vuejs/core/pull/3370
  */
 
-// type NativeAnimationEvent = AnimationEvent
-// type NativeClipboardEvent = ClipboardEvent
-// type NativeCompositionEvent = CompositionEvent
-// type NativeDragEvent = DragEvent
-// type NativeFocusEvent = FocusEvent
-// type NativeKeyboardEvent = KeyboardEvent
-// type NativeMouseEvent = MouseEvent
-// type NativeTouchEvent = TouchEvent
-// type NativePointerEvent = PointerEvent
-// type NativeTransitionEvent = TransitionEvent
-// type NativeUIEvent = UIEvent
-// type NativeWheelEvent = WheelEvent
-
-interface SyntheticEvent<T = Element, E = Event> extends Event {
-  /** Element that triggered the event */
+interface SyntheticEvent<T = Element> extends Event {
+  /** Элемент, который инициировал событие */
   target: T & EventTarget
-  /** Element that the event listener is attached to */
+  /** Элемент, к которому был добавлен листенер */
   currentTarget: T & EventTarget
-  nativeEvent: E
 }
 
 declare module '@vue/runtime-dom' {
-  // Дополняем интерфейсы атрибутов существующих элементов.
-  // К сожалению, обновить типы напрямую в интерфейсе Events невозможно, потому что тайпскрипт
-  // запрещает перезаписывать существующие свойства, а ts-ignore не помогает
+  /**
+   * Дополняем интерфейсы атрибутов существующих элементов.
+   * К сожалению, обновить типы напрямую в интерфейсе Events невозможно, потому что тайпскрипт
+   * запрещает перезаписывать существующие свойства, а ts-ignore не помогает
+   */
 
   interface InputHTMLAttributes {
     onInput?: (event: InputEvent<HTMLInputElement>) => void
   }
 
-  // Декларируем интерфейсы внутри модуля, чтобы была возможность импортировать их в коде
+  /**
+   * Декларируем типы внутри модуля, чтобы была возможность импортировать их в коде
+   */
 
-  interface InputEvent<T = Element> extends SyntheticEvent<T> {
-    target: EventTarget & T
-  }
+  type InputEvent<T = Element> = SyntheticEvent<T>
 
-  // interface ClipboardEvent<T = Element> extends SyntheticEvent<T, NativeClipboardEvent> {
+  // interface ClipboardEvent<T = Element> extends SyntheticEvent<T> {
   //   clipboardData: DataTransfer
   // }
   //
-  // interface CompositionEvent<T = Element> extends SyntheticEvent<T, NativeCompositionEvent> {
+  // interface CompositionEvent<T = Element> extends SyntheticEvent<T> {
   //   data: string
   // }
   //
-  // interface DragEvent<T = Element> extends MouseEvent<T, NativeDragEvent> {
+  // interface DragEvent<T = Element> extends MouseEvent<T> {
   //   dataTransfer: DataTransfer
   // }
   //
-  // interface PointerEvent<T = Element> extends MouseEvent<T, NativePointerEvent> {
+  // interface PointerEvent<T = Element> extends MouseEvent<T> {
   //   pointerId: number
   //   pressure: number
   //   tangentialPressure: number
@@ -68,7 +56,7 @@ declare module '@vue/runtime-dom' {
   //   isPrimary: boolean
   // }
   //
-  // interface FocusEvent<T = Element> extends SyntheticEvent<T, NativeFocusEvent> {
+  // interface FocusEvent<T = Element> extends SyntheticEvent<T> {
   //   relatedTarget: EventTarget | null
   //   target: EventTarget & T
   // }
@@ -83,7 +71,7 @@ declare module '@vue/runtime-dom' {
   //   target: EventTarget & T
   // }
   //
-  // interface KeyboardEvent<T = Element> extends SyntheticEvent<T, NativeKeyboardEvent> {
+  // interface KeyboardEvent<T = Element> extends SyntheticEvent<T> {
   //   altKey: boolean
   //   /** @deprecated */
   //   charCode: number
@@ -110,7 +98,7 @@ declare module '@vue/runtime-dom' {
   //   which: number
   // }
   //
-  // interface MouseEvent<T = Element, E = NativeMouseEvent> extends UIEvent<T, E> {
+  // interface MouseEvent<T = Element> extends UIEvent<T> {
   //   altKey: boolean
   //   button: number
   //   buttons: number
@@ -133,7 +121,7 @@ declare module '@vue/runtime-dom' {
   //   shiftKey: boolean
   // }
   //
-  // interface TouchEvent<T = Element> extends UIEvent<T, NativeTouchEvent> {
+  // interface TouchEvent<T = Element> extends UIEvent<T> {
   //   altKey: boolean
   //   changedTouches: TouchList
   //   ctrlKey: boolean
@@ -148,25 +136,25 @@ declare module '@vue/runtime-dom' {
   //   touches: TouchList
   // }
   //
-  // interface UIEvent<T = Element, E = NativeUIEvent> extends SyntheticEvent<T, E> {
+  // interface UIEvent<T = Element> extends SyntheticEvent<T> {
   //   detail: number
   //   view: Window
   // }
   //
-  // interface WheelEvent<T = Element> extends MouseEvent<T, NativeWheelEvent> {
+  // interface WheelEvent<T = Element> extends MouseEvent<T> {
   //   deltaMode: number
   //   deltaX: number
   //   deltaY: number
   //   deltaZ: number
   // }
   //
-  // interface AnimationEvent<T = Element> extends SyntheticEvent<T, NativeAnimationEvent> {
+  // interface AnimationEvent<T = Element> extends SyntheticEvent<T> {
   //   animationName: string
   //   elapsedTime: number
   //   pseudoElement: string
   // }
   //
-  // interface TransitionEvent<T = Element> extends SyntheticEvent<T, NativeTransitionEvent> {
+  // interface TransitionEvent<T = Element> extends SyntheticEvent<T> {
   //   elapsedTime: number
   //   propertyName: string
   //   pseudoElement: string

@@ -2,7 +2,6 @@ import { useMainSettingsStore } from 'store/mainSettings'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import { useEnv } from 'misc/hooks'
-import type { Api } from 'env/Api'
 
 /**
  * Вытаскиваем полезные функции/переменные/etc в глобальную область видимости,
@@ -16,7 +15,7 @@ type ExposedFeatures = {
   mainSettings: ReturnType<typeof useMainSettingsStore>
   settings: ReturnType<typeof useSettingsStore>
   viewer: ReturnType<typeof useViewerStore>
-  api: Api
+  api: ReturnType<typeof useEnv>['api']
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 

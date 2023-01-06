@@ -1,22 +1,18 @@
 import { defineStore } from 'pinia'
 import { RendererStorage } from 'model/Storage'
-import { resolveZeroUserId, UserId } from 'model/Peer'
+import * as Peer from 'model/Peer'
+
+type ViewerUser = Peer.User & { accessToken: string }
 
 type Viewer = {
-  id: UserId
-  accounts: Array<{
-    id: UserId
-    firstName: string
-    lastName: string
-    photo100: string
-    accessToken: string
-  }>
+  id: Peer.UserId
+  accounts: ViewerUser[]
   /** Record<login, hash> */
   trustedHashes: Record<string, string>
 }
 
 const viewerStorage = new RendererStorage<Viewer>('viewer', {
-  id: resolveZeroUserId(),
+  id: Peer.resolveZeroUserId(),
   accounts: [],
   trustedHashes: {}
 })
@@ -24,7 +20,19 @@ const viewerStorage = new RendererStorage<Viewer>('viewer', {
 export const useViewerStore = defineStore('viewer', {
   state: () => viewerStorage.data,
   actions: {
-    setTrustedHash(login: string, hash: string) {
+    addAccount(account: ViewerUser) {
+      const index = this.accounts.findIndex((acc) => acc.id === account.id)
+
+      if (index === -1) {
+        this.accounts.push(account)
+      } else {
+        this.accounts[index] = account
+      }
+    },
+    setDefaultAccount(userId: Peer.UserId) {
+      this.id = userId
+    },
+    addTrustedHash(login: string, hash: string) {
       this.trustedHashes[login] = hash
     }
   }
