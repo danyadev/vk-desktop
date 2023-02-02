@@ -4,7 +4,6 @@ module.exports = {
   ],
 
   rules: {
-    'comma-dangle': 'error',
     'eol-last': 'error',
     'no-trailing-spaces': 'error',
     'no-multiple-empty-lines': ['error', {
@@ -12,7 +11,9 @@ module.exports = {
     }],
     'padded-blocks': ['error', 'never'],
 
+    '@typescript-eslint/comma-dangle': 'error',
     '@typescript-eslint/no-unused-vars': ['error', {
+      caughtErrors: 'all',
       varsIgnorePattern: '^_typeguard\\d?$',
       argsIgnorePattern: '^_unused\\d?$'
     }]

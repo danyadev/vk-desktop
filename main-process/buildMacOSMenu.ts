@@ -1,7 +1,6 @@
-import { Menu, shell } from 'electron'
-import type Electron from 'electron'
+import Electron, { Menu, shell } from 'electron'
 
-export default function(mainWindow: Electron.BrowserWindow, labels: Record<string, string>) {
+export function buildMacOSMenu(mainWindow: Electron.BrowserWindow, labels: Record<string, string>) {
   const menu: Electron.MenuItemConstructorOptions[] = [
     {
       label: labels.appMenuTitle,

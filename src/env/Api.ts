@@ -89,7 +89,7 @@ export class Api {
           throw err
         }
 
-        await timer(API_MIN_RETRY_DELAY * 2 ** Math.min(attempts, 4))
+        await timer(API_MIN_RETRY_DELAY * (2 ** Math.min(attempts, 4)))
       }
     }
   }
@@ -215,12 +215,6 @@ export class Api {
 
     const { lang } = useSettingsStore()
 
-    params = {
-      v: API_VERSION,
-      lang,
-      ...params
-    }
-
     try {
       const abortController = new AbortController()
       const abortTimeoutId = window.setTimeout(
@@ -230,7 +224,11 @@ export class Api {
 
       const result = await fetch(`https://api.vk.com/method/${method}`, {
         method: 'POST',
-        body: toUrlParams(params),
+        body: toUrlParams({
+          v: API_VERSION,
+          lang,
+          ...params
+        }),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
@@ -265,7 +263,7 @@ export class Api {
       }
 
       return result.response
-    } catch (error) {
+    } catch {
       return Promise.reject({
         type: 'FetchError',
         kind: 'NetworkError'

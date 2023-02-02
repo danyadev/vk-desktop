@@ -10,7 +10,7 @@ export type AppearanceTheme = 'light' | 'dark' | 'system'
 // Нужно держать синхронизированным с типом из main-process/index.ts
 type MainSettings = {
   bounds: Electron.Rectangle
-  useCustomTitlebar: boolean,
+  useCustomTitlebar: boolean
   appearance: {
     scheme: AppearanceScheme
     theme: AppearanceTheme

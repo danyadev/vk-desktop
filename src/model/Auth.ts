@@ -80,101 +80,100 @@ export type GetAndroidTokenPayload = {
   captcha_key?: string
 }
 
-export function getAndroidToken(
+export async function getAndroidToken(
   login: string,
   password: string,
   payload: GetAndroidTokenPayload = {}
-) {
-  return new Promise<GetAndroidTokenResult>(async (resolve) => {
-    const { lang } = useSettingsStore()
-    const viewer = useViewerStore()
+): Promise<GetAndroidTokenResult> {
+  const { lang } = useSettingsStore()
+  const viewer = useViewerStore()
 
-    const query = toUrlParams({
-      scope: 'all',
-      client_id: 2274003,
-      client_secret: 'hHbZxrka2uZ6jB1inYsH',
-      username: login,
-      password,
-      '2fa_supported': 1,
-      grant_type: 'password',
-      lang,
-      v: API_VERSION,
-      trusted_hash: viewer.trustedHashes[login],
-      ...payload
-    })
+  const query = toUrlParams({
+    scope: 'all',
+    client_id: 2274003,
+    client_secret: 'hHbZxrka2uZ6jB1inYsH',
+    username: login,
+    password,
+    '2fa_supported': 1,
+    grant_type: 'password',
+    lang,
+    v: API_VERSION,
+    trusted_hash: viewer.trustedHashes[login],
+    ...payload
+  })
 
-    try {
-      const result = await fetch(`https://oauth.vk.com/token?${query}`, {
-        headers: {
-          'User-Agent': androidUserAgent
-        }
-      }).then<OauthTokenResponse>((response) => response.json())
+  try {
+    const result = await fetch(`https://oauth.vk.com/token?${query}`, {
+      headers: {
+        'User-Agent': androidUserAgent
+      }
+    }).then<OauthTokenResponse>((response) => response.json())
 
-      if ('error' in result) {
-        switch (result.error) {
-          case 'invalid_client': {
-            return resolve({
-              kind: 'InvalidCredentials',
-              errorMessage: result.error_description || result.error_type
-            })
+    if ('error' in result) {
+      switch (result.error) {
+        case 'invalid_client': {
+          return {
+            kind: 'InvalidCredentials',
+            errorMessage: result.error_description || result.error_type
           }
+        }
 
-          case 'need_validation': {
-            if ('ban_info' in result) {
-              return resolve({
-                kind: 'UserBanned',
-                banMessage: result.ban_info.message,
-                accessToken: result.ban_info.access_token
-              })
+        case 'need_validation': {
+          if ('ban_info' in result) {
+            return {
+              kind: 'UserBanned',
+              banMessage: result.ban_info.message,
+              accessToken: result.ban_info.access_token
             }
-
-            return resolve({
-              kind: 'RequireTwoFactor',
-              phoneMask: result.phone_mask,
-              validationType: result.validation_type,
-              validationSid: result.validation_sid,
-              needValidateSendSms: result.validation_resend === 'sms'
-            })
           }
 
-          case 'invalid_request': {
-            return resolve({
-              kind: 'InvalidTwoFactorCode',
-              errorMessage: result.error_description || result.error_type
-            })
-          }
-
-          case 'need_captcha': {
-            return resolve({
-              kind: 'Captcha',
-              captchaImg: result.captcha_img,
-              captchaSid: result.captcha_sid
-            })
-          }
-
-          default: {
-            const _typeguard: never = result
+          return {
+            kind: 'RequireTwoFactor',
+            phoneMask: result.phone_mask,
+            validationType: result.validation_type,
+            validationSid: result.validation_sid,
+            needValidateSendSms: result.validation_resend === 'sms'
           }
         }
 
-        return resolve({
-          kind: 'UnknownError',
-          payload: result
-        })
+        case 'invalid_request': {
+          return {
+            kind: 'InvalidTwoFactorCode',
+            errorMessage: result.error_description || result.error_type
+          }
+        }
+
+        case 'need_captcha': {
+          return {
+            kind: 'Captcha',
+            captchaImg: result.captcha_img,
+            captchaSid: result.captcha_sid
+          }
+        }
+
+        default: {
+          const _typeguard: never = result
+        }
       }
 
-      resolve({
-        kind: 'Success',
-        userId: result.user_id,
-        accessToken: result.access_token,
-        trustedHash: result.trusted_hash
-      })
-    } catch (err) {
-      console.error(err)
-      resolve({
+      return {
         kind: 'UnknownError',
-        payload: 'FetchError'
-      })
+        payload: result
+      }
     }
-  })
+
+    return {
+      kind: 'Success',
+      userId: result.user_id,
+      accessToken: result.access_token,
+      trustedHash: result.trusted_hash
+    }
+  } catch (err) {
+    console.error(err)
+
+    return {
+      kind: 'UnknownError',
+      payload: 'FetchError'
+    }
+  }
 }

@@ -1,4 +1,4 @@
-export default {
+export const ru = {
   vk_desktop_label: 'VK Desktop',
   cancel: 'Отмена',
 

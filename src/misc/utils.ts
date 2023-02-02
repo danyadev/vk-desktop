@@ -53,7 +53,7 @@ export function createSingletonHook<R extends object>(hook: (() => R)) {
   return () => hookResult || (hookResult = hook())
 }
 
-export function subscribeToElectronEvent(subscribe: (() => Function)) {
+export function subscribeToElectronEvent(subscribe: (() => () => void)) {
   const unsubscribe = subscribe()
 
   /**
@@ -78,10 +78,10 @@ export function subscribeToElectronEvent(subscribe: (() => Function)) {
 /**
  * Вызывает целевую функцию через delay мс после последнего вызова обертки
  */
-export function debounce<T extends Function>(fn: T, delay: number) {
+export function debounce<T extends ((...args: never[]) => void)>(fn: T, delay: number) {
   let timerId: NodeJS.Timeout | null = null
 
-  return function(this: unknown, ...args: unknown[]) {
+  return function(this: unknown, ...args: Parameters<T>) {
     if (timerId) {
       clearTimeout(timerId)
     }

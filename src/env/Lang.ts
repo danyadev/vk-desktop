@@ -1,4 +1,4 @@
-import ru from 'lang/ru'
+import { ru } from 'lang/ru'
 import type { VariablesTypings } from 'lang/VariablesTypings'
 import type { Settings } from 'store/settings'
 

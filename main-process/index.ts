@@ -1,10 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
-import type Electron from 'electron'
-import { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } from 'electron'
+import Electron, { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } from 'electron'
 import * as electronMain from '@electron/remote/main'
-import buildMacOSMenu from './buildMacOSMenu'
+import { buildMacOSMenu } from './buildMacOSMenu'
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
@@ -17,7 +16,7 @@ const storePath = path.join(appDataPath, 'storage-v1.json')
 type MainSettings = {
   // Определяется на стороне рендерера
   bounds: Electron.Rectangle | null
-  useCustomTitlebar: boolean,
+  useCustomTitlebar: boolean
   appearance: {
     scheme: 'vkcom' | 'vkui'
     theme: 'light' | 'dark' | 'system'
