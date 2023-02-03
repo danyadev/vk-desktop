@@ -20,7 +20,7 @@ export class Semaphore {
   }
 
   release() {
-    setTimeout(() => {
+    window.setTimeout(() => {
       this.freeOperations = Math.min(this.freeOperations + 1, this.operationsPerWindow)
 
       const queuedOperation = this.operationsQueue.shift()

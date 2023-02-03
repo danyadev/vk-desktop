@@ -66,6 +66,7 @@
   --dynamic_green: #1b7a1b;
   --dynamic_neon_pink: #f45fff;
   --dynamic_orange: #ffa000;
+  --dynamic_orange_peach: #f9b54f;
   --dynamic_purple: #735ce6;
   --dynamic_raspberry_pink: #e03fab;
   --dynamic_red: #ff3347;
@@ -239,5 +240,6 @@
   --vk_connect_button_primary_foreground: #ffffff;
   --vk_connect_button_secondary_background: #f5f5f5;
   --vk_connect_button_secondary_foreground: #222222;
+  --vk_donut_background: #fff2d6;
   --writebar_icon: #818c99;
 }

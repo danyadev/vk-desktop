@@ -68,7 +68,6 @@ module.exports = {
 
   rules: {
     //#region eslint
-    // TODO: check typescript variants
     'no-constant-binary-expression': 'error',
     'no-constant-condition': ['error', {
       // Разрешает while (true)
@@ -219,6 +218,13 @@ module.exports = {
     'template-curly-spacing': 'error',
     'template-tag-spacing': 'error',
     'yield-star-spacing': 'error',
+    'no-restricted-syntax': [
+      'error',
+      'CallExpression[callee.name="setTimeout"]',
+      'CallExpression[callee.name="clearTimeout"]',
+      'CallExpression[callee.name="setInterval"]',
+      'CallExpression[callee.name="clearInterval"]'
+    ],
     //#endregion eslint
 
     //#region eslint-plugin-import
@@ -294,6 +300,11 @@ module.exports = {
       checkCompoundAssignments: true
     }],
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
+    '@typescript-eslint/ban-types': ['error', {
+      types: {
+        'JSX.Element': 'Use JSXElement type from misc/utils'
+      }
+    }],
 
     /**
      * Далее идут правила, которые расширяют eslint-правила.

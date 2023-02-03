@@ -101,7 +101,7 @@ const paletteVKUI = getStyleObject('palette.json')
 const schemeWeb = getStyleObject('scheme_web.json')
 const paletteWeb = getStyleObject('palette_web.json')
 
-const stylesDir = path.resolve(process.cwd(), './src/schemes')
+const stylesDir = path.resolve(process.cwd(), './src/assets/schemes')
 
 generateScheme(schemeVKUI, paletteVKUI, stylesDir)
 generateScheme(schemeWeb, paletteWeb, stylesDir)

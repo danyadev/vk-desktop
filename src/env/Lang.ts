@@ -1,6 +1,7 @@
 import { ru } from 'lang/ru'
 import type { VariablesTypings } from 'lang/VariablesTypings'
 import type { Settings } from 'store/settings'
+import { isObject } from 'misc/utils'
 
 const langMap = {
   ru
@@ -19,13 +20,21 @@ export class Lang {
     this.dictionary = langMap[lang]
   }
 
+  /**
+   * Принимается максимум 2 аргумента.
+   * Второй аргумент - массив/объект необходимых для ключа переменных
+   */
   use<Key extends keyof DictionaryWithStringValues>(
     key: Key,
     ...variablesRest: VariablesTypings<DictionaryWithStringValues>[Key]
   ): string {
     const rawTranslation = this.dictionary[key]
-    // rest используется только для того, чтобы не делать второй параметр опциональным,
-    // а изнутри строго решать, обязателен этот параметр или его нельзя передать
+    /**
+     * Для более строгой типизации мы решаем, нужен ли нам второй аргумент, на основе
+     * первого переданного элемента.
+     * Если сделать второй аргумент опциональным, а не rest'ом, то функция не сможет заставить
+     * передать два аргумента, когда это действительно необходимо
+     */
     const [variables] = variablesRest
 
     if (Array.isArray(variables)) {
@@ -33,7 +42,9 @@ export class Lang {
         /{(\d+)}/g,
         (full, number: number) => variables[number] ?? full
       )
-    } else if (variables && typeof variables === 'object') {
+    }
+
+    if (isObject(variables)) {
       return rawTranslation.replace(
         /{(\w+)}/gi,
         (full, name: keyof typeof variables) => variables[name] ?? full

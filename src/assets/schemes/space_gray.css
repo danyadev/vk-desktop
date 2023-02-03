@@ -65,6 +65,7 @@
   --dynamic_green: #4bb34b;
   --dynamic_neon_pink: #f45fff;
   --dynamic_orange: #ffa000;
+  --dynamic_orange_peach: #ffc062;
   --dynamic_purple: #937ff5;
   --dynamic_raspberry_pink: #f060c0;
   --dynamic_red: #ff3347;
@@ -171,7 +172,7 @@
   --loader_track_value_fill: #ffffff;
   --media_overlay_button_background: #ffffff;
   --media_overlay_button_foreground: #2c2d2e;
-  --modal_card_background: #232324;
+  --modal_card_background: #2c2d2e;
   --modal_card_border: rgba(255, 255, 255, 0.12);
   --modal_card_header_close: #ffffff;
   --music_playback_icon: #ffffff;
@@ -238,5 +239,6 @@
   --vk_connect_button_primary_foreground: #19191a;
   --vk_connect_button_secondary_background: #454647;
   --vk_connect_button_secondary_foreground: #e1e3e6;
+  --vk_donut_background: #232324;
   --writebar_icon: #e1e3e6;
 }

@@ -89,7 +89,7 @@ export class Api {
           throw err
         }
 
-        await timer(API_MIN_RETRY_DELAY * (2 ** Math.min(attempts, 4)))
+        await timer(API_MIN_RETRY_DELAY * (2 ** Math.min(attempts - 1, 4)))
       }
     }
   }
@@ -234,7 +234,7 @@ export class Api {
         },
         signal: abortController.signal
       }).then<ApiResult<Methods[Method]['response']>>((response) => {
-        clearTimeout(abortTimeoutId)
+        window.clearTimeout(abortTimeoutId)
 
         if (!response.ok) {
           return Promise.reject({

@@ -1,6 +1,7 @@
 export const ru = {
   vk_desktop_label: 'VK Desktop',
   cancel: 'Отмена',
+  unknown_error: 'Неизвестная ошибка',
 
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
@@ -45,4 +46,4 @@ export const ru = {
     vkPage: 'Страница в VK',
     githubPage: 'Страница на GitHub'
   }
-}
+} as const

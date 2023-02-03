@@ -1,23 +1,29 @@
 import * as electron from '@electron/remote'
 import { onScopeDispose } from 'vue'
 
+export type Opaque<Type, Token = unknown> = Type & {
+  readonly __opaque__: Token
+}
+
+// Тип JSX.Element запрещен в пользу JSXElement, здесь его единственное использование
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type JSXElement = JSX.Element | string | number | null
+
+export type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T
+
 export const currentWindow = electron.getCurrentWindow()
 
+export function isObject(obj: unknown): obj is object {
+  return Object.prototype.toString.call(obj) === '[object Object]'
+}
+
 export function timer(milliseconds: number) {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds))
+  return new Promise<void>((resolve) => window.setTimeout(resolve, milliseconds))
 }
 
 export function exhaustivenessCheck(_unused: never): never {
   throw new Error('Exhaustiveness failure! This should never happen.')
 }
-
-export type Opaque<Type, Token = unknown> = Type & {
-  readonly __opaque__: Token
-}
-
-export type JSXElement = JSX.Element | string | number | null
-
-export type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T
 
 /**
  * Позволяет отфильтровать массив от falsy значений и убрать нежелательные
@@ -79,14 +85,14 @@ export function subscribeToElectronEvent(subscribe: (() => () => void)) {
  * Вызывает целевую функцию через delay мс после последнего вызова обертки
  */
 export function debounce<T extends ((...args: never[]) => void)>(fn: T, delay: number) {
-  let timerId: NodeJS.Timeout | null = null
+  let timerId: number | null = null
 
   return function(this: unknown, ...args: Parameters<T>) {
     if (timerId) {
-      clearTimeout(timerId)
+      window.clearTimeout(timerId)
     }
 
-    timerId = setTimeout(() => {
+    timerId = window.setTimeout(() => {
       fn.apply(this, args)
       timerId = null
     }, delay)

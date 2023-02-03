@@ -16,6 +16,7 @@ import { fromApiUser } from 'misc/converter/PeerConverter'
  * - поддержать флоу Логин -> СМС -> повторная отправка СМС
  * - поддержать флоу Логин -> Код из приложения -> форс СМС
  * - научиться обрабатывать капчу
+ * - научиться показывать второстепенные ошибки снекбарами
  */
 
 type TwoFactorState = {
@@ -77,7 +78,7 @@ export const Auth = defineComponent(() => {
           const [apiUser] = await api.fetch('users.get', {
             access_token: result.accessToken,
             fields: userFields
-          }, { retries: Infinity })
+          }, { retries: 3 })
           const user = fromApiUser(apiUser)
 
           viewer.addAccount({
@@ -89,7 +90,7 @@ export const Auth = defineComponent(() => {
           router.push('/')
         } catch (err) {
           console.error(err)
-          // TODO
+          // TODO снекбар
           state.error = api.isApiError(err) ? 'Ошибка апи' : 'Неизвестная ошибка'
         }
         break
@@ -110,17 +111,20 @@ export const Auth = defineComponent(() => {
       }
 
       case 'Captcha': {
+        // TODO модалка с капчей
         state.error = 'Captcha'
         break
       }
 
       case 'UserBanned': {
+        // TODO модалка с предложением выйти из аккаунта
         state.error = result.banMessage
         break
       }
 
       case 'UnknownError': {
-        state.error = 'UnknownError'
+        console.warn('Неизвестная ошибка авторизации', result.payload)
+        state.error = lang.use('unknown_error')
         break
       }
 
