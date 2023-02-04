@@ -121,7 +121,6 @@ module.exports = {
     'no-new-object': 'error',
     'no-new-wrappers': 'error',
     'no-octal-escape': 'error',
-    'no-param-reassign': 'error',
     'no-proto': 'error',
     'no-return-assign': 'error',
     'no-return-await': 'error',

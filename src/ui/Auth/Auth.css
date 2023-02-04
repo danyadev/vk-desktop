@@ -38,6 +38,10 @@
   gap: 10px;
 }
 
+.Auth__smsStatus {
+  margin: 12px 0;
+}
+
 .Auth__error {
   color: var(--destructive);
   background: var(--field_error_background);

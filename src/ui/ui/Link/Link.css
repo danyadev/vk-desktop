@@ -4,6 +4,8 @@
   text-decoration: none;
   /* Для FocusVisible */
   border-radius: 4px;
+  /* Когда компонент используется без href, этот стиль по умолчанию не проставляется */
+  cursor: pointer;
 }
 
 .Link:hover {

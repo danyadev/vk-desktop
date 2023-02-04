@@ -2,6 +2,10 @@ export const ru = {
   vk_desktop_label: 'VK Desktop',
   cancel: 'Отмена',
   unknown_error: 'Неизвестная ошибка',
+  months_of: [
+    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+  ],
 
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
@@ -13,6 +17,9 @@ export const ru = {
   auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {0}',
   auth_enter_code_from_code_gen_app: 'Введите код из приложения генератора кодов',
   auth_enter_code: 'Введите код',
+  auth_sms_is_sending: 'SMS отправляется...',
+  auth_resend_sms_at: 'Повторить через {0}',
+  auth_resend_sms: 'Повторить отправку SMS',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',

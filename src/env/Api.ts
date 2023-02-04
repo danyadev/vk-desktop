@@ -64,7 +64,7 @@ export class Api {
 
   async fetch<Method extends keyof Methods>(
     method: Method,
-    params: MethodParams<Method> = {},
+    params: MethodParams<Method>,
     fetchOptions: FetchOptions = {}
   ): Promise<Methods[Method]['response']> {
     const { retries = 0 } = fetchOptions
@@ -200,7 +200,7 @@ export class Api {
 
   private async doFetch<Method extends keyof Methods>(
     method: Method,
-    params: Methods[Method]['params'] & CommonParams = {},
+    params: MethodParams<Method> = {},
     fetchOptions: FetchOptions = {}
   ): Promise<Methods[Method]['response']> {
     if (!this.semaphore.lock()) {
