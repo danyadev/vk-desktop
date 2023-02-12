@@ -11,6 +11,10 @@ module.exports = {
     }],
     'padded-blocks': ['error', 'never'],
 
+    'import/no-unused-modules': ['error', {
+      unusedExports: true
+    }],
+
     '@typescript-eslint/comma-dangle': 'error',
     '@typescript-eslint/no-unused-vars': ['error', {
       caughtErrors: 'all',

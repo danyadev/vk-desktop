@@ -1,4 +1,4 @@
-.App {
+.root {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -8,4 +8,9 @@
   font: var(--font);
   text-rendering: optimizeSpeed;
   -webkit-rtl-ordering: visual;
+}
+
+.App {
+  position: relative;
+  height: 100%;
 }

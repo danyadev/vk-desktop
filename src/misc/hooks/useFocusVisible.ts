@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { createSingletonHook } from 'misc/utils'
 
-export const useFocusVisible = () => {
+export function useFocusVisible() {
   const isFocusedByEvent = ref(false)
   const isFocusedByTab = useTabFocusTracker()
 

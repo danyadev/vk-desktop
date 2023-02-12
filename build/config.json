@@ -15,6 +15,7 @@
     { "from": "app/dist", "to": "dist", "filter": "**/*" }
   ],
   "extraMetadata": {
+    "name": "vk-desktop",
     "main": "index.js"
   },
   "win": {

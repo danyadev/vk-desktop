@@ -1,7 +1,7 @@
 import './Link.css'
 import { defineComponent, AnchorHTMLAttributes } from 'vue'
 import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
-import { useFocusVisible } from 'misc/hooks/useFocusVisible'
+import { useFocusVisible } from 'misc/hooks'
 
 type Props = AnchorHTMLAttributes
 

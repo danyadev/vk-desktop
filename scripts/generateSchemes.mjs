@@ -63,7 +63,7 @@ function generateScheme(scheme, palette, targetDir) {
   for (const schemeId in scheme) {
     const clusters = scheme[schemeId].colors
     const cssLines = [
-      '/* stylelint-disable */',
+      '/* stylelint-disable color-hex-length */',
       '/**',
       ' * Этот файл сгенерирован автоматически. Не нужно править его руками.',
       ' */',

@@ -5,10 +5,6 @@
   color: var(--text_secondary);
 }
 
-.Titlebar--disabled {
-  display: none;
-}
-
 .Titlebar--macOS {
   --titlebarHeight: 24px;
   background: var(--content_tint_background);
@@ -40,11 +36,11 @@
   width: 48px;
   cursor: pointer;
   color: var(--text_primary);
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color var(--mediumTransition), color var(--mediumTransition);
 }
 
 .Titlebar__button:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--black_alpha12);
 }
 
 .Titlebar__button--close:hover {

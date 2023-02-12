@@ -1,0 +1,6 @@
+export { ModalsContainer } from './ModalsContainer/ModalsContainer'
+export { Modal } from './Modal/Modal'
+export { ModalView } from './ModalView/ModalView'
+export { ModalHeader } from './ModalHeader/ModalHeader'
+export { ModalBody } from './ModalBody/ModalBody'
+export { ModalFooter } from './ModalFooter/ModalFooter'

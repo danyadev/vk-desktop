@@ -16,9 +16,9 @@
   src: url('assets/Roboto-VK-500.woff2');
 }
 
-body {
+html, body {
   margin: 0;
-  height: 100vh;
+  height: 100%;
 }
 
 img {
@@ -42,14 +42,23 @@ display: none;
   --font: var(--fontSize) var(--fontFamily);
 
   --fastTransition: 0.15s;
+  --mediumTransition: 0.2s;
+  --slowTransition: 0.3s;
+
+  --zIndexModals: 1;
+}
+
+[data-scheme] {
+  --white: #fff;
+  --black_alpha12: rgba(0, 0, 0, 0.12);
+  --black_alpha40: rgba(0, 0, 0, 0.4);
+  --black_alpha72: rgba(0, 0, 0, 0.72);
 }
 
 [data-scheme="vkcom_dark"], [data-scheme="space_gray"] {
-  --white: #fff;
   --field_border_hover: rgba(255, 255, 255, 0.2);
 }
 
 [data-scheme="vkcom_light"], [data-scheme="bright_light"] {
-  --white: #fff;
   --field_border_hover: rgba(0, 0, 0, 0.2);
 }

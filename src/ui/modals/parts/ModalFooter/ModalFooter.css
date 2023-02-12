@@ -1,0 +1,8 @@
+.ModalFooter {
+  display: flex;
+  padding: 15px 20px;
+}
+
+.ModalFooter__buttons {
+  margin-left: auto;
+}

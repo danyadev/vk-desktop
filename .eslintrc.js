@@ -224,6 +224,22 @@ module.exports = {
       'CallExpression[callee.name="setInterval"]',
       'CallExpression[callee.name="clearInterval"]'
     ],
+    'no-restricted-imports': ['error', {
+      patterns: [
+        {
+          group: ['assets/icons/*'],
+          message: 'use assets/icons instead'
+        },
+        {
+          group: ['misc/hooks/*'],
+          message: 'use misc/hooks instead'
+        },
+        {
+          group: ['ui/modals/parts/*'],
+          message: 'use ui/modals/parts instead'
+        }
+      ]
+    }],
     //#endregion eslint
 
     //#region eslint-plugin-import
@@ -249,9 +265,7 @@ module.exports = {
         ['internal', 'parent', 'sibling', 'index']
       ]
     }],
-    'import/no-unused-modules': ['error', {
-      unusedExports: true
-    }],
+    'import/no-duplicates': 'error',
     //#endregion
 
     //#region @typescript-eslint

@@ -193,6 +193,8 @@ export class Api {
       // TODO: 6/9 (Слишком много запросов в секунду / однотипных действий)
       // TODO: 10 (Internal server error)
       // TODO: 14 (Капча)
+      // TODO: 29 (Rate limit reached, может означать "метод отключен из-за сильной нагрузки")
+      // TODO: 43 (раздел отключен, когда вк упал)
       default:
         throw apiError
     }

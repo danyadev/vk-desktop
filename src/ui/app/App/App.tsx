@@ -7,6 +7,8 @@ import { isMacOS } from 'misc/constants'
 import { Titlebar } from 'ui/app/Titlebar/Titlebar'
 import { currentWindow, debounce, subscribeToElectronEvent } from 'misc/utils'
 import { useMainSettingsStore } from 'store/mainSettings'
+import { ModalsContainer } from 'ui/modals/parts'
+import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
 
 export const App = defineComponent(() => {
   const { lang } = useEnv()
@@ -32,9 +34,14 @@ export const App = defineComponent(() => {
   })
 
   return () => (
-    <div class="App" data-scheme={scheme.value}>
+    <div class="root" data-scheme={scheme.value}>
       <Titlebar />
-      <RouterView />
+      <div class="App">
+        <RouterView />
+
+        <ModalsContainer />
+        <CaptchaModal />
+      </div>
     </div>
   )
 })
