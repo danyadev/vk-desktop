@@ -78,8 +78,7 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
 }
 
 function getLoadURL(entry: string) {
-  const devServerUrl = process.env.VITE_DEV_SERVER_URL
-  return devServerUrl || `file://${__dirname}/dist/${entry}.html`
+  return `file://${__dirname}/dist/${entry}.html`
 }
 
 app.once('ready', () => {
@@ -106,7 +105,7 @@ app.once('ready', () => {
     mainWindow.show()
   })
 
-  mainWindow.loadURL(getLoadURL('index'))
+  mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL || getLoadURL('index'))
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url)

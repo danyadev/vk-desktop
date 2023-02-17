@@ -4,28 +4,20 @@
   "rules": {
     "font-family-no-missing-generic-family-keyword": null,
     "shorthand-property-no-redundant-values": null,
-    "declaration-block-trailing-semicolon": null,
-    "selector-list-comma-newline-after": null,
     "custom-property-empty-line-before": null,
-    "declaration-colon-newline-after": null,
     "declaration-empty-line-before": null,
     "selector-no-vendor-prefix": null,
     "no-descending-specificity": null,
     "comment-empty-line-before": null,
     "selector-class-pattern": null,
     "length-zero-no-unit": null,
-    "string-quotes": null,
     "custom-property-pattern": "[a-z][a-zA-Z0-9_-]?",
     "font-family-name-quotes": "always-where-required",
     "color-function-notation": "legacy",
     "alpha-value-notation": "number",
-    "number-leading-zero": "always",
-    "selector-max-empty-lines": 1,
     "value-keyword-case": ["lower", {
       "ignoreKeywords": ["optimizeSpeed"]
     }],
-    "indentation": [2, {
-      "ignore": ["value"]
-    }]
+    "declaration-property-value-no-unknown": true
   }
 }
