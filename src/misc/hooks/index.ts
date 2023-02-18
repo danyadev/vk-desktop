@@ -1,4 +1,3 @@
-export { useThemeScheme } from './useThemeScheme'
 export { useEnv } from './useEnv'
 export { useFocusVisible } from './useFocusVisible'
 // Временно неиспользуемый хук

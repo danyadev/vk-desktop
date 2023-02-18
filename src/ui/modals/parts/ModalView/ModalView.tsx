@@ -70,8 +70,8 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
                   class="ModalView__content"
                   tabindex="-1"
                   onKeydown={(event) => event.key === 'Escape' && props.onClose()}
-                  onFocusout={onFocusOut}
                   onFocusin={onFocusIn}
+                  onFocusout={onFocusOut}
                   ref={$modalContent}
                 >
                   {slots.default?.()}

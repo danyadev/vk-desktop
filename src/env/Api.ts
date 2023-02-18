@@ -1,7 +1,8 @@
 import { CommonParams, Methods } from 'model/api-types'
-import { timer, toUrlParams, Truthy } from 'misc/utils'
+import { NonEmptyArray, timer, toUrlParams, Truthy } from 'misc/utils'
 import { Semaphore } from 'misc/Semaphore'
 import { useSettingsStore } from 'store/settings'
+import { useGlobalModal } from 'misc/hooks'
 
 /**
  * В случае повышения версии необходимо описать, какое поле понадобилось из новой версии
@@ -9,7 +10,7 @@ import { useSettingsStore } from 'store/settings'
 export const API_VERSION = '5.131'
 
 const API_DEFAULT_FETCH_TIMEOUT = 10 * 1000
-const API_MIN_RETRY_DELAY = 1000
+const API_MIN_RETRY_DELAY = 500
 
 type FetchOptions = {
   retries?: number
@@ -20,12 +21,16 @@ type ApiRequestParams = Array<{ key: string, value: string }>
 type ApiResultError = {
   error_code: number
   error_msg: string
+  captcha_sid?: string
+  captcha_img?: string
   request_params: ApiRequestParams
 }
 type ApiResultExecuteErrors = Array<{
   method: string
   error_code: number
   error_msg: string
+  captcha_sid?: string
+  captcha_img?: string
 }>
 type ApiResult<T> =
   | { response: T }
@@ -40,11 +45,19 @@ type ApiMethodError = {
   type: 'MethodError'
   code: number
   message: string
+  captchaSid?: string
+  captchaImg?: string
   requestParams: ApiRequestParams
 }
 type ApiExecuteError = {
   type: 'ExecuteError'
-  errors: Array<{ method: string, code: number, message: string }>
+  errors: NonEmptyArray<{
+    method: string
+    code: number
+    message: string
+    captchaSid?: string
+    captchaImg?: string
+  }>
 }
 type ApiError = ApiFetchError | ApiMethodError | ApiExecuteError
 
@@ -81,15 +94,26 @@ export class Api {
           throw err
         }
 
+        let skipBackoff = false
+
         if (err.type === 'MethodError' || err.type === 'ExecuteError') {
-          this.handleErrors(err)
+          const [restoreAttempt, heedSkipBackoff] = await this.handleErrors(err, params)
+
+          if (restoreAttempt) {
+            availableAttempts++
+          }
+          if (heedSkipBackoff) {
+            skipBackoff = true
+          }
         }
 
         if (!availableAttempts) {
           throw err
         }
 
-        await timer(API_MIN_RETRY_DELAY * (2 ** Math.min(attempts - 1, 4)))
+        if (!skipBackoff) {
+          await timer(API_MIN_RETRY_DELAY * (2 ** Math.min(attempts - 1, 4)))
+        }
       }
     }
   }
@@ -185,16 +209,49 @@ export class Api {
     )
   }
 
-  private handleErrors(apiError: ApiMethodError | ApiExecuteError) {
+  private async handleErrors<Method extends keyof Methods>(
+    apiError: ApiMethodError | ApiExecuteError,
+    params: MethodParams<Method>
+  ): Promise<[boolean, boolean]> {
     const error = apiError.type === 'MethodError' ? apiError : apiError.errors[0]
 
     switch (error.code) {
       // TODO: 5 (Сессия завершена)
       // TODO: 6/9 (Слишком много запросов в секунду / однотипных действий)
       // TODO: 10 (Internal server error)
-      // TODO: 14 (Капча)
       // TODO: 29 (Rate limit reached, может означать "метод отключен из-за сильной нагрузки")
       // TODO: 43 (раздел отключен, когда вк упал)
+
+      // Капча
+      case 14: {
+        const isResponded = await new Promise<boolean>((resolve) => {
+          const { captchaModal } = useGlobalModal()
+
+          if (!error.captchaSid || !error.captchaImg) {
+            resolve(false)
+            return
+          }
+
+          captchaModal.open({
+            captchaImg: error.captchaImg,
+            onClose(captchaKey) {
+              if (captchaKey) {
+                params.captcha_sid = error.captchaSid
+                params.captcha_key = captchaKey
+              }
+
+              resolve(!!captchaKey)
+            }
+          })
+        })
+
+        if (!isResponded) {
+          throw apiError
+        }
+
+        return [true, true]
+      }
+
       default:
         throw apiError
     }
@@ -253,6 +310,8 @@ export class Api {
           type: 'MethodError',
           code: result.error.error_code,
           message: result.error.error_msg,
+          captchaSid: result.error.captcha_sid,
+          captchaImg: result.error.captcha_img,
           requestParams: result.error.request_params
         })
       }
@@ -260,7 +319,13 @@ export class Api {
       if ('execute_errors' in result) {
         return Promise.reject({
           type: 'ExecuteError',
-          executeErrors: result.execute_errors
+          executeErrors: result.execute_errors.map((error) => ({
+            method: error.method,
+            code: error.error_code,
+            message: error.error_msg,
+            captchaSid: error.captcha_sid,
+            captchaImg: error.captcha_img
+          }))
         })
       }
 

@@ -1,3 +1,19 @@
 .CaptchaModal {
-  /* TODO */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.CaptchaModal__img {
+  box-sizing: content-box;
+  width: 130px;
+  height: 50px;
+  cursor: pointer;
+  border: 1px solid var(--separator_common);
+}
+
+.CaptchaModal__input {
+  width: 200px;
+  margin-top: 20px;
 }

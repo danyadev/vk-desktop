@@ -64,8 +64,21 @@ export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
 }
 
 function getAllFocusableElements(parent: HTMLElement): HTMLElement[] {
+  const focusableElementsSelectors = [
+    'a[href]',
+    'button',
+    'input',
+    'select',
+    'textarea',
+    '[tabindex]:not([tabindex="-1"])',
+    'div[contenteditable]',
+    'iframe',
+    'audio',
+    'video'
+  ]
+
   const nodeList = parent.querySelectorAll(
-    ':where(a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])):not([disabled])'
+    `:where(${focusableElementsSelectors.join(',')}):not([disabled])`
   )
 
   return [].slice.call(nodeList)

@@ -1,7 +1,6 @@
 export const ru = {
   vk_desktop_label: 'VK Desktop',
   cancel: 'Отмена',
-  unknown_error: 'Неизвестная ошибка',
   months_of: [
     'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
     'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
@@ -20,6 +19,14 @@ export const ru = {
   auth_sms_is_sending: 'SMS отправляется...',
   auth_resend_sms_at: 'Повторить через {0}',
   auth_resend_sms: 'Повторить отправку SMS',
+
+  auth_captcha_enter_error: 'Ошибка ввода капчи',
+  auth_user_load_error: 'Ошибка получения данных о пользователе',
+  auth_unknown_error: 'Неизвестная ошибка',
+
+  modal_send_label: 'Отправить',
+
+  captchaModal_enter_captcha: 'Введите капчу',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',

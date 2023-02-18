@@ -11,17 +11,18 @@ type Props = {
   size?: 'small' | 'regular' | 'medium' | 'large'
 }
 
-export const Spinner = defineComponent<Props>(({ size = 'small' }) => {
-  const SpinnerIcon = {
-    small: Icon16Spinner,
-    regular: Icon24Spinner,
-    medium: Icon32Spinner,
-    large: Icon44Spinner
-  }[size]
+const spinnerIcons = {
+  small: Icon16Spinner,
+  regular: Icon24Spinner,
+  medium: Icon32Spinner,
+  large: Icon44Spinner
+}
 
-  return () => (
-    <SpinnerIcon class="Spinner" />
-  )
+export const Spinner = defineComponent<Props>((props) => {
+  return () => {
+    const SpinnerIcon = spinnerIcons[props.size || 'small']
+    return <SpinnerIcon class="Spinner" />
+  }
 })
 
 Spinner.props = ['size']

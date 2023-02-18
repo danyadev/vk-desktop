@@ -5,6 +5,7 @@ import {
 } from 'model/api-types/methods/Messages'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
 import { AuthValidatePhoneParams, AuthValidatePhoneResponse } from 'model/api-types/methods/Auth'
+import { CaptchaForceParams, CaptchaForceResponse } from 'model/api-types/methods/Captcha'
 
 /**
  * Disclaimer:
@@ -44,5 +45,10 @@ export type Methods = {
   'auth.validatePhone': {
     params: AuthValidatePhoneParams
     response: AuthValidatePhoneResponse
+  }
+
+  'captcha.force': {
+    params: CaptchaForceParams
+    response: CaptchaForceResponse
   }
 }

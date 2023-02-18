@@ -7,14 +7,15 @@ type Props = {
   before?: JSXElement
   after?: JSXElement
   autofocus?: boolean
+  class?: string
 } & InheritedProps
 
 export const Input = defineComponent<Props>((props, { attrs }) => {
-  const inputRef = ref<HTMLInputElement | null>(null)
+  const $input = ref<HTMLInputElement | null>(null)
 
   onMounted(() => {
     if (props.autofocus) {
-      inputRef.value?.focus()
+      $input.value?.focus()
     }
   })
 
@@ -24,18 +25,18 @@ export const Input = defineComponent<Props>((props, { attrs }) => {
 
     return (
       <div
-        class={['Input', {
+        class={['Input', props.class, {
           'Input--hasBefore': before,
           'Input--hasAfter': after
         }]}
       >
         {before && <div class="Input__before">{before}</div>}
-        <input class="Input__el" type={type} {...restProps} ref={inputRef} />
+        <input class="Input__el" type={type} {...restProps} ref={$input} />
         {after && <div class="Input__after">{after}</div>}
       </div>
     )
   }
 })
 
-Input.props = ['before', 'after', 'autofocus']
+Input.props = ['before', 'after', 'autofocus', 'class']
 Input.inheritAttrs = false

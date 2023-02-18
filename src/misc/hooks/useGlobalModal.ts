@@ -2,6 +2,7 @@ import { reactive, ref } from 'vue'
 import { createSingletonHook } from 'misc/utils'
 
 type CaptchaModalMeta = {
+  captchaImg: string
   onClose: (captchaKey?: string) => void
 }
 
@@ -15,7 +16,7 @@ function createGlobalModal<Meta>(modalName: string) {
   const opened = ref(false)
   const meta = ref<Meta>()
 
-  function open(metaData?: Meta) {
+  function open(metaData: Meta) {
     if (opened.value) {
       throw new Error(`Модалка ${modalName} уже открыта`)
     }

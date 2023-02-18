@@ -11,6 +11,8 @@ export type JSXElement = JSX.Element | string | number | null
 
 export type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T
 
+export type NonEmptyArray<T> = [T, ...T[]]
+
 export const currentWindow = electron.getCurrentWindow()
 
 export function isObject(obj: unknown): obj is object {

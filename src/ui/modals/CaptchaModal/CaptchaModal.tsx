@@ -1,26 +1,50 @@
 import './CaptchaModal.css'
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
-import { useGlobalModal } from 'misc/hooks'
+import { useEnv, useGlobalModal } from 'misc/hooks'
+import { Input } from 'ui/ui/Input/Input'
 
 export const CaptchaModal = defineComponent(() => {
+  const { lang } = useEnv()
   const { captchaModal } = useGlobalModal()
+  const captchaKey = ref('')
+
+  function closeModal(key?: string) {
+    captchaModal.meta?.onClose(key)
+    captchaModal.close()
+  }
+
+  function updateImgUrl() {
+    if (captchaModal.meta?.captchaImg) {
+      captchaModal.meta.captchaImg += '1'
+    }
+  }
 
   return () => (
     <Modal
+      title={lang.use('captchaModal_enter_captcha')}
       opened={captchaModal.opened}
-      onClose={() => {
-        captchaModal.close()
-        captchaModal.meta?.onClose()
-      }}
-      title={'Введите капчу'}
+      onClose={() => closeModal()}
       buttons={
-        <Button onClick={() => captchaModal.meta?.onClose('код')}>Отправить</Button>
+        <Button onClick={() => closeModal(captchaKey.value)}>
+          {lang.use('modal_send_label')}
+        </Button>
       }
       class="CaptchaModal"
     >
-      капча епта
+      <img
+        src={captchaModal.meta?.captchaImg}
+        class="CaptchaModal__img"
+        onClick={updateImgUrl}
+      />
+      <Input
+        class="CaptchaModal__input"
+        placeholder={lang.use('captchaModal_enter_captcha')}
+        onInput={(event) => (captchaKey.value = event.target.value)}
+        onKeydown={(event) => event.key === 'Enter' && closeModal(captchaKey.value)}
+        autofocus
+      />
     </Modal>
   )
 })

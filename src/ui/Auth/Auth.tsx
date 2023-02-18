@@ -1,6 +1,6 @@
 import './Auth.css'
-import { computed, defineComponent, onMounted, reactive, ref, InputEvent } from 'vue'
-import { useEnv } from 'misc/hooks'
+import { computed, defineComponent, onMounted, reactive, ref, InputEvent, KeyboardEvent } from 'vue'
+import { useEnv, useGlobalModal } from 'misc/hooks'
 import logo from 'assets/logo512.png'
 import { Input } from 'ui/ui/Input/Input'
 import { Button } from 'ui/ui/Button/Button'
@@ -14,7 +14,6 @@ import { format } from 'misc/date/utils'
 
 /**
  * Чеклист по готовности авторизации:
- * - научиться обрабатывать капчу
  * - проверить работу Enter на всех страницах
  * - поддержать флоу Логин -> Код из приложения -> форс СМС
  * - научиться показывать второстепенные ошибки снекбарами
@@ -62,7 +61,7 @@ export const Auth = defineComponent(() => {
     state.twoFactorState = null
   }
 
-  async function performAuth(payload: GetAndroidTokenPayload = {}) {
+  async function performAuth(payload: GetAndroidTokenPayload = {}): Promise<void> {
     state.error = null
     state.loading = true
 
@@ -80,6 +79,11 @@ export const Auth = defineComponent(() => {
             access_token: result.accessToken,
             fields: userFields
           }, { retries: 3 })
+
+          if (!apiUser) {
+            throw new Error('API не вернул пользователя')
+          }
+
           const user = fromApiUser(apiUser)
 
           viewer.addAccount({
@@ -90,9 +94,8 @@ export const Auth = defineComponent(() => {
 
           router.push('/')
         } catch (err) {
-          console.error(err)
-          // TODO снекбар
-          state.error = api.isApiError(err) ? 'Ошибка апи' : 'Неизвестная ошибка'
+          console.warn('Ошибка получения юзера', err)
+          state.error = lang.use('auth_user_load_error')
         }
         break
       }
@@ -112,8 +115,25 @@ export const Auth = defineComponent(() => {
       }
 
       case 'Captcha': {
-        // TODO модалка с капчей
-        state.error = 'Captcha'
+        const captchaKey = await new Promise<string | undefined>((resolve) => {
+          const { captchaModal } = useGlobalModal()
+          captchaModal.open({
+            captchaImg: result.captchaImg,
+            onClose(captchaKey) {
+              resolve(captchaKey)
+            }
+          })
+        })
+
+        if (captchaKey) {
+          return performAuth({
+            ...payload,
+            captcha_key: captchaKey,
+            captcha_sid: result.captchaSid
+          })
+        } else {
+          state.error = lang.use('auth_captcha_enter_error')
+        }
         break
       }
 
@@ -125,7 +145,7 @@ export const Auth = defineComponent(() => {
 
       case 'UnknownError': {
         console.warn('Неизвестная ошибка авторизации', result.payload)
-        state.error = lang.use('unknown_error')
+        state.error = lang.use('auth_unknown_error')
         break
       }
 
