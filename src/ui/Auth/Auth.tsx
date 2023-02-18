@@ -11,10 +11,11 @@ import { useViewerStore } from 'store/viewer'
 import { userFields } from 'misc/constants'
 import { fromApiUser } from 'misc/converter/PeerConverter'
 import { format } from 'misc/date/utils'
+import { Icon24HideOutline, Icon24ViewOutline } from 'assets/icons'
+import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 
 /**
  * Чеклист по готовности авторизации:
- * - проверить работу Enter на всех страницах
  * - поддержать флоу Логин -> Код из приложения -> форс СМС
  * - научиться показывать второстепенные ошибки снекбарами
  */
@@ -183,6 +184,7 @@ type AuthMainProps = {
 
 const AuthMain = defineComponent<AuthMainProps>((props) => {
   const { lang } = useEnv()
+  const showPassword = ref(false)
 
   const state = reactive({
     login: '',
@@ -206,8 +208,16 @@ const AuthMain = defineComponent<AuthMainProps>((props) => {
           autofocus
         />
         <Input
-          type="password"
+          type={showPassword.value ? 'text' : 'password'}
           placeholder={lang.use('auth_password_placeholder')}
+          after={
+            <ButtonIcon
+              icon={showPassword.value ? <Icon24HideOutline /> : <Icon24ViewOutline />}
+              title={lang.use(showPassword.value ? 'auth_hide_password' : 'auth_show_password')}
+              onClick={() => (showPassword.value = !showPassword.value)}
+              stretched
+            />
+          }
           onInput={(event) => (state.password = event.target.value)}
         />
         <Button
@@ -254,6 +264,12 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
     }
   }
 
+  function onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !props.loading && code.value.length > 0) {
+      props.onSubmit(code.value)
+    }
+  }
+
   async function validateSendSms() {
     const DEFAULT_RESEND_INTERVAL = 60
 
@@ -293,7 +309,7 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
 
   return () => (
     <div class="Auth">
-      <div class="Auth__content">
+      <div class="Auth__content" onKeydown={onKeyDown}>
         <div class="Auth__twoFactorHeader">
           {lang.use('auth_confirm_login')}
         </div>
@@ -334,7 +350,9 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
         {resendSmsTimer.value === null ? (
           lang.use('auth_sms_is_sending')
         ) : resendSmsTimer.value > 0 ? (
-          lang.use('auth_resend_sms_at', [format(new Date(resendSmsTimer.value * 1000), 'mm:ss')])
+          lang.use('auth_resend_sms_at', [
+            format(new Date(resendSmsTimer.value * 1000), 'mm:ss')
+          ])
         ) : (
           <Link onClick={validateSendSms}>
             {lang.use('auth_resend_sms')}

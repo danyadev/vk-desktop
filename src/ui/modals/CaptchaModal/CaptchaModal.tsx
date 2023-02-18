@@ -23,7 +23,7 @@ export const CaptchaModal = defineComponent(() => {
 
   return () => (
     <Modal
-      title={lang.use('captchaModal_enter_captcha')}
+      title={lang.use('captchaModal_title')}
       opened={captchaModal.opened}
       onClose={() => closeModal()}
       buttons={
@@ -40,10 +40,11 @@ export const CaptchaModal = defineComponent(() => {
       />
       <Input
         class="CaptchaModal__input"
-        placeholder={lang.use('captchaModal_enter_captcha')}
+        placeholder={lang.use('captchaModal_enter_code')}
         onInput={(event) => (captchaKey.value = event.target.value)}
         onKeydown={(event) => event.key === 'Enter' && closeModal(captchaKey.value)}
         autofocus
+        inLayer
       />
     </Modal>
   )

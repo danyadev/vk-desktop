@@ -3,6 +3,11 @@
   border-radius: 8px;
 }
 
+.ButtonIcon--stretched {
+  width: 100%;
+  height: 100%;
+}
+
 .ButtonIcon :where(svg, img) {
   vertical-align: middle;
 }

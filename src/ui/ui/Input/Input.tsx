@@ -8,6 +8,8 @@ type Props = {
   after?: JSXElement
   autofocus?: boolean
   class?: string
+  /** Признак нахождения в слое, например в модалке, где фон слоя сливается с фоном поля ввода */
+  inLayer?: boolean
 } & InheritedProps
 
 export const Input = defineComponent<Props>((props, { attrs }) => {
@@ -27,7 +29,8 @@ export const Input = defineComponent<Props>((props, { attrs }) => {
       <div
         class={['Input', props.class, {
           'Input--hasBefore': before,
-          'Input--hasAfter': after
+          'Input--hasAfter': after,
+          'Input--inLayer': props.inLayer
         }]}
       >
         {before && <div class="Input__before">{before}</div>}
@@ -38,5 +41,5 @@ export const Input = defineComponent<Props>((props, { attrs }) => {
   }
 })
 
-Input.props = ['before', 'after', 'autofocus', 'class']
+Input.props = ['before', 'after', 'autofocus', 'class', 'inLayer']
 Input.inheritAttrs = false

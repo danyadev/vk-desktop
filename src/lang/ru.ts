@@ -9,6 +9,8 @@ export const ru = {
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
   auth_submit: 'Войти',
+  auth_show_password: 'Показать пароль',
+  auth_hide_password: 'Скрыть пароль',
   auth_register: 'Зарегистрироваться',
   auth_forgot_password: 'Забыли пароль?',
 
@@ -26,7 +28,8 @@ export const ru = {
 
   modal_send_label: 'Отправить',
 
-  captchaModal_enter_captcha: 'Введите капчу',
+  captchaModal_title: 'Введите капчу',
+  captchaModal_enter_code: 'Введите код',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',

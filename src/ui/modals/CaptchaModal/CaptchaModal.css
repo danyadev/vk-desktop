@@ -7,8 +7,9 @@
 
 .CaptchaModal__img {
   box-sizing: content-box;
-  width: 130px;
-  height: 50px;
+  /* Делаем картинку немного больше ее исходного разрешения, чтобы проще разглядеть капчу */
+  width: calc(130px * 1.25);
+  height: calc(50px * 1.25);
   cursor: pointer;
   border: 1px solid var(--separator_common);
 }

@@ -9,6 +9,10 @@
   transition: border-color var(--fastTransition);
 }
 
+.Input--inLayer {
+  background: var(--field_background_layer);
+}
+
 .Input:hover {
   border-color: var(--field_border_hover);
 }
@@ -53,5 +57,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  min-width: 36px;
+  height: 100%;
   color: var(--icon_secondary);
 }
