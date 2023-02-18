@@ -2,6 +2,7 @@ import './ModalHeader.css'
 import { defineComponent } from 'vue'
 import { JSXElement } from 'misc/utils'
 import { Icon24Cancel } from 'assets/icons'
+import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 
 type Props = {
   /** Заголовок модалки */
@@ -15,7 +16,7 @@ export const ModalHeader = defineComponent<Props>((props) => {
     <div class="ModalHeader">
       {props.title}
       <div class="ModalHeader__closeIcon" onClick={props.onClose}>
-        <Icon24Cancel />
+        <ButtonIcon icon={<Icon24Cancel />} />
       </div>
     </div>
   )

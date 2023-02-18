@@ -10,6 +10,7 @@
   user-select: none;
   pointer-events: none;
   overflow: hidden;
+  opacity: 0;
 }
 
 .FocusVisible--active {
@@ -17,7 +18,6 @@
 }
 
 .FocusVisible:not(.FocusVisible--outside) {
-  opacity: 0;
   animation: animation-focus-visible var(--fastTransition) ease-in-out forwards;
 }
 
@@ -38,6 +38,7 @@
 
 @keyframes animation-focus-visible-outside {
   100% {
+    opacity: 1;
     top: -2px;
     left: -4px;
     bottom: -2px;

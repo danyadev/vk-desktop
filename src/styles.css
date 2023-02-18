@@ -26,6 +26,14 @@ img {
   user-select: none;
 }
 
+:where(button) {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+}
+
 :focus {
   outline: none;
 }

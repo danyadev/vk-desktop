@@ -1,0 +1,8 @@
+.ButtonIcon {
+  position: relative;
+  border-radius: 8px;
+}
+
+.ButtonIcon :where(svg, img) {
+  vertical-align: middle;
+}

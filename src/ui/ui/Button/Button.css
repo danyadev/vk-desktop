@@ -1,10 +1,7 @@
 .Button {
   position: relative;
-  font: var(--font);
-  border: none;
   border-radius: 8px;
   padding: 0 16px;
-  cursor: pointer;
   transition: opacity var(--fastTransition);
 }
 

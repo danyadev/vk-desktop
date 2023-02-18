@@ -21,8 +21,15 @@ declare module '@vue/runtime-dom' {
    * запрещает перезаписывать существующие свойства, а ts-ignore не помогает
    */
 
+  interface HTMLAttributes {
+    onKeydown?: (event: KeyboardEvent<HTMLElement>) => void
+    onFocusin?: (event: FocusEvent<HTMLElement>) => void
+    onFocusout?: (event: FocusEvent<HTMLElement>) => void
+  }
+
   interface InputHTMLAttributes {
     onInput?: (event: InputEvent<HTMLInputElement>) => void
+    onKeydown?: (event: KeyboardEvent<HTMLInputElement>) => void
   }
 
   /**
@@ -30,6 +37,30 @@ declare module '@vue/runtime-dom' {
    */
 
   type InputEvent<T = Element> = SyntheticEvent<T>
+
+  interface KeyboardEvent<T = Element> extends SyntheticEvent<T> {
+    altKey: boolean
+    /** @deprecated */
+    charCode: number
+    ctrlKey: boolean
+    code: string
+    getModifierState: (key: string) => boolean
+    key: string
+    /** @deprecated */
+    keyCode: number
+    locale: string
+    location: number
+    metaKey: boolean
+    repeat: boolean
+    shiftKey: boolean
+    /** @deprecated */
+    which: number
+  }
+
+  interface FocusEvent<T = Element> extends SyntheticEvent<T> {
+    currentTarget: null
+    relatedTarget: T & EventTarget | null
+  }
 
   // interface ClipboardEvent<T = Element> extends SyntheticEvent<T> {
   //   clipboardData: DataTransfer
@@ -56,11 +87,6 @@ declare module '@vue/runtime-dom' {
   //   isPrimary: boolean
   // }
   //
-  // interface FocusEvent<T = Element> extends SyntheticEvent<T> {
-  //   relatedTarget: EventTarget | null
-  //   target: EventTarget & T
-  // }
-  //
   // interface FormEvent<T = Element> extends SyntheticEvent<T> {}
   //
   // interface InvalidEvent<T = Element> extends SyntheticEvent<T> {
@@ -69,33 +95,6 @@ declare module '@vue/runtime-dom' {
   //
   // interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
   //   target: EventTarget & T
-  // }
-  //
-  // interface KeyboardEvent<T = Element> extends SyntheticEvent<T> {
-  //   altKey: boolean
-  //   /** @deprecated */
-  //   charCode: number
-  //   ctrlKey: boolean
-  //   code: string
-  //   /**
-  //    * See [DOM Level 3 Events spec](https://www.w3.org/TR/uievents-key/#keys-modifier)
-  //    * for a list of valid (case-sensitive) arguments to this method
-  //    */
-  //   getModifierState(key: string): boolean
-  //   /**
-  //    * See the [DOM Level 3 Events spec](https://www.w3.org/TR/uievents-key/#named-key-attribute-values)
-  //    * for possible values
-  //    */
-  //   key: string
-  //   /** @deprecated */
-  //   keyCode: number
-  //   locale: string
-  //   location: number
-  //   metaKey: boolean
-  //   repeat: boolean
-  //   shiftKey: boolean
-  //   /** @deprecated */
-  //   which: number
   // }
   //
   // interface MouseEvent<T = Element> extends UIEvent<T> {

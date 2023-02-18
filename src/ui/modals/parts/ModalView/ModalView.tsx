@@ -1,6 +1,7 @@
 import './ModalView.css'
-import { defineComponent, Ref, Teleport, Transition, unref } from 'vue'
+import { defineComponent, ref, Ref, Teleport, Transition, unref, watch } from 'vue'
 import { useIsMounted } from 'misc/hooks'
+import { useFocusTrap } from './useFocusTrap'
 
 type Props = {
   /** Открыта ли модалка */
@@ -15,6 +16,30 @@ type Props = {
 
 export const ModalView = defineComponent<Props>((props, { slots }) => {
   const isMounted = useIsMounted()
+  const $modalContent = ref<HTMLDivElement | null>(null)
+  const { onFocusIn, onFocusOut } = useFocusTrap($modalContent)
+
+  /**
+   * Фокусируемся на модалке при ее показе, чтобы сбросить фокус с предыдущего элемента,
+   * который теперь находится под модалкой, например кнопки или поля ввода.
+   *
+   * Это нужно, чтобы случайно не совершать действия, которые не планировалось совершать,
+   * например при нажатии на Enter или Escape
+   *
+   * Ну и чтобы Esc отрабатывал правильно при открытой модалке
+   */
+  watch($modalContent, () => {
+    if (!$modalContent.value) {
+      return
+    }
+
+    // Если внутри модалки уже есть фокус, то не перебиваем фокус на корень модалки
+    if ($modalContent.value.contains(document.activeElement)) {
+      return
+    }
+
+    $modalContent.value.focus()
+  })
 
   return () => {
     /**
@@ -41,7 +66,14 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
             >
               <div class="ModalView__backdrop" onClick={props.onClose} />
               <div class="ModalView__container">
-                <div class="ModalView__content">
+                <div
+                  class="ModalView__content"
+                  tabindex="-1"
+                  onKeydown={(event) => event.key === 'Escape' && props.onClose()}
+                  onFocusout={onFocusOut}
+                  onFocusin={onFocusIn}
+                  ref={$modalContent}
+                >
                   {slots.default?.()}
                 </div>
               </div>
