@@ -21,6 +21,7 @@ export const ru = {
   auth_sms_is_sending: 'SMS отправляется...',
   auth_resend_sms_at: 'Повторить через {0}',
   auth_resend_sms: 'Повторить отправку SMS',
+  auth_send_sms: 'Отправить SMS',
 
   auth_captcha_enter_error: 'Ошибка ввода капчи',
   auth_user_load_error: 'Ошибка получения данных о пользователе',

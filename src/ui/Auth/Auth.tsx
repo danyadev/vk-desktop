@@ -1,5 +1,5 @@
 import './Auth.css'
-import { computed, defineComponent, onMounted, reactive, ref, InputEvent, KeyboardEvent } from 'vue'
+import { computed, defineComponent, onMounted, reactive, ref, InputEvent, KeyboardEvent, Ref } from 'vue'
 import { useEnv, useGlobalModal } from 'misc/hooks'
 import logo from 'assets/logo512.png'
 import { Input } from 'ui/ui/Input/Input'
@@ -16,7 +16,6 @@ import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 
 /**
  * Чеклист по готовности авторизации:
- * - поддержать флоу Логин -> Код из приложения -> форс СМС
  * - научиться показывать второстепенные ошибки снекбарами
  */
 
@@ -255,6 +254,7 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
   const { lang, api } = useEnv()
   const code = ref('')
   const resendSmsTimer = ref<number | null>(null)
+  const isSendingSms = ref(false)
 
   function onInput(event: InputEvent<HTMLInputElement>) {
     code.value = event.target.value
@@ -270,24 +270,25 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
     }
   }
 
-  async function validateSendSms() {
+  async function sendSms() {
     const DEFAULT_RESEND_INTERVAL = 60
 
     try {
-      resendSmsTimer.value = null
+      isSendingSms.value = true
 
       const { delay } = await api.fetch('auth.validatePhone', {
         sid: props.twoFactorState.validationSid
       }, { retries: 3 })
 
+      props.twoFactorState.validationType = '2fa_sms'
       resendSmsTimer.value = delay
     } catch {
       // TODO: снекбар с ошибкой
       console.log('ошибка переотправки смс')
-
       resendSmsTimer.value = DEFAULT_RESEND_INTERVAL
     }
 
+    isSendingSms.value = false
     tickTimer()
   }
 
@@ -303,7 +304,7 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
       props.twoFactorState.validationType === '2fa_sms' &&
       props.twoFactorState.needValidateSendSms
     ) {
-      validateSendSms()
+      sendSms()
     }
   })
 
@@ -347,20 +348,50 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
       </div>
 
       <div class="Auth__smsStatus">
-        {resendSmsTimer.value === null ? (
-          lang.use('auth_sms_is_sending')
-        ) : resendSmsTimer.value > 0 ? (
-          lang.use('auth_resend_sms_at', [
-            format(new Date(resendSmsTimer.value * 1000), 'mm:ss')
-          ])
-        ) : (
-          <Link onClick={validateSendSms}>
-            {lang.use('auth_resend_sms')}
-          </Link>
-        )}
+        <SmsStatus
+          validationType={props.twoFactorState.validationType}
+          sendSms={sendSms}
+          isSendingSms={isSendingSms}
+          resendSmsTimer={resendSmsTimer}
+        />
       </div>
     </div>
   )
 })
 
 AuthTwoFactor.props = ['twoFactorState', 'loading', 'error', 'onSubmit', 'onCancel']
+
+type SmsStatusProps = {
+  validationType: TwoFactorState['validationType']
+  sendSms: () => void
+  isSendingSms: Ref<boolean>
+  resendSmsTimer: Ref<number | null>
+}
+
+const SmsStatus = defineComponent<SmsStatusProps>((props) => {
+  const { lang } = useEnv()
+
+  return () => {
+    const { validationType, sendSms, isSendingSms, resendSmsTimer } = props
+
+    if (isSendingSms.value) {
+      return lang.use('auth_sms_is_sending')
+    }
+
+    if (resendSmsTimer.value) {
+      return lang.use('auth_resend_sms_at', [
+        format(new Date(resendSmsTimer.value * 1000), 'mm:ss')
+      ])
+    }
+
+    return (
+      <Link onClick={sendSms}>
+        {validationType === '2fa_app'
+          ? lang.use('auth_send_sms')
+          : lang.use('auth_resend_sms')}
+      </Link>
+    )
+  }
+})
+
+SmsStatus.props = ['validationType', 'sendSms', 'isSendingSms', 'resendSmsTimer']
