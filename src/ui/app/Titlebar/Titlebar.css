@@ -40,7 +40,7 @@
 }
 
 .Titlebar__button:hover {
-  background: var(--black_alpha12);
+  background: var(--titlebar_button_hover);
 }
 
 .Titlebar__button--close:hover {

@@ -59,21 +59,27 @@ display: none;
 
 [data-scheme] {
   --white: #fff;
+  --white_alpha20: rgba(255, 255, 255, 0.2);
   --black_alpha12: rgba(0, 0, 0, 0.12);
+  --black_alpha20: rgba(0, 0, 0, 0.2);
   --black_alpha40: rgba(0, 0, 0, 0.4);
   --black_alpha72: rgba(0, 0, 0, 0.72);
+  --gray_850: #232324;
+  --gray_900: #222;
 }
 
 [data-scheme="vkcom_dark"], [data-scheme="space_gray"] {
-  --field_border_hover: rgba(255, 255, 255, 0.2);
-  --field_background_layer: #222;
+  --field_border_hover: var(--white_alpha20);
+  --field_background_layer: var(--gray_900);
+  --titlebar_button_hover: var(--black_alpha40);
 }
 
 [data-scheme="vkcom_light"], [data-scheme="bright_light"] {
-  --field_border_hover: rgba(0, 0, 0, 0.2);
+  --field_border_hover: var(--black_alpha20);
   --field_background_layer: var(--field_background);
+  --titlebar_button_hover: var(--black_alpha12);
 }
 
 [data-scheme="space_gray"] {
-  --field_background_layer: #232324;
+  --field_background_layer: var(--gray_850);
 }

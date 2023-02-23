@@ -3,18 +3,18 @@ import { defineComponent, ref } from 'vue'
 import { isMacOS } from 'misc/constants'
 import { currentWindow } from 'misc/utils'
 import {
-  Icon12TitlebarMinimize,
+  Icon10TitlebarMinimize,
   Icon10TitlebarMaximize,
-  Icon12TitlebarRestore,
+  Icon10TitlebarRestore,
   Icon10TitlebarClose
 } from 'assets/icons'
 import { useMainSettingsStore } from 'store/mainSettings'
 import { useEnv } from 'misc/hooks'
 
 const buttons = [
-  { action: 'minimize', icon: <Icon12TitlebarMinimize /> },
+  { action: 'minimize', icon: <Icon10TitlebarMinimize /> },
   { action: 'maximize', icon: <Icon10TitlebarMaximize /> },
-  { action: 'restore', icon: <Icon12TitlebarRestore /> },
+  { action: 'restore', icon: <Icon10TitlebarRestore /> },
   { action: 'close', icon: <Icon10TitlebarClose /> }
 ] as const
 

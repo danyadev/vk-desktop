@@ -66,7 +66,6 @@ export const Auth = defineComponent(() => {
     state.loading = true
 
     const result = await getAndroidToken(state.login, state.password, payload)
-    console.log(result)
 
     switch (result.kind) {
       case 'Success': {
@@ -138,8 +137,12 @@ export const Auth = defineComponent(() => {
       }
 
       case 'UserBanned': {
-        // TODO модалка с предложением выйти из аккаунта
         state.error = result.banMessage
+        break
+      }
+
+      case 'NetworkError': {
+        state.error = lang.use('auth_network_error')
         break
       }
 
@@ -253,7 +256,7 @@ type AuthTwoFactorProps = {
 const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
   const { lang, api } = useEnv()
   const code = ref('')
-  const resendSmsTimer = ref<number | null>(null)
+  const resendSmsTimer = ref<number>(0)
   const isSendingSms = ref(false)
 
   function onInput(event: InputEvent<HTMLInputElement>) {
@@ -365,7 +368,7 @@ type SmsStatusProps = {
   validationType: TwoFactorState['validationType']
   sendSms: () => void
   isSendingSms: Ref<boolean>
-  resendSmsTimer: Ref<number | null>
+  resendSmsTimer: Ref<number>
 }
 
 const SmsStatus = defineComponent<SmsStatusProps>((props) => {

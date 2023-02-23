@@ -72,6 +72,7 @@ type GetAndroidTokenResult =
   | { kind: 'InvalidTwoFactorCode', errorMessage: string }
   | { kind: 'Captcha', captchaImg: string, captchaSid: string }
   | { kind: 'UserBanned', banMessage: string, accessToken: string }
+  | { kind: 'NetworkError' }
   | { kind: 'UnknownError', payload: unknown }
 
 export type GetAndroidTokenPayload = {
@@ -169,11 +170,10 @@ export async function getAndroidToken(
       trustedHash: result.trusted_hash
     }
   } catch (err) {
-    console.error(err)
+    console.warn(err)
 
     return {
-      kind: 'UnknownError',
-      payload: 'FetchError'
+      kind: 'NetworkError'
     }
   }
 }

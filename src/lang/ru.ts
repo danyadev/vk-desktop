@@ -25,6 +25,7 @@ export const ru = {
 
   auth_captcha_enter_error: 'Ошибка ввода капчи',
   auth_user_load_error: 'Ошибка получения данных о пользователе',
+  auth_network_error: 'Ошибка сети',
   auth_unknown_error: 'Неизвестная ошибка',
 
   modal_send_label: 'Отправить',
