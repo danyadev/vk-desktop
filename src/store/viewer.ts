@@ -6,30 +6,29 @@ type ViewerUser = Peer.User & { accessToken: string }
 
 type Viewer = {
   id: Peer.UserId
-  accounts: ViewerUser[]
+  accounts: Map<Peer.UserId, ViewerUser>
   /** Record<login, hash> */
   trustedHashes: Record<string, string>
 }
 
 const viewerStorage = new RendererStorage<Viewer>('viewer', {
   id: Peer.resolveZeroUserId(),
-  accounts: [],
+  accounts: new Map(),
   trustedHashes: {}
 })
 
 export const useViewerStore = defineStore('viewer', {
   state: () => viewerStorage.data,
+  getters: {
+    viewer(state) {
+      return state.accounts.get(state.id)
+    }
+  },
   actions: {
     addAccount(account: ViewerUser) {
-      const index = this.accounts.findIndex((acc) => acc.id === account.id)
-
-      if (index === -1) {
-        this.accounts.push(account)
-      } else {
-        this.accounts[index] = account
-      }
+      this.accounts.set(account.id, account)
     },
-    setDefaultAccount(userId: Peer.UserId) {
+    setCurrentAccount(userId: Peer.UserId) {
       this.id = userId
     },
     addTrustedHash(login: string, hash: string) {

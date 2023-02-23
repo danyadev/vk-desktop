@@ -89,7 +89,7 @@ export const Auth = defineComponent(() => {
             ...user,
             accessToken: result.accessToken
           })
-          viewer.setDefaultAccount(user.id)
+          viewer.setCurrentAccount(user.id)
 
           router.push('/')
         } catch (err) {

@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import * as electron from '@electron/remote'
+import { deserializeJson, serializeJson } from 'misc/jsonSerializer'
 
 export class MainStorage<T extends Record<string, unknown>> {
   path: string
@@ -16,7 +17,7 @@ export class MainStorage<T extends Record<string, unknown>> {
 
     let storageData: Partial<T> = {}
     try {
-      storageData = JSON.parse(fs.readFileSync(this.path, 'utf-8')) as Partial<T>
+      storageData = deserializeJson<Partial<T>>(fs.readFileSync(this.path, 'utf-8'))
     } catch {
       // Файл криво записался и перезапишется при следующем сохранении
       // или при запуске приложения в main процессе
@@ -34,7 +35,7 @@ export class MainStorage<T extends Record<string, unknown>> {
   }
 
   save() {
-    fs.writeFileSync(this.path, JSON.stringify(this.data))
+    fs.writeFileSync(this.path, serializeJson(this.data))
   }
 }
 
@@ -47,7 +48,7 @@ export class RendererStorage<T extends Record<string, unknown>> {
     this.name = `${name}-v${this.version}`
 
     const defaultValue = typeof defaults === 'function' ? defaults() : defaults
-    const storageData = JSON.parse(localStorage.getItem(this.name) || '{}') as Partial<T>
+    const storageData = deserializeJson<Partial<T>>(localStorage.getItem(this.name) || '{}')
 
     this.data = {
       ...defaultValue,
@@ -63,6 +64,6 @@ export class RendererStorage<T extends Record<string, unknown>> {
   }
 
   save() {
-    localStorage.setItem(this.name, JSON.stringify(this.data))
+    localStorage.setItem(this.name, serializeJson(this.data))
   }
 }

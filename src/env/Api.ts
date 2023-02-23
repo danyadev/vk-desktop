@@ -3,13 +3,14 @@ import { NonEmptyArray, timer, toUrlParams, Truthy } from 'misc/utils'
 import { Semaphore } from 'misc/Semaphore'
 import { useSettingsStore } from 'store/settings'
 import { useGlobalModal } from 'misc/hooks'
+import { useViewerStore } from 'store/viewer'
 
 /**
  * В случае повышения версии необходимо описать, какое поле понадобилось из новой версии
  */
 export const API_VERSION = '5.131'
 
-const API_DEFAULT_FETCH_TIMEOUT = 10 * 1000
+const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500
 
 type FetchOptions = {
@@ -273,6 +274,7 @@ export class Api {
     }
 
     const { lang } = useSettingsStore()
+    const { viewer } = useViewerStore()
 
     try {
       const abortController = new AbortController()
@@ -284,6 +286,7 @@ export class Api {
       const result = await fetch(`https://api.vk.com/method/${method}`, {
         method: 'POST',
         body: toUrlParams({
+          access_token: viewer?.accessToken,
           v: API_VERSION,
           lang,
           ...params
@@ -330,7 +333,9 @@ export class Api {
       }
 
       return result.response
-    } catch {
+    } catch (error) {
+      console.warn(error)
+
       return Promise.reject({
         type: 'FetchError',
         kind: 'NetworkError'
