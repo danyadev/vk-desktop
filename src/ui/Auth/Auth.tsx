@@ -5,7 +5,7 @@ import logo from 'assets/logo512.png'
 import { Input } from 'ui/ui/Input/Input'
 import { Button } from 'ui/ui/Button/Button'
 import { Link } from 'ui/ui/Link/Link'
-import { getAndroidToken, GetAndroidTokenPayload } from 'model/Auth'
+import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth'
 import { exhaustivenessCheck } from 'misc/utils'
 import { useViewerStore } from 'store/viewer'
 import { userFields } from 'misc/constants'
@@ -73,9 +73,15 @@ export const Auth = defineComponent(() => {
           viewer.addTrustedHash(state.login, result.trustedHash)
         }
 
+        const appToken = await getAppToken(result.androidToken)
+        if (!appToken) {
+          state.error = lang.use('auth_app_token_getting_error')
+          break
+        }
+
         try {
           const [apiUser] = await api.fetch('users.get', {
-            access_token: result.accessToken,
+            access_token: appToken,
             fields: userFields
           }, { retries: 3 })
 
@@ -87,7 +93,8 @@ export const Auth = defineComponent(() => {
 
           viewer.addAccount({
             ...user,
-            accessToken: result.accessToken
+            accessToken: appToken,
+            androidToken: result.androidToken
           })
           viewer.setCurrentAccount(user.id)
 

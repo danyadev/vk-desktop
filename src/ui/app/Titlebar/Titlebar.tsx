@@ -1,7 +1,7 @@
 import './Titlebar.css'
 import { defineComponent, ref } from 'vue'
 import { isMacOS } from 'misc/constants'
-import { currentWindow } from 'misc/utils'
+import { currentWindow, subscribeToElectronEvent } from 'misc/utils'
 import {
   Icon10TitlebarMinimize,
   Icon10TitlebarMaximize,
@@ -26,12 +26,14 @@ export const Titlebar = defineComponent(() => {
   const onMaximize = () => (isMaximized.value = true)
   const onUnmaximize = () => (isMaximized.value = false)
 
-  currentWindow.on('maximize', onMaximize)
-  currentWindow.on('unmaximize', onUnmaximize)
+  subscribeToElectronEvent(() => {
+    currentWindow.on('maximize', onMaximize)
+    currentWindow.on('unmaximize', onUnmaximize)
 
-  window.addEventListener('beforeunload', () => {
-    currentWindow.removeListener('maximize', onMaximize)
-    currentWindow.removeListener('unmaximize', onUnmaximize)
+    return () => {
+      currentWindow.removeListener('maximize', onMaximize)
+      currentWindow.removeListener('unmaximize', onUnmaximize)
+    }
   })
 
   return () => {

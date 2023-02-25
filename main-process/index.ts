@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
-import Electron, { app, BrowserWindow, shell, screen, nativeTheme, ipcMain } from 'electron'
+import Electron, { app, BrowserWindow, shell, screen, nativeTheme, ipcMain, session } from 'electron'
 import * as electronMain from '@electron/remote/main'
 import { buildMacOSMenu } from './buildMacOSMenu'
 
@@ -110,6 +110,13 @@ app.once('ready', () => {
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url)
     return { action: 'deny' }
+  })
+
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    if (details.responseHeaders) {
+      details.responseHeaders['x-original-url-by-electron'] = [details.url]
+    }
+    callback({ responseHeaders: details.responseHeaders })
   })
 
   if (isMacOS) {

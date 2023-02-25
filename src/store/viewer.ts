@@ -2,7 +2,10 @@ import { defineStore } from 'pinia'
 import { RendererStorage } from 'model/Storage'
 import * as Peer from 'model/Peer'
 
-type ViewerUser = Peer.User & { accessToken: string }
+type ViewerUser = Peer.User & {
+  accessToken: string
+  androidToken: string
+}
 
 type Viewer = {
   id: Peer.UserId

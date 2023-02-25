@@ -14,6 +14,7 @@ const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500
 
 type FetchOptions = {
+  android?: boolean
   retries?: number
   timeout?: number
 }
@@ -286,7 +287,7 @@ export class Api {
       const result = await fetch(`https://api.vk.com/method/${method}`, {
         method: 'POST',
         body: toUrlParams({
-          access_token: viewer?.accessToken,
+          access_token: fetchOptions.android ? viewer?.androidToken : viewer?.accessToken,
           v: API_VERSION,
           lang,
           ...params

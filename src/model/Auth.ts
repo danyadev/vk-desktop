@@ -60,7 +60,7 @@ type OauthTokenResponse =
   | OauthUserBannedResponse
 
 type GetAndroidTokenResult =
-  | { kind: 'Success', userId: number, accessToken: string, trustedHash?: string }
+  | { kind: 'Success', userId: number, androidToken: string, trustedHash?: string }
   | { kind: 'InvalidCredentials', errorMessage: string }
   | {
       kind: 'RequireTwoFactor'
@@ -71,7 +71,7 @@ type GetAndroidTokenResult =
     }
   | { kind: 'InvalidTwoFactorCode', errorMessage: string }
   | { kind: 'Captcha', captchaImg: string, captchaSid: string }
-  | { kind: 'UserBanned', banMessage: string, accessToken: string }
+  | { kind: 'UserBanned', banMessage: string, androidToken: string }
   | { kind: 'NetworkError' }
   | { kind: 'UnknownError', payload: unknown }
 
@@ -124,7 +124,7 @@ export async function getAndroidToken(
             return {
               kind: 'UserBanned',
               banMessage: result.ban_info.message,
-              accessToken: result.ban_info.access_token
+              androidToken: result.ban_info.access_token
             }
           }
 
@@ -166,7 +166,7 @@ export async function getAndroidToken(
     return {
       kind: 'Success',
       userId: result.user_id,
-      accessToken: result.access_token,
+      androidToken: result.access_token,
       trustedHash: result.trusted_hash
     }
   } catch (err) {
@@ -176,4 +176,40 @@ export async function getAndroidToken(
       kind: 'NetworkError'
     }
   }
+}
+
+export async function getAppToken(androidToken: string) {
+  const query = toUrlParams({
+    redirect_uri: 'https://oauth.vk.com/blank.html',
+    display: 'page',
+    response_type: 'token',
+    access_token: androidToken,
+    revoke: 1,
+    lang: 'ru',
+    scope: 136297695,
+    client_id: 6717234,
+    v: API_VERSION,
+    sdk_package: 'ru.danyadev.vkdesktop',
+    sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
+  })
+
+  const authorizeBody = await fetch(`https://oauth.vk.com/authorize?${query}`)
+    .then((response) => response.text())
+    .catch(() => '')
+
+  const authLinkPart = authorizeBody.match(/"(\/auth_by_token.+?)"\+/)?.[1]
+  if (!authLinkPart) {
+    return null
+  }
+
+  const urlWithToken = await fetch(`https://oauth.vk.com${authLinkPart}`)
+    .then((response) => response.headers.get('x-original-url-by-electron'))
+    .catch(() => null)
+
+  if (!urlWithToken) {
+    return null
+  }
+
+  const hashValue = urlWithToken.slice(urlWithToken.indexOf('#') + 1)
+  return new URLSearchParams(hashValue).get('access_token')
 }
