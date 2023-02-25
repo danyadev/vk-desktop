@@ -16,6 +16,7 @@ type Props = {
 
 export const ModalView = defineComponent<Props>((props, { slots }) => {
   const isMounted = useIsMounted()
+  const isModalTransitionLeaved = ref(true)
   const $modalContent = ref<HTMLDivElement | null>(null)
   const { onFocusIn, onFocusOut } = useFocusTrap($modalContent)
 
@@ -54,9 +55,25 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
       return null
     }
 
+    /**
+     * Рендерим телепорт с модалкой только когда модалка открыта,
+     * либо когда анимация закрытия еще не завершилась
+     *
+     * Это нужно, чтобы в контейнере, куда телепортируется контент, модалки располагались
+     * в порядке их открытия, а не в порядке инициализации компонента с opened={false}
+     */
+    if (!unref(props.opened) && isModalTransitionLeaved.value) {
+      return null
+    }
+
     return (
       <Teleport to=".ModalsContainer">
-        <Transition name="ModalViewAnimation">
+        <Transition
+          name="ModalViewAnimation"
+          appear
+          onBeforeAppear={() => (isModalTransitionLeaved.value = false)}
+          onAfterLeave={() => (isModalTransitionLeaved.value = true)}
+        >
           {unref(props.opened) && (
             <div
               class={['ModalView', {
