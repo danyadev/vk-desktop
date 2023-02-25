@@ -4,6 +4,7 @@ import { Semaphore } from 'misc/Semaphore'
 import { useSettingsStore } from 'store/settings'
 import { useGlobalModal } from 'misc/hooks'
 import { useViewerStore } from 'store/viewer'
+import { androidUserAgent, appUserAgent } from 'misc/constants'
 
 /**
  * В случае повышения версии необходимо описать, какое поле понадобилось из новой версии
@@ -293,6 +294,7 @@ export class Api {
           ...params
         }),
         headers: {
+          'User-Agent': fetchOptions.android ? androidUserAgent : appUserAgent,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         signal: abortController.signal
