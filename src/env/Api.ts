@@ -294,7 +294,7 @@ export class Api {
           ...params
         }),
         headers: {
-          'User-Agent': fetchOptions.android ? androidUserAgent : appUserAgent,
+          'X-User-Agent': fetchOptions.android ? androidUserAgent : appUserAgent,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         signal: abortController.signal

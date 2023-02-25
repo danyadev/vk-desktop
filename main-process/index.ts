@@ -116,7 +116,15 @@ app.once('ready', () => {
     if (details.responseHeaders) {
       details.responseHeaders['x-original-url-by-electron'] = [details.url]
     }
-    callback({ responseHeaders: details.responseHeaders })
+    callback(details)
+  })
+
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    if (details.requestHeaders['X-User-Agent']) {
+      details.requestHeaders['User-Agent'] = details.requestHeaders['X-User-Agent']
+      delete details.requestHeaders['X-User-Agent']
+    }
+    callback(details)
   })
 
   if (isMacOS) {
