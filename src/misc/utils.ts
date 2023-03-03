@@ -9,7 +9,7 @@ export type Opaque<Type, Token = unknown> = Type & {
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type JSXElement = JSX.Element | string | number | null
 
-export type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T
+export type Truthy<T> = T extends false | '' | 0 | null | undefined | 0n ? never : T
 
 export type NonEmptyArray<T> = [T, ...T[]]
 

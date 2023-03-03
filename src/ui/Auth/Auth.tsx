@@ -6,7 +6,6 @@ import { Input } from 'ui/ui/Input/Input'
 import { Button } from 'ui/ui/Button/Button'
 import { Link } from 'ui/ui/Link/Link'
 import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth'
-import { exhaustivenessCheck } from 'misc/utils'
 import { useViewerStore } from 'store/viewer'
 import { userFields } from 'misc/constants'
 import { fromApiUser } from 'misc/converter/PeerConverter'
@@ -158,9 +157,6 @@ export const Auth = defineComponent(() => {
         state.error = lang.use('auth_unknown_error')
         break
       }
-
-      default:
-        exhaustivenessCheck(result)
     }
 
     state.loading = false

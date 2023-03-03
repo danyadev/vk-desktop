@@ -1,12 +1,7 @@
 import * as electron from '@electron/remote'
 import { computed, ref, watch } from 'vue'
 import { useMainSettingsStore, AppearanceScheme, AppearanceTheme } from 'store/mainSettings'
-import {
-  createSingletonHook,
-  currentWindow,
-  exhaustivenessCheck,
-  subscribeToElectronEvent
-} from 'misc/utils'
+import { createSingletonHook, currentWindow, subscribeToElectronEvent } from 'misc/utils'
 
 export const useThemeScheme = createSingletonHook(() => {
   const { appearance } = useMainSettingsStore()
@@ -61,8 +56,5 @@ function getFullScheme(
         scheme,
         actualAppTheme
       )
-
-    default:
-      exhaustivenessCheck(theme)
   }
 }

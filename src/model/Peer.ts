@@ -74,8 +74,6 @@ export function resolveRealId(realId: number, kind: Peer['kind']): Id {
       return resolveId(-realId)
     case 'Chat':
       return resolveId(realId + 2e9)
-    default:
-      exhaustivenessCheck(kind)
   }
 }
 

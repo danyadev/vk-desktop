@@ -1,6 +1,5 @@
 import { API_VERSION } from 'env/Api'
 import { toUrlParams } from 'misc/utils'
-import { androidUserAgent } from 'misc/constants'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 
@@ -104,11 +103,8 @@ export async function getAndroidToken(
   })
 
   try {
-    const result = await fetch(`https://oauth.vk.com/token?${query}`, {
-      headers: {
-        'User-Agent': androidUserAgent
-      }
-    }).then<OauthTokenResponse>((response) => response.json())
+    const result = await fetch(`https://oauth.vk.com/token?${query}`)
+      .then<OauthTokenResponse>((response) => response.json())
 
     if ('error' in result) {
       switch (result.error) {
@@ -151,10 +147,6 @@ export async function getAndroidToken(
             captchaSid: result.captcha_sid
           }
         }
-
-        default: {
-          const _typeguard: never = result
-        }
       }
 
       return {
@@ -178,14 +170,13 @@ export async function getAndroidToken(
   }
 }
 
-export async function getAppToken(androidToken: string) {
+export async function getAppToken(androidToken: string): Promise<string | null> {
   const query = toUrlParams({
     redirect_uri: 'https://oauth.vk.com/blank.html',
     display: 'page',
     response_type: 'token',
     access_token: androidToken,
     revoke: 1,
-    lang: 'ru',
     scope: 136297695,
     client_id: 6717234,
     v: API_VERSION,
@@ -197,12 +188,12 @@ export async function getAppToken(androidToken: string) {
     .then((response) => response.text())
     .catch(() => '')
 
-  const authLinkPart = authorizeBody.match(/"(\/auth_by_token.+?)"\+/)?.[1]
-  if (!authLinkPart) {
+  const authLinkPath = authorizeBody.match(/"\/(auth_by_token.+?)"\+/)?.[1]
+  if (!authLinkPath) {
     return null
   }
 
-  const urlWithToken = await fetch(`https://oauth.vk.com${authLinkPart}`)
+  const urlWithToken = await fetch(`https://oauth.vk.com/${authLinkPath}`)
     .then((response) => response.headers.get('x-original-url-by-electron'))
     .catch(() => null)
 
