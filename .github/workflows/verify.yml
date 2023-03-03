@@ -15,4 +15,4 @@ jobs:
       - name: Try lint
         run: yarn lint
       - name: Try build code (with tsc)
-      - run: yarn dist
+        run: yarn dist
