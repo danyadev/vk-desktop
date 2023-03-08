@@ -1,8 +1,8 @@
-import { computed, ref } from 'vue'
+import { computed, shallowRef } from 'vue'
 import { createSingletonHook } from 'misc/utils'
 
 export function useFocusVisible() {
-  const isFocusedByEvent = ref(false)
+  const isFocusedByEvent = shallowRef(false)
   const isFocusedByTab = useTabFocusTracker()
 
   return {
@@ -13,7 +13,7 @@ export function useFocusVisible() {
 }
 
 const useTabFocusTracker = createSingletonHook(() => {
-  const isFocusedByTab = ref(false)
+  const isFocusedByTab = shallowRef(false)
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Tab') {

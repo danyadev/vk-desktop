@@ -1,5 +1,5 @@
 import './ModalView.css'
-import { defineComponent, ref, Ref, Teleport, Transition, unref, watch } from 'vue'
+import { defineComponent, Ref, shallowRef, Teleport, Transition, unref, watch } from 'vue'
 import { useIsMounted } from 'misc/hooks'
 import { useFocusTrap } from './useFocusTrap'
 
@@ -26,8 +26,8 @@ type Props = {
 
 export const ModalView = defineComponent<Props>((props, { slots }) => {
   const isMounted = useIsMounted()
-  const isModalVisible = ref(false)
-  const $modalContent = ref<HTMLDivElement | null>(null)
+  const isModalVisible = shallowRef(false)
+  const $modalContent = shallowRef<HTMLDivElement | null>(null)
   const { onFocusIn, onFocusOut } = useFocusTrap($modalContent)
 
   /**

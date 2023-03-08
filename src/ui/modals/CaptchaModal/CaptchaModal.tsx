@@ -1,5 +1,5 @@
 import './CaptchaModal.css'
-import { defineComponent, ref, KeyboardEvent } from 'vue'
+import { defineComponent, KeyboardEvent, shallowRef } from 'vue'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { useEnv, useGlobalModal } from 'misc/hooks'
@@ -13,8 +13,8 @@ export type CaptchaModalParams = {
 export const CaptchaModal = defineComponent<CaptchaModalParams>((params) => {
   const { lang } = useEnv()
   const { captchaModal } = useGlobalModal()
-  const captchaKey = ref('')
-  const captchaImg = ref(params.captchaImg)
+  const captchaKey = shallowRef('')
+  const captchaImg = shallowRef(params.captchaImg)
 
   function closeModal(key?: string) {
     params.onClose(key)

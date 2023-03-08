@@ -1,5 +1,5 @@
 import './Input.css'
-import { defineComponent, InputHTMLAttributes, onMounted, ref } from 'vue'
+import { defineComponent, InputHTMLAttributes, onMounted, shallowRef } from 'vue'
 import { JSXElement } from 'misc/utils'
 
 type InheritedProps = InputHTMLAttributes
@@ -13,7 +13,7 @@ type Props = {
 } & InheritedProps
 
 export const Input = defineComponent<Props>((props, { attrs }) => {
-  const $input = ref<HTMLInputElement | null>(null)
+  const $input = shallowRef<HTMLInputElement | null>(null)
 
   onMounted(() => {
     if (props.autofocus) {

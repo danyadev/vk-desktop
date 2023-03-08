@@ -1,5 +1,15 @@
 import './Auth.css'
-import { computed, defineComponent, onMounted, reactive, ref, InputEvent, KeyboardEvent, Ref } from 'vue'
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  InputEvent,
+  KeyboardEvent,
+  Ref,
+  shallowRef,
+  shallowReactive,
+  reactive
+} from 'vue'
 import { useEnv, useGlobalModal } from 'misc/hooks'
 import logo from 'assets/logo512.png'
 import { Input } from 'ui/ui/Input/Input'
@@ -189,9 +199,9 @@ type AuthMainProps = {
 
 const AuthMain = defineComponent<AuthMainProps>((props) => {
   const { lang } = useEnv()
-  const showPassword = ref(false)
+  const showPassword = shallowRef(false)
 
-  const state = reactive({
+  const state = shallowReactive({
     login: '',
     password: ''
   })
@@ -258,9 +268,9 @@ type AuthTwoFactorProps = {
 
 const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
   const { lang, api } = useEnv()
-  const code = ref('')
-  const resendSmsTimer = ref<number>(0)
-  const isSendingSms = ref(false)
+  const code = shallowRef('')
+  const resendSmsTimer = shallowRef(0)
+  const isSendingSms = shallowRef(false)
 
   function onInput(event: InputEvent<HTMLInputElement>) {
     code.value = event.target.value

@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { reactive, shallowRef } from 'vue'
 import { createSingletonHook } from 'misc/utils'
 import { CaptchaModalParams } from 'ui/modals/CaptchaModal/CaptchaModal'
 
@@ -9,9 +9,9 @@ export const useGlobalModal = createSingletonHook(() => {
 })
 
 function createGlobalModal<ModalParams>(modalName: string) {
-  const opened = ref(false)
-  const visible = ref(false)
-  const params = ref<ModalParams>()
+  const opened = shallowRef(false)
+  const visible = shallowRef(false)
+  const params = shallowRef<ModalParams>()
 
   function open(modalParams: ModalParams) {
     if (opened.value) {

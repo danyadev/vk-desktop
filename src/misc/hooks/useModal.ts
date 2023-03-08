@@ -1,8 +1,8 @@
-import { computed, ref } from 'vue'
+import { computed, shallowRef } from 'vue'
 
 export function useModal() {
-  const opened = ref(false)
-  const hidden = ref(false)
+  const opened = shallowRef(false)
+  const hidden = shallowRef(false)
 
   return {
     opened,

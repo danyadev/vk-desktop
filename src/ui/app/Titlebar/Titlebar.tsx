@@ -1,5 +1,5 @@
 import './Titlebar.css'
-import { defineComponent, ref } from 'vue'
+import { defineComponent, shallowRef } from 'vue'
 import { isMacOS } from 'misc/constants'
 import { currentWindow, subscribeToElectronEvent } from 'misc/utils'
 import {
@@ -21,7 +21,7 @@ const buttons = [
 export const Titlebar = defineComponent(() => {
   const { lang } = useEnv()
   const mainSettings = useMainSettingsStore()
-  const isMaximized = ref(currentWindow.isMaximized())
+  const isMaximized = shallowRef(currentWindow.isMaximized())
 
   const onMaximize = () => (isMaximized.value = true)
   const onUnmaximize = () => (isMaximized.value = false)

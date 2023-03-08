@@ -1,7 +1,7 @@
-import { onMounted, ref } from 'vue'
+import { onMounted, shallowRef } from 'vue'
 
 export function useIsMounted() {
-  const isMounted = ref(false)
+  const isMounted = shallowRef(false)
 
   onMounted(() => {
     isMounted.value = true
