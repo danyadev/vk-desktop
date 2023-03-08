@@ -2,6 +2,7 @@ import { useMainSettingsStore } from 'store/mainSettings'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import { useEnv } from 'misc/hooks'
+import * as Auth from 'model/Auth'
 
 /**
  * Вытаскиваем полезные функции/переменные/etc в глобальную область видимости,
@@ -16,6 +17,7 @@ type ExposedFeatures = {
   settings: ReturnType<typeof useSettingsStore>
   viewer: ReturnType<typeof useViewerStore>
   api: ReturnType<typeof useEnv>['api']
+  auth: typeof Auth
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 
@@ -26,4 +28,5 @@ export function exposeFeatures() {
   exposedWindow.settings = useSettingsStore()
   exposedWindow.viewer = useViewerStore()
   exposedWindow.api = api
+  exposedWindow.auth = { ...Auth }
 }

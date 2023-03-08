@@ -11,6 +11,8 @@ type Props = {
   onClose: () => void
   /** Убирает темный фон под модалкой */
   noBackdrop?: boolean
+  /** Сообщает о фактической смене видимости модалки. См. описание в ModalView */
+  onVisibilityChange?: (isVisible: boolean) => void
   /** Заголовок в шапке модалки */
   title: string | JSXElement
   /** Убирает стандартные отступы для контента модалки */
@@ -30,6 +32,7 @@ export const Modal = defineComponent<Props>((props, { slots }) => {
       hidden={props.hidden}
       onClose={props.onClose}
       noBackdrop={props.noBackdrop}
+      onVisibilityChange={props.onVisibilityChange}
     >
       <ModalHeader title={props.title} onClose={props.onClose} />
       <ModalBody

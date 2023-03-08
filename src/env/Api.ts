@@ -214,7 +214,7 @@ export class Api {
 
   private async handleErrors<Method extends keyof Methods>(
     apiError: ApiMethodError | ApiExecuteError,
-    params: MethodParams<Method>
+    params: MethodParams<Method> = {}
   ): Promise<[boolean, boolean]> {
     const error = apiError.type === 'MethodError' ? apiError : apiError.errors[0]
 

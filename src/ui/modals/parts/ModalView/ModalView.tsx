@@ -12,11 +12,21 @@ type Props = {
   onClose: () => void
   /** Убирает темный фон под модалкой */
   noBackdrop?: boolean
+  /**
+   * Функция, сообщающая о смене актуальной видимости модалки.
+   * isVisible = true выставляется перед началом анимации появления модалки
+   * isVisible = false выставляется после окончания анимации скрытия модалки
+   *
+   * Схема работы:
+   * <opened = true> -> <isVisible = true> -> [анимация появления модалки]
+   * <opened = false> -> [анимация скрытия модалки] -> <isVisible = false>
+   */
+  onVisibilityChange?: (isVisible: boolean) => void
 }
 
 export const ModalView = defineComponent<Props>((props, { slots }) => {
   const isMounted = useIsMounted()
-  const isModalTransitionLeaved = ref(true)
+  const isModalVisible = ref(false)
   const $modalContent = ref<HTMLDivElement | null>(null)
   const { onFocusIn, onFocusOut } = useFocusTrap($modalContent)
 
@@ -42,6 +52,30 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
     $modalContent.value.focus()
   })
 
+  function onBeforeAppear() {
+    isModalVisible.value = true
+    props.onVisibilityChange?.(true)
+  }
+
+  function onAfterLeave() {
+    /**
+     * Если на этот момент модалка в открытом состоянии, то это означает,
+     * что она была повторно открыта до момента окончания текущей анимации закрытия.
+     * (см. схему в описании поля onVisibilityChange)
+     *
+     * Пропускаем установку видимости в false, чтобы у модалки, которая в данный момент
+     * собирается открыться, не было неправильного состояния <opened = true> и <visible = false>,
+     * когда на самом деле модалка видна.
+     * Иначе при закрытии этой модалки не произойдет анимации закрытия
+     */
+    if (props.opened) {
+      return
+    }
+
+    isModalVisible.value = false
+    props.onVisibilityChange?.(false)
+  }
+
   return () => {
     /**
      * Телепортом можно пользоваться только когда элемент назначения (ModalsContainer)
@@ -62,7 +96,7 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
      * Это нужно, чтобы в контейнере, куда телепортируется контент, модалки располагались
      * в порядке их открытия, а не в порядке инициализации компонента с opened={false}
      */
-    if (!unref(props.opened) && isModalTransitionLeaved.value) {
+    if (!unref(props.opened) && !isModalVisible.value) {
       return null
     }
 
@@ -71,8 +105,8 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
         <Transition
           name="ModalViewAnimation"
           appear
-          onBeforeAppear={() => (isModalTransitionLeaved.value = false)}
-          onAfterLeave={() => (isModalTransitionLeaved.value = true)}
+          onBeforeAppear={onBeforeAppear}
+          onAfterLeave={onAfterLeave}
         >
           {unref(props.opened) && (
             <div
@@ -102,4 +136,4 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
   }
 })
 
-ModalView.props = ['opened', 'hidden', 'onClose', 'noBackdrop']
+ModalView.props = ['opened', 'hidden', 'onClose', 'noBackdrop', 'onVisibilityChange']

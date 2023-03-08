@@ -2,7 +2,7 @@ import './App.css'
 import electron from 'electron'
 import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
-import { useEnv } from 'misc/hooks'
+import { useEnv, useGlobalModal } from 'misc/hooks'
 import { isMacOS } from 'misc/constants'
 import { currentWindow, debounce, subscribeToElectronEvent } from 'misc/utils'
 import { useThemeScheme } from './useThemeScheme'
@@ -41,8 +41,23 @@ export const App = defineComponent(() => {
         <RouterView />
 
         <ModalsContainer />
-        <CaptchaModal />
+        <GlobalModals />
       </div>
     </div>
+  )
+})
+
+const GlobalModals = defineComponent(() => {
+  const { captchaModal } = useGlobalModal()
+  const modals = [
+    [captchaModal, CaptchaModal]
+  ] as const
+
+  return () => (
+    modals.map(([modal, Modal]) => (
+      // Параметры появляются при открытии модалки,
+      // а удаляются только после окончания анимации закрытия модалки
+      modal.params && <Modal {...modal.params} />
+    ))
   )
 })

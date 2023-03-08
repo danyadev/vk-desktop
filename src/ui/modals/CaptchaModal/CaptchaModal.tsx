@@ -1,23 +1,38 @@
 import './CaptchaModal.css'
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, KeyboardEvent } from 'vue'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { useEnv, useGlobalModal } from 'misc/hooks'
 import { Input } from 'ui/ui/Input/Input'
 
-export const CaptchaModal = defineComponent(() => {
+export type CaptchaModalParams = {
+  captchaImg: string
+  onClose: (captchaKey?: string) => void
+}
+
+export const CaptchaModal = defineComponent<CaptchaModalParams>((params) => {
   const { lang } = useEnv()
   const { captchaModal } = useGlobalModal()
   const captchaKey = ref('')
+  const captchaImg = ref(params.captchaImg)
 
   function closeModal(key?: string) {
-    captchaModal.meta?.onClose(key)
+    params.onClose(key)
     captchaModal.close()
   }
 
   function updateImgUrl() {
-    if (captchaModal.meta?.captchaImg) {
-      captchaModal.meta.captchaImg += '1'
+    /**
+     * API возвращает ссылку на капчу с &s=1 на конце.
+     * Изменяем ссылку на картинку, чтобы бэкенд сгенерировал новую картинку
+     * и на ней появилась другая капча
+     */
+    captchaImg.value += '1'
+  }
+
+  function onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && captchaKey.value) {
+      closeModal(captchaKey.value)
     }
   }
 
@@ -26,15 +41,16 @@ export const CaptchaModal = defineComponent(() => {
       title={lang.use('captchaModal_title')}
       opened={captchaModal.opened}
       onClose={() => closeModal()}
+      onVisibilityChange={captchaModal.onVisibilityChange}
       buttons={
-        <Button onClick={() => closeModal(captchaKey.value)}>
+        <Button disabled={!captchaKey.value} onClick={() => closeModal(captchaKey.value)}>
           {lang.use('modal_send_label')}
         </Button>
       }
       class="CaptchaModal"
     >
       <img
-        src={captchaModal.meta?.captchaImg}
+        src={captchaImg.value}
         class="CaptchaModal__img"
         onClick={updateImgUrl}
       />
@@ -42,10 +58,12 @@ export const CaptchaModal = defineComponent(() => {
         class="CaptchaModal__input"
         placeholder={lang.use('captchaModal_enter_code')}
         onInput={(event) => (captchaKey.value = event.target.value)}
-        onKeydown={(event) => event.key === 'Enter' && closeModal(captchaKey.value)}
+        onKeydown={onKeyDown}
         autofocus
         inLayer
       />
     </Modal>
   )
 })
+
+CaptchaModal.props = ['captchaImg', 'onClose']
