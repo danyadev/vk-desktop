@@ -161,7 +161,7 @@ app.once('ready', () => {
       }
     })
   } else {
-    mainWindow.removeMenu()
+    mainWindow.setMenuBarVisibility(false)
   }
 })
 
