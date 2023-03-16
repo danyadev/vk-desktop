@@ -18,6 +18,9 @@
     "value-keyword-case": ["lower", {
       "ignoreKeywords": ["optimizeSpeed"]
     }],
-    "declaration-property-value-no-unknown": true
+    "declaration-property-value-no-unknown": true,
+    "declaration-block-no-redundant-longhand-properties": [true, {
+      "ignoreShorthands": ["inset"]
+    }]
   }
 }
