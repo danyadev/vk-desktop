@@ -1,7 +1,18 @@
-import { FocusEvent, Ref } from 'vue'
+import { FocusEvent, onBeforeMount, onUnmounted, Ref } from 'vue'
 
 export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
+  let initialFocusedElement: Element | null = null
   let isPageBecomeActive = false
+
+  onBeforeMount(() => {
+    initialFocusedElement = document.activeElement
+  })
+
+  onUnmounted(() => {
+    if (initialFocusedElement instanceof HTMLElement) {
+      initialFocusedElement.focus()
+    }
+  })
 
   /**
    * event.relatedTarget - предыдущий сфокусированный элемент
