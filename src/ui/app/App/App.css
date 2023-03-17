@@ -14,3 +14,26 @@
   position: relative;
   height: 100%;
 }
+
+/* Скроллбар меняется с дефолтного на кастомный только при выставлении стилей в этом селекторе */
+.App:not(.App--isMacOS)::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+* {
+  --scrollbar-color: transparent;
+}
+
+*:hover {
+  --scrollbar-color: var(--black_alpha30);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 4px solid transparent;
+  border-radius: 10px;
+  box-shadow: 0 0 0 5px var(--scrollbar-color) inset;
+}

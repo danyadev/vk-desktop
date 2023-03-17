@@ -37,7 +37,7 @@ export const App = defineComponent(() => {
   return () => (
     <div class="root" data-scheme={scheme.value}>
       <Titlebar />
-      <div class="App">
+      <div class={['App', { 'App--isMacOS': isMacOS }]}>
         <RouterView />
 
         <ModalsContainer />

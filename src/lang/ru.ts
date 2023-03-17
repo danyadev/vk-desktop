@@ -18,7 +18,7 @@ export const ru = {
   auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {0}',
   auth_enter_code_from_code_gen_app: 'Введите код из приложения генератора кодов',
   auth_enter_code: 'Введите код',
-  auth_sms_is_sending: 'SMS отправляется...',
+  auth_sms_is_sending: 'SMS отправляется',
   auth_resend_sms_at: 'Повторить через {0}',
   auth_resend_sms: 'Повторить отправку SMS',
   auth_send_sms: 'Отправить SMS',

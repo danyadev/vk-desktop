@@ -17,8 +17,8 @@
 }
 
 html, body {
-  margin: 0;
   height: 100%;
+  margin: 0;
 }
 
 img {
@@ -38,12 +38,6 @@ img {
   outline: none;
 }
 
-/*
-::-webkit-scrollbar {
-display: none;
-}
-*/
-
 :root {
   --fontFamily: 'BlinkMacSystemFont', 'Roboto VK';
   --fontSize: 15px;
@@ -62,6 +56,7 @@ display: none;
   --white_alpha20: rgba(255, 255, 255, 0.2);
   --black_alpha12: rgba(0, 0, 0, 0.12);
   --black_alpha20: rgba(0, 0, 0, 0.2);
+  --black_alpha30: rgba(0, 0, 0, 0.3);
   --black_alpha40: rgba(0, 0, 0, 0.4);
   --black_alpha72: rgba(0, 0, 0, 0.72);
   --gray_850: #232324;
