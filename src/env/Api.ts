@@ -1,5 +1,5 @@
 import { CommonParams, Methods } from 'model/api-types'
-import { NonEmptyArray, timer, toUrlParams, Truthy } from 'misc/utils'
+import { NonEmptyArray, random, timer, toUrlParams, Truthy } from 'misc/utils'
 import { Semaphore } from 'misc/Semaphore'
 import { useSettingsStore } from 'store/settings'
 import { useGlobalModal } from 'misc/hooks'
@@ -115,7 +115,10 @@ export class Api {
         }
 
         if (!skipBackoff) {
-          await timer(API_MIN_RETRY_DELAY * (2 ** Math.min(attempts - 1, 4)))
+          // https://aws.amazon.com/ru/blogs/architecture/exponential-backoff-and-jitter
+          const exponentialBackoff = API_MIN_RETRY_DELAY * (2 ** Math.min(attempts - 1, 5))
+          const equalJitterBackoff = (exponentialBackoff / 2) + random(0, exponentialBackoff / 2)
+          await timer(equalJitterBackoff)
         }
       }
     }
@@ -316,8 +319,10 @@ export class Api {
           type: 'MethodError',
           code: result.error.error_code,
           message: result.error.error_msg,
-          captchaSid: result.error.captcha_sid,
-          captchaImg: result.error.captcha_img,
+          ...(result.error.captcha_sid && result.error.captcha_img && {
+            captchaSid: result.error.captcha_sid,
+            captchaImg: result.error.captcha_img
+          }),
           requestParams: result.error.request_params
         })
       }
@@ -329,8 +334,10 @@ export class Api {
             method: error.method,
             code: error.error_code,
             message: error.error_msg,
-            captchaSid: error.captcha_sid,
-            captchaImg: error.captcha_img
+            ...(error.captcha_sid && error.captcha_img && {
+              captchaSid: error.captcha_sid,
+              captchaImg: error.captcha_img
+            })
           }))
         })
       }

@@ -23,6 +23,10 @@ export function timer(milliseconds: number) {
   return new Promise<void>((resolve) => window.setTimeout(resolve, milliseconds))
 }
 
+export function random(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
 export function exhaustivenessCheck(_unused: never): never {
   throw new Error('Exhaustiveness failure! This should never happen.')
 }
