@@ -1,3 +1,57 @@
 .Messenger {
+  display: flex;
   height: 100%;
+}
+
+.Messenger__leftPanel {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  border-right: 1px solid var(--separator_common);
+}
+
+.Messenger__leftPanelHeader {
+  height: 48px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--separator_common);
+}
+
+.Messenger__leftPanelContent {
+  overflow: overlay;
+}
+
+.Messenger__content {
+  flex-grow: 1;
+}
+
+@media (width < 700px) {
+  .Messenger__leftPanel {
+    width: 100%;
+    border-right: none;
+  }
+
+  .Messenger__content {
+    /* TODO: поддержать кейс с открытым чатом */
+    display: none;
+  }
+}
+
+@media (700px <= width <= 880px) {
+  .Messenger__leftPanel {
+    width: 41%;
+  }
+
+  .Messenger__content {
+    width: 59%;
+  }
+}
+
+@media (width > 880px) {
+  .Messenger__leftPanel {
+    width: calc(880px * 0.41);
+  }
+
+  .Messenger__content {
+    width: calc(100% - 880px * 0.41);
+  }
 }
