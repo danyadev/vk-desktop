@@ -51,8 +51,6 @@ export default defineConfig({
         }
       }
     }),
-    electronRenderer({
-      nodeIntegration: true
-    })
+    electronRenderer()
   ]
 })
