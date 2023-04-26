@@ -7,7 +7,7 @@ const langMap = {
   ru
 }
 
-type Dictionary = typeof langMap[Settings['lang']]
+export type Dictionary = typeof langMap[Settings['lang']]
 
 type DictionaryWithStringValues = {
   [Key in keyof Dictionary as Dictionary[Key] extends string ? Key : never]: Dictionary[Key]

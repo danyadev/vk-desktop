@@ -1,7 +1,9 @@
 import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
 import {
   MessagesGetConversationsParams,
-  MessagesGetConversationsResponse
+  MessagesGetConversationsResponse,
+  MessagesGetLongPollServerParams,
+  MessagesGetLongPollServerResponse
 } from 'model/api-types/methods/Messages'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
 import { AuthValidatePhoneParams, AuthValidatePhoneResponse } from 'model/api-types/methods/Auth'
@@ -35,6 +37,10 @@ export type Methods = {
   'messages.getConversations': {
     params: MessagesGetConversationsParams
     response: MessagesGetConversationsResponse
+  }
+  'messages.getLongPollServer': {
+    params: MessagesGetLongPollServerParams
+    response: MessagesGetLongPollServerResponse
   }
 
   'groups.getById': {

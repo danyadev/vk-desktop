@@ -1,6 +1,10 @@
 import Electron, { Menu, shell } from 'electron'
+import { Dictionary } from 'env/Lang'
 
-export function buildMacOSMenu(mainWindow: Electron.BrowserWindow, labels: Record<string, string>) {
+export function buildMacOSMenu(
+  mainWindow: Electron.BrowserWindow,
+  labels: Dictionary['app_menu_labels']
+) {
   const menu: Electron.MenuItemConstructorOptions[] = [
     {
       label: labels.appMenuTitle,

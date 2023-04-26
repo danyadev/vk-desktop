@@ -17,16 +17,18 @@ type ExposedFeatures = {
   settings: ReturnType<typeof useSettingsStore>
   viewer: ReturnType<typeof useViewerStore>
   api: ReturnType<typeof useEnv>['api']
+  engine: ReturnType<typeof useEnv>['engine']
   auth: typeof Auth
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 
 export function exposeFeatures() {
-  const { api } = useEnv()
+  const { api, engine } = useEnv()
 
   exposedWindow.mainSettings = useMainSettingsStore()
   exposedWindow.settings = useSettingsStore()
   exposedWindow.viewer = useViewerStore()
   exposedWindow.api = api
+  exposedWindow.engine = engine
   exposedWindow.auth = { ...Auth }
 }

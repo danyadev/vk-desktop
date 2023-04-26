@@ -1,5 +1,6 @@
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
+import { MessagesLongpollParams } from 'model/api-types/objects/MessagesLongpollParams'
 
 // messages.getConversations
 export type MessagesGetConversationsParams = {
@@ -13,3 +14,12 @@ export type MessagesGetConversationsResponse = {
     last_message: MessagesMessage
   }>
 }
+
+// messages.getLongPollServer
+export type MessagesGetLongPollServerParams = {
+  lp_version: number
+  need_pts: 1
+  group_id?: number
+}
+
+export type MessagesGetLongPollServerResponse = MessagesLongpollParams

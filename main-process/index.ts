@@ -4,6 +4,7 @@ import os from 'os'
 import Electron, { app, BrowserWindow, shell, screen, nativeTheme, ipcMain, session } from 'electron'
 import * as electronMain from '@electron/remote/main'
 import { buildMacOSMenu } from './buildMacOSMenu'
+import { Dictionary } from 'env/Lang'
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
@@ -128,7 +129,7 @@ app.once('ready', () => {
   })
 
   if (isMacOS) {
-    ipcMain.on('menu:build', (event, labels: Record<string, string>) => {
+    ipcMain.on('menu:build', (event, labels: Dictionary['app_menu_labels']) => {
       buildMacOSMenu(mainWindow, labels)
     })
 

@@ -99,14 +99,22 @@ export class Api {
 
         let skipBackoff = false
 
-        if (err.type === 'MethodError' || err.type === 'ExecuteError') {
-          const [restoreAttempt, heedSkipBackoff] = await this.handleErrors(err, params)
+        switch (err.type) {
+          case 'FetchError':
+            // Никак дополнительно не обрабатываем ошибку сети
+            break
 
-          if (restoreAttempt) {
-            availableAttempts++
-          }
-          if (heedSkipBackoff) {
-            skipBackoff = true
+          case 'MethodError':
+          case 'ExecuteError': {
+            const [restoreAttempt, heedSkipBackoff] = await this.handleErrors(err, params)
+
+            if (restoreAttempt) {
+              availableAttempts++
+            }
+            if (heedSkipBackoff) {
+              skipBackoff = true
+            }
+            break
           }
         }
 
