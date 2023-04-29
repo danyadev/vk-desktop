@@ -1,23 +1,12 @@
-import { computed, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { Lang } from 'env/Lang'
-import { Api } from 'env/Api'
-import { Engine } from 'env/Engine'
-import { useSettingsStore } from 'store/settings'
-import { createSingletonHook } from 'misc/utils'
+import { inject } from 'vue'
+import { ENV_PROVIDE_KEY } from 'env/createEnv'
 
-export const useEnv = createSingletonHook(() => {
-  const settings = useSettingsStore()
+export function useEnv() {
+  const env = inject(ENV_PROVIDE_KEY)
 
-  const lang = computed(() => new Lang(settings.lang))
-  const api = new Api()
-  const engine = new Engine()
-  const router = useRouter()
+  if (!env) {
+    throw new Error('useEnv был вызван вне контекста приложения')
+  }
 
-  return reactive({
-    lang,
-    api,
-    engine,
-    router
-  })
-})
+  return env
+}

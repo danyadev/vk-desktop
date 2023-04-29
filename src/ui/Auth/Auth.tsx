@@ -10,6 +10,7 @@ import {
   shallowReactive,
   reactive
 } from 'vue'
+import { useRouter } from 'vue-router'
 import { useEnv, useGlobalModal } from 'misc/hooks'
 import logo from 'assets/logo512.png'
 import { Input } from 'ui/ui/Input/Input'
@@ -19,7 +20,6 @@ import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth
 import { useViewerStore } from 'store/viewer'
 import { userFields } from 'misc/constants'
 import { fromApiUser } from 'misc/converter/PeerConverter'
-import { format } from 'misc/date/utils'
 import { Icon24HideOutline, Icon24ViewOutline } from 'assets/icons'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 
@@ -44,7 +44,8 @@ type AuthState = {
 }
 
 export const Auth = defineComponent(() => {
-  const { api, lang, router } = useEnv()
+  const { api, lang } = useEnv()
+  const router = useRouter()
   const viewer = useViewerStore()
 
   const state = reactive<AuthState>({
@@ -396,7 +397,7 @@ const SmsStatus = defineComponent<SmsStatusProps>((props) => {
 
     if (resendSmsTimer.value) {
       return lang.use('auth_resend_sms_at', [
-        format(new Date(resendSmsTimer.value * 1000), 'mm:ss')
+        lang.formatDate(resendSmsTimer.value * 1000, 'mm:ss')
       ])
     }
 

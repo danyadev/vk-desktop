@@ -8,7 +8,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { initStores } from 'store/init'
 import { router } from 'env/router'
-import { exposeFeatures } from 'misc/exposeFeatures'
+import { createEnv, ENV_PROVIDE_KEY } from 'env/createEnv'
 import { App } from 'ui/app/App/App'
 
 const app = createApp(App)
@@ -19,6 +19,7 @@ initStores()
 
 app.use(router)
 
-app.mount('body')
+const env = createEnv()
+app.provide(ENV_PROVIDE_KEY, env)
 
-exposeFeatures()
+app.mount('body')

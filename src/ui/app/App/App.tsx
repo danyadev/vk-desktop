@@ -10,11 +10,14 @@ import { useMainSettingsStore } from 'store/mainSettings'
 import { Titlebar } from 'ui/app/Titlebar/Titlebar'
 import { ModalsContainer } from 'ui/modals/parts'
 import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
+import { exposeFeatures } from 'misc/exposeFeatures'
 
 export const App = defineComponent(() => {
   const { lang } = useEnv()
   const scheme = useThemeScheme()
   const mainSettings = useMainSettingsStore()
+
+  exposeFeatures()
 
   if (isMacOS) {
     electron.ipcRenderer.send('menu:build', lang.useRaw('app_menu_labels'))
