@@ -1,6 +1,6 @@
 import { defineComponent, Ref } from 'vue'
-import { ModalBody, ModalFooter, ModalHeader, ModalView } from 'ui/modals/parts'
 import { JSXElement } from 'misc/utils'
+import { ModalBody, ModalFooter, ModalHeader, ModalView } from 'ui/modals/parts'
 
 type Props = {
   /** Открыта ли модалка */

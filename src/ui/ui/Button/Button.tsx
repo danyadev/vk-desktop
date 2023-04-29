@@ -1,9 +1,10 @@
 import './Button.css'
-import { defineComponent, ButtonHTMLAttributes } from 'vue'
+
+import { ButtonHTMLAttributes, defineComponent } from 'vue'
 import { JSXElement } from 'misc/utils'
-import { Spinner } from 'ui/ui/Spinner/Spinner'
-import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
 import { useFocusVisible } from 'misc/hooks'
+import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
+import { Spinner } from 'ui/ui/Spinner/Spinner'
 
 type Props = {
   size?: 'small' | 'medium' | 'large'

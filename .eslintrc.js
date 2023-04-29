@@ -17,7 +17,7 @@ module.exports = {
     es2021: true
   },
 
-  plugins: ['import'],
+  plugins: ['import', 'simple-import-sort'],
 
   settings: {
     'import/resolver': {
@@ -258,15 +258,22 @@ module.exports = {
     'import/first': 'error',
     'import/newline-after-import': 'error',
     'import/no-default-export': 'error',
-    'import/order': ['error', {
-      groups: [
-        'builtin',
-        'external',
-        ['internal', 'parent', 'sibling', 'index']
-      ]
-    }],
     'import/no-duplicates': 'error',
     //#endregion
+
+    'simple-import-sort/imports': ['error', {
+      groups: [
+        ['.css$'],
+        [
+          ...['^fs$', '^os$', '^path$'],
+          ...['^@?electron', '^vue', '^pinia'],
+          ...['^env', '^store', '^model', '^lang'],
+          ...['^misc/utils', '^misc/hooks', '^misc/converter', '^misc'],
+          ...['^\\./', '^ui']
+        ],
+        ['^assets']
+      ]
+    }],
 
     //#region @typescript-eslint
     '@typescript-eslint/array-type': ['error', {

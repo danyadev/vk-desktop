@@ -1,5 +1,7 @@
 import './Spinner.css'
+
 import { defineComponent } from 'vue'
+
 import {
   Icon16Spinner,
   Icon24Spinner,

@@ -1,10 +1,10 @@
+import { useSettingsStore } from 'store/settings'
+import { useViewerStore } from 'store/viewer'
 import { CommonParams, Methods } from 'model/api-types'
 import { NonEmptyArray, random, timer, toUrlParams, Truthy } from 'misc/utils'
-import { Semaphore } from 'misc/Semaphore'
-import { useSettingsStore } from 'store/settings'
 import { useGlobalModal } from 'misc/hooks'
-import { useViewerStore } from 'store/viewer'
 import { androidUserAgent, appUserAgent } from 'misc/constants'
+import { Semaphore } from 'misc/Semaphore'
 
 /**
  * В случае повышения версии необходимо описать, какое поле понадобилось из новой версии

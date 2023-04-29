@@ -1,27 +1,29 @@
 import './Auth.css'
+
 import {
   computed,
   defineComponent,
-  onMounted,
   InputEvent,
   KeyboardEvent,
+  onMounted,
+  reactive,
   Ref,
-  shallowRef,
   shallowReactive,
-  reactive
+  shallowRef
 } from 'vue'
 import { useRouter } from 'vue-router'
-import { useEnv, useGlobalModal } from 'misc/hooks'
-import logo from 'assets/logo512.png'
-import { Input } from 'ui/ui/Input/Input'
-import { Button } from 'ui/ui/Button/Button'
-import { Link } from 'ui/ui/Link/Link'
-import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth'
 import { useViewerStore } from 'store/viewer'
-import { userFields } from 'misc/constants'
+import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth'
+import { useEnv, useGlobalModal } from 'misc/hooks'
 import { fromApiUser } from 'misc/converter/PeerConverter'
-import { Icon24HideOutline, Icon24ViewOutline } from 'assets/icons'
+import { userFields } from 'misc/constants'
+import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { Input } from 'ui/ui/Input/Input'
+import { Link } from 'ui/ui/Link/Link'
+
+import { Icon24HideOutline, Icon24ViewOutline } from 'assets/icons'
+import logo from 'assets/logo512.png'
 
 /**
  * Чеклист по готовности авторизации:

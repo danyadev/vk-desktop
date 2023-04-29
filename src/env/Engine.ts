@@ -1,6 +1,6 @@
 import { MessagesLongpollParams } from 'model/api-types/objects/MessagesLongpollParams'
-import { toUrlParams } from 'misc/utils'
 import { EngineResponse } from 'model/Engine'
+import { toUrlParams } from 'misc/utils'
 
 export const ENGINE_VERSION = 19
 

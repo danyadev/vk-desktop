@@ -1,13 +1,13 @@
-import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
+import { AuthValidatePhoneParams, AuthValidatePhoneResponse } from 'model/api-types/methods/Auth'
+import { CaptchaForceParams, CaptchaForceResponse } from 'model/api-types/methods/Captcha'
+import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
 import {
   MessagesGetConversationsParams,
   MessagesGetConversationsResponse,
   MessagesGetLongPollServerParams,
   MessagesGetLongPollServerResponse
 } from 'model/api-types/methods/Messages'
-import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
-import { AuthValidatePhoneParams, AuthValidatePhoneResponse } from 'model/api-types/methods/Auth'
-import { CaptchaForceParams, CaptchaForceResponse } from 'model/api-types/methods/Captcha'
+import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
 
 /**
  * Disclaimer:
@@ -29,9 +29,19 @@ export type Methods = {
     response: unknown
   }
 
-  'users.get': {
-    params: UsersGetParams
-    response: UsersGetResponse
+  'auth.validatePhone': {
+    params: AuthValidatePhoneParams
+    response: AuthValidatePhoneResponse
+  }
+
+  'captcha.force': {
+    params: CaptchaForceParams
+    response: CaptchaForceResponse
+  }
+
+  'groups.getById': {
+    params: GroupsGetByIdParams
+    response: GroupsGetByIdResponse
   }
 
   'messages.getConversations': {
@@ -43,18 +53,8 @@ export type Methods = {
     response: MessagesGetLongPollServerResponse
   }
 
-  'groups.getById': {
-    params: GroupsGetByIdParams
-    response: GroupsGetByIdResponse
-  }
-
-  'auth.validatePhone': {
-    params: AuthValidatePhoneParams
-    response: AuthValidatePhoneResponse
-  }
-
-  'captcha.force': {
-    params: CaptchaForceParams
-    response: CaptchaForceResponse
+  'users.get': {
+    params: UsersGetParams
+    response: UsersGetResponse
   }
 }

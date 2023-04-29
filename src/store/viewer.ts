@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { RendererStorage } from 'model/Storage'
 import * as Peer from 'model/Peer'
+import { RendererStorage } from 'model/Storage'
 
 type ViewerUser = Peer.User & {
   accessToken: string

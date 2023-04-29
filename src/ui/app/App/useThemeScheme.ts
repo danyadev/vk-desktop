@@ -1,6 +1,6 @@
 import * as electron from '@electron/remote'
 import { computed, shallowRef, watch } from 'vue'
-import { useMainSettingsStore, AppearanceScheme, AppearanceTheme } from 'store/mainSettings'
+import { AppearanceScheme, AppearanceTheme, useMainSettingsStore } from 'store/mainSettings'
 import { createSingletonHook, currentWindow, subscribeToElectronEvent } from 'misc/utils'
 
 export const useThemeScheme = createSingletonHook(() => {

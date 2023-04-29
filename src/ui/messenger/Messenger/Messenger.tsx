@@ -1,7 +1,8 @@
 import './Messenger.css'
+
 import { defineComponent, onMounted } from 'vue'
-import { useEnv } from 'misc/hooks'
 import { ENGINE_VERSION } from 'env/Engine'
+import { useEnv } from 'misc/hooks'
 
 export const Messenger = defineComponent(() => {
   const { api, engine } = useEnv()

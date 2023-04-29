@@ -1,4 +1,5 @@
 import './FocusVisible.css'
+
 import { defineComponent } from 'vue'
 
 type Props = {

@@ -1,7 +1,7 @@
 import { API_VERSION } from 'env/Api'
-import { toUrlParams } from 'misc/utils'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
+import { toUrlParams } from 'misc/utils'
 
 type OauthSuccessResponse = {
   user_id: number

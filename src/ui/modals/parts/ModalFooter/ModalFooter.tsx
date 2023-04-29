@@ -1,4 +1,5 @@
 import './ModalFooter.css'
+
 import { defineComponent } from 'vue'
 import { JSXElement } from 'misc/utils'
 

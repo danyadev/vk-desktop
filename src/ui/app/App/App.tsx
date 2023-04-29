@@ -1,16 +1,17 @@
 import './App.css'
+
 import electron from 'electron'
 import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
+import { useMainSettingsStore } from 'store/mainSettings'
+import { currentWindow, debounce, subscribeToElectronEvent } from 'misc/utils'
 import { useEnv, useGlobalModal } from 'misc/hooks'
 import { isMacOS } from 'misc/constants'
-import { currentWindow, debounce, subscribeToElectronEvent } from 'misc/utils'
-import { useThemeScheme } from './useThemeScheme'
-import { useMainSettingsStore } from 'store/mainSettings'
-import { Titlebar } from 'ui/app/Titlebar/Titlebar'
-import { ModalsContainer } from 'ui/modals/parts'
-import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
 import { exposeFeatures } from 'misc/exposeFeatures'
+import { useThemeScheme } from './useThemeScheme'
+import { Titlebar } from 'ui/app/Titlebar/Titlebar'
+import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
+import { ModalsContainer } from 'ui/modals/parts'
 
 export const App = defineComponent(() => {
   const { lang } = useEnv()

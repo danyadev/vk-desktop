@@ -1,8 +1,9 @@
 import './CaptchaModal.css'
+
 import { defineComponent, KeyboardEvent, shallowRef } from 'vue'
+import { useEnv, useGlobalModal } from 'misc/hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
-import { useEnv, useGlobalModal } from 'misc/hooks'
 import { Input } from 'ui/ui/Input/Input'
 
 export type CaptchaModalParams = {

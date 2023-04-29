@@ -44,6 +44,7 @@
     "eslint": "8.39.0",
     "eslint-import-resolver-typescript": "3.5.5",
     "eslint-plugin-import": "npm:eslint-plugin-i",
+    "eslint-plugin-simple-import-sort": "10.0.0",
     "husky": "8.0.3",
     "innosetup-compiler": "6.2.0",
     "lint-staged": "13.2.2",

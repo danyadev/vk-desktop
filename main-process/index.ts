@@ -1,10 +1,10 @@
 import fs from 'fs'
-import path from 'path'
 import os from 'os'
-import Electron, { app, BrowserWindow, shell, screen, nativeTheme, ipcMain, session } from 'electron'
+import path from 'path'
 import * as electronMain from '@electron/remote/main'
-import { buildMacOSMenu } from './buildMacOSMenu'
+import Electron, { app, BrowserWindow, ipcMain, nativeTheme, screen, session, shell } from 'electron'
 import { Dictionary } from 'env/Lang'
+import { buildMacOSMenu } from './buildMacOSMenu'
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 

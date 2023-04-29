@@ -1,6 +1,6 @@
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
-import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import { MessagesLongpollParams } from 'model/api-types/objects/MessagesLongpollParams'
+import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 
 // messages.getConversations
 export type MessagesGetConversationsParams = {

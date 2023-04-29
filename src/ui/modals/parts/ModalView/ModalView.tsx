@@ -1,4 +1,5 @@
 import './ModalView.css'
+
 import { defineComponent, Ref, shallowRef, Teleport, Transition, unref, watch } from 'vue'
 import { useIsMounted } from 'misc/hooks'
 import { useFocusTrap } from './useFocusTrap'

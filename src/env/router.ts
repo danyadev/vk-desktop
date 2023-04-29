@@ -1,4 +1,4 @@
-import { createRouter, createMemoryHistory } from 'vue-router'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import { useViewerStore } from 'store/viewer'
 import { Auth } from 'ui/Auth/Auth'
 import { Messenger } from 'ui/messenger/Messenger/Messenger'

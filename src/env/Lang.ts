@@ -1,6 +1,6 @@
+import type { Settings } from 'store/settings'
 import { ru } from 'lang/ru'
 import type { VariablesTypings } from 'lang/VariablesTypings'
-import type { Settings } from 'store/settings'
 import { isObject } from 'misc/utils'
 
 const langMap = {
