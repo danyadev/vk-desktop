@@ -1,10 +1,12 @@
 import './ModalBody.css'
 
 import { defineComponent } from 'vue'
+import { ClassName } from 'misc/utils'
 
 type Props = {
   /** Убирает стандартные отступы */
   withCustomLayout?: boolean
+  class?: ClassName
 }
 
 export const ModalBody = defineComponent<Props>((props, { slots }) => {
@@ -13,6 +15,6 @@ export const ModalBody = defineComponent<Props>((props, { slots }) => {
       {slots.default?.()}
     </div>
   )
+}, {
+  props: ['withCustomLayout']
 })
-
-ModalBody.props = ['withCustomLayout']

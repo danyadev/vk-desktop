@@ -135,6 +135,6 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
       </Teleport>
     )
   }
+}, {
+  props: ['opened', 'hidden', 'onClose', 'noBackdrop', 'onVisibilityChange']
 })
-
-ModalView.props = ['opened', 'hidden', 'onClose', 'noBackdrop', 'onVisibilityChange']

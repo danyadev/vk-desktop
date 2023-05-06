@@ -1,10 +1,10 @@
 import path from 'path'
+import { svgLoader } from './build/svgLoader'
 
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { defineConfig } from 'vite'
 import electron from 'vite-plugin-electron'
 import electronRenderer from 'vite-plugin-electron-renderer'
-import svgLoader from 'vite-svg-loader'
 
 // eslint-disable-next-line import/no-unused-modules, import/no-default-export
 export default defineConfig({

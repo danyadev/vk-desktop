@@ -7,7 +7,13 @@ export type Opaque<Type, Token = unknown> = Type & {
 
 // Тип JSX.Element запрещен в пользу JSXElement, здесь его единственное использование
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type JSXElement = JSX.Element | string | number | null
+export type JSXElement = JSX.Element | string | number | null | false
+
+type ClassNameUnit = string | false | 0
+export type ClassName =
+  | ClassNameUnit
+  | ClassNameUnit[]
+  | Record<string, boolean>
 
 export type Truthy<T> = T extends false | '' | 0 | null | undefined | 0n ? never : T
 

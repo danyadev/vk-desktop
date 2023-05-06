@@ -65,6 +65,6 @@ export const CaptchaModal = defineComponent<CaptchaModalParams>((params) => {
       />
     </Modal>
   )
+}, {
+  props: ['captchaImg', 'onClose']
 })
-
-CaptchaModal.props = ['captchaImg', 'onClose']

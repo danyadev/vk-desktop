@@ -1,6 +1,6 @@
 import './Spinner.css'
 
-import { defineComponent } from 'vue'
+import { defineComponent, SVGAttributes } from 'vue'
 
 import {
   Icon16Spinner,
@@ -11,7 +11,7 @@ import {
 
 type Props = {
   size?: 'small' | 'regular' | 'medium' | 'large'
-}
+} & SVGAttributes
 
 const spinnerIcons = {
   small: Icon16Spinner,
@@ -25,6 +25,6 @@ export const Spinner = defineComponent<Props>((props) => {
     const SpinnerIcon = spinnerIcons[props.size || 'small']
     return <SpinnerIcon class="Spinner" />
   }
+}, {
+  props: ['size']
 })
-
-Spinner.props = ['size']

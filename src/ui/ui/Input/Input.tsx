@@ -40,7 +40,7 @@ export const Input = defineComponent<Props>((props, { attrs }) => {
       </div>
     )
   }
+}, {
+  props: ['before', 'after', 'autofocus', 'class', 'inLayer'],
+  inheritAttrs: false
 })
-
-Input.props = ['before', 'after', 'autofocus', 'class', 'inLayer']
-Input.inheritAttrs = false

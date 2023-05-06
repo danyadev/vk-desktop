@@ -17,6 +17,6 @@ export const ModalFooter = defineComponent<Props>((props) => {
       <div class="ModalFooter__buttons">{props.buttons}</div>
     </div>
   )
+}, {
+  props: ['buttons', 'leftContent']
 })
-
-ModalFooter.props = ['buttons', 'leftContent']

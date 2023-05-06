@@ -1,5 +1,5 @@
 import { defineComponent, Ref } from 'vue'
-import { JSXElement } from 'misc/utils'
+import { ClassName, JSXElement } from 'misc/utils'
 import { ModalBody, ModalFooter, ModalHeader, ModalView } from 'ui/modals/parts'
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
   /** Убирает стандартные отступы для контента модалки */
   withCustomLayout?: boolean
   /** Класс, который пробрасывается во враппер контента модалки */
-  class?: string
+  class?: ClassName
   /** Кнопки в футере модалки */
   buttons?: JSXElement | JSXElement[]
   /** Контент в левой части футера модалки */
@@ -46,16 +46,16 @@ export const Modal = defineComponent<Props>((props, { slots }) => {
       )}
     </ModalView>
   )
+}, {
+  props: [
+    'opened',
+    'hidden',
+    'onClose',
+    'noBackdrop',
+    'title',
+    'withCustomLayout',
+    'class',
+    'buttons',
+    'footerLeftContent'
+  ]
 })
-
-Modal.props = [
-  'opened',
-  'hidden',
-  'onClose',
-  'noBackdrop',
-  'title',
-  'withCustomLayout',
-  'class',
-  'buttons',
-  'footerLeftContent'
-]

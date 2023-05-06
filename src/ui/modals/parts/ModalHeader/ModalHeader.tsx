@@ -22,6 +22,6 @@ export const ModalHeader = defineComponent<Props>((props) => {
       </div>
     </div>
   )
+}, {
+  props: ['title', 'onClose']
 })
-
-ModalHeader.props = ['title', 'onClose']

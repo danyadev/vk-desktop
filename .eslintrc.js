@@ -63,6 +63,12 @@ module.exports = {
       rules: {
         '@typescript-eslint/consistent-type-definitions': 'off'
       }
+    },
+    {
+      files: ['build/*.ts'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off'
+      }
     }
   ],
 

@@ -257,9 +257,9 @@ const AuthMain = defineComponent<AuthMainProps>((props) => {
       </div>
     </div>
   )
+}, {
+  props: ['loading', 'error', 'onSubmit']
 })
-
-AuthMain.props = ['loading', 'error', 'onSubmit']
 
 type AuthTwoFactorProps = {
   twoFactorState: TwoFactorState
@@ -376,9 +376,9 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
       </div>
     </div>
   )
+}, {
+  props: ['twoFactorState', 'loading', 'error', 'onSubmit', 'onCancel']
 })
-
-AuthTwoFactor.props = ['twoFactorState', 'loading', 'error', 'onSubmit', 'onCancel']
 
 type SmsStatusProps = {
   validationType: TwoFactorState['validationType']
@@ -411,6 +411,6 @@ const SmsStatus = defineComponent<SmsStatusProps>((props) => {
       </Link>
     )
   }
+}, {
+  props: ['validationType', 'sendSms', 'isSendingSms', 'resendSmsTimer']
 })
-
-SmsStatus.props = ['validationType', 'sendSms', 'isSendingSms', 'resendSmsTimer']

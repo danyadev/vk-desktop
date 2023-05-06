@@ -17,6 +17,6 @@ export const FocusVisible = defineComponent<Props>((props) => {
       ]}
     />
   )
+}, {
+  props: ['isFocused', 'outside']
 })
-
-FocusVisible.props = ['isFocused', 'outside']

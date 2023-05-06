@@ -25,6 +25,6 @@ export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
       <FocusVisible isFocused={isFocused.value} />
     </button>
   )
+}, {
+  props: ['icon', 'stretched']
 })
-
-ButtonIcon.props = ['icon', 'stretched']

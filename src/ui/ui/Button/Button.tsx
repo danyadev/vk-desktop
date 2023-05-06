@@ -41,6 +41,6 @@ export const Button = defineComponent<Props>((props, { slots }) => {
       </button>
     )
   }
+}, {
+  props: ['size', 'mode', 'wide', 'before', 'after', 'loading']
 })
-
-Button.props = ['size', 'mode', 'wide', 'before', 'after', 'loading']
