@@ -29,8 +29,11 @@ type OauthRequireTwoFactorResponse = {
 }
 type OauthInvalidTwoFactorCodeResponse = {
   error: 'invalid_request'
-  error_type: 'wrong_otp'
-  /** 'Вы ввели неверный код' */
+  /**
+   * wrong_otp - неверный код 2фа
+   * остальные типы - показываем переданную ошибку
+   */
+  error_type: 'wrong_otp' | 'restore_wait_delayed_request' | 'cancel_by_owner_needed'
   error_description: string
 }
 type OauthCaptchaResponse = {
@@ -134,8 +137,15 @@ export async function getAndroidToken(
         }
 
         case 'invalid_request': {
+          if (result.error_type === 'wrong_otp') {
+            return {
+              kind: 'InvalidTwoFactorCode',
+              errorMessage: result.error_description
+            }
+          }
+
           return {
-            kind: 'InvalidTwoFactorCode',
+            kind: 'InvalidCredentials',
             errorMessage: result.error_description || result.error_type
           }
         }
