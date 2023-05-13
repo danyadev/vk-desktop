@@ -1,14 +1,14 @@
 import './Input.css'
 
 import { defineComponent, InputHTMLAttributes, onMounted, shallowRef } from 'vue'
-import { JSXElement } from 'misc/utils'
+import { ClassName, JSXElement } from 'misc/utils'
 
 type InheritedProps = InputHTMLAttributes
 type Props = {
   before?: JSXElement
   after?: JSXElement
   autofocus?: boolean
-  class?: string
+  class?: ClassName
   /** Признак нахождения в слое, например в модалке, где фон слоя сливается с фоном поля ввода */
   inLayer?: boolean
 } & InheritedProps

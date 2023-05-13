@@ -1,3 +1,4 @@
+import { toRaw } from 'vue'
 import { defineStore } from 'pinia'
 import * as Peer from 'model/Peer'
 import { RendererStorage } from 'model/Storage'
@@ -24,7 +25,11 @@ export const useViewerStore = defineStore('viewer', {
   state: () => viewerStorage.data,
   getters: {
     viewer(state) {
-      return state.accounts.get(state.id)
+      const viewer = state.accounts.get(state.id)
+      if (!viewer) {
+        throw new Error('Unexpected access to non-existing current viewer')
+      }
+      return viewer
     }
   },
   actions: {
@@ -42,6 +47,11 @@ export const useViewerStore = defineStore('viewer', {
 
 export function init() {
   useViewerStore().$subscribe((mutation, state) => {
-    viewerStorage.update(state)
+    viewerStorage.update(toRaw(state))
   })
+}
+
+export function logout() {
+  viewerStorage.set('id', Peer.resolveZeroUserId())
+  location.reload()
 }

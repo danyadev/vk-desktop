@@ -19,7 +19,7 @@ export type UserId = Opaque<number, User>
 type GroupId = Opaque<number, Group>
 type ChatId = Opaque<number, Chat>
 
-type Peer = User | Group | Chat
+export type Peer = User | Group | Chat
 type Id = Peer['id']
 
 export type User = {
@@ -34,11 +34,17 @@ export type User = {
 type Group = {
   kind: 'Group'
   id: GroupId
+  name: string
+  photo50: string
+  photo100: string
 }
 
 type Chat = {
   kind: 'Chat'
   id: ChatId
+  title: string
+  photo50: string
+  photo100: string
 }
 
 /**
@@ -104,4 +110,15 @@ function isGroupPeerId(peerId: Id): peerId is GroupId {
 
 function isChatPeerId(peerId: Id): peerId is ChatId {
   return peerId > 2e9
+}
+
+export function name(peer: Peer): string {
+  switch (peer.kind) {
+    case 'User':
+      return `${peer.firstName} ${peer.lastName}`
+    case 'Group':
+      return peer.name
+    case 'Chat':
+      return peer.title
+  }
 }

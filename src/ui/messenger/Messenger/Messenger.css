@@ -3,21 +3,11 @@
   height: 100%;
 }
 
-.Messenger__leftPanel {
+.Messenger__convoList {
   display: flex;
   flex-direction: column;
   width: 300px;
   border-right: 1px solid var(--separator_common);
-}
-
-.Messenger__leftPanelHeader {
-  height: 48px;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--separator_common);
-}
-
-.Messenger__leftPanelContent {
-  overflow: overlay;
 }
 
 .Messenger__content {
@@ -25,7 +15,7 @@
 }
 
 @media (width < 700px) {
-  .Messenger__leftPanel {
+  .Messenger__convoList {
     width: 100%;
     border-right: none;
   }
@@ -37,7 +27,7 @@
 }
 
 @media (700px <= width <= 880px) {
-  .Messenger__leftPanel {
+  .Messenger__convoList {
     width: 41%;
   }
 
@@ -47,7 +37,7 @@
 }
 
 @media (width > 880px) {
-  .Messenger__leftPanel {
+  .Messenger__convoList {
     width: calc(880px * 0.41);
   }
 

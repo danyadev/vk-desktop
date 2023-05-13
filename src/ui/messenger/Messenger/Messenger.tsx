@@ -1,8 +1,9 @@
 import './Messenger.css'
 
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent, onMounted, onUnmounted } from 'vue'
 import { ENGINE_VERSION } from 'env/Engine'
 import { useEnv } from 'misc/hooks'
+import { ConvoList } from 'ui/messenger/ConvoList/ConvoList'
 
 export const Messenger = defineComponent(() => {
   const { api, engine } = useEnv()
@@ -14,19 +15,15 @@ export const Messenger = defineComponent(() => {
     })
 
     engine.start(longpollParams)
-    // TODO () => engine.stop()
+  })
+
+  onUnmounted(() => {
+    engine.stop()
   })
 
   return () => (
     <div class="Messenger">
-      <div class="Messenger__leftPanel">
-        <div class="Messenger__leftPanelHeader">
-          шапка
-        </div>
-        <div class="Messenger__leftPanelContent">
-          список диалогов
-        </div>
-      </div>
+      <ConvoList class="Messenger__convoList" />
       <div class="Messenger__content">
         контент
       </div>

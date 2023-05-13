@@ -14,9 +14,11 @@ import {
 import { useRouter } from 'vue-router'
 import { useViewerStore } from 'store/viewer'
 import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth'
+import * as Peer from 'model/Peer'
 import { useEnv, useGlobalModal } from 'misc/hooks'
 import { fromApiUser } from 'misc/converter/PeerConverter'
 import { userFields } from 'misc/constants'
+import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Input } from 'ui/ui/Input/Input'
@@ -110,7 +112,7 @@ export const Auth = defineComponent(() => {
           })
           viewer.setCurrentAccount(user.id)
 
-          router.push('/')
+          router.replace('/')
         } catch (err) {
           console.warn('Ошибка получения юзера', err)
           state.error = lang.use('auth_user_load_error')
@@ -202,6 +204,8 @@ type AuthMainProps = {
 
 const AuthMain = defineComponent<AuthMainProps>((props) => {
   const { lang } = useEnv()
+  const viewer = useViewerStore()
+  const router = useRouter()
   const showPassword = shallowRef(false)
 
   const state = shallowReactive({
@@ -214,6 +218,11 @@ const AuthMain = defineComponent<AuthMainProps>((props) => {
     if (event.key === 'Enter' && canSubmit.value) {
       props.onSubmit(state.login, state.password)
     }
+  }
+
+  function openAccount(userId: Peer.UserId) {
+    viewer.setCurrentAccount(userId)
+    router.replace('/')
   }
 
   return () => (
@@ -248,6 +257,19 @@ const AuthMain = defineComponent<AuthMainProps>((props) => {
           {lang.use('auth_submit')}
         </Button>
         {props.error && <div class="Auth__error">{props.error}</div>}
+
+        <div class="Auth__accounts">
+          {[...viewer.accounts.values()].map((account) => (
+            <div class="Auth__account" onClick={() => openAccount(account.id)}>
+              <Avatar peer={account} size={56} />
+              <div class="Auth__accountNameWrapper">
+                <div class="Auth__accountName">
+                  {Peer.name(account)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div class="Auth__footerLinks">

@@ -63,6 +63,11 @@ export class RendererStorage<T extends Record<string, unknown>> {
     this.save()
   }
 
+  set<K extends keyof T>(key: K, value: T[K]) {
+    this.data[key] = value
+    this.save()
+  }
+
   save() {
     localStorage.setItem(this.name, serializeJson(this.data))
   }

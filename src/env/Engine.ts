@@ -17,14 +17,14 @@ const ENGINE_MODE =
 export class Engine {
   active = false
   version = ENGINE_VERSION
-  serverParams: MessagesLongpollParams | null = null
+  params: MessagesLongpollParams | null = null
 
-  async start(serverParams: MessagesLongpollParams) {
+  async start(params: MessagesLongpollParams) {
     this.active = true
-    this.serverParams = serverParams
+    this.params = params
 
     while (this.active) {
-      const { server, key, ts } = this.serverParams
+      const { server, key, ts } = this.params
       const timeoutSignal = AbortSignal.timeout(ENGINE_FETCH_TIMEOUT)
 
       const result = await fetch(`https://${server}?act=a_check`, {
@@ -49,12 +49,16 @@ export class Engine {
         }
       }
 
-      this.serverParams.ts = result.ts
-      this.serverParams.pts = result.pts
+      this.params.ts = result.ts
+      this.params.pts = result.pts
 
       for (const update of result.updates) {
         console.log(update)
       }
     }
+  }
+
+  stop() {
+    this.active = false
   }
 }

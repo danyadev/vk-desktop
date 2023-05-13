@@ -1,0 +1,21 @@
+.ConvoList__header {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  flex-shrink: 0;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--separator_common);
+}
+
+.ConvoList__headerAvatar {
+  margin-right: 8px;
+}
+
+.ConvoList__headerExitIcon {
+  margin-left: auto;
+  padding: 2px;
+}
+
+.ConvoList__list {
+  overflow: overlay;
+}

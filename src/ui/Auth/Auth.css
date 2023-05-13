@@ -57,6 +57,45 @@
   top: 100%;
 }
 
+.Auth__accounts {
+  display: flex;
+  width: max-content;
+  gap: 5px;
+  position: relative;
+  margin-bottom: -40%;
+}
+
+.Auth__account {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 120px;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color var(--fastTransition);
+}
+
+.Auth__account:hover {
+  background: var(--background_light);
+}
+
+.Auth__accountNameWrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin-top: 5px;
+}
+
+.Auth__accountName {
+  display: -webkit-box;
+  text-align: center;
+  word-break: break-word;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
 .Auth__footerLinks {
   display: flex;
   margin: 12px 0;
