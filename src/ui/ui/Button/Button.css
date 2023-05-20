@@ -77,6 +77,10 @@
   background-color: var(--button_secondary_background);
 }
 
+.Button--destructive {
+  background-color: var(--destructive);
+}
+
 .Button--outline {
   color: var(--button_outline_foreground);
   border: 1px solid var(--button_outline_border);

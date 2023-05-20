@@ -1,17 +1,15 @@
-import './Titlebar.css'
-
 import { defineComponent, shallowRef } from 'vue'
 import { useMainSettingsStore } from 'store/mainSettings'
 import { currentWindow, subscribeToElectronEvent } from 'misc/utils'
 import { useEnv } from 'misc/hooks'
 import { isMacOS } from 'misc/constants'
-
 import {
   Icon10TitlebarClose,
   Icon10TitlebarMaximize,
   Icon10TitlebarMinimize,
   Icon10TitlebarRestore
 } from 'assets/icons'
+import './Titlebar.css'
 
 const buttons = [
   { action: 'minimize', icon: <Icon10TitlebarMinimize /> },

@@ -1,6 +1,5 @@
-import './FocusVisible.css'
-
 import { defineComponent } from 'vue'
+import './FocusVisible.css'
 
 type Props = {
   isFocused: boolean

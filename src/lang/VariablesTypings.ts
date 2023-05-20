@@ -1,6 +1,7 @@
 type ExplicitVariablesTypings = {
-  auth_sms_with_code_sent: [string]
-  auth_resend_sms_at: [string]
+  auth_sms_with_code_sent: [phone: string]
+  auth_resend_sms_at: [time: string]
+  confirmAccountDelete_confirm: [userName: string]
 }
 
 export type VariablesTypings<Dictionary extends Record<string, unknown>> =

@@ -1,12 +1,11 @@
-import './Avatar.css'
-
 import { computed, defineComponent } from 'vue'
 import * as Peer from 'model/Peer'
 import { ClassName } from 'misc/utils'
 import { usePixelDensity } from 'misc/hooks'
+import './Avatar.css'
 
 type Props = {
-  peer: Pick<Peer.Peer, 'photo50' | 'photo100'>
+  peer: Peer.Peer
   size: 32 | 56
   class?: ClassName
 }

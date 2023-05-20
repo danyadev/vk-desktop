@@ -1,10 +1,10 @@
-import { computed, shallowRef } from 'vue'
+import { computed, reactive, shallowRef } from 'vue'
 
 export function useModal() {
   const opened = shallowRef(false)
   const hidden = shallowRef(false)
 
-  return {
+  return reactive({
     opened,
     hidden: computed(() => opened.value && hidden.value),
 
@@ -13,5 +13,5 @@ export function useModal() {
 
     hide: () => (hidden.value = true),
     unhide: () => (hidden.value = false)
-  }
+  })
 }

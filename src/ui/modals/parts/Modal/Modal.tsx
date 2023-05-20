@@ -1,12 +1,12 @@
-import { defineComponent, Ref } from 'vue'
+import { defineComponent } from 'vue'
 import { ClassName, JSXElement } from 'misc/utils'
 import { ModalBody, ModalFooter, ModalHeader, ModalView } from 'ui/modals/parts'
 
 type Props = {
   /** Открыта ли модалка */
-  opened: Ref<boolean> | boolean
+  opened: boolean
   /** Скрыта ли модалка. Не анмаунтит компонент */
-  hidden?: Ref<boolean> | boolean
+  hidden?: boolean
   /** Обработчик закрытия при клике на крестик и бэкграунд */
   onClose: () => void
   /** Убирает темный фон под модалкой */
@@ -52,6 +52,7 @@ export const Modal = defineComponent<Props>((props, { slots }) => {
     'hidden',
     'onClose',
     'noBackdrop',
+    'onVisibilityChange',
     'title',
     'withCustomLayout',
     'class',

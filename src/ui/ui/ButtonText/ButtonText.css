@@ -1,11 +1,10 @@
-.Link {
+.ButtonText {
   position: relative;
   color: var(--text_link);
-  text-decoration: none;
   /* Для FocusVisible */
   border-radius: 4px;
 }
 
-.Link:hover {
+.ButtonText:hover {
   text-decoration: underline;
 }

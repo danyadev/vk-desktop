@@ -1,7 +1,6 @@
-import './ModalBody.css'
-
 import { defineComponent } from 'vue'
 import { ClassName } from 'misc/utils'
+import './ModalBody.css'
 
 type Props = {
   /** Убирает стандартные отступы */

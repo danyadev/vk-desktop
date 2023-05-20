@@ -13,6 +13,7 @@ export const ru = {
   auth_hide_password: 'Скрыть пароль',
   auth_register: 'Зарегистрироваться',
   auth_forgot_password: 'Забыли пароль?',
+  auth_account_delete: 'Удалить',
 
   auth_confirm_login: 'Подтвердите вход',
   auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {0}',
@@ -29,10 +30,15 @@ export const ru = {
   auth_network_error: 'Ошибка сети',
   auth_unknown_error: 'Неизвестная ошибка',
 
+  modal_cancel_label: 'Отмена',
   modal_send_label: 'Отправить',
+  modal_delete_label: 'Удалить',
 
   captchaModal_title: 'Введите капчу',
   captchaModal_enter_code: 'Введите код',
+
+  confirmAccountDelete_title: 'Удаление аккаунта',
+  confirmAccountDelete_confirm: 'Вы действительно хотите удалить аккаунт {0}?',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',

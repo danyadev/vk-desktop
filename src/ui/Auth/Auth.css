@@ -51,6 +51,7 @@
   text-align: center;
   padding: 10px;
   border-radius: 8px;
+  cursor: pointer;
 
   position: absolute;
   margin-top: 10px;
@@ -68,23 +69,24 @@
 .Auth__account {
   display: flex;
   flex-direction: column;
+  height: max-content;
+}
+
+.Auth__accountContent {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  max-width: 120px;
+  height: 100%;
+  max-width: 100px;
   padding: 8px;
+  gap: 5px;
   border-radius: 10px;
   cursor: pointer;
   transition: background-color var(--fastTransition);
 }
 
-.Auth__account:hover {
+.Auth__accountContent:hover {
   background: var(--background_light);
-}
-
-.Auth__accountNameWrapper {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  margin-top: 5px;
 }
 
 .Auth__accountName {
@@ -94,6 +96,30 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
+  height: 100%;
+}
+
+.Auth__accountDeleteButton {
+  font-size: calc(var(--fontSize) - 2px);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility var(--fastTransition), opacity var(--fastTransition);
+}
+
+.Auth__accounts--deleteMode .Auth__accountDeleteButton {
+  visibility: visible;
+  opacity: 1;
+}
+
+.Auth__accountToggleDeleteModeButton {
+  margin: 6px 0 auto 0;
+  padding: 2px;
+  position: absolute;
+  right: -32px;
+}
+
+.Auth__accountToggleDeleteModeButton svg {
+  transition: color var(--fastTransition);
 }
 
 .Auth__footerLinks {

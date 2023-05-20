@@ -1,9 +1,8 @@
-import './Messenger.css'
-
 import { defineComponent, onMounted, onUnmounted } from 'vue'
 import { ENGINE_VERSION } from 'env/Engine'
 import { useEnv } from 'misc/hooks'
 import { ConvoList } from 'ui/messenger/ConvoList/ConvoList'
+import './Messenger.css'
 
 export const Messenger = defineComponent(() => {
   const { api, engine } = useEnv()

@@ -1,13 +1,11 @@
-import './Spinner.css'
-
 import { defineComponent, SVGAttributes } from 'vue'
-
 import {
   Icon16Spinner,
   Icon24Spinner,
   Icon32Spinner,
   Icon44Spinner
 } from 'assets/icons'
+import './Spinner.css'
 
 type Props = {
   size?: 'small' | 'regular' | 'medium' | 'large'

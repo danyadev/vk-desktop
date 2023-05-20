@@ -1,7 +1,6 @@
-import './Input.css'
-
 import { defineComponent, InputHTMLAttributes, onMounted, shallowRef } from 'vue'
 import { ClassName, JSXElement } from 'misc/utils'
+import './Input.css'
 
 type InheritedProps = InputHTMLAttributes
 type Props = {

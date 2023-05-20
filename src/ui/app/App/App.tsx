@@ -1,5 +1,3 @@
-import './App.css'
-
 import electron from 'electron'
 import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
@@ -12,6 +10,7 @@ import { useThemeScheme } from './useThemeScheme'
 import { Titlebar } from 'ui/app/Titlebar/Titlebar'
 import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
 import { ModalsContainer } from 'ui/modals/parts'
+import './App.css'
 
 export const App = defineComponent(() => {
   const { lang } = useEnv()

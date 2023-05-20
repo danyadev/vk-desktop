@@ -269,15 +269,13 @@ module.exports = {
 
     'simple-import-sort/imports': ['error', {
       groups: [
-        ['.css$'],
         [
           ...['^fs$', '^os$', '^path$'],
-          ...['^@?electron', '^vue', '^pinia'],
+          ...['^@?electron', '^vue', '^pinia', '^@?vite'],
           ...['^env', '^store', '^model', '^lang'],
           ...['^misc/utils', '^misc/hooks', '^misc/converter', '^misc'],
-          ...['^\\./', '^ui']
-        ],
-        ['^assets']
+          ...['^\\./', '^ui', '^assets', '.css$']
+        ]
       ]
     }],
 

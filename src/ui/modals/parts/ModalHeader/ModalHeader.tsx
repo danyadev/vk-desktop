@@ -1,10 +1,8 @@
-import './ModalHeader.css'
-
 import { defineComponent } from 'vue'
 import { JSXElement } from 'misc/utils'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
-
 import { Icon24Cancel } from 'assets/icons'
+import './ModalHeader.css'
 
 type Props = {
   /** Заголовок модалки */

@@ -1,14 +1,13 @@
-import './Button.css'
-
 import { ButtonHTMLAttributes, defineComponent } from 'vue'
 import { JSXElement } from 'misc/utils'
 import { useFocusVisible } from 'misc/hooks'
 import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
+import './Button.css'
 
 type Props = {
   size?: 'small' | 'medium' | 'large'
-  mode?: 'primary' | 'secondary' | 'tertiary' | 'outline'
+  mode?: 'primary' | 'secondary' | 'destructive' | 'tertiary' | 'outline'
   wide?: boolean
   before?: JSXElement
   after?: JSXElement

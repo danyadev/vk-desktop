@@ -1,14 +1,13 @@
-import './ModalView.css'
-
-import { defineComponent, Ref, shallowRef, Teleport, Transition, unref, watch } from 'vue'
+import { defineComponent, shallowRef, Teleport, Transition, watch } from 'vue'
 import { useIsMounted } from 'misc/hooks'
 import { useFocusTrap } from './useFocusTrap'
+import './ModalView.css'
 
 type Props = {
   /** Открыта ли модалка */
-  opened: Ref<boolean> | boolean
+  opened: boolean
   /** Скрыта ли модалка. Не анмаунтит компонент */
-  hidden?: Ref<boolean> | boolean
+  hidden?: boolean
   /** Обработчик закрытия при клике на крестик и бэкграунд */
   onClose: () => void
   /** Убирает темный фон под модалкой */
@@ -97,7 +96,7 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
      * Это нужно, чтобы в контейнере, куда телепортируется контент, модалки располагались
      * в порядке их открытия, а не в порядке инициализации компонента с opened={false}
      */
-    if (!unref(props.opened) && !isModalVisible.value) {
+    if (!props.opened && !isModalVisible.value) {
       return null
     }
 
@@ -109,10 +108,10 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
           onBeforeAppear={onBeforeAppear}
           onAfterLeave={onAfterLeave}
         >
-          {unref(props.opened) && (
+          {props.opened && (
             <div
               class={['ModalView', {
-                'ModalView--hidden': unref(props.hidden),
+                'ModalView--hidden': props.hidden,
                 'ModalView--noBackdrop': props.noBackdrop
               }]}
             >

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import * as Peer from 'model/Peer'
 import { RendererStorage } from 'model/Storage'
 
-type ViewerUser = Peer.User & {
+export type ViewerUser = Peer.User & {
   accessToken: string
   androidToken: string
 }
@@ -25,16 +25,15 @@ export const useViewerStore = defineStore('viewer', {
   state: () => viewerStorage.data,
   getters: {
     viewer(state) {
-      const viewer = state.accounts.get(state.id)
-      if (!viewer) {
-        throw new Error('Unexpected access to non-existing current viewer')
-      }
-      return viewer
+      return state.accounts.get(state.id)
     }
   },
   actions: {
     addAccount(account: ViewerUser) {
       this.accounts.set(account.id, account)
+    },
+    deleteAccount(userId: Peer.UserId) {
+      this.accounts.delete(userId)
     },
     setCurrentAccount(userId: Peer.UserId) {
       this.id = userId

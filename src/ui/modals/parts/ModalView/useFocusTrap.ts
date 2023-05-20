@@ -22,8 +22,8 @@ export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
     /**
      * Произошла активация окна страницы, фокус автоматически выставился на то место,
      * где он был в момент деактивации окна страницы.
-     * Поэтому в данном случае мы игнорируем последующий onFocusOut, в котором нам покажется,
-     * что человек сделал Tab и вышел за пределы focusRoot
+     * Поэтому в данном случае мы игнорируем первоначально вызванный onFocusOut,
+     * в котором нам покажется, что человек сделал Tab и вышел за пределы focusRoot
      */
     if (event.relatedTarget === null && event.target !== null) {
       isPageBecomeActive = true

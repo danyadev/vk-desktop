@@ -1,5 +1,3 @@
-import './Auth.css'
-
 import {
   computed,
   defineComponent,
@@ -12,20 +10,22 @@ import {
   shallowRef
 } from 'vue'
 import { useRouter } from 'vue-router'
-import { useViewerStore } from 'store/viewer'
+import { useViewerStore, ViewerUser } from 'store/viewer'
 import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth'
 import * as Peer from 'model/Peer'
-import { useEnv, useGlobalModal } from 'misc/hooks'
+import { useEnv, useGlobalModal, useModal } from 'misc/hooks'
 import { fromApiUser } from 'misc/converter/PeerConverter'
 import { userFields } from 'misc/constants'
+import { Modal } from 'ui/modals/parts'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import { Input } from 'ui/ui/Input/Input'
 import { Link } from 'ui/ui/Link/Link'
-
-import { Icon24HideOutline, Icon24ViewOutline } from 'assets/icons'
+import { Icon20TrashOutline, Icon24HideOutline, Icon24ViewOutline } from 'assets/icons'
 import logo from 'assets/logo512.png'
+import './Auth.css'
 
 /**
  * Чеклист по готовности авторизации:
@@ -73,6 +73,10 @@ export const Auth = defineComponent(() => {
   function onCancelCode() {
     state.error = null
     state.twoFactorState = null
+  }
+
+  function onHideError() {
+    state.error = null
   }
 
   async function performAuth(payload: GetAndroidTokenPayload = {}): Promise<void> {
@@ -183,6 +187,7 @@ export const Auth = defineComponent(() => {
         loading={state.loading}
         error={state.error}
         onSubmit={onSubmitAuth}
+        onHideError={onHideError}
       />
     ) : (
       <AuthTwoFactor
@@ -191,6 +196,7 @@ export const Auth = defineComponent(() => {
         error={state.error}
         onSubmit={onSubmitCode}
         onCancel={onCancelCode}
+        onHideError={onHideError}
       />
     )
   )
@@ -200,12 +206,11 @@ type AuthMainProps = {
   loading: boolean
   error: string | null
   onSubmit: (login: string, password: string) => void
+  onHideError: () => void
 }
 
 const AuthMain = defineComponent<AuthMainProps>((props) => {
   const { lang } = useEnv()
-  const viewer = useViewerStore()
-  const router = useRouter()
   const showPassword = shallowRef(false)
 
   const state = shallowReactive({
@@ -218,11 +223,6 @@ const AuthMain = defineComponent<AuthMainProps>((props) => {
     if (event.key === 'Enter' && canSubmit.value) {
       props.onSubmit(state.login, state.password)
     }
-  }
-
-  function openAccount(userId: Peer.UserId) {
-    viewer.setCurrentAccount(userId)
-    router.replace('/')
   }
 
   return () => (
@@ -256,20 +256,12 @@ const AuthMain = defineComponent<AuthMainProps>((props) => {
         >
           {lang.use('auth_submit')}
         </Button>
-        {props.error && <div class="Auth__error">{props.error}</div>}
 
-        <div class="Auth__accounts">
-          {[...viewer.accounts.values()].map((account) => (
-            <div class="Auth__account" onClick={() => openAccount(account.id)}>
-              <Avatar peer={account} size={56} />
-              <div class="Auth__accountNameWrapper">
-                <div class="Auth__accountName">
-                  {Peer.name(account)}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {props.error ? (
+          <div class="Auth__error" onClick={props.onHideError}>{props.error}</div>
+        ) : (
+          <AuthAccounts />
+        )}
       </div>
 
       <div class="Auth__footerLinks">
@@ -280,7 +272,7 @@ const AuthMain = defineComponent<AuthMainProps>((props) => {
     </div>
   )
 }, {
-  props: ['loading', 'error', 'onSubmit']
+  props: ['loading', 'error', 'onSubmit', 'onHideError']
 })
 
 type AuthTwoFactorProps = {
@@ -289,6 +281,7 @@ type AuthTwoFactorProps = {
   error: string | null
   onSubmit: (code: string) => void
   onCancel: () => void
+  onHideError: () => void
 }
 
 const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
@@ -385,7 +378,7 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
             {lang.use('auth_submit')}
           </Button>
         </div>
-        {props.error && <div class="Auth__error">{props.error}</div>}
+        {props.error && <div class="Auth__error" onClick={props.onHideError}>{props.error}</div>}
       </div>
 
       <div class="Auth__smsStatus">
@@ -399,7 +392,7 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
     </div>
   )
 }, {
-  props: ['twoFactorState', 'loading', 'error', 'onSubmit', 'onCancel']
+  props: ['twoFactorState', 'loading', 'error', 'onSubmit', 'onCancel', 'onHideError']
 })
 
 type SmsStatusProps = {
@@ -426,13 +419,98 @@ const SmsStatus = defineComponent<SmsStatusProps>((props) => {
     }
 
     return (
-      <Link onClick={sendSms}>
+      <ButtonText onClick={sendSms}>
         {validationType === '2fa_app'
           ? lang.use('auth_send_sms')
           : lang.use('auth_resend_sms')}
-      </Link>
+      </ButtonText>
     )
   }
 }, {
   props: ['validationType', 'sendSms', 'isSendingSms', 'resendSmsTimer']
+})
+
+const AuthAccounts = defineComponent(() => {
+  const viewer = useViewerStore()
+  const router = useRouter()
+  const { lang } = useEnv()
+
+  const isDeleteModeActive = shallowRef(false)
+  const confirmDeleteModal = useModal()
+  const userToDelete = shallowRef<ViewerUser>()
+
+  function openAccount(userId: Peer.UserId) {
+    viewer.setCurrentAccount(userId)
+    router.replace('/')
+  }
+
+  function confirmDeleteAccount(userId: Peer.UserId) {
+    userToDelete.value = viewer.accounts.get(userId)
+    confirmDeleteModal.open()
+  }
+
+  function deleteAccount() {
+    if (!userToDelete.value) {
+      return
+    }
+
+    viewer.deleteAccount(userToDelete.value.id)
+    confirmDeleteModal.close()
+  }
+
+  return () => {
+    if (!viewer.accounts.size) {
+      return null
+    }
+
+    return (
+      <div class={['Auth__accounts', isDeleteModeActive.value && 'Auth__accounts--deleteMode']}>
+        {[...viewer.accounts.values()].map((account) => (
+          <div class="Auth__account">
+            <div class="Auth__accountContent" onClick={() => openAccount(account.id)}>
+              <Avatar peer={account} size={56} />
+              <div class="Auth__accountName">
+                {account.firstName}
+              </div>
+            </div>
+
+            <ButtonText
+              class="Auth__accountDeleteButton"
+              disabled={!isDeleteModeActive.value}
+              onClick={() => confirmDeleteAccount(account.id)}
+            >
+              {lang.use('auth_account_delete')}
+            </ButtonText>
+          </div>
+        ))}
+
+        <ButtonIcon
+          class="Auth__accountToggleDeleteModeButton"
+          onClick={() => (isDeleteModeActive.value = !isDeleteModeActive.value)}
+        >
+          <Icon20TrashOutline
+            color={isDeleteModeActive.value ? 'var(--accent)' : 'var(--destructive)'}
+          />
+        </ButtonIcon>
+
+        {userToDelete.value && (
+          <Modal
+            opened={confirmDeleteModal.opened}
+            onClose={confirmDeleteModal.close}
+            title={lang.use('confirmAccountDelete_title')}
+            buttons={[
+              <Button mode="destructive" onClick={deleteAccount}>
+                {lang.use('modal_delete_label')}
+              </Button>,
+              <Button onClick={confirmDeleteModal.close}>
+                {lang.use('modal_cancel_label')}
+              </Button>
+            ]}
+          >
+            {lang.use('confirmAccountDelete_confirm', [Peer.name(userToDelete.value)])}
+          </Modal>
+        )}
+      </div>
+    )
+  }
 })

@@ -4,5 +4,7 @@
 }
 
 .ModalFooter__buttons {
+  display: flex;
   margin-left: auto;
+  gap: 10px;
 }

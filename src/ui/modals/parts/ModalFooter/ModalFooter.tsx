@@ -1,7 +1,6 @@
-import './ModalFooter.css'
-
 import { defineComponent } from 'vue'
 import { JSXElement } from 'misc/utils'
+import './ModalFooter.css'
 
 type Props = {
   /** Кнопки, зафиксированные справа. Сначала кнопка отмены, затем кнопка действия */
