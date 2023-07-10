@@ -194,23 +194,40 @@ export async function getAppToken(androidToken: string): Promise<string | null> 
     sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
   })
 
+  /**
+   * 1. Получаем страницу для авторизации приложения
+   *
+   * Есть две версии этой страницы:
+   * 1) старая, с кнопкой для подтверждения, которая редиркетит на фактическую авторизацию
+   * 2) новая, через vk id и на реакте, но на страницу сразу же зашивают токен
+   */
   const authorizeBody = await fetch(`https://oauth.vk.com/authorize?${query}`)
     .then((response) => response.text())
     .catch(() => '')
 
-  const authLinkPath = authorizeBody.match(/"\/(auth_by_token.+?)"\+/)?.[1]
-  if (!authLinkPath) {
+  // 2.1. Пытаемся достать ссылку для подтверждения
+  const authLink = authorizeBody.match(/"(https:\/\/[a-z.]+\/auth_by_token.+?)"/i)?.[1]
+
+  if (!authLink) {
+    // 2.2. Если ссылки не оказалось, считаем, что это новая версия через vk id
+    const accessToken = authorizeBody.match(/"data":\{"access_token":"([^"]+)"/)?.[1]
+    return accessToken || null
+  }
+
+  // 3. Переходим по ссылке для фактической авторизации
+  const pageWithToken = await fetch(`https://oauth.vk.com/${authLink}`).catch(() => null)
+  if (!pageWithToken) {
     return null
   }
 
-  const urlWithToken = await fetch(`https://oauth.vk.com/${authLinkPath}`)
-    .then((response) => response.headers.get('x-original-url-by-electron'))
-    .catch(() => null)
+  // 4. Получаем токен из хеш-параметра ссылки на страницу
+  const urlMaybeWithToken = pageWithToken.headers.get('x-original-url-by-electron') || ''
+  const hashIndex = urlMaybeWithToken.indexOf('#')
 
-  if (!urlWithToken) {
-    return null
+  if (hashIndex !== -1) {
+    const hashValue = urlMaybeWithToken.slice(hashIndex + 1)
+    return new URLSearchParams(hashValue).get('access_token')
   }
 
-  const hashValue = urlWithToken.slice(urlWithToken.indexOf('#') + 1)
-  return new URLSearchParams(hashValue).get('access_token')
+  return null
 }
