@@ -2,6 +2,8 @@ import { useMainSettingsStore } from 'store/mainSettings'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import * as Auth from 'model/Auth'
+import * as IApi from 'model/IApi'
+import * as utils from 'misc/utils'
 import { useEnv } from 'misc/hooks'
 
 /**
@@ -16,9 +18,10 @@ type ExposedFeatures = {
   mainSettings: ReturnType<typeof useMainSettingsStore>
   settings: ReturnType<typeof useSettingsStore>
   viewer: ReturnType<typeof useViewerStore>
-  api: ReturnType<typeof useEnv>['api']
+  api: IApi.Api
   engine: ReturnType<typeof useEnv>['engine']
   auth: typeof Auth
+  utils: typeof utils
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 
@@ -31,4 +34,5 @@ export function exposeFeatures() {
   exposedWindow.api = api
   exposedWindow.engine = engine
   exposedWindow.auth = { ...Auth }
+  exposedWindow.utils = { ...utils }
 }

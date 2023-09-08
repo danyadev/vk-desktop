@@ -91,7 +91,7 @@ export const Auth = defineComponent(() => {
           viewer.addTrustedHash(state.login, result.trustedHash)
         }
 
-        const appToken = await getAppToken(result.androidToken)
+        const appToken = await getAppToken(result.androidToken, api)
         if (!appToken) {
           state.error = lang.use('auth_app_token_getting_error')
           break
@@ -497,6 +497,7 @@ const AuthAccounts = defineComponent(() => {
           <Modal
             opened={confirmDeleteModal.opened}
             onClose={confirmDeleteModal.close}
+            onVisibilityChange={(isVisible) => !isVisible && (userToDelete.value = undefined)}
             title={lang.use('confirmAccountDelete_title')}
             buttons={[
               <Button mode="destructive" onClick={deleteAccount}>

@@ -1,7 +1,8 @@
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
-import { CommonParams, Methods } from 'model/api-types'
-import { NonEmptyArray, random, timer, toUrlParams, Truthy } from 'misc/utils'
+import { Methods } from 'model/api-types'
+import * as IApi from 'model/IApi'
+import { random, timer, toUrlParams } from 'misc/utils'
 import { useGlobalModal } from 'misc/hooks'
 import { androidUserAgent, appUserAgent } from 'misc/constants'
 import { Semaphore } from 'misc/Semaphore'
@@ -14,74 +15,13 @@ export const API_VERSION = '5.131'
 const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500
 
-type FetchOptions = {
-  android?: boolean
-  retries?: number
-  timeout?: number
-}
-
-type ApiRequestParams = Array<{ key: string, value: string }>
-type ApiResultError = {
-  error_code: number
-  error_msg: string
-  captcha_sid?: string
-  captcha_img?: string
-  request_params: ApiRequestParams
-}
-type ApiResultExecuteErrors = Array<{
-  method: string
-  error_code: number
-  error_msg: string
-  captcha_sid?: string
-  captcha_img?: string
-}>
-type ApiResult<T> =
-  | { response: T }
-  | { error: ApiResultError }
-  | { execute_errors: ApiResultExecuteErrors }
-
-type ApiFetchError = {
-  type: 'FetchError'
-  kind: 'ServerError' | 'NetworkError'
-}
-type ApiMethodError = {
-  type: 'MethodError'
-  code: number
-  message: string
-  captchaSid?: string
-  captchaImg?: string
-  requestParams: ApiRequestParams
-}
-type ApiExecuteError = {
-  type: 'ExecuteError'
-  errors: NonEmptyArray<{
-    method: string
-    code: number
-    message: string
-    captchaSid?: string
-    captchaImg?: string
-  }>
-}
-type ApiError = ApiFetchError | ApiMethodError | ApiExecuteError
-
-type MethodParams<Method extends keyof Methods> = Methods[Method]['params'] & CommonParams
-
-type FetchManyRequestMethod<Method extends keyof Methods = keyof Methods> = [
-  Method,
-  MethodParams<Method>
-] | false | null | undefined
-type FetchManyResponseMethod<RequestMethod extends FetchManyRequestMethod> =
-  RequestMethod extends Truthy<RequestMethod>
-    ? Methods[RequestMethod[0]]['response']
-    : null
-
-export class Api {
+export class Api implements IApi.Api {
   private semaphore = new Semaphore(3, 1000)
 
-  async fetch<Method extends keyof Methods>(
+  public async fetch<Method extends keyof Methods>(
     method: Method,
-    params: MethodParams<Method>,
-    fetchOptions: FetchOptions = {}
+    params: IApi.MethodParams<Method>,
+    fetchOptions: IApi.FetchOptions = {}
   ): Promise<Methods[Method]['response']> {
     const { retries = 0 } = fetchOptions
     let attempts = 0
@@ -143,11 +83,11 @@ export class Api {
    * ])
    * ```
    */
-  fetchMany<CurrentMethodsList extends FetchManyRequestMethod[]>(
+  public fetchMany<CurrentMethodsList extends IApi.FetchManyRequestMethod[]>(
     methods: [...CurrentMethodsList],
-    fetchOptions: FetchOptions = {}
+    fetchOptions: IApi.FetchOptions = {}
   ): Promise<{
-    [Index in keyof CurrentMethodsList]: FetchManyResponseMethod<CurrentMethodsList[Index]>
+    [Index in keyof CurrentMethodsList]: IApi.FetchManyResponseMethod<CurrentMethodsList[Index]>
   }> {
     const methodsCalls = methods.map((methodInfo) => {
       if (!methodInfo) {
@@ -178,11 +118,11 @@ export class Api {
    * ])
    * ```
    */
-  fetchParallel<CurrentMethodsList extends FetchManyRequestMethod[]>(
+  public fetchParallel<CurrentMethodsList extends IApi.FetchManyRequestMethod[]>(
     methods: [...CurrentMethodsList],
-    fetchOptions: FetchOptions = {}
+    fetchOptions: IApi.FetchOptions = {}
   ): Promise<{
-    [Index in keyof CurrentMethodsList]: FetchManyResponseMethod<CurrentMethodsList[Index]>
+    [Index in keyof CurrentMethodsList]: IApi.FetchManyResponseMethod<CurrentMethodsList[Index]>
   }> {
     const forkDeclarations = methods.map((methodInfo, index) => {
       if (!methodInfo) {
@@ -206,14 +146,14 @@ export class Api {
     }, fetchOptions) as Promise<never>
   }
 
-  buildMethod<Method extends keyof Methods>(
+  public buildMethod<Method extends keyof Methods>(
     method: Method,
-    params: MethodParams<Method> = {}
-  ): [Method, MethodParams<Method>] {
+    params: IApi.MethodParams<Method> = {}
+  ): [Method, IApi.MethodParams<Method>] {
     return [method, params]
   }
 
-  isApiError(error: unknown): error is ApiError {
+  public isApiError(error: unknown): error is IApi.Error {
     return (
       !!error &&
       typeof error === 'object' &&
@@ -224,8 +164,8 @@ export class Api {
   }
 
   private async handleErrors<Method extends keyof Methods>(
-    apiError: ApiMethodError | ApiExecuteError,
-    params: MethodParams<Method> = {}
+    apiError: IApi.MethodError | IApi.ExecuteError,
+    params: IApi.MethodParams<Method> = {}
   ): Promise<[boolean, boolean]> {
     const error = apiError.type === 'MethodError' ? apiError : apiError.errors[0]
 
@@ -273,8 +213,8 @@ export class Api {
 
   private async doFetch<Method extends keyof Methods>(
     method: Method,
-    params: MethodParams<Method> = {},
-    fetchOptions: FetchOptions = {}
+    params: IApi.MethodParams<Method> = {},
+    fetchOptions: IApi.FetchOptions = {}
   ): Promise<Methods[Method]['response']> {
     if (!this.semaphore.lock()) {
       return new Promise((resolve, reject) => {
@@ -309,7 +249,7 @@ export class Api {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         signal: abortController.signal
-      }).then<ApiResult<Methods[Method]['response']>>((response) => {
+      }).then<IApi.Result<Methods[Method]['response']>>((response) => {
         window.clearTimeout(abortTimeoutId)
 
         if (!response.ok) {

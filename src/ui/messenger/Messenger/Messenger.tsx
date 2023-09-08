@@ -14,6 +14,7 @@ export const Messenger = defineComponent(() => {
     })
 
     engine.start(longpollParams)
+    engine.stop()
   })
 
   onUnmounted(() => {

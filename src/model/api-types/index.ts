@@ -1,4 +1,8 @@
-import { AuthValidatePhoneParams, AuthValidatePhoneResponse } from 'model/api-types/methods/Auth'
+import {
+  AuthGetOauthTokenParams, AuthGetOauthTokenResponse,
+  AuthValidatePhoneParams,
+  AuthValidatePhoneResponse
+} from 'model/api-types/methods/Auth'
 import { CaptchaForceParams, CaptchaForceResponse } from 'model/api-types/methods/Captcha'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
 import {
@@ -32,6 +36,10 @@ export type Methods = {
   'auth.validatePhone': {
     params: AuthValidatePhoneParams
     response: AuthValidatePhoneResponse
+  }
+  'auth.getOauthToken': {
+    params: AuthGetOauthTokenParams
+    response: AuthGetOauthTokenResponse
   }
 
   'captcha.force': {

@@ -291,7 +291,6 @@ module.exports = {
       'ts-check': true
     }],
     '@typescript-eslint/consistent-indexed-object-style': 'error',
-    '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/member-delimiter-style': ['error', {
       multiline: {
         delimiter: 'none'
@@ -300,7 +299,6 @@ module.exports = {
         delimiter: 'comma'
       }
     }],
-    '@typescript-eslint/method-signature-style': ['error', 'property'],
     '@typescript-eslint/naming-convention': ['error', {
       // Разрешаем называть типы только в PascalCase
       selector: 'typeLike',

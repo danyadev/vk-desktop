@@ -7,8 +7,8 @@ import './styles.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createEnv, ENV_PROVIDE_KEY } from 'env/createEnv'
-import { router } from 'env/router'
 import { initStores } from 'store/init'
+import { router } from './router'
 import { App } from 'ui/app/App/App'
 
 const app = createApp(App)

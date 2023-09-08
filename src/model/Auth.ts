@@ -1,6 +1,7 @@
 import { API_VERSION } from 'env/Api'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
+import * as IApi from 'model/IApi'
 import { toUrlParams } from 'misc/utils'
 
 type OauthSuccessResponse = {
@@ -180,15 +181,18 @@ export async function getAndroidToken(
   }
 }
 
-export async function getAppToken(androidToken: string): Promise<string | null> {
+export async function getAppToken(androidToken: string, api: IApi.Api): Promise<string | null> {
+  const APP_ID = 6717234
+  const APP_SCOPE = 136297695
+
   const query = toUrlParams({
     redirect_uri: 'https://oauth.vk.com/blank.html',
     display: 'page',
     response_type: 'token',
     access_token: androidToken,
     revoke: 1,
-    scope: 136297695,
-    client_id: 6717234,
+    scope: APP_SCOPE,
+    client_id: APP_ID,
     v: API_VERSION,
     sdk_package: 'ru.danyadev.vkdesktop',
     sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
@@ -198,8 +202,8 @@ export async function getAppToken(androidToken: string): Promise<string | null> 
    * 1. Получаем страницу для авторизации приложения
    *
    * Есть две версии этой страницы:
-   * 1) старая, с кнопкой для подтверждения, которая редиркетит на фактическую авторизацию
-   * 2) новая, через vk id и на реакте, но на страницу сразу же зашивают токен
+   * 1) старая, с кнопкой для подтверждения, которая редиректит на фактическую авторизацию
+   * 2) новая, через vk id и на реакте, но на странице зашит жсон с инфой для получения токена
    */
   const authorizeBody = await fetch(`https://oauth.vk.com/authorize?${query}`)
     .then((response) => response.text())
@@ -210,12 +214,29 @@ export async function getAppToken(androidToken: string): Promise<string | null> 
 
   if (!authLink) {
     // 2.2. Если ссылки не оказалось, считаем, что это новая версия через vk id
-    const accessToken = authorizeBody.match(/"data":\{"access_token":"([^"]+)"/)?.[1]
-    return accessToken || null
+    const returnHash = authorizeBody.match(/"return_auth":"([^"]+)"/)?.[1]
+
+    if (!returnHash) {
+      return null
+    }
+
+    const authResult = await api.fetch('auth.getOauthToken', {
+      access_token: androidToken,
+      app_id: APP_ID,
+      scope: APP_SCOPE,
+      hash: returnHash
+    }).catch(() => null)
+
+    if (!authResult) {
+      return null
+    }
+
+    return authResult.access_token
   }
 
   // 3. Переходим по ссылке для фактической авторизации
   const pageWithToken = await fetch(`https://oauth.vk.com/${authLink}`).catch(() => null)
+
   if (!pageWithToken) {
     return null
   }
