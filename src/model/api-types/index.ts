@@ -1,5 +1,6 @@
 import {
-  AuthGetOauthTokenParams, AuthGetOauthTokenResponse,
+  AuthGetOauthTokenParams,
+  AuthGetOauthTokenResponse,
   AuthValidatePhoneParams,
   AuthValidatePhoneResponse
 } from 'model/api-types/methods/Auth'

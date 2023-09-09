@@ -1,5 +1,5 @@
 import { MessagesLongpollParams } from 'model/api-types/objects/MessagesLongpollParams'
-import { EngineResponse } from 'model/Engine'
+import * as IEngine from 'model/IEngine'
 import { toUrlParams } from 'misc/utils'
 
 export const ENGINE_VERSION = 19
@@ -37,7 +37,7 @@ export class Engine {
           wait: ENGINE_MAX_CONNECTION_DURATION_SEC
         }),
         signal: timeoutSignal
-      }).then<EngineResponse>((response) => response.json())
+      }).then<IEngine.Response>((response) => response.json())
 
       if ('failed' in result) {
         switch (result.failed) {

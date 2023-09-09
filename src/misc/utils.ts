@@ -25,7 +25,11 @@ export function isObject(obj: unknown): obj is object {
   return Object.prototype.toString.call(obj) === '[object Object]'
 }
 
-export function timer(milliseconds: number) {
+export function isNonEmptyArray<T>(array: T[]): array is NonEmptyArray<T> {
+  return array.length > 0
+}
+
+export function sleep(milliseconds: number) {
   return new Promise<void>((resolve) => window.setTimeout(resolve, milliseconds))
 }
 

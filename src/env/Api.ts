@@ -2,7 +2,7 @@ import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import { Methods } from 'model/api-types'
 import * as IApi from 'model/IApi'
-import { random, timer, toUrlParams } from 'misc/utils'
+import { isNonEmptyArray, random, sleep, toUrlParams } from 'misc/utils'
 import { useGlobalModal } from 'misc/hooks'
 import { androidUserAgent, appUserAgent } from 'misc/constants'
 import { Semaphore } from 'misc/Semaphore'
@@ -14,9 +14,10 @@ export const API_VERSION = '5.131'
 
 const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500
+const API_RATE_LIMIT_WINDOW = 1000
 
 export class Api implements IApi.Api {
-  private semaphore = new Semaphore(3, 1000)
+  private semaphore = new Semaphore(3, API_RATE_LIMIT_WINDOW)
 
   public async fetch<Method extends keyof Methods>(
     method: Method,
@@ -24,11 +25,10 @@ export class Api implements IApi.Api {
     fetchOptions: IApi.FetchOptions = {}
   ): Promise<Methods[Method]['response']> {
     const { retries = 0 } = fetchOptions
-    let attempts = 0
-    let availableAttempts = 1 + retries
+    let takenAttempts = 0
 
-    while (availableAttempts--) {
-      attempts++
+    while (true) {
+      takenAttempts++
 
       try {
         return await this.doFetch(method, params, fetchOptions)
@@ -46,27 +46,27 @@ export class Api implements IApi.Api {
 
           case 'MethodError':
           case 'ExecuteError': {
-            const [restoreAttempt, heedSkipBackoff] = await this.handleErrors(err, params)
+            const { resetAttempts, needSkipBackoff } = await this.handleErrors(err, params)
 
-            if (restoreAttempt) {
-              availableAttempts++
+            if (resetAttempts) {
+              takenAttempts = 0
             }
-            if (heedSkipBackoff) {
+            if (needSkipBackoff) {
               skipBackoff = true
             }
             break
           }
         }
 
-        if (!availableAttempts) {
+        if (takenAttempts === retries + 1) {
           throw err
         }
 
         if (!skipBackoff) {
           // https://aws.amazon.com/ru/blogs/architecture/exponential-backoff-and-jitter
-          const exponentialBackoff = API_MIN_RETRY_DELAY * (2 ** Math.min(attempts - 1, 5))
+          const exponentialBackoff = API_MIN_RETRY_DELAY * (2 ** Math.min(takenAttempts - 1, 5))
           const equalJitterBackoff = (exponentialBackoff / 2) + random(0, exponentialBackoff / 2)
-          await timer(equalJitterBackoff)
+          await sleep(equalJitterBackoff)
         }
       }
     }
@@ -166,25 +166,31 @@ export class Api implements IApi.Api {
   private async handleErrors<Method extends keyof Methods>(
     apiError: IApi.MethodError | IApi.ExecuteError,
     params: IApi.MethodParams<Method> = {}
-  ): Promise<[boolean, boolean]> {
+  ): Promise<{ resetAttempts: boolean, needSkipBackoff: boolean }> {
     const error = apiError.type === 'MethodError' ? apiError : apiError.errors[0]
 
     switch (error.code) {
       // TODO: 5 (Сессия завершена)
-      // TODO: 6/9 (Слишком много запросов в секунду / однотипных действий)
+      // TODO: 9 (Слишком много однотипных действий)
       // TODO: 10 (Internal server error)
       // TODO: 29 (Rate limit reached, может означать "метод отключен из-за сильной нагрузки")
       // TODO: 43 (раздел отключен, когда вк упал)
 
+      // Слишком много запросов в секунду
+      case 6: {
+        await sleep(API_RATE_LIMIT_WINDOW)
+        return { resetAttempts: true, needSkipBackoff: true }
+      }
+
       // Капча
       case 14: {
         const isResponded = await new Promise<boolean>((resolve) => {
-          const { captchaModal } = useGlobalModal()
-
           if (!error.captchaSid || !error.captchaImg) {
             resolve(false)
             return
           }
+
+          const { captchaModal } = useGlobalModal()
 
           captchaModal.open({
             captchaImg: error.captchaImg,
@@ -203,7 +209,7 @@ export class Api implements IApi.Api {
           throw apiError
         }
 
-        return [true, true]
+        return { resetAttempts: true, needSkipBackoff: true }
       }
 
       default:
@@ -216,15 +222,7 @@ export class Api implements IApi.Api {
     params: IApi.MethodParams<Method> = {},
     fetchOptions: IApi.FetchOptions = {}
   ): Promise<Methods[Method]['response']> {
-    if (!this.semaphore.lock()) {
-      return new Promise((resolve, reject) => {
-        this.semaphore.addToQueue(() => {
-          this.doFetch(method, params, fetchOptions)
-            .then(resolve)
-            .catch(reject)
-        })
-      })
-    }
+    await this.semaphore.lock()
 
     const { lang } = useSettingsStore()
     const { viewer } = useViewerStore()
@@ -236,14 +234,16 @@ export class Api implements IApi.Api {
         fetchOptions.timeout || API_DEFAULT_FETCH_TIMEOUT
       )
 
+      const fullParams: IApi.MethodParams<Method> = {
+        access_token: fetchOptions.android ? viewer?.androidToken : viewer?.accessToken,
+        v: API_VERSION,
+        lang,
+        ...params
+      }
+
       const result = await fetch(`https://api.vk.com/method/${method}`, {
         method: 'POST',
-        body: toUrlParams({
-          access_token: fetchOptions.android ? viewer?.androidToken : viewer?.accessToken,
-          v: API_VERSION,
-          lang,
-          ...params
-        }),
+        body: toUrlParams(fullParams),
         headers: {
           'X-User-Agent': fetchOptions.android ? androidUserAgent : appUserAgent,
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -255,7 +255,8 @@ export class Api implements IApi.Api {
         if (!response.ok) {
           return Promise.reject({
             type: 'FetchError',
-            kind: 'ServerError'
+            kind: 'ServerError',
+            payload: response.status
           })
         }
 
@@ -263,7 +264,7 @@ export class Api implements IApi.Api {
       })
 
       if ('error' in result) {
-        return Promise.reject({
+        const error: IApi.MethodError = {
           type: 'MethodError',
           code: result.error.error_code,
           message: result.error.error_msg,
@@ -272,32 +273,47 @@ export class Api implements IApi.Api {
             captchaImg: result.error.captcha_img
           }),
           requestParams: result.error.request_params
-        })
+        }
+        return Promise.reject(error)
       }
 
       if ('execute_errors' in result) {
-        return Promise.reject({
+        const errors = result.execute_errors.map((error) => ({
+          method: error.method,
+          code: error.error_code,
+          message: error.error_msg,
+          ...(error.captcha_sid && error.captcha_img && {
+            captchaSid: error.captcha_sid,
+            captchaImg: error.captcha_img
+          })
+        }))
+
+        if (!isNonEmptyArray(errors)) {
+          const error: IApi.FetchError = {
+            type: 'FetchError',
+            kind: 'ServerError',
+            payload: 'empty execute_errors'
+          }
+          return Promise.reject(error)
+        }
+
+        const error: IApi.ExecuteError = {
           type: 'ExecuteError',
-          executeErrors: result.execute_errors.map((error) => ({
-            method: error.method,
-            code: error.error_code,
-            message: error.error_msg,
-            ...(error.captcha_sid && error.captcha_img && {
-              captchaSid: error.captcha_sid,
-              captchaImg: error.captcha_img
-            })
-          }))
-        })
+          errors
+        }
+        return Promise.reject(error)
       }
 
       return result.response
     } catch (error) {
       console.warn(error)
 
-      return Promise.reject({
+      const networkError: IApi.FetchError = {
         type: 'FetchError',
-        kind: 'NetworkError'
-      })
+        kind: 'NetworkError',
+        payload: error
+      }
+      return Promise.reject(networkError)
     } finally {
       this.semaphore.release()
     }

@@ -25,6 +25,7 @@ export type Error = FetchError | MethodError | ExecuteError
 export type FetchError = {
   type: 'FetchError'
   kind: 'ServerError' | 'NetworkError'
+  payload: unknown
 }
 export type MethodError = {
   type: 'MethodError'

@@ -1,36 +1,33 @@
 export class Semaphore {
-  freeOperations: number
-  operationsQueue: Array<() => void> = []
+  private resources: number
+  private queue: Array<() => void> = []
 
-  constructor(public operationsPerWindow: number, public windowSizeMilliseconds: number) {
-    this.freeOperations = operationsPerWindow
+  constructor(
+    private readonly capacity: number,
+    private readonly window: number
+  ) {
+    this.resources = capacity
   }
 
-  /**
-   * Возвращает true, если операцию можно выполнить сейчас,
-   * и false, если ее нужно положить в очередь
-   */
-  lock() {
-    if (this.freeOperations === 0) {
-      return false
+  async lock(): Promise<void> {
+    if (this.resources > 0) {
+      this.resources--
+      return Promise.resolve()
     }
 
-    this.freeOperations--
-    return true
+    return new Promise((resolve) => {
+      this.queue.push(resolve)
+    })
   }
 
-  release() {
+  release(): void {
     window.setTimeout(() => {
-      this.freeOperations = Math.min(this.freeOperations + 1, this.operationsPerWindow)
-
-      const queuedOperation = this.operationsQueue.shift()
-      if (queuedOperation) {
-        queuedOperation()
+      const nextJob = this.queue.shift()
+      if (nextJob) {
+        nextJob()
+      } else {
+        this.resources++
       }
-    }, this.windowSizeMilliseconds)
-  }
-
-  addToQueue(operation: (() => void)) {
-    this.operationsQueue.push(operation)
+    }, this.window)
   }
 }
