@@ -69,7 +69,7 @@ export class Lang {
       yy: () => String(date.getFullYear()).slice(-2),
 
       // месяц (полное название; короткое название; 01-12; 1-12)
-      MMMM: () => months[date.getMonth()] || '',
+      MMMM: () => months[date.getMonth()] ?? '',
       MMM: () => tokens.MMMM().slice(0, 3),
       MM: () => addZero(tokens.M()),
       M: () => date.getMonth() + 1,

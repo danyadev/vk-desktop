@@ -20,7 +20,7 @@ const spinnerIcons = {
 
 export const Spinner = defineComponent<Props>((props) => {
   return () => {
-    const SpinnerIcon = spinnerIcons[props.size || 'small']
+    const SpinnerIcon = spinnerIcons[props.size ?? 'small']
     return <SpinnerIcon class="Spinner" />
   }
 }, {

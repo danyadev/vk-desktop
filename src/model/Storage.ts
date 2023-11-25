@@ -48,7 +48,7 @@ export class RendererStorage<T extends Record<string, unknown>> {
     this.name = `${name}-v${this.version}`
 
     const defaultValue = typeof defaults === 'function' ? defaults() : defaults
-    const storageData = deserializeJson<Partial<T>>(localStorage.getItem(this.name) || '{}')
+    const storageData = deserializeJson<Partial<T>>(localStorage.getItem(this.name) ?? '{}')
 
     this.data = {
       ...defaultValue,

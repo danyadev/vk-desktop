@@ -231,7 +231,7 @@ export class Api implements IApi.Api {
       const abortController = new AbortController()
       const abortTimeoutId = window.setTimeout(
         () => abortController.abort(),
-        fetchOptions.timeout || API_DEFAULT_FETCH_TIMEOUT
+        fetchOptions.timeout ?? API_DEFAULT_FETCH_TIMEOUT
       )
 
       const fullParams: IApi.MethodParams<Method> = {

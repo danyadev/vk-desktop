@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs'
+import { Plugin } from 'vite'
 
 import { compileTemplate } from '@vue/compiler-sfc'
-import { Plugin } from 'vite'
 
 type Options = {
   defaultImport?: 'url' | 'raw' | 'component'
@@ -20,7 +20,7 @@ export function svgLoader({ defaultImport }: Options = {}): Plugin {
       }
 
       const [path, query] = id.split('?', 2)
-      const importType = query || defaultImport
+      const importType = query ?? defaultImport
 
       if (!path || !importType || importType === 'url') {
         return // Use default svg loader

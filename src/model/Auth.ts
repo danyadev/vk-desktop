@@ -242,7 +242,7 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
   }
 
   // 4. Получаем токен из хеш-параметра ссылки на страницу
-  const urlMaybeWithToken = pageWithToken.headers.get('x-original-url-by-electron') || ''
+  const urlMaybeWithToken = pageWithToken.headers.get('x-original-url-by-electron') ?? ''
   const hashIndex = urlMaybeWithToken.indexOf('#')
 
   if (hashIndex !== -1) {

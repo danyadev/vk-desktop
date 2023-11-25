@@ -8,7 +8,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2021,
     tsconfigRootDir: __dirname,
-    project: './tsconfig.json'
+    project: true
   },
 
   env: {
@@ -16,6 +16,8 @@ module.exports = {
     node: true,
     es2021: true
   },
+
+  reportUnusedDisableDirectives: true,
 
   plugins: ['import', 'simple-import-sort'],
 
@@ -35,16 +37,19 @@ module.exports = {
     'eslint:recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
-    'plugin:@typescript-eslint/recommended'
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/stylistic'
   ],
 
   overrides: [
     {
       files: ['**/*.{ts,tsx}'],
       extends: [
-        'plugin:@typescript-eslint/recommended-requiring-type-checking'
+        'plugin:@typescript-eslint/recommended-type-checked',
+        'plugin:@typescript-eslint/stylistic-type-checked'
       ],
       rules: {
+        '@typescript-eslint/consistent-type-definitions': 'off',
         '@typescript-eslint/no-floating-promises': 'off',
         '@typescript-eslint/no-misused-promises': ['error', {
           checksVoidReturn: {
@@ -56,12 +61,6 @@ module.exports = {
             properties: false
           }
         }]
-      }
-    },
-    {
-      files: ['**/*.d.ts'],
-      rules: {
-        '@typescript-eslint/consistent-type-definitions': 'off'
       }
     },
     {
@@ -148,21 +147,6 @@ module.exports = {
     'prefer-const': ['error', {
       // Разрешает let, если какая-то переменная при деструктуризации переопределяется
       destructuring: 'all'
-    }],
-    'prefer-destructuring': ['error', {
-      // false здесь означает, что проверяться такие кейсы не будут.
-      // Для массивов я считаю нормальным многие варианты использования:
-      // const id = match[1];
-      // const [, type, id] = match;
-      VariableDeclarator: {
-        array: false,
-        object: true
-      },
-      // Отключаем форсирование выражений [foo] = array
-      AssignmentExpression: {
-        array: false,
-        object: false
-      }
     }],
     'prefer-exponentiation-operator': 'error',
     'prefer-numeric-literals': 'error',
@@ -290,7 +274,6 @@ module.exports = {
       // Запрещаем разрешенный по умолчанию @ts-check
       'ts-check': true
     }],
-    '@typescript-eslint/consistent-indexed-object-style': 'error',
     '@typescript-eslint/member-delimiter-style': ['error', {
       multiline: {
         delimiter: 'none'
@@ -304,24 +287,21 @@ module.exports = {
       selector: 'typeLike',
       format: ['PascalCase']
     }],
-    '@typescript-eslint/no-base-to-string': 'error',
     '@typescript-eslint/no-confusing-void-expression': ['error', {
       // Разрешаем () => fnThatReturnVoid()
       ignoreArrowShorthand: true
     }],
-    '@typescript-eslint/no-duplicate-enum-values': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-extra-semi': 'error',
     '@typescript-eslint/no-invalid-void-type': 'error',
-    '@typescript-eslint/no-redundant-type-constituents': 'error',
+    '@typescript-eslint/no-non-null-assertion': 'error',
+    '@typescript-eslint/no-unsafe-unary-minus': 'error',
     '@typescript-eslint/prefer-includes': 'error',
-    '@typescript-eslint/prefer-optional-chain': 'error',
     '@typescript-eslint/prefer-reduce-type-parameter': 'error',
-    '@typescript-eslint/prefer-string-starts-ends-with': 'error',
-    '@typescript-eslint/require-array-sort-compare': 'error',
-    '@typescript-eslint/restrict-plus-operands': ['error', {
-      // Проверяем так же += операнды
-      checkCompoundAssignments: true
+    '@typescript-eslint/restrict-plus-operands': 'error',
+    '@typescript-eslint/switch-exhaustiveness-check': ['error', {
+      requireDefaultForNonUnion: true
     }],
-    '@typescript-eslint/switch-exhaustiveness-check': 'error',
     '@typescript-eslint/ban-types': ['error', {
       types: {
         'JSX.Element': 'Use JSXElement type from misc/utils'
@@ -335,7 +315,6 @@ module.exports = {
     '@typescript-eslint/brace-style': 'error',
     '@typescript-eslint/comma-spacing': 'error',
     '@typescript-eslint/default-param-last': 'error',
-    '@typescript-eslint/dot-notation': 'error',
     '@typescript-eslint/func-call-spacing': 'error',
     '@typescript-eslint/key-spacing': 'error',
     '@typescript-eslint/keyword-spacing': 'error',
@@ -347,7 +326,23 @@ module.exports = {
     // Включено в full файле
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
+    '@typescript-eslint/no-useless-template-literals': 'error',
     '@typescript-eslint/object-curly-spacing': ['error', 'always'],
+    '@typescript-eslint/prefer-destructuring': ['error', {
+      // false здесь означает, что проверяться такие кейсы не будут.
+      // Для массивов я считаю нормальным многие варианты использования:
+      // const id = match[1];
+      // const [, type, id] = match;
+      VariableDeclarator: {
+        array: false,
+        object: true
+      },
+      // Отключаем форсирование выражений [foo] = array
+      AssignmentExpression: {
+        array: false,
+        object: false
+      }
+    }],
     '@typescript-eslint/quotes': ['error', 'single', {
       avoidEscape: true
     }],

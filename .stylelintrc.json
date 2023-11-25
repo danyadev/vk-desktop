@@ -15,6 +15,7 @@
     "font-family-name-quotes": "always-where-required",
     "color-function-notation": "legacy",
     "alpha-value-notation": "number",
+    "media-feature-name-value-no-unknown": true,
     "value-keyword-case": ["lower", {
       "ignoreKeywords": ["optimizeSpeed"]
     }],

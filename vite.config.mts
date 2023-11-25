@@ -2,10 +2,11 @@ import path from 'path'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { defineConfig } from 'vite'
 import electron from 'vite-plugin-electron'
+import { notBundle } from 'vite-plugin-electron/plugin'
 import electronRenderer from 'vite-plugin-electron-renderer'
 import { svgLoader } from './build/svgLoader'
 
-// eslint-disable-next-line import/no-unused-modules, import/no-default-export
+// eslint-disable-next-line import/no-default-export
 export default defineConfig({
   build: {
     target: 'esnext',
@@ -13,7 +14,8 @@ export default defineConfig({
       polyfill: false
     },
     outDir: 'app/dist',
-    reportCompressedSize: false
+    reportCompressedSize: false,
+    cssMinify: 'lightningcss'
   },
   esbuild: {
     legalComments: 'none'
@@ -30,7 +32,8 @@ export default defineConfig({
     }
   },
   define: {
-    __VUE_OPTIONS_API__: false
+    __VUE_OPTIONS_API__: false,
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
   },
   plugins: [
     vueJsx({
@@ -48,9 +51,15 @@ export default defineConfig({
         },
         esbuild: {
           legalComments: 'none'
-        }
+        },
+        plugins: [
+          notBundle()
+        ]
       }
     }),
     electronRenderer()
-  ]
+  ],
+  css: {
+    transformer: 'lightningcss'
+  }
 })

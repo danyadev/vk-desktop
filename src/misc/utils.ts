@@ -72,7 +72,7 @@ export function toUrlParams(object: Record<string, string | number | null | unde
  */
 export function createSingletonHook<R extends object>(hook: (() => R)) {
   let hookResult: R | undefined
-  return () => hookResult || (hookResult = hook())
+  return () => hookResult ?? (hookResult = hook())
 }
 
 export function subscribeToElectronEvent(subscribe: (() => () => void)) {
