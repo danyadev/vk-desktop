@@ -2,7 +2,7 @@
   "productName": "VK Desktop",
   "appId": "ru.danyadev.vkdesktop",
   "artifactName": "VK Desktop ${os} ${arch}.${ext}",
-  "electronVersion": "20.3.12",
+  "electronVersion": "22.3.27",
   "npmRebuild": false,
   "asar": true,
   "directories": {
@@ -37,6 +37,6 @@
       "target": "dmg",
       "arch": ["arm64", "x64"]
     },
-    "electronLanguages": ["ru", "en", "uk"]
+    "electronLanguages": ["ru", "en"]
   }
 }

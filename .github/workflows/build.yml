@@ -16,13 +16,13 @@ jobs:
           - os: windows-latest
             files: '"app/VK Desktop Setup x64.exe" "app/VK Desktop Setup x32.exe"'
           - os: macos-latest
-            files: '"app/VK Desktop mac x64.dmg"'
+            files: '"app/VK Desktop mac x64.dmg" "app/VK Desktop mac arm64.dmg"'
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
     - name: Install dependencies
       run: yarn
     - name: Build Electron app
