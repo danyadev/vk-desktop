@@ -44,6 +44,10 @@ img {
   --lineHeight: 18px;
   --font: var(--fontSize) / var(--lineHeight) var(--fontFamily);
 
+  --smallFontSize: 13px;
+  --smallLineHeight: 15px;
+  --smallFont: var(--smallFontSize) / var(--smallLineHeight) var(--fontFamily);
+
   --fastTransition: 0.15s;
   --mediumTransition: 0.2s;
   --slowTransition: 0.3s;

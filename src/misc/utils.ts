@@ -41,6 +41,10 @@ export function exhaustivenessCheck(_unused: never): never {
   throw new Error('Exhaustiveness failure! This should never happen.')
 }
 
+export function typeguard(_unused: never) {
+  // Функция предназначена для того, чтобы падать по типам при передаче неправильного значения
+}
+
 /**
  * Позволяет отфильтровать массив от falsy значений и убрать нежелательные
  * варианты значений из типов

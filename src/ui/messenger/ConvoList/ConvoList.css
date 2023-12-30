@@ -18,4 +18,11 @@
 
 .ConvoList__list {
   overflow: overlay;
+  height: 100%;
+}
+
+.ConvoList__list--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

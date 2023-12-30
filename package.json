@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "yarn run dist && yarn run pack",
     "tsc": "tsc --noEmit",
-    "lint:eslint": "eslint -c .eslintrc.full.js src main-process scripts *.{js,ts} --ext .js,.ts,.tsx,.mjs",
+    "lint:eslint": "eslint -c .eslintrc.full.js src main-process scripts *.{js,mts} --ext .js,.ts,.tsx,.mjs",
     "lint:stylelint": "stylelint src/**/*.css",
     "lint": "yarn lint:eslint && yarn lint:stylelint",
     "generate-schemes": "node ./scripts/generateSchemes.mjs",

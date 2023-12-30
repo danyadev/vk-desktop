@@ -1,0 +1,25 @@
+.ConvoListItem {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  gap: 10px;
+  margin: 10px;
+}
+
+.ConvoListItem__photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.ConvoListItem__name {
+  flex: 1;
+}
+
+.ConvoListItem__unreadCount {
+  background-color: #828282;
+  color: #222;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font: var(--smallFont);
+}

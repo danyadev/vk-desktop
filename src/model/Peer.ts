@@ -16,41 +16,42 @@ import { exhaustivenessCheck, Opaque } from 'misc/utils'
  */
 
 export type UserId = Opaque<number, User>
-type GroupId = Opaque<number, Group>
-type ChatId = Opaque<number, Chat>
+export type GroupId = Opaque<number, Group>
+export type ChatId = Opaque<number, Chat>
 
 export type Peer = User | Group | Chat
-type Id = Peer['id']
+export type Id = Peer['id']
 
 export type User = {
   kind: 'User'
   id: UserId
   firstName: string
   lastName: string
-  photo50: string
-  photo100: string
+  photo50?: string
+  photo100?: string
 }
 
-type Group = {
+export type Group = {
   kind: 'Group'
   id: GroupId
   name: string
-  photo50: string
-  photo100: string
+  screenName: string
+  photo50?: string
+  photo100?: string
 }
 
-type Chat = {
+export type Chat = {
   kind: 'Chat'
   id: ChatId
   title: string
-  photo50: string
-  photo100: string
+  photo50?: string
+  photo100?: string
 }
 
 /**
  * Конвертит число в Peer.Id
  */
-function resolveId(id: number): Id {
+export function resolveId(id: number): Id {
   if (id === 0) {
     throw new Error('Peer.Id = 0')
   }
@@ -83,14 +84,13 @@ export function resolveRealId(realId: number, kind: Peer['kind']): Id {
   }
 }
 
-// временно неиспользуемая функция
-/* eslint-disable */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function toRealId(peerId: Id): number {
   if (isUserPeerId(peerId)) {
     return peerId
   }
   if (isGroupPeerId(peerId)) {
-    return -peerId
+    return -Number(peerId)
   }
   if (isChatPeerId(peerId)) {
     return peerId - 2e9
@@ -98,18 +98,31 @@ function toRealId(peerId: Id): number {
 
   exhaustivenessCheck(peerId)
 }
-/* eslint-enable */
 
-function isUserPeerId(peerId: Id): peerId is UserId {
+export function isUserPeerId(peerId: Id): peerId is UserId {
   return peerId > 0 && peerId < 1.9e9
 }
 
-function isGroupPeerId(peerId: Id): peerId is GroupId {
+export function isGroupPeerId(peerId: Id): peerId is GroupId {
   return peerId < 0 && peerId > -1.9e9 + 1e7
 }
 
-function isChatPeerId(peerId: Id): peerId is ChatId {
+export function isChatPeerId(peerId: Id): peerId is ChatId {
   return peerId > 2e9
+}
+
+export function safeGet(peers: Map<Id, Peer>, id: UserId): User
+export function safeGet(peers: Map<Id, Peer>, id: GroupId): Group
+export function safeGet(peers: Map<Id, Peer>, id: ChatId): Chat
+export function safeGet(peers: Map<Id, Peer>, id: Id): Peer
+export function safeGet(peers: Map<Id, Peer>, id: Id): unknown {
+  const peer = peers.get(id)
+
+  if (!peer) {
+    throw new Error('TODO: return peer mock')
+  }
+
+  return peer
 }
 
 export function name(peer: Peer): string {

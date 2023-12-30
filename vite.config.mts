@@ -6,7 +6,7 @@ import { notBundle } from 'vite-plugin-electron/plugin'
 import electronRenderer from 'vite-plugin-electron-renderer'
 import { svgLoader } from './build/svgLoader'
 
-// eslint-disable-next-line import/no-default-export
+// eslint-disable-next-line import/no-default-export import/no-unused-modules
 export default defineConfig({
   build: {
     target: 'esnext',

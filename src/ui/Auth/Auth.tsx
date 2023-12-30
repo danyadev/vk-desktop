@@ -15,7 +15,7 @@ import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth
 import * as Peer from 'model/Peer'
 import { useEnv, useGlobalModal, useModal } from 'misc/hooks'
 import { fromApiUser } from 'misc/converters/PeerConverter'
-import { userFields } from 'misc/constants'
+import { PEER_FIELDS } from 'misc/constants'
 import { Modal } from 'ui/modals/parts'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
@@ -100,7 +100,7 @@ export const Auth = defineComponent(() => {
         try {
           const [apiUser] = await api.fetch('users.get', {
             access_token: appToken,
-            fields: userFields
+            fields: PEER_FIELDS
           }, { retries: 3 })
 
           if (!apiUser) {
