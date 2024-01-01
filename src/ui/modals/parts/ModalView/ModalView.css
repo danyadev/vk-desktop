@@ -17,7 +17,7 @@
 }
 
 .ModalView:not(.ModalView--noBackdrop) .ModalView__backdrop {
-  background-color: var(--black_alpha72);
+  background-color: var(--vkui--color_overlay_primary);
 }
 
 .ModalView__container {
@@ -29,9 +29,9 @@
 }
 
 .ModalView__content {
-  background-color: var(--modal_card_background);
+  background-color: var(--vkui--color_background_modal);
   border-radius: 12px;
-  box-shadow: 0 4px 20px var(--black_alpha40);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.24);
   visibility: visible;
 }
 

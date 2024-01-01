@@ -1,15 +1,15 @@
-import os from 'os'
 import type Electron from 'electron'
 import { toRaw } from 'vue'
 import { defineStore } from 'pinia'
 import { MainStorage } from 'model/Storage'
 import { currentWindow } from 'misc/utils'
 
-export type AppearanceScheme = 'vkcom' | 'vkui'
-export type AppearanceTheme = 'light' | 'dark' | 'system'
+import { shouldUseCustomTitlebar } from '../../main-process/shared'
 
-// Нужно держать синхронизированным с типом из main-process/index.ts
-type MainSettings = {
+export type AppearanceScheme = 'vkcom' | 'vkui'
+type AppearanceTheme = 'light' | 'dark' | 'system'
+
+export type MainSettings = {
   bounds: Electron.Rectangle
   useCustomTitlebar: boolean
   appearance: {
@@ -20,8 +20,7 @@ type MainSettings = {
 
 const mainSettingsStorage = new MainStorage<MainSettings>({
   bounds: currentWindow.getBounds(),
-  // Включаем кастомный тайтлбар только для винды < 10 версии
-  useCustomTitlebar: process.platform === 'win32' && parseInt(os.release()) < 10,
+  useCustomTitlebar: shouldUseCustomTitlebar,
   appearance: {
     scheme: 'vkcom',
     theme: 'system'

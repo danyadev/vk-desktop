@@ -6,7 +6,7 @@
   bottom: 0;
   right: 0;
   border-radius: inherit;
-  box-shadow: 0 0 0 2px var(--accent);
+  box-shadow: 0 0 0 2px var(--vkui--color_stroke_accent);
   user-select: none;
   pointer-events: none;
   overflow: hidden;

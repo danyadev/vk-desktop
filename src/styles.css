@@ -41,12 +41,10 @@ img {
 :root {
   --fontFamily: 'BlinkMacSystemFont', 'Roboto VK';
   --fontSize: 15px;
+  --smallFontSize: 13px;
   --lineHeight: 18px;
   --font: var(--fontSize) / var(--lineHeight) var(--fontFamily);
-
-  --smallFontSize: 13px;
-  --smallLineHeight: 15px;
-  --smallFont: var(--smallFontSize) / var(--smallLineHeight) var(--fontFamily);
+  --smallFont: var(--smallFontSize) / var(--lineHeight) var(--fontFamily);
 
   --fastTransition: 0.15s;
   --mediumTransition: 0.2s;
@@ -56,29 +54,9 @@ img {
 }
 
 [data-scheme] {
-  --white: #fff;
-  --white_alpha20: rgba(255, 255, 255, 0.2);
-  --black_alpha12: rgba(0, 0, 0, 0.12);
-  --black_alpha20: rgba(0, 0, 0, 0.2);
-  --black_alpha30: rgba(0, 0, 0, 0.3);
-  --black_alpha40: rgba(0, 0, 0, 0.4);
-  --black_alpha72: rgba(0, 0, 0, 0.72);
-  --gray_850: #232324;
-  --gray_900: #222;
+  --vkui--color_field_background_in_layer: var(--vkui--color_field_background);
 }
 
-[data-scheme="vkcom_dark"], [data-scheme="space_gray"] {
-  --field_border_hover: var(--white_alpha20);
-  --field_background_layer: var(--gray_900);
-  --titlebar_button_hover: var(--black_alpha40);
-}
-
-[data-scheme="vkcom_light"], [data-scheme="bright_light"] {
-  --field_border_hover: var(--black_alpha20);
-  --field_background_layer: var(--field_background);
-  --titlebar_button_hover: var(--black_alpha12);
-}
-
-[data-scheme="space_gray"] {
-  --field_background_layer: var(--gray_850);
+[data-scheme="vkcom-dark"] {
+  --vkui--color_field_background_in_layer: var(--vkui--color_background_content);
 }

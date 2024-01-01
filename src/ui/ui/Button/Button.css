@@ -2,7 +2,7 @@
   position: relative;
   border-radius: 8px;
   padding: 0 16px;
-  transition: opacity var(--fastTransition);
+  transition: opacity var(--fastTransition), background-color var(--fastTransition);
 }
 
 .Button:hover,
@@ -51,43 +51,43 @@
 }
 
 .Button--primary {
-  color: var(--button_primary_foreground);
-  background-color: var(--button_primary_background);
+  color: var(--vkui--color_text_contrast_themed);
+  background: var(--vkui--color_background_accent_themed);
 }
 
 .Button--secondary {
-  color: var(--button_secondary_foreground);
-  background-color: var(--button_secondary_background);
+  color: var(--vkui--color_text_primary);
+  background: var(--vkui--color_background_secondary);
 }
 
 .Button--secondary:not([disabled]):hover,
 .Button--secondary:active {
-  color: var(--button_secondary_foreground_highlighted);
-  background-color: var(--button_secondary_background_highlighted);
+  background: var(--vkui--color_background_secondary--hover);
   opacity: 1;
 }
 
 .Button--tertiary {
-  color: var(--button_tertiary_foreground);
-  background-color: var(--button_tertiary_background);
+  color: var(--vkui--color_text_primary);
+  background: var(--vkui--color_transparent);
 }
 
 .Button--tertiary:not([disabled]):hover,
 .Button--tertiary:active {
-  background-color: var(--button_secondary_background);
+  background: var(--vkui--color_transparent--hover);
 }
 
 .Button--destructive {
-  background-color: var(--destructive);
+  color: var(--vkui--color_text_contrast);
+  background: var(--vkui--color_background_negative);
 }
 
 .Button--outline {
-  color: var(--button_outline_foreground);
-  border: 1px solid var(--button_outline_border);
-  background-color: transparent;
+  color: var(--vkui--color_text_accent_themed);
+  background: var(--vkui--color_transparent);
+  border: 1px solid var(--vkui--color_stroke_accent_themed);
 }
 
 .Button--outline:not([disabled]):hover,
 .Button--outline:active {
-  background-color: var(--button_secondary_background);
+  background: var(--vkui--color_transparent--hover);
 }

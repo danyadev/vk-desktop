@@ -46,7 +46,7 @@ export const ConvoList = defineComponent<Props>(() => {
 
         <ButtonIcon
           class="ConvoList__headerExitIcon"
-          icon={<Icon24DoorArrowRightOutline color="var(--destructive)" />}
+          icon={<Icon24DoorArrowRightOutline color="var(--vkui--color_icon_negative)" />}
           onClick={logout}
         />
       </div>

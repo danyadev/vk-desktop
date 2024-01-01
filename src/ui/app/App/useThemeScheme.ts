@@ -1,15 +1,20 @@
 import * as electron from '@electron/remote'
 import { computed, shallowRef, watch } from 'vue'
-import { AppearanceScheme, AppearanceTheme, useMainSettingsStore } from 'store/mainSettings'
+import { AppearanceScheme, useMainSettingsStore } from 'store/mainSettings'
 import { createSingletonHook, currentWindow, subscribeToElectronEvent } from 'misc/utils'
 
+import { getColorBackgroundContent } from '../../../../main-process/shared'
+
+/**
+ * 0) В main процессе выставляем themeSource в зависимости от mainSettings (light | dark | system)
+ * 1) В этом хуке достаем высчитанную из themeSource тему через getAppTheme (light | dark)
+ * 2) При смене appearance из mainSettings обновляем themeSource
+ * 2.1) Сразу же ловим эвент и обновляем actualAppTheme -> меняем схему
+ * 3) При смене системной темы ловим эвент и обновляем actualAppTheme -> меняем схему
+ */
 export const useThemeScheme = createSingletonHook(() => {
   const { appearance } = useMainSettingsStore()
-
   const actualAppTheme = shallowRef(getAppTheme())
-  const scheme = computed(
-    () => getFullScheme(appearance.theme, appearance.scheme, actualAppTheme.value)
-  )
 
   watch(() => appearance.theme, () => {
     electron.nativeTheme.themeSource = appearance.theme
@@ -17,8 +22,9 @@ export const useThemeScheme = createSingletonHook(() => {
 
   function onThemeUpdate() {
     actualAppTheme.value = getAppTheme()
-    // см. main-process/index.ts
-    currentWindow.setBackgroundColor(actualAppTheme.value === 'dark' ? '#222' : '#fff')
+    currentWindow.setBackgroundColor(
+      getColorBackgroundContent(actualAppTheme.value, appearance.scheme)
+    )
   }
 
   subscribeToElectronEvent(() => {
@@ -26,35 +32,12 @@ export const useThemeScheme = createSingletonHook(() => {
     return () => electron.nativeTheme.off('updated', onThemeUpdate)
   })
 
-  return scheme
+  return computed<`${AppearanceScheme}-${ActualTheme}`>(
+    () => `${appearance.scheme}-${actualAppTheme.value}`
+  )
 })
 
-type ActualTheme = 'light' | 'dark'
+export type ActualTheme = 'light' | 'dark'
 function getAppTheme(): ActualTheme {
   return electron.nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
-}
-
-function getFullScheme(
-  theme: AppearanceTheme,
-  scheme: AppearanceScheme,
-  actualAppTheme: ActualTheme
-): 'vkcom_light' | 'vkcom_dark' | 'bright_light' | 'space_gray' {
-  switch (theme) {
-    case 'light':
-      return scheme === 'vkcom'
-        ? 'vkcom_light'
-        : 'bright_light'
-
-    case 'dark':
-      return scheme === 'vkcom'
-        ? 'vkcom_dark'
-        : 'space_gray'
-
-    case 'system':
-      return getFullScheme(
-        actualAppTheme,
-        scheme,
-        actualAppTheme
-      )
-  }
 }

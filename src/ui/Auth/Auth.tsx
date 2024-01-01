@@ -30,6 +30,8 @@ import './Auth.css'
 /**
  * Чеклист по готовности авторизации:
  * - научиться показывать второстепенные ошибки снекбарами
+ * - переделать мультиаккаунт
+ * - авторизовываться через вебвью и получать токен веба?
  */
 
 type TwoFactorState = {
@@ -489,7 +491,11 @@ const AuthAccounts = defineComponent(() => {
           onClick={() => (isDeleteModeActive.value = !isDeleteModeActive.value)}
         >
           <Icon20TrashOutline
-            color={isDeleteModeActive.value ? 'var(--accent)' : 'var(--destructive)'}
+            color={
+              isDeleteModeActive.value
+                ? 'var(--vkui--color_button_icon)'
+                : 'var(--vkui--color_icon_negative)'
+            }
           />
         </ButtonIcon>
 

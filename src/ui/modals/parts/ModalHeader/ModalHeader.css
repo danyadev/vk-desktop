@@ -16,7 +16,6 @@
 }
 
 .ModalHeader__closeIcon svg {
-  color: var(--icon_medium);
   opacity: 0.7;
   transition: opacity var(--mediumTransition);
 }

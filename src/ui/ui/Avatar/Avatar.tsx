@@ -6,7 +6,7 @@ import './Avatar.css'
 
 type Props = {
   peer: Peer.Peer
-  size: 32 | 56
+  size: 32 | 48 | 56
   class?: ClassName
 }
 

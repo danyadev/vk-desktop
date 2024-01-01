@@ -1,8 +1,8 @@
 // eslint-disable-next-line simple-import-sort/imports
-import './assets/schemes/bright_light.css'
-import './assets/schemes/space_gray.css'
-import './assets/schemes/vkcom_light.css'
-import './assets/schemes/vkcom_dark.css'
+import './assets/schemes/vkcom-light.css'
+import './assets/schemes/vkcom-dark.css'
+import './assets/schemes/vkui-light.css'
+import './assets/schemes/vkui-dark.css'
 import './styles.css'
 import 'vue/jsx'
 import { createApp } from 'vue'

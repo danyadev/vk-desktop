@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   width: 300px;
-  border-right: 1px solid var(--separator_common);
+  border-right: 1px solid var(--vkui--color_separator_primary);
 }
 
 .Messenger__content {

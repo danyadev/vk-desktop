@@ -1,10 +1,11 @@
 import fs from 'fs'
-import os from 'os'
 import path from 'path'
 import * as electronMain from '@electron/remote/main'
 import Electron, { app, BrowserWindow, ipcMain, nativeTheme, screen, session, shell } from 'electron'
-import { Dictionary } from 'env/Lang'
+import type { Dictionary } from 'env/Lang'
+import type { MainSettings as PostMainSettings } from 'store/mainSettings'
 import { buildMacOSMenu } from './buildMacOSMenu'
+import { getColorBackgroundContent, shouldUseCustomTitlebar } from './shared'
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
@@ -13,21 +14,13 @@ const isMacOS = process.platform === 'darwin'
 const appDataPath = path.join(app.getPath('appData'), 'vk-desktop')
 const storePath = path.join(appDataPath, 'storage-v1.json')
 
-// Нужно держать синхронизированным с типом из store/mainSettings.ts
-type MainSettings = {
-  // Определяется на стороне рендерера
-  bounds: Electron.Rectangle | null
-  useCustomTitlebar: boolean
-  appearance: {
-    scheme: 'vkcom' | 'vkui'
-    theme: 'light' | 'dark' | 'system'
-  }
+type MainSettings = Omit<PostMainSettings, 'bounds'> & {
+  bounds: PostMainSettings['bounds'] | null
 }
 
 let mainSettings: MainSettings = {
   bounds: null,
-  // Включаем кастомный тайтлбар только для винды < 10 версии
-  useCustomTitlebar: process.platform === 'win32' && parseInt(os.release()) < 10,
+  useCustomTitlebar: shouldUseCustomTitlebar,
   appearance: {
     scheme: 'vkcom',
     theme: 'system'
@@ -56,6 +49,11 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
     ? params.frame
     : !mainSettings.useCustomTitlebar
 
+  const backgroundColor = getColorBackgroundContent(
+    nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
+    mainSettings.appearance.scheme
+  )
+
   const win = new BrowserWindow({
     minWidth: 410,
     minHeight: 550,
@@ -63,7 +61,7 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
     frame: isFrameEnabled,
     titleBarStyle: isFrameEnabled ? 'default' : 'hidden',
     trafficLightPosition: isFrameEnabled ? undefined : { x: 8, y: 4 },
-    backgroundColor: nativeTheme.shouldUseDarkColors ? '#222' : '#fff',
+    backgroundColor,
     webPreferences: {
       webSecurity: false,
       contextIsolation: false,

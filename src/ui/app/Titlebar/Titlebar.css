@@ -2,23 +2,28 @@
   --titlebarHeight: 32px;
   display: flex;
   height: var(--titlebarHeight);
-  color: var(--text_secondary);
+  color: var(--vkui--color_text_primary);
 }
 
 .Titlebar--macOS {
   --titlebarHeight: 24px;
-  background: var(--content_tint_background);
+  background: var(--vkui--color_background_secondary);
 }
 
 .Titlebar__dragZone {
   app-region: drag;
   flex-grow: 1;
+  line-height: var(--titlebarHeight);
+}
+
+.Titlebar:not(.Titlebar--macOS) .Titlebar__dragZone {
+  padding-left: 8px;
 }
 
 .Titlebar--macOS .Titlebar__dragZone {
   text-align: center;
-  font-size: 13px;
-  line-height: var(--titlebarHeight);
+  font-size: var(--smallFontSize);
+  color: var(--vkui--color_text_subhead);
 }
 
 .Titlebar__buttons {
@@ -35,17 +40,17 @@
   align-items: center;
   width: 48px;
   cursor: pointer;
-  color: var(--text_primary);
+  color: var(--vkui--color_text_primary);
   transition: background-color var(--mediumTransition), color var(--mediumTransition);
 }
 
 .Titlebar__button:hover {
-  background: var(--titlebar_button_hover);
+  background: var(--vkui--color_background_secondary--hover);
 }
 
 .Titlebar__button--close:hover {
-  background: var(--dynamic_red);
-  color: var(--white);
+  background: var(--vkui--color_accent_red);
+  color: var(--vkui--color_icon_contrast);
 }
 
 .Titlebar--maximized .Titlebar__button--maximize,

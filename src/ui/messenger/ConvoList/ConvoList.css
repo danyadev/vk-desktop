@@ -4,7 +4,7 @@
   height: 48px;
   flex-shrink: 0;
   padding: 0 8px;
-  border-bottom: 1px solid var(--separator_common);
+  border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
 .ConvoList__headerAvatar {

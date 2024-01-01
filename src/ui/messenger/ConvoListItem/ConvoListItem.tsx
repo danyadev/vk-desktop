@@ -2,6 +2,7 @@ import { defineComponent } from 'vue'
 import { usePeersStore } from 'store/peers'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
+import { Avatar } from 'ui/ui/Avatar/Avatar'
 import './ConvoListItem.css'
 
 type Props = {
@@ -10,13 +11,11 @@ type Props = {
 
 export const ConvoListItem = defineComponent<Props>(({ convo }) => {
   const { peers } = usePeersStore()
-
   const peer = Peer.safeGet(peers, convo.id)
-  const photo = peer.photo100 ?? peer.photo50
 
   return () => (
     <div class="ConvoListItem">
-      {photo && <img src={photo} class="ConvoListItem__photo" />}
+      <Avatar peer={peer} size={48} />
 
       <span class="ConvoListItem__name">{Peer.name(peer)}</span>
 

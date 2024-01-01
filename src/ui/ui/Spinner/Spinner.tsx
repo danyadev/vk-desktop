@@ -21,7 +21,7 @@ const spinnerIcons = {
 export const Spinner = defineComponent<Props>((props) => {
   return () => {
     const SpinnerIcon = spinnerIcons[props.size ?? 'small']
-    return <SpinnerIcon class="Spinner" />
+    return <SpinnerIcon class="Spinner" color="var(--vkui--color_icon_medium)" />
   }
 }, {
   props: ['size']

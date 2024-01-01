@@ -3,6 +3,8 @@ module.exports = {
     '.eslintrc.js'
   ],
 
+  reportUnusedDisableDirectives: true,
+
   rules: {
     'eol-last': 'error',
     'no-trailing-spaces': 'error',

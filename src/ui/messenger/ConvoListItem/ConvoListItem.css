@@ -17,9 +17,9 @@
 }
 
 .ConvoListItem__unreadCount {
-  background-color: #828282;
-  color: #222;
+  color: var(--vkui--color_background_content);
+  background: var(--vkui--color_icon_secondary);
   border-radius: 10px;
-  padding: 2px 6px;
+  padding: 1px 6px;
   font: var(--smallFont);
 }

@@ -7,25 +7,24 @@
     "dev": "vite",
     "build": "yarn run dist && yarn run pack",
     "tsc": "tsc --noEmit",
-    "lint:eslint": "eslint -c .eslintrc.full.js src main-process scripts *.{js,mts} --ext .js,.ts,.tsx,.mjs",
+    "lint:eslint": "eslint -c .eslintrc.full.js src main-process scripts *.{js,mts} --ext .js,.ts,.tsx,.mjs,.mts",
     "lint:stylelint": "stylelint src/**/*.css",
     "lint": "yarn lint:eslint && yarn lint:stylelint",
-    "generate-schemes": "node ./scripts/generateSchemes.mjs",
     "dist": "yarn run tsc && vite build",
     "pack": "electron-builder --config build/config.json",
     "win-setup": "yarn win-setup64 && yarn win-setup32",
     "win-setup64": "innosetup-compiler build/config-x64.iss --verbose",
     "win-setup32": "innosetup-compiler build/config-ia32.iss --verbose",
-    "postinstall": "husky install"
+    "postinstall": "husky install && node ./scripts/moveVkuiTokens.mjs"
   },
   "repository": "https://github.com/danyadev/vk-desktop",
   "author": "danyadev <danyadev@mail.ru>",
   "license": "Apache-2.0",
   "engines": {
-    "node": "^18.0.0 || >=20.0.0"
+    "node": ">=20.0.0"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,mjs}": "eslint -c .eslintrc.full.js",
+    "*.{js,ts,tsx,mjs,mts}": "eslint -c .eslintrc.full.js",
     "*.css": "stylelint"
   },
   "dependencies": {
@@ -38,7 +37,7 @@
     "@typescript-eslint/eslint-plugin": "6.16.0",
     "@typescript-eslint/parser": "6.16.0",
     "@vitejs/plugin-vue-jsx": "3.1.0",
-    "@vkontakte/appearance": "https://github.com/VKCOM/Appearance#9.58.0",
+    "@vkontakte/vkui-tokens": "4.41.4",
     "@vue/compiler-sfc": "3.4.1",
     "electron": "22.3.27",
     "electron-builder": "24.10.0",

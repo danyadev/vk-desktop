@@ -1,6 +1,6 @@
 .Link {
   position: relative;
-  color: var(--text_link);
+  color: var(--vkui--color_text_link);
   text-decoration: none;
   /* Для FocusVisible */
   border-radius: 4px;

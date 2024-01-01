@@ -17,8 +17,6 @@ module.exports = {
     es2021: true
   },
 
-  reportUnusedDisableDirectives: true,
-
   plugins: ['import', 'simple-import-sort'],
 
   settings: {
@@ -254,7 +252,7 @@ module.exports = {
     'simple-import-sort/imports': ['error', {
       groups: [
         [
-          ...['^fs$', '^os$', '^path$'],
+          ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
           ...['^@?electron', '^vue', '^pinia', '^@?vite'],
           ...['^env', '^store', '^model', '^lang'],
           ...['^misc/utils', '^misc/hooks', '^misc/converter', '^misc'],

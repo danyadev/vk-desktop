@@ -11,7 +11,7 @@
   width: calc(130px * 1.25);
   height: calc(50px * 1.25);
   cursor: pointer;
-  border: 1px solid var(--separator_common);
+  border: 1px solid var(--vkui--color_separator_primary);
 }
 
 .CaptchaModal__input {

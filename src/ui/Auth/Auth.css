@@ -43,8 +43,8 @@
 }
 
 .Auth__error {
-  color: var(--destructive);
-  background: var(--field_error_background);
+  color: var(--vkui--color_text_negative);
+  background: var(--vkui--color_background_negative_tint);
   min-width: 250px;
   width: max-content;
   max-width: 280px;
@@ -86,7 +86,7 @@
 }
 
 .Auth__accountContent:hover {
-  background: var(--background_light);
+  background: var(--vkui--color_background_tertiary);
 }
 
 .Auth__accountName {
@@ -100,7 +100,7 @@
 }
 
 .Auth__accountDeleteButton {
-  font-size: calc(var(--fontSize) - 2px);
+  font: var(--smallFont);
   visibility: hidden;
   opacity: 0;
   transition: visibility var(--fastTransition), opacity var(--fastTransition);
@@ -129,5 +129,5 @@
 }
 
 .Auth__footerLinks, .Auth__footerLinks a {
-  color: var(--text_tertiary);
+  color: var(--vkui--color_text_secondary);
 }

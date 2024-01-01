@@ -1,6 +1,6 @@
 import { version } from '../../package.json'
 
-export const isMacOS = process.platform === 'darwin'
+export const isMacOS = __IS_MACOS__
 
 export const appUserAgent = `VKDesktop/${version}`
 

@@ -58,16 +58,19 @@ export const Titlebar = defineComponent(() => {
         }}
       >
         <div class="Titlebar__dragZone">{lang.use('vk_desktop_label')}</div>
-        <div class="Titlebar__buttons">
-          {buttons.map(({ action, icon }) => (
-            <div
-              class={['Titlebar__button', `Titlebar__button--${action}`]}
-              onClick={() => currentWindow[action]()}
-            >
-              {icon}
-            </div>
-          ))}
-        </div>
+
+        {!isMacOS && (
+          <div class="Titlebar__buttons">
+            {buttons.map(({ action, icon }) => (
+              <div
+                class={['Titlebar__button', `Titlebar__button--${action}`]}
+                onClick={() => currentWindow[action]()}
+              >
+                {icon}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     )
   }
