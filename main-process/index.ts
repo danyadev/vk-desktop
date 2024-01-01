@@ -5,6 +5,7 @@ import Electron, { app, BrowserWindow, ipcMain, nativeTheme, screen, session, sh
 import type { Dictionary } from 'env/Lang'
 import type { MainSettings as PostMainSettings } from 'store/mainSettings'
 import { buildMacOSMenu } from './buildMacOSMenu'
+import { initIpcEvents } from './ipcEvents'
 import { getColorBackgroundContent, shouldUseCustomTitlebar } from './shared'
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
@@ -78,6 +79,8 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
 
 app.once('ready', () => {
   const mainWindow = createWindow()
+
+  initIpcEvents(mainWindow)
 
   mainWindow.webContents.once('dom-ready', () => {
     if (mainSettings.bounds) {

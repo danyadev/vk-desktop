@@ -1,5 +1,5 @@
+import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { defineComponent, shallowRef } from 'vue'
-import { useMainSettingsStore } from 'store/mainSettings'
 import { currentWindow, subscribeToElectronEvent } from 'misc/utils'
 import { useEnv } from 'misc/hooks'
 import { isMacOS } from 'misc/constants'
@@ -20,27 +20,18 @@ const buttons = [
 
 export const Titlebar = defineComponent(() => {
   const { lang } = useEnv()
-  const mainSettings = useMainSettingsStore()
   const isMaximized = shallowRef(currentWindow.isMaximized())
 
-  const onMaximize = () => (isMaximized.value = true)
-  const onUnmaximize = () => (isMaximized.value = false)
-
   subscribeToElectronEvent(() => {
-    currentWindow.on('maximize', onMaximize)
-    currentWindow.on('unmaximize', onUnmaximize)
-
-    return () => {
-      currentWindow.removeListener('maximize', onMaximize)
-      currentWindow.removeListener('unmaximize', onUnmaximize)
+    function onMaximizeChange(event: IpcRendererEvent, value: boolean) {
+      isMaximized.value = value
     }
+
+    ipcRenderer.on('maximize-change', onMaximizeChange)
+    return () => ipcRenderer.off('maximize-change', onMaximizeChange)
   })
 
   return () => {
-    if (!mainSettings.useCustomTitlebar) {
-      return null
-    }
-
     return (
       <div
         class={['Titlebar', {

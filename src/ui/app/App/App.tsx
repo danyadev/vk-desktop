@@ -1,8 +1,8 @@
-import electron from 'electron'
+import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
 import { useMainSettingsStore } from 'store/mainSettings'
-import { currentWindow, debounce, subscribeToElectronEvent } from 'misc/utils'
+import { subscribeToElectronEvent } from 'misc/utils'
 import { useEnv, useGlobalModal } from 'misc/hooks'
 import { isMacOS } from 'misc/constants'
 import { exposeFeatures } from 'misc/exposeFeatures'
@@ -20,26 +20,22 @@ export const App = defineComponent(() => {
   exposeFeatures()
 
   if (isMacOS) {
-    electron.ipcRenderer.send('menu:build', lang.useRaw('app_menu_labels'))
+    ipcRenderer.send('menu:build', lang.useRaw('app_menu_labels'))
   }
 
-  const updateWindowBounds = debounce(() => {
-    mainSettings.setWindowBounds()
-  }, 500)
-
   subscribeToElectronEvent(() => {
-    currentWindow.on('move', updateWindowBounds)
-    currentWindow.on('resize', updateWindowBounds)
-
-    return () => {
-      currentWindow.off('move', updateWindowBounds)
-      currentWindow.off('resize', updateWindowBounds)
+    const onBoundsChange = (event: IpcRendererEvent, bounds: Electron.Rectangle) => {
+      mainSettings.bounds = bounds
     }
+
+    ipcRenderer.on('bounds-change', onBoundsChange)
+    return () => ipcRenderer.off('bounds-change', onBoundsChange)
   })
 
   return () => (
     <div class="root" data-scheme={scheme.value}>
-      <Titlebar />
+      {mainSettings.useCustomTitlebar && <Titlebar />}
+
       <div class={['App', { 'App--isMacOS': isMacOS }]}>
         <RouterView />
 

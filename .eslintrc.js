@@ -205,13 +205,6 @@ module.exports = {
     'template-curly-spacing': 'error',
     'template-tag-spacing': 'error',
     'yield-star-spacing': 'error',
-    'no-restricted-syntax': [
-      'error',
-      'CallExpression[callee.name="setTimeout"]',
-      'CallExpression[callee.name="clearTimeout"]',
-      'CallExpression[callee.name="setInterval"]',
-      'CallExpression[callee.name="clearInterval"]'
-    ],
     'no-restricted-imports': ['error', {
       patterns: [
         {
@@ -256,7 +249,7 @@ module.exports = {
           ...['^@?electron', '^vue', '^pinia', '^@?vite'],
           ...['^env', '^store', '^model', '^lang'],
           ...['^misc/utils', '^misc/hooks', '^misc/converter', '^misc'],
-          ...['^\\./', '^ui', '^assets', '.css$']
+          ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
         ]
       ]
     }],

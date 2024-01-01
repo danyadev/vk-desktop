@@ -18,3 +18,21 @@ export function getColorBackgroundContent(theme: ActualTheme, scheme: Appearance
       return '#19191a'
   }
 }
+
+/**
+ * Вызывает целевую функцию через delay мс после последнего вызова обертки
+ */
+export function debounce<T extends ((...args: never[]) => void)>(fn: T, delay: number) {
+  let timerId: NodeJS.Timeout | null = null
+
+  return function(this: unknown, ...args: Parameters<T>) {
+    if (timerId) {
+      clearTimeout(timerId)
+    }
+
+    timerId = setTimeout(() => {
+      fn.apply(this, args)
+      timerId = null
+    }, delay)
+  }
+}

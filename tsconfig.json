@@ -17,6 +17,7 @@
     "sourceMap": true,
     "strict": true,
     "paths": {
+      "main-process/*": ["../main-process/*"],
       "assets/*": ["./assets/*"],
       "env/*": ["./env/*"],
       "lang/*": ["./lang/*"],

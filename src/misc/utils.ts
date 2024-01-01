@@ -101,20 +101,4 @@ export function subscribeToElectronEvent(subscribe: (() => () => void)) {
   DEV && window.addEventListener('beforeunload', removeListener)
 }
 
-/**
- * Вызывает целевую функцию через delay мс после последнего вызова обертки
- */
-export function debounce<T extends ((...args: never[]) => void)>(fn: T, delay: number) {
-  let timerId: number | null = null
-
-  return function(this: unknown, ...args: Parameters<T>) {
-    if (timerId) {
-      window.clearTimeout(timerId)
-    }
-
-    timerId = window.setTimeout(() => {
-      fn.apply(this, args)
-      timerId = null
-    }, delay)
-  }
-}
+export { debounce } from 'main-process/shared'

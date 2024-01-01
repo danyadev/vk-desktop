@@ -25,6 +25,7 @@ export default defineConfig(async ({ mode }) => {
     },
     resolve: {
       alias: {
+        'main-process': path.resolve(__dirname, './main-process'),
         assets: path.resolve(__dirname, './src/assets'),
         env: path.resolve(__dirname, './src/env'),
         lang: path.resolve(__dirname, './src/lang'),

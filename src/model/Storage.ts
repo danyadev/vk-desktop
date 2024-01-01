@@ -1,4 +1,5 @@
 import fs from 'fs'
+import fsPromises from 'fs/promises'
 import path from 'path'
 import * as electron from '@electron/remote'
 import { deserializeJson, serializeJson } from 'misc/jsonSerializer'
@@ -35,7 +36,7 @@ export class MainStorage<T extends Record<string, unknown>> {
   }
 
   save() {
-    fs.writeFileSync(this.path, serializeJson(this.data))
+    return fsPromises.writeFile(this.path, serializeJson(this.data))
   }
 }
 
