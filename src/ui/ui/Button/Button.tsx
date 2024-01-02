@@ -35,7 +35,7 @@ export const Button = defineComponent<Props>((props, { slots }) => {
           {slots.default?.()}
           {props.after}
         </span>
-        {props.loading && <Spinner class="Button__spinner" />}
+        {props.loading && <Spinner class="Button__spinner" color="inherit" />}
         <FocusVisible isFocused={isFocused.value} />
       </button>
     )

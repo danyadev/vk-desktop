@@ -1,6 +1,11 @@
 .ButtonIcon {
   position: relative;
-  border-radius: 8px;
+  border-radius: 6px;
+  transition: background-color var(--fastTransition);
+}
+
+.ButtonIcon:hover {
+  background: var(--vkui--color_transparent--hover);
 }
 
 .ButtonIcon--stretched {

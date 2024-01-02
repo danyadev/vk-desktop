@@ -7,10 +7,7 @@ import { useGlobalModal } from 'misc/hooks'
 import { androidUserAgent, appUserAgent } from 'misc/constants'
 import { Semaphore } from 'misc/Semaphore'
 
-/**
- * В случае повышения версии необходимо описать, какое поле понадобилось из новой версии
- */
-export const API_VERSION = '5.131'
+export const API_VERSION = '5.186'
 
 const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500

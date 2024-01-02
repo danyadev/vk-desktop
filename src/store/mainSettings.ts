@@ -34,9 +34,7 @@ export const useMainSettingsStore = defineStore('mainSettings', {
 })
 
 export function init() {
-  const store = useMainSettingsStore()
-
-  store.$subscribe((mutation, state) => {
+  useMainSettingsStore().$subscribe((mutation, state) => {
     mainSettingsStorage.update(toRaw(state))
   })
 }

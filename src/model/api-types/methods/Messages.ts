@@ -10,7 +10,7 @@ export type MessagesGetConversationsParams = {
   fields: string
   extended: 1
   offset?: number
-  filter?: 'all' | 'archive' | 'important' | 'unanswered' | 'unread'
+  filter?: 'all' | 'archive' | 'business_notify' | 'chats' | 'important' | 'message_request' | 'unanswered' | 'unread'
   start_message_id?: number
   group_id?: number
 }
@@ -20,7 +20,7 @@ export type MessagesGetConversationsResponse = {
   unread_count?: number
   items: Array<{
     conversation: MessagesConversation
-    last_message: MessagesMessage
+    last_message?: MessagesMessage
   }>
   profiles?: UsersUser[]
   groups?: GroupsGroup[]
