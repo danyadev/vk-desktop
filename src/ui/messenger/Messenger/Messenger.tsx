@@ -33,7 +33,7 @@ export const Messenger = defineComponent(() => {
     engine.stop()
 
     for (const apiConvo of conversations.items) {
-      const { convo, peer } = fromApiConvo(apiConvo.conversation)
+      const { convo, peer } = fromApiConvo(apiConvo.conversation, apiConvo.last_message)
       if (convo) {
         convoList.push(convo.id)
         convos.set(convo.id, convo)

@@ -135,3 +135,14 @@ export function name(peer: Peer): string {
       return peer.title
   }
 }
+
+export function firstName(peer: Peer): string {
+  switch (peer.kind) {
+    case 'User':
+      return peer.firstName
+    case 'Group':
+      return peer.name
+    case 'Chat':
+      return peer.title
+  }
+}

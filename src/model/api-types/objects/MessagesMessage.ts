@@ -3,7 +3,7 @@ import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
 export type MessagesMessage = {
   version: number
   action?: unknown // TODO
-  attachments?: unknown // TODO
+  attachments?: unknown[] // TODO
   template?: unknown // TODO
   conversation_message_id?: number
   date: number

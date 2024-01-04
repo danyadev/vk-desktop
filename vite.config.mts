@@ -62,7 +62,7 @@ export default defineConfig(async ({ mode }) => {
       electronRenderer()
     ],
     css: {
-      transformer: 'lightningcss',
+      transformer: mode === 'production' ? 'lightningcss' : undefined,
       lightningcss: {
         unusedSymbols
       }

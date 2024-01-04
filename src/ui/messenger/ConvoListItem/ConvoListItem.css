@@ -1,19 +1,57 @@
 .ConvoListItem {
-  display: flex;
-  height: 50px;
-  align-items: center;
-  gap: 10px;
+  display: grid;
+  grid-template-areas:
+    'avatar name name'
+    'avatar message indicators';
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: auto 1fr auto;
   margin: 10px;
 }
 
-.ConvoListItem__photo {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+.ConvoListItem__avatar {
+  grid-area: avatar;
+  margin-right: 10px;
 }
 
 .ConvoListItem__name {
-  flex: 1;
+  grid-area: name;
+  align-self: center;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ConvoListItem__message {
+  grid-area: message;
+  align-self: center;
+
+  display: flex;
+  align-items: baseline;
+
+  overflow: hidden;
+}
+
+.ConvoListItem__messageAuthor {
+  color: var(--vkui--color_text_tertiary);
+  white-space: pre-wrap;
+  flex: none;
+}
+
+.ConvoListItem__messageText {
+  color: var(--vkui--color_text_subhead);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ConvoListItem__indicators {
+  grid-area: indicators;
+  align-self: center;
+}
+
+.ConvoListItem__indicators:not(:empty) {
+  margin-left: 5px;
 }
 
 .ConvoListItem__unreadCount {

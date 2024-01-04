@@ -1,14 +1,41 @@
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
+import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import * as Convo from 'model/Convo'
+import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { typeguard } from 'misc/utils'
+import { fromApiMessage } from 'misc/converters/MessageConverter'
 
 export function fromApiConvo(
-  apiConvo: MessagesConversation
+  apiConvo: MessagesConversation,
+  apiLastMessage?: MessagesMessage
 ):
   | { convo: Convo.ChatConvo, peer: Peer.Chat }
   | { convo?: Exclude<Convo.Convo, Convo.ChatConvo>, peer?: undefined } {
+  const lastMessage = apiLastMessage && fromApiMessage(apiLastMessage)
+  const lastCmid = apiConvo.last_conversation_message_id ?? 0
+  const history: Convo.History = []
+
+  if (lastMessage) {
+    if (lastCmid > 1) {
+      history.push({
+        kind: 'Gap',
+        fromCmid: Message.resolveCmid(1),
+        toCmid: Message.resolveCmid(lastCmid - 1)
+      })
+    }
+
+    history.push(lastMessage)
+  } else if (lastCmid > 0) {
+    history.push({
+      kind: 'Gap',
+      fromCmid: Message.resolveCmid(1),
+      toCmid: Message.resolveCmid(lastCmid)
+    })
+  }
+
   const baseConvo = {
+    history,
     unreadCount: apiConvo.unread_count ?? 0
   }
 
@@ -17,7 +44,7 @@ export function fromApiConvo(
   switch (apiConvo.peer.type) {
     case 'user':
       if (!Peer.isUserPeerId(peerId)) {
-        return {}
+        throw new Error('User with out of range id: ' + peerId)
       }
 
       return {
@@ -30,7 +57,7 @@ export function fromApiConvo(
 
     case 'group':
       if (!Peer.isGroupPeerId(peerId)) {
-        return {}
+        throw new Error('Group with out of range id: ' + peerId)
       }
 
       return {
@@ -43,7 +70,7 @@ export function fromApiConvo(
 
     case 'chat':
       if (!Peer.isChatPeerId(peerId)) {
-        return {}
+        throw new Error('Chat with out of range id: ' + peerId)
       }
 
       return {
