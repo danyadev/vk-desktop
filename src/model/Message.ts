@@ -5,36 +5,71 @@ export type Cmid = Opaque<number, Message>
 
 export type Message = Normal | Service | Expired
 
-type Normal = {
-  kind: 'Normal'
+interface BaseMessage {
   cmid: Cmid
   peerId: Peer.Id
-  authorId: Peer.Id
+  authorId: Peer.UserId | Peer.GroupId
   isOut: boolean
-  text: string
-  attachments: unknown[] // TODO
   sentAt: number
+}
+
+export interface Normal extends BaseMessage {
+  kind: 'Normal'
+  text: string
+  attachments: Array<{ type: string }> // TODO
+  forwardedMessages: unknown[] // TODO
   updatedAt?: number
 }
 
-type Service = {
+export interface Service extends BaseMessage {
   kind: 'Service'
-  cmid: Cmid
-  peerId: Peer.Id
-  authorId: Peer.Id
-  isOut: boolean
-  sentAt: number
+  action: ServiceAction
 }
 
-type Expired = {
+interface Expired extends BaseMessage {
   kind: 'Expired'
-  cmid: Cmid
-  peerId: Peer.Id
-  authorId: Peer.Id
-  isOut: boolean
-  sentAt: number
   updatedAt: number
 }
+
+export type ServiceAction =
+  | { type: 'chat_create', title: string }
+  | { type: 'chat_title_update', title: string, oldTitle: string }
+  | {
+      type: 'chat_photo_update'
+      photo?: { photo50: string, photo100: string, photo200: string }
+    }
+  | {
+      type:
+        | 'chat_photo_remove'
+        | 'chat_kick_don'
+        | 'call_transcription_failed'
+        | 'chat_invite_user_by_link'
+        | 'chat_screenshot'
+        | 'chat_group_call_started'
+        | 'chat_invite_user_by_call_join_link'
+    }
+  | {
+      type: 'chat_invite_user' | 'chat_kick_user' | 'accepted_message_request'
+      peerId: Peer.UserId | Peer.GroupId
+    }
+  | {
+      type:
+        | 'chat_invite_user_by_message_request'
+        | 'chat_invite_user_by_call'
+        | 'chat_kick_user_call_block'
+      peerId: Peer.UserId
+    }
+  | {
+      type: 'chat_pin_message' | 'chat_unpin_message'
+      cmid: Cmid
+      message: string
+    }
+  | {
+      type: 'conversation_style_update' | 'conversation_style_update_action'
+      style: string | undefined
+    }
+  | { type: 'custom', message: string }
+  | { type: 'unknown' }
 
 export function resolveCmid(cmid: number): Cmid {
   if (cmid <= 0) {

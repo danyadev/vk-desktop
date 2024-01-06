@@ -25,7 +25,8 @@ let mainSettings: MainSettings = {
   appearance: {
     scheme: 'vkcom',
     theme: 'system'
-  }
+  },
+  alwaysOnTop: false
 }
 
 try {
@@ -62,6 +63,7 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
     frame: isFrameEnabled,
     titleBarStyle: isFrameEnabled ? 'default' : 'hidden',
     trafficLightPosition: isFrameEnabled ? undefined : { x: 8, y: 4 },
+    alwaysOnTop: mainSettings.alwaysOnTop,
     backgroundColor,
     webPreferences: {
       webSecurity: false,

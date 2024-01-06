@@ -36,7 +36,8 @@ export function fromApiConvo(
 
   const baseConvo = {
     history,
-    unreadCount: apiConvo.unread_count ?? 0
+    unreadCount: apiConvo.unread_count ?? 0,
+    enabledNotifications: !apiConvo.push_settings
   }
 
   const peerId = Peer.resolveId(apiConvo.peer.id)
@@ -77,6 +78,8 @@ export function fromApiConvo(
         convo: {
           kind: 'ChatConvo',
           id: peerId,
+          isChannel: !!apiConvo.chat_settings?.is_group_channel,
+          isCasper: !!apiConvo.chat_settings?.is_disappearing,
           ...baseConvo
         },
         peer: {

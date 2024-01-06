@@ -45,6 +45,10 @@ export function typeguard(_unused: never) {
   // Функция предназначена для того, чтобы падать по типам при передаче неправильного значения
 }
 
+export function getFirstLetter(string: string): string {
+  return new Intl.Segmenter().segment(string).containing(0).segment
+}
+
 /**
  * Позволяет отфильтровать массив от falsy значений и убрать нежелательные
  * варианты значений из типов

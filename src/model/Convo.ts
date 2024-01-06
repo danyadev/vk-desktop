@@ -6,6 +6,7 @@ export type Convo = UserConvo | GroupConvo | ChatConvo
 interface BaseConvo {
   history: History
   unreadCount: number
+  enabledNotifications: boolean
 }
 
 interface UserConvo extends BaseConvo {
@@ -21,6 +22,8 @@ interface GroupConvo extends BaseConvo {
 export interface ChatConvo extends BaseConvo {
   kind: 'ChatConvo'
   id: Peer.ChatId
+  isChannel: boolean
+  isCasper: boolean
 }
 
 export type History = Array<Message.Message | HistoryGap>
@@ -39,7 +42,7 @@ export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.Id): unknown {
   const convo = convos.get(id)
 
   if (!convo) {
-    throw new Error('TODO: return convo mock')
+    throw new Error('Convo.safeGet: expected convo for ' + id)
   }
 
   return convo
@@ -53,4 +56,8 @@ export function lastMessage(convo: Convo): Message.Message | undefined {
   }
 
   return undefined
+}
+
+export function isCasper(convo: Convo): boolean {
+  return convo.kind === 'ChatConvo' && convo.isCasper
 }

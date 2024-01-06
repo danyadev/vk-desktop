@@ -1,4 +1,4 @@
-import { exhaustivenessCheck, Opaque } from 'misc/utils'
+import { exhaustivenessCheck, getFirstLetter, Opaque } from 'misc/utils'
 
 /**
  * Peer (пир или диалог) - термин, объединяющий все сущности мессенджера:
@@ -26,9 +26,12 @@ export type User = {
   kind: 'User'
   id: UserId
   firstName: string
+  firstNameAcc: string
   lastName: string
+  lastNameAcc: string
   photo50?: string
   photo100?: string
+  gender: 'male' | 'female' | 'unknown'
 }
 
 export type Group = {
@@ -119,16 +122,18 @@ export function safeGet(peers: Map<Id, Peer>, id: Id): unknown {
   const peer = peers.get(id)
 
   if (!peer) {
-    throw new Error('TODO: return peer mock')
+    throw new Error('Peer.safeGet: expected peer for ' + id)
   }
 
   return peer
 }
 
-export function name(peer: Peer): string {
+export function name(peer: Peer, nameCase?: 'acc'): string {
   switch (peer.kind) {
     case 'User':
-      return `${peer.firstName} ${peer.lastName}`
+      return nameCase === 'acc'
+        ? `${peer.firstNameAcc} ${peer.lastNameAcc}`
+        : `${peer.firstName} ${peer.lastName}`
     case 'Group':
       return peer.name
     case 'Chat':
@@ -144,5 +149,16 @@ export function firstName(peer: Peer): string {
       return peer.name
     case 'Chat':
       return peer.title
+  }
+}
+
+export function initials(peer: Peer): string {
+  switch (peer.kind) {
+    case 'User':
+      return getFirstLetter(peer.firstName) + getFirstLetter(peer.lastName)
+    case 'Group':
+      return getFirstLetter(peer.name).toUpperCase()
+    case 'Chat':
+      return getFirstLetter(peer.title).toUpperCase()
   }
 }

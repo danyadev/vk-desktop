@@ -1,4 +1,4 @@
-import { computed, defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import * as Peer from 'model/Peer'
 import { ClassName } from 'misc/utils'
 import { usePixelDensity } from 'misc/hooks'
@@ -12,15 +12,24 @@ type Props = {
 
 export const Avatar = defineComponent<Props>((props) => {
   const isDense = usePixelDensity()
-  const src = computed(() => (isDense.value ? props.peer.photo100 : props.peer.photo50))
 
-  return () => (
-    <img
-      class="Avatar"
-      src={src.value}
-      style={{ width: `${props.size}px`, height: `${props.size}px` }}
-    />
-  )
+  return () => {
+    const src = isDense.value ? props.peer.photo100 : props.peer.photo50
+    const style = {
+      width: `${props.size}px`,
+      height: `${props.size}px`
+    }
+
+    if (src) {
+      return <img class="Avatar" src={src} style={style} />
+    }
+
+    return (
+      <span class={['Avatar', `Avatar--color-${props.peer.id % 6}`]} style={style}>
+        {Peer.initials(props.peer)}
+      </span>
+    )
+  }
 }, {
   props: ['peer', 'size']
 })

@@ -32,7 +32,7 @@ export const ConvoList = defineComponent<Props>(() => {
     return (
       <div class="ConvoList__list">
         {convoList.map((id) => (
-          <ConvoListItem convo={Convo.safeGet(convos, id)} />
+          <ConvoListItem key={id} convo={Convo.safeGet(convos, id)} />
         ))}
       </div>
     )

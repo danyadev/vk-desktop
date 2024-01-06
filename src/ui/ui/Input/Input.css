@@ -10,7 +10,7 @@
 }
 
 .Input--inLayer {
-  background: var(--vkui--color_field_background_in_layer);
+  background: var(--vkd--color_field_background_in_layer);
 }
 
 .Input:hover {

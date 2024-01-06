@@ -40,7 +40,7 @@ img {
 
 :root {
   --fontFamily: 'BlinkMacSystemFont', 'Roboto VK';
-  --fontSize: 15px;
+  --fontSize: 14px;
   --smallFontSize: 13px;
   --lineHeight: 18px;
   --font: var(--fontSize) / var(--lineHeight) var(--fontFamily);
@@ -54,9 +54,17 @@ img {
 }
 
 [data-scheme] {
-  --vkui--color_field_background_in_layer: var(--vkui--color_field_background);
+  --vkd--color_field_background_in_layer: var(--vkui--color_field_background);
+  --vkd--color_background_accent_themed: var(--vkui--color_background_accent_themed);
+  --vkd--color_text_accent_themed: var(--vkui--color_text_accent_themed);
+}
+
+[data-scheme="vkui-dark"] {
+  /* Цвет из vkcom-dark, чтобы не было выжигания глаз от #fff */
+  --vkd--color_background_accent_themed: #e1e3e6;
+  --vkd--color_text_accent_themed: #e1e3e6;
 }
 
 [data-scheme="vkcom-dark"] {
-  --vkui--color_field_background_in_layer: var(--vkui--color_background_content);
+  --vkd--color_field_background_in_layer: var(--vkui--color_background_content);
 }

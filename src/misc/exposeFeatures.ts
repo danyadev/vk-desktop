@@ -1,4 +1,6 @@
+import { useConvosStore } from 'store/convos'
 import { useMainSettingsStore } from 'store/mainSettings'
+import { usePeersStore } from 'store/peers'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import * as Auth from 'model/Auth'
@@ -18,6 +20,8 @@ type ExposedFeatures = {
   mainSettings: ReturnType<typeof useMainSettingsStore>
   settings: ReturnType<typeof useSettingsStore>
   viewer: ReturnType<typeof useViewerStore>
+  peers: ReturnType<typeof usePeersStore>
+  convos: ReturnType<typeof useConvosStore>
   api: IApi.Api
   engine: ReturnType<typeof useEnv>['engine']
   auth: typeof Auth
@@ -31,6 +35,8 @@ export function exposeFeatures() {
   exposedWindow.mainSettings = useMainSettingsStore()
   exposedWindow.settings = useSettingsStore()
   exposedWindow.viewer = useViewerStore()
+  exposedWindow.peers = usePeersStore()
+  exposedWindow.convos = useConvosStore()
   exposedWindow.api = api
   exposedWindow.engine = engine
   exposedWindow.auth = { ...Auth }

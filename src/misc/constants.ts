@@ -8,6 +8,9 @@ export const androidUserAgent =
   `VKAndroidApp/7.43-14005 (Android 10; SDK 29; arm64-v8a; VK Desktop ${version}; ru; 2340x1080)`
 
 export const PEER_FIELDS = [
+  'first_name_acc',
+  'last_name_acc',
   'photo_50',
-  'photo_100'
+  'photo_100',
+  'sex'
 ].join(',')

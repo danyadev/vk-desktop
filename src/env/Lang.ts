@@ -1,7 +1,7 @@
 import type { Settings } from 'store/settings'
+import * as Peer from 'model/Peer'
 import { ru } from 'lang/ru'
 import type { VariablesTypings } from 'lang/VariablesTypings'
-import { isObject } from 'misc/utils'
 
 const langMap = {
   ru
@@ -11,6 +11,11 @@ export type Dictionary = typeof langMap[Settings['lang']]
 
 type DictionaryWithStringValues = {
   [Key in keyof Dictionary as Dictionary[Key] extends string ? Key : never]: Dictionary[Key]
+}
+
+type DictionaryWithArrayValues = {
+  [Key in keyof Dictionary as Dictionary[Key] extends ReadonlyArray<string> ? Key : never]:
+    Dictionary[Key]
 }
 
 export class Lang {
@@ -26,7 +31,7 @@ export class Lang {
    */
   use<Key extends keyof DictionaryWithStringValues>(
     key: Key,
-    ...variablesRest: VariablesTypings<DictionaryWithStringValues>[Key]
+    ...variables: VariablesTypings<DictionaryWithStringValues>[Key]
   ): string {
     const rawTranslation = this.dictionary[key]
     /**
@@ -35,27 +40,83 @@ export class Lang {
      * Если сделать второй аргумент опциональным, а не rest'ом, то функция не сможет заставить
      * передать два аргумента, когда это действительно необходимо
      */
-    const [variables] = variablesRest
+    const [variablesList] = variables
 
-    if (Array.isArray(variables)) {
-      return rawTranslation.replace(
-        /{(\d+)}/g,
-        (full, number: number) => variables[number] ?? full
-      )
-    }
-
-    if (isObject(variables)) {
-      return rawTranslation.replace(
-        /{(\w+)}/gi,
-        (full, name: keyof typeof variables) => variables[name] ?? full
-      )
+    if (variablesList) {
+      return this.applyVariables(rawTranslation, variablesList)
     }
 
     return rawTranslation
   }
 
+  usePlural<Key extends keyof DictionaryWithArrayValues>(
+    key: Key,
+    number: number,
+    ...variables: VariablesTypings<DictionaryWithArrayValues>[Key]
+  ): string {
+    const values = this.dictionary[key]
+    const value = values[this.pluralIndex(number)] ?? ''
+    const [variablesList] = variables
+
+    if (variablesList) {
+      return this.applyVariables(value, variablesList)
+    } else {
+      return this.applyVariables(value, [String(number)])
+    }
+  }
+
+  useGender<Key extends keyof DictionaryWithArrayValues>(
+    key: Key,
+    gender: Peer.User['gender'],
+    ...variables: VariablesTypings<DictionaryWithArrayValues>[Key]
+  ): string {
+    const values = this.dictionary[key]
+    const value = gender === 'female' ? values[1] : values[0]
+    const [variablesList] = variables
+
+    if (variablesList) {
+      return this.applyVariables(value, variablesList)
+    }
+
+    return value
+  }
+
   useRaw<Key extends keyof Dictionary>(key: Key): Dictionary[Key] {
     return this.dictionary[key]
+  }
+
+  applyVariables<T extends string[] | Record<string, string>>(
+    translation: string,
+    variables: T
+  ): string {
+    if (Array.isArray(variables)) {
+      return translation.replace(
+        /{(\d+)}/g,
+        (full, number: number) => variables[number] ?? full
+      )
+    } else {
+      return translation.replace(
+        /{(\w+)}/gi,
+        (full, name: string) => variables[name] ?? full
+      )
+    }
+  }
+
+  pluralIndex(count: number) {
+    const lastDigits = Math.abs(count) % 100
+    const lastDigit = lastDigits % 10
+
+    if (lastDigits > 10 && lastDigits < 20) {
+      return 2
+    }
+    if (lastDigit > 1 && lastDigit < 5) {
+      return 1
+    }
+    if (lastDigit === 1) {
+      return 0
+    }
+
+    return 2
   }
 
   formatDate(timestamp: number, mask: string) {

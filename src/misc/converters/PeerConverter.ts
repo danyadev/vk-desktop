@@ -7,9 +7,16 @@ export function fromApiUser(apiUser: UsersUser): Peer.User {
     kind: 'User',
     id: Peer.resolveRealId(apiUser.id, 'User'),
     firstName: apiUser.first_name,
+    firstNameAcc: apiUser.first_name_acc,
     lastName: apiUser.last_name,
+    lastNameAcc: apiUser.last_name_acc,
     photo50: apiUser.photo_50,
-    photo100: apiUser.photo_100
+    photo100: apiUser.photo_100,
+    gender: apiUser.sex === 1
+      ? 'female'
+      : apiUser.sex === 2
+        ? 'male'
+        : 'unknown'
   }
 }
 
