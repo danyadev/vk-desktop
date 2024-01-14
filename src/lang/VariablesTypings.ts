@@ -2,7 +2,11 @@ type ExplicitVariablesTypings = {
   auth_sms_with_code_sent: [phone: string]
   auth_resend_sms_at: [time: string]
 
-  me_convo_list_author: [author: string]
+  me_convo_list_author: { author: string }
+  me_convo_list_date_mins: { mins: number }
+  me_convo_list_date_hours: { hours: number }
+  me_convo_list_date_days: { days: number }
+  me_convo_list_date_weeks: { weeks: number }
 
   me_service_chat_create: { author: string, title: string }
   me_service_chat_title_update: { author: string, oldTitle: string, title: string }
@@ -33,6 +37,5 @@ export type VariablesTypings<Dictionary extends Record<string, unknown>> =
     Exclude<keyof Dictionary, keyof ExplicitVariablesTypings>,
     []
   > & {
-    [Key in keyof ExplicitVariablesTypings]:
-      [ExplicitVariablesTypings[Key]]
+    [Key in keyof ExplicitVariablesTypings]: [ExplicitVariablesTypings[Key]]
   }

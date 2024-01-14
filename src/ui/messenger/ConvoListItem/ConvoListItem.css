@@ -1,7 +1,7 @@
 .ConvoListItem {
   display: grid;
   grid-template-areas:
-    'avatar name name'
+    'avatar name indicators'
     'avatar message indicators';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto;
@@ -18,10 +18,20 @@
   grid-area: name;
   align-self: end;
 
+  display: flex;
+  align-items: center;
+  overflow: hidden;
   font-weight: 500;
+}
+
+.ConvoListItem__nameText {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ConvoListItem__nameIcons {
+  margin-left: 3px;
 }
 
 .ConvoListItem__message {
@@ -29,27 +39,29 @@
   align-self: start;
 
   display: flex;
-  align-items: baseline;
-
   overflow: hidden;
   color: var(--vkui--color_text_subhead);
 }
 
-.ConvoListItem__messageAuthor {
-  color: var(--vkui--color_text_secondary--active);
-  white-space: pre-wrap;
-  flex: none;
-}
-
-.ConvoListItem__messageText {
+.ConvoListItem__text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.ConvoListItem__messageAuthor {
+  color: var(--vkui--color_text_secondary--active);
+}
+
+.ConvoListItem__date {
+  white-space: pre;
+  color: var(--vkui--color_text_tertiary);
+  flex: none;
+}
+
 .ConvoListItem__indicators {
   grid-area: indicators;
-  align-self: start;
+  align-self: center;
 }
 
 .ConvoListItem__indicators:not(:empty) {

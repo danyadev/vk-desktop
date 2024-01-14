@@ -1,12 +1,14 @@
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, Ref } from 'vue'
 import { usePeersStore } from 'store/peers'
+import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { useEnv } from 'misc/hooks'
+import { useEnv, useNow } from 'misc/hooks'
 import { ServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Counter } from 'ui/ui/Counter/Counter'
+import { Icon16Muted } from 'assets/icons'
 import './ConvoListItem.css'
 
 type Props = {
@@ -15,20 +17,29 @@ type Props = {
 
 export const ConvoListItem = defineComponent<Props>(({ convo }) => {
   const { peers } = usePeersStore()
-  const peer = Peer.safeGet(peers, convo.id)
-  const authorName = useAuthorName(convo)
+  const peer = computed(() => Peer.safeGet(peers, convo.id))
+  const lastMessage = computed(() => Convo.lastMessage(convo))
+  const authorName = useAuthorName(lastMessage, convo)
 
   return () => (
     <div class="ConvoListItem">
-      <Avatar class="ConvoListItem__avatar" peer={peer} size={48} />
+      <Avatar class="ConvoListItem__avatar" peer={peer.value} size={48} />
 
-      <div class="ConvoListItem__name">{Peer.name(peer)}</div>
+      <div class="ConvoListItem__name">
+        <span class="ConvoListItem__nameText">
+          {Peer.name(peer.value)}
+        </span>
+        <span class="ConvoListItem__nameIcons">
+          {!convo.enabledNotifications && <Icon16Muted color="var(--vkui--color_icon_tertiary)" />}
+        </span>
+      </div>
 
       <div class="ConvoListItem__message">
-        {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
-        <span class="ConvoListItem__messageText">
+        <span class="ConvoListItem__text">
+          {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
           <MessagePreview convo={convo} />
         </span>
+        <span class="ConvoListItem__date">{lastMessage.value && <MessageDate message={lastMessage.value} />}</span>
       </div>
 
       <div class="ConvoListItem__indicators">
@@ -47,17 +58,20 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
   const { lang } = useEnv()
 
   const getAttachmentPreview = (message: Message.Normal) => {
-    const attachTranslations = lang.useRaw('me_message_attaches_preview')
+    if (message.attachments.length > 1) {
+      return lang.usePlural('me_message_attaches', message.attachments.length)
+    }
+
     const firstAttach = message.attachments[0]
 
-    if (firstAttach && firstAttach.type in attachTranslations) {
-      const translation = attachTranslations[firstAttach.type as keyof typeof attachTranslations]
-
-      if (typeof translation === 'string') {
+    if (firstAttach) {
+      const translation = Attach.preview(firstAttach, lang)
+      if (translation) {
         return translation
-      } else {
-        return lang.applyVariables(translation[lang.pluralIndex(1)], ['1'])
       }
+
+      console.warn(firstAttach)
+      return lang.use('me_unsupported_message')
     }
 
     if (message.forwardedMessages.length) {
@@ -90,7 +104,7 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
 
         {attachmentPreview && (
           <span class="MessagePreview__highlight">
-            {' '}
+            {lastMessage.text && ' '}
             {attachmentPreview}
           </span>
         )}
@@ -101,30 +115,77 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
   props: ['convo']
 })
 
-function useAuthorName(convo: Convo.Convo) {
+const MessageDate = defineComponent<{ message: Message.Message }>(({ message }) => {
+  const { lang } = useEnv()
+  const now = useNow(10000)
+
+  const getDate = () => {
+    const ONE_MINUTE = 60 * 1000
+    const ONE_HOUR = 60 * ONE_MINUTE
+    const ONE_DAY = 24 * ONE_HOUR
+    const ONE_WEEK = 7 * ONE_DAY
+    const ONE_MONTH = 4 * ONE_WEEK
+    const diff = now.value - message.sentAt
+
+    switch (true) {
+      case diff < ONE_MINUTE:
+        return ''
+
+      case diff < ONE_HOUR:
+        return lang.use('me_convo_list_date_mins', {
+          mins: Math.floor((diff % ONE_HOUR) / ONE_MINUTE)
+        })
+
+      case diff < ONE_DAY:
+        return lang.use('me_convo_list_date_hours', {
+          hours: Math.floor((diff % ONE_DAY) / ONE_HOUR)
+        })
+
+      case diff < ONE_WEEK:
+        return lang.use('me_convo_list_date_days', {
+          days: Math.floor((diff % ONE_WEEK) / ONE_DAY)
+        })
+
+      case diff < ONE_MONTH:
+        return lang.use('me_convo_list_date_weeks', {
+          weeks: Math.floor((diff % ONE_MONTH) / ONE_WEEK)
+        })
+
+      default:
+        return lang.formatDate(message.sentAt, 'd MMM yyyy')
+    }
+  }
+
+  return () => {
+    const date = getDate()
+    return date && ` · ${date}`
+  }
+}, {
+  props: ['message']
+})
+
+function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Convo.Convo) {
   const { peers } = usePeersStore()
   const { lang } = useEnv()
 
   return computed(() => {
-    const lastMessage = Convo.lastMessage(convo)
+    const message = messageRef.value
 
-    if (!lastMessage || lastMessage.kind === 'Service') {
+    if (!message || message.kind === 'Service') {
       return ''
     }
 
-    if (lastMessage.isOut) {
-      return lang.use(
-        'me_convo_list_author',
-        [lang.use('me_convo_list_author_you')]
-      ) + ' '
+    if (message.isOut) {
+      return lang.use('me_convo_list_author', {
+        author: lang.use('me_convo_list_author_you')
+      }) + ' '
     }
 
     if (convo.kind === 'ChatConvo' && !convo.isChannel) {
-      const author = Peer.safeGet(peers, lastMessage.authorId)
-      return lang.use(
-        'me_convo_list_author',
-        [Peer.firstName(author)]
-      ) + ' '
+      const author = Peer.safeGet(peers, message.authorId)
+      return lang.use('me_convo_list_author', {
+        author: Peer.firstName(author)
+      }) + ' '
     }
 
     return ''

@@ -34,6 +34,34 @@ type HistoryGap = {
   toCmid: Message.Cmid
 }
 
+export type Style =
+  | 'unknown'
+  | 'default'
+  | 'disco'
+  | 'twilight'
+  | 'sunset'
+  | 'lagoon'
+  | 'marine'
+  | 'retrowave'
+  | 'candy'
+  | 'crimson'
+  | 'emerald'
+  | 'halloween_orange'
+  | 'halloween_violet'
+  | 'unicorn'
+  | 'midnight'
+  | 'easter_egg'
+  | 'frost'
+  | 'new_year'
+  | 'valentine'
+  | 'warm_valentine'
+  | 'womens_day'
+  | 'mable'
+  | 'vk17'
+  | 'gamer'
+  | 'gifts'
+  | 'sberkot'
+
 export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.UserId): UserConvo
 export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.GroupId): GroupConvo
 export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.ChatId): ChatConvo

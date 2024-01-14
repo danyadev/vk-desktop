@@ -1,6 +1,7 @@
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { fromApiConvoStyle } from 'converters/ConvoConverter'
 import { typeguard } from 'misc/utils'
 
 export function fromApiMessage(message: MessagesMessage): Message.Message {
@@ -133,7 +134,7 @@ function fromApiMessageAction(action: MessagesMessageAction): Message.ServiceAct
     case 'conversation_style_update_action':
       return {
         type: action.type,
-        style: action.style
+        style: action.style ? fromApiConvoStyle(action.style) : undefined
       }
 
     case 'custom':
@@ -144,6 +145,7 @@ function fromApiMessageAction(action: MessagesMessageAction): Message.ServiceAct
 
     default:
       typeguard(action.type)
+      console.warn(action)
       return { type: 'unknown' }
   }
 }

@@ -55,7 +55,7 @@ export class Lang {
     ...variables: VariablesTypings<DictionaryWithArrayValues>[Key]
   ): string {
     const values = this.dictionary[key]
-    const value = values[this.pluralIndex(number)] ?? ''
+    const value = values[this.pluralIndex(number)] ?? values[0] ?? ''
     const [variablesList] = variables
 
     if (variablesList) {
@@ -85,7 +85,7 @@ export class Lang {
     return this.dictionary[key]
   }
 
-  applyVariables<T extends string[] | Record<string, string>>(
+  applyVariables<T extends string[] | Record<string, string | number>>(
     translation: string,
     variables: T
   ): string {
@@ -97,7 +97,7 @@ export class Lang {
     } else {
       return translation.replace(
         /{(\w+)}/gi,
-        (full, name: string) => variables[name] ?? full
+        (full, name: string) => String(variables[name] ?? full)
       )
     }
   }

@@ -26,6 +26,10 @@ img {
   user-select: none;
 }
 
+img, svg {
+  vertical-align: middle;
+}
+
 :where(button) {
   all: unset;
   box-sizing: border-box;

@@ -19,6 +19,7 @@
     "paths": {
       "main-process/*": ["../main-process/*"],
       "assets/*": ["./assets/*"],
+      "converters/*": ["./converters/*"],
       "env/*": ["./env/*"],
       "lang/*": ["./lang/*"],
       "misc/*": ["./misc/*"],

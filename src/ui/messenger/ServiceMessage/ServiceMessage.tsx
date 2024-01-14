@@ -96,9 +96,11 @@ export const ServiceMessage = defineComponent<Props>(({ message }) => {
       case 'conversation_style_update':
       case 'conversation_style_update_action':
         if (message.action.style) {
+          const styleTranslations = lang.useRaw('me_convo_styles')
+
           return lang.useGender('me_service_conversation_style_update', gender, {
             author: Peer.name(author),
-            style: message.action.style
+            style: styleTranslations[message.action.style]
           })
         } else {
           return lang.useGender('me_service_conversation_style_reset', gender, {

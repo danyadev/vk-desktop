@@ -1,3 +1,4 @@
+import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { Opaque } from 'misc/utils'
 
@@ -32,8 +33,15 @@ interface Expired extends BaseMessage {
 }
 
 export type ServiceAction =
-  | { type: 'chat_create', title: string }
-  | { type: 'chat_title_update', title: string, oldTitle: string }
+  | {
+      type: 'chat_create'
+      title: string
+    }
+  | {
+      type: 'chat_title_update'
+      title: string
+      oldTitle: string
+    }
   | {
       type: 'chat_photo_update'
       photo?: { photo50: string, photo100: string, photo200: string }
@@ -66,9 +74,12 @@ export type ServiceAction =
     }
   | {
       type: 'conversation_style_update' | 'conversation_style_update_action'
-      style: string | undefined
+      style: Convo.Style | undefined
     }
-  | { type: 'custom', message: string }
+  | {
+      type: 'custom'
+      message: string
+    }
   | { type: 'unknown' }
 
 export function resolveCmid(cmid: number): Cmid {

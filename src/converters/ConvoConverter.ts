@@ -4,7 +4,7 @@ import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { typeguard } from 'misc/utils'
-import { fromApiMessage } from 'misc/converters/MessageConverter'
+import { fromApiMessage } from './MessageConverter'
 
 export function fromApiConvo(
   apiConvo: MessagesConversation,
@@ -98,5 +98,38 @@ export function fromApiConvo(
     default:
       typeguard(apiConvo.peer.type)
       return {}
+  }
+}
+
+export function fromApiConvoStyle(style: string): Convo.Style {
+  switch (style) {
+    case 'default':
+    case 'disco':
+    case 'twilight':
+    case 'sunset':
+    case 'lagoon':
+    case 'marine':
+    case 'retrowave':
+    case 'candy':
+    case 'crimson':
+    case 'emerald':
+    case 'halloween_orange':
+    case 'halloween_violet':
+    case 'unicorn':
+    case 'midnight':
+    case 'easter_egg':
+    case 'frost':
+    case 'new_year':
+    case 'valentine':
+    case 'warm_valentine':
+    case 'womens_day':
+    case 'mable':
+    case 'vk17':
+    case 'gamer':
+    case 'gifts':
+    case 'sberkot':
+      return style
+    default:
+      return 'unknown'
   }
 }
