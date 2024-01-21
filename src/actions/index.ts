@@ -1,0 +1,1 @@
+export { loadInitialData } from './loadInitialData'

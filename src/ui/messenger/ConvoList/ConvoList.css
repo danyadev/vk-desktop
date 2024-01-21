@@ -1,17 +1,35 @@
 .ConvoList__header {
-  display: flex;
+  display: grid;
+  grid-template-areas:
+    'avatar name exitIcon'
+    'avatar status exitIcon';
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   height: 48px;
-  flex-shrink: 0;
   padding: 0 8px;
   border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
 .ConvoList__headerAvatar {
+  grid-area: avatar;
   margin-right: 8px;
 }
 
+.ConvoList__headerName {
+  grid-area: name;
+  align-self: end;
+}
+
+.ConvoList__headerStatus {
+  grid-area: status;
+  align-self: start;
+  font: var(--smallFont);
+  color: var(--vkui--color_text_secondary);
+}
+
 .ConvoList__headerExitIcon {
+  grid-area: exitIcon;
   margin-left: auto;
   padding: 2px;
 }

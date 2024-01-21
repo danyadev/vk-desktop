@@ -18,6 +18,7 @@
     "strict": true,
     "paths": {
       "main-process/*": ["../main-process/*"],
+      "actions/*": ["./actions/*"],
       "assets/*": ["./assets/*"],
       "converters/*": ["./converters/*"],
       "env/*": ["./env/*"],

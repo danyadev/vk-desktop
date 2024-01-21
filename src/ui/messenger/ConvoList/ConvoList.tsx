@@ -18,7 +18,8 @@ type Props = {
 
 export const ConvoList = defineComponent<Props>(() => {
   const viewer = useViewer()
-  const { convos, convoList } = useConvosStore()
+  const convosStore = useConvosStore()
+  const { convos, convoList } = convosStore
 
   const convoListRenderer = () => {
     if (!convoList.length) {
@@ -42,7 +43,9 @@ export const ConvoList = defineComponent<Props>(() => {
     <div class="ConvoList">
       <div class="ConvoList__header">
         <Avatar class="ConvoList__headerAvatar" peer={viewer} size={32} />
-        {Peer.name(viewer)}
+
+        <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
+        <span class="ConvoList__headerStatus">{convosStore.connectionStatus}</span>
 
         <ButtonIcon
           class="ConvoList__headerExitIcon"
