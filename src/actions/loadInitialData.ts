@@ -11,6 +11,10 @@ export async function loadInitialData() {
   const { peers } = usePeersStore()
   const convosStore = useConvosStore()
 
+  if (convosStore.connectionStatus !== 'init') {
+    return
+  }
+
   try {
     const [longpollParams, conversations] = await api.fetchParallel([
       api.buildMethod('messages.getLongPollServer', {
@@ -24,6 +28,7 @@ export async function loadInitialData() {
       })
     ])
 
+    convosStore.connectionStatus = 'connected'
     engine.start(longpollParams)
     engine.stop()
 

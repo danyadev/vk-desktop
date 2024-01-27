@@ -1,17 +1,34 @@
 .ConvoListItem {
   display: grid;
+  position: relative;
   grid-template-areas:
     'avatar name indicators'
     'avatar message indicators';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto;
-  margin: 10px;
   row-gap: 5px;
+  padding: 6px 8px;
+  margin: 2px 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background var(--fastTransition);
+}
+
+.ConvoListItem:not(.ConvoListItem--active):hover {
+  background: var(--vkui--color_transparent--hover);
+}
+
+.ConvoListItem--active {
+  background: var(--vkui--color_transparent--active);
 }
 
 .ConvoListItem__avatar {
   grid-area: avatar;
   margin-right: 10px;
+}
+
+.ConvoListItem--compact .ConvoListItem__avatar {
+  margin-right: 0;
 }
 
 .ConvoListItem__name {
@@ -66,6 +83,13 @@
 
 .ConvoListItem__indicators:not(:empty) {
   margin-left: 5px;
+}
+
+.ConvoListItem__compactCounter {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  border: 2px solid var(--vkui--color_background_content);
 }
 
 .MessagePreview__highlight {

@@ -1,4 +1,5 @@
 import { computed, defineComponent, Ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { usePeersStore } from 'store/peers'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
@@ -13,45 +14,76 @@ import './ConvoListItem.css'
 
 type Props = {
   convo: Convo.Convo
+  compact?: boolean
 }
 
-export const ConvoListItem = defineComponent<Props>(({ convo }) => {
+export const ConvoListItem = defineComponent<Props>((props) => {
   const { peers } = usePeersStore()
-  const peer = computed(() => Peer.safeGet(peers, convo.id))
-  const lastMessage = computed(() => Convo.lastMessage(convo))
-  const authorName = useAuthorName(lastMessage, convo)
+  const router = useRouter()
+  const peer = computed(() => Peer.safeGet(peers, props.convo.id))
+  const lastMessage = computed(() => Convo.lastMessage(props.convo))
+  const active = computed(() => router.currentRoute.value.path === `/convo/${props.convo.id}`)
+  const authorName = useAuthorName(lastMessage, props.convo)
 
-  return () => (
-    <div class="ConvoListItem">
-      <Avatar class="ConvoListItem__avatar" peer={peer.value} size={48} />
+  function openConvo() {
+    router.push('/convo/' + props.convo.id)
+  }
 
-      <div class="ConvoListItem__name">
-        <span class="ConvoListItem__nameText">
-          {Peer.name(peer.value)}
-        </span>
-        <span class="ConvoListItem__nameIcons">
-          {!convo.enabledNotifications && <Icon16Muted color="var(--vkui--color_icon_tertiary)" />}
-        </span>
+  return () => {
+    if (props.compact) {
+      return (
+        <div
+          class={['ConvoListItem', 'ConvoListItem--compact', {
+            'ConvoListItem--active': active.value
+          }]}
+          onClick={openConvo}
+        >
+          <Avatar class="ConvoListItem__avatar" peer={peer.value} size={48} />
+
+          <Counter
+            class="ConvoListItem__compactCounter"
+            count={props.convo.unreadCount}
+            mode={props.convo.enabledNotifications ? 'primary' : 'secondary'}
+          />
+        </div>
+      )
+    }
+
+    return (
+      <div
+        class={['ConvoListItem', { 'ConvoListItem--active': active.value }]}
+        onClick={openConvo}
+      >
+        <Avatar class="ConvoListItem__avatar" peer={peer.value} size={48} />
+
+        <div class="ConvoListItem__name">
+          <span class="ConvoListItem__nameText">
+            {Peer.name(peer.value)}
+          </span>
+          <span class="ConvoListItem__nameIcons">
+            {!props.convo.enabledNotifications && <Icon16Muted color="var(--vkui--color_icon_tertiary)" />}
+          </span>
+        </div>
+
+        <div class="ConvoListItem__message">
+          <span class="ConvoListItem__text">
+            {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
+            <MessagePreview convo={props.convo} />
+          </span>
+          <span class="ConvoListItem__date">{lastMessage.value && <MessageDate message={lastMessage.value} />}</span>
+        </div>
+
+        <div class="ConvoListItem__indicators">
+          <Counter
+            count={props.convo.unreadCount}
+            mode={props.convo.enabledNotifications ? 'primary' : 'secondary'}
+          />
+        </div>
       </div>
-
-      <div class="ConvoListItem__message">
-        <span class="ConvoListItem__text">
-          {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
-          <MessagePreview convo={convo} />
-        </span>
-        <span class="ConvoListItem__date">{lastMessage.value && <MessageDate message={lastMessage.value} />}</span>
-      </div>
-
-      <div class="ConvoListItem__indicators">
-        <Counter
-          count={convo.unreadCount}
-          mode={convo.enabledNotifications ? 'primary' : 'secondary'}
-        />
-      </div>
-    </div>
-  )
+    )
+  }
 }, {
-  props: ['convo']
+  props: ['convo', 'compact']
 })
 
 const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
@@ -151,8 +183,16 @@ const MessageDate = defineComponent<{ message: Message.Message }>(({ message }) 
           weeks: Math.floor((diff % ONE_MONTH) / ONE_WEEK)
         })
 
-      default:
-        return lang.formatDate(message.sentAt, 'd MMM yyyy')
+      default: {
+        const isSameYear =
+          new Date(now.value).getFullYear() === new Date(message.sentAt).getFullYear()
+
+        const options: Intl.DateTimeFormatOptions = isSameYear
+          ? { day: 'numeric', month: 'short' }
+          : { day: 'numeric', month: 'numeric', year: '2-digit' }
+
+        return lang.dateTimeFormatter(options).format(message.sentAt)
+      }
     }
   }
 

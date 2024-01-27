@@ -45,8 +45,10 @@ export function typeguard(_unused: never) {
   // Функция предназначена для того, чтобы падать по типам при передаче неправильного значения
 }
 
+const getSegmenter = createSingletonHook(() => new Intl.Segmenter())
+
 export function getFirstLetter(string: string): string {
-  return new Intl.Segmenter().segment(string).containing(0).segment
+  return getSegmenter().segment(string).containing(0).segment
 }
 
 /**

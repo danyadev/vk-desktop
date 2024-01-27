@@ -14,9 +14,10 @@ import './ConvoList.css'
 
 type Props = {
   class?: ClassName
+  compact?: boolean
 }
 
-export const ConvoList = defineComponent<Props>(() => {
+export const ConvoList = defineComponent<Props>((props) => {
   const viewer = useViewer()
   const convosStore = useConvosStore()
   const { convos, convoList } = convosStore
@@ -33,28 +34,34 @@ export const ConvoList = defineComponent<Props>(() => {
     return (
       <div class="ConvoList__list">
         {convoList.map((id) => (
-          <ConvoListItem key={id} convo={Convo.safeGet(convos, id)} />
+          <ConvoListItem key={id} convo={Convo.safeGet(convos, id)} compact={props.compact} />
         ))}
       </div>
     )
   }
 
   return () => (
-    <div class="ConvoList">
+    <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
       <div class="ConvoList__header">
         <Avatar class="ConvoList__headerAvatar" peer={viewer} size={32} />
 
-        <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
-        <span class="ConvoList__headerStatus">{convosStore.connectionStatus}</span>
+        {!props.compact && (
+          <>
+            <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
+            <span class="ConvoList__headerStatus">{convosStore.connectionStatus}</span>
 
-        <ButtonIcon
-          class="ConvoList__headerExitIcon"
-          icon={<Icon24DoorArrowRightOutline color="var(--vkui--color_icon_negative)" />}
-          onClick={logout}
-        />
+            <ButtonIcon
+              class="ConvoList__headerExitIcon"
+              icon={<Icon24DoorArrowRightOutline color="var(--vkui--color_icon_negative)" />}
+              onClick={logout}
+            />
+          </>
+        )}
       </div>
 
       {convoListRenderer()}
     </div>
   )
+}, {
+  props: ['compact']
 })

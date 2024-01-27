@@ -415,9 +415,12 @@ const SmsStatus = defineComponent<SmsStatusProps>((props) => {
     }
 
     if (resendSmsTimer.value) {
-      return lang.use('auth_resend_sms_at', [
-        lang.formatDate(resendSmsTimer.value * 1000, 'mm:ss')
-      ])
+      return lang.use('auth_resend_sms_at', {
+        time: lang.dateTimeFormatter({
+          minute: '2-digit',
+          second: '2-digit'
+        }).format(resendSmsTimer.value * 1000)
+      })
     }
 
     return (

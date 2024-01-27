@@ -57,7 +57,7 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
   )
 
   const win = new BrowserWindow({
-    minWidth: 410,
+    minWidth: 400,
     minHeight: 550,
     show: false,
     frame: isFrameEnabled,

@@ -2,15 +2,12 @@ import { shallowRef } from 'vue'
 import { createSingletonHook } from 'misc/utils'
 
 export const usePixelDensity = createSingletonHook(() => {
-  const isDense = shallowRef(false)
+  const mediaQuery = window.matchMedia('(min-resolution: 1.25dppx)')
+  const isDense = shallowRef(mediaQuery.matches)
 
-  const onChange = () => {
-    isDense.value = window.devicePixelRatio >= 1.25
-  }
-  onChange()
-
-  const match = window.matchMedia('(resolution: 1.25dppx)')
-  match.addEventListener('change', onChange)
+  mediaQuery.addEventListener('change', ({ matches }) => {
+    isDense.value = matches
+  })
 
   return isDense
 })

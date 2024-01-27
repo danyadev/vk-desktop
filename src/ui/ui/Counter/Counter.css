@@ -1,7 +1,7 @@
 .Counter {
   color: var(--vkui--color_text_contrast_themed);
   background: var(--vkd--color_background_accent_themed);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 1px 6px;
   min-width: 20px;
   text-align: center;

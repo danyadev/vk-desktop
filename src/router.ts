@@ -1,7 +1,9 @@
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { useViewerStore } from 'store/viewer'
 import { Auth } from 'ui/Auth/Auth'
+import { ConvoWrapper } from 'ui/messenger/ConvoRoot/ConvoRoot'
 import { Messenger } from 'ui/messenger/Messenger/Messenger'
+import { NoConvo } from 'ui/messenger/NoConvo/NoConvo'
 
 export const router = createRouter({
   history: createMemoryHistory(),
@@ -14,7 +16,18 @@ export const router = createRouter({
         if (viewer.id === 0) {
           return { path: '/auth' }
         }
-      }
+      },
+      children: [
+        {
+          path: '/',
+          component: NoConvo
+        },
+        {
+          name: 'Convo',
+          path: '/convo/:peerId',
+          component: ConvoWrapper
+        }
+      ]
     },
     {
       path: '/auth',

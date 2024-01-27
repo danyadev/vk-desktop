@@ -1,0 +1,9 @@
+.ConvoRoot {
+  width: 100%;
+}
+
+.ConvoWrapper__spinner {
+  display: flex;
+  height: 100%;
+  margin: auto;
+}

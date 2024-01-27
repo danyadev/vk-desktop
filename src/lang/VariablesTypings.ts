@@ -1,6 +1,6 @@
 type ExplicitVariablesTypings = {
   auth_sms_with_code_sent: [phone: string]
-  auth_resend_sms_at: [time: string]
+  auth_resend_sms_at: { time: string }
 
   me_convo_list_author: { author: string }
   me_convo_list_date_mins: { mins: number }

@@ -11,9 +11,18 @@
   border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
+.ConvoList--compact .ConvoList__header {
+  justify-items: center;
+  grid-template: 'avatar' 1fr / 1fr;
+}
+
 .ConvoList__headerAvatar {
   grid-area: avatar;
   margin-right: 8px;
+}
+
+.ConvoList--compact .ConvoList__headerAvatar {
+  margin-right: 0;
 }
 
 .ConvoList__headerName {
@@ -37,6 +46,7 @@
 .ConvoList__list {
   overflow: overlay;
   height: 100%;
+  padding: 6px 8px;
 }
 
 .ConvoList__list--loading {

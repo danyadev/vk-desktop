@@ -6,42 +6,49 @@
 .Messenger__convoList {
   display: flex;
   flex-direction: column;
-  width: 300px;
+  flex: none;
   border-right: 1px solid var(--vkui--color_separator_primary);
 }
 
 .Messenger__content {
   flex-grow: 1;
+  width: 100%;
+  height: 100%;
 }
 
-@media (width < 700px) {
+@media (width < 500px) {
   .Messenger__convoList {
     width: 100%;
     border-right: none;
   }
 
   .Messenger__content {
-    /* TODO: поддержать кейс с открытым чатом */
     display: none;
   }
-}
 
-@media (700px <= width <= 880px) {
-  .Messenger__convoList {
-    width: 41%;
+  .Messenger--withConvo .Messenger__convoList {
+    display: none;
   }
 
-  .Messenger__content {
-    width: 59%;
+  .Messenger--withConvo .Messenger__content {
+    display: block;
   }
 }
 
-@media (width > 880px) {
+@media (500px <= width <= 700px) {
   .Messenger__convoList {
-    width: calc(880px * 0.41);
+    width: 80px;
   }
+}
 
-  .Messenger__content {
-    width: calc(100% - 880px * 0.41);
+@media (width > 700px) {
+  .Messenger__convoList {
+    width: 42%;
+  }
+}
+
+@media (width > 850px) {
+  .Messenger__convoList {
+    width: calc(850px * 0.42);
   }
 }

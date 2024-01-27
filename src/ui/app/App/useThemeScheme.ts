@@ -2,8 +2,7 @@ import * as electron from '@electron/remote'
 import { computed, shallowRef, watch } from 'vue'
 import { AppearanceScheme, useMainSettingsStore } from 'store/mainSettings'
 import { createSingletonHook, currentWindow, subscribeToElectronEvent } from 'misc/utils'
-
-import { getColorBackgroundContent } from '../../../../main-process/shared'
+import { getColorBackgroundContent } from 'main-process/shared'
 
 /**
  * 0) В main процессе выставляем themeSource в зависимости от mainSettings (light | dark | system)
