@@ -20,7 +20,7 @@ type Props = {
 export const ConvoList = defineComponent<Props>((props) => {
   const viewer = useViewer()
   const convosStore = useConvosStore()
-  const { convos, convoList } = convosStore
+  const { convoList } = convosStore
 
   const convoListRenderer = () => {
     if (!convoList.length) {
@@ -34,7 +34,7 @@ export const ConvoList = defineComponent<Props>((props) => {
     return (
       <div class="ConvoList__list">
         {convoList.map((id) => (
-          <ConvoListItem key={id} convo={Convo.safeGet(convos, id)} compact={props.compact} />
+          <ConvoListItem key={id} convo={Convo.safeGet(id)} compact={props.compact} />
         ))}
       </div>
     )

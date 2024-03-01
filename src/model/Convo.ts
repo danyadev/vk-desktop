@@ -1,3 +1,4 @@
+import { useConvosStore } from 'store/convos'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 
@@ -62,11 +63,12 @@ export type Style =
   | 'gifts'
   | 'sberkot'
 
-export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.UserId): UserConvo
-export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.GroupId): GroupConvo
-export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.ChatId): ChatConvo
-export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.Id): Convo
-export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.Id): unknown {
+export function safeGet(id: Peer.UserId): UserConvo
+export function safeGet(id: Peer.GroupId): GroupConvo
+export function safeGet(id: Peer.ChatId): ChatConvo
+export function safeGet(id: Peer.Id): Convo
+export function safeGet(id: Peer.Id): unknown {
+  const { convos } = useConvosStore()
   const convo = convos.get(id)
 
   if (!convo) {

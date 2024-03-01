@@ -1,22 +1,20 @@
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { useConvosStore } from 'store/convos'
-import { usePeersStore } from 'store/peers'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
-import './ConvoRoot.css'
+import './ConvoView.css'
 
-type ConvoRootProps = {
+type ConvoViewProps = {
   convo: Convo.Convo
 }
 
-const ConvoRoot = defineComponent<ConvoRootProps>(({ convo }) => {
-  const { peers } = usePeersStore()
-  const peer = Peer.safeGet(peers, convo.id)
+const ConvoView = defineComponent<ConvoViewProps>(({ convo }) => {
+  const peer = Peer.safeGet(convo.id)
 
   return () => (
-    <div class="ConvoRoot">
+    <div class="ConvoView">
       id: {convo.id}<br/>
       name: {Peer.name(peer)}
     </div>
@@ -35,9 +33,15 @@ export const ConvoWrapper = defineComponent(() => {
   })
   const convo = computed(() => (peerId.value ? convos.get(peerId.value) : null))
 
+  watchEffect(() => {
+    if (!convo.value) {
+      alert('необходима загрузка конвы')
+    }
+  })
+
   return () => (
     convo.value ? (
-      <ConvoRoot convo={convo.value} />
+      <ConvoView convo={convo.value} />
     ) : (
       <Spinner class="ConvoWrapper__spinner" size="medium" />
     )

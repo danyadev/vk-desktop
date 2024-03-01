@@ -87,8 +87,8 @@
 
 .ConvoListItem__compactCounter {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 2px;
+  right: 2px;
   border: 2px solid var(--vkui--color_background_content);
 }
 

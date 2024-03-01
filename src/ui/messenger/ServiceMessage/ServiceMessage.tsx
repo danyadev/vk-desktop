@@ -1,5 +1,4 @@
 import { defineComponent } from 'vue'
-import { usePeersStore } from 'store/peers'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv } from 'misc/hooks'
@@ -10,9 +9,8 @@ type Props = {
 }
 
 export const ServiceMessage = defineComponent<Props>(({ message }) => {
-  const { peers } = usePeersStore()
   const { lang } = useEnv()
-  const author = Peer.safeGet(peers, message.authorId)
+  const author = Peer.safeGet(message.authorId)
   const gender = author.kind === 'User' ? author.gender : 'unknown'
 
   return () => {
@@ -54,7 +52,7 @@ export const ServiceMessage = defineComponent<Props>(({ message }) => {
           })
         }
 
-        const target = Peer.safeGet(peers, message.action.peerId)
+        const target = Peer.safeGet(message.action.peerId)
 
         return lang.useGender(`me_service_${message.action.type}`, gender, {
           author: Peer.name(author),
@@ -64,7 +62,7 @@ export const ServiceMessage = defineComponent<Props>(({ message }) => {
 
       case 'chat_invite_user_by_message_request':
       case 'chat_invite_user_by_call': {
-        const target = Peer.safeGet(peers, message.action.peerId)
+        const target = Peer.safeGet(message.action.peerId)
 
         return lang.useGender(`me_service_${message.action.type}`, gender, {
           author: Peer.name(author),
@@ -73,14 +71,14 @@ export const ServiceMessage = defineComponent<Props>(({ message }) => {
       }
 
       case 'accepted_message_request': {
-        const target = Peer.safeGet(peers, message.action.peerId)
+        const target = Peer.safeGet(message.action.peerId)
         return lang.use('me_service_accepted_message_request', {
           target: Peer.name(target)
         })
       }
 
       case 'chat_kick_user_call_block': {
-        const target = Peer.safeGet(peers, message.action.peerId)
+        const target = Peer.safeGet(message.action.peerId)
         return lang.useGender('me_service_chat_kick_user_call_block', gender, {
           target: Peer.name(target)
         })

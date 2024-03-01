@@ -1,6 +1,5 @@
 import { computed, defineComponent, Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { usePeersStore } from 'store/peers'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
@@ -18,9 +17,8 @@ type Props = {
 }
 
 export const ConvoListItem = defineComponent<Props>((props) => {
-  const { peers } = usePeersStore()
   const router = useRouter()
-  const peer = computed(() => Peer.safeGet(peers, props.convo.id))
+  const peer = computed(() => Peer.safeGet(props.convo.id))
   const lastMessage = computed(() => Convo.lastMessage(props.convo))
   const active = computed(() => router.currentRoute.value.path === `/convo/${props.convo.id}`)
   const authorName = useAuthorName(lastMessage, props.convo)
@@ -205,7 +203,6 @@ const MessageDate = defineComponent<{ message: Message.Message }>(({ message }) 
 })
 
 function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Convo.Convo) {
-  const { peers } = usePeersStore()
   const { lang } = useEnv()
 
   return computed(() => {
@@ -222,7 +219,7 @@ function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Conv
     }
 
     if (convo.kind === 'ChatConvo' && !convo.isChannel) {
-      const author = Peer.safeGet(peers, message.authorId)
+      const author = Peer.safeGet(message.authorId)
       return lang.use('me_convo_list_author', {
         author: Peer.firstName(author)
       }) + ' '
