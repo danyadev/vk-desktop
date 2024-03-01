@@ -345,6 +345,9 @@
   --vkui--color_background_accent_themed: #FFFFFF;
   --vkui--color_background_accent_themed--hover: #EBEDF0;
   --vkui--color_background_accent_themed--active: #D7D8DB;
+  --vkui--color_background_accent_themed_alpha: rgba(255, 255, 255, 0.2);
+  --vkui--color_background_accent_themed_alpha--hover: rgba(255, 255, 255, 0.24);
+  --vkui--color_background_accent_themed_alpha--active: rgba(255, 255, 255, 0.28);
   --vkui--color_background_accent_tint: #5a9eff;
   --vkui--color_background_accent_tint--hover: #61A2FF;
   --vkui--color_background_accent_tint--active: #67A6FF;

@@ -298,6 +298,7 @@ module.exports = {
         'JSX.Element': 'Use JSXElement type from misc/utils'
       }
     }],
+    '@typescript-eslint/no-array-delete': 'error',
 
     /**
      * Далее идут правила, которые расширяют eslint-правила.

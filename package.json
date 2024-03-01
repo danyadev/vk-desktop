@@ -15,7 +15,7 @@
     "win-setup": "yarn win-setup64 && yarn win-setup32",
     "win-setup64": "innosetup-compiler build/config-x64.iss --verbose",
     "win-setup32": "innosetup-compiler build/config-ia32.iss --verbose",
-    "postinstall": "husky install && node ./scripts/moveVkuiTokens.mjs"
+    "postinstall": "husky && node ./scripts/moveVkuiTokens.mjs"
   },
   "repository": "https://github.com/danyadev/vk-desktop",
   "author": "danyadev <danyadev@mail.ru>",
@@ -28,32 +28,32 @@
     "*.css": "stylelint"
   },
   "dependencies": {
-    "@electron/remote": "2.1.1",
+    "@electron/remote": "2.1.2",
     "pinia": "2.1.7",
-    "vue": "3.4.1",
-    "vue-router": "4.2.5"
+    "vue": "3.4.21",
+    "vue-router": "4.3.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "6.16.0",
-    "@typescript-eslint/parser": "6.16.0",
+    "@typescript-eslint/eslint-plugin": "7.1.0",
+    "@typescript-eslint/parser": "7.1.0",
     "@vitejs/plugin-vue-jsx": "3.1.0",
-    "@vkontakte/vkui-tokens": "4.41.4",
-    "@vue/compiler-sfc": "3.4.1",
+    "@vkontakte/vkui-tokens": "4.43.1",
+    "@vue/compiler-sfc": "3.4.21",
     "electron": "22.3.27",
-    "electron-builder": "24.10.0",
-    "eslint": "8.56.0",
+    "electron-builder": "24.12.0",
+    "eslint": "8.57.0",
     "eslint-import-resolver-typescript": "3.6.1",
     "eslint-plugin-import": "npm:eslint-plugin-i",
-    "eslint-plugin-simple-import-sort": "10.0.0",
-    "husky": "8.0.3",
+    "eslint-plugin-simple-import-sort": "12.0.0",
+    "husky": "9.0.11",
     "innosetup-compiler": "6.2.0",
-    "lightningcss": "1.22.1",
-    "lint-staged": "15.2.0",
-    "stylelint": "16.1.0",
+    "lightningcss": "1.24.0",
+    "lint-staged": "15.2.2",
+    "stylelint": "16.2.1",
     "stylelint-config-standard": "36.0.0",
     "typescript": "5.3.3",
-    "vite": "5.0.10",
-    "vite-plugin-electron": "0.15.5",
+    "vite": "5.1.4",
+    "vite-plugin-electron": "0.28.2",
     "vite-plugin-electron-renderer": "0.14.5"
   }
 }
