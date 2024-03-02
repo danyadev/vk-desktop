@@ -1,4 +1,8 @@
 .ButtonIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: none;
   position: relative;
   border-radius: 6px;
   transition: background-color var(--fastTransition);

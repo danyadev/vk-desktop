@@ -54,3 +54,11 @@ export function logout() {
   viewerStorage.set('id', Peer.resolveZeroUserId())
   location.reload()
 }
+
+// defineStore оборачивает стейт в UnwrapRef, заставляя IDE показывать полный бред.
+// Добавляем стейт в исключение, считая, что его значение не является рефом
+declare module '@vue/reactivity' {
+  interface RefUnwrapBailTypes {
+    Viewer: Viewer
+  }
+}

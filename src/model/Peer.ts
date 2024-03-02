@@ -21,7 +21,7 @@ export type GroupId = Opaque<number, Group>
 export type ChatId = Opaque<number, Chat>
 
 export type Peer = User | Group | Chat
-export type Id = Peer['id']
+export type Id = UserId | GroupId | ChatId
 
 export type User = {
   kind: 'User'

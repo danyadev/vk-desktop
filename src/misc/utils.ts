@@ -2,7 +2,7 @@ import * as electron from '@electron/remote'
 import { onScopeDispose } from 'vue'
 
 export type Opaque<Type, Token = unknown> = Type & {
-  readonly __opaque__: Token
+  __opaque__: Token
 }
 
 // Тип JSX.Element запрещен в пользу JSXElement, здесь его единственное использование

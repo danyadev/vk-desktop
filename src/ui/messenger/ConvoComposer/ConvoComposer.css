@@ -1,0 +1,27 @@
+.ConvoComposer {
+  flex: none;
+  padding: 0 16px 16px;
+}
+
+.ConvoComposer__panel {
+  display: flex;
+  align-items: flex-end;
+  background: #292929;
+  padding: 4px 6px;
+  border-radius: 12px;
+  box-shadow: var(--vkui--elevation3);
+}
+
+.ConvoComposer__input {
+  width: 100%;
+  margin: 8px 6px;
+  font: var(--font);
+  max-height: calc(10 * var(--lineHeight));
+  overflow: auto;
+}
+
+.ConvoComposer__input:empty::before {
+  content: attr(placeholder);
+  pointer-events: none;
+  color: var(--vkui--color_text_secondary);
+}

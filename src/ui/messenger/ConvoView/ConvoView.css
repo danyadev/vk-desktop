@@ -1,5 +1,13 @@
 .ConvoView {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100%;
+}
+
+.ConvoView__history {
+  height: 100%;
+  overflow: hidden;
 }
 
 .ConvoWrapper__spinner {

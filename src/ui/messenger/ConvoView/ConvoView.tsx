@@ -3,6 +3,9 @@ import { useRoute } from 'vue-router'
 import { useConvosStore } from 'store/convos'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
+import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
+import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
+import { ConvoHistory } from 'ui/messenger/ConvoHistory/ConvoHistory'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ConvoView.css'
 
@@ -11,12 +14,13 @@ type ConvoViewProps = {
 }
 
 const ConvoView = defineComponent<ConvoViewProps>(({ convo }) => {
-  const peer = Peer.safeGet(convo.id)
-
   return () => (
     <div class="ConvoView">
-      id: {convo.id}<br/>
-      name: {Peer.name(peer)}
+      <ConvoHeader convo={convo} />
+      <div class="ConvoView__history">
+        <ConvoHistory convo={convo} />
+      </div>
+      <ConvoComposer />
     </div>
   )
 }, {

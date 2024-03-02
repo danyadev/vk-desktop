@@ -15,3 +15,11 @@ export const useConvosStore = defineStore('convos', {
     connectionStatus: 'init'
   })
 })
+
+// defineStore оборачивает стейт в UnwrapRef, заставляя IDE показывать полный бред.
+// Добавляем стейт в исключение, считая, что его значение не является рефом
+declare module '@vue/reactivity' {
+  interface RefUnwrapBailTypes {
+    Convos: Convos
+  }
+}
