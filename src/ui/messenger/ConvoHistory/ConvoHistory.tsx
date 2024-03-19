@@ -11,7 +11,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     <div class="ConvoHistory">
       {convo.history.map((message) => {
         if (message.kind === 'Gap') {
-          return JSON.stringify(message)
+          return <div style="text-align: center">Gap {message.fromCmid}..{message.toCmid}</div>
         }
 
         if (message.kind === 'Service') {

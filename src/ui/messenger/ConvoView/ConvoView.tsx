@@ -29,16 +29,16 @@ const ConvoView = defineComponent<ConvoViewProps>(({ convo }) => {
 
 export const ConvoWrapper = defineComponent(() => {
   const route = useRoute()
-  const { convos } = useConvosStore()
+  const { convos, connection } = useConvosStore()
 
   const peerId = computed(() => {
     const rawValue = Number(route.params.peerId)
     return rawValue ? Peer.resolveId(rawValue) : null
   })
-  const convo = computed(() => (peerId.value ? convos.get(peerId.value) : null))
+  const convo = computed(() => (peerId.value && convos.get(peerId.value)))
 
   watchEffect(() => {
-    if (!convo.value) {
+    if (!convo.value && connection.status !== 'init') {
       alert('необходима загрузка конвы')
     }
   })

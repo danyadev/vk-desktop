@@ -9,9 +9,9 @@ import { PEER_FIELDS } from 'misc/constants'
 export async function loadInitialData() {
   const { api, engine } = useEnv()
   const { peers } = usePeersStore()
-  const convosStore = useConvosStore()
+  const { convos, convoList, connection } = useConvosStore()
 
-  if (convosStore.connectionStatus !== 'init') {
+  if (connection.status !== 'init') {
     return
   }
 
@@ -28,7 +28,7 @@ export async function loadInitialData() {
       })
     ])
 
-    convosStore.connectionStatus = 'connected'
+    connection.status = 'connected'
     engine.start(longpollParams)
     engine.stop()
 
@@ -38,8 +38,8 @@ export async function loadInitialData() {
         peer
       } = fromApiConvo(apiConvo.conversation, apiConvo.last_message)
       if (convo) {
-        convosStore.convoList.push(convo.id)
-        convosStore.convos.set(convo.id, convo)
+        convoList.push(convo.id)
+        convos.set(convo.id, convo)
       }
       if (peer) {
         peers.set(peer.id, peer)
@@ -56,6 +56,6 @@ export async function loadInitialData() {
     }
   } catch (err) {
     console.error(err)
-    convosStore.connectionStatus = 'initFailed'
+    connection.status = 'initFailed'
   }
 }

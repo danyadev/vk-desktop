@@ -19,8 +19,7 @@ type Props = {
 
 export const ConvoList = defineComponent<Props>((props) => {
   const viewer = useViewer()
-  const convosStore = useConvosStore()
-  const { convoList } = convosStore
+  const { convoList, connection } = useConvosStore()
 
   const convoListRenderer = () => {
     if (!convoList.length) {
@@ -48,7 +47,7 @@ export const ConvoList = defineComponent<Props>((props) => {
         {!props.compact && (
           <>
             <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
-            <span class="ConvoList__headerStatus">{convosStore.connectionStatus}</span>
+            <span class="ConvoList__headerStatus">{connection.status}</span>
 
             <ButtonIcon
               class="ConvoList__headerExitIcon"

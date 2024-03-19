@@ -352,7 +352,7 @@ const AuthTwoFactor = defineComponent<AuthTwoFactorProps>((props) => {
         </div>
         <div class="Auth__twoFactorDescription">
           {props.twoFactorState.validationType === '2fa_sms'
-            ? lang.use('auth_sms_with_code_sent', [props.twoFactorState.phoneMask])
+            ? lang.use('auth_sms_with_code_sent', { phone: props.twoFactorState.phoneMask })
             : lang.use('auth_enter_code_from_code_gen_app')}
         </div>
         <Input
@@ -517,7 +517,9 @@ const AuthAccounts = defineComponent(() => {
               </Button>
             ]}
           >
-            {lang.use('confirmAccountDelete_confirm', [Peer.name(userToDelete.value)])}
+            {lang.use('confirmAccountDelete_confirm', {
+              userName: Peer.name(userToDelete.value)
+            })}
           </Modal>
         )}
       </div>

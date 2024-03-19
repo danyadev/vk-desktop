@@ -107,4 +107,23 @@ export function subscribeToElectronEvent(subscribe: (() => () => void)) {
   DEV && window.addEventListener('beforeunload', removeListener)
 }
 
+type SplitterChunk =
+  | { kind: 'separator', value: string }
+  | { kind: 'rest', value: string }
+/**
+ * Раскладывает строку по сепаратору на массив чанков
+ *
+ * Важно: в значении separator будет находиться значение, обернутое в скобки в регулярке
+ */
+export function splitter(string: string, regexp: RegExp): SplitterChunk[] {
+  const chunks = string.split(regexp)
+  let isSeparator = !!chunks[0]?.match(regexp)
+
+  return chunks.map((value) => {
+    const kind = isSeparator ? 'separator' : 'rest'
+    isSeparator = !isSeparator
+    return { kind, value }
+  })
+}
+
 export { debounce } from 'main-process/shared'
