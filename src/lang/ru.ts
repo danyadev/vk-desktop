@@ -16,7 +16,7 @@ export const ru = {
   auth_account_delete: 'Удалить',
 
   auth_confirm_login: 'Подтвердите вход',
-  auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {0}',
+  auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {phone}',
   auth_enter_code_from_code_gen_app: 'Введите код из приложения генератора кодов',
   auth_enter_code: 'Введите код',
   auth_sms_is_sending: 'SMS отправляется',
@@ -199,7 +199,7 @@ export const ru = {
   captchaModal_enter_code: 'Введите код',
 
   confirmAccountDelete_title: 'Удаление аккаунта',
-  confirmAccountDelete_confirm: 'Вы действительно хотите удалить аккаунт {0}?',
+  confirmAccountDelete_confirm: 'Вы действительно хотите удалить аккаунт {userName}?',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',

@@ -1,4 +1,4 @@
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { useViewerStore } from 'store/viewer'
 import { Auth } from 'ui/Auth/Auth'
 import { ConvoWrapper } from 'ui/messenger/ConvoView/ConvoView'
@@ -6,7 +6,7 @@ import { Messenger } from 'ui/messenger/Messenger/Messenger'
 import { NoConvo } from 'ui/messenger/NoConvo/NoConvo'
 
 export const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
