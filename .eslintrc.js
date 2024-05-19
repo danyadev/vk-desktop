@@ -246,7 +246,7 @@ module.exports = {
       groups: [
         [
           ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
-          ...['^@?electron', '^vue', '^pinia', '^@?vite'],
+          ...['^@?electron', '^vue', '^pinia', '^@?vite', '^@vkontakte/vk-qr'],
           ...['^env', '^store', '^model', '^converters', '^actions', '^lang'],
           ...['^misc/utils', '^misc/hooks', '^misc'],
           ...['^main-process', '^\\./', '^ui', '^assets', '.css$']

@@ -61,6 +61,7 @@ export type FetchOptions = {
   android?: boolean
   retries?: number
   timeout?: number
+  headers?: Record<string, string>
 }
 
 export interface Api {

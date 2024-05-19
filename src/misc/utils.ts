@@ -127,3 +127,14 @@ export function splitter(string: string, regexp: RegExp): SplitterChunk[] {
 }
 
 export { debounce } from 'main-process/shared'
+
+export async function getPlatform() {
+  const deviceInfo = await navigator.userAgentData?.getHighEntropyValues([
+    'platform',
+    'platformVersion'
+  ]).catch(() => null)
+
+  return deviceInfo
+    ? `${deviceInfo.platform} ${deviceInfo.platformVersion}`
+    : navigator.userAgentData?.platform ?? 'Unknown'
+}

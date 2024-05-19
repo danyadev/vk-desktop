@@ -124,10 +124,19 @@ app.once('ready', () => {
   })
 
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
-    if (details.requestHeaders['X-User-Agent']) {
-      details.requestHeaders['User-Agent'] = details.requestHeaders['X-User-Agent']
-      delete details.requestHeaders['X-User-Agent']
+    const rewrite = (proxyHeaderName: string, targetHeaderName: string) => {
+      const headerValue = details.requestHeaders[proxyHeaderName]
+
+      if (headerValue) {
+        details.requestHeaders[targetHeaderName] = headerValue
+        delete details.requestHeaders[proxyHeaderName]
+      }
     }
+
+    rewrite('X-User-Agent', 'User-Agent')
+    rewrite('X-Origin', 'Origin')
+    rewrite('X-Referer', 'Referer')
+
     callback(details)
   })
 

@@ -2,6 +2,8 @@ import { version } from '../../package.json'
 
 export const isMacOS = __IS_MACOS__
 
+export const APP_VERSION = version
+
 export const appUserAgent = `VKDesktop/${version}`
 
 export const androidUserAgent =

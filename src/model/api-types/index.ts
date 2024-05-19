@@ -1,6 +1,14 @@
 import {
+  AuthCheckAuthCodeParams,
+  AuthCheckAuthCodeResponse,
+  AuthGetAnonymTokenParams,
+  AuthGetAnonymTokenResponse,
+  AuthGetAuthCodeParams,
+  AuthGetAuthCodeResponse,
   AuthGetOauthTokenParams,
   AuthGetOauthTokenResponse,
+  AuthValidateAccountParams,
+  AuthValidateAccountResponse,
   AuthValidatePhoneParams,
   AuthValidatePhoneResponse
 } from 'model/api-types/methods/Auth'
@@ -41,6 +49,22 @@ export type Methods = {
   'auth.getOauthToken': {
     params: AuthGetOauthTokenParams
     response: AuthGetOauthTokenResponse
+  }
+  'auth.getAnonymToken': {
+    params: AuthGetAnonymTokenParams
+    response: AuthGetAnonymTokenResponse
+  }
+  'auth.getAuthCode': {
+    params: AuthGetAuthCodeParams
+    response: AuthGetAuthCodeResponse
+  }
+  'auth.checkAuthCode': {
+    params: AuthCheckAuthCodeParams
+    response: AuthCheckAuthCodeResponse
+  }
+  'auth.validateAccount': {
+    params: AuthValidateAccountParams
+    response: AuthValidateAccountResponse
   }
 
   'captcha.force': {

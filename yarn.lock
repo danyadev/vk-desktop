@@ -901,6 +901,11 @@
     "@babel/plugin-transform-typescript" "^7.23.3"
     "@vue/babel-plugin-jsx" "^1.1.5"
 
+"@vkontakte/vk-qr@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@vkontakte/vk-qr/-/vk-qr-2.1.1.tgz#e0a460b6f6836c73cfbfad5344668e0cf5d3a47a"
+  integrity sha512-0weBoEd4o5kYVtq+U2MdBlPIGVMrE06q8Pja9ITtONdo0onM2mF6VmRo5VJXyc6crkuOZeZ0QmLkOvyiD6I3IQ==
+
 "@vkontakte/vkui-tokens@4.43.1":
   version "4.43.1"
   resolved "https://registry.yarnpkg.com/@vkontakte/vkui-tokens/-/vkui-tokens-4.43.1.tgz#77c802128e341ded43a518d5b553fcb87614a7e3"
@@ -3843,6 +3848,11 @@ uri-js@^4.2.2:
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   dependencies:
     punycode "^2.1.0"
+
+user-agent-data-types@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/user-agent-data-types/-/user-agent-data-types-0.4.2.tgz#3bbd3662022c3fb9d0c2f7449b6cdd412a3f9e0d"
+  integrity sha512-jXep3kO/dGNmDOkbDa8ccp4QArgxR4I76m3QVcJ1aOF0B9toc+YtSXtX5gLdDTZXyWlpQYQrABr6L1L2GZOghw==
 
 utf8-byte-length@^1.0.1:
   version "1.0.4"

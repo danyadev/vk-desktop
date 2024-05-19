@@ -1,12 +1,13 @@
 import { defineComponent, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useViewerStore } from 'store/viewer'
-import { getAndroidToken, GetAndroidTokenPayload, getAppToken } from 'model/Auth'
+import * as AuthModel from 'model/Auth'
 import { fromApiUser } from 'converters/PeerConverter'
 import { useEnv, useGlobalModal } from 'misc/hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { AuthConfirmationPage, ConfirmationState } from 'ui/Auth/AuthConfirmationPage'
 import { AuthMainPage } from 'ui/Auth/AuthMainPage'
+import { AuthQRPage } from 'ui/Auth/AuthQRPage'
 import './Auth.css'
 
 type AuthState = {
@@ -15,6 +16,7 @@ type AuthState = {
   loading: boolean
   error: string | null
   confirmationState: ConfirmationState | null
+  isQrCodePage: boolean
 }
 
 export const Auth = defineComponent(() => {
@@ -27,13 +29,22 @@ export const Auth = defineComponent(() => {
     password: '',
     loading: false,
     error: null,
-    confirmationState: null
+    confirmationState: null,
+    isQrCodePage: false
   })
 
   function onSubmitAuth(login: string, password: string) {
     state.login = login
     state.password = password
     performAuth()
+  }
+
+  function openQrCodePage() {
+    state.isQrCodePage = true
+  }
+
+  function onCancelQrCode() {
+    state.isQrCodePage = false
   }
 
   function onSubmitCode(code: string) {
@@ -49,11 +60,11 @@ export const Auth = defineComponent(() => {
     state.error = null
   }
 
-  async function performAuth(payload: GetAndroidTokenPayload = {}): Promise<void> {
+  async function performAuth(payload: AuthModel.GetAndroidTokenPayload = {}): Promise<void> {
     state.error = null
     state.loading = true
 
-    const result = await getAndroidToken(state.login, state.password, payload)
+    const result = await AuthModel.getAndroidToken(state.login, state.password, payload)
 
     switch (result.kind) {
       case 'Success': {
@@ -61,40 +72,12 @@ export const Auth = defineComponent(() => {
           viewer.addTrustedHash(state.login, result.trustedHash)
         }
 
-        const appToken = await getAppToken(result.androidToken, api)
-        if (!appToken) {
-          state.error = lang.use('auth_app_token_getting_error')
-          break
-        }
-
-        try {
-          const [apiUser] = await api.fetch('users.get', {
-            access_token: appToken,
-            fields: PEER_FIELDS
-          }, { retries: 3 })
-
-          if (!apiUser) {
-            throw new Error('API не вернул пользователя')
-          }
-
-          const user = fromApiUser(apiUser)
-
-          viewer.addAccount({
-            ...user,
-            accessToken: appToken,
-            androidToken: result.androidToken
-          })
-          viewer.setCurrentAccount(user.id)
-
-          router.replace('/')
-        } catch (err) {
-          console.warn('Ошибка получения юзера', err)
-          state.error = lang.use('auth_user_load_error')
-        }
+        await completeAuthWithAndroidToken(result.androidToken)
         break
       }
 
-      case 'InvalidCredentials': {
+      case 'InvalidCredentials':
+      case 'InvalidTwoFactorCode': {
         state.error = result.errorMessage
         break
       }
@@ -102,11 +85,6 @@ export const Auth = defineComponent(() => {
       case 'RequireTwoFactor':
         state.confirmationState = result
         break
-
-      case 'InvalidTwoFactorCode': {
-        state.error = result.errorMessage
-        break
-      }
 
       case 'Captcha': {
         const captchaKey = await new Promise<string | undefined>((resolve) => {
@@ -151,23 +129,70 @@ export const Auth = defineComponent(() => {
     state.loading = false
   }
 
-  return () => (
-    !state.confirmationState ? (
+  async function completeAuthWithAndroidToken(androidToken: string) {
+    const appToken = await AuthModel.getAppToken(androidToken, api)
+
+    if (!appToken) {
+      state.isQrCodePage = false
+      state.error = lang.use('auth_app_token_getting_error')
+      return
+    }
+
+    try {
+      const [apiUser] = await api.fetch('users.get', {
+        access_token: appToken,
+        fields: PEER_FIELDS
+      }, { retries: 3 })
+
+      if (!apiUser) {
+        throw new Error('API не вернул пользователя')
+      }
+
+      const user = fromApiUser(apiUser)
+
+      viewer.addAccount({
+        ...user,
+        accessToken: appToken,
+        androidToken
+      })
+      viewer.setCurrentAccount(user.id)
+
+      router.replace('/')
+    } catch (err) {
+      console.warn('Ошибка получения юзера', err)
+      state.isQrCodePage = false
+      state.error = lang.use('auth_user_load_error')
+    }
+  }
+
+  return () => {
+    if (state.confirmationState) {
+      return (
+        <AuthConfirmationPage
+          confirmationState={state.confirmationState}
+          onSubmit={onSubmitCode}
+          onCancel={onCancelCode}
+          loading={state.loading}
+          error={state.error}
+          onHideError={onHideError}
+        />
+      )
+    }
+
+    if (state.isQrCodePage) {
+      return (
+        <AuthQRPage onCancel={onCancelQrCode} onAuth={completeAuthWithAndroidToken} />
+      )
+    }
+
+    return (
       <AuthMainPage
-        loading={state.loading}
-        error={state.error}
         onSubmit={onSubmitAuth}
-        onHideError={onHideError}
-      />
-    ) : (
-      <AuthConfirmationPage
-        confirmationState={state.confirmationState}
         loading={state.loading}
         error={state.error}
-        onSubmit={onSubmitCode}
-        onCancel={onCancelCode}
         onHideError={onHideError}
+        openQrCodePage={openQrCodePage}
       />
     )
-  )
+  }
 })

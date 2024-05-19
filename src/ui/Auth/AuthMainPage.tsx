@@ -9,10 +9,11 @@ import { Icon24HideOutline, Icon24ViewOutline } from 'assets/icons'
 import logo from 'assets/logo512.png'
 
 type AuthMainPageProps = {
+  onSubmit: (login: string, password: string) => void
   loading: boolean
   error: string | null
-  onSubmit: (login: string, password: string) => void
   onHideError: () => void
+  openQrCodePage: () => void
 }
 
 export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
@@ -37,12 +38,14 @@ export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
         <img class="Auth__logo" src={logo} />
         <Input
           placeholder={lang.use('auth_login_placeholder')}
+          disabled={props.loading}
           onInput={(event) => (state.login = event.target.value)}
           autofocus
         />
         <Input
           type={showPassword.value ? 'text' : 'password'}
           placeholder={lang.use('auth_password_placeholder')}
+          disabled={props.loading}
           after={
             <ButtonIcon
               icon={showPassword.value ? <Icon24HideOutline /> : <Icon24ViewOutline />}
@@ -62,6 +65,15 @@ export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
         >
           {lang.use('auth_submit')}
         </Button>
+        <Button
+          mode="secondary"
+          size="large"
+          wide
+          disabled={props.loading}
+          onClick={props.openQrCodePage}
+        >
+          Войти по QR-коду
+        </Button>
 
         {props.error ? (
           <div class="Auth__error" onClick={props.onHideError}>{props.error}</div>
@@ -78,5 +90,5 @@ export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
     </div>
   )
 }, {
-  props: ['loading', 'error', 'onSubmit', 'onHideError']
+  props: ['onSubmit', 'loading', 'error', 'onHideError', 'openQrCodePage']
 })

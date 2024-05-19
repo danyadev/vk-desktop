@@ -84,6 +84,9 @@ export type GetAndroidTokenPayload = {
   captcha_key?: string
 }
 
+export const ANDROID_CLIENT_ID = 2274003
+export const ANDROID_CLIENT_SECRET = 'hHbZxrka2uZ6jB1inYsH'
+
 export async function getAndroidToken(
   login: string,
   password: string,
@@ -94,8 +97,8 @@ export async function getAndroidToken(
 
   const query = toUrlParams({
     scope: 'all',
-    client_id: 2274003,
-    client_secret: 'hHbZxrka2uZ6jB1inYsH',
+    client_id: ANDROID_CLIENT_ID,
+    client_secret: ANDROID_CLIENT_SECRET,
     username: login,
     password,
     '2fa_supported': 1,
@@ -251,4 +254,13 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
   }
 
   return null
+}
+
+export async function getAnonymToken(api: IApi.Api): Promise<string> {
+  const { token } = await api.fetch('auth.getAnonymToken', {
+    client_id: ANDROID_CLIENT_ID,
+    client_secret: ANDROID_CLIENT_SECRET
+  })
+
+  return token
 }

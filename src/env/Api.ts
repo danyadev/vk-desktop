@@ -242,8 +242,9 @@ export class Api implements IApi.Api {
         method: 'POST',
         body: toUrlParams(fullParams),
         headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
           'X-User-Agent': fetchOptions.android ? androidUserAgent : appUserAgent,
-          'Content-Type': 'application/x-www-form-urlencoded'
+          ...fetchOptions.headers
         },
         signal: abortController.signal
       }).then<IApi.Result<Methods[Method]['response']>>((response) => {

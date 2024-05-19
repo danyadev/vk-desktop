@@ -13,10 +13,10 @@ export type ConfirmationState = {
 
 type AuthConfirmationPageProps = {
   confirmationState: ConfirmationState
-  loading: boolean
-  error: string | null
   onSubmit: (code: string) => void
   onCancel: () => void
+  loading: boolean
+  error: string | null
   onHideError: () => void
 }
 
@@ -37,6 +37,10 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
   function onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !props.loading && code.value.length > 0) {
       props.onSubmit(code.value)
+    }
+
+    if (event.key === 'Escape') {
+      props.onCancel()
     }
   }
 
@@ -84,17 +88,21 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
         <div class="Auth__confirmationHeader">
           {lang.use('auth_confirm_login')}
         </div>
+
         <div class="Auth__confirmationDescription">
           {props.confirmationState.validationType === '2fa_sms'
             ? lang.use('auth_sms_with_code_sent', { phone: props.confirmationState.phoneMask })
             : lang.use('auth_enter_code_from_code_gen_app')}
         </div>
+
         <Input
           placeholder={lang.use('auth_enter_code')}
+          disabled={props.loading}
           onInput={onInput}
           autofocus
         />
-        <div class="Auth__confirmationButtonsWrapper">
+
+        <div class="Auth__buttonsWrapper">
           <Button
             mode="secondary"
             size="large"
@@ -114,21 +122,22 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
             {lang.use('auth_submit')}
           </Button>
         </div>
-        {props.error && <div class="Auth__error" onClick={props.onHideError}>{props.error}</div>}
-      </div>
 
-      <div class="Auth__smsStatus">
-        <SmsStatus
-          validationType={props.confirmationState.validationType}
-          sendSms={sendSms}
-          isSendingSms={isSendingSms}
-          resendSmsTimer={resendSmsTimer}
-        />
+        {props.error && <div class="Auth__error" onClick={props.onHideError}>{props.error}</div>}
+
+        <div class="Auth__smsStatus">
+          <SmsStatus
+            validationType={props.confirmationState.validationType}
+            sendSms={sendSms}
+            isSendingSms={isSendingSms}
+            resendSmsTimer={resendSmsTimer}
+          />
+        </div>
       </div>
     </div>
   )
 }, {
-  props: ['confirmationState', 'loading', 'error', 'onSubmit', 'onCancel', 'onHideError']
+  props: ['confirmationState', 'onSubmit', 'onCancel', 'loading', 'error', 'onHideError']
 })
 
 type SmsStatusProps = {
