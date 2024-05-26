@@ -1,55 +1,57 @@
+import { Lang } from 'env/Lang'
 import * as Auth from 'model/Auth'
 import * as IApi from 'model/IApi'
-import { getPlatform } from 'misc/utils'
-import { APP_VERSION } from 'misc/constants'
 
 const CANCELLED_TIMEOUT_ID = 0
 
 export type QrCodeAuthEvent =
-  | { kind: 'UrlUpdated', url: string }
-  | { kind: 'UrlInvalidated' }
-  | { kind: 'Success', androidToken: string }
-  | { kind: 'Error' }
+  | { kind: 'UrlAcquired', url: string }
+  | { kind: 'Success', accessToken: string }
+  | { kind: 'Error', message: string }
 
 export class QrCodeAuth {
   private timeoutId: number | undefined
 
-  constructor(private api: IApi.Api, private onEvent: (event: QrCodeAuthEvent) => void) {}
+  constructor(private api: IApi.Api, private lang: Lang) {}
 
-  async subscribe() {
-    const anonymToken = await Auth.getAnonymToken(this.api)
-    const { authUrl, authHash } = await this.fetchAuthUrl(anonymToken)
+  async start(onEvent: (event: QrCodeAuthEvent) => void) {
+    try {
+      const anonymToken = await Auth.getAnonymToken(
+        this.api,
+        Auth.ANDROID_APP_ID,
+        Auth.ANDROID_APP_SECRET
+      )
+      const { authUrl, authHash } = await Auth.getAuthCode(
+        this.api,
+        anonymToken,
+        Auth.ANDROID_APP_ID,
+        Auth.ANDROID_APP_SCOPE
+      )
 
-    this.onEvent({ kind: 'UrlUpdated', url: authUrl })
-    this.checkStatusLoop(anonymToken, authHash)
+      onEvent({
+        kind: 'UrlAcquired',
+        url: authUrl
+      })
+      this.checkStatusLoop(anonymToken, authHash, onEvent)
+    } catch (err) {
+      console.warn('[QRCodeAuth]', err)
+      onEvent({
+        kind: 'Error',
+        message: this.getMessageByError(err)
+      })
+    }
   }
 
-  unsubscribe() {
+  stop() {
     clearTimeout(this.timeoutId)
     this.timeoutId = CANCELLED_TIMEOUT_ID
   }
 
-  private async fetchAuthUrl(anonymToken: string) {
-    const platform = await getPlatform()
-
-    const {
-      auth_url: authUrl,
-      auth_hash: authHash
-    } = await this.api.fetch('auth.getAuthCode', {
-      client_id: Auth.ANDROID_CLIENT_ID,
-      anonymous_token: anonymToken,
-      device_name: `VK Desktop ${APP_VERSION} at ${platform}`
-    }, {
-      android: true,
-      headers: {
-        'X-Origin': 'https://vk.com'
-      }
-    })
-
-    return { authUrl, authHash }
-  }
-
-  private async checkStatusLoop(anonymToken: string, authHash: string) {
+  private async checkStatusLoop(
+    anonymToken: string,
+    authHash: string,
+    onEvent: (event: QrCodeAuthEvent) => void
+  ) {
     try {
       const response = await this.api.fetch('auth.checkAuthCode', {
         anonymous_token: anonymToken,
@@ -60,23 +62,35 @@ export class QrCodeAuth {
         case 0: // Created
         case 1: // Opened
           break
+
         case 2: // Approved
-          // Показываем спиннер, чтобы показать, что авторизация продолжается
-          this.onEvent({ kind: 'UrlInvalidated' })
-          this.onEvent({ kind: 'Success', androidToken: response.access_token })
+          if ('access_token' in response) {
+            onEvent({
+              kind: 'Success',
+              accessToken: response.access_token
+            })
+          } else {
+            console.warn('[QRCodeAuth]', response)
+            onEvent({
+              kind: 'Error',
+              message: this.lang.use('auth_get_app_token_error')
+            })
+          }
           return
+
         case 3: // Declined
-          this.onEvent({ kind: 'Error' })
+          onEvent({
+            kind: 'Error',
+            message: this.lang.use('auth_qr_code_declined')
+          })
           return
-        case 4: { // Expired
-          this.onEvent({ kind: 'UrlInvalidated' })
 
-          const { authUrl, authHash: newAuthHash } = await this.fetchAuthUrl(anonymToken)
-          authHash = newAuthHash
-
-          this.onEvent({ kind: 'UrlUpdated', url: authUrl })
-          break
-        }
+        case 4: // Expired
+          onEvent({
+            kind: 'Error',
+            message: this.lang.use('auth_qr_code_expired')
+          })
+          return
       }
 
       if (this.timeoutId === CANCELLED_TIMEOUT_ID) {
@@ -84,10 +98,22 @@ export class QrCodeAuth {
       }
 
       this.timeoutId = window.setTimeout(() => {
-        this.checkStatusLoop(anonymToken, authHash)
-      }, 3000)
-    } catch {
-      this.onEvent({ kind: 'Error' })
+        this.checkStatusLoop(anonymToken, authHash, onEvent)
+      }, 5000)
+    } catch (err) {
+      console.warn('[QRCodeAuth]', err)
+      onEvent({
+        kind: 'Error',
+        message: this.getMessageByError(err)
+      })
     }
+  }
+
+  private getMessageByError(err: unknown) {
+    if (this.api.isApiError(err) && err.type === 'FetchError') {
+      return this.lang.use('auth_network_error')
+    }
+
+    return this.lang.use('auth_unknown_error')
   }
 }

@@ -39,21 +39,20 @@ export const Auth = defineComponent(() => {
     performAuth()
   }
 
-  function openQrCodePage() {
-    state.isQrCodePage = true
-  }
-
-  function onCancelQrCode() {
-    state.isQrCodePage = false
-  }
-
   function onSubmitCode(code: string) {
     performAuth({ code })
   }
 
   function onCancelCode() {
-    state.error = null
     state.confirmationState = null
+  }
+
+  function onOpenQrCodePage() {
+    state.isQrCodePage = true
+  }
+
+  function onCloseQrCode() {
+    state.isQrCodePage = false
   }
 
   function onHideError() {
@@ -61,7 +60,6 @@ export const Auth = defineComponent(() => {
   }
 
   async function performAuth(payload: AuthModel.GetAndroidTokenPayload = {}): Promise<void> {
-    state.error = null
     state.loading = true
 
     const result = await AuthModel.getAndroidToken(state.login, state.password, payload)
@@ -103,10 +101,9 @@ export const Auth = defineComponent(() => {
             captcha_key: captchaKey,
             captcha_sid: result.captchaSid
           })
-        } else {
-          state.error = lang.use('auth_captcha_enter_error')
         }
-        break
+
+        return performAuth(payload)
       }
 
       case 'UserBanned': {
@@ -130,11 +127,11 @@ export const Auth = defineComponent(() => {
   }
 
   async function completeAuthWithAndroidToken(androidToken: string) {
-    const appToken = await AuthModel.getAppToken(androidToken, api)
+    const appToken = await AuthModel.getAppToken(androidToken, api).catch(() => null)
 
     if (!appToken) {
       state.isQrCodePage = false
-      state.error = lang.use('auth_app_token_getting_error')
+      state.error = lang.use('auth_get_app_token_error')
       return
     }
 
@@ -166,6 +163,12 @@ export const Auth = defineComponent(() => {
   }
 
   return () => {
+    if (state.isQrCodePage) {
+      return (
+        <AuthQRPage onCancel={onCloseQrCode} onAuth={completeAuthWithAndroidToken} />
+      )
+    }
+
     if (state.confirmationState) {
       return (
         <AuthConfirmationPage
@@ -179,19 +182,13 @@ export const Auth = defineComponent(() => {
       )
     }
 
-    if (state.isQrCodePage) {
-      return (
-        <AuthQRPage onCancel={onCancelQrCode} onAuth={completeAuthWithAndroidToken} />
-      )
-    }
-
     return (
       <AuthMainPage
         onSubmit={onSubmitAuth}
         loading={state.loading}
         error={state.error}
         onHideError={onHideError}
-        openQrCodePage={openQrCodePage}
+        openQrCodePage={onOpenQrCodePage}
       />
     )
   }

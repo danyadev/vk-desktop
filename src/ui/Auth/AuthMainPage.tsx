@@ -1,6 +1,7 @@
 import { computed, defineComponent, KeyboardEvent, shallowReactive, shallowRef } from 'vue'
 import { useEnv } from 'misc/hooks'
 import { AuthMultiaccount } from 'ui/Auth/AuthMultiaccount'
+import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Input } from 'ui/ui/Input/Input'
@@ -72,14 +73,10 @@ export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
           disabled={props.loading}
           onClick={props.openQrCodePage}
         >
-          Войти по QR-коду
+          {lang.use('auth_by_qr_code')}
         </Button>
 
-        {props.error ? (
-          <div class="Auth__error" onClick={props.onHideError}>{props.error}</div>
-        ) : (
-          <AuthMultiaccount />
-        )}
+        <AuthMultiaccount />
       </div>
 
       <div class="Auth__footerLinks">
@@ -87,6 +84,15 @@ export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
         •
         <Link href="https://vk.com/restore">{lang.use('auth_forgot_password')}</Link>
       </div>
+
+      <Modal
+        opened={!!props.error}
+        onClose={props.onHideError}
+        title={lang.use('auth_error')}
+        buttons={<Button onClick={props.onHideError}>{lang.use('modal_close_label')}</Button>}
+      >
+        {props.error}
+      </Modal>
     </div>
   )
 }, {

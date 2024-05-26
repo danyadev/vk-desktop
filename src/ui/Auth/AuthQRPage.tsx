@@ -1,7 +1,8 @@
-import { defineComponent, KeyboardEvent, onMounted, onUnmounted, shallowRef, watch } from 'vue'
+import { defineComponent, KeyboardEvent, onMounted, onUnmounted, shallowReactive } from 'vue'
 import vkqr from '@vkontakte/vk-qr'
 import { QrCodeAuth, QrCodeAuthEvent } from 'model/QrCodeAuth'
 import { useEnv } from 'misc/hooks'
+import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { Link } from 'ui/ui/Link/Link'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
@@ -11,69 +12,103 @@ type Props = {
   onAuth: (androidToken: string) => void
 }
 
+type State = {
+  qrCodeUrl: string | null
+  qrCodeHtml: string | null
+  loading: boolean
+  error: string | null
+}
+
 export const AuthQRPage = defineComponent<Props>((props) => {
   const { api, lang } = useEnv()
-  const qrCodeUrl = shallowRef<string | null>(null)
-  const qrCodeRaw = shallowRef<string | null>(null)
-  const qrCodeAuth = new QrCodeAuth(api, onEvent)
+  const qrCodeAuth = new QrCodeAuth(api, lang)
+  const state = shallowReactive<State>({
+    qrCodeUrl: null,
+    qrCodeHtml: null,
+    loading: false,
+    error: null
+  })
+
+  function generateQRCode(url: string) {
+    return vkqr.createQR(url, {
+      qrSize: 128,
+      foregroundColor: 'black'
+    })
+  }
 
   function onEvent(event: QrCodeAuthEvent) {
     switch (event.kind) {
-      case 'UrlUpdated':
-        qrCodeUrl.value = event.url
-        break
-      case 'UrlInvalidated':
-        qrCodeUrl.value = null
+      case 'UrlAcquired':
+        state.qrCodeUrl = event.url
+        state.qrCodeHtml = generateQRCode(event.url)
         break
       case 'Success':
-        props.onAuth(event.androidToken)
+        props.onAuth(event.accessToken)
+        // Показываем спиннер на период догрузки данных
+        state.loading = true
+        state.qrCodeUrl = null
+        state.qrCodeHtml = null
         break
       case 'Error':
-        props.onCancel()
+        state.error = event.message
         break
     }
   }
 
   function onKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && !state.loading) {
       props.onCancel()
     }
   }
 
-  watch(qrCodeUrl, () => {
-    if (qrCodeUrl.value) {
-      qrCodeRaw.value = vkqr.createQR(qrCodeUrl.value, {
-        qrSize: 128,
-        foregroundColor: 'black'
-      })
-    } else {
-      qrCodeRaw.value = null
-    }
-  })
+  function onHideError() {
+    state.error = null
+    props.onCancel()
+  }
 
   onMounted(() => {
-    qrCodeAuth.subscribe().catch(props.onCancel)
+    qrCodeAuth.start(onEvent)
   })
 
   onUnmounted(() => {
-    qrCodeAuth.unsubscribe()
+    qrCodeAuth.stop()
   })
 
   return () => (
     <div class="Auth">
       <div class="Auth__content" onKeydown={onKeyDown} tabindex={-1}>
-        <div class="Auth__QRHeader">Вход по QR-коду</div>
+        <div class="Auth__QRHeader">{lang.use('auth_by_qr_code_title')}</div>
+
         <div class="Auth__QRDescription">
-          Отсканируйте QR-код, либо перейдите по ссылке в браузере, где вы уже авторизованы
+          {lang.use('auth_by_qr_code_description')}
         </div>
-        {qrCodeRaw.value
-          ? <div class="Auth__QR" v-html={qrCodeRaw.value} />
+
+        {state.qrCodeHtml
+          ? <div class="Auth__QR" v-html={state.qrCodeHtml} />
           : <div class="Auth__QR"><Spinner size="regular" /></div>}
-        <Link class="Auth__QRLink" href={qrCodeUrl.value ?? ''}>
-          {qrCodeUrl.value ?? <Spinner />}
+
+        <Link class="Auth__QRLink" href={state.qrCodeUrl ?? ''}>
+          {state.qrCodeUrl ?? <Spinner />}
         </Link>
-        <Button wide onClick={props.onCancel}>{lang.use('cancel')}</Button>
+
+        <Button
+          wide
+          onClick={props.onCancel}
+          loading={state.loading}
+          disabled={state.loading}
+        >
+          {lang.use('cancel')}
+        </Button>
       </div>
+
+      <Modal
+        opened={!!state.error}
+        onClose={onHideError}
+        title={lang.use('auth_error')}
+        buttons={<Button onClick={onHideError}>{lang.use('modal_close_label')}</Button>}
+      >
+        {state.error}
+      </Modal>
     </div>
   )
 }, {

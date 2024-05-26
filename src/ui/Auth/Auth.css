@@ -44,22 +44,6 @@
   margin-top: 4px;
 }
 
-.Auth__error {
-  color: var(--vkui--color_text_negative);
-  background: var(--vkui--color_background_negative_tint);
-  min-width: 250px;
-  width: max-content;
-  max-width: 280px;
-  text-align: center;
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-
-  position: absolute;
-  margin-top: 10px;
-  top: 100%;
-}
-
 .Auth__accounts {
   display: flex;
   width: max-content;

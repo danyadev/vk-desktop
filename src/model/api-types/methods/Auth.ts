@@ -16,8 +16,11 @@ export type AuthValidatePhoneResponse = {
 // auth.getOauthToken
 export type AuthGetOauthTokenParams = {
   app_id: number
-  hash: string
+  client_id: number
   scope: number
+  hash: string
+  auth_user_hash: string
+  is_seamless_auth: 0
 }
 
 export type AuthGetOauthTokenResponse = {
@@ -39,6 +42,7 @@ export type AuthGetAnonymTokenResponse = {
 // auth.getAuthCode
 export type AuthGetAuthCodeParams = {
   client_id: number
+  scope: string | number
   anonymous_token: string
   device_name: string
 }
@@ -55,6 +59,7 @@ export type AuthGetAuthCodeResponse = {
 export type AuthCheckAuthCodeParams = {
   anonymous_token: string
   auth_hash: string
+  web_auth?: 0 | 1
 }
 
 export type AuthCheckAuthCodeResponse =
@@ -64,6 +69,7 @@ export type AuthCheckAuthCodeResponse =
   | { status: 1, expires_in: number }
   /** Approved */
   | { status: 2, access_token: string, is_partial: boolean, provider_app_id: number }
+  | { status: 2, super_app_token: string, is_partial: boolean, provider_app_id: number }
   /** Declined */
   | { status: 3 }
   /** Expired */
@@ -82,3 +88,18 @@ export type AuthValidateAccountResponse = {
   flow_names: Array<'password' | 'passkey'>
   sid: string
 }
+
+// auth.processAuthCode
+export type AuthProcessAuthCodeParams = {
+  auth_code: string
+  /**
+   * 0 - инициализация авторизации
+   * 1 - подтверждение авторизации
+   */
+  action: 0 | 1
+}
+
+export type AuthProcessAuthCodeResponse =
+  // Не описывал весь ответ, так как он не используется
+  | { auth_info: { auth_id: string } }
+  | { status: 1 }

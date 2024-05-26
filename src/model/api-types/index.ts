@@ -6,7 +6,7 @@ import {
   AuthGetAuthCodeParams,
   AuthGetAuthCodeResponse,
   AuthGetOauthTokenParams,
-  AuthGetOauthTokenResponse,
+  AuthGetOauthTokenResponse, AuthProcessAuthCodeParams, AuthProcessAuthCodeResponse,
   AuthValidateAccountParams,
   AuthValidateAccountResponse,
   AuthValidatePhoneParams,
@@ -65,6 +65,10 @@ export type Methods = {
   'auth.validateAccount': {
     params: AuthValidateAccountParams
     response: AuthValidateAccountResponse
+  }
+  'auth.processAuthCode': {
+    params: AuthProcessAuthCodeParams
+    response: AuthProcessAuthCodeResponse
   }
 
   'captcha.force': {

@@ -11,9 +11,13 @@ export const ru = {
   auth_submit: 'Войти',
   auth_show_password: 'Показать пароль',
   auth_hide_password: 'Скрыть пароль',
+  auth_by_qr_code: 'Войти по QR-коду',
+  auth_by_qr_code_title: 'Вход по QR-коду',
+  auth_by_qr_code_description: 'Отсканируйте QR-код, либо перейдите по ссылке в браузере, где вы уже авторизованы',
   auth_register: 'Зарегистрироваться',
   auth_forgot_password: 'Забыли пароль?',
   auth_account_delete: 'Удалить',
+  auth_error: 'Ошибка авторизации',
 
   auth_confirm_login: 'Подтвердите вход',
   auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {phone}',
@@ -24,11 +28,12 @@ export const ru = {
   auth_resend_sms: 'Повторить отправку SMS',
   auth_send_sms: 'Отправить SMS',
 
-  auth_captcha_enter_error: 'Ошибка ввода капчи',
   auth_user_load_error: 'Ошибка получения данных о пользователе',
-  auth_app_token_getting_error: 'Ошибка получения токена приложения',
+  auth_get_app_token_error: 'Ошибка получения токена приложения',
   auth_network_error: 'Ошибка сети',
   auth_unknown_error: 'Неизвестная ошибка',
+  auth_qr_code_declined: 'Запрос на авторизацию отклонен',
+  auth_qr_code_expired: 'Время действия QR-кода истекло',
 
   me_convo_list_author: '{author}:',
   me_convo_list_author_you: 'Вы',
@@ -192,6 +197,7 @@ export const ru = {
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
 
   modal_cancel_label: 'Отмена',
+  modal_close_label: 'Закрыть',
   modal_send_label: 'Отправить',
   modal_delete_label: 'Удалить',
 

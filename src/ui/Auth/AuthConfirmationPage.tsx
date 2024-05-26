@@ -1,5 +1,6 @@
 import { defineComponent, InputEvent, KeyboardEvent, onMounted, Ref, shallowRef } from 'vue'
 import { useEnv } from 'misc/hooks'
+import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import { Input } from 'ui/ui/Input/Input'
@@ -39,7 +40,7 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
       props.onSubmit(code.value)
     }
 
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && !props.loading) {
       props.onCancel()
     }
   }
@@ -123,8 +124,6 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
           </Button>
         </div>
 
-        {props.error && <div class="Auth__error" onClick={props.onHideError}>{props.error}</div>}
-
         <div class="Auth__smsStatus">
           <SmsStatus
             validationType={props.confirmationState.validationType}
@@ -134,6 +133,15 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
           />
         </div>
       </div>
+
+      <Modal
+        opened={!!props.error}
+        onClose={props.onHideError}
+        title={lang.use('auth_error')}
+        buttons={<Button onClick={props.onHideError}>{lang.use('modal_close_label')}</Button>}
+      >
+        {props.error}
+      </Modal>
     </div>
   )
 }, {

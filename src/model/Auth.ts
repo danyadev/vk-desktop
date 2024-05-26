@@ -2,7 +2,8 @@ import { API_VERSION } from 'env/Api'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import * as IApi from 'model/IApi'
-import { toUrlParams } from 'misc/utils'
+import { getPlatform, toUrlParams } from 'misc/utils'
+import { APP_VERSION } from 'misc/constants'
 
 type OauthSuccessResponse = {
   user_id: number
@@ -84,8 +85,9 @@ export type GetAndroidTokenPayload = {
   captcha_key?: string
 }
 
-export const ANDROID_CLIENT_ID = 2274003
-export const ANDROID_CLIENT_SECRET = 'hHbZxrka2uZ6jB1inYsH'
+export const ANDROID_APP_ID = 2274003
+export const ANDROID_APP_SECRET = 'hHbZxrka2uZ6jB1inYsH'
+export const ANDROID_APP_SCOPE = 'all'
 
 export async function getAndroidToken(
   login: string,
@@ -96,9 +98,9 @@ export async function getAndroidToken(
   const viewer = useViewerStore()
 
   const query = toUrlParams({
-    scope: 'all',
-    client_id: ANDROID_CLIENT_ID,
-    client_secret: ANDROID_CLIENT_SECRET,
+    client_id: ANDROID_APP_ID,
+    client_secret: ANDROID_APP_SECRET,
+    scope: ANDROID_APP_SCOPE,
     username: login,
     password,
     '2fa_supported': 1,
@@ -186,81 +188,135 @@ export async function getAndroidToken(
 
 export async function getAppToken(androidToken: string, api: IApi.Api): Promise<string | null> {
   const APP_ID = 6717234
+  const APP_SECRET = 'KoSS8uGa3RrU081ucgvO'
   const APP_SCOPE = 136297695
 
-  const query = toUrlParams({
-    redirect_uri: 'https://oauth.vk.com/blank.html',
-    display: 'page',
-    response_type: 'token',
+  const anonymToken = await getAnonymToken(api, APP_ID, APP_SECRET)
+  const { authCode, authHash } = await getAuthCode(api, anonymToken, APP_ID, 0)
+
+  await api.fetch('auth.processAuthCode', {
     access_token: androidToken,
-    revoke: 1,
-    scope: APP_SCOPE,
-    client_id: APP_ID,
-    v: API_VERSION,
-    sdk_package: 'ru.danyadev.vkdesktop',
-    sdk_fingerprint: '9E76F3AF885CD6A1E2378197D4E7DF1B2C17E46C'
+    auth_code: authCode,
+    action: 0
+  })
+  await api.fetch('auth.processAuthCode', {
+    access_token: androidToken,
+    auth_code: authCode,
+    action: 1
   })
 
-  /**
-   * 1. Получаем страницу для авторизации приложения
-   *
-   * Есть две версии этой страницы:
-   * 1) старая, с кнопкой для подтверждения, которая редиректит на фактическую авторизацию
-   * 2) новая, через vk id и на реакте, но на странице зашит жсон с инфой для получения токена
-   */
-  const authorizeBody = await fetch(`https://oauth.vk.com/authorize?${query}`)
-    .then((response) => response.text())
-    .catch(() => '')
+  const checkResult = await api.fetch('auth.checkAuthCode', {
+    anonymous_token: anonymToken,
+    auth_hash: authHash,
+    web_auth: 1
+  })
 
-  // 2.1. Пытаемся достать ссылку для подтверждения
-  const authLink = authorizeBody.match(/"(https:\/\/[a-z.]+\/auth_by_token.+?)"/i)?.[1]
-
-  if (!authLink) {
-    // 2.2. Если ссылки не оказалось, считаем, что это новая версия через vk id
-    const returnHash = authorizeBody.match(/"return_auth":"([^"]+)"/)?.[1]
-
-    if (!returnHash) {
-      return null
-    }
-
-    const authResult = await api.fetch('auth.getOauthToken', {
-      access_token: androidToken,
-      app_id: APP_ID,
-      scope: APP_SCOPE,
-      hash: returnHash
-    }).catch(() => null)
-
-    if (!authResult) {
-      return null
-    }
-
-    return authResult.access_token
-  }
-
-  // 3. Переходим по ссылке для фактической авторизации
-  const pageWithToken = await fetch(`https://oauth.vk.com/${authLink}`).catch(() => null)
-
-  if (!pageWithToken) {
+  if (!('super_app_token' in checkResult)) {
+    console.warn('auth check failed', checkResult)
     return null
   }
 
-  // 4. Получаем токен из хеш-параметра ссылки на страницу
-  const urlMaybeWithToken = pageWithToken.headers.get('x-original-url-by-electron') ?? ''
-  const hashIndex = urlMaybeWithToken.indexOf('#')
+  const { url: oauthUrl } = await fetch('https://oauth.vk.com/authorize?' + toUrlParams({
+    client_id: APP_ID,
+    display: 'mobile',
+    redirect_uri: 'https://oauth.vk.com/blank.html',
+    scope: APP_SCOPE,
+    response_type: 'token',
+    revoke: 1,
+    v: API_VERSION
+  }))
+  const oauthHash = new URL(oauthUrl).searchParams.get('return_auth_hash')
 
-  if (hashIndex !== -1) {
-    const hashValue = urlMaybeWithToken.slice(hashIndex + 1)
-    return new URLSearchParams(hashValue).get('access_token')
+  if (!oauthHash) {
+    console.warn('auth hash not found', oauthUrl)
+    return null
   }
 
-  return null
+  // Этот запрос нужен для получения кук
+  await fetch('https://login.vk.com?' + toUrlParams({
+    act: 'connect_code_auth',
+    token: checkResult.super_app_token,
+    app_id: APP_ID,
+    oauth_scope: APP_SCOPE,
+    oauth_force_hash: 1,
+    is_registration: 0,
+    oauth_response_type: 'token',
+    is_oauth_migrated_flow: 1,
+    version: 1,
+    to: btoa('https://oauth.vk.com/blank.html')
+  }), {
+    headers: {
+      'X-Origin': 'https://id.vk.com'
+    }
+  })
+
+  type AuthResponse = {
+    data: {
+      access_token: string
+      auth_user_hash: string
+    }
+  }
+
+  const authResponse = await fetch('https://login.vk.com?' + toUrlParams({
+    act: 'connect_internal',
+    app_id: APP_ID,
+    oauth_version: 1,
+    version: 1
+  }), {
+    headers: {
+      'X-Origin': 'https://id.vk.com'
+    }
+  }).then<AuthResponse>((res) => res.json())
+
+  const { access_token: appToken } = await api.fetch('auth.getOauthToken', {
+    access_token: authResponse.data.access_token,
+    app_id: APP_ID,
+    client_id: APP_ID,
+    scope: APP_SCOPE,
+    hash: oauthHash,
+    auth_user_hash: authResponse.data.auth_user_hash,
+    is_seamless_auth: 0
+  })
+
+  return appToken
 }
 
-export async function getAnonymToken(api: IApi.Api): Promise<string> {
+export async function getAnonymToken(
+  api: IApi.Api,
+  appId: number,
+  appSecret: string
+): Promise<string> {
   const { token } = await api.fetch('auth.getAnonymToken', {
-    client_id: ANDROID_CLIENT_ID,
-    client_secret: ANDROID_CLIENT_SECRET
+    client_id: appId,
+    client_secret: appSecret
   })
 
   return token
+}
+
+export async function getAuthCode(
+  api: IApi.Api,
+  anonymToken: string,
+  appId: number,
+  scope: number | string
+) {
+  const platform = await getPlatform()
+
+  const {
+    auth_url: authUrl,
+    auth_code: authCode,
+    auth_hash: authHash
+  } = await api.fetch('auth.getAuthCode', {
+    client_id: appId,
+    scope,
+    anonymous_token: anonymToken,
+    device_name: `VK Desktop ${APP_VERSION} at ${platform}`
+  }, {
+    android: true,
+    headers: {
+      'X-Origin': 'https://vk.com'
+    }
+  })
+
+  return { authUrl, authCode, authHash }
 }
