@@ -34,7 +34,7 @@ export class QrCodeAuth {
       })
       this.checkStatusLoop(anonymToken, authHash, onEvent)
     } catch (err) {
-      console.warn('[QRCodeAuth]', err)
+      console.warn('[QRCodeAuth] start failed', err)
       onEvent({
         kind: 'Error',
         message: this.getMessageByError(err)
@@ -70,7 +70,7 @@ export class QrCodeAuth {
               accessToken: response.access_token
             })
           } else {
-            console.warn('[QRCodeAuth]', response)
+            console.warn('[QRCodeAuth] corrupted approve', response)
             onEvent({
               kind: 'Error',
               message: this.lang.use('auth_get_app_token_error')
@@ -101,7 +101,7 @@ export class QrCodeAuth {
         this.checkStatusLoop(anonymToken, authHash, onEvent)
       }, 5000)
     } catch (err) {
-      console.warn('[QRCodeAuth]', err)
+      console.warn('[QRCodeAuth] loop error', err)
       onEvent({
         kind: 'Error',
         message: this.getMessageByError(err)

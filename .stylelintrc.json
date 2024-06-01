@@ -6,7 +6,6 @@
     "shorthand-property-no-redundant-values": null,
     "custom-property-empty-line-before": null,
     "declaration-empty-line-before": null,
-    "selector-no-vendor-prefix": null,
     "no-descending-specificity": null,
     "comment-empty-line-before": null,
     "selector-class-pattern": null,

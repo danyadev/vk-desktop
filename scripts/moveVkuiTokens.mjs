@@ -14,6 +14,8 @@ import {
   getDeclarationVarObject as getVkComDarkVariables
 } from '@vkontakte/vkui-tokens/themes/vkComDark/cssVars/declarations/onlyVariables.js'
 
+/** @typedef {[string, Object.<string, string | number>]} Entry */
+/** @type Entry[] */
 const entries = [
   ['vkui-light', getVkBaseVariables()],
   ['vkui-dark', getVkBaseDarkVariables()],

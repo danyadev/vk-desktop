@@ -299,6 +299,7 @@ module.exports = {
       }
     }],
     '@typescript-eslint/no-array-delete': 'error',
+    '@typescript-eslint/use-unknown-in-catch-callback-variable': 'error',
 
     /**
      * Далее идут правила, которые расширяют eslint-правила.

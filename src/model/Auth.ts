@@ -178,7 +178,7 @@ export async function getAndroidToken(
       trustedHash: result.trusted_hash
     }
   } catch (err) {
-    console.warn(err)
+    console.warn('[Auth.getAndroidToken]', err)
 
     return {
       kind: 'NetworkError'
@@ -212,7 +212,7 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
   })
 
   if (!('super_app_token' in checkResult)) {
-    console.warn('auth check failed', checkResult)
+    console.warn('[Auth.getAppToken] check failed', checkResult)
     return null
   }
 
@@ -228,7 +228,7 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
   const oauthHash = new URL(oauthUrl).searchParams.get('return_auth_hash')
 
   if (!oauthHash) {
-    console.warn('auth hash not found', oauthUrl)
+    console.warn('[Auth.getAppToken] no hash', oauthUrl)
     return null
   }
 

@@ -29,19 +29,16 @@ export const AuthQRPage = defineComponent<Props>((props) => {
     error: null
   })
 
-  function generateQRCode(url: string) {
-    return vkqr.createQR(url, {
-      qrSize: 128,
-      foregroundColor: 'black'
-    })
-  }
-
   function onEvent(event: QrCodeAuthEvent) {
     switch (event.kind) {
       case 'UrlAcquired':
         state.qrCodeUrl = event.url
-        state.qrCodeHtml = generateQRCode(event.url)
+        state.qrCodeHtml = vkqr.createQR(event.url, {
+          qrSize: 128,
+          foregroundColor: 'black'
+        })
         break
+
       case 'Success':
         props.onAuth(event.accessToken)
         // Показываем спиннер на период догрузки данных
@@ -49,6 +46,7 @@ export const AuthQRPage = defineComponent<Props>((props) => {
         state.qrCodeUrl = null
         state.qrCodeHtml = null
         break
+
       case 'Error':
         state.error = event.message
         break
@@ -61,7 +59,7 @@ export const AuthQRPage = defineComponent<Props>((props) => {
     }
   }
 
-  function onHideError() {
+  function onCloseErrorModal() {
     state.error = null
     props.onCancel()
   }
@@ -103,9 +101,9 @@ export const AuthQRPage = defineComponent<Props>((props) => {
 
       <Modal
         opened={!!state.error}
-        onClose={onHideError}
+        onClose={onCloseErrorModal}
         title={lang.use('auth_error')}
-        buttons={<Button onClick={onHideError}>{lang.use('modal_close_label')}</Button>}
+        buttons={<Button onClick={onCloseErrorModal}>{lang.use('modal_close_label')}</Button>}
       >
         {state.error}
       </Modal>
