@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, defineComponent } from 'vue'
+import { useFocusVisible } from 'hooks'
 import { JSXElement } from 'misc/utils'
-import { useFocusVisible } from 'misc/hooks'
 import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
 import './ButtonIcon.css'
 

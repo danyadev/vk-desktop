@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import * as Peer from 'model/Peer'
+import { usePixelDensity } from 'hooks'
 import { ClassName } from 'misc/utils'
-import { usePixelDensity } from 'misc/hooks'
 import './Avatar.css'
 
 type Props = {

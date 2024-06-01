@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { useEnv } from 'misc/hooks'
+import { useEnv } from 'hooks'
 import './NoConvo.css'
 
 export const NoConvo = defineComponent(() => {

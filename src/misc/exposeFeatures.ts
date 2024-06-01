@@ -5,8 +5,8 @@ import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import * as Auth from 'model/Auth'
 import * as IApi from 'model/IApi'
+import { useEnv } from 'hooks'
 import * as utils from 'misc/utils'
-import { useEnv } from 'misc/hooks'
 
 /**
  * Вытаскиваем полезные функции/переменные/etc в глобальную область видимости,

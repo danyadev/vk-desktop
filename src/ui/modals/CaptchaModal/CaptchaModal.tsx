@@ -1,5 +1,5 @@
 import { defineComponent, KeyboardEvent, shallowRef } from 'vue'
-import { useEnv, useGlobalModal } from 'misc/hooks'
+import { useEnv, useGlobalModal } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { Input } from 'ui/ui/Input/Input'

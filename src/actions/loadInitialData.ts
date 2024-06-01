@@ -3,7 +3,7 @@ import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { fromApiConvo } from 'converters/ConvoConverter'
 import { fromApiGroup, fromApiUser } from 'converters/PeerConverter'
-import { useEnv } from 'misc/hooks'
+import { useEnv } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 
 export async function loadInitialData() {

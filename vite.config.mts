@@ -30,6 +30,7 @@ export default defineConfig(async ({ mode }) => {
         assets: path.resolve(__dirname, './src/assets'),
         converters: path.resolve(__dirname, './src/converters'),
         env: path.resolve(__dirname, './src/env'),
+        hooks: path.resolve(__dirname, './src/hooks'),
         lang: path.resolve(__dirname, './src/lang'),
         misc: path.resolve(__dirname, './src/misc'),
         model: path.resolve(__dirname, './src/model'),

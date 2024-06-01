@@ -1,5 +1,5 @@
 import { computed, defineComponent, KeyboardEvent, shallowReactive, shallowRef } from 'vue'
-import { useEnv } from 'misc/hooks'
+import { useEnv } from 'hooks'
 import { AuthMultiaccount } from 'ui/Auth/AuthMultiaccount'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'

@@ -22,6 +22,7 @@
       "assets/*": ["./assets/*"],
       "converters/*": ["./converters/*"],
       "env/*": ["./env/*"],
+      "hooks/*": ["./hooks/*"],
       "lang/*": ["./lang/*"],
       "misc/*": ["./misc/*"],
       "model/*": ["./model/*"],

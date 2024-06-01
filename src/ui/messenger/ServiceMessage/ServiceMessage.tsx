@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { useEnv } from 'misc/hooks'
+import { useEnv } from 'hooks'
 import './ServiceMessage.css'
 
 type Props = {

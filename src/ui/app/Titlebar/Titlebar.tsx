@@ -1,7 +1,7 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { defineComponent, shallowRef } from 'vue'
+import { useEnv } from 'hooks'
 import { currentWindow, subscribeToElectronEvent } from 'misc/utils'
-import { useEnv } from 'misc/hooks'
 import { isMacOS } from 'misc/constants'
 import {
   Icon10TitlebarClose,

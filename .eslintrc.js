@@ -248,7 +248,7 @@ module.exports = {
           ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
           ...['^@?electron', '^vue', '^pinia', '^@?vite', '^@vkontakte/vk-qr'],
           ...['^env', '^store', '^model', '^converters', '^actions', '^lang'],
-          ...['^misc/utils', '^misc/hooks', '^misc'],
+          ...['^hooks', '^misc/utils', '^misc'],
           ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
         ]
       ]

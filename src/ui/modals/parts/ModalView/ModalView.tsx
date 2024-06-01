@@ -1,5 +1,5 @@
 import { defineComponent, shallowRef, Teleport, Transition, watch } from 'vue'
-import { useIsMounted } from 'misc/hooks'
+import { useIsMounted } from 'hooks'
 import { useFocusTrap } from './useFocusTrap'
 import './ModalView.css'
 

@@ -1,5 +1,5 @@
 import { AnchorHTMLAttributes, defineComponent } from 'vue'
-import { useFocusVisible } from 'misc/hooks'
+import { useFocusVisible } from 'hooks'
 import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
 import './Link.css'
 
