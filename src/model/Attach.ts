@@ -1,8 +1,8 @@
-import { Lang } from 'env/Lang'
+import * as ILang from 'env/ILang'
 
 type Attach = { type: string }
 
-export function preview(attach: Attach, lang: Lang): string | null {
+export function preview(attach: Attach, lang: ILang.Lang): string | null {
   switch (attach.type) {
     case 'photo':
     case 'video':

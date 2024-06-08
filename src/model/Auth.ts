@@ -1,9 +1,9 @@
 import { API_VERSION } from 'env/Api'
+import * as IApi from 'env/IApi'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
-import * as IApi from 'model/IApi'
 import { getPlatform, toUrlParams } from 'misc/utils'
-import { APP_VERSION } from 'misc/constants'
+import { appVersion } from 'misc/constants'
 
 type OauthSuccessResponse = {
   user_id: number
@@ -310,7 +310,7 @@ export async function getAuthCode(
     client_id: appId,
     scope,
     anonymous_token: anonymToken,
-    device_name: `VK Desktop ${APP_VERSION} at ${platform}`
+    device_name: `VK Desktop ${appVersion} at ${platform}`
   }, {
     android: true,
     headers: {

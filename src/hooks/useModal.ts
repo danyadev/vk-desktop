@@ -12,6 +12,6 @@ export function useModal() {
     close: () => (opened.value = false),
 
     hide: () => (hidden.value = true),
-    unhide: () => (hidden.value = false)
+    show: () => (hidden.value = false)
   })
 }

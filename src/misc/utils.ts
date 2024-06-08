@@ -1,5 +1,7 @@
 import * as electron from '@electron/remote'
-import { onScopeDispose } from 'vue'
+import { ComponentPublicInstance, onScopeDispose, Ref, unref } from 'vue'
+
+export { debounce } from 'main-process/shared'
 
 export type Opaque<Type, Token = unknown> = Type & {
   __opaque__: Token
@@ -8,6 +10,9 @@ export type Opaque<Type, Token = unknown> = Type & {
 // Тип JSX.Element запрещен в пользу JSXElement, здесь его единственное использование
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type JSXElement = JSX.Element | string | number | null | false
+
+type ExplicitRefElement = HTMLElement | SVGElement | null
+export type RefElement = ExplicitRefElement | ComponentPublicInstance
 
 type ClassNameUnit = string | false | 0
 export type ClassName =
@@ -50,19 +55,6 @@ const getSegmenter = createSingletonHook(() => new Intl.Segmenter())
 export function getFirstLetter(string: string): string {
   return getSegmenter().segment(string).containing(0).segment
 }
-
-/**
- * Позволяет отфильтровать массив от falsy значений и убрать нежелательные
- * варианты значений из типов
- *
- * Использование:
- * array.filter(isTruthy)
- * как аналог
- * array.filter(Boolean)
- */
-// export function isTruthy<T>(value: T): value is Truthy<T> {
-//   return !!value
-// }
 
 export function toUrlParams(object: Record<string, string | number | null | undefined>) {
   return Object.keys(object).reduce((params, key) => {
@@ -126,8 +118,6 @@ export function splitter(string: string, regexp: RegExp): SplitterChunk[] {
   })
 }
 
-export { debounce } from 'main-process/shared'
-
 export async function getPlatform() {
   const deviceInfo = await navigator.userAgentData?.getHighEntropyValues([
     'platform',
@@ -137,4 +127,14 @@ export async function getPlatform() {
   return deviceInfo
     ? `${deviceInfo.platform} ${deviceInfo.platformVersion}`
     : navigator.userAgentData?.platform ?? 'Unknown'
+}
+
+export function unrefElement(ref: Ref<RefElement>): ExplicitRefElement {
+  const raw = unref(ref)
+
+  if (raw && '$el' in raw) {
+    return raw.$el as ExplicitRefElement
+  }
+
+  return raw
 }

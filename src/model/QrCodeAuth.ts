@@ -1,6 +1,6 @@
-import { Lang } from 'env/Lang'
+import * as IApi from 'env/IApi'
+import * as ILang from 'env/ILang'
 import * as Auth from 'model/Auth'
-import * as IApi from 'model/IApi'
 
 const CANCELLED_TIMEOUT_ID = 0
 
@@ -12,7 +12,7 @@ export type QrCodeAuthEvent =
 export class QrCodeAuth {
   private timeoutId: number | undefined
 
-  constructor(private api: IApi.Api, private lang: Lang) {}
+  constructor(private api: IApi.Api, private lang: ILang.Lang) {}
 
   async start(onEvent: (event: QrCodeAuthEvent) => void) {
     try {

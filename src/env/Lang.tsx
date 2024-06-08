@@ -1,5 +1,5 @@
-import type { Settings } from 'store/settings'
 import * as Peer from 'model/Peer'
+import type { Settings } from 'store/settings'
 import { ru } from 'lang/ru'
 import { VariablesTypings } from 'lang/VariablesTypings'
 import { JSXElement, splitter } from 'misc/utils'
@@ -172,7 +172,7 @@ export class Lang {
     return this.dictionary[key]
   }
 
-  transform<V, R>(
+  private transform<V, R>(
     translation: string,
     variables: Record<string, V | string> | undefined,
     joiner: (chunks: Array<V | string>) => R
@@ -184,7 +184,7 @@ export class Lang {
     return this.applyVariables(translation, variables, joiner)
   }
 
-  applyVariables<V, R>(
+  private applyVariables<V, R>(
     translation: string,
     variables: Record<string, V | string>,
     joiner: (chunks: Array<V | string>) => R
@@ -201,7 +201,7 @@ export class Lang {
     return joiner(chunks)
   }
 
-  pluralIndex(count: number) {
+  private pluralIndex(count: number) {
     const pluralRule = this.pluralRules.select(count)
 
     if (pluralRule === 'one') {

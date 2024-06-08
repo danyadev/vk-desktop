@@ -1,6 +1,6 @@
 import { toRaw } from 'vue'
 import { defineStore } from 'pinia'
-import { RendererStorage } from 'model/Storage'
+import { RendererStorage } from 'store/Storage'
 
 export type Settings = {
   lang: 'ru'

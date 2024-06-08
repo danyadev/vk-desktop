@@ -1,6 +1,7 @@
 export { useEnv } from './useEnv'
 export { useFocusVisible } from './useFocusVisible'
 export { useGlobalModal } from './useGlobalModal'
+export { useInView } from './useInView'
 export { useIsMounted } from './useIsMounted'
 export { useModal } from './useModal'
 export { useNow } from './useNow'

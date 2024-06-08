@@ -1,7 +1,7 @@
 import { toRaw } from 'vue'
 import { defineStore } from 'pinia'
 import * as Peer from 'model/Peer'
-import { RendererStorage } from 'model/Storage'
+import { RendererStorage } from 'store/Storage'
 
 export type ViewerUser = Peer.User & {
   accessToken: string

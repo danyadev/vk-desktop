@@ -1,13 +1,15 @@
-import { useConvosStore } from 'store/convos'
-import * as Message from 'model/Message'
+import * as History from 'model/History'
 import * as Peer from 'model/Peer'
+import { useConvosStore } from 'store/convos'
 
 export type Convo = UserConvo | GroupConvo | ChatConvo
 
 interface BaseConvo {
-  history: History
+  history: History.History
   unreadCount: number
   enabledNotifications: boolean
+  majorSortId: number
+  minorSortId: number
 }
 
 interface UserConvo extends BaseConvo {
@@ -25,14 +27,6 @@ export interface ChatConvo extends BaseConvo {
   id: Peer.ChatId
   isChannel: boolean
   isCasper: boolean
-}
-
-export type History = Array<Message.Message | HistoryGap>
-
-type HistoryGap = {
-  kind: 'Gap'
-  fromCmid: Message.Cmid
-  toCmid: Message.Cmid
 }
 
 export type Style =
@@ -78,16 +72,14 @@ export function safeGet(id: Peer.Id): unknown {
   return convo
 }
 
-export function lastMessage(convo: Convo): Message.Message | undefined {
-  const last = convo.history.at(-1)
-
-  if (last && last.kind !== 'Gap') {
-    return last
-  }
-
-  return undefined
-}
-
 export function isCasper(convo: Convo): boolean {
   return convo.kind === 'ChatConvo' && convo.isCasper
+}
+
+export function sorter(a: Convo, b: Convo) {
+  if (a.majorSortId !== b.majorSortId) {
+    return b.majorSortId - a.majorSortId
+  }
+
+  return b.minorSortId - a.minorSortId
 }

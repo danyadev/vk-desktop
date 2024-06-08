@@ -1,6 +1,7 @@
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import * as Convo from 'model/Convo'
+import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { typeguard } from 'misc/utils'
@@ -14,7 +15,7 @@ export function fromApiConvo(
   | { convo?: Exclude<Convo.Convo, Convo.ChatConvo>, peer?: undefined } {
   const lastMessage = apiLastMessage && fromApiMessage(apiLastMessage)
   const lastCmid = apiConvo.last_conversation_message_id ?? 0
-  const history: Convo.History = []
+  const history: History.History = []
 
   if (lastMessage) {
     if (lastCmid > 1) {
@@ -37,8 +38,10 @@ export function fromApiConvo(
   const baseConvo = {
     history,
     unreadCount: apiConvo.unread_count ?? 0,
-    enabledNotifications: !apiConvo.push_settings
-  }
+    enabledNotifications: !apiConvo.push_settings,
+    majorSortId: apiConvo.sort_id?.major_id ?? 0,
+    minorSortId: apiConvo.sort_id?.minor_id ?? 0
+  } satisfies Partial<Convo.Convo>
 
   const peerId = Peer.resolveId(apiConvo.peer.id)
 

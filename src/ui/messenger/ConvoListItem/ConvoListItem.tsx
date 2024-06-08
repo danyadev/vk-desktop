@@ -2,6 +2,7 @@ import { computed, defineComponent, Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
+import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv, useNow } from 'hooks'
@@ -19,7 +20,7 @@ type Props = {
 export const ConvoListItem = defineComponent<Props>((props) => {
   const router = useRouter()
   const peer = computed(() => Peer.safeGet(props.convo.id))
-  const lastMessage = computed(() => Convo.lastMessage(props.convo))
+  const lastMessage = computed(() => History.lastMessage(props.convo.history))
   const active = computed(() => router.currentRoute.value.path === `/convo/${props.convo.id}`)
   const authorName = useAuthorName(lastMessage, props.convo)
 
@@ -110,7 +111,7 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
   }
 
   return () => {
-    const lastMessage = Convo.lastMessage(convo)
+    const lastMessage = History.lastMessage(convo.history)
 
     if (!lastMessage || lastMessage.kind === 'Expired') {
       return (

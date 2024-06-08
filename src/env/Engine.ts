@@ -1,5 +1,5 @@
+import * as IEngine from 'env/IEngine'
 import { MessagesLongpollParams } from 'model/api-types/objects/MessagesLongpollParams'
-import * as IEngine from 'model/IEngine'
 import { toUrlParams } from 'misc/utils'
 
 export const ENGINE_VERSION = 19

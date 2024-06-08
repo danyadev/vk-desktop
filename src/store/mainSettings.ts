@@ -1,7 +1,7 @@
 import Electron from 'electron'
 import { toRaw } from 'vue'
 import { defineStore } from 'pinia'
-import { MainStorage } from 'model/Storage'
+import { MainStorage } from 'store/Storage'
 import { currentWindow } from 'misc/utils'
 import { shouldUseCustomTitlebar } from 'main-process/shared'
 

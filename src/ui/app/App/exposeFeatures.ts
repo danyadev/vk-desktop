@@ -1,10 +1,10 @@
+import * as IApi from 'env/IApi'
+import * as Auth from 'model/Auth'
 import { useConvosStore } from 'store/convos'
 import { useMainSettingsStore } from 'store/mainSettings'
 import { usePeersStore } from 'store/peers'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
-import * as Auth from 'model/Auth'
-import * as IApi from 'model/IApi'
 import { useEnv } from 'hooks'
 import * as utils from 'misc/utils'
 

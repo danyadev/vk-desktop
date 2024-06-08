@@ -4,7 +4,11 @@ import * as Peer from 'model/Peer'
 
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>
-  convoList: Peer.Id[]
+  convoList: {
+    peerIds: Peer.Id[]
+    hasMore: boolean
+    loading: boolean
+  }
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
@@ -13,7 +17,11 @@ type Convos = {
 export const useConvosStore = defineStore('convos', {
   state: (): Convos => ({
     convos: new Map(),
-    convoList: [],
+    convoList: {
+      peerIds: [],
+      hasMore: true,
+      loading: true
+    },
     connection: {
       status: 'init'
     }

@@ -4,7 +4,7 @@ import { usePeersStore } from 'store/peers'
 import { fromApiConvo } from 'converters/ConvoConverter'
 import { fromApiGroup, fromApiUser } from 'converters/PeerConverter'
 import { useEnv } from 'hooks'
-import { PEER_FIELDS } from 'misc/constants'
+import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
 export async function loadInitialData() {
   const { api, engine } = useEnv()
@@ -22,7 +22,7 @@ export async function loadInitialData() {
         need_pts: 1
       }),
       api.buildMethod('messages.getConversations', {
-        count: 20,
+        count: CONVOS_PER_PAGE,
         extended: 1,
         fields: PEER_FIELDS
       })
@@ -38,7 +38,7 @@ export async function loadInitialData() {
         peer
       } = fromApiConvo(apiConvo.conversation, apiConvo.last_message)
       if (convo) {
-        convoList.push(convo.id)
+        convoList.peerIds.push(convo.id)
         convos.set(convo.id, convo)
       }
       if (peer) {
@@ -54,6 +54,9 @@ export async function loadInitialData() {
       const group = fromApiGroup(apiGroup)
       peers.set(group.id, group)
     }
+
+    convoList.loading = false
+    convoList.hasMore = conversations.items.length === CONVOS_PER_PAGE
   } catch (err) {
     console.error(err)
     connection.status = 'initFailed'

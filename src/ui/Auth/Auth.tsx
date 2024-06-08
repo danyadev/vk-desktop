@@ -1,7 +1,7 @@
 import { defineComponent, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { useViewerStore } from 'store/viewer'
 import * as AuthModel from 'model/Auth'
+import { useViewerStore } from 'store/viewer'
 import { fromApiUser } from 'converters/PeerConverter'
 import { useEnv, useGlobalModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'

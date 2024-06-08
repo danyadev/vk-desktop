@@ -208,16 +208,20 @@ module.exports = {
     'no-restricted-imports': ['error', {
       patterns: [
         {
-          group: ['assets/icons/*'],
-          message: 'use assets/icons instead'
+          group: ['actions/*'],
+          message: 'Use \'actions\' instead'
         },
         {
-          group: ['misc/hooks/*'],
-          message: 'use misc/hooks instead'
+          group: ['assets/icons/*'],
+          message: 'Use \'assets/icons\' instead'
+        },
+        {
+          group: ['hooks/*'],
+          message: 'Use \'hooks\' instead'
         },
         {
           group: ['ui/modals/parts/*'],
-          message: 'use ui/modals/parts instead'
+          message: 'Use \'ui/modals/parts\' instead'
         }
       ]
     }],
@@ -240,6 +244,15 @@ module.exports = {
     'import/newline-after-import': 'error',
     'import/no-default-export': 'error',
     'import/no-duplicates': 'error',
+    'import/no-restricted-paths': ['error', {
+      basePath: './src',
+      zones: [{
+        // Где применяются ограничения
+        target: ['converters', 'lang', 'misc', 'model', 'store'],
+        // Откуда нельзя импортировать
+        from: ['actions', 'hooks', 'ui']
+      }]
+    }],
     //#endregion
 
     'simple-import-sort/imports': ['error', {
@@ -247,7 +260,7 @@ module.exports = {
         [
           ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
           ...['^@?electron', '^vue', '^pinia', '^@?vite', '^@vkontakte/vk-qr'],
-          ...['^env', '^store', '^model', '^converters', '^actions', '^lang'],
+          ...['^env', '^model', '^store', '^actions', '^converters', '^lang'],
           ...['^hooks', '^misc/utils', '^misc'],
           ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
         ]

@@ -1,12 +1,20 @@
-import { inject } from 'vue'
-import { ENV_PROVIDE_KEY } from 'env/createEnv'
+import { computed, reactive } from 'vue'
+import { Api } from 'env/Api'
+import { Engine } from 'env/Engine'
+import { Lang } from 'env/Lang'
+import { useSettingsStore } from 'store/settings'
+import { createSingletonHook } from 'misc/utils'
 
-export function useEnv() {
-  const env = inject(ENV_PROVIDE_KEY)
+export const useEnv = createSingletonHook(() => {
+  const settings = useSettingsStore()
 
-  if (!env) {
-    throw new Error('useEnv был вызван вне контекста приложения')
-  }
+  const lang = computed(() => new Lang(settings.lang))
+  const api = new Api()
+  const engine = new Engine()
 
-  return env
-}
+  return reactive({
+    lang,
+    api,
+    engine
+  })
+})

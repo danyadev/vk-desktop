@@ -11,7 +11,7 @@ export type MessagesGetConversationsParams = {
   extended: 1
   offset?: number
   filter?: 'all' | 'archive' | 'business_notify' | 'chats' | 'important' | 'message_request' | 'unanswered' | 'unread'
-  start_message_id?: number
+  start_from_minor_sort_id?: number
   group_id?: number
 }
 

@@ -1,7 +1,7 @@
 import { defineComponent, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
-import { useViewerStore, ViewerUser } from 'store/viewer'
 import * as Peer from 'model/Peer'
+import { useViewerStore, ViewerUser } from 'store/viewer'
 import { useEnv, useModal } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Avatar } from 'ui/ui/Avatar/Avatar'

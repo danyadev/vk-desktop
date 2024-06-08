@@ -20,7 +20,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
     authorId,
     isOut: !!message.out || message.peer_id === message.from_id,
     sentAt: message.date * 1000
-  }
+  } satisfies Partial<Message.Message>
 
   if (message.action) {
     return {
