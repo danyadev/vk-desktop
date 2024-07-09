@@ -1,4 +1,33 @@
 .ConvoHistory {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   overflow: auto;
+  padding: 16px;
+}
+
+.ConvoHistory--placeholder {
+  align-items: center;
+  justify-content: center;
+}
+
+.ConvoHistory__topFiller {
+  flex: 1;
+}
+
+.ConvoHistory__spinner {
+  margin: 16px auto;
+}
+
+/* ====== */
+
+.MessagesStack {
+  display: flex;
+  align-items: flex-end;
+}
+
+.MessagesStack__avatar {
+  position: sticky;
+  bottom: 0;
+  margin-right: 8px;
 }

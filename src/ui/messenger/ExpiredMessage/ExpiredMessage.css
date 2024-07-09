@@ -1,0 +1,13 @@
+.ExpiredMessage {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  margin: 0 auto;
+  color: var(--vkui--color_text_contrast);
+  background-color: var(--vkui--color_overlay_primary);
+  border-radius: 20px;
+}
+
+.ExpiredMessage__icon {
+  margin-right: 8px;
+}

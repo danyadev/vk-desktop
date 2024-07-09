@@ -6,12 +6,13 @@ import { fromApiGroup, fromApiUser } from 'converters/PeerConverter'
 import { useEnv } from 'hooks'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
-export async function loadInitialData() {
+export async function loadInitialData(onError: () => void) {
   const { api, engine } = useEnv()
   const { peers } = usePeersStore()
   const { convos, convoList, connection } = useConvosStore()
 
-  if (connection.status !== 'init') {
+  // Не инициализируем повторно приложение во время разработки
+  if (import.meta.env.DEV && connection.status !== 'init' && connection.status !== 'initFailed') {
     return
   }
 
@@ -57,8 +58,8 @@ export async function loadInitialData() {
 
     convoList.loading = false
     convoList.hasMore = conversations.items.length === CONVOS_PER_PAGE
-  } catch (err) {
-    console.error(err)
+  } catch {
     connection.status = 'initFailed'
+    onError()
   }
 }

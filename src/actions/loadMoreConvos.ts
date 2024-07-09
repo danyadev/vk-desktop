@@ -32,14 +32,18 @@ export async function loadMoreConvos() {
     extended: 1
   })
 
-  console.log(response)
-
   for (const apiConvo of response.items) {
     const { convo, peer } = fromApiConvo(apiConvo.conversation, apiConvo.last_message)
+
     if (convo) {
       convoList.peerIds.push(convo.id)
-      convos.set(convo.id, convo)
+      // Мы держим конву в актуальном состоянии через лонгполл.
+      // Перезапись конвы в кеше сбросила бы список сообщений
+      if (!convos.get(convo.id)) {
+        convos.set(convo.id, convo)
+      }
     }
+
     if (peer) {
       peers.set(peer.id, peer)
     }

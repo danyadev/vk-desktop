@@ -1,4 +1,5 @@
 import * as History from 'model/History'
+import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 
@@ -10,6 +11,8 @@ interface BaseConvo {
   enabledNotifications: boolean
   majorSortId: number
   minorSortId: number
+  inReadBy: Message.Cmid
+  outReadBy: Message.Cmid
 }
 
 interface UserConvo extends BaseConvo {

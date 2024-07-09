@@ -15,8 +15,8 @@ export type MessagesConversation = {
   last_conversation_message_id?: number
   in_read: number
   out_read: number
-  in_read_cmid?: number
-  out_read_cmid?: number
+  in_read_cmid: number
+  out_read_cmid: number
   unread_count?: number
   is_marked_unread?: boolean
   out_read_by?: {

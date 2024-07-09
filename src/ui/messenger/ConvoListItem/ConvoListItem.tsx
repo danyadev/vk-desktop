@@ -106,7 +106,9 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
     }
 
     if (message.forwardedMessages.length) {
-      return lang.usePlural('me_message_messages', message.forwardedMessages.length)
+      return message.forwardedMessages.length === 1
+        ? lang.use('me_message')
+        : lang.usePlural('me_messages', message.forwardedMessages.length)
     }
   }
 
@@ -118,7 +120,7 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
         <span class="MessagePreview__highlight">
           {Convo.isCasper(convo) || lastMessage
             ? lang.use('me_message_disappeared')
-            : lang.use('me_convo_empty')}
+            : lang.use('me_convo_list_empty_convo')}
         </span>
       )
     }

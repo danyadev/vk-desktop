@@ -27,7 +27,7 @@ export interface Service extends BaseMessage {
   action: ServiceAction
 }
 
-interface Expired extends BaseMessage {
+export interface Expired extends BaseMessage {
   kind: 'Expired'
   updatedAt: number
 }

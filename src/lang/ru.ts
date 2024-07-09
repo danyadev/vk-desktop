@@ -41,13 +41,15 @@ export const ru = {
   me_convo_list_date_hours: '{hours}ч',
   me_convo_list_date_days: '{days}д',
   me_convo_list_date_weeks: '{weeks}н',
-  me_convo_empty: 'Пустой диалог',
+  me_convo_list_empty_convo: 'Пустой диалог',
   me_message_disappeared: 'Сообщение исчезло',
+  me_messages_disappeared: ['{0} сообщение исчезло', '{0} сообщения исчезло', '{0} сообщений исчезло'],
   me_unsupported_message: 'Сообщение не поддерживается',
-  me_message_attaches: ['Вложение', '{0} вложения', '{0} вложений'],
-  me_message_messages: ['Сообщение', '{0} сообщения', '{0} сообщений'],
+  me_message_attaches: ['{0} вложение', '{0} вложения', '{0} вложений'],
+  me_message: 'Сообщение',
+  me_messages: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
 
-  //#region service messages
+  // region service messages
   me_service_chat_create: [
     '{author} создал чат «{title}»',
     '{author} создала чат «{title}»'
@@ -127,9 +129,9 @@ export const ru = {
     '{author} сбросил оформление чата',
     '{author} сбросила оформление чата'
   ],
-  //#endregion
+  // endregion
 
-  //#region message attaches
+  // region message attaches
   me_message_attach_photo: ['Фотография', '{0} фотографии', '{0} фотографий'],
   me_message_attach_audio: ['Аудиозапись', '{0} аудиозаписи', '{0} аудиозаписей'],
   me_message_attach_video: ['Видео', '{0} видео', '{0} видео'],
@@ -163,7 +165,7 @@ export const ru = {
   me_message_attach_widget: 'Виджет',
   me_message_attach_question: 'Вопрос',
   me_message_attach_donut_link: 'Сообщество с VK Donut',
-  //#endregion
+  // endregion
 
   me_convo_styles: {
     unknown: 'Неизвестное',
@@ -195,6 +197,7 @@ export const ru = {
   },
 
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
+  me_convo_empty_placeholder: 'История переписки пуста',
 
   modal_cancel_label: 'Отмена',
   modal_close_label: 'Закрыть',
@@ -203,6 +206,10 @@ export const ru = {
 
   captchaModal_title: 'Введите капчу',
   captchaModal_enter_code: 'Введите код',
+
+  initErrorModal_title: 'Ошибка инициализации',
+  initErrorModal_text: 'Не удалось загрузить начальные данные для старта приложения',
+  initErrorModal_retry: 'Повторить попытку',
 
   confirmAccountDelete_title: 'Удаление аккаунта',
   confirmAccountDelete_confirm: 'Вы действительно хотите удалить аккаунт {userName}?',

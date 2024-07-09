@@ -47,8 +47,12 @@ img, svg {
   --fontSize: 14px;
   --smallFontSize: 13px;
   --lineHeight: 18px;
+  --smallLineHeight: 14px;
   --font: var(--fontSize) / var(--lineHeight) var(--fontFamily);
   --smallFont: var(--smallFontSize) / var(--lineHeight) var(--fontFamily);
+
+  --messageDateFontSize: 11px;
+  --messageDateLineHeight: 11px;
 
   --fastTransition: 0.15s;
   --mediumTransition: 0.2s;

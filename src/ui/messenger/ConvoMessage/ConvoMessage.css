@@ -1,3 +1,28 @@
 .ConvoMessage {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  padding: 8px 10px;
+  background-color: #333;
+  border-radius: 14px;
+}
+
+.ConvoMessage--out {
+  background-color: #454647;
+  align-self: end;
+}
+
+.ConvoMessage__author {
+  color: var(--vkui--color_text_link);
+  font: 500 var(--smallFontSize) / var(--smallLineHeight) var(--fontFamily);
+  margin-bottom: 2px;
+}
+
+.ConvoMessage__time {
+  position: relative;
+  float: right;
+  margin: 4px 0 4px 6px;
+  bottom: -6px;
+  color: var(--vkui--color_text_secondary);
+  font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
 }

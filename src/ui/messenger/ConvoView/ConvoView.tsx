@@ -47,7 +47,7 @@ export const ConvoWrapper = defineComponent(() => {
     convo.value ? (
       <ConvoView convo={convo.value} />
     ) : (
-      <Spinner class="ConvoWrapper__spinner" size="medium" />
+      <Spinner class="ConvoWrapper__spinner" size="regular" />
     )
   )
 })
