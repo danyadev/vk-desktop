@@ -5,11 +5,14 @@
   padding: 8px 10px;
   background-color: #333;
   border-radius: 14px;
+  word-break: break-word;
+  /* для поддержки нескольких пробелов подряд можно заюзать pre-wrap */
+  white-space: pre-line;
+  user-select: text;
 }
 
 .ConvoMessage--out {
   background-color: #454647;
-  align-self: end;
 }
 
 .ConvoMessage__author {

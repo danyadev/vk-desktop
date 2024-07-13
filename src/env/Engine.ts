@@ -52,9 +52,9 @@ export class Engine {
       this.params.ts = result.ts
       this.params.pts = result.pts
 
-      for (const update of result.updates) {
-        console.log(update)
-      }
+      // for (const update of result.updates) {
+      //   console.log(update)
+      // }
     }
   }
 

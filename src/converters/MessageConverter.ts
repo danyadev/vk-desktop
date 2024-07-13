@@ -18,7 +18,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
     cmid: Message.resolveCmid(message.conversation_message_id),
     peerId: Peer.resolveId(message.peer_id),
     authorId,
-    isOut: !!message.out || message.peer_id === message.from_id,
+    isOut: message.out === 1,
     sentAt: message.date * 1000
   } satisfies Partial<Message.Message>
 

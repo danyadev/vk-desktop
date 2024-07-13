@@ -69,6 +69,10 @@ export default defineConfig(async ({ mode }) => {
       lightningcss: {
         unusedSymbols
       }
+    },
+    test: {
+      isolate: false,
+      pool: 'threads'
     }
   } as UserConfig
 })

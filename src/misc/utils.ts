@@ -24,8 +24,6 @@ export type Truthy<T> = T extends false | '' | 0 | null | undefined | 0n ? never
 
 export type NonEmptyArray<T> = [T, ...T[]]
 
-export type ExcludeFromArray<Arr extends unknown[], Types> = Array<Exclude<Arr[number], Types>>
-
 export const currentWindow = electron.getCurrentWindow()
 
 export function isObject(obj: unknown): obj is object {

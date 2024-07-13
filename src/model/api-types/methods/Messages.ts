@@ -24,6 +24,30 @@ export type MessagesGetConversationsResponse = {
   }>
   profiles?: UsersUser[]
   groups?: GroupsGroup[]
+  // contacts?: MessagesContact[]
+}
+
+// messages.getHistory
+export type MessagesGetHistoryParams = {
+  peer_id: number
+  start_cmid?: number
+  count?: number
+  offset?: number
+  filter?: 'all' | 'audio' | 'file' | 'link' | 'media_viewer' | 'photo' | 'pinned_messages' | 'video'
+  extended: 1
+  fwd_extended: 1
+  fields: string
+  group_id?: number
+}
+
+export type MessagesGetHistoryResponse = {
+  count: number
+  items: MessagesMessage[]
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+  conversations?: MessagesConversation[]
+  // contacts?: MessagesContact[]
+  // apps?: AppsApp[]
 }
 
 // messages.getLongPollServer

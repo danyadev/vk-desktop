@@ -3,6 +3,7 @@ import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { loadConvoHistory } from 'actions'
 import { useEnv } from 'hooks'
 import { exhaustivenessCheck, NonEmptyArray } from 'misc/utils'
 import { ConvoMessage } from 'ui/messenger/ConvoMessage/ConvoMessage'
@@ -21,22 +22,31 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const { lang } = useEnv()
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
 
+  const loadHistory = (direction: 'around' | 'up' | 'down', startCmid: Message.Cmid, gap: History.Gap) => (
+    loadConvoHistory({
+      peerId: convo.id,
+      startCmid,
+      gap,
+      direction
+    })
+  )
+
   return () => {
-    const { messages, gapBefore, gapAround, gapAfter } = historySlice.value
+    const { items, gapBefore, gapAround, gapAfter } = historySlice.value
 
     if (gapAround) {
       return (
-        <div class="ConvoHistory ConvoHistory--placeholder">
-          <IntersectionWrapper onIntersect={() => console.log('load from gapAround')}>
+        <div class="ConvoHistory__placeholder">
+          <IntersectionWrapper onIntersect={() => loadHistory('around', convo.inReadBy, gapAround)}>
             <Spinner size="regular" class="ConvoHistory__spinner" />
           </IntersectionWrapper>
         </div>
       )
     }
 
-    if (messages.length === 0) {
+    if (items.length === 0) {
       return (
-        <div class="ConvoHistory ConvoHistory--placeholder">
+        <div class="ConvoHistory__placeholder">
           {lang.use('me_convo_empty_placeholder')}
         </div>
       )
@@ -44,21 +54,27 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
     return (
       <div class="ConvoHistory">
-        <div class="ConvoHistory__topFiller" />
+        <div class="ConvoHistory__content">
+          <div class="ConvoHistory__topFiller" />
 
-        {gapBefore && (
-          <IntersectionWrapper onIntersect={() => console.log('load from gapBefore')}>
-            <Spinner size="regular" class="ConvoHistory__spinner" />
-          </IntersectionWrapper>
-        )}
+          {gapBefore && (
+            <IntersectionWrapper
+              onIntersect={() => gapBefore && loadHistory('up', Message.resolveCmid(gapBefore.toId), gapBefore)}
+            >
+              <Spinner size="regular" class="ConvoHistory__spinner" />
+            </IntersectionWrapper>
+          )}
 
-        <HistoryMessages messages={messages} />
+          <HistoryMessages items={items} />
 
-        {gapAfter && (
-          <IntersectionWrapper onIntersect={() => console.log('load from gapAfter')}>
-            <Spinner size="regular" class="ConvoHistory__spinner" />
-          </IntersectionWrapper>
-        )}
+          {gapAfter && (
+            <IntersectionWrapper
+              onIntersect={() => gapAfter && loadHistory('down', Message.resolveCmid(gapAfter.fromId), gapAfter)}
+            >
+              <Spinner size="regular" class="ConvoHistory__spinner" />
+            </IntersectionWrapper>
+          )}
+        </div>
       </div>
     )
   }
@@ -67,14 +83,17 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 })
 
 type HistoryMessagesProps = {
-  messages: Message.Message[]
+  items: Array<History.Item<Message.Message>>
 }
 
-const HistoryMessages = defineComponent<HistoryMessagesProps>(({ messages }) => {
+const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
   return () => {
-    const stacks = messages.reduce((stacks, message, index) => {
+    const stacks = props.items.reduce((stacks, item, index) => {
       const lastStack = stacks.at(-1)
-      const prevMessage = messages[index - 1]
+      const prevItem = props.items[index - 1]
+
+      const message = item.item
+      const prevMessage = prevItem?.item
 
       if (
         !lastStack ||
@@ -93,15 +112,16 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>(({ messages }) => 
     return stacks.map((messages) => <MessagesStack messages={messages} />)
   }
 }, {
-  props: ['messages']
+  props: ['items']
 })
 
 type MessagesStackProps = {
   messages: NonEmptyArray<Message.Message>
 }
 
-const MessagesStack = defineComponent<MessagesStackProps>(({ messages }) => {
-  const author = computed(() => Peer.safeGet(messages[0].authorId))
+const MessagesStack = defineComponent<MessagesStackProps>((props) => {
+  const author = computed(() => Peer.safeGet(props.messages[0].authorId))
+  const isOut = computed(() => props.messages[0].isOut)
 
   const renderMessage = (message: Message.Message) => {
     switch (message.kind) {
@@ -117,10 +137,10 @@ const MessagesStack = defineComponent<MessagesStackProps>(({ messages }) => {
   }
 
   return () => (
-    <div class="MessagesStack">
-      <Avatar class="MessagesStack__avatar" peer={author.value} size={32} />
+    <div class={['MessagesStack', isOut.value && 'MessagesStack--out']}>
+      {!isOut.value && <Avatar class="MessagesStack__avatar" peer={author.value} size={32} />}
       <div class="MessagesStack__messages">
-        {messages.map(renderMessage)}
+        {props.messages.map(renderMessage)}
       </div>
     </div>
   )

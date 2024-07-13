@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "yarn run dist && yarn run pack",
     "tsc": "tsc --noEmit",
+    "test": "vitest run",
+    "test-watch": "vitest watch",
     "lint:eslint": "eslint -c .eslintrc.full.js src main-process scripts *.{js,mts} --ext .js,.ts,.tsx,.mjs,.mts",
     "lint:stylelint": "stylelint src/**/*.css",
     "lint": "yarn lint:eslint && yarn lint:stylelint",
@@ -31,7 +33,7 @@
     "@electron/remote": "2.1.2",
     "@vkontakte/vk-qr": "2.1.1",
     "pinia": "2.1.7",
-    "vue": "3.4.27",
+    "vue": "3.4.31",
     "vue-router": "4.3.2"
   },
   "devDependencies": {
@@ -39,7 +41,7 @@
     "@typescript-eslint/parser": "7.11.0",
     "@vitejs/plugin-vue-jsx": "4.0.0",
     "@vkontakte/vkui-tokens": "4.46.0",
-    "@vue/compiler-sfc": "3.4.27",
+    "@vue/compiler-sfc": "3.4.31",
     "electron": "22.3.27",
     "electron-builder": "24.13.3",
     "eslint": "8.57.0",
@@ -56,6 +58,7 @@
     "user-agent-data-types": "0.4.2",
     "vite": "5.2.12",
     "vite-plugin-electron": "0.28.7",
-    "vite-plugin-electron-renderer": "0.14.5"
+    "vite-plugin-electron-renderer": "0.14.5",
+    "vitest": "2.0.2"
   }
 }

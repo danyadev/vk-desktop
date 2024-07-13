@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
+import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 
 type Convos = {
@@ -12,6 +13,7 @@ type Convos = {
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
+  loadingConvosHistory: Set<`${Peer.Id}-${Message.Cmid}`>
 }
 
 export const useConvosStore = defineStore('convos', {
@@ -24,7 +26,8 @@ export const useConvosStore = defineStore('convos', {
     },
     connection: {
       status: 'init'
-    }
+    },
+    loadingConvosHistory: new Set()
   })
 })
 

@@ -1,8 +1,8 @@
 import * as Convo from 'model/Convo'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
+import { insertPeers } from 'actions'
 import { fromApiConvo } from 'converters/ConvoConverter'
-import { fromApiGroup, fromApiUser } from 'converters/PeerConverter'
 import { useEnv } from 'hooks'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
@@ -49,14 +49,10 @@ export async function loadMoreConvos() {
     }
   }
 
-  for (const apiUser of response.profiles ?? []) {
-    const user = fromApiUser(apiUser)
-    peers.set(user.id, user)
-  }
-  for (const apiGroup of response.groups ?? []) {
-    const group = fromApiGroup(apiGroup)
-    peers.set(group.id, group)
-  }
+  insertPeers({
+    profiles: response.profiles,
+    groups: response.groups
+  })
 
   convoList.peerIds = [...new Set(convoList.peerIds)]
     .map(Convo.safeGet)
