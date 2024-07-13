@@ -70,13 +70,12 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             <MessagePreview convo={props.convo} />
           </span>
           <span class="ConvoListItem__date">{lastMessage.value && <MessageDate message={lastMessage.value} />}</span>
-
-          <div class="ConvoListItem__indicators">
-            <Counter
-              count={props.convo.unreadCount}
-              mode={props.convo.enabledNotifications ? 'primary' : 'secondary'}
-            />
-          </div>
+        </div>
+        <div class="ConvoListItem__indicators">
+          <Counter
+            count={props.convo.unreadCount}
+            mode={props.convo.enabledNotifications ? 'primary' : 'secondary'}
+          />
         </div>
       </div>
     )

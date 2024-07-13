@@ -54,9 +54,8 @@
 .ConvoListItem__message {
   grid-area: message;
   align-self: start;
-
+  width: calc(100% - 5px);
   display: flex;
-  gap: 8px;
   overflow: hidden;
   color: var(--vkui--color_text_subhead);
 }
@@ -79,11 +78,11 @@
 
 .ConvoListItem__indicators {
   grid-area: indicators;
-  align-self: center;
+  align-self: self-end;
 }
 
 .ConvoListItem__indicators:not(:empty) {
-  margin-left: 5px;
+  transform: translateY(-3px);
 }
 
 .ConvoListItem__compactCounter {

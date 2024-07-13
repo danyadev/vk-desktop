@@ -49,10 +49,6 @@
   padding: 6px 8px;
 }
 
-.ConvoList__list::-webkit-scrollbar {
-  width: 2px;
-}
-
 .ConvoList__spinner {
   margin: 16px auto;
 }
