@@ -54,6 +54,12 @@ type OauthUserBannedResponse = {
     access_token: string
   }
 }
+type OauthFloodControlResponse = {
+  // Не спрашивайте...
+  error: '9;Flood control'
+  error_type?: 'password_bruteforce_attempt'
+  error_description?: string
+}
 
 type OauthTokenResponse =
   | OauthSuccessResponse
@@ -62,6 +68,7 @@ type OauthTokenResponse =
   | OauthInvalidTwoFactorCodeResponse
   | OauthCaptchaResponse
   | OauthUserBannedResponse
+  | OauthFloodControlResponse
 
 type GetAndroidTokenResult =
   | { kind: 'Success', userId: number, androidToken: string, trustedHash?: string }
@@ -76,6 +83,7 @@ type GetAndroidTokenResult =
   | { kind: 'InvalidTwoFactorCode', errorMessage: string }
   | { kind: 'Captcha', captchaImg: string, captchaSid: string }
   | { kind: 'UserBanned', banMessage: string, androidToken: string }
+  | { kind: 'FloodControl', errorMessage: string }
   | { kind: 'NetworkError' }
   | { kind: 'UnknownError', payload: unknown }
 
@@ -161,6 +169,13 @@ export async function getAndroidToken(
             kind: 'Captcha',
             captchaImg: result.captcha_img,
             captchaSid: result.captcha_sid
+          }
+        }
+
+        case '9;Flood control': {
+          return {
+            kind: 'FloodControl',
+            errorMessage: result.error_description ?? result.error_type ?? result.error
           }
         }
       }

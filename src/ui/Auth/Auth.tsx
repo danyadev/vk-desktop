@@ -75,7 +75,8 @@ export const Auth = defineComponent(() => {
       }
 
       case 'InvalidCredentials':
-      case 'InvalidTwoFactorCode': {
+      case 'InvalidTwoFactorCode':
+      case 'FloodControl': {
         state.error = result.errorMessage
         break
       }
