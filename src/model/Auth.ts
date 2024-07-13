@@ -24,7 +24,7 @@ type OauthRequireTwoFactorResponse = {
   error_description: string
   phone_mask: string
   redirect_uri: string
-  validation_type: '2fa_sms' | '2fa_app'
+  validation_type: '2fa_sms' | '2fa_app' | '2fa_callreset'
   validation_sid: string
   /** Приходит, если для отправки кода нужно вызвать метод auth.validatePhone */
   validation_resend?: 'sms'
@@ -76,7 +76,7 @@ type GetAndroidTokenResult =
   | {
       kind: 'RequireTwoFactor'
       phoneMask: string
-      validationType: '2fa_sms' | '2fa_app'
+      validationType: '2fa_sms' | '2fa_app' | '2fa_callreset'
       validationSid: string
       needValidateSendSms: boolean
     }

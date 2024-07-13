@@ -21,6 +21,7 @@ export const ru = {
 
   auth_confirm_login: 'Подтвердите вход',
   auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {phone}',
+  auth_enter_incoming_call_digits: 'Введите последние 4 цифры из входящего звонка',
   auth_enter_code_from_code_gen_app: 'Введите код из приложения генератора кодов',
   auth_enter_code: 'Введите код',
   auth_sms_is_sending: 'SMS отправляется',
