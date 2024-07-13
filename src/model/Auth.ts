@@ -188,10 +188,31 @@ export async function getAndroidToken(
 
 export async function getAppToken(androidToken: string, api: IApi.Api): Promise<string | null> {
   const APP_ID = 6717234
-  const APP_SECRET = 'KoSS8uGa3RrU081ucgvO'
   const APP_SCOPE = 136297695
 
-  const anonymToken = await getAnonymToken(api, APP_ID, APP_SECRET)
+  const fetchedOauth = await fetch('https://oauth.vk.com/authorize?' + toUrlParams({
+    client_id: APP_ID,
+    display: 'mobile',
+    redirect_uri: 'https://oauth.vk.com/blank.html',
+    scope: APP_SCOPE,
+    response_type: 'token',
+    revoke: 1,
+    v: API_VERSION
+  }))
+
+  const oauthHash = new URL(fetchedOauth.url).searchParams.get('return_auth_hash')
+  if (!oauthHash) {
+    console.warn('[Auth.getAppToken] no hash', fetchedOauth.url)
+    return null
+  }
+
+  const oauthResponse = await fetchedOauth.text()
+  const anonymToken = oauthResponse.match(/"anonymous_token":"([^"]+)"/)?.[1]
+  if (!anonymToken) {
+    console.warn('[Auth.getAppToken] no anonym token', { oauthResponse })
+    return null
+  }
+
   const { authCode, authHash } = await getAuthCode(api, anonymToken, APP_ID, 0)
 
   await api.fetch('auth.processAuthCode', {
@@ -213,22 +234,6 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
 
   if (!('super_app_token' in checkResult)) {
     console.warn('[Auth.getAppToken] check failed', checkResult)
-    return null
-  }
-
-  const { url: oauthUrl } = await fetch('https://oauth.vk.com/authorize?' + toUrlParams({
-    client_id: APP_ID,
-    display: 'mobile',
-    redirect_uri: 'https://oauth.vk.com/blank.html',
-    scope: APP_SCOPE,
-    response_type: 'token',
-    revoke: 1,
-    v: API_VERSION
-  }))
-  const oauthHash = new URL(oauthUrl).searchParams.get('return_auth_hash')
-
-  if (!oauthHash) {
-    console.warn('[Auth.getAppToken] no hash', oauthUrl)
     return null
   }
 
@@ -257,7 +262,7 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
     }
   }
 
-  const authResponse = await fetch('https://login.vk.com?' + toUrlParams({
+  const connectResponse = await fetch('https://login.vk.com?' + toUrlParams({
     act: 'connect_internal',
     app_id: APP_ID,
     oauth_version: 1,
@@ -269,26 +274,22 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
   }).then<AuthResponse>((res) => res.json())
 
   const { access_token: appToken } = await api.fetch('auth.getOauthToken', {
-    access_token: authResponse.data.access_token,
+    access_token: connectResponse.data.access_token,
     app_id: APP_ID,
     client_id: APP_ID,
     scope: APP_SCOPE,
     hash: oauthHash,
-    auth_user_hash: authResponse.data.auth_user_hash,
+    auth_user_hash: connectResponse.data.auth_user_hash,
     is_seamless_auth: 0
   })
 
   return appToken
 }
 
-export async function getAnonymToken(
-  api: IApi.Api,
-  appId: number,
-  appSecret: string
-): Promise<string> {
+export async function getAndroidAnonymToken(api: IApi.Api): Promise<string> {
   const { token } = await api.fetch('auth.getAnonymToken', {
-    client_id: appId,
-    client_secret: appSecret
+    client_id: ANDROID_APP_ID,
+    client_secret: ANDROID_APP_SECRET
   })
 
   return token
