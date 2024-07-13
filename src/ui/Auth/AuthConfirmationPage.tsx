@@ -7,7 +7,7 @@ import { Input } from 'ui/ui/Input/Input'
 
 export type ConfirmationState = {
   phoneMask: string
-  validationType: '2fa_sms' | '2fa_app'
+  validationType: '2fa_sms' | '2fa_app' | '2fa_callreset'
   validationSid: string
   needValidateSendSms: boolean
 }
@@ -27,7 +27,16 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
   const resendSmsTimer = shallowRef(0)
   const isSendingSms = shallowRef(false)
 
-  function onInput(event: InputEvent<HTMLInputElement>) {
+  onMounted(() => {
+    if (
+      props.confirmationState.validationType === '2fa_sms' &&
+      props.confirmationState.needValidateSendSms
+    ) {
+      sendSms()
+    }
+  })
+
+  const onInput = (event: InputEvent<HTMLInputElement>) => {
     code.value = event.target.value
 
     if (!props.loading && code.value.length === 6) {
@@ -35,7 +44,7 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
     }
   }
 
-  function onKeyDown(event: KeyboardEvent) {
+  const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !props.loading && code.value.length > 0) {
       props.onSubmit(code.value)
     }
@@ -45,7 +54,7 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
     }
   }
 
-  async function sendSms() {
+  const sendSms = async () => {
     const DEFAULT_RESEND_INTERVAL = 60
 
     try {
@@ -59,7 +68,7 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
       resendSmsTimer.value = delay
     } catch {
       // TODO: снекбар с ошибкой
-      console.log('ошибка переотправки смс')
+      console.warn('ошибка переотправки смс')
       resendSmsTimer.value = DEFAULT_RESEND_INTERVAL
     }
 
@@ -67,21 +76,26 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
     tickTimer()
   }
 
-  function tickTimer() {
+  const tickTimer = () => {
     window.setTimeout(() => {
       resendSmsTimer.value && resendSmsTimer.value--
       resendSmsTimer.value && tickTimer()
     }, 1000)
   }
 
-  onMounted(() => {
-    if (
-      props.confirmationState.validationType === '2fa_sms' &&
-      props.confirmationState.needValidateSendSms
-    ) {
-      sendSms()
+  const getConfirmationDescription = (validationType: ConfirmationState['validationType']) => {
+    switch (validationType) {
+      case '2fa_app':
+        return lang.use('auth_enter_code_from_code_gen_app')
+      case '2fa_callreset':
+        return lang.use('auth_enter_incoming_call_digits')
+      case '2fa_sms':
+      default:
+        return lang.use('auth_sms_with_code_sent', {
+          phone: props.confirmationState.phoneMask
+        })
     }
-  })
+  }
 
   return () => (
     <div class="Auth">
@@ -91,9 +105,7 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
         </div>
 
         <div class="Auth__confirmationDescription">
-          {props.confirmationState.validationType === '2fa_sms'
-            ? lang.use('auth_sms_with_code_sent', { phone: props.confirmationState.phoneMask })
-            : lang.use('auth_enter_code_from_code_gen_app')}
+          {getConfirmationDescription(props.confirmationState.validationType)}
         </div>
 
         <Input
@@ -176,9 +188,9 @@ const SmsStatus = defineComponent<SmsStatusProps>((props) => {
 
     return (
       <ButtonText onClick={sendSms}>
-        {validationType === '2fa_app'
-          ? lang.use('auth_send_sms')
-          : lang.use('auth_resend_sms')}
+        {validationType === '2fa_sms'
+          ? lang.use('auth_resend_sms')
+          : lang.use('auth_send_sms')}
       </ButtonText>
     )
   }
