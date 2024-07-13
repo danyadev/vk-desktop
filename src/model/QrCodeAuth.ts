@@ -61,10 +61,18 @@ export class QrCodeAuth {
 
         case 2: // Approved
           if ('access_token' in response) {
-            onEvent({
-              kind: 'Success',
-              accessToken: response.access_token
-            })
+            if (response.is_partial) {
+              console.warn('[QRCodeAuth] partial token', response)
+              onEvent({
+                kind: 'Error',
+                message: this.lang.use('auth_get_app_token_error')
+              })
+            } else {
+              onEvent({
+                kind: 'Success',
+                accessToken: response.access_token
+              })
+            }
           } else {
             console.warn('[QRCodeAuth] corrupted approve', response)
             onEvent({

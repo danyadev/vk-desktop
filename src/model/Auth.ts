@@ -252,6 +252,11 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
     return null
   }
 
+  if (checkResult.is_partial) {
+    console.warn('[Auth.getAppToken] partial token', checkResult)
+    return null
+  }
+
   // Этот запрос нужен для получения кук
   await fetch('https://login.vk.com?' + toUrlParams({
     act: 'connect_code_auth',
