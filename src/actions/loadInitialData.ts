@@ -29,9 +29,14 @@ export async function loadInitialData(onError: () => void) {
       })
     ])
 
-    connection.status = 'connected'
-    engine.start(longpollParams)
-    engine.stop()
+    for (const apiUser of conversations.profiles ?? []) {
+      const user = fromApiUser(apiUser)
+      peers.set(user.id, user)
+    }
+    for (const apiGroup of conversations.groups ?? []) {
+      const group = fromApiGroup(apiGroup)
+      peers.set(group.id, group)
+    }
 
     for (const apiConvo of conversations.items) {
       const {
@@ -47,18 +52,14 @@ export async function loadInitialData(onError: () => void) {
       }
     }
 
-    for (const apiUser of conversations.profiles ?? []) {
-      const user = fromApiUser(apiUser)
-      peers.set(user.id, user)
-    }
-    for (const apiGroup of conversations.groups ?? []) {
-      const group = fromApiGroup(apiGroup)
-      peers.set(group.id, group)
-    }
+    connection.status = 'connected'
+    engine.start(longpollParams)
+    engine.stop()
 
     convoList.loading = false
     convoList.hasMore = conversations.items.length === CONVOS_PER_PAGE
-  } catch {
+  } catch (err) {
+    console.warn('Ошибка начальной загрузки данных', err)
     connection.status = 'initFailed'
     onError()
   }

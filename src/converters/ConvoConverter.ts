@@ -41,8 +41,8 @@ export function fromApiConvo(
     enabledNotifications: !apiConvo.push_settings,
     majorSortId: apiConvo.sort_id?.major_id ?? 0,
     minorSortId: apiConvo.sort_id?.minor_id ?? 0,
-    inReadBy: Message.resolveCmid(apiConvo.in_read_cmid),
-    outReadBy: Message.resolveCmid(apiConvo.out_read_cmid)
+    inReadBy: Message.resolveCmid(apiConvo.in_read_cmid, true),
+    outReadBy: Message.resolveCmid(apiConvo.out_read_cmid, true)
   } satisfies Partial<Convo.Convo>
 
   const peerId = Peer.resolveId(apiConvo.peer.id)
