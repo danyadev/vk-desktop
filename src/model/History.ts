@@ -142,32 +142,27 @@ export function insert<T>(
 
     if (startIndex === -1) {
       /**
-       * firstItem.id = 100
-       * firstItemId <= node.toId:
-       * node = { fromId:  98, toId:  99 } false
-       * node = { fromId:  99, toId: 100 } true
-       * node = { fromId: 100, toId: 101 } true
+       * Если нода пересекается с первым вставляемым элементом или находится дальше него,
+       * то первая такая найденная нода является первой пересекаемой со вставляемыми элементами.
+       *
+       * Чисто технически найденная нода может находиться позже последнего вставляемого элемента,
+       * но это возможно только в случае, когда в истории не был размечен гэп в этой зоне,
+       * что должно быть невозможным, так как это нарушает целостность структуры
        */
-      if (firstItem.id <= (node.kind === 'Gap' ? node.toId : node.id)) {
+      const nodeEndBoundary = node.kind === 'Gap' ? node.toId : node.id
+      if (nodeEndBoundary >= firstItem.id) {
         startIndex = index
       }
     }
 
     if (startIndex !== -1 && endIndex === -1) {
-      /**
-       * lastItem.id = 120
-       * lastItem.id <= node.toCmid:
-       * node = { fromId: 118, toId: 119 } false
-       * node = { fromId: 119, toId: 120 } true
-       * node = { fromId: 120, toId: 121 } false
-       */
-      const nodeBoundary = node.kind === 'Gap' ? node.fromId : node.id
-      if (lastItem.id === nodeBoundary) {
+      const nextNode = history[index + 1]
+      const nextNodeStartBoundary =
+        nextNode ? (nextNode.kind === 'Gap' ? nextNode.fromId : nextNode.id) : 0
+      // Если следующей ноды нет или она начинается после последнего элемента,
+      // то текущая нода - последняя пересекаемая вставляемыми элементами
+      if (!nextNode || nextNodeStartBoundary > lastItem.id) {
         endIndex = index
-        break
-      }
-      if (lastItem.id > nodeBoundary) {
-        endIndex = index - 1
         break
       }
     }
@@ -215,8 +210,8 @@ export function insert<T>(
       }
 
       // Разделяем один гэп на два: до истории и после.
-      // Сначала вставляем разделенную нижнюю часть, если начало гэпа
-      // не совпадает с первым элементом
+      // Сначала вставляем разделенную нижнюю часть, если конец гэпа
+      // не совпадает с последним элементом
       if (startNode.toId !== lastItem.id) {
         history.splice(startIndex + 1, 0, {
           kind: 'Gap',
@@ -225,7 +220,7 @@ export function insert<T>(
         })
       }
 
-      // Если начало гэпа совпадает с первым элементом, удаляем верхний гэп и вставляем элементы
+      // Если начало гэпа совпадает с первым элементом, удаляем гэп и вставляем элементы
       if (startNode.fromId === firstItem.id) {
         history.splice(startIndex, 1, ...items)
         return

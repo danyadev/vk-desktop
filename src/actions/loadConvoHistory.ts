@@ -133,7 +133,9 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
       direction,
       count,
       offset,
-      messages
+      messages,
+      hasMoreUp,
+      hasMoreDown
     })
 
     Convo.insert(convo, messages, {
