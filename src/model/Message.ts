@@ -82,8 +82,8 @@ export type ServiceAction =
     }
   | { type: 'unknown' }
 
-export function resolveCmid(cmid: number): Cmid {
-  if (cmid <= 0) {
+export function resolveCmid(cmid: number, allowZero = false): Cmid {
+  if (!allowZero && cmid <= 0) {
     throw new Error('Message.Cmid = ' + cmid)
   }
 
