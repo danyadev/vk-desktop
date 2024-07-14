@@ -6,7 +6,7 @@
     'avatar message indicators';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto;
-  row-gap: 5px;
+  row-gap: 2px;
   padding: 6px 8px;
   margin: 2px 0;
   border-radius: 12px;
@@ -33,7 +33,7 @@
 
 .ConvoListItem__name {
   grid-area: name;
-  align-self: end;
+  align-self: center;
 
   display: flex;
   align-items: center;
