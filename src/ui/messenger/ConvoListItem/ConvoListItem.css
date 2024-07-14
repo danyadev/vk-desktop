@@ -78,12 +78,11 @@
 
 .ConvoListItem__indicators {
   grid-area: indicators;
-  align-self: self-end;
+  align-self: self-start;
 }
 
 .ConvoListItem__indicators:not(:empty) {
   margin-left: 5px;
-  margin-bottom: 3px;
 }
 
 .ConvoListItem__compactCounter {
