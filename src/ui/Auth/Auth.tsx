@@ -59,10 +59,10 @@ export const Auth = defineComponent(() => {
     state.error = null
   }
 
-  async function performAuth(payload: AuthModel.GetAndroidTokenPayload = {}): Promise<void> {
+  async function performAuth(payload: AuthModel.GetMessengerTokenPayload = {}): Promise<void> {
     state.loading = true
 
-    const result = await AuthModel.getAndroidToken(state.login, state.password, payload)
+    const result = await AuthModel.getMessengerToken(state.login, state.password, payload)
 
     switch (result.kind) {
       case 'Success': {
@@ -70,7 +70,7 @@ export const Auth = defineComponent(() => {
           viewer.addTrustedHash(state.login, result.trustedHash)
         }
 
-        await completeAuthWithAndroidToken(result.androidToken)
+        await completeAuthWithMessengerToken(result.messengerToken)
         break
       }
 
@@ -127,8 +127,8 @@ export const Auth = defineComponent(() => {
     state.loading = false
   }
 
-  async function completeAuthWithAndroidToken(androidToken: string) {
-    const appToken = await AuthModel.getAppToken(androidToken, api).catch(() => null)
+  async function completeAuthWithMessengerToken(messengerToken: string) {
+    const appToken = await AuthModel.getAppToken(messengerToken, api).catch(() => null)
 
     if (!appToken) {
       state.isQrCodePage = false
@@ -151,7 +151,7 @@ export const Auth = defineComponent(() => {
       viewer.addAccount({
         ...user,
         accessToken: appToken,
-        androidToken
+        messengerToken
       })
       viewer.setCurrentAccount(user.id)
 
@@ -166,7 +166,7 @@ export const Auth = defineComponent(() => {
   return () => {
     if (state.isQrCodePage) {
       return (
-        <AuthQRPage onCancel={onCloseQrCode} onAuth={completeAuthWithAndroidToken} />
+        <AuthQRPage onCancel={onCloseQrCode} onAuth={completeAuthWithMessengerToken} />
       )
     }
 

@@ -16,12 +16,15 @@ export class QrCodeAuth {
 
   async start(onEvent: (event: QrCodeAuthEvent) => void) {
     try {
-      const anonymToken = await Auth.getAndroidAnonymToken(this.api)
+      const { token: anonymToken } = await this.api.fetch('auth.getAnonymToken', {
+        client_id: Auth.MESSENGER_APP_ID,
+        client_secret: Auth.MESSENGER_APP_SECRET
+      })
       const { authUrl, authHash } = await Auth.getAuthCode(
         this.api,
         anonymToken,
-        Auth.ANDROID_APP_ID,
-        Auth.ANDROID_APP_SCOPE
+        Auth.MESSENGER_APP_ID,
+        Auth.MESSENGER_APP_SCOPE
       )
 
       onEvent({

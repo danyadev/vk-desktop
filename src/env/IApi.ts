@@ -58,7 +58,7 @@ export type FetchManyResponseMethod<RequestMethod extends FetchManyRequestMethod
     : null
 
 export type FetchOptions = {
-  android?: boolean
+  messengerToken?: boolean
   retries?: number
   timeout?: number
   headers?: Record<string, string>

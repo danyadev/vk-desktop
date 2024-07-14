@@ -5,7 +5,7 @@ import { RendererStorage } from 'store/Storage'
 
 export type ViewerUser = Peer.User & {
   accessToken: string
-  androidToken: string
+  messengerToken: string
 }
 
 type Viewer = {
