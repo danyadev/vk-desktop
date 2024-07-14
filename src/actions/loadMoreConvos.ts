@@ -32,6 +32,11 @@ export async function loadMoreConvos() {
     extended: 1
   })
 
+  insertPeers({
+    profiles: response.profiles,
+    groups: response.groups
+  })
+
   for (const apiConvo of response.items) {
     const { convo, peer } = fromApiConvo(apiConvo.conversation, apiConvo.last_message)
 
@@ -48,11 +53,6 @@ export async function loadMoreConvos() {
       peers.set(peer.id, peer)
     }
   }
-
-  insertPeers({
-    profiles: response.profiles,
-    groups: response.groups
-  })
 
   convoList.peerIds = [...new Set(convoList.peerIds)]
     .map(Convo.safeGet)
