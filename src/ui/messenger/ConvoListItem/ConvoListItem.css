@@ -2,7 +2,7 @@
   display: grid;
   position: relative;
   grid-template-areas:
-    'avatar name indicators'
+    'avatar name name'
     'avatar message indicators';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto;
@@ -54,7 +54,7 @@
 .ConvoListItem__message {
   grid-area: message;
   align-self: start;
-  width: calc(100% - 5px);
+
   display: flex;
   overflow: hidden;
   color: var(--vkui--color_text_subhead);
@@ -82,7 +82,8 @@
 }
 
 .ConvoListItem__indicators:not(:empty) {
-  transform: translateY(-3px);
+  margin-left: 5px;
+  margin-bottom: 3px;
 }
 
 .ConvoListItem__compactCounter {

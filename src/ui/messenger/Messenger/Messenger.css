@@ -43,12 +43,12 @@
 
 @media (width > 700px) {
   .Messenger__convoList {
-    width: 45%;
+    width: 42%;
   }
 }
 
-@media (width > 850px) {
+@media (width > 950px) {
   .Messenger__convoList {
-    width: calc(850px * 0.45);
+    width: calc(950px * 0.42);
   }
 }
