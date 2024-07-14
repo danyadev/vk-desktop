@@ -53,7 +53,7 @@
 
 .ConvoListItem__message {
   grid-area: message;
-  align-self: start;
+  align-self: center;
 
   display: flex;
   overflow: hidden;
@@ -78,7 +78,7 @@
 
 .ConvoListItem__indicators {
   grid-area: indicators;
-  align-self: self-start;
+  align-self: center;
 }
 
 .ConvoListItem__indicators:not(:empty) {
