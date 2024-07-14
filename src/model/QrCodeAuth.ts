@@ -65,7 +65,9 @@ export class QrCodeAuth {
               console.warn('[QRCodeAuth] partial token', response)
               onEvent({
                 kind: 'Error',
-                message: this.lang.use('auth_get_app_token_error')
+                message: this.lang.use('auth_get_app_token_error', {
+                  description: 'partial token'
+                })
               })
             } else {
               onEvent({
@@ -77,7 +79,9 @@ export class QrCodeAuth {
             console.warn('[QRCodeAuth] corrupted approve', response)
             onEvent({
               kind: 'Error',
-              message: this.lang.use('auth_get_app_token_error')
+              message: this.lang.use('auth_get_app_token_error', {
+                description: 'no access_token'
+              })
             })
           }
           return

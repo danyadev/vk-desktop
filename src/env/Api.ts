@@ -4,7 +4,7 @@ import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import { useGlobalModal } from 'hooks'
 import { isNonEmptyArray, random, sleep, toUrlParams } from 'misc/utils'
-import { androidUserAgent, appUserAgent } from 'misc/constants'
+import { appUserAgent } from 'misc/constants'
 import { Semaphore } from 'misc/Semaphore'
 
 export const API_VERSION = '5.200'
@@ -243,7 +243,7 @@ export class Api implements IApi.Api {
         body: toUrlParams(fullParams),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'X-User-Agent': fetchOptions.messengerToken ? androidUserAgent : appUserAgent,
+          'X-User-Agent': appUserAgent,
           ...fetchOptions.headers
         },
         signal: abortController.signal

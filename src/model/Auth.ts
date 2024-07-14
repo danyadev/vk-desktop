@@ -247,7 +247,7 @@ export async function getExchangeToken(api: IApi.Api, accessToken: string, userI
     ?.common_token
 }
 
-export async function getAppToken(messengerToken: string, api: IApi.Api): Promise<string | null> {
+export async function getAppToken(messengerToken: string, api: IApi.Api): Promise<string> {
   const APP_ID = 6717234
   const APP_SCOPE = 136297695
 
@@ -264,14 +264,14 @@ export async function getAppToken(messengerToken: string, api: IApi.Api): Promis
   const oauthHash = new URL(fetchedOauth.url).searchParams.get('return_auth_hash')
   if (!oauthHash) {
     console.warn('[Auth.getAppToken] no hash', fetchedOauth.url)
-    return null
+    throw 'no oauth hash'
   }
 
   const oauthResponse = await fetchedOauth.text()
   const anonymToken = oauthResponse.match(/"anonymous_token":"([^"]+)"/)?.[1]
   if (!anonymToken) {
     console.warn('[Auth.getAppToken] no anonym token', { oauthResponse })
-    return null
+    throw 'no anonym token'
   }
 
   const { authCode, authHash } = await getAuthCode(api, anonymToken, APP_ID, 0)
@@ -295,12 +295,12 @@ export async function getAppToken(messengerToken: string, api: IApi.Api): Promis
 
   if (!('super_app_token' in checkResult)) {
     console.warn('[Auth.getAppToken] check failed', checkResult)
-    return null
+    throw 'no super_app_token'
   }
 
   if (checkResult.is_partial) {
     console.warn('[Auth.getAppToken] partial token', checkResult)
-    return null
+    throw 'partial token'
   }
 
   // Этот запрос нужен для получения кук
@@ -370,7 +370,6 @@ export async function getAuthCode(
     anonymous_token: anonymToken,
     device_name: `VK Desktop ${appVersion} at ${platform}`
   }, {
-    // messengerToken: true,
     headers: {
       'X-Origin': 'https://vk.com'
     }
