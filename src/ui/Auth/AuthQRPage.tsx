@@ -9,7 +9,7 @@ import { Spinner } from 'ui/ui/Spinner/Spinner'
 
 type Props = {
   onCancel: () => void
-  onAuth: (androidToken: string) => void
+  onAuth: (messengerToken: string) => void
 }
 
 type State = {

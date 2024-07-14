@@ -70,8 +70,8 @@ type OauthTokenResponse =
   | OauthUserBannedResponse
   | OauthFloodControlResponse
 
-type GetAndroidTokenResult =
-  | { kind: 'Success', userId: number, androidToken: string, trustedHash?: string }
+type GetMessengerTokenResult =
+  | { kind: 'Success', userId: number, messengerToken: string, trustedHash?: string }
   | { kind: 'InvalidCredentials', errorMessage: string }
   | {
       kind: 'RequireTwoFactor'
@@ -82,33 +82,34 @@ type GetAndroidTokenResult =
     }
   | { kind: 'InvalidTwoFactorCode', errorMessage: string }
   | { kind: 'Captcha', captchaImg: string, captchaSid: string }
-  | { kind: 'UserBanned', banMessage: string, androidToken: string }
+  | { kind: 'UserBanned', banMessage: string, messengerToken: string }
   | { kind: 'FloodControl', errorMessage: string }
   | { kind: 'NetworkError' }
   | { kind: 'UnknownError', payload: unknown }
 
-export type GetAndroidTokenPayload = {
+export type GetMessengerTokenPayload = {
   code?: string
   captcha_sid?: string
   captcha_key?: string
 }
 
-export const ANDROID_APP_ID = 2274003
-export const ANDROID_APP_SECRET = 'hHbZxrka2uZ6jB1inYsH'
-export const ANDROID_APP_SCOPE = 'all'
+// VK Messenger Desktop
+export const MESSENGER_APP_ID = 51453752
+export const MESSENGER_APP_SECRET = '4UyuCUsdK8pVCNoeQuGi'
+export const MESSENGER_APP_SCOPE = 'all'
 
-export async function getAndroidToken(
+export async function getMessengerToken(
   login: string,
   password: string,
-  payload: GetAndroidTokenPayload = {}
-): Promise<GetAndroidTokenResult> {
+  payload: GetMessengerTokenPayload = {}
+): Promise<GetMessengerTokenResult> {
   const { lang } = useSettingsStore()
   const viewer = useViewerStore()
 
   const query = toUrlParams({
-    client_id: ANDROID_APP_ID,
-    client_secret: ANDROID_APP_SECRET,
-    scope: ANDROID_APP_SCOPE,
+    client_id: MESSENGER_APP_ID,
+    client_secret: MESSENGER_APP_SECRET,
+    scope: MESSENGER_APP_SCOPE,
     username: login,
     password,
     '2fa_supported': 1,
@@ -137,7 +138,7 @@ export async function getAndroidToken(
             return {
               kind: 'UserBanned',
               banMessage: result.ban_info.message,
-              androidToken: result.ban_info.access_token
+              messengerToken: result.ban_info.access_token
             }
           }
 
@@ -189,11 +190,11 @@ export async function getAndroidToken(
     return {
       kind: 'Success',
       userId: result.user_id,
-      androidToken: result.access_token,
+      messengerToken: result.access_token,
       trustedHash: result.trusted_hash
     }
   } catch (err) {
-    console.warn('[Auth.getAndroidToken]', err)
+    console.warn('[Auth.getMessengerToken]', err)
 
     return {
       kind: 'NetworkError'
@@ -201,7 +202,7 @@ export async function getAndroidToken(
   }
 }
 
-export async function getAppToken(androidToken: string, api: IApi.Api): Promise<string | null> {
+export async function getAppToken(messengerToken: string, api: IApi.Api): Promise<string | null> {
   const APP_ID = 6717234
   const APP_SCOPE = 136297695
 
@@ -231,12 +232,12 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
   const { authCode, authHash } = await getAuthCode(api, anonymToken, APP_ID, 0)
 
   await api.fetch('auth.processAuthCode', {
-    access_token: androidToken,
+    access_token: messengerToken,
     auth_code: authCode,
     action: 0
   })
   await api.fetch('auth.processAuthCode', {
-    access_token: androidToken,
+    access_token: messengerToken,
     auth_code: authCode,
     action: 1
   })
@@ -306,15 +307,6 @@ export async function getAppToken(androidToken: string, api: IApi.Api): Promise<
   return appToken
 }
 
-export async function getAndroidAnonymToken(api: IApi.Api): Promise<string> {
-  const { token } = await api.fetch('auth.getAnonymToken', {
-    client_id: ANDROID_APP_ID,
-    client_secret: ANDROID_APP_SECRET
-  })
-
-  return token
-}
-
 export async function getAuthCode(
   api: IApi.Api,
   anonymToken: string,
@@ -333,7 +325,7 @@ export async function getAuthCode(
     anonymous_token: anonymToken,
     device_name: `VK Desktop ${appVersion} at ${platform}`
   }, {
-    android: true,
+    messengerToken: true,
     headers: {
       'X-Origin': 'https://vk.com'
     }

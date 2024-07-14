@@ -232,7 +232,7 @@ export class Api implements IApi.Api {
       )
 
       const fullParams: IApi.MethodParams<Method> = {
-        access_token: fetchOptions.android ? viewer?.androidToken : viewer?.accessToken,
+        access_token: fetchOptions.messengerToken ? viewer?.messengerToken : viewer?.accessToken,
         v: API_VERSION,
         lang,
         ...params
@@ -243,7 +243,7 @@ export class Api implements IApi.Api {
         body: toUrlParams(fullParams),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'X-User-Agent': fetchOptions.android ? androidUserAgent : appUserAgent,
+          'X-User-Agent': fetchOptions.messengerToken ? androidUserAgent : appUserAgent,
           ...fetchOptions.headers
         },
         signal: abortController.signal
