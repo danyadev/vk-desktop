@@ -80,12 +80,16 @@ export const Auth = defineComponent(() => {
         }
 
         if (isService) {
-          state.error = lang.use('auth_incorrect_profile_type', { type: 'service' })
+          state.error = lang.use('auth_incorrect_profile_type', {
+            type: 'service'
+          })
           break
         }
 
         if (isPartial) {
-          state.error = lang.use('auth_get_app_token_error')
+          state.error = lang.use('auth_get_app_token_error', {
+            description: 'partial token'
+          })
           break
         }
 
@@ -151,17 +155,21 @@ export const Auth = defineComponent(() => {
   }
 
   async function completeAuthWithMessengerToken(messengerToken: string) {
-    const appToken = await AuthModel.getAppToken(messengerToken, api).catch(() => null)
+    const appToken = await AuthModel.getAppToken(messengerToken, api)
+      .then((token) => ({ kind: 'Token', token }) as const)
+      .catch((error: unknown) => ({ kind: 'Error', error }) as const)
 
-    if (!appToken) {
+    if (appToken.kind === 'Error') {
       state.isQrCodePage = false
-      state.error = lang.use('auth_get_app_token_error')
+      state.error = lang.use('auth_get_app_token_error', {
+        description: String(appToken.error)
+      })
       return
     }
 
     try {
       const [apiUser] = await api.fetch('users.get', {
-        access_token: appToken,
+        access_token: appToken.token,
         fields: PEER_FIELDS
       }, { retries: 3 })
       if (!apiUser) {
@@ -177,7 +185,7 @@ export const Auth = defineComponent(() => {
 
       viewer.addAccount({
         ...user,
-        accessToken: appToken,
+        accessToken: appToken.token,
         messengerToken,
         messengerExchangeToken: exchangeToken
       })
