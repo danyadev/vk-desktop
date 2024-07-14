@@ -6,9 +6,10 @@ import { getPlatform, toUrlParams } from 'misc/utils'
 import { appVersion } from 'misc/constants'
 
 type OauthSuccessResponse = {
-  user_id: number
-  expires_in: number
-  access_token: string
+  silent_token: string
+  silent_token_uuid: string
+  /** На момент написания было 600 = 10 минут */
+  silent_token_ttl: number
   /** Приходит при наличии 2fa */
   trusted_hash?: string
 }
@@ -71,7 +72,7 @@ type OauthTokenResponse =
   | OauthFloodControlResponse
 
 type GetMessengerTokenResult =
-  | { kind: 'Success', userId: number, messengerToken: string, trustedHash?: string }
+  | { kind: 'Success', silentToken: string, uuid: string, trustedHash?: string }
   | { kind: 'InvalidCredentials', errorMessage: string }
   | {
       kind: 'RequireTwoFactor'
@@ -98,7 +99,7 @@ export const MESSENGER_APP_ID = 51453752
 export const MESSENGER_APP_SECRET = '4UyuCUsdK8pVCNoeQuGi'
 export const MESSENGER_APP_SCOPE = 'all'
 
-export async function getMessengerToken(
+export async function getMessengerSilentToken(
   login: string,
   password: string,
   payload: GetMessengerTokenPayload = {}
@@ -189,8 +190,8 @@ export async function getMessengerToken(
 
     return {
       kind: 'Success',
-      userId: result.user_id,
-      messengerToken: result.access_token,
+      silentToken: result.silent_token,
+      uuid: result.silent_token_uuid,
       trustedHash: result.trusted_hash
     }
   } catch (err) {
@@ -200,6 +201,50 @@ export async function getMessengerToken(
       kind: 'NetworkError'
     }
   }
+}
+
+export async function getMessengerAnonymToken(api: IApi.Api) {
+  const { token } = await api.fetch('auth.getAnonymToken', {
+    client_id: MESSENGER_APP_ID,
+    client_secret: MESSENGER_APP_SECRET
+  })
+
+  return token
+}
+
+export async function exchangeSilentToken(
+  api: IApi.Api,
+  anonymToken: string,
+  silentToken: string,
+  uuid: string
+) {
+  const {
+    access_token: accessToken,
+    is_partial: isPartial,
+    is_service: isService,
+    additional_signup_required: isSignupRequired
+  } = await api.fetch('auth.exchangeSilentAuthToken', {
+    access_token: anonymToken,
+    token: silentToken,
+    uuid
+  })
+
+  return {
+    accessToken,
+    isPartial,
+    isService,
+    isSignupRequired
+  }
+}
+
+export async function getExchangeToken(api: IApi.Api, accessToken: string, userId: number) {
+  const response = await api.fetch('auth.getExchangeToken', {
+    access_token: accessToken
+  })
+
+  return response.users_exchange_tokens
+    .find((item) => item.user_id === userId)
+    ?.common_token
 }
 
 export async function getAppToken(messengerToken: string, api: IApi.Api): Promise<string | null> {
@@ -325,7 +370,7 @@ export async function getAuthCode(
     anonymous_token: anonymToken,
     device_name: `VK Desktop ${appVersion} at ${platform}`
   }, {
-    messengerToken: true,
+    // messengerToken: true,
     headers: {
       'X-Origin': 'https://vk.com'
     }

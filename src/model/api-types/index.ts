@@ -1,10 +1,14 @@
 import {
   AuthCheckAuthCodeParams,
   AuthCheckAuthCodeResponse,
+  AuthExchangeSilentAuthTokenParams,
+  AuthExchangeSilentAuthTokenResponse,
   AuthGetAnonymTokenParams,
   AuthGetAnonymTokenResponse,
   AuthGetAuthCodeParams,
   AuthGetAuthCodeResponse,
+  AuthGetExchangeTokenParams,
+  AuthGetExchangeTokenResponse,
   AuthGetOauthTokenParams,
   AuthGetOauthTokenResponse,
   AuthProcessAuthCodeParams,
@@ -71,6 +75,14 @@ export type Methods = {
   'auth.processAuthCode': {
     params: AuthProcessAuthCodeParams
     response: AuthProcessAuthCodeResponse
+  }
+  'auth.exchangeSilentAuthToken': {
+    params: AuthExchangeSilentAuthTokenParams
+    response: AuthExchangeSilentAuthTokenResponse
+  }
+  'auth.getExchangeToken': {
+    params: AuthGetExchangeTokenParams
+    response: AuthGetExchangeTokenResponse
   }
 
   'captcha.force': {

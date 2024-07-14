@@ -29,8 +29,10 @@ export const ru = {
   auth_resend_sms: 'Повторить отправку SMS',
   auth_send_sms: 'Отправить SMS',
 
-  auth_user_load_error: 'Ошибка получения данных о пользователе',
+  auth_profile_with_hanging_signup: 'Завершите регистрацию на сайте и повторите попытку',
+  auth_incorrect_profile_type: 'Невозможно авторизовать профиль с таким типом ({type})',
   auth_get_app_token_error: 'Ошибка получения токена приложения',
+  auth_user_load_error: 'Ошибка получения данных о пользователе',
   auth_network_error: 'Ошибка сети',
   auth_unknown_error: 'Неизвестная ошибка',
   auth_qr_code_declined: 'Запрос на авторизацию отклонен',

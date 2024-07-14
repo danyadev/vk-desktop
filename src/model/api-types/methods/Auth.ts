@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 // auth.validatePhone
 export type AuthValidatePhoneParams = {
   sid: string
@@ -103,3 +105,32 @@ export type AuthProcessAuthCodeResponse =
   // Не описывал весь ответ, так как он не используется
   | { auth_info: { auth_id: string } }
   | { status: 1 }
+
+// auth.exchangeSilentAuthToken
+export type AuthExchangeSilentAuthTokenParams = {
+  token: string
+  uuid: string
+}
+
+export type AuthExchangeSilentAuthTokenResponse = {
+  access_token: string
+  access_token_id: string
+  additional_signup_required: boolean
+  expires_in: number
+  is_partial: boolean
+  is_service: boolean
+  source: number
+  source_description: string
+  user_id: number
+}
+
+// auth.getExchangeToken
+export type AuthGetExchangeTokenParams = {}
+
+export type AuthGetExchangeTokenResponse = {
+  users_exchange_tokens: Array<{
+    user_id: number
+    profile_type: 0 | 2
+    common_token: string
+  }>
+}

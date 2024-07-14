@@ -62,15 +62,38 @@ export const Auth = defineComponent(() => {
   async function performAuth(payload: AuthModel.GetMessengerTokenPayload = {}): Promise<void> {
     state.loading = true
 
-    const result = await AuthModel.getMessengerToken(state.login, state.password, payload)
+    const result = await AuthModel.getMessengerSilentToken(state.login, state.password, payload)
 
     switch (result.kind) {
       case 'Success': {
+        const anonymToken = await AuthModel.getMessengerAnonymToken(api)
+        const {
+          accessToken,
+          isPartial,
+          isService,
+          isSignupRequired
+        } = await AuthModel.exchangeSilentToken(api, anonymToken, result.silentToken, result.uuid)
+
+        if (isSignupRequired) {
+          state.error = lang.use('auth_profile_with_hanging_signup')
+          break
+        }
+
+        if (isService) {
+          state.error = lang.use('auth_incorrect_profile_type', { type: 'service' })
+          break
+        }
+
+        if (isPartial) {
+          state.error = lang.use('auth_get_app_token_error')
+          break
+        }
+
         if (result.trustedHash) {
           viewer.addTrustedHash(state.login, result.trustedHash)
         }
 
-        await completeAuthWithMessengerToken(result.messengerToken)
+        await completeAuthWithMessengerToken(accessToken)
         break
       }
 
@@ -141,9 +164,13 @@ export const Auth = defineComponent(() => {
         access_token: appToken,
         fields: PEER_FIELDS
       }, { retries: 3 })
-
       if (!apiUser) {
         throw new Error('API не вернул пользователя')
+      }
+
+      const exchangeToken = await AuthModel.getExchangeToken(api, messengerToken, apiUser.id)
+      if (!exchangeToken) {
+        throw new Error('API не вернул exchangeToken')
       }
 
       const user = fromApiUser(apiUser)
@@ -151,7 +178,8 @@ export const Auth = defineComponent(() => {
       viewer.addAccount({
         ...user,
         accessToken: appToken,
-        messengerToken
+        messengerToken,
+        messengerExchangeToken: exchangeToken
       })
       viewer.setCurrentAccount(user.id)
 
