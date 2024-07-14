@@ -1,6 +1,7 @@
 export type VariablesTypings<T = string | number> = {
   auth_sms_with_code_sent: { phone: T }
   auth_resend_sms_at: { time: T }
+  auth_incorrect_profile_type: { type: T }
 
   me_convo_list_author: { author: T }
   me_convo_list_date_mins: { mins: T }
