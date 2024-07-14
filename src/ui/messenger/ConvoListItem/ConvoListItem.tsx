@@ -71,7 +71,6 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           </span>
           <span class="ConvoListItem__date">{lastMessage.value && <MessageDate message={lastMessage.value} />}</span>
         </div>
-
         <div class="ConvoListItem__indicators">
           <Counter
             count={props.convo.unreadCount}

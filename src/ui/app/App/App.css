@@ -18,7 +18,7 @@
 }
 
 /* Скроллбар меняется с дефолтного на кастомный только при выставлении стилей в этом селекторе */
-.App:not(.App--isMacOS)::-webkit-scrollbar {
+.App:not(.App--isMacOS) ::-webkit-scrollbar {
   width: 16px;
 }
 
