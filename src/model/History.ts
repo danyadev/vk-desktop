@@ -117,12 +117,13 @@ export function around<T>(history: History<T>, aroundId: number): {
 
 /**
  * Вставляет в историю непрерывную часть истории
+ *
+ * При реализации закладывалась идея, что история консистентна:
+ * - если между нодами есть пустое пространство, значит айтемы в этой области недостижимы
+ * - айтемы могут быть вставлены либо полностью пересекаясь с существующими нодами,
+ *   либо выходить за нижнюю границу, чтобы добавить новые сообщения в историю
  */
-export function insert<T>(
-  history: History<T>,
-  items: Array<Item<T>>,
-  hasMore: { up: boolean, down: boolean }
-) {
+export function insert<T>(history: History<T>, items: Array<Item<T>>) {
   const firstItem = items[0]
   const lastItem = items.at(-1)
 
@@ -171,97 +172,24 @@ export function insert<T>(
   const startNode = history[startIndex]
   const endNode = history[endIndex]
 
-  /**
-   * Если стартовой ноды не нашлось, значит вставляемая история не налезает на
-   * уже существующую историю, а добавляется после нее
-   */
-  if (!startNode) {
-    if (hasMore.up) {
-      const lastNode = history.at(-1)
-      history.push({
-        kind: 'Gap',
-        fromId: lastNode
-          ? (lastNode.kind === 'Gap' ? lastNode.toId : lastNode.id) + 1
-          : 1,
-        toId: lastItem.id - 1
-      })
-    }
+  const newNodes: History<T> = []
 
-    history.push(...items)
-
-    if (hasMore.down) {
-      history.push({
-        kind: 'Gap',
-        fromId: lastItem.id + 1,
-        toId: Infinity
-      })
-    }
-
-    return
+  // Если стартовый гэп начался до вставляемых элементов, то надо сохранить кусок гэпа до нас
+  if (startNode && startNode.kind === 'Gap' && startNode.fromId < firstItem.id) {
+    newNodes.push({ kind: 'Gap', fromId: startNode.fromId, toId: firstItem.id - 1 })
   }
 
-  if (startNode.kind === 'Gap') {
-    // Вся вставляемая история помещается внутрь одного гэпа; hasMore можно проигнорировать
-    if (startNode === endNode) {
-      // Если гэп совпадает со вставляемой историей, удаляем гэп и вставляем элементы
-      if (startNode.fromId === firstItem.id && startNode.toId === lastItem.id) {
-        history.splice(startIndex, 1, ...items)
-        return
-      }
+  newNodes.push(...items)
 
-      // Разделяем один гэп на два: до истории и после.
-      // Сначала вставляем разделенную нижнюю часть, если конец гэпа
-      // не совпадает с последним элементом
-      if (startNode.toId !== lastItem.id) {
-        history.splice(startIndex + 1, 0, {
-          kind: 'Gap',
-          fromId: lastItem.id + 1,
-          toId: startNode.toId
-        })
-      }
-
-      // Если начало гэпа совпадает с первым элементом, удаляем гэп и вставляем элементы
-      if (startNode.fromId === firstItem.id) {
-        history.splice(startIndex, 1, ...items)
-        return
-      }
-
-      // Иначе обрезаем верхний гэп и вставляем элементы
-      startNode.toId = firstItem.id - 1
-      history.splice(startIndex + 1, 0, ...items)
-      return
-    }
-
-    // let deleteStartNode = false
-    // if (startNode.fromId > firstItem.id) {
-    //   // Мы полностью перекрываем начальный гэп и можем его удалить.
-    //   // Сделаем позже, чтобы не сдвинуть индексы
-    //   deleteStartNode = true
-    // } else {
-    //   // Наш контент начинается после начала гэпа, обрезаем его
-    //   startNode.toId = firstItem.id - 1
-    // }
-    //
-    // // Начальную ноду мы полностью
-    // history.splice(startIndex, 0, ...items)
-    //
-    // history.splice()
+  // Если конечный гэп продолжается после нас, то нужно сохранить кусок гэпа после нас
+  if (endNode && endNode.kind === 'Gap' && endNode.toId > lastItem.id) {
+    newNodes.push({ kind: 'Gap', fromId: lastItem.id + 1, toId: endNode.toId })
   }
 
-  // Если нет конечной ноды, а стартовая не-гэп, заменяем всю историю
-  // начиная со стартовой ноды на нашу
-  // if (!endNode) {
-  //   history.splice(startIndex, history.length, ...items)
-  //   return
-  // }
-  //
-  // if (endNode.kind === 'Gap') {
-  //   // Если конечная нода
-  //   if (endNode.toId <= lastItem.id) {
-  //     history.splice(startIndex, endIndex, ...items)
-  //     return
-  //   }
-  // }
-
-  throw 'not implemented yet'
+  // Если не нашелся startIndex, значит вставляемые элементы находятся после всей истории
+  if (startIndex === -1) {
+    history.push(...newNodes)
+  } else {
+    history.splice(startIndex, endIndex - startIndex + 1, ...newNodes)
+  }
 }

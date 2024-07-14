@@ -83,18 +83,11 @@ export function sorter(a: Convo, b: Convo) {
   return b.minorSortId - a.minorSortId
 }
 
-export function insert(
-  convo: Convo,
-  messages: Message.Message[],
-  hasMore: { up: boolean, down: boolean }
-) {
-  console.log('before', JSON.parse(JSON.stringify(convo.history)))
+export function insert(convo: Convo, messages: Message.Message[]) {
   History.insert(
     convo.history,
-    messages.map((message) => History.toItem(message.cmid, message)),
-    hasMore
+    messages.map((message) => History.toItem(message.cmid, message))
   )
-  console.log('after', JSON.parse(JSON.stringify(convo.history)))
 }
 
 export function isCasper(convo: Convo): boolean {

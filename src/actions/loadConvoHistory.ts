@@ -30,8 +30,6 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
 
   let count = 30
   let offset = 0
-  let optimizedUp = false
-  let optimizedDown = false
 
   switch (direction) {
     case 'around': {
@@ -47,11 +45,10 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
       const messagesToGapEnd = gap.toId - startCmid + 1
       if (messagesToGapEnd <= count) {
         offset = -messagesToGapEnd + 1
-        optimizedDown = true
-        break
+      } else {
+        // Грузим 70% сообщений новее и 30% сообщений старше
+        offset = -Math.floor(count * 0.7)
       }
-      // Грузим 70% сообщений новее и 30% сообщений старше
-      offset = -Math.floor(count * 0.7)
       break
     }
 
@@ -68,7 +65,6 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
       const messagesToGapStart = startCmid - gap.fromId + 1
       if (messagesToGapStart <= count) {
         count = messagesToGapStart
-        optimizedUp = true
       }
       break
     }
@@ -87,7 +83,6 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
       const messagesToGapEnd = gap.toId - startCmid + 1
       if (messagesToGapEnd <= count) {
         count = messagesToGapEnd
-        optimizedDown = true
       }
       // Грузим в направлении новых сообщений, но включаем и сам startCmid
       offset = -count + 1
@@ -117,31 +112,8 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
 
     // Апи возвращает сообщения от новых к старым, а мы храним историю со старых до новых
     const messages = items.map(fromApiMessage).reverse()
-    const hasMoreUp =
-      (direction === 'up' || direction === 'around') &&
-      !optimizedUp &&
-      items.length === count
-    const hasMoreDown =
-      (direction === 'down' || direction === 'around') &&
-      !optimizedDown &&
-      items.length === count
 
-    console.log('loaded history', {
-      peerId,
-      startCmid,
-      gap,
-      direction,
-      count,
-      offset,
-      messages,
-      hasMoreUp,
-      hasMoreDown
-    })
-
-    Convo.insert(convo, messages, {
-      up: hasMoreUp,
-      down: hasMoreDown
-    })
+    Convo.insert(convo, messages)
   } catch (err) {
     // TODO: обработка ошибки в интерфейсе
     console.warn('Ошибка загрузки истории', err)
