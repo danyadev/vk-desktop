@@ -8,12 +8,14 @@ type Props = {
   message: Message.Service
 }
 
-export const ServiceMessage = defineComponent<Props>(({ message }) => {
+export const ServiceMessage = defineComponent<Props>((props) => {
   const { lang } = useEnv()
-  const author = Peer.safeGet(message.authorId)
+  const author = Peer.safeGet(props.message.authorId)
   const gender = author.kind === 'User' ? author.gender : 'unknown'
 
   return () => {
+    const { message } = props
+
     switch (message.action.type) {
       case 'chat_create':
         return lang.useGender('me_service_chat_create', gender, {

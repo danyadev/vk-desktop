@@ -2,15 +2,11 @@ import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, shallo
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
-import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv } from 'hooks'
-import { exhaustivenessCheck, NonEmptyArray } from 'misc/utils'
-import { ConvoMessage } from 'ui/messenger/ConvoMessage/ConvoMessage'
-import { ExpiredMessage } from 'ui/messenger/ExpiredMessage/ExpiredMessage'
-import { ServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
-import { Avatar } from 'ui/ui/Avatar/Avatar'
+import { NonEmptyArray } from 'misc/utils'
+import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ConvoHistory.css'
@@ -188,41 +184,4 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
   }
 }, {
   props: ['items']
-})
-
-type MessagesStackProps = {
-  messages: NonEmptyArray<Message.Message>
-}
-
-const MessagesStack = defineComponent<MessagesStackProps>((props) => {
-  const author = computed(() => Peer.safeGet(props.messages[0].authorId))
-  const isOut = computed(() => props.messages[0].isOut)
-
-  const renderMessage = (message: Message.Message) => {
-    switch (message.kind) {
-      case 'Normal':
-        return <ConvoMessage message={message} />
-      case 'Service':
-        return <ServiceMessage message={message} />
-      case 'Expired':
-        return <ExpiredMessage count={1} />
-      default:
-        return exhaustivenessCheck(message)
-    }
-  }
-
-  return () => (
-    <div class={['MessagesStack', isOut.value && 'MessagesStack--out']}>
-      {!isOut.value && <Avatar class="MessagesStack__avatar" peer={author.value} size={32} />}
-      <div class="MessagesStack__messages">
-        {props.messages.map((message) => (
-          <div class="MessagesStack__message" data-cmid={message.cmid} key={message.cmid}>
-            {renderMessage(message)}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}, {
-  props: ['messages']
 })

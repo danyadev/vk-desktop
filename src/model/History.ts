@@ -53,12 +53,8 @@ export function around<T>(history: History<T>, aroundId: number): {
   gapAround?: Gap
   gapAfter?: Gap
 } {
-  const aroundIndex = history.findIndex((node) => (
-    node.kind === 'Gap'
-      ? aroundId >= node.fromId && aroundId <= node.toId
-      : aroundId === node.id
-  ))
-  const aroundNode = history[aroundIndex]
+  const aroundIndex = findNode(history, aroundId, true)
+  const aroundNode = aroundIndex !== null && history[aroundIndex]
 
   if (!aroundNode) {
     return {

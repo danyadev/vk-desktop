@@ -24,33 +24,3 @@
 .ConvoHistory__spinner {
   margin: 16px auto;
 }
-
-/* ====== */
-
-.MessagesStack {
-  display: flex;
-  align-items: flex-end;
-  padding: 4px;
-}
-
-.MessagesStack--out {
-  justify-content: flex-end;
-}
-
-.MessagesStack__avatar {
-  position: sticky;
-  bottom: 2px;
-  margin-right: 8px;
-}
-
-.MessagesStack__messages {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  min-width: 0;
-}
-
-.MessagesStack--out .MessagesStack__messages {
-  align-items: flex-end;
-}

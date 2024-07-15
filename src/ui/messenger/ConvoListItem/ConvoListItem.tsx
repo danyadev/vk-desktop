@@ -69,7 +69,9 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
             <MessagePreview convo={props.convo} />
           </span>
-          <span class="ConvoListItem__date">{lastMessage.value && <MessageDate message={lastMessage.value} />}</span>
+          <span class="ConvoListItem__date">
+            {lastMessage.value && <MessageDate message={lastMessage.value} />}
+          </span>
         </div>
         <div class="ConvoListItem__indicators">
           <Counter
