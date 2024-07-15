@@ -36,6 +36,8 @@ export async function loadConvoHistory({
 
   let count = 20
   let offset = 0
+  let reachedUpperBoundary = false
+  let reachedLowerBoundary = false
 
   switch (direction) {
     case 'around': {
@@ -51,10 +53,11 @@ export async function loadConvoHistory({
       const messagesToGapEnd = gap.toId - startCmid + 1
       if (messagesToGapEnd <= count) {
         offset = -messagesToGapEnd + 1
-      } else {
-        // Грузим 70% сообщений новее и 30% сообщений старше
-        offset = -Math.floor(count * 0.7)
+        reachedLowerBoundary = true
+        break
       }
+      // Грузим 70% сообщений новее и 30% сообщений старше
+      offset = -Math.floor(count * 0.7)
       break
     }
 
@@ -71,6 +74,7 @@ export async function loadConvoHistory({
       const messagesToGapStart = startCmid - gap.fromId + 1
       if (messagesToGapStart <= count) {
         count = messagesToGapStart
+        reachedUpperBoundary = true
       }
       break
     }
@@ -89,6 +93,7 @@ export async function loadConvoHistory({
       const messagesToGapEnd = gap.toId - startCmid + 1
       if (messagesToGapEnd <= count) {
         count = messagesToGapEnd
+        reachedLowerBoundary = true
       }
       // Грузим в направлении новых сообщений, но включаем и сам startCmid
       offset = -count + 1
@@ -120,8 +125,19 @@ export async function loadConvoHistory({
 
     // Апи возвращает сообщения от новых к старым, а мы храним историю со старых до новых
     const messages = items.map(fromApiMessage).reverse()
+    const hasMoreUp =
+      (direction === 'up' || direction === 'around') &&
+      !reachedUpperBoundary &&
+      items.length === count
+    const hasMoreDown =
+      (direction === 'down' || direction === 'around') &&
+      !reachedLowerBoundary &&
+      items.length === count
 
-    Convo.insert(convo, messages)
+    Convo.insert(convo, messages, {
+      up: hasMoreUp,
+      down: hasMoreDown
+    })
     onHistoryInserted(messages)
   } catch (err) {
     // TODO: обработка ошибки в интерфейсе

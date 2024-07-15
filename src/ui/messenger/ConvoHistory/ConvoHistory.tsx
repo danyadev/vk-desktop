@@ -63,7 +63,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
        * Дело в том, что возврат ответа из асинхронной операции происходит в отдельной микротаске,
        * а перед выполнением этой микротаски могут успеть исполниться другие макро- и микротаски.
        * Так и происходит: после окончания асинхронного loadConvoHistory у нас уже перерендерен
-       * компонент и обновлен дом, из-за чего мы не можем достать
+       * компонент и обновлен дом, из-за чего мы не можем достать предыдущий scrollHeight
        */
       onHistoryInserted(insertedMessages) {
         correctScrollPosition(insertedMessages, direction, startCmid)

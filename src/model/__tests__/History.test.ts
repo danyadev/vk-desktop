@@ -4,14 +4,15 @@ import * as History from 'model/History'
 describe(History.insert.name, () => {
   const insert = (
     history: Array<number | [number, number]>,
-    items: number[]
+    items: number[],
+    { up = true, down = true } = {}
   ) => {
     const actualHistory = history.map((id) => (
       Array.isArray(id) ? History.toGap(id[0], id[1]) : History.toItem(id, null)
     ))
     const actualItems = items.map((id) => History.toItem(id, null))
 
-    History.insert(actualHistory, actualItems)
+    History.insert(actualHistory, actualItems, { up, down })
 
     return actualHistory.map((node) => (
       node.kind === 'Gap' ? [node.fromId, node.toId] : node.id
@@ -124,5 +125,74 @@ describe(History.insert.name, () => {
       .toEqual([[1, 1], 2, 3])
     expect(insert([[1, 2]], [3, 4]))
       .toEqual([[1, 2], 3, 4])
+  })
+
+  test('insert with updating boundaries', () => {
+    expect(insert([[1, 4]], [2, 3, 4], { up: false }))
+      .toEqual([2, 3, 4])
+    expect(insert([[1, 4]], [1, 2, 3], { down: false }))
+      .toEqual([1, 2, 3])
+    expect(insert([[1, 4]], [2, 3], { up: false, down: false }))
+      .toEqual([2, 3])
+  })
+
+  /**
+   * В случае с историей сообщений, могут быть не полностью удаленные сообщения,
+   * которые могут быть восстановлены. В таком случае нужно уметь вставлять в айтемы в пустые зоны
+   */
+
+  test('insert in empty zones near items', () => {
+    expect(insert([1], [2]))
+      .toEqual([1, 2])
+    expect(insert([2], [1]))
+      .toEqual([1, 2])
+
+    expect(insert([2], [1, 2]))
+      .toEqual([1, 2])
+    expect(insert([2], [2, 3]))
+      .toEqual([2, 3])
+
+    expect(insert([2], [1, 2, 3]))
+      .toEqual([1, 2, 3])
+  })
+
+  test('insert in empty zones near gaps', () => {
+    expect(insert([[1, 1]], [2]))
+      .toEqual([[1, 1], 2])
+    expect(insert([[2, 2]], [1]))
+      .toEqual([1, [2, 2]])
+
+    expect(insert([[2, 2]], [1, 2]))
+      .toEqual([1, 2])
+    expect(insert([[2, 2]], [2, 3]))
+      .toEqual([2, 3])
+
+    expect(insert([[2, 2]], [1, 2, 3]))
+      .toEqual([1, 2, 3])
+
+    expect(insert([[1, 2], [4, 5]], [3]))
+      .toEqual([[1, 2], 3, [4, 5]])
+    expect(insert([[1, 2], [4, 5]], [2, 3]))
+      .toEqual([[1, 1], 2, 3, [4, 5]])
+    expect(insert([[1, 2], [4, 5]], [3, 4]))
+      .toEqual([[1, 2], 3, 4, [5, 5]])
+    expect(insert([[1, 2], [4, 5]], [2, 4]))
+      .toEqual([[1, 1], 2, 4, [5, 5]])
+    expect(insert([[1, 2], [4, 5]], [2, 3, 4]))
+      .toEqual([[1, 1], 2, 3, 4, [5, 5]])
+
+    expect(insert([[1, 2], [4, 5]], [3], { up: false }))
+      .toEqual([3, [4, 5]])
+    expect(insert([[1, 2], [4, 5]], [3], { down: false }))
+      .toEqual([[1, 2], 3])
+    expect(insert([[1, 2], [4, 5]], [3], { up: false, down: false }))
+      .toEqual([3])
+
+    expect(insert([[1, 2], [4, 5]], [2, 3, 4], { up: false }))
+      .toEqual([2, 3, 4, [5, 5]])
+    expect(insert([[1, 2], [4, 5]], [2, 3, 4], { down: false }))
+      .toEqual([[1, 1], 2, 3, 4])
+    expect(insert([[1, 2], [4, 5]], [2, 3, 4], { up: false, down: false }))
+      .toEqual([2, 3, 4])
   })
 })

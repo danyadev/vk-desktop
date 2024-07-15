@@ -83,10 +83,15 @@ export function sorter(a: Convo, b: Convo) {
   return b.minorSortId - a.minorSortId
 }
 
-export function insert(convo: Convo, messages: Message.Message[]) {
+export function insert(
+  convo: Convo,
+  messages: Message.Message[],
+  hasMore: { up: boolean, down: boolean }
+) {
   History.insert(
     convo.history,
-    messages.map((message) => History.toItem(message.cmid, message))
+    messages.map((message) => History.toItem(message.cmid, message)),
+    hasMore
   )
 }
 

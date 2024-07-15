@@ -119,11 +119,17 @@ export function around<T>(history: History<T>, aroundId: number): {
  * Вставляет в историю непрерывную часть истории
  *
  * При реализации закладывалась идея, что история консистентна:
- * - если между нодами есть пустое пространство, значит айтемы в этой области недостижимы
- * - айтемы могут быть вставлены либо полностью пересекаясь с существующими нодами,
- *   либо выходить за нижнюю границу, чтобы добавить новые сообщения в историю
+ * - если между нодами есть пустое пространство, значит элементы в этой области недостижимы
+ * - при запросе истории из апи можно спокойно учитывать это и уменьшать количество загружаемых
+ *   элементов до границ гэпов
+ * - однако допускается ситуация, когда элемент считался удаленным и его исключили из истории,
+ *   а затем приходит insert с этим элементом
  */
-export function insert<T>(history: History<T>, items: Array<Item<T>>) {
+export function insert<T>(
+  history: History<T>,
+  items: Array<Item<T>>,
+  hasMore: { up: boolean, down: boolean }
+) {
   const firstItem = items[0]
   const lastItem = items.at(-1)
 
@@ -146,9 +152,8 @@ export function insert<T>(history: History<T>, items: Array<Item<T>>) {
        * Если нода пересекается с первым вставляемым элементом или находится дальше него,
        * то первая такая найденная нода является первой пересекаемой со вставляемыми элементами.
        *
-       * Чисто технически найденная нода может находиться позже последнего вставляемого элемента,
-       * но это возможно только в случае, когда в истории не был размечен гэп в этой зоне,
-       * что должно быть невозможным, так как это нарушает целостность структуры
+       * Однако найденная нода может находиться позже последнего вставляемого элемента,
+       * но это возможно только в случае, когда элемент был удален и теперь восстановился
        */
       const nodeEndBoundary = node.kind === 'Gap' ? node.toId : node.id
       if (nodeEndBoundary >= firstItem.id) {
@@ -172,24 +177,43 @@ export function insert<T>(history: History<T>, items: Array<Item<T>>) {
   const startNode = history[startIndex]
   const endNode = history[endIndex]
 
+  // Если не нашлась стартовая нода, значит вставляемые элементы находятся после всей истории
+  if (!startNode || !endNode) {
+    history.push(...items)
+    return
+  }
+
+  // Если стартовая нода оказалась дальше последнего сообщения, значит вставляемые айтемы
+  // находятся перед стартовой ноды, просто вставляем их перед нодой
+  const startNodeStartBoundary = startNode.kind === 'Gap' ? startNode.fromId : startNode.id
+  if (startNode === endNode && startNodeStartBoundary > lastItem.id) {
+    // Если сверху гэп, а мы поняли, что выше сообщений нет, то удаляем верхний гэп.
+    // Так же, если снизу гэп, а мы поняли, что ниже сообщений нет, то удаляем нижний гэп
+    const deleteTopGap = startNode.kind === 'Gap' && !hasMore.up
+    const deleteBottomGap = endNode.kind === 'Gap' && !hasMore.down
+
+    const fromIndex = deleteTopGap ? startIndex - 1 : startIndex
+    let deleteCount = 0
+    deleteTopGap && deleteCount++
+    deleteBottomGap && deleteCount++
+
+    history.splice(fromIndex, deleteCount, ...items)
+    return
+  }
+
   const newNodes: History<T> = []
 
   // Если стартовый гэп начался до вставляемых элементов, то надо сохранить кусок гэпа до нас
-  if (startNode && startNode.kind === 'Gap' && startNode.fromId < firstItem.id) {
+  if (hasMore.up && startNode && startNode.kind === 'Gap' && startNode.fromId < firstItem.id) {
     newNodes.push({ kind: 'Gap', fromId: startNode.fromId, toId: firstItem.id - 1 })
   }
 
   newNodes.push(...items)
 
   // Если конечный гэп продолжается после нас, то нужно сохранить кусок гэпа после нас
-  if (endNode && endNode.kind === 'Gap' && endNode.toId > lastItem.id) {
+  if (hasMore.down && endNode && endNode.kind === 'Gap' && endNode.toId > lastItem.id) {
     newNodes.push({ kind: 'Gap', fromId: lastItem.id + 1, toId: endNode.toId })
   }
 
-  // Если не нашелся startIndex, значит вставляемые элементы находятся после всей истории
-  if (startIndex === -1) {
-    history.push(...newNodes)
-  } else {
-    history.splice(startIndex, endIndex - startIndex + 1, ...newNodes)
-  }
+  history.splice(startIndex, endIndex - startIndex + 1, ...newNodes)
 }
