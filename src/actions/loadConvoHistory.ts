@@ -13,13 +13,19 @@ type Props = {
   startCmid: Message.Cmid
   gap: History.Gap
   direction: 'around' | 'up' | 'down'
+  onHistoryInserted: (messages: Message.Message[]) => void
 }
 
-export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Props) {
+export async function loadConvoHistory({
+  peerId,
+  startCmid,
+  gap,
+  direction,
+  onHistoryInserted
+}: Props) {
   const { api } = useEnv()
   const { loadingConvosHistory } = useConvosStore()
 
-  const convo = Convo.safeGet(peerId)
   const loadingKey: `${Peer.Id}-${Message.Cmid}` = `${peerId}-${startCmid}`
 
   if (loadingConvosHistory.has(loadingKey)) {
@@ -28,7 +34,7 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
 
   loadingConvosHistory.add(loadingKey)
 
-  let count = 30
+  let count = 20
   let offset = 0
 
   switch (direction) {
@@ -91,6 +97,8 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
   }
 
   try {
+    const convo = Convo.safeGet(peerId)
+
     const {
       items,
       profiles,
@@ -114,6 +122,7 @@ export async function loadConvoHistory({ peerId, startCmid, gap, direction }: Pr
     const messages = items.map(fromApiMessage).reverse()
 
     Convo.insert(convo, messages)
+    onHistoryInserted(messages)
   } catch (err) {
     // TODO: обработка ошибки в интерфейсе
     console.warn('Ошибка загрузки истории', err)

@@ -1,8 +1,9 @@
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv } from 'hooks'
 import { exhaustivenessCheck, NonEmptyArray } from 'misc/utils'
@@ -20,16 +21,94 @@ type Props = {
 
 export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const { lang } = useEnv()
+  const { convoScrollPositions } = useConvosStore()
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
+  const $historyElement = shallowRef<HTMLDivElement | null>(null)
 
-  const loadHistory = (direction: 'around' | 'up' | 'down', startCmid: Message.Cmid, gap: History.Gap) => (
+  onMounted(() => {
+    const scrollTop = convoScrollPositions.get(convo.id)
+    if ($historyElement.value && scrollTop !== undefined) {
+      $historyElement.value.scrollTop = scrollTop
+    }
+  })
+
+  onBeforeUnmount(() => {
+    if ($historyElement.value) {
+      convoScrollPositions.set(convo.id, $historyElement.value.scrollTop)
+    }
+  })
+
+  const loadHistory = (direction: 'around' | 'up' | 'down', gap: History.Gap) => {
+    let startCmid: Message.Cmid
+
+    switch (direction) {
+      case 'around':
+        startCmid = convo.inReadBy
+        break
+      case 'up':
+        startCmid = Message.resolveCmid(gap.toId)
+        break
+      case 'down':
+        startCmid = Message.resolveCmid(gap.fromId)
+        break
+    }
+
     loadConvoHistory({
       peerId: convo.id,
       startCmid,
       gap,
-      direction
+      direction,
+      /**
+       * Пользуемся колбэком вместо ожидания окончания асинхронного loadConvoHistory.
+       * Дело в том, что возврат ответа из асинхронной операции происходит в отдельной микротаске,
+       * а перед выполнением этой микротаски могут успеть исполниться другие макро- и микротаски.
+       * Так и происходит: после окончания асинхронного loadConvoHistory у нас уже перерендерен
+       * компонент и обновлен дом, из-за чего мы не можем достать
+       */
+      onHistoryInserted(insertedMessages) {
+        correctScrollPosition(insertedMessages, direction, startCmid)
+      }
     })
-  )
+  }
+
+  const correctScrollPosition = (
+    insertedMessages: Message.Message[],
+    direction: 'around' | 'up' | 'down',
+    startCmid: Message.Cmid
+  ) => {
+    if (direction === 'around') {
+      nextTick(() => {
+        const historyElement = $historyElement.value
+        if (!historyElement) {
+          return
+        }
+
+        // При загрузке вокруг кмида этого сообщения может не оказаться, тогда мы возьмем следующее
+        const aroundMessage = insertedMessages.find(({ cmid }) => (cmid >= startCmid))
+          ?? insertedMessages.at(-1)
+
+        const messageElement = aroundMessage && historyElement.querySelector(
+          `.MessagesStack__message[data-cmid="${aroundMessage.cmid}"]`
+        )
+        messageElement?.scrollIntoView({
+          block: 'center',
+          behavior: 'instant'
+        })
+      })
+    }
+
+    if (direction === 'up') {
+      const historyElement = $historyElement.value
+      if (!historyElement) {
+        return
+      }
+
+      const { scrollTop, scrollHeight } = historyElement
+      nextTick(() => {
+        historyElement.scrollTop = scrollTop + historyElement.scrollHeight - scrollHeight
+      })
+    }
+  }
 
   return () => {
     const { items, gapBefore, gapAround, gapAfter } = historySlice.value
@@ -37,7 +116,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     if (gapAround) {
       return (
         <div class="ConvoHistory__placeholder">
-          <IntersectionWrapper onIntersect={() => loadHistory('around', convo.inReadBy, gapAround)}>
+          <IntersectionWrapper onIntersect={() => loadHistory('around', gapAround)}>
             <Spinner size="regular" class="ConvoHistory__spinner" />
           </IntersectionWrapper>
         </div>
@@ -53,14 +132,12 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     }
 
     return (
-      <div class="ConvoHistory">
+      <div class="ConvoHistory" ref={$historyElement}>
         <div class="ConvoHistory__content">
           <div class="ConvoHistory__topFiller" />
 
           {gapBefore && (
-            <IntersectionWrapper
-              onIntersect={() => gapBefore && loadHistory('up', Message.resolveCmid(gapBefore.toId), gapBefore)}
-            >
+            <IntersectionWrapper onIntersect={() => loadHistory('up', gapBefore)}>
               <Spinner size="regular" class="ConvoHistory__spinner" />
             </IntersectionWrapper>
           )}
@@ -68,9 +145,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
           <HistoryMessages items={items} />
 
           {gapAfter && (
-            <IntersectionWrapper
-              onIntersect={() => gapAfter && loadHistory('down', Message.resolveCmid(gapAfter.fromId), gapAfter)}
-            >
+            <IntersectionWrapper onIntersect={() => loadHistory('down', gapAfter)}>
               <Spinner size="regular" class="ConvoHistory__spinner" />
             </IntersectionWrapper>
           )}
@@ -140,7 +215,11 @@ const MessagesStack = defineComponent<MessagesStackProps>((props) => {
     <div class={['MessagesStack', isOut.value && 'MessagesStack--out']}>
       {!isOut.value && <Avatar class="MessagesStack__avatar" peer={author.value} size={32} />}
       <div class="MessagesStack__messages">
-        {props.messages.map(renderMessage)}
+        {props.messages.map((message) => (
+          <div class="MessagesStack__message" data-cmid={message.cmid} key={message.cmid}>
+            {renderMessage(message)}
+          </div>
+        ))}
       </div>
     </div>
   )

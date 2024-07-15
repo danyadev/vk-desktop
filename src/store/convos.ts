@@ -14,6 +14,7 @@ type Convos = {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
   loadingConvosHistory: Set<`${Peer.Id}-${Message.Cmid}`>
+  convoScrollPositions: Map<Peer.Id, number>
 }
 
 export const useConvosStore = defineStore('convos', {
@@ -27,7 +28,8 @@ export const useConvosStore = defineStore('convos', {
     connection: {
       status: 'init'
     },
-    loadingConvosHistory: new Set()
+    loadingConvosHistory: new Set(),
+    convoScrollPositions: new Map()
   })
 })
 
