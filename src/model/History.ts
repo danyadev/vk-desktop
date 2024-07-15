@@ -128,12 +128,18 @@ export function around<T>(history: History<T>, aroundId: number): {
 export function insert<T>(
   history: History<T>,
   items: Array<Item<T>>,
-  hasMore: { up: boolean, down: boolean }
+  hasMore: { up: boolean, down: boolean, aroundId?: number }
 ) {
   const firstItem = items[0]
   const lastItem = items.at(-1)
 
   if (!firstItem || !lastItem) {
+    // Если при загрузке истории для гэпа оказалось, что истории больше нет,
+    // то нужно удалить этот гэп
+    if ((!hasMore.up || !hasMore.down) && hasMore.aroundId) {
+      removeNode(history, hasMore.aroundId, true)
+    }
+
     return
   }
 
@@ -216,4 +222,71 @@ export function insert<T>(
   }
 
   history.splice(startIndex, endIndex - startIndex + 1, ...newNodes)
+}
+
+/**
+ * Находит ноду в истории двоичным поиском
+ */
+function findNode<T>(history: History<T>, id: number): Node<T> | null
+function findNode<T>(history: History<T>, id: number, asIndex: true): number | null
+function findNode<T>(
+  history: History<T>,
+  id: number,
+  asIndex?: true
+): Node<T> | number | null {
+  let left = 0
+  let right = history.length - 1
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2)
+    const node = history[mid]
+    if (!node) {
+      return null
+    }
+
+    const nodeStart = node.kind === 'Gap' ? node.fromId : node.id
+    const nodeEnd = node.kind === 'Gap' ? node.toId : node.id
+
+    if (id >= nodeStart && id <= nodeEnd) {
+      return asIndex ? mid : node
+    } else if (nodeEnd < id) {
+      left = mid + 1
+    } else {
+      right = mid - 1
+    }
+  }
+
+  return null
+}
+
+/**
+ * Удаляет ноду из истории
+ *
+ * - если это элемент, то удаляем его;
+ * - если это гэп с одним элементом, то удаляем его;
+ * - если это гэп и removeWholeGap = true, то удаляем его;
+ * - если это гэп, граница которого - удаляемый элемент, то уменьшаем границу;
+ * - если удаляемый элемент внутри гэпа, то игнорируем.
+ */
+function removeNode<T>(history: History<T>, id: number, removeWholeGap = false) {
+  const nodeIndex = findNode(history, id, true)
+  const node = nodeIndex !== null && history[nodeIndex]
+
+  if (!node) {
+    return
+  }
+
+  if (node.kind !== 'Gap' || node.fromId === node.toId || removeWholeGap) {
+    history.splice(nodeIndex, 1)
+    return
+  }
+
+  if (node.fromId === id) {
+    node.fromId++
+    return
+  }
+
+  if (node.toId === id) {
+    node.toId--
+  }
 }

@@ -136,7 +136,8 @@ export async function loadConvoHistory({
 
     Convo.insert(convo, messages, {
       up: hasMoreUp,
-      down: hasMoreDown
+      down: hasMoreDown,
+      aroundId: startCmid
     })
     onHistoryInserted(messages)
   } catch (err) {

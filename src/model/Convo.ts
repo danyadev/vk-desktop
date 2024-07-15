@@ -86,7 +86,7 @@ export function sorter(a: Convo, b: Convo) {
 export function insert(
   convo: Convo,
   messages: Message.Message[],
-  hasMore: { up: boolean, down: boolean }
+  hasMore: { up: boolean, down: boolean, aroundId: number }
 ) {
   History.insert(
     convo.history,

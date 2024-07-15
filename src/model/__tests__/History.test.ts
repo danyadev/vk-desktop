@@ -5,14 +5,14 @@ describe(History.insert.name, () => {
   const insert = (
     history: Array<number | [number, number]>,
     items: number[],
-    { up = true, down = true } = {}
+    { up = true, down = true, aroundId = 0 } = {}
   ) => {
     const actualHistory = history.map((id) => (
       Array.isArray(id) ? History.toGap(id[0], id[1]) : History.toItem(id, null)
     ))
     const actualItems = items.map((id) => History.toItem(id, null))
 
-    History.insert(actualHistory, actualItems, { up, down })
+    History.insert(actualHistory, actualItems, { aroundId, up, down })
 
     return actualHistory.map((node) => (
       node.kind === 'Gap' ? [node.fromId, node.toId] : node.id
@@ -134,6 +134,18 @@ describe(History.insert.name, () => {
       .toEqual([1, 2, 3])
     expect(insert([[1, 4]], [2, 3], { up: false, down: false }))
       .toEqual([2, 3])
+
+    expect(insert([[1, 2], 3], [], { up: false, aroundId: 2 }))
+      .toEqual([3])
+    expect(insert([3, [4, 5]], [], { down: false, aroundId: 4 }))
+      .toEqual([3])
+
+    // В реальности мы грузим историю на основе существующего гэпа, поэтому мы не умеем
+    // и собственно нам и не надо уметь удалять гэпы с двух сторон одновременно
+    expect(insert([[1, 2], 3, [4, 5]], [], { up: false, down: false, aroundId: 2 }))
+      .toEqual([3, [4, 5]])
+    expect(insert([[1, 2], 3, [4, 5]], [], { up: false, down: false, aroundId: 4 }))
+      .toEqual([[1, 2], 3])
   })
 
   /**
