@@ -4,10 +4,6 @@
   padding: 4px 0;
 }
 
-.MessagesStack--out {
-  justify-content: flex-end;
-}
-
 .MessagesStack__avatar {
   position: sticky;
   bottom: 2px;
@@ -24,6 +20,10 @@
 
 .MessagesStack--out .MessagesStack__messages {
   align-items: flex-end;
+}
+
+.MessagesStack__message {
+  max-width: 85%;
 }
 
 .MessagesStack__message--centered {

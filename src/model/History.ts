@@ -124,15 +124,15 @@ export function around<T>(history: History<T>, aroundId: number): {
 export function insert<T>(
   history: History<T>,
   items: Array<Item<T>>,
-  hasMore: { up: boolean, down: boolean, aroundId?: number }
+  hasMore: { up: boolean, down: boolean, aroundId: number }
 ) {
   const firstItem = items[0]
   const lastItem = items.at(-1)
 
   if (!firstItem || !lastItem) {
-    // Если при загрузке истории для гэпа оказалось, что истории больше нет,
-    // то нужно удалить этот гэп
-    if ((!hasMore.up || !hasMore.down) && hasMore.aroundId) {
+    // Если при загрузке истории оказалось, что истории в этой области нет,
+    // то нужно удалить эту область
+    if (!hasMore.up || !hasMore.down) {
       removeNode(history, hasMore.aroundId, true)
     }
 
@@ -188,7 +188,7 @@ export function insert<T>(
   // Если стартовая нода оказалась дальше последнего сообщения, значит вставляемые айтемы
   // находятся перед стартовой ноды, просто вставляем их перед нодой
   const startNodeStartBoundary = startNode.kind === 'Gap' ? startNode.fromId : startNode.id
-  if (startNode === endNode && startNodeStartBoundary > lastItem.id) {
+  if (startNodeStartBoundary > lastItem.id) {
     // Если сверху гэп, а мы поняли, что выше сообщений нет, то удаляем верхний гэп.
     // Так же, если снизу гэп, а мы поняли, что ниже сообщений нет, то удаляем нижний гэп
     const deleteTopGap = startNode.kind === 'Gap' && !hasMore.up
@@ -207,14 +207,14 @@ export function insert<T>(
 
   // Если стартовый гэп начался до вставляемых элементов, то надо сохранить кусок гэпа до нас
   if (hasMore.up && startNode && startNode.kind === 'Gap' && startNode.fromId < firstItem.id) {
-    newNodes.push({ kind: 'Gap', fromId: startNode.fromId, toId: firstItem.id - 1 })
+    newNodes.push(toGap(startNode.fromId, firstItem.id - 1))
   }
 
   newNodes.push(...items)
 
   // Если конечный гэп продолжается после нас, то нужно сохранить кусок гэпа после нас
   if (hasMore.down && endNode && endNode.kind === 'Gap' && endNode.toId > lastItem.id) {
-    newNodes.push({ kind: 'Gap', fromId: lastItem.id + 1, toId: endNode.toId })
+    newNodes.push(toGap(lastItem.id + 1, endNode.toId))
   }
 
   history.splice(startIndex, endIndex - startIndex + 1, ...newNodes)

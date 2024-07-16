@@ -83,7 +83,7 @@ export function sorter(a: Convo, b: Convo) {
   return b.minorSortId - a.minorSortId
 }
 
-export function insert(
+export function insertMessages(
   convo: Convo,
   messages: Message.Message[],
   hasMore: { up: boolean, down: boolean, aroundId: number }

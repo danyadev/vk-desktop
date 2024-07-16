@@ -24,15 +24,15 @@ export async function loadConvoHistory({
   onHistoryInserted
 }: Props) {
   const { api } = useEnv()
-  const { loadingConvosHistory } = useConvosStore()
+  const { loadConvoHistoryLock } = useConvosStore()
 
   const loadingKey: `${Peer.Id}-${Message.Cmid}` = `${peerId}-${startCmid}`
 
-  if (loadingConvosHistory.has(loadingKey)) {
+  if (loadConvoHistoryLock.has(loadingKey)) {
     return
   }
 
-  loadingConvosHistory.add(loadingKey)
+  loadConvoHistoryLock.add(loadingKey)
 
   let count = 20
   let offset = 0
@@ -134,7 +134,7 @@ export async function loadConvoHistory({
       !reachedLowerBoundary &&
       items.length === count
 
-    Convo.insert(convo, messages, {
+    Convo.insertMessages(convo, messages, {
       up: hasMoreUp,
       down: hasMoreDown,
       aroundId: startCmid
@@ -144,6 +144,6 @@ export async function loadConvoHistory({
     // TODO: обработка ошибки в интерфейсе
     console.warn('Ошибка загрузки истории', err)
   } finally {
-    loadingConvosHistory.delete(loadingKey)
+    loadConvoHistoryLock.delete(loadingKey)
   }
 }

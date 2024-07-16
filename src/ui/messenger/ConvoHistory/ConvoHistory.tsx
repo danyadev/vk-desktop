@@ -17,12 +17,12 @@ type Props = {
 
 export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const { lang } = useEnv()
-  const { convoScrollPositions } = useConvosStore()
+  const { savedConvoScroll } = useConvosStore()
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
 
   onMounted(() => {
-    const scrollTop = convoScrollPositions.get(convo.id)
+    const scrollTop = savedConvoScroll.get(convo.id)
     if ($historyElement.value && scrollTop !== undefined) {
       $historyElement.value.scrollTop = scrollTop
     }
@@ -30,25 +30,15 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
   onBeforeUnmount(() => {
     if ($historyElement.value) {
-      convoScrollPositions.set(convo.id, $historyElement.value.scrollTop)
+      savedConvoScroll.set(convo.id, $historyElement.value.scrollTop)
     }
   })
 
-  const loadHistory = (direction: 'around' | 'up' | 'down', gap: History.Gap) => {
-    let startCmid: Message.Cmid
-
-    switch (direction) {
-      case 'around':
-        startCmid = convo.inReadBy
-        break
-      case 'up':
-        startCmid = Message.resolveCmid(gap.toId)
-        break
-      case 'down':
-        startCmid = Message.resolveCmid(gap.fromId)
-        break
-    }
-
+  const loadHistory = (
+    direction: 'around' | 'up' | 'down',
+    startCmid: Message.Cmid,
+    gap: History.Gap
+  ) => {
     loadConvoHistory({
       peerId: convo.id,
       startCmid,
@@ -112,7 +102,12 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     if (gapAround) {
       return (
         <div class="ConvoHistory__placeholder">
-          <IntersectionWrapper onIntersect={() => loadHistory('around', gapAround)}>
+          <IntersectionWrapper
+            key={convo.inReadBy}
+            onIntersect={() => {
+              loadHistory('around', convo.inReadBy, gapAround)
+            }}
+          >
             <Spinner size="regular" class="ConvoHistory__spinner" />
           </IntersectionWrapper>
         </div>
@@ -133,7 +128,12 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
           <div class="ConvoHistory__topFiller" />
 
           {gapBefore && (
-            <IntersectionWrapper onIntersect={() => loadHistory('up', gapBefore)}>
+            <IntersectionWrapper
+              key={gapBefore.toId}
+              onIntersect={() => {
+                loadHistory('up', Message.resolveCmid(gapBefore.toId), gapBefore)
+              }}
+            >
               <Spinner size="regular" class="ConvoHistory__spinner" />
             </IntersectionWrapper>
           )}
@@ -141,7 +141,12 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
           <HistoryMessages items={items} />
 
           {gapAfter && (
-            <IntersectionWrapper onIntersect={() => loadHistory('down', gapAfter)}>
+            <IntersectionWrapper
+              key={gapAfter.fromId}
+              onIntersect={() => {
+                loadHistory('down', Message.resolveCmid(gapAfter.fromId), gapAfter)
+              }}
+            >
               <Spinner size="regular" class="ConvoHistory__spinner" />
             </IntersectionWrapper>
           )}

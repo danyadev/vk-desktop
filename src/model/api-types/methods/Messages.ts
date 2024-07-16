@@ -1,5 +1,6 @@
 import { GroupsGroup } from 'model/api-types/objects/GroupsGroup'
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
+import { MessagesConversationWithMessage } from 'model/api-types/objects/MessagesConversationWithMessage'
 import { MessagesLongpollParams } from 'model/api-types/objects/MessagesLongpollParams'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import { UsersUser } from 'model/api-types/objects/UsersUser'
@@ -18,10 +19,7 @@ export type MessagesGetConversationsParams = {
 export type MessagesGetConversationsResponse = {
   count: number
   unread_count?: number
-  items: Array<{
-    conversation: MessagesConversation
-    last_message?: MessagesMessage
-  }>
+  items: MessagesConversationWithMessage[]
   profiles?: UsersUser[]
   groups?: GroupsGroup[]
   // contacts?: MessagesContact[]

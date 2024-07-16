@@ -51,6 +51,7 @@ export const ru = {
   me_message_attaches: ['{0} вложение', '{0} вложения', '{0} вложений'],
   me_message: 'Сообщение',
   me_messages: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
+  me_convo_composer_placeholder: 'Напишите сообщение...',
 
   // region service messages
   me_service_chat_create: [
