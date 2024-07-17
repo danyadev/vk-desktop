@@ -125,14 +125,37 @@ export async function loadConvoHistory({
 
     // Апи возвращает сообщения от новых к старым, а мы храним историю со старых до новых
     const messages = items.map(fromApiMessage).reverse()
-    const hasMoreUp =
-      (direction === 'up' || direction === 'around') &&
-      !reachedUpperBoundary &&
-      items.length === count
-    const hasMoreDown =
-      (direction === 'down' || direction === 'around') &&
-      !reachedLowerBoundary &&
-      items.length === count
+    let hasMoreUp = false
+    let hasMoreDown = false
+
+    if (direction === 'up') {
+      hasMoreUp = !reachedUpperBoundary && items.length === count
+    }
+    if (direction === 'down') {
+      hasMoreDown = !reachedLowerBoundary && items.length === count
+    }
+    if (direction === 'around') {
+      const upperMessagesCount = items.filter((item) => (
+        item.conversation_message_id <= startCmid
+      )).length
+      const lowerMessagesCount = items.length - upperMessagesCount
+      /**
+       * Если offset = 0, то мы грузим count сообщений вверх начиная со startCmid.
+       * Если offset < 0, то мы грузим count сообщений вверх начиная со startCmid + |offset|,
+       * то есть достаем сообщения в том числе под startCmid.
+       * Если offset = -count, то мы грузим сообщения ровно после startCmid, не включая его.
+       *
+       * requestedUpperMessages = count - |offset|:
+       * offset = 0 -> сообщениями выше будет весь count
+       * offset < 0 -> сообщениями выше будет count + offset
+       * requestedLowerMessages = |offset|, так как это равно count - requestedUpperMessages
+       */
+      const requestedUpperMessages = count + offset
+      const requestedLowerMessages = -offset
+
+      hasMoreUp = !reachedUpperBoundary && requestedUpperMessages === upperMessagesCount
+      hasMoreDown = !reachedLowerBoundary && requestedLowerMessages === lowerMessagesCount
+    }
 
     Convo.insertMessages(convo, messages, {
       up: hasMoreUp,

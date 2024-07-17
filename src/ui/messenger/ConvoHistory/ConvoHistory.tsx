@@ -97,15 +97,15 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   }
 
   return () => {
-    const { items, gapBefore, gapAround, gapAfter } = historySlice.value
+    const { items, matchedAroundId, gapBefore, gapAround, gapAfter } = historySlice.value
 
     if (gapAround) {
       return (
         <div class="ConvoHistory__placeholder">
           <IntersectionWrapper
-            key={convo.inReadBy}
+            key={matchedAroundId}
             onIntersect={() => {
-              loadHistory('around', convo.inReadBy, gapAround)
+              loadHistory('around', Message.resolveCmid(matchedAroundId), gapAround)
             }}
           >
             <Spinner size="regular" class="ConvoHistory__spinner" />

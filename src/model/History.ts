@@ -49,6 +49,7 @@ export function lastItem<T>(history: History<T>): T | undefined {
  */
 export function around<T>(history: History<T>, aroundId: number): {
   items: Array<Item<T>>
+  matchedAroundId: number
   gapBefore?: Gap
   gapAround?: Gap
   gapAfter?: Gap
@@ -56,9 +57,60 @@ export function around<T>(history: History<T>, aroundId: number): {
   const aroundIndex = findNode(history, aroundId, true)
   const aroundNode = aroundIndex !== null && history[aroundIndex]
 
+  /**
+   * В подавляющем большинстве случаев мы найдем гэп или элемент.
+   * Если не нашли, значит либо попали в удаленный элемент, либо ткнули за пределы истории
+   */
   if (!aroundNode) {
+    // Пустая история - пустой ответ
+    const lastNode = history.at(-1)
+    if (!lastNode) {
+      return {
+        items: [],
+        matchedAroundId: aroundId
+      }
+    }
+
+    // Если элемент находится после истории, вернем слайс в конце истории
+    const lastNodeEndBoundary = lastNode.kind === 'Gap' ? lastNode.toId : lastNode.id
+    if (aroundId > lastNodeEndBoundary) {
+      return around(history, lastNodeEndBoundary)
+    }
+
+    // Иначе, элемент находится где-то в пустой зоне истории, находим первый элемент рядом с ним
+    for (let i = 0; i < history.length; i++) {
+      const node = history[i]
+      const prevNode = history[i - 1]
+      if (!node) {
+        continue
+      }
+
+      /**
+       * Отдаем предпочтение в порядке убывания:
+       * 1) граничащему элементу ниже
+       * 2) граничащему элементы выше
+       * 3) не граничащему элементу ниже
+       *
+       * так как мы предпочитаем более актуальную историю
+       * и хотим всегда видеть уже доступную историю в структуре
+       */
+      const nodeStartBoundary = node.kind === 'Gap' ? node.fromId : node.id
+      if (nodeStartBoundary >= aroundId) {
+        if (node.kind !== 'Gap' || node.fromId === aroundId + 1) {
+          return around(history, nodeStartBoundary)
+        }
+        if (prevNode && (prevNode.kind !== 'Gap' || prevNode.toId === aroundId + 1)) {
+          const prevNodeEndBoundary = prevNode.kind === 'Gap' ? prevNode.toId : prevNode.id
+          return around(history, prevNodeEndBoundary)
+        }
+        return around(history, nodeStartBoundary)
+      }
+    }
+
+    // По сути невозможный кейс, возвращаем пустоту
     return {
-      items: []
+      items: [],
+      matchedAroundId: aroundId
     }
   }
 
@@ -67,18 +119,19 @@ export function around<T>(history: History<T>, aroundId: number): {
      * Если мы попались на граничный гэп рядом с историей, то отдадим эту историю
      */
     const prevNode = history[aroundIndex - 1]
-    if (prevNode && prevNode.kind !== 'Gap' && aroundId - 1 === prevNode.id) {
+    if (prevNode && prevNode.kind !== 'Gap' && aroundNode.fromId === aroundId) {
       return around(history, prevNode.id)
     }
 
     const nextNode = history[aroundIndex + 1]
-    if (nextNode && nextNode.kind !== 'Gap' && aroundId + 1 === nextNode.id) {
+    if (nextNode && nextNode.kind !== 'Gap' && aroundNode.toId === aroundId) {
       return around(history, nextNode.id)
     }
 
     return {
       items: [],
-      gapAround: aroundNode
+      gapAround: aroundNode,
+      matchedAroundId: aroundId
     }
   }
 
@@ -106,6 +159,7 @@ export function around<T>(history: History<T>, aroundId: number): {
 
   return {
     items: history.slice(gapBeforeIndex + 1, gapAfterIndex) as Array<Item<T>>,
+    matchedAroundId: aroundId,
     gapBefore,
     gapAfter
   }
@@ -223,9 +277,9 @@ export function insert<T>(
 /**
  * Находит ноду в истории двоичным поиском
  */
-function findNode<T>(history: History<T>, id: number): Node<T> | null
-function findNode<T>(history: History<T>, id: number, asIndex: true): number | null
-function findNode<T>(
+export function findNode<T>(history: History<T>, id: number): Node<T> | null
+export function findNode<T>(history: History<T>, id: number, asIndex: true): number | null
+export function findNode<T>(
   history: History<T>,
   id: number,
   asIndex?: true
@@ -264,7 +318,7 @@ function findNode<T>(
  * - если это гэп, граница которого - удаляемый элемент, то уменьшаем границу;
  * - если удаляемый элемент внутри гэпа, то игнорируем.
  */
-function removeNode<T>(history: History<T>, id: number, removeWholeGap = false) {
+export function removeNode<T>(history: History<T>, id: number, removeWholeGap = false) {
   const nodeIndex = findNode(history, id, true)
   const node = nodeIndex !== null && history[nodeIndex]
 
