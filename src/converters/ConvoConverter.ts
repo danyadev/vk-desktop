@@ -15,24 +15,16 @@ export function fromApiConvo(
   | { convo?: Exclude<Convo.Convo, Convo.ChatConvo>, peer?: undefined } {
   const lastMessage = apiLastMessage && fromApiMessage(apiLastMessage)
   const lastCmid = apiConvo.last_conversation_message_id ?? 0
-  const history: History.History = []
+  const history: History.History<Message.Message> = []
 
   if (lastMessage) {
     if (lastCmid > 1) {
-      history.push({
-        kind: 'Gap',
-        fromCmid: Message.resolveCmid(1),
-        toCmid: Message.resolveCmid(lastCmid - 1)
-      })
+      history.push(History.toGap(1, lastCmid - 1))
     }
 
-    history.push(lastMessage)
+    history.push(History.toItem(lastMessage.cmid, lastMessage))
   } else if (lastCmid > 0) {
-    history.push({
-      kind: 'Gap',
-      fromCmid: Message.resolveCmid(1),
-      toCmid: Message.resolveCmid(lastCmid)
-    })
+    history.push(History.toGap(1, lastCmid))
   }
 
   const baseConvo = {

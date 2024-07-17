@@ -20,7 +20,7 @@ type Props = {
 export const ConvoListItem = defineComponent<Props>((props) => {
   const router = useRouter()
   const peer = computed(() => Peer.safeGet(props.convo.id))
-  const lastMessage = computed(() => History.lastMessage(props.convo.history))
+  const lastMessage = computed(() => History.lastItem(props.convo.history))
   const active = computed(() => router.currentRoute.value.path === `/convo/${props.convo.id}`)
   const authorName = useAuthorName(lastMessage, props.convo)
 
@@ -69,7 +69,9 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
             <MessagePreview convo={props.convo} />
           </span>
-          <span class="ConvoListItem__date">{lastMessage.value && <MessageDate message={lastMessage.value} />}</span>
+          <span class="ConvoListItem__date">
+            {lastMessage.value && <MessageDate message={lastMessage.value} />}
+          </span>
         </div>
         <div class="ConvoListItem__indicators">
           <Counter
@@ -112,7 +114,7 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
   }
 
   return () => {
-    const lastMessage = History.lastMessage(convo.history)
+    const lastMessage = History.lastItem(convo.history)
 
     if (!lastMessage || lastMessage.kind === 'Expired') {
       return (

@@ -1,15 +1,12 @@
 import { ENGINE_VERSION } from 'env/Engine'
 import { useConvosStore } from 'store/convos'
-import { usePeersStore } from 'store/peers'
-import { fromApiConvo } from 'converters/ConvoConverter'
-import { fromApiGroup, fromApiUser } from 'converters/PeerConverter'
+import { insertConvos, insertPeers } from 'actions'
 import { useEnv } from 'hooks'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
 export async function loadInitialData(onError: () => void) {
   const { api, engine } = useEnv()
-  const { peers } = usePeersStore()
-  const { convos, convoList, connection } = useConvosStore()
+  const { convoList, connection } = useConvosStore()
 
   // Не инициализируем повторно приложение во время разработки
   if (import.meta.env.DEV && connection.status !== 'init' && connection.status !== 'initFailed') {
@@ -29,28 +26,11 @@ export async function loadInitialData(onError: () => void) {
       })
     ])
 
-    for (const apiUser of conversations.profiles ?? []) {
-      const user = fromApiUser(apiUser)
-      peers.set(user.id, user)
-    }
-    for (const apiGroup of conversations.groups ?? []) {
-      const group = fromApiGroup(apiGroup)
-      peers.set(group.id, group)
-    }
-
-    for (const apiConvo of conversations.items) {
-      const {
-        convo,
-        peer
-      } = fromApiConvo(apiConvo.conversation, apiConvo.last_message)
-      if (convo) {
-        convoList.peerIds.push(convo.id)
-        convos.set(convo.id, convo)
-      }
-      if (peer) {
-        peers.set(peer.id, peer)
-      }
-    }
+    insertPeers({
+      profiles: conversations.profiles,
+      groups: conversations.groups
+    })
+    insertConvos(conversations.items)
 
     connection.status = 'connected'
     engine.start(longpollParams)

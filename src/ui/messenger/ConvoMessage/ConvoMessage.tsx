@@ -6,6 +6,7 @@ import './ConvoMessage.css'
 
 type Props = {
   message: Message.Normal
+  showName: boolean
 }
 
 export const ConvoMessage = defineComponent<Props>((props) => {
@@ -19,7 +20,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
       }]}
     >
       <div class="ConvoMessage__content">
-        {!props.message.isOut && (
+        {props.showName && !props.message.isOut && (
           <div class="ConvoMessage__author">{Peer.name(author.value)}</div>
         )}
         <span class="ConvoMessage__text">{props.message.text}</span>
@@ -32,5 +33,5 @@ export const ConvoMessage = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['message']
+  props: ['message', 'showName']
 })

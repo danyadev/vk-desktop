@@ -6,7 +6,7 @@ import { useConvosStore } from 'store/convos'
 export type Convo = UserConvo | GroupConvo | ChatConvo
 
 interface BaseConvo {
-  history: History.History
+  history: History.History<Message.Message>
   unreadCount: number
   enabledNotifications: boolean
   majorSortId: number
@@ -75,14 +75,26 @@ export function safeGet(id: Peer.Id): unknown {
   return convo
 }
 
-export function isCasper(convo: Convo): boolean {
-  return convo.kind === 'ChatConvo' && convo.isCasper
-}
-
 export function sorter(a: Convo, b: Convo) {
   if (a.majorSortId !== b.majorSortId) {
     return b.majorSortId - a.majorSortId
   }
 
   return b.minorSortId - a.minorSortId
+}
+
+export function insertMessages(
+  convo: Convo,
+  messages: Message.Message[],
+  hasMore: { up: boolean, down: boolean, aroundId: number }
+) {
+  History.insert(
+    convo.history,
+    messages.map((message) => History.toItem(message.cmid, message)),
+    hasMore
+  )
+}
+
+export function isCasper(convo: Convo): boolean {
+  return convo.kind === 'ChatConvo' && convo.isCasper
 }

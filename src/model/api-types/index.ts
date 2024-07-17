@@ -23,6 +23,8 @@ import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/meth
 import {
   MessagesGetConversationsParams,
   MessagesGetConversationsResponse,
+  MessagesGetHistoryParams,
+  MessagesGetHistoryResponse,
   MessagesGetLongPollServerParams,
   MessagesGetLongPollServerResponse
 } from 'model/api-types/methods/Messages'
@@ -98,6 +100,10 @@ export type Methods = {
   'messages.getConversations': {
     params: MessagesGetConversationsParams
     response: MessagesGetConversationsResponse
+  }
+  'messages.getHistory': {
+    params: MessagesGetHistoryParams
+    response: MessagesGetHistoryResponse
   }
   'messages.getLongPollServer': {
     params: MessagesGetLongPollServerParams

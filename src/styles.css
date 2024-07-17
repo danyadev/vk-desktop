@@ -53,6 +53,8 @@ img, svg {
 
   --messageDateFontSize: 11px;
   --messageDateLineHeight: 11px;
+  --convoHistoryMaxWidth: 740px;
+  --convoHistoryIndent: 16px;
 
   --fastTransition: 0.15s;
   --mediumTransition: 0.2s;

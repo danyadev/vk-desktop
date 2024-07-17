@@ -5,7 +5,7 @@ export type MessagesMessage = {
   action?: MessagesMessageAction
   attachments?: Array<{ type: string }> // TODO
   template?: unknown // TODO
-  conversation_message_id?: number
+  conversation_message_id: number
   date: number
   deleted?: 0 | 1
   from_id: number

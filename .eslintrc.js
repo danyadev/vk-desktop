@@ -62,7 +62,7 @@ module.exports = {
       }
     },
     {
-      files: ['build/*.ts'],
+      files: ['build/*.ts', '**/*.test.ts'],
       rules: {
         'import/no-extraneous-dependencies': 'off'
       }
