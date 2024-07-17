@@ -26,7 +26,10 @@
     "node": ">=20.0.0"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,mjs,mts}": "eslint -c .eslintrc.full.js",
+    "*.{js,ts,tsx,mjs,mts}": [
+      "eslint -c .eslintrc.full.js",
+      "vitest related --run"
+    ],
     "*.css": "stylelint"
   },
   "dependencies": {

@@ -3,13 +3,13 @@ import * as History from 'model/History'
 
 type SimpleHistory = Array<number | [number, number]>
 
-const simplifyHistory = <T>(history: History.History<T>): SimpleHistory => {
+const simplifyHistory = (history: History.History<null>): SimpleHistory => {
   return history.map((node) => (
     node.kind === 'Gap' ? [node.fromId, node.toId] : node.id
   ))
 }
 
-const restoreHistory = <T>(simpleHistory: SimpleHistory): History.History<T> => {
+const restoreHistory = (simpleHistory: SimpleHistory): History.History<null> => {
   return simpleHistory.map((id) => (
     Array.isArray(id) ? History.toGap(id[0], id[1]) : History.toItem(id, null)
   ))
@@ -225,7 +225,7 @@ describe(History.removeNode.name, () => {
       .toEqual([[2, 2]])
     expect(removeNode([[2, 2]], 2))
       .toEqual([])
-    expect(removeNode([[2, 2]], 2), true)
+    expect(removeNode([[2, 2]], 2, true))
       .toEqual([])
     expect(removeNode([[2, 2]], 3))
       .toEqual([[2, 2]])
