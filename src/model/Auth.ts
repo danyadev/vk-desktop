@@ -247,6 +247,34 @@ export async function getExchangeToken(api: IApi.Api, accessToken: string, userI
     ?.common_token
 }
 
+export async function refreshByExchangeToken(api: IApi.Api, exchangeToken: string) {
+  const result = await fetch('https://oauth.vk.com/auth_by_exchange_token?' + toUrlParams({
+    v: API_VERSION,
+    client_id: MESSENGER_APP_ID,
+    exchange_token: exchangeToken
+  })).then<OauthSuccessResponse>((res) => res.json())
+
+  if (!('silent_token' in result)) {
+    console.warn('refresh token error', result)
+    throw 'refresh token error'
+  }
+
+  const anonymToken = await getMessengerAnonymToken(api)
+  const {
+    accessToken,
+    isPartial,
+    isService,
+    isSignupRequired
+  } = await exchangeSilentToken(api, anonymToken, result.silent_token, result.silent_token_uuid)
+
+  if (isPartial || isService || isSignupRequired) {
+    console.warn('refreshed token is incorrect', { isPartial, isService, isSignupRequired })
+    throw 'refreshed token is incorrect'
+  }
+
+  return accessToken
+}
+
 export async function getAppToken(messengerToken: string, api: IApi.Api): Promise<string> {
   const APP_ID = 6717234
   const APP_SCOPE = 136297695

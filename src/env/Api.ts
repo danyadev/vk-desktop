@@ -1,7 +1,8 @@
 import * as IApi from 'env/IApi'
 import { Methods } from 'model/api-types'
+import * as Auth from 'model/Auth'
 import { useSettingsStore } from 'store/settings'
-import { useViewerStore } from 'store/viewer'
+import { logout, useViewerStore } from 'store/viewer'
 import { useGlobalModal } from 'hooks'
 import { isNonEmptyArray, random, sleep, toUrlParams } from 'misc/utils'
 import { appUserAgent } from 'misc/constants'
@@ -15,6 +16,7 @@ const API_RATE_LIMIT_WINDOW = 1000
 
 export class Api implements IApi.Api {
   private semaphore = new Semaphore(3, API_RATE_LIMIT_WINDOW)
+  private globalErrorHandler?: Promise<unknown>
 
   public async fetch<Method extends keyof Methods>(
     method: Method,
@@ -164,14 +166,43 @@ export class Api implements IApi.Api {
     apiError: IApi.MethodError | IApi.ExecuteError,
     params: IApi.MethodParams<Method> = {}
   ): Promise<{ resetAttempts: boolean, needSkipBackoff: boolean }> {
+    if (this.globalErrorHandler) {
+      try {
+        await this.globalErrorHandler
+        return { resetAttempts: true, needSkipBackoff: true }
+      } catch {
+        throw apiError
+      }
+    }
+
     const error = apiError.type === 'MethodError' ? apiError : apiError.errors[0]
 
     switch (error.code) {
-      // TODO: 5 (Сессия завершена)
       // TODO: 9 (Слишком много однотипных действий)
       // TODO: 10 (Internal server error)
       // TODO: 29 (Rate limit reached, может означать "метод отключен из-за сильной нагрузки")
       // TODO: 43 (раздел отключен, когда вк упал)
+
+      // Сессия завершена или токен истек
+      case 5: {
+        const { viewer } = useViewerStore()
+        if (!viewer || params.access_token) {
+          throw apiError
+        }
+
+        const refreshTokenPromise = Auth.refreshByExchangeToken(this, viewer.messengerExchangeToken)
+        this.globalErrorHandler = refreshTokenPromise
+
+        try {
+          viewer.messengerToken = await refreshTokenPromise
+          return { resetAttempts: true, needSkipBackoff: true }
+        } catch {
+          logout()
+          throw apiError
+        } finally {
+          this.globalErrorHandler = undefined
+        }
+      }
 
       // Слишком много запросов в секунду
       case 6: {
@@ -181,7 +212,7 @@ export class Api implements IApi.Api {
 
       // Капча
       case 14: {
-        const isResponded = await new Promise<boolean>((resolve) => {
+        const captchaPromise = new Promise<boolean>((resolve) => {
           if (!error.captchaSid || !error.captchaImg) {
             resolve(false)
             return
@@ -201,6 +232,19 @@ export class Api implements IApi.Api {
             }
           })
         })
+
+        this.globalErrorHandler = new Promise<void>((resolve, reject) => {
+          captchaPromise.then((isResponded) => {
+            if (isResponded) {
+              resolve()
+            } else {
+              reject()
+            }
+          })
+        })
+
+        const isResponded = await captchaPromise
+        this.globalErrorHandler = undefined
 
         if (!isResponded) {
           throw apiError
