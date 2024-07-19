@@ -32,20 +32,19 @@ export class Api implements IApi.Api {
       try {
         return await this.doFetch(method, params, fetchOptions)
       } catch (err) {
-        if (!this.isApiError(err)) {
-          throw err
-        }
-
         let skipBackoff = false
 
-        switch (err.type) {
-          case 'FetchError':
+        switch (true) {
+          case err instanceof IApi.FetchError:
             // Никак дополнительно не обрабатываем ошибку сети
             break
 
-          case 'MethodError':
-          case 'ExecuteError': {
-            const { resetAttempts, needSkipBackoff } = await this.handleErrors(err, params)
+          case err instanceof IApi.MethodError:
+          case err instanceof IApi.ExecuteError: {
+            const {
+              resetAttempts,
+              needSkipBackoff
+            } = await this.handleErrors(err, params, fetchOptions)
 
             if (resetAttempts) {
               takenAttempts = 0
@@ -55,6 +54,9 @@ export class Api implements IApi.Api {
             }
             break
           }
+
+          default:
+            throw err
         }
 
         if (takenAttempts === retries + 1) {
@@ -152,19 +154,10 @@ export class Api implements IApi.Api {
     return [method, params]
   }
 
-  public isApiError(error: unknown): error is IApi.Error {
-    return (
-      !!error &&
-      typeof error === 'object' &&
-      'type' in error &&
-      typeof error.type === 'string' &&
-      ['FetchError', 'MethodError', 'ExecuteError'].includes(error.type)
-    )
-  }
-
   private async handleErrors<Method extends keyof Methods>(
     apiError: IApi.MethodError | IApi.ExecuteError,
-    params: IApi.MethodParams<Method> = {}
+    params: IApi.MethodParams<Method>,
+    fetchOptions: IApi.FetchOptions
   ): Promise<{ resetAttempts: boolean, needSkipBackoff: boolean }> {
     if (this.globalErrorHandler) {
       try {
@@ -175,9 +168,9 @@ export class Api implements IApi.Api {
       }
     }
 
-    const error = apiError.type === 'MethodError' ? apiError : apiError.errors[0]
+    const error = apiError instanceof IApi.MethodError ? apiError.apiError : apiError.errors[0]
 
-    switch (error.code) {
+    switch (error.error_code) {
       // TODO: 9 (Слишком много однотипных действий)
       // TODO: 10 (Internal server error)
       // TODO: 29 (Rate limit reached, может означать "метод отключен из-за сильной нагрузки")
@@ -187,6 +180,11 @@ export class Api implements IApi.Api {
       case 5: {
         const { viewer } = useViewerStore()
         if (!viewer || params.access_token) {
+          throw apiError
+        }
+
+        if (!fetchOptions.messengerToken) {
+          logout()
           throw apiError
         }
 
@@ -213,7 +211,7 @@ export class Api implements IApi.Api {
       // Капча
       case 14: {
         const captchaPromise = new Promise<boolean>((resolve) => {
-          if (!error.captchaSid || !error.captchaImg) {
+          if (!error.captcha_img || !error.captcha_sid) {
             resolve(false)
             return
           }
@@ -221,10 +219,10 @@ export class Api implements IApi.Api {
           const { captchaModal } = useGlobalModal()
 
           captchaModal.open({
-            captchaImg: error.captchaImg,
+            captchaImg: error.captcha_img,
             onClose(captchaKey) {
               if (captchaKey) {
-                params.captcha_sid = error.captchaSid
+                params.captcha_sid = error.captcha_sid
                 params.captcha_key = captchaKey
               }
 
@@ -295,67 +293,30 @@ export class Api implements IApi.Api {
         window.clearTimeout(abortTimeoutId)
 
         if (!response.ok) {
-          return Promise.reject({
-            type: 'FetchError',
-            kind: 'ServerError',
-            payload: response.status
-          })
+          const errorReason = new Error(`api responded with status ${response.status}`)
+          return Promise.reject(new IApi.FetchError('ServerError', errorReason))
         }
 
         return response.json()
       })
 
       if ('error' in result) {
-        const error: IApi.MethodError = {
-          type: 'MethodError',
-          code: result.error.error_code,
-          message: result.error.error_msg,
-          ...(result.error.captcha_sid && result.error.captcha_img && {
-            captchaSid: result.error.captcha_sid,
-            captchaImg: result.error.captcha_img
-          }),
-          requestParams: result.error.request_params
-        }
-        return Promise.reject(error)
+        return Promise.reject(new IApi.MethodError(method, result.error))
       }
 
       if ('execute_errors' in result) {
-        const errors = result.execute_errors.map((error) => ({
-          method: error.method,
-          code: error.error_code,
-          message: error.error_msg,
-          ...(error.captcha_sid && error.captcha_img && {
-            captchaSid: error.captcha_sid,
-            captchaImg: error.captcha_img
-          })
-        }))
-
-        if (!isNonEmptyArray(errors)) {
-          const error: IApi.FetchError = {
-            type: 'FetchError',
-            kind: 'ServerError',
-            payload: 'empty execute_errors'
-          }
-          return Promise.reject(error)
+        if (!isNonEmptyArray(result.execute_errors)) {
+          const errorReason = new Error('api responded with empty execute_errors')
+          return Promise.reject(new IApi.FetchError('ServerError', errorReason))
         }
 
-        const error: IApi.ExecuteError = {
-          type: 'ExecuteError',
-          errors
-        }
-        return Promise.reject(error)
+        return Promise.reject(new IApi.ExecuteError(result.execute_errors))
       }
 
       return result.response
     } catch (error) {
       console.warn(error)
-
-      const networkError: IApi.FetchError = {
-        type: 'FetchError',
-        kind: 'NetworkError',
-        payload: error
-      }
-      return Promise.reject(networkError)
+      return Promise.reject(new IApi.FetchError('NetworkError', error))
     } finally {
       this.semaphore.release()
     }

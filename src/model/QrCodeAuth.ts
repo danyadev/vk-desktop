@@ -118,7 +118,7 @@ export class QrCodeAuth {
   }
 
   private getMessageByError(err: unknown) {
-    if (this.api.isApiError(err) && err.type === 'FetchError') {
+    if (err instanceof IApi.FetchError) {
       return this.lang.use('auth_network_error')
     }
 
