@@ -39,7 +39,7 @@ export async function loadInitialData(onError: () => void) {
     convoList.loading = false
     convoList.hasMore = conversations.items.length === CONVOS_PER_PAGE
   } catch (err) {
-    console.warn('Ошибка начальной загрузки данных', err)
+    console.warn('[loadInitialData] loading error', err)
     connection.status = 'initFailed'
     onError()
   }

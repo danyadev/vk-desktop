@@ -4,10 +4,11 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
-import { useViewer } from 'hooks'
+import { useEnv, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
+import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
@@ -20,6 +21,7 @@ type Props = {
 }
 
 export const ConvoList = defineComponent<Props>((props) => {
+  const { lang } = useEnv()
   const viewer = useViewer()
   const { convoList, connection } = useConvosStore()
 
@@ -47,8 +49,23 @@ export const ConvoList = defineComponent<Props>((props) => {
           <ConvoListItem key={id} convo={Convo.safeGet(id)} compact={props.compact} />
         ))}
 
-        {convoList.hasMore && (
-          <IntersectionWrapper onIntersect={loadMoreConvos}>
+        {convoList.peerIds.length === 0 && !convoList.hasMore && (
+          <div class="ConvoList__empty">
+            {lang.use('me_convo_list_empty')}
+          </div>
+        )}
+
+        {convoList.loadError && (
+          <div class="ConvoList__error">
+            {lang.use('me_convo_list_loading_error')}
+            <Button onClick={loadMoreConvos}>
+              {lang.use('me_convo_list_retry_loading')}
+            </Button>
+          </div>
+        )}
+
+        {convoList.hasMore && !convoList.loadError && (
+          <IntersectionWrapper onIntersect={loadMoreConvos} key={convoList.peerIds.length}>
             <Spinner size="regular" class="ConvoList__spinner" />
           </IntersectionWrapper>
         )}

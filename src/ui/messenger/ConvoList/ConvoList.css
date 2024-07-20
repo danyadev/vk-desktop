@@ -49,6 +49,23 @@
   padding: 6px 8px;
 }
 
+.ConvoList__empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--vkui--color_text_subhead);
+}
+
 .ConvoList__spinner {
   margin: 16px auto;
+}
+
+.ConvoList__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--vkui--color_text_subhead);
+  margin: 24px 0;
+  gap: 10px;
 }

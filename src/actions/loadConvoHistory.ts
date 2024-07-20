@@ -165,7 +165,7 @@ export async function loadConvoHistory({
     onHistoryInserted(messages)
   } catch (err) {
     // TODO: обработка ошибки в интерфейсе
-    console.warn('Ошибка загрузки истории', err)
+    console.warn('[loadConvoHistory] loading error', err)
   } finally {
     loadConvoHistoryLock.delete(loadingKey)
   }

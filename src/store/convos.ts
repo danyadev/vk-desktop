@@ -9,6 +9,7 @@ type Convos = {
     peerIds: Peer.Id[]
     hasMore: boolean
     loading: boolean
+    loadError: boolean
   }
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
@@ -23,7 +24,8 @@ export const useConvosStore = defineStore('convos', {
     convoList: {
       peerIds: [],
       hasMore: true,
-      loading: true
+      loading: true,
+      loadError: true
     },
     connection: {
       status: 'init'
