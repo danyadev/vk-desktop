@@ -12,29 +12,31 @@ export async function loadMoreConvos() {
     return
   }
 
-  const lastConvoId = convoList.peerIds.at(-1)
-  const convo = lastConvoId && Convo.safeGet(lastConvoId)
+  try {
+    const lastConvoId = convoList.peerIds.at(-1)
+    const convo = lastConvoId && Convo.safeGet(lastConvoId)
 
-  if (!convo?.minorSortId) {
-    console.error('чет не то')
-    return
+    convoList.loading = true
+    convoList.loadError = false
+
+    const response = await api.fetch('messages.getConversations', {
+      start_from_minor_sort_id: convo?.minorSortId ?? 0,
+      count: CONVOS_PER_PAGE,
+      fields: PEER_FIELDS,
+      extended: 1
+    })
+
+    insertPeers({
+      profiles: response.profiles,
+      groups: response.groups
+    })
+    insertConvos(response.items)
+
+    convoList.hasMore = response.items.length === CONVOS_PER_PAGE
+  } catch (err) {
+    console.warn('[loadMoreConvos] loading error', err)
+    convoList.loadError = true
+  } finally {
+    convoList.loading = false
   }
-
-  convoList.loading = true
-
-  const response = await api.fetch('messages.getConversations', {
-    start_from_minor_sort_id: convo.minorSortId,
-    count: CONVOS_PER_PAGE,
-    fields: PEER_FIELDS,
-    extended: 1
-  })
-
-  insertPeers({
-    profiles: response.profiles,
-    groups: response.groups
-  })
-  insertConvos(response.items)
-
-  convoList.loading = false
-  convoList.hasMore = response.items.length === CONVOS_PER_PAGE
 }

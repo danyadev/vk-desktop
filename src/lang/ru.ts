@@ -45,6 +45,10 @@ export const ru = {
   me_convo_list_date_days: '{days}д',
   me_convo_list_date_weeks: '{weeks}н',
   me_convo_list_empty_convo: 'Пустой диалог',
+  me_convo_list_empty: 'Список сообщений пуст',
+  me_convo_list_loading_error: 'Ошибка загрузки',
+  me_convo_list_retry_loading: 'Повторить',
+
   me_message_disappeared: 'Сообщение исчезло',
   me_messages_disappeared: ['{0} сообщение исчезло', '{0} сообщения исчезло', '{0} сообщений исчезло'],
   me_unsupported_message: 'Сообщение не поддерживается',
