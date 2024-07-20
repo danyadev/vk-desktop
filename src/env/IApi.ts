@@ -40,26 +40,22 @@ export type FetchOptions = {
   headers?: Record<string, string>
 }
 
-export class FetchError extends Error {
-  constructor(public kind: 'ServerError' | 'NetworkError', public reason: unknown) {
-    super(`[API] Fetch error: ${kind}`, { cause: reason })
-  }
+export class FetchError {
+  constructor(public kind: 'ServerError' | 'NetworkError', public reason: string) {}
 }
 
-export class MethodError extends Error {
+export class MethodError {
   public code: number
+  public message: string
 
   constructor(public method: string, public apiError: ResultError) {
-    super(`[API] ${method} error: ${apiError.error_code} ${apiError.error_msg}`)
     this.code = apiError.error_code
+    this.message = apiError.error_msg
   }
 }
 
-export class ExecuteError extends Error {
-  constructor(public errors: NonEmptyArray<ResultExecuteError>) {
-    const methodsList = errors.map(({ method }) => method).join(', ')
-    super(`[API] Execute error with methods: ${methodsList}`)
-  }
+export class ExecuteError {
+  constructor(public errors: NonEmptyArray<ResultExecuteError>) {}
 }
 
 export interface Api {
