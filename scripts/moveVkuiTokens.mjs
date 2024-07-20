@@ -27,7 +27,7 @@ const schemesDir = path.resolve(process.cwd(), './src/assets/schemes')
 
 for (const [schemeName, variables] of entries) {
   const cssLines = [
-    '/* stylelint-disable color-hex-length, value-keyword-case, number-max-precision */',
+    '/* stylelint-disable */',
     '/* Этот файл сгенерирован с помощью scripts/generateSchemes.mjs */',
     `[data-scheme="${schemeName}"] {`
   ]

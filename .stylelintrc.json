@@ -1,5 +1,6 @@
 {
-  "extends": ["stylelint-config-standard"],
+  "plugins": ["@stylistic/stylelint-plugin"],
+  "extends": ["stylelint-config-standard", "@stylistic/stylelint-config"],
 
   "rules": {
     "font-family-no-missing-generic-family-keyword": null,
@@ -25,6 +26,9 @@
     }],
     "declaration-block-no-redundant-longhand-properties": [true, {
       "ignoreShorthands": ["inset", "grid-template"]
-    }]
+    }],
+
+    "@stylistic/string-quotes": "single",
+    "@stylistic/selector-list-comma-newline-after": null
   }
 }
