@@ -26,13 +26,13 @@ export async function loadConvoHistory({
   const { api } = useEnv()
   const { loadConvoHistoryLock } = useConvosStore()
 
-  const loadingKey: `${Peer.Id}-${Message.Cmid}` = `${peerId}-${startCmid}`
+  const loadingKey = `${peerId}-${direction}` as const
 
-  if (loadConvoHistoryLock.has(loadingKey)) {
+  if (loadConvoHistoryLock.get(loadingKey) === 'loading') {
     return
   }
 
-  loadConvoHistoryLock.add(loadingKey)
+  loadConvoHistoryLock.set(loadingKey, 'loading')
 
   let count = 20
   let offset = 0
@@ -163,10 +163,10 @@ export async function loadConvoHistory({
       aroundId: startCmid
     })
     onHistoryInserted(messages)
-  } catch (err) {
-    // TODO: обработка ошибки в интерфейсе
-    console.warn('[loadConvoHistory] loading error', err)
-  } finally {
+
     loadConvoHistoryLock.delete(loadingKey)
+  } catch (err) {
+    console.warn('[loadConvoHistory] loading error', err)
+    loadConvoHistoryLock.set(loadingKey, 'error')
   }
 }
