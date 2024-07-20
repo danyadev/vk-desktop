@@ -7,6 +7,7 @@ import { loadConvoHistory } from 'actions'
 import { useEnv } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
+import { Button } from 'ui/ui/Button/Button'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ConvoHistory.css'
@@ -17,7 +18,7 @@ type Props = {
 
 export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const { lang } = useEnv()
-  const { savedConvoScroll } = useConvosStore()
+  const { loadConvoHistoryLock, savedConvoScroll } = useConvosStore()
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
 
@@ -96,20 +97,39 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     }
   }
 
+  const renderLoader = (
+    direction: 'around' | 'up' | 'down',
+    startId: number,
+    gap: History.Gap
+  ) => {
+    const lockStatus = loadConvoHistoryLock.get(`${convo.id}-${direction}`)
+    const onLoad = () => loadHistory(direction, Message.resolveCmid(startId), gap)
+
+    if (lockStatus === 'error') {
+      return (
+        <div class="ConvoHistory__loadError">
+          {lang.use('me_convo_loading_error')}
+          <Button onClick={onLoad}>
+            {lang.use('me_convo_retry_loading')}
+          </Button>
+        </div>
+      )
+    }
+
+    return (
+      <IntersectionWrapper key={startId} onIntersect={onLoad}>
+        <Spinner size="regular" class="ConvoHistory__spinner" />
+      </IntersectionWrapper>
+    )
+  }
+
   return () => {
     const { items, matchedAroundId, gapBefore, gapAround, gapAfter } = historySlice.value
 
     if (gapAround) {
       return (
         <div class="ConvoHistory__placeholder">
-          <IntersectionWrapper
-            key={matchedAroundId}
-            onIntersect={() => {
-              loadHistory('around', Message.resolveCmid(matchedAroundId), gapAround)
-            }}
-          >
-            <Spinner size="regular" class="ConvoHistory__spinner" />
-          </IntersectionWrapper>
+          {renderLoader('around', matchedAroundId, gapAround)}
         </div>
       )
     }
@@ -127,29 +147,11 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
         <div class="ConvoHistory__content">
           <div class="ConvoHistory__topFiller" />
 
-          {gapBefore && (
-            <IntersectionWrapper
-              key={gapBefore.toId}
-              onIntersect={() => {
-                loadHistory('up', Message.resolveCmid(gapBefore.toId), gapBefore)
-              }}
-            >
-              <Spinner size="regular" class="ConvoHistory__spinner" />
-            </IntersectionWrapper>
-          )}
+          {gapBefore && renderLoader('up', gapBefore.toId, gapBefore)}
 
           <HistoryMessages items={items} />
 
-          {gapAfter && (
-            <IntersectionWrapper
-              key={gapAfter.fromId}
-              onIntersect={() => {
-                loadHistory('down', Message.resolveCmid(gapAfter.fromId), gapAfter)
-              }}
-            >
-              <Spinner size="regular" class="ConvoHistory__spinner" />
-            </IntersectionWrapper>
-          )}
+          {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
         </div>
       </div>
     )

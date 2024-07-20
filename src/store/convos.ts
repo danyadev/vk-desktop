@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
-import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 
 type Convos = {
@@ -14,7 +13,7 @@ type Convos = {
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
-  loadConvoHistoryLock: Set<`${Peer.Id}-${Message.Cmid}`>
+  loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, 'loading' | 'error'>
   savedConvoScroll: Map<Peer.Id, number>
 }
 
@@ -25,12 +24,12 @@ export const useConvosStore = defineStore('convos', {
       peerIds: [],
       hasMore: true,
       loading: true,
-      loadError: true
+      loadError: false
     },
     connection: {
       status: 'init'
     },
-    loadConvoHistoryLock: new Set(),
+    loadConvoHistoryLock: new Map(),
     savedConvoScroll: new Map()
   })
 })

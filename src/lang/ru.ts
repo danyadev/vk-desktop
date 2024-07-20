@@ -56,6 +56,10 @@ export const ru = {
   me_message: 'Сообщение',
   me_messages: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
   me_convo_composer_placeholder: 'Напишите сообщение...',
+  me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
+  me_convo_empty_placeholder: 'История переписки пуста',
+  me_convo_loading_error: 'Ошибка загрузки',
+  me_convo_retry_loading: 'Повторить',
 
   // region service messages
   me_service_chat_create: [
@@ -203,9 +207,6 @@ export const ru = {
     warm_valentine: 'Амурное',
     womens_day: 'Весеннее'
   },
-
-  me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
-  me_convo_empty_placeholder: 'История переписки пуста',
 
   modal_cancel_label: 'Отмена',
   modal_close_label: 'Закрыть',
