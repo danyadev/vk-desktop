@@ -1,4 +1,4 @@
-export type MessagesLongpollParams = {
+export type MessagesLongpollCredentials = {
   /** server url (without https:// protocol) */
   server: string
   key: string

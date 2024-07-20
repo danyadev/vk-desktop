@@ -1,5 +1,5 @@
 import * as IEngine from 'env/IEngine'
-import { MessagesLongpollParams } from 'model/api-types/objects/MessagesLongpollParams'
+import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import { toUrlParams } from 'misc/utils'
 
 export const ENGINE_VERSION = 19
@@ -17,14 +17,14 @@ const ENGINE_MODE =
 export class Engine {
   active = false
   version = ENGINE_VERSION
-  params: MessagesLongpollParams | null = null
+  credentials: MessagesLongpollCredentials | null = null
 
-  async start(params: MessagesLongpollParams) {
+  async start(credentials: MessagesLongpollCredentials) {
     this.active = true
-    this.params = params
+    this.credentials = credentials
 
     while (this.active) {
-      const { server, key, ts } = this.params
+      const { server, key, ts } = this.credentials
       const timeoutSignal = AbortSignal.timeout(ENGINE_FETCH_TIMEOUT)
 
       const result = await fetch(`https://${server}?act=a_check`, {
@@ -49,8 +49,8 @@ export class Engine {
         }
       }
 
-      this.params.ts = result.ts
-      this.params.pts = result.pts
+      this.credentials.ts = result.ts
+      this.credentials.pts = result.pts
 
       // for (const update of result.updates) {
       //   console.log(update)
