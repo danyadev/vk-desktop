@@ -332,7 +332,7 @@ module.exports = {
     // Включено в full файле
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
-    '@typescript-eslint/no-useless-template-literals': 'error',
+    '@typescript-eslint/no-unnecessary-template-expression': 'error',
     '@typescript-eslint/object-curly-spacing': ['error', 'always'],
     '@typescript-eslint/prefer-destructuring': ['error', {
       // false здесь означает, что проверяться такие кейсы не будут.
