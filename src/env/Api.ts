@@ -293,7 +293,7 @@ export class Api implements IApi.Api {
         window.clearTimeout(abortTimeoutId)
 
         if (!response.ok) {
-          const errorReason = new Error(`api responded with status ${response.status}`)
+          const errorReason = `api responded with status ${response.status}`
           return Promise.reject(new IApi.FetchError('ServerError', errorReason))
         }
 
@@ -306,7 +306,7 @@ export class Api implements IApi.Api {
 
       if ('execute_errors' in result) {
         if (!isNonEmptyArray(result.execute_errors)) {
-          const errorReason = new Error('api responded with empty execute_errors')
+          const errorReason = 'api responded with empty execute_errors'
           return Promise.reject(new IApi.FetchError('ServerError', errorReason))
         }
 
@@ -316,7 +316,7 @@ export class Api implements IApi.Api {
       return result.response
     } catch (error) {
       console.warn(error)
-      return Promise.reject(new IApi.FetchError('NetworkError', error))
+      return Promise.reject(new IApi.FetchError('NetworkError', String(error)))
     } finally {
       this.semaphore.release()
     }
