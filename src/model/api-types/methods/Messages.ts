@@ -1,7 +1,7 @@
 import { GroupsGroup } from 'model/api-types/objects/GroupsGroup'
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
 import { MessagesConversationWithMessage } from 'model/api-types/objects/MessagesConversationWithMessage'
-import { MessagesLongpollParams } from 'model/api-types/objects/MessagesLongpollParams'
+import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import { UsersUser } from 'model/api-types/objects/UsersUser'
 
@@ -55,4 +55,4 @@ export type MessagesGetLongPollServerParams = {
   group_id?: number
 }
 
-export type MessagesGetLongPollServerResponse = MessagesLongpollParams
+export type MessagesGetLongPollServerResponse = MessagesLongpollCredentials
