@@ -1,7 +1,6 @@
 import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
 
 export type MessagesMessage = {
-  version: number
   action?: MessagesMessageAction
   attachments?: Array<{ type: string }> // TODO
   template?: unknown // TODO
@@ -16,7 +15,6 @@ export type MessagesMessage = {
   is_hidden?: boolean
   keyboard?: MessagesKeyboard
   members_count?: number
-  message_tag?: string
   out: 0 | 1
   payload?: string
   peer_id: number
@@ -39,9 +37,11 @@ export type MessagesMessage = {
   was_played?: boolean
   pinned_at?: number
   is_silent?: boolean
+  from_app_id?: number
   is_mentioned_user: boolean
   is_unavailable?: boolean
-  admin_author_id?: number
+  version: number
+  force_autoplay_media?: boolean
 }
 
 export type MessagesMessageAction = {
@@ -59,11 +59,11 @@ export type MessagesMessageAction = {
     | 'conversation_style_update_action'
     | 'call_transcription_failed'
     | 'custom'
+    | 'accepted_message_request'
     | 'chat_invite_user_by_link'
     | 'chat_invite_user_by_message_request'
     | 'chat_screenshot'
     | 'chat_group_call_started'
-    | 'accepted_message_request'
     | 'chat_invite_user_by_call'
     | 'chat_invite_user_by_call_join_link'
     | 'chat_kick_user_call_block'

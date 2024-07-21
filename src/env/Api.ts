@@ -8,7 +8,7 @@ import { isNonEmptyArray, random, sleep, toUrlParams } from 'misc/utils'
 import { appUserAgent } from 'misc/constants'
 import { Semaphore } from 'misc/Semaphore'
 
-export const API_VERSION = '5.200'
+export const API_VERSION = '5.238'
 
 const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500

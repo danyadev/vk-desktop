@@ -14,7 +14,7 @@ export function fromApiConvo(
   | { convo: Convo.ChatConvo, peer: Peer.Chat }
   | { convo?: Exclude<Convo.Convo, Convo.ChatConvo>, peer?: undefined } {
   const lastMessage = apiLastMessage && fromApiMessage(apiLastMessage)
-  const lastCmid = apiConvo.last_conversation_message_id ?? 0
+  const lastCmid = apiConvo.last_conversation_message_id
   const history: History.History<Message.Message> = []
 
   if (lastMessage) {
@@ -88,8 +88,8 @@ export function fromApiConvo(
         }
       }
 
-    case 'email':
-      // Устаревший тип чата, не будет поддержан
+    case 'email': // Устаревший тип чата, не будет поддержан
+    case 'contact': // В данный момент не поддерживаем
       return {}
 
     default:

@@ -2,7 +2,7 @@ import * as IEngine from 'env/IEngine'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import { toUrlParams } from 'misc/utils'
 
-export const ENGINE_VERSION = 19
+export const ENGINE_VERSION = 21
 
 const ENGINE_MAX_CONNECTION_DURATION_SEC = 20
 const ENGINE_FETCH_TIMEOUT = (ENGINE_MAX_CONNECTION_DURATION_SEC + 5) * 1000
