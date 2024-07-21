@@ -4,7 +4,7 @@ import { UsersUser } from 'model/api-types/objects/UsersUser'
 // groups.getById
 export type GroupsGetByIdParams = {
   group_ids: string | number
-  fields?: string
+  fields: string
 }
 
 export type GroupsGetByIdResponse = {

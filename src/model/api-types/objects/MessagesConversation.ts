@@ -5,14 +5,14 @@ export type MessagesConversation = {
   peer: {
     id: number
     local_id?: number
-    type: 'user' | 'group' | 'chat' | 'email'
+    type: 'user' | 'group' | 'chat' | 'contact' | 'email'
   }
   sort_id?: {
     major_id: number
     minor_id: number
   }
   last_message_id: number
-  last_conversation_message_id?: number
+  last_conversation_message_id: number
   in_read: number
   out_read: number
   in_read_cmid: number
@@ -31,10 +31,27 @@ export type MessagesConversation = {
     inviter_id?: number
     request_date?: number
   }
+  business_notify_data?: {
+    peer_id: number
+    last_cmid: number
+    unread_count?: number
+    service_url?: string
+  }
   mentions?: number[]
   mention_cmids?: number[]
   expire_messages?: number[]
   expire_cmids?: number[]
+  conversation_bar?: {
+    card_info?: { text: string }
+    buttons?: unknown[]
+    /** icon url */
+    icon?: string
+    name: string
+    title?: string
+    text: string
+    can_hide?: boolean
+  }
+  conversation_card?: unknown
   current_keyboard?: MessagesKeyboard
   push_settings?: {
     disabled_forever: boolean
@@ -46,6 +63,7 @@ export type MessagesConversation = {
   can_write?: {
     allowed: boolean
     reason?: number
+    until?: number
   }
   can_send_money?: boolean
   can_receive_money?: boolean
@@ -101,20 +119,20 @@ export type MessagesConversation = {
     is_service?: boolean
     is_donut?: boolean
     donut_owner_id?: number
+    type_mask?: number
     short_poll_reactions?: boolean
-  }
-  call_in_progress?: {
-    call_id: string
-    participants: {
-      count?: number
-      list?: number[]
+    writing_disabled?: {
+      value: boolean
+      until_ts?: number
     }
-    // ...и некоторые другие поля
   }
+  call_in_progress?: unknown
+  spam_expiration?: number
   is_new?: boolean
   is_archived?: boolean
   style?: string
   folder_ids?: number[]
   unread_reactions?: number[]
   peer_flags?: number
+  version: number
 }

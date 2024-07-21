@@ -1,4 +1,5 @@
 import * as IApi from 'env/IApi'
+import * as ILang from 'env/ILang'
 import * as Auth from 'model/Auth'
 import { useConvosStore } from 'store/convos'
 import { useMainSettingsStore } from 'store/mainSettings'
@@ -24,13 +25,14 @@ type ExposedFeatures = {
   convos: ReturnType<typeof useConvosStore>
   api: IApi.Api
   engine: ReturnType<typeof useEnv>['engine']
+  lang: ILang.Lang
   auth: typeof Auth
   utils: typeof utils
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 
 export function exposeFeatures() {
-  const { api, engine } = useEnv()
+  const { api, engine, lang } = useEnv()
 
   exposedWindow.mainSettings = useMainSettingsStore()
   exposedWindow.settings = useSettingsStore()
@@ -39,6 +41,7 @@ export function exposeFeatures() {
   exposedWindow.convos = useConvosStore()
   exposedWindow.api = api
   exposedWindow.engine = engine
+  exposedWindow.lang = lang
   exposedWindow.auth = { ...Auth }
   exposedWindow.utils = { ...utils }
 }
