@@ -1,35 +1,35 @@
-export type VariablesTypings<T = string | number> = {
-  auth_sms_with_code_sent: { phone: T }
-  auth_resend_sms_at: { time: T }
-  auth_incorrect_profile_type: { type: T }
-  auth_get_app_token_error: { description: T }
+import { Dictionary } from 'env/Lang'
 
-  me_convo_list_author: { author: T }
-  me_convo_list_date_mins: { mins: T }
-  me_convo_list_date_hours: { hours: T }
-  me_convo_list_date_days: { days: T }
-  me_convo_list_date_weeks: { weeks: T }
+/**
+ * Средствами тайпскрипта достаем из всех переводов использование {таких} переменных,
+ * собираем для каждого перевода список переменных и указываем им определенный тип:
+ * string | number, либо же JSXElement, в зависимости от потребности
+ *
+ * Отдельно игнорируем переменные {0}, так как они используются для plural групп переводов
+ */
 
-  me_service_chat_create: { author: T, title: T }
-  me_service_chat_title_update: { author: T, oldTitle: T, title: T }
-  me_service_chat_photo_update: { author: T }
-  me_service_chat_photo_remove: { author: T }
-  me_service_chat_invite_user_by_link: { author: T }
-  me_service_chat_screenshot: { author: T }
-  me_service_chat_group_call_started: { author: T }
-  me_service_chat_invite_user_by_call_join_link: { author: T }
-  me_service_chat_invite_user: { author: T, target: T }
-  me_service_chat_kick_user: { author: T, target: T }
-  me_service_chat_invite_user_self: { author: T }
-  me_service_chat_kick_user_self: { author: T }
-  me_service_accepted_message_request: { target: T }
-  me_service_chat_invite_user_by_message_request: { author: T, target: T }
-  me_service_chat_invite_user_by_call: { author: T, target: T }
-  me_service_chat_kick_user_call_block: { target: T }
-  me_service_chat_pin_message: { author: T, message: T }
-  me_service_chat_unpin_message: { author: T, message: T }
-  me_service_conversation_style_update: { author: T, style: T }
-  me_service_conversation_style_reset: { author: T }
+type ExtractVariables<Str extends string, Vars extends string[] = []> =
+  Str extends `${string}{${infer Var extends string}}${infer End extends string}`
+    ? ExtractVariables<End, Var extends '0' ? Vars : [...Vars, Var]>
+    : Vars
 
-  confirmAccountDelete_confirm: { userName: T }
+type ExtractFromArrayEntry<Arr extends string[], Vars extends string[]> =
+  Arr extends [infer Current extends string, ...infer Rest extends string[]]
+    ? ExtractFromArrayEntry<Rest, [...Vars, ...ExtractVariables<Current>]>
+    : Vars
+
+type ExtractFromEntry<
+  T extends string | ReadonlyArray<string> | Record<string, string>,
+  Vars extends string[] = []
+> =
+  T extends string
+    ? [...Vars, ...ExtractVariables<T>]
+    : T extends ReadonlyArray<string>
+      ? [...Vars, ...ExtractFromArrayEntry<[...T], Vars>]
+      : Vars
+
+export type VariablesTypings<Variables = string | number> = {
+  [Key in keyof Dictionary as ExtractFromEntry<Dictionary[Key]> extends [] ? never : Key]: {
+    [K in ExtractFromEntry<Dictionary[Key]>[number]]: Variables
+  }
 }

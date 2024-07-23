@@ -95,14 +95,14 @@ export const AuthQRPage = defineComponent<Props>((props) => {
           loading={state.loading}
           disabled={state.loading}
         >
-          {lang.use('cancel')}
+          {lang.use('auth_cancel')}
         </Button>
       </div>
 
       <Modal
         opened={!!state.error}
         onClose={onCloseErrorModal}
-        title={lang.use('auth_error')}
+        title={lang.use('auth_error_modal_title')}
         buttons={<Button onClick={onCloseErrorModal}>{lang.use('modal_close_label')}</Button>}
       >
         {state.error}

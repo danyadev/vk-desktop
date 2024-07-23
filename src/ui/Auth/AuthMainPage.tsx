@@ -88,7 +88,7 @@ export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
       <Modal
         opened={!!props.error}
         onClose={props.onHideError}
-        title={lang.use('auth_error')}
+        title={lang.use('auth_error_modal_title')}
         buttons={<Button onClick={props.onHideError}>{lang.use('modal_close_label')}</Button>}
       >
         {props.error}

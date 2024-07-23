@@ -123,7 +123,7 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
             disabled={props.loading}
             onClick={props.onCancel}
           >
-            {lang.use('cancel')}
+            {lang.use('auth_cancel')}
           </Button>
           <Button
             size="large"
@@ -149,7 +149,7 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
       <Modal
         opened={!!props.error}
         onClose={props.onHideError}
-        title={lang.use('auth_error')}
+        title={lang.use('auth_error_modal_title')}
         buttons={<Button onClick={props.onHideError}>{lang.use('modal_close_label')}</Button>}
       >
         {props.error}
