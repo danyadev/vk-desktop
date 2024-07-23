@@ -1,14 +1,10 @@
 export const ru = {
   vk_desktop_label: 'VK Desktop',
-  cancel: 'Отмена',
-  months_of: [
-    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
-  ],
 
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
   auth_submit: 'Войти',
+  auth_cancel: 'Отмена',
   auth_show_password: 'Показать пароль',
   auth_hide_password: 'Скрыть пароль',
   auth_by_qr_code: 'Войти по QR-коду',
@@ -17,7 +13,7 @@ export const ru = {
   auth_register: 'Зарегистрироваться',
   auth_forgot_password: 'Забыли пароль?',
   auth_account_delete: 'Удалить',
-  auth_error: 'Ошибка авторизации',
+  auth_error_modal_title: 'Ошибка авторизации',
 
   auth_confirm_login: 'Подтвердите вход',
   auth_sms_with_code_sent: 'SMS с кодом отправлен на номер {phone}',

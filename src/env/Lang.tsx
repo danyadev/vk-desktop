@@ -51,10 +51,10 @@ export class Lang {
   useJSX<Key extends keyof VariablesTypings>(
     key: Key,
     variables: VariablesTypings<JSXElement>[Key]
-  ): string
+  ): JSXElement
   useJSX<Key extends Exclude<keyof DictionaryWithStringValues, keyof VariablesTypings>>(
     key: Key
-  ): string
+  ): JSXElement
   useJSX<Key extends keyof DictionaryWithStringValues>(
     key: Key,
     variables?: Key extends keyof VariablesTypings
@@ -88,7 +88,7 @@ export class Lang {
 
     return this.transform(
       values[this.pluralIndex(number)] ?? values[0],
-      variables ?? { 0: String(number) },
+      variables ?? { 0: number },
       (chunks) => chunks.join('')
     )
   }
@@ -97,11 +97,11 @@ export class Lang {
     key: Key,
     number: number,
     variables: VariablesTypings<JSXElement>[Key]
-  ): string
+  ): JSXElement
   usePluralJSX<Key extends Exclude<keyof DictionaryWithArrayValues, keyof VariablesTypings>>(
     key: Key,
     number: number
-  ): string
+  ): JSXElement
   usePluralJSX<Key extends keyof DictionaryWithArrayValues>(
     key: Key,
     number: number,
@@ -113,7 +113,7 @@ export class Lang {
 
     return this.transform(
       values[this.pluralIndex(number)] ?? values[0],
-      variables ?? { 0: String(number) },
+      variables ?? { 0: number as JSXElement },
       (chunks) => <>{chunks}</>
     )
   }
@@ -147,11 +147,11 @@ export class Lang {
     key: Key,
     gender: Peer.User['gender'],
     variables: VariablesTypings<JSXElement>[Key]
-  ): string
+  ): JSXElement
   useGenderJSX<Key extends Exclude<keyof DictionaryWithArrayValues, keyof VariablesTypings>>(
     key: Key,
     gender: Peer.User['gender']
-  ): string
+  ): JSXElement
   useGenderJSX<Key extends keyof DictionaryWithArrayValues>(
     key: Key,
     gender: Peer.User['gender'],
