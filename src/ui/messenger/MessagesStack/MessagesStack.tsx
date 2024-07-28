@@ -18,7 +18,10 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
       case 'Normal':
         return (
           <div class="MessagesStack__message" data-cmid={message.cmid}>
-            <ConvoMessage message={message} showName={index === 0} />
+            <ConvoMessage
+              message={message}
+              showName={index === 0 && Peer.isChatPeerId(message.peerId)}
+            />
           </div>
         )
       case 'Service':
@@ -48,7 +51,7 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
 
     return (
       <div class={['MessagesStack', message.isOut && 'MessagesStack--out']}>
-        {message.kind === 'Normal' && !message.isOut && (
+        {message.kind === 'Normal' && !message.isOut && Peer.isChatPeerId(message.peerId) && (
           <Avatar class="MessagesStack__avatar" peer={author} size={32} />
         )}
         <div class="MessagesStack__messages">

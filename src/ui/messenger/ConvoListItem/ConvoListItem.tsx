@@ -90,20 +90,20 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
   const { lang } = useEnv()
 
   const getAttachmentPreview = (message: Message.Normal) => {
-    if (message.attachments.length > 1) {
-      return lang.usePlural('me_message_attaches', message.attachments.length)
+    const kindsCount = Attach.kindsCount(message.attaches)
+    const count = Attach.count(message.attaches)
+
+    if (kindsCount > 1) {
+      return lang.usePlural('me_message_attaches', count)
     }
 
-    const firstAttach = message.attachments[0]
-
+    const firstAttach = Object.values(message.attaches)[0]
     if (firstAttach) {
-      const translation = Attach.preview(firstAttach, lang)
-      if (translation) {
-        return translation
-      }
+      return Attach.preview(firstAttach, lang)
+    }
 
-      console.warn(firstAttach)
-      return lang.use('me_unsupported_message')
+    if (message.replyMessage) {
+      return lang.usePlural('me_messages', 1)
     }
 
     if (message.forwardedMessages.length) {
@@ -129,6 +129,14 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
     }
 
     const attachmentPreview = getAttachmentPreview(lastMessage)
+
+    if (!lastMessage.text && !attachmentPreview) {
+      return (
+        <span class="MessagePreview__highlight">
+          {lang.use('me_empty_message')}
+        </span>
+      )
+    }
 
     return (
       <>

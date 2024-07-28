@@ -1,6 +1,7 @@
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { fromApiAttaches } from 'converters/AttachConverter'
 import { fromApiConvoStyle } from 'converters/ConvoConverter'
 import { typeguard } from 'misc/utils'
 
@@ -45,7 +46,8 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
   return {
     kind: 'Normal',
     text: message.text,
-    attachments: message.attachments ?? [],
+    attaches: fromApiAttaches(message.attachments ?? []),
+    replyMessage: message.reply_message,
     forwardedMessages: message.fwd_messages ?? [],
     updatedAt: message.update_time
       ? message.update_time * 1000

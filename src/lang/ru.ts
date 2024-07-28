@@ -81,7 +81,6 @@ export const ru = {
     few: '{0} сообщения исчезло',
     many: '{0} сообщений исчезло'
   },
-  me_unsupported_message: 'Сообщение не поддерживается',
   me_message_attaches: {
     one: '{0} вложение',
     few: '{0} вложения',
@@ -93,6 +92,9 @@ export const ru = {
     few: '{0} сообщения',
     many: '{0} сообщений'
   },
+  me_empty_message: 'Пустое сообщение',
+  me_unknown_attach: 'Неизвестное вложение',
+  me_unsupported_service_message: 'Сервисное сообщение не поддерживается',
   me_convo_composer_placeholder: 'Напишите сообщение...',
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
   me_convo_empty_placeholder: 'История переписки пуста',

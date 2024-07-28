@@ -1,8 +1,9 @@
 import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
+import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'
 
 export type MessagesMessage = {
   action?: MessagesMessageAction
-  attachments?: Array<{ type: string }> // TODO
+  attachments?: MessagesMessageAttachment[]
   template?: unknown // TODO
   conversation_message_id: number
   date: number

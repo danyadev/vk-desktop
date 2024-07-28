@@ -1,3 +1,4 @@
+import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { Opaque } from 'misc/utils'
@@ -17,7 +18,8 @@ interface BaseMessage {
 export interface Normal extends BaseMessage {
   kind: 'Normal'
   text: string
-  attachments: Array<{ type: string }> // TODO
+  attaches: Attach.Attaches
+  replyMessage?: unknown // TODO
   forwardedMessages: unknown[] // TODO
   updatedAt?: number
 }
