@@ -112,7 +112,7 @@ export const ServiceMessage = defineComponent<Props>((props) => {
         return message.action.message
 
       case 'unknown':
-        return lang.use('me_unsupported_message')
+        return lang.use('me_unsupported_service_message')
     }
   }
 }, {

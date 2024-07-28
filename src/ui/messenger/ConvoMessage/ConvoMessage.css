@@ -29,3 +29,7 @@
   color: var(--vkui--color_text_secondary);
   font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
 }
+
+.ConvoMessage__unknownAttach {
+  color: var(--vkui--color_text_secondary);
+}

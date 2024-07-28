@@ -1,15 +1,38 @@
 import * as ILang from 'env/ILang'
+import { NonEmptyArray } from 'misc/utils'
 
-type Attach = { type: string }
+export type Attaches = {
+  unknown?: NonEmptyArray<Unknown>
+}
 
-export function preview(attach: Attach, lang: ILang.Lang): string | null {
-  switch (attach.type) {
+type Attach = NonNullable<Attaches[keyof Attaches]>
+
+type Unknown = {
+  kind: 'Unknown'
+  type: string
+  raw: unknown
+}
+
+export function kindsCount(attaches: Attaches): number {
+  return Object.keys(attaches).length
+}
+
+export function count(attaches: Attaches): number {
+  return Object.values(attaches).reduce((count, attach) => {
+    const attachItemsLength = Array.isArray(attach) ? attach.length : 1
+
+    return count + attachItemsLength
+  }, 0)
+}
+
+export function preview(attach: Attach, lang: ILang.Lang): string {
+  switch (attach[0].type) {
     case 'photo':
     case 'video':
     case 'audio':
     case 'doc':
     case 'link':
-      return lang.usePlural(`me_message_attach_${attach.type}`, 1)
+      return lang.usePlural(`me_message_attach_${attach[0].type}`, attach.length)
 
     case 'gift':
     case 'sticker':
@@ -39,9 +62,9 @@ export function preview(attach: Attach, lang: ILang.Lang): string | null {
     case 'widget':
     case 'question':
     case 'donut_link':
-      return lang.use(`me_message_attach_${attach.type}`)
+      return lang.use(`me_message_attach_${attach[0].type}`)
 
     default:
-      return null
+      return lang.use('me_unknown_attach')
   }
 }

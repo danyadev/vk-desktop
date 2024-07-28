@@ -1,6 +1,7 @@
 .ExpiredMessage {
   display: flex;
   align-items: center;
+  text-align: center;
   padding: 10px 12px;
   color: var(--vkui--color_text_contrast);
   background-color: var(--vkui--color_overlay_primary);
@@ -9,4 +10,5 @@
 
 .ExpiredMessage__icon {
   margin-right: 8px;
+  flex: none;
 }
