@@ -1,22 +1,34 @@
 import * as Peer from 'model/Peer'
 import type { Settings } from 'store/settings'
-import { ru } from 'lang/ru'
+import { ru, RuPluralRules } from 'lang/ru'
 import { VariablesTypings } from 'lang/VariablesTypings'
 import { JSXElement, splitter } from 'misc/utils'
 
 const langMap = {
   ru
 }
+type PluralKeysMap = {
+  ru: RuPluralRules
+}
+
+type PluralKeys = PluralKeysMap[Settings['lang']]
+type PluralValues = Record<PluralKeys, string> & { single?: string }
+
+type GenderKeys = 'male' | 'female'
+type GenderValues = Record<GenderKeys, string>
 
 export type Dictionary = typeof langMap[Settings['lang']]
 
-type DictionaryWithStringValues = {
+type DictionaryOfStrings = {
   [Key in keyof Dictionary as Dictionary[Key] extends string ? Key : never]: Dictionary[Key]
 }
 
-type DictionaryWithArrayValues = {
-  [Key in keyof Dictionary as Dictionary[Key] extends ReadonlyArray<string> ? Key : never]:
-    Dictionary[Key]
+type DictionaryOfPlurals = {
+  [Key in keyof Dictionary as Dictionary[Key] extends PluralValues ? Key : never]: Dictionary[Key]
+}
+
+type DictionaryOfGenders = {
+  [Key in keyof Dictionary as Dictionary[Key] extends GenderValues ? Key : never]: Dictionary[Key]
 }
 
 export class Lang {
@@ -32,10 +44,10 @@ export class Lang {
     key: Key,
     variables: VariablesTypings[Key]
   ): string
-  use<Key extends Exclude<keyof DictionaryWithStringValues, keyof VariablesTypings>>(
+  use<Key extends Exclude<keyof DictionaryOfStrings, keyof VariablesTypings>>(
     key: Key
   ): string
-  use<Key extends keyof DictionaryWithStringValues>(
+  use<Key extends keyof DictionaryOfStrings>(
     key: Key,
     variables?: Key extends keyof VariablesTypings
       ? VariablesTypings[Key]
@@ -52,10 +64,10 @@ export class Lang {
     key: Key,
     variables: VariablesTypings<JSXElement>[Key]
   ): JSXElement
-  useJSX<Key extends Exclude<keyof DictionaryWithStringValues, keyof VariablesTypings>>(
+  useJSX<Key extends Exclude<keyof DictionaryOfStrings, keyof VariablesTypings>>(
     key: Key
   ): JSXElement
-  useJSX<Key extends keyof DictionaryWithStringValues>(
+  useJSX<Key extends keyof DictionaryOfStrings>(
     key: Key,
     variables?: Key extends keyof VariablesTypings
       ? VariablesTypings<JSXElement>[Key]
@@ -68,101 +80,107 @@ export class Lang {
     )
   }
 
-  usePlural<Key extends keyof DictionaryWithArrayValues & keyof VariablesTypings>(
+  usePlural<Key extends keyof DictionaryOfPlurals & keyof VariablesTypings>(
     key: Key,
     number: number,
     variables: VariablesTypings[Key]
   ): string
-  usePlural<Key extends Exclude<keyof DictionaryWithArrayValues, keyof VariablesTypings>>(
+  usePlural<Key extends Exclude<keyof DictionaryOfPlurals, keyof VariablesTypings>>(
     key: Key,
     number: number
   ): string
-  usePlural<Key extends keyof DictionaryWithArrayValues>(
+  usePlural<Key extends keyof DictionaryOfPlurals>(
     key: Key,
     number: number,
-    variables?: Key extends keyof DictionaryWithArrayValues & keyof VariablesTypings
+    variables?: Key extends keyof VariablesTypings
       ? VariablesTypings[Key]
       : never
   ): string {
-    const values = this.dictionary[key]
+    const values = this.dictionary[key] as PluralValues
+    const value = number === 1 && values.single
+      ? values.single
+      : values[this.pluralRules.select(number) as PluralKeys]
 
     return this.transform(
-      values[this.pluralIndex(number)] ?? values[0],
+      value,
       variables ?? { 0: number },
       (chunks) => chunks.join('')
     )
   }
 
-  usePluralJSX<Key extends keyof DictionaryWithArrayValues & keyof VariablesTypings>(
+  usePluralJSX<Key extends keyof DictionaryOfPlurals & keyof VariablesTypings>(
     key: Key,
     number: number,
     variables: VariablesTypings<JSXElement>[Key]
   ): JSXElement
-  usePluralJSX<Key extends Exclude<keyof DictionaryWithArrayValues, keyof VariablesTypings>>(
+  usePluralJSX<Key extends Exclude<keyof DictionaryOfPlurals, keyof VariablesTypings>>(
     key: Key,
     number: number
   ): JSXElement
-  usePluralJSX<Key extends keyof DictionaryWithArrayValues>(
+  usePluralJSX<Key extends keyof DictionaryOfPlurals>(
     key: Key,
     number: number,
-    variables?: Key extends keyof DictionaryWithArrayValues & keyof VariablesTypings
+    variables?: Key extends keyof VariablesTypings
       ? VariablesTypings<JSXElement>[Key]
       : never
   ): JSXElement {
-    const values = this.dictionary[key]
+    const values = this.dictionary[key] as PluralValues
+    const value = number === 1 && values.single
+      ? values.single
+      : values[this.pluralRules.select(number) as PluralKeys]
 
     return this.transform(
-      values[this.pluralIndex(number)] ?? values[0],
+      value,
       variables ?? { 0: number as JSXElement },
       (chunks) => <>{chunks}</>
     )
   }
 
-  useGender<Key extends keyof DictionaryWithArrayValues & keyof VariablesTypings>(
+  useGender<Key extends keyof DictionaryOfGenders & keyof VariablesTypings>(
     key: Key,
     gender: Peer.User['gender'],
     variables: VariablesTypings[Key]
   ): string
-  useGender<Key extends Exclude<keyof DictionaryWithArrayValues, keyof VariablesTypings>>(
+  useGender<Key extends Exclude<keyof DictionaryOfGenders, keyof VariablesTypings>>(
     key: Key,
     gender: Peer.User['gender']
   ): string
-  useGender<Key extends keyof DictionaryWithArrayValues>(
+  useGender<Key extends keyof DictionaryOfGenders>(
     key: Key,
     gender: Peer.User['gender'],
-    variables?: Key extends keyof DictionaryWithArrayValues & keyof VariablesTypings
+    variables?: Key extends keyof VariablesTypings
       ? VariablesTypings[Key]
       : never
   ): string {
-    const values = this.dictionary[key]
+    const values = this.dictionary[key] as GenderValues
 
     return this.transform(
-      gender === 'female' ? values[1] : values[0],
+      gender === 'female' ? values.female : values.male,
       variables,
       (chunks) => chunks.join('')
     )
   }
 
-  useGenderJSX<Key extends keyof DictionaryWithArrayValues & keyof VariablesTypings>(
+  useGenderJSX<Key extends keyof DictionaryOfGenders & keyof VariablesTypings>(
     key: Key,
     gender: Peer.User['gender'],
     variables: VariablesTypings<JSXElement>[Key]
   ): JSXElement
-  useGenderJSX<Key extends Exclude<keyof DictionaryWithArrayValues, keyof VariablesTypings>>(
+  useGenderJSX<Key extends Exclude<keyof DictionaryOfGenders, keyof VariablesTypings>>(
     key: Key,
     gender: Peer.User['gender']
   ): JSXElement
-  useGenderJSX<Key extends keyof DictionaryWithArrayValues>(
+  useGenderJSX<Key extends keyof DictionaryOfGenders>(
     key: Key,
     gender: Peer.User['gender'],
-    variables?: Key extends keyof DictionaryWithArrayValues & keyof VariablesTypings
+    variables?: Key extends keyof VariablesTypings
       ? VariablesTypings<JSXElement>[Key]
       : never
   ): JSXElement {
-    const values = this.dictionary[key]
+    const values = this.dictionary[key] as GenderValues
 
     return this.transform(
-      gender === 'female' ? values[1] : values[0],
+      gender === 'female' ? values.female : values.male,
       variables,
       (chunks) => <>{chunks}</>
     )
@@ -199,19 +217,6 @@ export class Lang {
     })
 
     return joiner(chunks)
-  }
-
-  private pluralIndex(count: number) {
-    const pluralRule = this.pluralRules.select(count)
-
-    if (pluralRule === 'one') {
-      return 0
-    }
-    if (pluralRule === 'few') {
-      return 1
-    }
-
-    return 2
   }
 
   private dateTimeFormatters = new Map<string, Intl.DateTimeFormat>()

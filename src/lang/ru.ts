@@ -1,3 +1,5 @@
+export type RuPluralRules = 'one' | 'few' | 'many'
+
 export const ru = {
   vk_desktop_label: 'VK Desktop',
 
@@ -45,12 +47,24 @@ export const ru = {
   me_convo_list_loading_error: 'Ошибка загрузки',
   me_convo_list_retry_loading: 'Повторить',
 
-  me_message_disappeared: 'Сообщение исчезло',
-  me_messages_disappeared: ['{0} сообщение исчезло', '{0} сообщения исчезло', '{0} сообщений исчезло'],
+  me_messages_disappeared: {
+    single: 'Сообщение исчезло',
+    one: '{0} сообщение исчезло',
+    few: '{0} сообщения исчезло',
+    many: '{0} сообщений исчезло'
+  },
   me_unsupported_message: 'Сообщение не поддерживается',
-  me_message_attaches: ['{0} вложение', '{0} вложения', '{0} вложений'],
-  me_message: 'Сообщение',
-  me_messages: ['{0} сообщение', '{0} сообщения', '{0} сообщений'],
+  me_message_attaches: {
+    one: '{0} вложение',
+    few: '{0} вложения',
+    many: '{0} вложений'
+  },
+  me_messages: {
+    single: 'Сообщение',
+    one: '{0} сообщение',
+    few: '{0} сообщения',
+    many: '{0} сообщений'
+  },
   me_convo_composer_placeholder: 'Напишите сообщение...',
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
   me_convo_empty_placeholder: 'История переписки пуста',
@@ -58,93 +72,118 @@ export const ru = {
   me_convo_retry_loading: 'Повторить',
 
   // region service messages
-  me_service_chat_create: [
-    '{author} создал чат «{title}»',
-    '{author} создала чат «{title}»'
-  ],
-  me_service_chat_title_update: [
-    '{author} изменил название чата с «{oldTitle}» на «{title}»',
-    '{author} изменила название чата с «{oldTitle}» на «{title}»'
-  ],
-  me_service_chat_photo_update: [
-    '{author} обновил фотографию чата',
-    '{author} обновила фотографию чата'
-  ],
-  me_service_chat_photo_remove: [
-    '{author} удалил фотографию чата',
-    '{author} удалила фотографию чата'
-  ],
+  me_service_chat_create: {
+    male: '{author} создал чат «{title}»',
+    female: '{author} создала чат «{title}»'
+  },
+  me_service_chat_title_update: {
+    male: '{author} изменил название чата с «{oldTitle}» на «{title}»',
+    female: '{author} изменила название чата с «{oldTitle}» на «{title}»'
+  },
+  me_service_chat_photo_update: {
+    male: '{author} обновил фотографию чата',
+    female: '{author} обновила фотографию чата'
+  },
+  me_service_chat_photo_remove: {
+    male: '{author} удалил фотографию чата',
+    female: '{author} удалила фотографию чата'
+  },
   me_service_chat_kick_don: 'Вы исключены из чата, так как перестали поддерживать сообщество через VK Donut',
   me_service_call_transcription_failed: 'Не удалось создать расшифровку звонка',
-  me_service_chat_invite_user_by_link: [
-    '{author} присоединился к чату по ссылке',
-    '{author} присоединилась к чату по ссылке'
-  ],
-  me_service_chat_screenshot: [
-    '{author} сделал скриншот чата',
-    '{author} сделала скриншот чата'
-  ],
-  me_service_chat_group_call_started: [
-    '{author} начал групповой звонок',
-    '{author} начала групповой звонок'
-  ],
-  me_service_chat_invite_user_by_call_join_link: [
-    '{author} присоединился к звонку по ссылке',
-    '{author} присоединилась к звонку по ссылке'
-  ],
-  me_service_chat_invite_user: [
-    '{author} пригласил {target}',
-    '{author} пригласила {target}'
-  ],
-  me_service_chat_invite_user_self: [
-    '{author} вернулся в чат',
-    '{author} вернулась в чат'
-  ],
-  me_service_chat_kick_user: [
-    '{author} исключил {target}',
-    '{author} исключила {target}'
-  ],
-  me_service_chat_kick_user_self: [
-    '{author} вышел из чата',
-    '{author} вышла из чата'
-  ],
+  me_service_chat_invite_user_by_link: {
+    male: '{author} присоединился к чату по ссылке',
+    female: '{author} присоединилась к чату по ссылке'
+  },
+  me_service_chat_screenshot: {
+    male: '{author} сделал скриншот чата',
+    female: '{author} сделала скриншот чата'
+  },
+  me_service_chat_group_call_started: {
+    male: '{author} начал групповой звонок',
+    female: '{author} начала групповой звонок'
+  },
+  me_service_chat_invite_user_by_call_join_link: {
+    male: '{author} присоединился к звонку по ссылке',
+    female: '{author} присоединилась к звонку по ссылке'
+  },
+  me_service_chat_invite_user: {
+    male: '{author} пригласил {target}',
+    female: '{author} пригласила {target}'
+  },
+  me_service_chat_invite_user_self: {
+    male: '{author} вернулся в чат',
+    female: '{author} вернулась в чат'
+  },
+  me_service_chat_kick_user: {
+    male: '{author} исключил {target}',
+    female: '{author} исключила {target}'
+  },
+  me_service_chat_kick_user_self: {
+    male: '{author} вышел из чата',
+    female: '{author} вышла из чата'
+  },
   me_service_accepted_message_request: 'Это {target} из вашего списка контактов',
-  me_service_chat_invite_user_by_message_request: [
-    '{author} пригласил {target} в чат',
-    '{author} пригласила {target} в чат'
-  ],
-  me_service_chat_invite_user_by_call: [
-    '{author} пригласил {target} в звонок',
-    '{author} пригласила {target} в звонок'
-  ],
-  me_service_chat_kick_user_call_block: [
-    '{target} исключён из чата',
-    '{target} исключена из чата'
-  ],
-  me_service_chat_pin_message: [
-    '{author} закрепил сообщение «{message}»',
-    '{author} закрепила сообщение «{message}»'
-  ],
-  me_service_chat_unpin_message: [
-    '{author} открепил сообщение «{message}»',
-    '{author} открепила сообщение «{message}»'
-  ],
-  me_service_conversation_style_update: [
-    '{author} изменил оформление чата на «{style}»',
-    '{author} изменила оформление чата на «{style}»'
-  ],
-  me_service_conversation_style_reset: [
-    '{author} сбросил оформление чата',
-    '{author} сбросила оформление чата'
-  ],
+  me_service_chat_invite_user_by_message_request: {
+    male: '{author} пригласил {target} в чат',
+    female: '{author} пригласила {target} в чат'
+  },
+  me_service_chat_invite_user_by_call: {
+    male: '{author} пригласил {target} в звонок',
+    female: '{author} пригласила {target} в звонок'
+  },
+  me_service_chat_kick_user_call_block: {
+    male: '{target} исключён из чата',
+    female: '{target} исключена из чата'
+  },
+  me_service_chat_pin_message: {
+    male: '{author} закрепил сообщение «{message}»',
+    female: '{author} закрепила сообщение «{message}»'
+  },
+  me_service_chat_unpin_message: {
+    male: '{author} открепил сообщение «{message}»',
+    female: '{author} открепила сообщение «{message}»'
+  },
+  me_service_conversation_style_update: {
+    male: '{author} изменил оформление чата на «{style}»',
+    female: '{author} изменила оформление чата на «{style}»'
+  },
+  me_service_conversation_style_reset: {
+    male: '{author} сбросил оформление чата',
+    female: '{author} сбросила оформление чата'
+  },
   // endregion
 
   // region message attaches
-  me_message_attach_photo: ['Фотография', '{0} фотографии', '{0} фотографий'],
-  me_message_attach_audio: ['Аудиозапись', '{0} аудиозаписи', '{0} аудиозаписей'],
-  me_message_attach_video: ['Видео', '{0} видео', '{0} видео'],
-  me_message_attach_doc: ['Файл', '{0} файла', '{0} файлов'],
-  me_message_attach_link: ['Ссылка', '{0} ссылки', '{0} ссылок'],
+  me_message_attach_photo: {
+    single: 'Фотография',
+    one: '{0} фотография',
+    few: '{0} фотографии',
+    many: '{0} фотографий'
+  },
+  me_message_attach_audio: {
+    single: 'Аудиозапись',
+    one: '{0} аудиозапись',
+    few: '{0} аудиозаписи',
+    many: '{0} аудиозаписей'
+  },
+  me_message_attach_video: {
+    single: 'Видео',
+    one: '{0} видео',
+    few: '{0} видео',
+    many: '{0} видео'
+  },
+  me_message_attach_doc: {
+    single: 'Файл',
+    one: '{0} файл',
+    few: '{0} файла',
+    many: '{0} файлов'
+  },
+  me_message_attach_link: {
+    single: 'Ссылка',
+    one: '{0} ссылка',
+    few: '{0} ссылки',
+    many: '{0} ссылок'
+  },
   me_message_attach_gift: 'Подарок',
   me_message_attach_sticker: 'Стикер',
   me_message_attach_ugc_sticker: 'Стикер',
