@@ -38,7 +38,7 @@ export const ConvoWrapper = defineComponent(() => {
   const convo = computed(() => (peerId.value && convos.get(peerId.value)))
 
   watchEffect(() => {
-    if (!convo.value && connection.status !== 'init') {
+    if (!convo.value && connection.status !== 'init' && connection.status !== 'initFailed') {
       alert('необходима загрузка конвы')
     }
   })

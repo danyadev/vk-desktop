@@ -13,9 +13,7 @@ export const ExpiredMessage = defineComponent<Props>((props) => {
   return () => (
     <div class="ExpiredMessage">
       <Icon20BombOutline class="ExpiredMessage__icon" color="var(--vkui--color_icon_contrast)" />
-      {props.count === 1
-        ? lang.use('me_message_disappeared')
-        : lang.usePlural('me_messages_disappeared', props.count)}
+      {lang.usePlural('me_messages_disappeared', props.count)}
     </div>
   )
 }, {

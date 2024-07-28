@@ -13,19 +13,16 @@ type ExtractVariables<Str extends string, Vars extends string[] = []> =
     ? ExtractVariables<End, Var extends '0' ? Vars : [...Vars, Var]>
     : Vars
 
-type ExtractFromArrayEntry<Arr extends string[], Vars extends string[]> =
-  Arr extends [infer Current extends string, ...infer Rest extends string[]]
-    ? ExtractFromArrayEntry<Rest, [...Vars, ...ExtractVariables<Current>]>
+type ExtractFromRecord<Obj extends Record<string, string>, Vars extends string[] = []> =
+  { [K in keyof Obj]: ExtractVariables<Obj[K]> }[keyof Obj] extends infer U extends string[]
+    ? [...Vars, ...U]
     : Vars
 
-type ExtractFromEntry<
-  T extends string | ReadonlyArray<string> | Record<string, string>,
-  Vars extends string[] = []
-> =
+type ExtractFromEntry<T extends string | Record<string, string>, Vars extends string[] = []> =
   T extends string
     ? [...Vars, ...ExtractVariables<T>]
-    : T extends ReadonlyArray<string>
-      ? [...Vars, ...ExtractFromArrayEntry<[...T], Vars>]
+    : T extends Record<string, string>
+      ? [...Vars, ...ExtractFromRecord<T>]
       : Vars
 
 export type VariablesTypings<Variables = string | number> = {
