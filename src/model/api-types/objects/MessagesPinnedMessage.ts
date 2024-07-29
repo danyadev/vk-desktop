@@ -1,7 +1,8 @@
 import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
+import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'
 
 export type MessagesPinnedMessage = {
-  attachments?: unknown[] // TODO
+  attachments?: MessagesMessageAttachment[]
   conversation_message_id: number
   id: number
   date: number

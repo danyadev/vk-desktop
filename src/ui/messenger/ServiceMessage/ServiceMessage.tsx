@@ -9,6 +9,18 @@ type Props = {
 }
 
 export const ServiceMessage = defineComponent<Props>((props) => {
+  return () => {
+    return (
+      <div class="ServiceMessage">
+        <PlainServiceMessage message={props.message} />
+      </div>
+    )
+  }
+}, {
+  props: ['message']
+})
+
+export const PlainServiceMessage = defineComponent<Props>((props) => {
   const { lang } = useEnv()
 
   return () => {
