@@ -6,7 +6,7 @@ import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv, useNow } from 'hooks'
-import { ServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
+import { PlainServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Counter } from 'ui/ui/Counter/Counter'
 import { Icon16Muted } from 'assets/icons'
@@ -125,7 +125,7 @@ const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
     }
 
     if (lastMessage.kind === 'Service') {
-      return <ServiceMessage message={lastMessage} />
+      return <PlainServiceMessage message={lastMessage} />
     }
 
     const attachmentPreview = getAttachmentPreview(lastMessage)

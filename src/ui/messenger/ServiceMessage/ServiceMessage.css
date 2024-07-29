@@ -1,1 +1,5 @@
-/* здесь могут быть стили для расширенной версии компонента */
+.ServiceMessage {
+  color: var(--vkui--color_text_subhead);
+  word-break: break-word;
+  text-align: center;
+}
