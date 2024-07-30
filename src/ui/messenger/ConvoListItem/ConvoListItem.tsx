@@ -1,12 +1,11 @@
 import { computed, defineComponent, Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv, useNow } from 'hooks'
-import { PlainServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
+import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Counter } from 'ui/ui/Counter/Counter'
 import { Icon16Muted } from 'assets/icons'
@@ -19,6 +18,7 @@ type Props = {
 
 export const ConvoListItem = defineComponent<Props>((props) => {
   const router = useRouter()
+  const { lang } = useEnv()
   const peer = computed(() => Peer.safeGet(props.convo.id))
   const lastMessage = computed(() => History.lastItem(props.convo.history))
   const active = computed(() => router.currentRoute.value.path === `/convo/${props.convo.id}`)
@@ -67,7 +67,15 @@ export const ConvoListItem = defineComponent<Props>((props) => {
         <div class="ConvoListItem__message">
           <span class="ConvoListItem__text">
             {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
-            <MessagePreview convo={props.convo} />
+            {lastMessage.value ? (
+              <MessagePreview message={lastMessage.value} />
+            ) : (
+              <span class="MessagePreview">
+                {Convo.isCasper(props.convo)
+                  ? lang.usePlural('me_messages_disappeared', 1)
+                  : lang.use('me_convo_list_empty_convo')}
+              </span>
+            )}
           </span>
           <span class="ConvoListItem__date">
             {lastMessage.value && <MessageDate message={lastMessage.value} />}
@@ -84,75 +92,6 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   }
 }, {
   props: ['convo', 'compact']
-})
-
-const MessagePreview = defineComponent<{ convo: Convo.Convo }>(({ convo }) => {
-  const { lang } = useEnv()
-
-  const getAttachmentPreview = (message: Message.Normal) => {
-    const kindsCount = Attach.kindsCount(message.attaches)
-    const count = Attach.count(message.attaches)
-
-    if (kindsCount > 1) {
-      return lang.usePlural('me_message_attaches', count)
-    }
-
-    const firstAttach = Object.values(message.attaches)[0]
-    if (firstAttach) {
-      return Attach.preview(firstAttach, lang)
-    }
-
-    if (message.replyMessage) {
-      return lang.usePlural('me_messages', 1)
-    }
-
-    if (message.forwardedMessages.length) {
-      return lang.usePlural('me_messages', message.forwardedMessages.length)
-    }
-  }
-
-  return () => {
-    const lastMessage = History.lastItem(convo.history)
-
-    if (!lastMessage || lastMessage.kind === 'Expired') {
-      return (
-        <span class="MessagePreview__highlight">
-          {Convo.isCasper(convo) || lastMessage
-            ? lang.usePlural('me_messages_disappeared', 1)
-            : lang.use('me_convo_list_empty_convo')}
-        </span>
-      )
-    }
-
-    if (lastMessage.kind === 'Service') {
-      return <PlainServiceMessage message={lastMessage} />
-    }
-
-    const attachmentPreview = getAttachmentPreview(lastMessage)
-
-    if (!lastMessage.text && !attachmentPreview) {
-      return (
-        <span class="MessagePreview__highlight">
-          {lang.use('me_empty_message')}
-        </span>
-      )
-    }
-
-    return (
-      <>
-        {lastMessage.text}
-
-        {attachmentPreview && (
-          <span class="MessagePreview__highlight">
-            {lastMessage.text && ' '}
-            {attachmentPreview}
-          </span>
-        )}
-      </>
-    )
-  }
-}, {
-  props: ['convo']
 })
 
 const MessageDate = defineComponent<{ message: Message.Message }>(({ message }) => {
