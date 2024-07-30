@@ -4,6 +4,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv } from 'hooks'
 import { Attaches } from 'ui/messenger/ConvoMessage/Attaches'
+import { ForwardedMessages } from 'ui/messenger/ConvoMessage/ForwardedMessages'
 import { ReplyMessage } from 'ui/messenger/ConvoMessage/ReplyMessage'
 import './ConvoMessage.css'
 
@@ -47,13 +48,10 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             </span>
           )}
 
-          {message.forwardedMessages && (
-            <div class="ConvoMessage__unknownAttach">
-              тут пересланные
-            </div>
-          )}
+          {message.forwardedMessages && <ForwardedMessages messages={message.forwardedMessages} />}
 
           <span class="ConvoMessage__time">
+            {message.updatedAt && (lang.use('me_edited_label') + ' · ')}
             {lang
               .dateTimeFormatter({ hour: '2-digit', minute: '2-digit' })
               .format(message.sentAt)}

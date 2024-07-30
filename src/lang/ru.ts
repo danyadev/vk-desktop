@@ -92,6 +92,7 @@ export const ru = {
     few: '{0} сообщения',
     many: '{0} сообщений'
   },
+  me_in_reply_to_message: 'В ответ на сообщение',
   me_empty_message: 'Пустое сообщение',
   me_unknown_attach: 'Неизвестное вложение',
   me_unsupported_service_message: 'Сервисное сообщение не поддерживается',
@@ -100,6 +101,7 @@ export const ru = {
   me_convo_empty_placeholder: 'История переписки пуста',
   me_convo_loading_error: 'Ошибка загрузки',
   me_convo_retry_loading: 'Повторить',
+  me_edited_label: 'ред.',
 
   me_chat_members_count: {
     one: '{count} участник',

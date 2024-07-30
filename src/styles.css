@@ -67,10 +67,20 @@ img, svg {
   --vkd--color_field_background_in_layer: var(--vkui--color_field_background);
   --vkd--color_background_accent_themed: var(--vkui--color_background_accent_themed);
   --vkd--color_text_accent_themed: var(--vkui--color_text_accent_themed);
+  --vkd--color_background_message_out: #cce4ff;
+  --vkd--color_background_message: #fff;
+  --vkd--color_background_composer: #fff;
+  --vkd--color_background_convo_history: var(--vkui--color_background);
+}
+
+[data-scheme='vkui-dark'], [data-scheme='vkcom-dark'] {
+  --vkd--color_background_message_out: #454647;
+  --vkd--color_background_message: #333;
+  --vkd--color_background_composer: #292929;
 }
 
 [data-scheme='vkui-dark'] {
-  /* Цвет из vkcom-dark, чтобы не было выжигания глаз от #fff */
+  /* Цвета из vkcom-dark, чтобы не было выжигания глаз от #fff */
   --vkd--color_background_accent_themed: #e1e3e6;
   --vkd--color_text_accent_themed: #e1e3e6;
 }

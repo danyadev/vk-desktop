@@ -8,6 +8,7 @@
 .ConvoView__history {
   height: 100%;
   overflow: hidden;
+  background: var(--vkd--color_background_convo_history);
 }
 
 .ConvoWrapper__spinner {

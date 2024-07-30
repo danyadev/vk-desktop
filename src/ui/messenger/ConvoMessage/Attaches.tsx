@@ -11,7 +11,7 @@ export const Attaches = defineComponent<Props>((props) => {
   const { lang } = useEnv()
 
   return () => (
-    <div>
+    <div class="ConvoMessage__attaches">
       {props.attaches.sticker && <AttachSticker sticker={props.attaches.sticker} />}
       {props.attaches.unknown?.map((unknown) => (
         <div class="ConvoMessage__unknownAttach">
