@@ -1,3 +1,5 @@
+import { BaseImage } from 'model/api-types/objects/BaseImage'
+
 export type MessagesMessageAttachment = {
   type: MessagesMessageAttachmentType
   photo?: unknown
@@ -9,7 +11,7 @@ export type MessagesMessageAttachment = {
   link?: unknown
   market?: unknown
   gift?: unknown
-  sticker?: unknown
+  sticker?: MessagesMessageAttachmentsSticker
   wall?: unknown
   wall_reply?: unknown
   money_transfer?: unknown
@@ -102,4 +104,31 @@ export type MessagesMessageAttachmentGeo = {
   }
   showmap?: number
   type?: string
+}
+
+type MessagesMessageAttachmentsSticker = {
+  inner_type: 'base_sticker_new'
+  sticker_id?: number
+  product_id?: number
+  images?: BaseImage[]
+  images_with_background?: BaseImage[]
+  animation_url?: string
+  animations?: Array<{
+    type?: 'light' | 'dark'
+    url?: string
+  }>
+  is_allowed?: boolean
+  render?: {
+    id?: string
+    images: BaseImage[]
+    is_stub?: boolean
+    is_rendering?: boolean
+  }
+  vmoji?: {
+    character_id: string
+  }
+  image_config_context?: {
+    config_id?: number
+    version?: number
+  }
 }
