@@ -1,0 +1,47 @@
+.ReplyMessage {
+  position: relative;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.ReplyMessage::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--vkui--color_stroke_accent);
+}
+
+.ReplyMessage::after {
+  content: '';
+  position: absolute;
+  border-radius: 8px;
+  margin: 0 -6px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
+  transition: opacity var(--fastTransition), background-color var(--fastTransition);
+}
+
+.ReplyMessage:hover::after {
+  background-color: var(--vkui--color_background_accent);
+  opacity: 0.1;
+}
+
+.ReplyMessage__name {
+  color: var(--vkui--color_text_link);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.ReplyMessage__name,
+.ReplyMessage__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

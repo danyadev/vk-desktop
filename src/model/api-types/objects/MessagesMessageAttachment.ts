@@ -81,3 +81,25 @@ type MessagesMessageAttachmentType =
   | 'app_action'
   | 'question'
   | 'sticker_pack_preview'
+
+export type MessagesMessageAttachmentGeo = {
+  coordinates?: {
+    latitude: number
+    longitude: number
+  }
+  place?: {
+    address?: string
+    checkins?: number
+    city?: string
+    country?: string
+    created?: number
+    icon?: string
+    id?: number
+    latitude?: number
+    longitude?: number
+    title?: string
+    type?: string
+  }
+  showmap?: number
+  type?: string
+}

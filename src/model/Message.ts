@@ -1,7 +1,7 @@
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
-import { Opaque } from 'misc/utils'
+import { NonEmptyArray, Opaque } from 'misc/utils'
 
 export type Cmid = Opaque<number, Message>
 
@@ -19,8 +19,8 @@ export interface Normal extends BaseMessage {
   kind: 'Normal'
   text: string
   attaches: Attach.Attaches
-  replyMessage?: unknown // TODO
-  forwardedMessages: unknown[] // TODO
+  replyMessage?: Foreign
+  forwardedMessages?: NonEmptyArray<Foreign>
   updatedAt?: number
 }
 
@@ -32,6 +32,21 @@ export interface Service extends BaseMessage {
 export interface Expired extends BaseMessage {
   kind: 'Expired'
   updatedAt: number
+}
+
+export interface Foreign {
+  kind: 'Foreign'
+  cmid: Cmid
+  rootCmid: Cmid
+  peerId?: Peer.Id
+  rootPeerId: Peer.Id
+  authorId: Peer.UserId | Peer.GroupId
+  sentAt: number
+  text: string
+  attaches: Attach.Attaches
+  replyMessage?: Foreign
+  forwardedMessages?: NonEmptyArray<Foreign>
+  updatedAt?: number
 }
 
 export type ServiceAction =

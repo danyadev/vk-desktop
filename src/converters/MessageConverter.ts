@@ -1,15 +1,12 @@
+import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { fromApiAttaches } from 'converters/AttachConverter'
 import { fromApiConvoStyle } from 'converters/ConvoConverter'
-import { typeguard } from 'misc/utils'
+import { isNonEmptyArray, NonEmptyArray, typeguard } from 'misc/utils'
 
 export function fromApiMessage(message: MessagesMessage): Message.Message {
-  if (!message.conversation_message_id) {
-    throw new Error('[fromApiMessage] No message.conversation_message_id')
-  }
-
   const authorId = Peer.resolveId(message.from_id)
   if (!Peer.isUserPeerId(authorId) && !Peer.isGroupPeerId(authorId)) {
     throw new Error('[fromApiMessage] message.from_id neither UserId nor GroupId')
@@ -47,8 +44,16 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
     kind: 'Normal',
     text: message.text,
     attaches: fromApiAttaches(message.attachments ?? []),
-    replyMessage: message.reply_message,
-    forwardedMessages: message.fwd_messages ?? [],
+    replyMessage: message.reply_message && fromApiForeignMessage(
+      message.reply_message,
+      baseMessage.peerId,
+      baseMessage.cmid
+    ),
+    forwardedMessages: fromApiForwardedMessages(
+      message.fwd_messages ?? [],
+      baseMessage.peerId,
+      baseMessage.cmid
+    ),
     updatedAt: message.update_time
       ? message.update_time * 1000
       : undefined,
@@ -150,4 +155,60 @@ function fromApiMessageAction(action: MessagesMessageAction): Message.ServiceAct
       console.warn(action)
       return { type: 'unknown' }
   }
+}
+
+function fromApiForeignMessage(
+  foreignMessage: MessagesForeignMessage,
+  rootPeerId: Peer.Id,
+  rootCmid: Message.Cmid
+): Message.Foreign {
+  const authorId = Peer.resolveId(foreignMessage.from_id)
+  if (!Peer.isUserPeerId(authorId) && !Peer.isGroupPeerId(authorId)) {
+    throw new Error('[fromApiForeignMessage] foreignMessage.from_id neither UserId nor GroupId')
+  }
+
+  return {
+    kind: 'Foreign',
+    peerId: foreignMessage.peer_id
+      ? Peer.resolveId(foreignMessage.peer_id)
+      : undefined,
+    rootPeerId,
+    cmid: Message.resolveCmid(foreignMessage.conversation_message_id),
+    rootCmid,
+    authorId,
+    sentAt: foreignMessage.date * 1000,
+    text: foreignMessage.text,
+    attaches: fromApiAttaches(foreignMessage.attachments ?? []),
+    replyMessage: foreignMessage.reply_message && fromApiForeignMessage(
+      foreignMessage.reply_message,
+      rootPeerId,
+      rootCmid
+    ),
+    forwardedMessages: fromApiForwardedMessages(
+      foreignMessage.fwd_messages ?? [],
+      rootPeerId,
+      rootCmid
+    ),
+    updatedAt: foreignMessage.update_time
+      ? foreignMessage.update_time * 1000
+      : undefined
+  }
+}
+
+function fromApiForwardedMessages(
+  apiForwardedMessages: MessagesForeignMessage[],
+  rootPeerId: Peer.Id,
+  rootCmid: Message.Cmid
+): NonEmptyArray<Message.Foreign> | undefined {
+  const forwardedMessages = apiForwardedMessages.map((foreign) => fromApiForeignMessage(
+    foreign,
+    rootPeerId,
+    rootCmid
+  ))
+
+  if (!isNonEmptyArray(forwardedMessages)) {
+    return undefined
+  }
+
+  return forwardedMessages
 }

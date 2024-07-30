@@ -1,5 +1,9 @@
+import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
 import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
-import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'
+import {
+  MessagesMessageAttachment,
+  MessagesMessageAttachmentGeo
+} from 'model/api-types/objects/MessagesMessageAttachment'
 
 export type MessagesMessage = {
   action?: MessagesMessageAction
@@ -9,8 +13,8 @@ export type MessagesMessage = {
   date: number
   deleted?: 0 | 1
   from_id: number
-  fwd_messages?: unknown[] // TODO
-  geo?: unknown // TODO
+  fwd_messages?: MessagesForeignMessage[]
+  geo?: MessagesMessageAttachmentGeo
   id: number
   important?: boolean
   is_hidden?: boolean
@@ -22,7 +26,7 @@ export type MessagesMessage = {
   random_id?: number
   ref?: string
   ref_source?: string
-  reply_message?: unknown // TODO
+  reply_message?: MessagesForeignMessage
   reaction_id?: number
   reactions?: unknown[] // TODO
   last_reaction_id?: number

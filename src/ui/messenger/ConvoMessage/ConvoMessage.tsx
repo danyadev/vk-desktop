@@ -4,6 +4,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv } from 'hooks'
 import { Attaches } from 'ui/messenger/ConvoMessage/Attaches'
+import { ReplyMessage } from 'ui/messenger/ConvoMessage/ReplyMessage'
 import './ConvoMessage.css'
 
 type Props = {
@@ -22,7 +23,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
       !message.text &&
       !hasAttaches &&
       !message.replyMessage &&
-      !message.forwardedMessages.length
+      !message.forwardedMessages
 
     return (
       <div
@@ -35,11 +36,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             <div class="ConvoMessage__author">{Peer.name(author)}</div>
           )}
 
-          {message.replyMessage && (
-            <div class="ConvoMessage__unknownAttach">
-              тут ответ
-            </div>
-          )}
+          {message.replyMessage && <ReplyMessage reply={message.replyMessage} />}
 
           {message.text && <span class="ConvoMessage__text">{message.text}</span>}
           {hasAttaches && <Attaches attaches={message.attaches} />}
@@ -50,7 +47,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             </span>
           )}
 
-          {message.forwardedMessages.length > 0 && (
+          {message.forwardedMessages && (
             <div class="ConvoMessage__unknownAttach">
               тут пересланные
             </div>
