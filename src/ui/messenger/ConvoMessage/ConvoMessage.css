@@ -4,7 +4,7 @@
   width: fit-content;
   max-width: 100%;
   padding: 8px 10px;
-  background-color: #333;
+  background-color: var(--vkd--color_background_message);
   border-radius: 14px;
   word-break: break-word;
   /* для поддержки нескольких пробелов подряд можно заюзать pre-wrap */
@@ -13,7 +13,7 @@
 }
 
 .ConvoMessage--out {
-  background-color: #454647;
+  background-color: var(--vkd--color_background_message_out);
 }
 
 .ConvoMessage__author {

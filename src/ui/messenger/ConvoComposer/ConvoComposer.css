@@ -4,12 +4,13 @@
   margin: 0 auto;
   width: 100%;
   max-width: var(--convoHistoryMaxWidth);
+  background: var(--vkd--color_background_convo_history);
 }
 
 .ConvoComposer__panel {
   display: flex;
   align-items: flex-end;
-  background: #292929;
+  background: var(--vkd--color_background_composer);
   padding: 4px 6px;
   border-radius: 12px;
   box-shadow: var(--vkui--elevation3);
