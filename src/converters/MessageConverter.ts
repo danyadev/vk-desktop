@@ -1,5 +1,6 @@
 import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
+import { MessagesPinnedMessage } from 'model/api-types/objects/MessagesPinnedMessage'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { fromApiAttaches } from 'converters/AttachConverter'
@@ -13,8 +14,8 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
   }
 
   const baseMessage = {
-    cmid: Message.resolveCmid(message.conversation_message_id),
     peerId: Peer.resolveId(message.peer_id),
+    cmid: Message.resolveCmid(message.conversation_message_id),
     authorId,
     isOut: message.out === 1,
     sentAt: message.date * 1000
@@ -172,8 +173,8 @@ function fromApiForeignMessage(
     peerId: foreignMessage.peer_id
       ? Peer.resolveId(foreignMessage.peer_id)
       : undefined,
-    rootPeerId,
     cmid: Message.resolveCmid(foreignMessage.conversation_message_id),
+    rootPeerId,
     rootCmid,
     authorId,
     sentAt: foreignMessage.date * 1000,
@@ -191,7 +192,8 @@ function fromApiForeignMessage(
     ),
     updatedAt: foreignMessage.update_time
       ? foreignMessage.update_time * 1000
-      : undefined
+      : undefined,
+    isUnavailable: !!foreignMessage.is_unavailable
   }
 }
 
@@ -211,4 +213,35 @@ function fromApiForwardedMessages(
   }
 
   return forwardedMessages
+}
+
+export function fromApiPinnedMessage(pinnedMessage: MessagesPinnedMessage): Message.Pinned {
+  const authorId = Peer.resolveId(pinnedMessage.from_id)
+  if (!Peer.isUserPeerId(authorId) && !Peer.isGroupPeerId(authorId)) {
+    throw new Error('[fromApiPinnedMessage] pinnedMessage.from_id neither UserId nor GroupId')
+  }
+
+  const peerId = Peer.resolveId(pinnedMessage.peer_id)
+  const cmid = Message.resolveCmid(pinnedMessage.conversation_message_id)
+
+  return {
+    kind: 'Pinned',
+    peerId,
+    cmid,
+    authorId,
+    sentAt: pinnedMessage.date * 1000,
+    text: pinnedMessage.text,
+    attaches: fromApiAttaches(pinnedMessage.attachments ?? []),
+    replyMessage: pinnedMessage.reply_message && fromApiForeignMessage(
+      pinnedMessage.reply_message,
+      peerId,
+      cmid
+    ),
+    forwardedMessages: fromApiForwardedMessages(
+      pinnedMessage.fwd_messages ?? [],
+      peerId,
+      cmid
+    ),
+    isUnavailable: !!pinnedMessage.is_unavailable
+  }
 }

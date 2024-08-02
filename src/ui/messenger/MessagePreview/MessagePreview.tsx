@@ -7,7 +7,7 @@ import { PlainServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import './MessagePreview.css'
 
 type Props = {
-  message: Message.Message | Message.Foreign
+  message: Message.Message | Message.Foreign | Message.Pinned
   accent?: boolean
 }
 
@@ -57,7 +57,10 @@ export const MessagePreview = defineComponent<Props>((props) => {
   props: ['message', 'accent']
 })
 
-const getAttachmentPreview = (message: Message.Normal | Message.Foreign, lang: ILang.Lang) => {
+const getAttachmentPreview = (
+  message: Message.Normal | Message.Foreign | Message.Pinned,
+  lang: ILang.Lang
+) => {
   const kindsCount = Attach.kindsCount(message.attaches)
   const count = Attach.count(message.attaches)
 
