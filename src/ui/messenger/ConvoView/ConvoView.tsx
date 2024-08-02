@@ -6,6 +6,7 @@ import { useConvosStore } from 'store/convos'
 import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
 import { ConvoHistory } from 'ui/messenger/ConvoHistory/ConvoHistory'
+import { PinnedMessage } from 'ui/messenger/PinnedMessage/PinnedMessage'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ConvoView.css'
 
@@ -13,12 +14,15 @@ type ConvoViewProps = {
   convo: Convo.Convo
 }
 
-const ConvoView = defineComponent<ConvoViewProps>(({ convo }) => {
+const ConvoView = defineComponent<ConvoViewProps>((props) => {
   return () => (
     <div class="ConvoView">
-      <ConvoHeader convo={convo} />
+      <ConvoHeader convo={props.convo} />
+      {props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage && (
+        <PinnedMessage pinnedMessage={props.convo.pinnedMessage} />
+      )}
       <div class="ConvoView__history">
-        <ConvoHistory convo={convo} />
+        <ConvoHistory convo={props.convo} />
       </div>
       <ConvoComposer />
     </div>
@@ -31,11 +35,11 @@ export const ConvoWrapper = defineComponent(() => {
   const route = useRoute()
   const { convos, connection } = useConvosStore()
 
-  const peerId = computed(() => {
-    const rawValue = Number(route.params.peerId)
-    return rawValue ? Peer.resolveId(rawValue) : null
+  const convo = computed(() => {
+    const rawPeerId = Number(route.params.peerId)
+    const peerId = rawPeerId && Peer.resolveId(rawPeerId)
+    return peerId && convos.get(peerId)
   })
-  const convo = computed(() => (peerId.value && convos.get(peerId.value)))
 
   watchEffect(() => {
     if (!convo.value && connection.status !== 'init' && connection.status !== 'initFailed') {

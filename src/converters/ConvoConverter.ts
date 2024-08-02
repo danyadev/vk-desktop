@@ -5,7 +5,7 @@ import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { typeguard } from 'misc/utils'
-import { fromApiMessage } from './MessageConverter'
+import { fromApiMessage, fromApiPinnedMessage } from './MessageConverter'
 
 export function fromApiConvo(
   apiConvo: MessagesConversation,
@@ -77,6 +77,9 @@ export function fromApiConvo(
           id: peerId,
           isChannel: !!apiConvo.chat_settings?.is_group_channel,
           isCasper: !!apiConvo.chat_settings?.is_disappearing,
+          pinnedMessage: apiConvo.chat_settings?.pinned_message
+            ? fromApiPinnedMessage(apiConvo.chat_settings.pinned_message)
+            : undefined,
           ...baseConvo
         },
         peer: {

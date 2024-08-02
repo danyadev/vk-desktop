@@ -8,11 +8,12 @@ export type Cmid = Opaque<number, Message>
 export type Message = Normal | Service | Expired
 
 interface BaseMessage {
-  cmid: Cmid
   peerId: Peer.Id
+  cmid: Cmid
   authorId: Peer.UserId | Peer.GroupId
   isOut: boolean
   sentAt: number
+  updatedAt?: number
 }
 
 export interface Normal extends BaseMessage {
@@ -21,7 +22,6 @@ export interface Normal extends BaseMessage {
   attaches: Attach.Attaches
   replyMessage?: Foreign
   forwardedMessages?: NonEmptyArray<Foreign>
-  updatedAt?: number
 }
 
 export interface Service extends BaseMessage {
@@ -31,22 +31,19 @@ export interface Service extends BaseMessage {
 
 export interface Expired extends BaseMessage {
   kind: 'Expired'
-  updatedAt: number
 }
 
-export interface Foreign {
+export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'isOut'> {
   kind: 'Foreign'
-  cmid: Cmid
-  rootCmid: Cmid
   peerId?: Peer.Id
+  rootCmid: Cmid
   rootPeerId: Peer.Id
-  authorId: Peer.UserId | Peer.GroupId
-  sentAt: number
-  text: string
-  attaches: Attach.Attaches
-  replyMessage?: Foreign
-  forwardedMessages?: NonEmptyArray<Foreign>
-  updatedAt?: number
+  isUnavailable: boolean
+}
+
+export interface Pinned extends Omit<Normal, 'kind' | 'isOut' | 'updatedAt'> {
+  kind: 'Pinned'
+  isUnavailable: boolean
 }
 
 export type ServiceAction =

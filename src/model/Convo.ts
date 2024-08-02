@@ -30,6 +30,7 @@ export interface ChatConvo extends BaseConvo {
   id: Peer.ChatId
   isChannel: boolean
   isCasper: boolean
+  pinnedMessage?: Message.Pinned
 }
 
 export type Style =

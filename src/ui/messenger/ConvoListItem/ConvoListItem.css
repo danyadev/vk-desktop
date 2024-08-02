@@ -90,4 +90,5 @@
   top: 2px;
   right: 2px;
   border: 2px solid var(--vkui--color_background_content);
+  min-width: 24px;
 }
