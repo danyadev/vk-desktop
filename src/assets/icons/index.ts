@@ -13,6 +13,7 @@ export { default as Icon24ChevronCompactLeft } from './Icon24ChevronCompactLeft.
 // export { default as Icon24CopyOutline } from './Icon24CopyOutline.svg'
 export { default as Icon24DoorArrowRightOutline } from './Icon24DoorArrowRightOutline.svg'
 export { default as Icon24HideOutline } from './Icon24HideOutline.svg'
+export { default as Icon24LinkExternalOutline } from './Icon24LinkExternalOutline.svg'
 export { default as Icon24Spinner } from './Icon24Spinner.svg'
 export { default as Icon24ViewOutline } from './Icon24ViewOutline.svg'
 export { default as Icon32Spinner } from './Icon32Spinner.svg'

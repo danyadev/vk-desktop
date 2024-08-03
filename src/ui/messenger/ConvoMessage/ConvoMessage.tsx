@@ -43,7 +43,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
           {hasAttaches && <Attaches class="ConvoMessage__attaches" attaches={message.attaches} />}
 
           {isEmpty && (
-            <span class="ConvoMessage__unknownAttach">
+            <span class="ConvoMessage__empty">
               {lang.use('me_empty_message')}
             </span>
           )}

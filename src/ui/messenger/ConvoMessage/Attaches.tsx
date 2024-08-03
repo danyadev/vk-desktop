@@ -2,8 +2,10 @@ import { defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
 import { useEnv } from 'hooks'
 import { ClassName } from 'misc/utils'
+import { AttachLink } from 'ui/messenger/attaches/AttachLink/AttachLink'
 import { AttachPhotos } from 'ui/messenger/attaches/AttachPhotos/AttachPhotos'
 import { AttachSticker } from 'ui/messenger/attaches/AttachSticker/AttachSticker'
+import './Attaches.css'
 
 type Props = {
   attaches: Attach.Attaches
@@ -14,11 +16,12 @@ export const Attaches = defineComponent<Props>((props) => {
   const { lang } = useEnv()
 
   return () => (
-    <div class={props.class}>
+    <div class={['Attaches', props.class]}>
       {props.attaches.sticker && <AttachSticker sticker={props.attaches.sticker} />}
       {props.attaches.photos && <AttachPhotos photos={props.attaches.photos} />}
+      {props.attaches.links?.map((link) => <AttachLink link={link} />)}
       {props.attaches.unknown?.map((unknown) => (
-        <div class="ConvoMessage__unknownAttach">
+        <div class="Attaches__unknown">
           {lang.use('me_unknown_attach')} ({unknown.type})
         </div>
       ))}
