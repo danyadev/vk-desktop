@@ -44,8 +44,8 @@ export function lastItem<T>(history: History<T>): T | undefined {
 }
 
 /**
- * Возвращает часть истории, непрерывно доступной вокруг aroundCmid,
- * то есть список сообщений до первого гэпа с обеих сторон от aroundCmid
+ * Возвращает часть истории, непрерывно доступной вокруг aroundId,
+ * то есть список элементов до первого гэпа с обеих сторон от aroundId
  */
 export function around<T>(history: History<T>, aroundId: number): {
   items: Array<Item<T>>
@@ -62,8 +62,9 @@ export function around<T>(history: History<T>, aroundId: number): {
    * Если не нашли, значит либо попали в удаленный элемент, либо ткнули за пределы истории
    */
   if (!aroundNode) {
-    // Пустая история - пустой ответ
     const lastNode = history.at(-1)
+
+    // Пустая история - пустой ответ
     if (!lastNode) {
       return {
         items: [],
@@ -85,25 +86,25 @@ export function around<T>(history: History<T>, aroundId: number): {
         continue
       }
 
-      /**
-       * Отдаем предпочтение в порядке убывания:
-       * 1) граничащему элементу ниже
-       * 2) граничащему элементы выше
-       * 3) не граничащему элементу ниже
-       *
-       * так как мы предпочитаем более актуальную историю
-       * и хотим всегда видеть уже доступную историю в структуре
-       */
       const nodeStartBoundary = node.kind === 'Gap' ? node.fromId : node.id
-      if (nodeStartBoundary >= aroundId) {
-        if (node.kind !== 'Gap' || node.fromId === aroundId + 1) {
+      if (nodeStartBoundary > aroundId) {
+        // Предпочитаем отображать более актуальную историю
+        // aroundId: 5; [4-, 6+] -> around 6+
+        if (node.kind !== 'Gap') {
           return around(history, nodeStartBoundary)
         }
-        if (prevNode && (prevNode.kind !== 'Gap' || prevNode.toId === aroundId + 1)) {
-          const prevNodeEndBoundary = prevNode.kind === 'Gap' ? prevNode.toId : prevNode.id
-          return around(history, prevNodeEndBoundary)
+        // Но если рядом оказалась только прошлая история, возвращаем ее
+        // aroundId: 5; [4-, [6+, n]] -> around 4-
+        if (prevNode && prevNode.kind !== 'Gap') {
+          return around(history, prevNode.id)
         }
-        return around(history, nodeStartBoundary)
+        // Иначе отдаем гэп более актуальной истории
+        // aroundId: 5; [[n, 4-]?, [6+, n]] -> gap [6+, n]
+        return {
+          items: [],
+          gapAround: node,
+          matchedAroundId: nodeStartBoundary
+        }
       }
     }
 
@@ -184,8 +185,7 @@ export function insert<T>(
   const lastItem = items.at(-1)
 
   if (!firstItem || !lastItem) {
-    // Если при загрузке истории оказалось, что истории в этой области нет,
-    // то нужно удалить эту область
+    // Если при загрузке истории оказалось, что истории в этом гэпе нет, то нужно его удалить
     if (!hasMore.up || !hasMore.down) {
       removeNode(history, hasMore.aroundId, true)
     }
@@ -217,7 +217,7 @@ export function insert<T>(
       }
     }
 
-    if (startIndex !== -1 && endIndex === -1) {
+    if (startIndex !== -1) {
       const nextNode = history[index + 1]
       const nextNodeStartBoundary =
         nextNode ? (nextNode.kind === 'Gap' ? nextNode.fromId : nextNode.id) : 0
@@ -239,19 +239,18 @@ export function insert<T>(
     return
   }
 
-  // Если стартовая нода оказалась дальше последнего сообщения, значит вставляемые айтемы
-  // находятся перед стартовой ноды, просто вставляем их перед нодой
+  // Если стартовая нода оказалась дальше последнего элемента, значит вставляемые элементы
+  // находятся перед стартовой нодой, просто вставляем их перед нодой
   const startNodeStartBoundary = startNode.kind === 'Gap' ? startNode.fromId : startNode.id
   if (startNodeStartBoundary > lastItem.id) {
-    // Если сверху гэп, а мы поняли, что выше сообщений нет, то удаляем верхний гэп.
-    // Так же, если снизу гэп, а мы поняли, что ниже сообщений нет, то удаляем нижний гэп
-    const deleteTopGap = startNode.kind === 'Gap' && !hasMore.up
-    const deleteBottomGap = endNode.kind === 'Gap' && !hasMore.down
+    // В таком случае начальная нода = конечная нода, а мы вставляем элементы
+    // после prevStartNode, но перед startNode, то есть даже без пересечений
+    const prevStartNode = history[startIndex - 1]
+    const deleteTopGap = prevStartNode?.kind === 'Gap' && !hasMore.up
+    const deleteBottomGap = startNode.kind === 'Gap' && !hasMore.down
 
     const fromIndex = deleteTopGap ? startIndex - 1 : startIndex
-    let deleteCount = 0
-    deleteTopGap && deleteCount++
-    deleteBottomGap && deleteCount++
+    const deleteCount = Number(deleteTopGap) + Number(deleteBottomGap)
 
     history.splice(fromIndex, deleteCount, ...items)
     return
@@ -260,14 +259,14 @@ export function insert<T>(
   const newNodes: History<T> = []
 
   // Если стартовый гэп начался до вставляемых элементов, то надо сохранить кусок гэпа до нас
-  if (hasMore.up && startNode && startNode.kind === 'Gap' && startNode.fromId < firstItem.id) {
+  if (hasMore.up && startNode.kind === 'Gap' && startNode.fromId < firstItem.id) {
     newNodes.push(toGap(startNode.fromId, firstItem.id - 1))
   }
 
   newNodes.push(...items)
 
   // Если конечный гэп продолжается после нас, то нужно сохранить кусок гэпа после нас
-  if (hasMore.down && endNode && endNode.kind === 'Gap' && endNode.toId > lastItem.id) {
+  if (hasMore.down && endNode.kind === 'Gap' && endNode.toId > lastItem.id) {
     newNodes.push(toGap(lastItem.id + 1, endNode.toId))
   }
 
