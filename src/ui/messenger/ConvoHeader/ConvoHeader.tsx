@@ -19,7 +19,7 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
   const router = useRouter()
   const peer = Peer.safeGet(convo.id)
 
-  const getFormatTimestamp = useFormatDate()
+  const formatDate = useFormatDate()
 
   const peerInfo = computed<string>(() => {
     switch (peer.kind) {
@@ -33,7 +33,7 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
           return lang.use('me_user_was_online_a_long_time_ago')
         }
 
-        return getFormatTimestamp(peer.onlineInfo.lastSeen)
+        return formatDate(peer.onlineInfo.lastSeen)
       }
 
       case 'Group': {
@@ -61,7 +61,7 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
         class="ConvoHeader__back"
         onClick={() => router.back()}
       />
-      <Avatar class="ConvoHeader__avatar" peer={peer} size={32}/>
+      <Avatar class="ConvoHeader__avatar" peer={peer} size={32} />
 
       <span class="ConvoHeader__name">{Peer.name(peer)}</span>
       <span class="ConvoHeader__info">{peerInfo.value}</span>
