@@ -48,6 +48,10 @@
   white-space: nowrap;
 }
 
+.ForwardedMessage__text + .ForwardedMessage__attaches {
+  margin-top: 4px;
+}
+
 .ForwardedMessage__nested {
   font-weight: 500;
   color: var(--vkui--color_text_accent);

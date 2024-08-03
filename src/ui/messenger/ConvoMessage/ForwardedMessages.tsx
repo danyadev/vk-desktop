@@ -42,8 +42,10 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
             </div>
           </div>
 
-          {message.text}
-          {hasAttaches && <Attaches attaches={message.attaches} />}
+          <span class="ForwardedMessage__text">{message.text}</span>
+          {hasAttaches && (
+            <Attaches class="ForwardedMessage__attaches" attaches={message.attaches} />
+          )}
 
           {message.replyMessage && (
             <div class="ForwardedMessage__nested">

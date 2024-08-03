@@ -40,7 +40,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
           {message.replyMessage && <ReplyMessage reply={message.replyMessage} />}
 
           {message.text && <span class="ConvoMessage__text">{message.text}</span>}
-          {hasAttaches && <Attaches attaches={message.attaches} />}
+          {hasAttaches && <Attaches class="ConvoMessage__attaches" attaches={message.attaches} />}
 
           {isEmpty && (
             <span class="ConvoMessage__unknownAttach">

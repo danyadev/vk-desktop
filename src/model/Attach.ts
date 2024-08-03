@@ -1,8 +1,11 @@
 import * as ILang from 'env/ILang'
-import { NonEmptyArray } from 'misc/utils'
+import { MessagesMessageAttachmentType } from 'model/api-types/objects/MessagesMessageAttachment'
+import * as Peer from 'model/Peer'
+import { NonEmptyArray, typeguard } from 'misc/utils'
 
 export type Attaches = {
   sticker?: Sticker
+  photos?: NonEmptyArray<Photo>
   unknown?: NonEmptyArray<Unknown>
 }
 
@@ -16,9 +19,17 @@ export type Sticker = {
   imagesWithBackground?: ImageList
 }
 
+export type Photo = {
+  kind: 'Photo'
+  id: number
+  ownerId: Peer.UserId | Peer.GroupId
+  accessKey?: string
+  image: Image
+}
+
 type Unknown = {
   kind: 'Unknown'
-  type: string
+  type: MessagesMessageAttachmentType
   raw: unknown
 }
 
@@ -44,9 +55,16 @@ export function count(attaches: Attaches): number {
 
 export function preview(attach: Attach, lang: ILang.Lang): string {
   if (Array.isArray(attach)) {
-    switch (attach[0].kind) {
+    const [firstAttach] = attach
+
+    switch (firstAttach.kind) {
+      case 'Photo': {
+        const lowerCaseName = firstAttach.kind.toLowerCase() as Lowercase<typeof firstAttach.kind>
+        return lang.usePlural(`me_message_attach_${lowerCaseName}`, attach.length)
+      }
+
       case 'Unknown':
-        return previewUnknown(attach, lang)
+        return previewUnknown(attach as NonEmptyArray<Unknown>, lang)
     }
   }
 
@@ -91,7 +109,6 @@ function previewUnknown(unknown: NonNullable<Attaches['unknown']>, lang: ILang.L
     case 'podcast':
     case 'money_request':
     case 'money_transfer':
-    case 'geo':
     case 'call':
     case 'group_call_in_progress':
     case 'mini_app':
@@ -102,7 +119,17 @@ function previewUnknown(unknown: NonNullable<Attaches['unknown']>, lang: ILang.L
     case 'donut_link':
       return lang.use(`me_message_attach_${firstType}`)
 
+    case 'video_playlist':
+    case 'group':
+    case 'link_curator':
+    case 'vkpay':
+    case 'album':
+    case 'market_album':
+    case 'sticker_pack_preview':
+      return lang.use('me_unknown_attach')
+
     default:
+      typeguard(firstType)
       return lang.use('me_unknown_attach')
   }
 }
