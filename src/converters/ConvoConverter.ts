@@ -84,7 +84,8 @@ export function fromApiConvo(
           id: peerId,
           title: apiConvo.chat_settings?.title ?? '',
           photo50: apiConvo.chat_settings?.photo?.photo_50,
-          photo100: apiConvo.chat_settings?.photo?.photo_100
+          photo100: apiConvo.chat_settings?.photo?.photo_100,
+          membersCount: apiConvo.chat_settings?.members_count ?? 0
         }
       }
 

@@ -221,7 +221,7 @@ export class Lang {
 
   private dateTimeFormatters = new Map<string, Intl.DateTimeFormat>()
 
-  dateTimeFormatter(options?: Intl.DateTimeFormatOptions) {
+  dateTimeFormatter(options: Intl.DateTimeFormatOptions) {
     const cacheKey = JSON.stringify(options)
     const cachedFormatter = this.dateTimeFormatters.get(cacheKey)
 

@@ -11,4 +11,6 @@ export type GroupsGroup = {
   photo_50?: string
   photo_100?: string
   photo_base?: string
+  /** Не приходит, если сообщество забанено */
+  members_count?: number
 }

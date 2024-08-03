@@ -10,7 +10,9 @@ export const PEER_FIELDS = [
   'last_name_acc',
   'photo_50',
   'photo_100',
-  'sex'
+  'sex',
+  'members_count',
+  'online_info'
 ].join(',')
 
 export const CONVOS_PER_PAGE = 20

@@ -1,17 +1,45 @@
 .ConvoHeader {
-  display: flex;
-  align-items: center;
-  flex: none;
+  display: grid;
+  grid-template-areas:
+    'button avatar name'
+    'button avatar info';
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: auto auto 1fr;
   height: 48px;
   padding: 0 8px;
+  gap: 0 8px;
+  flex: none;
   border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
 .ConvoHeader__back {
+  grid-area: button;
+  align-self: center;
   width: 32px;
   height: 32px;
 }
 
 .ConvoHeader__avatar {
-  margin: 0 8px;
+  grid-area: avatar;
+  align-self: center;
+}
+
+.ConvoHeader__name {
+  grid-area: name;
+  align-self: end;
+  font: var(--smallFont);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ConvoHeader__info {
+  grid-area: info;
+  align-self: start;
+  font: var(--smallFont);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--vkui--color_text_secondary);
 }
