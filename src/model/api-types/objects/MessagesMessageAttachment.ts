@@ -1,15 +1,15 @@
 import { BaseImage } from 'model/api-types/objects/BaseImage'
-import { PhotosPhotoSize } from 'model/api-types/objects/PhotosPhotoSize'
+import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
 
 export type MessagesMessageAttachment = {
   type: MessagesMessageAttachmentType
-  photo?: MessagesMessageAttachmentPhoto
+  photo?: PhotosPhoto
   audio?: unknown
   video?: unknown
   video_playlist?: unknown
   video_message?: unknown
   doc?: unknown
-  link?: unknown
+  link?: MessagesMessageAttachmentLink
   market?: unknown
   gift?: unknown
   sticker?: MessagesMessageAttachmentsSticker
@@ -134,16 +134,9 @@ type MessagesMessageAttachmentsSticker = {
   }
 }
 
-type MessagesMessageAttachmentPhoto = {
-  id: number
-  owner_id: number
-  access_key?: string
-  album_id: number
-  date: number
-  sizes?: PhotosPhotoSize[]
-  orig_photo?: PhotosPhotoSize
-  thumb_hash?: string
-  web_view_token?: string
-  has_tags: boolean
-  text?: string
+type MessagesMessageAttachmentLink = {
+  url: string
+  title?: string
+  caption?: string
+  photo?: PhotosPhoto
 }

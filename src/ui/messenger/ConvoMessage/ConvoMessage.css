@@ -31,11 +31,11 @@
   font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
 }
 
-.ConvoMessage__unknownAttach {
+.ConvoMessage__empty {
   color: var(--vkui--color_text_secondary);
 }
 
 .ConvoMessage__author + .ConvoMessage__attaches,
 .ConvoMessage__text + .ConvoMessage__attaches {
-  margin-top: 4px;
+  margin-top: 6px;
 }

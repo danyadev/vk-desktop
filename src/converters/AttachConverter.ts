@@ -1,5 +1,6 @@
 import { BaseImage } from 'model/api-types/objects/BaseImage'
 import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'
+import { PhotosPhotoSize } from 'model/api-types/objects/PhotosPhotoSize'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
 import { isNonEmptyArray } from 'misc/utils'
@@ -58,6 +59,26 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
         break
       }
 
+      case 'link': {
+        if (!apiAttach.link) {
+          addUnknown(apiAttach)
+          break
+        }
+
+        const link: Attach.Link = {
+          kind: 'Link',
+          url: apiAttach.link.url,
+          title: apiAttach.link.title ?? '',
+          caption: apiAttach.link.caption ?? apiAttach.link.url,
+          imageSizes: apiAttach.link.photo?.sizes
+            ? fromApiImageSizes(apiAttach.link.photo.sizes)
+            : undefined
+        }
+
+        attaches.links = [...(attaches.links ?? []), link]
+        break
+      }
+
       default: {
         addUnknown(apiAttach)
         break
@@ -80,4 +101,14 @@ function fromApiImageList(apiImages: BaseImage[]): Attach.ImageList | undefined 
   }
 
   return images
+}
+
+function fromApiImageSizes(apiImageSizes: PhotosPhotoSize[]): Attach.ImageSizes {
+  const sizes: Attach.ImageSizes = new Map()
+
+  for (const size of apiImageSizes) {
+    sizes.set(size.type as Attach.ImageSize, size)
+  }
+
+  return sizes
 }

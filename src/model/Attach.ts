@@ -6,6 +6,7 @@ import { NonEmptyArray, typeguard } from 'misc/utils'
 export type Attaches = {
   sticker?: Sticker
   photos?: NonEmptyArray<Photo>
+  links?: NonEmptyArray<Link>
   unknown?: NonEmptyArray<Unknown>
 }
 
@@ -27,6 +28,14 @@ export type Photo = {
   image: Image
 }
 
+export type Link = {
+  kind: 'Link'
+  url: string
+  title: string
+  caption: string
+  imageSizes?: ImageSizes
+}
+
 type Unknown = {
   kind: 'Unknown'
   type: MessagesMessageAttachmentType
@@ -40,6 +49,22 @@ type Image = {
 }
 
 export type ImageList = NonEmptyArray<Image>
+
+export type ImageSize =
+  | 's' // сторона <= 75px
+  | 'm' // сторона <= 130px
+  | 'x' // сторона <= 604px
+  | 'y' // сторона <= 807px
+  | 'z' // размер <= 1080x1024px
+  | 'w' // размер <= 2560x2048px
+  | 'o' // кроп со стороной <= 130px; для preview документа - оригинальный размер
+  | 'p' // кроп со стороной <= 200px
+  | 'q' // кроп со стороной <= 320px
+  | 'r' // кроп со стороной <= 510px
+  | 'k' // ровно 1074x480px
+  | 'l' // ровно 537x240px
+
+export type ImageSizes = Map<ImageSize, Image>
 
 export function kindsCount(attaches: Attaches): number {
   return Object.keys(attaches).length
@@ -58,7 +83,8 @@ export function preview(attach: Attach, lang: ILang.Lang): string {
     const [firstAttach] = attach
 
     switch (firstAttach.kind) {
-      case 'Photo': {
+      case 'Photo':
+      case 'Link': {
         const lowerCaseName = firstAttach.kind.toLowerCase() as Lowercase<typeof firstAttach.kind>
         return lang.usePlural(`me_message_attach_${lowerCaseName}`, attach.length)
       }
