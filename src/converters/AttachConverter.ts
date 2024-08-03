@@ -1,6 +1,7 @@
 import { BaseImage } from 'model/api-types/objects/BaseImage'
 import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'
 import * as Attach from 'model/Attach'
+import * as Peer from 'model/Peer'
 import { isNonEmptyArray } from 'misc/utils'
 
 export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attach.Attaches {
@@ -17,7 +18,7 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
 
   for (const apiAttach of apiAttaches) {
     switch (apiAttach.type) {
-      case 'sticker':
+      case 'sticker': {
         if (!apiAttach.sticker?.sticker_id || !apiAttach.sticker.product_id) {
           addUnknown(apiAttach)
           break
@@ -31,10 +32,36 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
           imagesWithBackground: fromApiImageList(apiAttach.sticker.images_with_background ?? [])
         }
         break
+      }
 
-      default:
+      case 'photo': {
+        if (!apiAttach.photo?.orig_photo) {
+          addUnknown(apiAttach)
+          break
+        }
+
+        const ownerId = Peer.resolveId(apiAttach.photo.owner_id)
+        if (!Peer.isUserPeerId(ownerId) && !Peer.isGroupPeerId(ownerId)) {
+          addUnknown(apiAttach)
+          break
+        }
+
+        const photo: Attach.Photo = {
+          kind: 'Photo',
+          id: apiAttach.photo.id,
+          ownerId,
+          accessKey: apiAttach.photo.access_key,
+          image: apiAttach.photo.orig_photo
+        }
+
+        attaches.photos = [...(attaches.photos ?? []), photo]
+        break
+      }
+
+      default: {
         addUnknown(apiAttach)
         break
+      }
     }
   }
 

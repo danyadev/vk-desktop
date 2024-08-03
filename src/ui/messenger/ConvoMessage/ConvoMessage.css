@@ -34,3 +34,8 @@
 .ConvoMessage__unknownAttach {
   color: var(--vkui--color_text_secondary);
 }
+
+.ConvoMessage__author + .ConvoMessage__attaches,
+.ConvoMessage__text + .ConvoMessage__attaches {
+  margin-top: 4px;
+}
