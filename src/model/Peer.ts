@@ -33,6 +33,14 @@ export type User = {
   photo50?: string
   photo100?: string
   gender: 'male' | 'female' | 'unknown'
+  onlineInfo: {
+    visible: boolean
+    lastSeen?: number
+    isOnline?: boolean
+    isMobile?: boolean
+    status?: 'recently' | 'last_week' | 'last_month' | 'long_ago' | 'not_show'
+    appId?: number
+  }
 }
 
 export type Group = {
@@ -42,6 +50,7 @@ export type Group = {
   screenName: string
   photo50?: string
   photo100?: string
+  membersCount: number
 }
 
 export type Chat = {
@@ -50,6 +59,7 @@ export type Chat = {
   title: string
   photo50?: string
   photo100?: string
+  membersCount: number
 }
 
 /**

@@ -3,6 +3,34 @@ export type RuPluralRules = 'one' | 'few' | 'many'
 export const ru = {
   vk_desktop_label: 'VK Desktop',
 
+  date_today_at_time: 'сегодня в {time}',
+  date_yesterday_at_time: 'вчера в {time}',
+
+  date_at_time: '{date} в {time}',
+  date_at_time_with_year: '{date} {year} в {time}',
+  date_a_moment_ago: 'только что',
+
+  date_minutes_ago: {
+    single: 'минуту назад',
+    one: '{0} минуту назад',
+    few: '{0} минуты назад',
+    many: '{0} минут назад'
+  },
+
+  date_hours_ago: {
+    single: 'час назад',
+    one: '{0} час назад',
+    few: '{0} часа назад',
+    many: '{0} часов назад'
+  },
+
+  date_days_ago: {
+    single: 'день назад',
+    one: '{0} день назад',
+    few: '{0} дня назад',
+    many: '{0} дней назад'
+  },
+
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
   auth_submit: 'Войти',
@@ -70,6 +98,20 @@ export const ru = {
   me_convo_empty_placeholder: 'История переписки пуста',
   me_convo_loading_error: 'Ошибка загрузки',
   me_convo_retry_loading: 'Повторить',
+
+  me_chat_members_count: {
+    one: '{count} участник',
+    few: '{count} участника',
+    many: '{count} участников'
+  },
+  me_group_members_count: {
+    one: '{count} подписчик',
+    few: '{count} подписчика',
+    many: '{count} подписчиков'
+  },
+
+  me_user_online: 'online',
+  me_user_was_online_a_long_time_ago: 'заходил давно',
 
   // region service messages
   me_service_chat_create: {

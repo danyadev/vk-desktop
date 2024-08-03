@@ -16,7 +16,17 @@ export function fromApiUser(apiUser: UsersUser): Peer.User {
       ? 'female'
       : apiUser.sex === 2
         ? 'male'
-        : 'unknown'
+        : 'unknown',
+    onlineInfo: {
+      visible: apiUser.online_info.visible,
+      lastSeen: apiUser.online_info.last_seen
+        ? apiUser.online_info.last_seen * 1000
+        : undefined,
+      isOnline: apiUser.online_info.is_online,
+      isMobile: apiUser.online_info.is_mobile,
+      status: apiUser.online_info.status,
+      appId: apiUser.online_info.app_id
+    }
   }
 }
 
@@ -27,6 +37,7 @@ export function fromApiGroup(apiGroup: GroupsGroup): Peer.Group {
     name: apiGroup.name,
     screenName: apiGroup.screen_name,
     photo50: apiGroup.photo_50,
-    photo100: apiGroup.photo_100
+    photo100: apiGroup.photo_100,
+    membersCount: apiGroup.members_count ?? 0
   }
 }
