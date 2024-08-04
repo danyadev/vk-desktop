@@ -102,6 +102,10 @@ export const ru = {
   me_convo_loading_error: 'Ошибка загрузки',
   me_convo_retry_loading: 'Повторить',
   me_edited_label: 'ред.',
+  me_user_online: 'online',
+  me_user_was_online_a_long_time_ago: 'заходил давно',
+  me_attach_wall_empty: 'Пустая запись',
+  me_attach_wall_open_button: 'Открыть запись',
 
   me_chat_members_count: {
     one: '{count} участник',
@@ -113,9 +117,6 @@ export const ru = {
     few: '{count} подписчика',
     many: '{count} подписчиков'
   },
-
-  me_user_online: 'online',
-  me_user_was_online_a_long_time_ago: 'заходил давно',
 
   // region service messages
   me_service_chat_create: {

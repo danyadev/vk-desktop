@@ -1,7 +1,3 @@
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
 @font-face {
   font-family: Roboto VK;
   font-weight: 400;
@@ -32,10 +28,18 @@ img, svg {
 
 :where(button) {
   all: unset;
-  box-sizing: border-box;
   display: inline-block;
   text-align: center;
   cursor: pointer;
+}
+
+:where(a) {
+  all: unset;
+  cursor: pointer;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 :focus {

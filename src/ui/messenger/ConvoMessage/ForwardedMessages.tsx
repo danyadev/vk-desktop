@@ -4,7 +4,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
-import { Attaches } from 'ui/messenger/ConvoMessage/Attaches'
+import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import './ForwardedMessages.css'
 
@@ -42,7 +42,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
             </div>
           </div>
 
-          <span class="ForwardedMessage__text">{message.text}</span>
+          {message.text && <span class="ForwardedMessage__text">{message.text}</span>}
           {hasAttaches && (
             <Attaches class="ForwardedMessage__attaches" attaches={message.attaches} />
           )}

@@ -10,7 +10,7 @@ export type Message = Normal | Service | Expired
 interface BaseMessage {
   peerId: Peer.Id
   cmid: Cmid
-  authorId: Peer.UserId | Peer.GroupId
+  authorId: Peer.OwnerId
   isOut: boolean
   sentAt: number
   updatedAt?: number
@@ -72,7 +72,7 @@ export type ServiceAction =
     }
   | {
       type: 'chat_invite_user' | 'chat_kick_user' | 'accepted_message_request'
-      peerId: Peer.UserId | Peer.GroupId
+      peerId: Peer.OwnerId
     }
   | {
       type:

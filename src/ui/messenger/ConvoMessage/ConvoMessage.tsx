@@ -3,7 +3,7 @@ import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv } from 'hooks'
-import { Attaches } from 'ui/messenger/ConvoMessage/Attaches'
+import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { ForwardedMessages } from 'ui/messenger/ConvoMessage/ForwardedMessages'
 import { ReplyMessage } from 'ui/messenger/ConvoMessage/ReplyMessage'
 import './ConvoMessage.css'
@@ -37,7 +37,9 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             <div class="ConvoMessage__author">{Peer.name(author)}</div>
           )}
 
-          {message.replyMessage && <ReplyMessage reply={message.replyMessage} />}
+          {message.replyMessage && (
+            <ReplyMessage class="ConvoMessage__reply" reply={message.replyMessage} />
+          )}
 
           {message.text && <span class="ConvoMessage__text">{message.text}</span>}
           {hasAttaches && <Attaches class="ConvoMessage__attaches" attaches={message.attaches} />}

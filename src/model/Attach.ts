@@ -7,6 +7,7 @@ export type Attaches = {
   sticker?: Sticker
   photos?: NonEmptyArray<Photo>
   links?: NonEmptyArray<Link>
+  wall?: Wall
   unknown?: NonEmptyArray<Unknown>
 }
 
@@ -23,7 +24,7 @@ export type Sticker = {
 export type Photo = {
   kind: 'Photo'
   id: number
-  ownerId: Peer.UserId | Peer.GroupId
+  ownerId: Peer.OwnerId
   accessKey?: string
   image: Image
 }
@@ -34,6 +35,20 @@ export type Link = {
   title: string
   caption: string
   imageSizes?: ImageSizes
+}
+
+export type Wall = {
+  kind: 'Wall'
+  id: number
+  ownerId: Peer.OwnerId
+  authorId: Peer.OwnerId
+  accessKey?: string
+  createdAt: number
+  text: string
+  attaches: Attaches
+  isDeleted: boolean
+  donutPlaceholder?: string
+  repost?: Wall
 }
 
 type Unknown = {
@@ -95,7 +110,8 @@ export function preview(attach: Attach, lang: ILang.Lang): string {
   }
 
   switch (attach.kind) {
-    case 'Sticker': {
+    case 'Sticker':
+    case 'Wall': {
       const lowerCaseName = attach.kind.toLowerCase() as Lowercase<typeof attach.kind>
       return lang.use(`me_message_attach_${lowerCaseName}`)
     }

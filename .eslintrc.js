@@ -248,23 +248,24 @@ module.exports = {
       basePath: './src',
       zones: [{
         // Где применяются ограничения
-        target: ['converters', 'lang', 'misc', 'model', 'store'],
+        target: ['lang', 'misc', 'model', 'store'],
         // Откуда нельзя импортировать
         from: ['actions', 'hooks', 'ui']
+      }, {
+        target: ['converters'],
+        from: ['hooks', 'ui']
       }]
     }],
     //#endregion
 
     'simple-import-sort/imports': ['error', {
-      groups: [
-        [
-          ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
-          ...['^@?electron', '^vue', '^pinia', '^@?vite', '^@vkontakte/vk-qr'],
-          ...['^env', '^model', '^store', '^actions', '^converters', '^lang'],
-          ...['^hooks', '^misc/utils', '^misc'],
-          ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
-        ]
-      ]
+      groups: [[
+        ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
+        ...['^@?electron', '^vue', '^pinia', '^@?vite', '^@vkontakte/vk-qr'],
+        ...['^env', '^model', '^store', '^actions', '^converters', '^lang'],
+        ...['^hooks', '^misc/utils', '^misc'],
+        ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
+      ]]
     }],
 
     //#region @typescript-eslint

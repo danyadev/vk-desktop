@@ -22,6 +22,7 @@ export type ChatId = Opaque<number, Chat>
 
 export type Peer = User | Group | Chat
 export type Id = UserId | GroupId | ChatId
+export type OwnerId = UserId | GroupId
 
 export type User = {
   kind: 'User'
@@ -79,6 +80,16 @@ export function resolveId(id: number): Id {
  */
 export function resolveZeroUserId(): UserId {
   return 0 as UserId
+}
+
+export function resolveOwnerId(id: number): UserId | GroupId {
+  const peerId = resolveId(id)
+
+  if (!isUserPeerId(peerId) && !isGroupPeerId(peerId)) {
+    throw new Error('Expected UserId or GroupId, got ' + id)
+  }
+
+  return peerId
 }
 
 /**
