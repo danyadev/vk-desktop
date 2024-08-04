@@ -1,11 +1,13 @@
 import { defineComponent } from 'vue'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { ClassName } from 'misc/utils'
 import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import './ReplyMessage.css'
 
 type Props = {
   reply: Message.Foreign
+  class: ClassName
 }
 
 export const ReplyMessage = defineComponent<Props>((props) => {
@@ -13,7 +15,7 @@ export const ReplyMessage = defineComponent<Props>((props) => {
     const author = Peer.safeGet(props.reply.authorId)
 
     return (
-      <div class="ReplyMessage">
+      <div class={['ReplyMessage', props.class]}>
         <div class="ReplyMessage__name">
           {Peer.name(author)}
         </div>
@@ -24,5 +26,5 @@ export const ReplyMessage = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['reply']
+  props: ['reply', 'class']
 })

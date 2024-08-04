@@ -5,6 +5,7 @@ import { ClassName } from 'misc/utils'
 import { AttachLink } from 'ui/messenger/attaches/AttachLink/AttachLink'
 import { AttachPhotos } from 'ui/messenger/attaches/AttachPhotos/AttachPhotos'
 import { AttachSticker } from 'ui/messenger/attaches/AttachSticker/AttachSticker'
+import { AttachWall } from 'ui/messenger/attaches/AttachWall/AttachWall'
 import './Attaches.css'
 
 type Props = {
@@ -20,6 +21,7 @@ export const Attaches = defineComponent<Props>((props) => {
       {props.attaches.sticker && <AttachSticker sticker={props.attaches.sticker} />}
       {props.attaches.photos && <AttachPhotos photos={props.attaches.photos} />}
       {props.attaches.links?.map((link) => <AttachLink link={link} />)}
+      {props.attaches.wall && <AttachWall wall={props.attaches.wall} />}
       {props.attaches.unknown?.map((unknown) => (
         <div class="Attaches__unknown">
           {lang.use('me_unknown_attach')} ({unknown.type})

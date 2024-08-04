@@ -1,5 +1,7 @@
 import { BaseImage } from 'model/api-types/objects/BaseImage'
+import { GroupsGroup } from 'model/api-types/objects/GroupsGroup'
 import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
+import { UsersUser } from 'model/api-types/objects/UsersUser'
 
 export type MessagesMessageAttachment = {
   type: MessagesMessageAttachmentType
@@ -13,7 +15,7 @@ export type MessagesMessageAttachment = {
   market?: unknown
   gift?: unknown
   sticker?: MessagesMessageAttachmentsSticker
-  wall?: unknown
+  wall?: MessagesMessageAttachmentWall
   wall_reply?: unknown
   money_transfer?: unknown
   money_request?: unknown
@@ -139,4 +141,30 @@ type MessagesMessageAttachmentLink = {
   title?: string
   caption?: string
   photo?: PhotosPhoto
+}
+
+export type MessagesMessageAttachmentWall = {
+  inner_type: 'wall_wallpost'
+  id?: number
+  /** Айди автора стены, иногда может не приходить */
+  owner_id?: number
+  /** Айди автора стены, если не пришел owner_id */
+  to_id?: number
+  /** Айди автора поста, может отличаться от автора стены */
+  from_id?: number
+  from?: UsersUser | GroupsGroup
+  access_key?: string
+  date?: number
+  text?: string
+  attachments?: MessagesMessageAttachment[]
+  copy_history?: MessagesMessageAttachmentWall[]
+  poster?: unknown
+  views?: { count: number }
+  is_deleted?: boolean
+  deleted_reason?: string
+  deleted_details?: string
+  donut?: {
+    is_donut: boolean
+    placeholder?: { text: string }
+  }
 }

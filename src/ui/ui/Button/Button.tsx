@@ -1,10 +1,14 @@
-import { ButtonHTMLAttributes, defineComponent } from 'vue'
+import { defineComponent, HTMLAttributes } from 'vue'
 import { useFocusVisible } from 'hooks'
 import { JSXElement } from 'misc/utils'
 import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './Button.css'
 
+type InheritedProps = HTMLAttributes & {
+  href?: string
+  disabled?: boolean
+}
 type Props = {
   size?: 'small' | 'medium' | 'large'
   mode?: 'primary' | 'secondary' | 'destructive' | 'tertiary' | 'outline'
@@ -12,21 +16,29 @@ type Props = {
   before?: JSXElement
   after?: JSXElement
   loading?: boolean
-} & ButtonHTMLAttributes
+} & InheritedProps
 
-export const Button = defineComponent<Props>((props, { slots }) => {
+export const Button = defineComponent<Props>((props, { slots, attrs }) => {
   const { isFocused, onBlur, onFocus } = useFocusVisible()
 
   return () => {
     const { size = 'medium', mode = 'primary' } = props
+    const restProps = attrs as InheritedProps
+
+    const Component = restProps.href ? 'a' : 'button'
+    const componentRelatedProps = Component === 'button'
+      ? { type: 'button' } as const
+      : { target: '_blank' } as const
+    const disableFocusProps = restProps.disabled && { tabindex: -1 }
 
     return (
-      <button
+      <Component
         class={['Button', `Button--${size}`, `Button--${mode}`, {
           'Button--wide': props.wide,
           'Button--loading': props.loading
         }]}
-        type="button"
+        {...componentRelatedProps}
+        {...disableFocusProps}
         onBlur={onBlur}
         onFocus={onFocus}
       >
@@ -37,7 +49,7 @@ export const Button = defineComponent<Props>((props, { slots }) => {
         </span>
         {props.loading && <Spinner class="Button__spinner" color="inherit" />}
         <FocusVisible isFocused={isFocused.value} />
-      </button>
+      </Component>
     )
   }
 }, {

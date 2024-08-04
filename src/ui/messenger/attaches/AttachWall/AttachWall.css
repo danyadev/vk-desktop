@@ -1,0 +1,71 @@
+.AttachWall__header {
+  display: grid;
+  grid-template-areas:
+    'icon avatar name'
+    'icon avatar date';
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: auto auto 1fr;
+  gap: 0 8px;
+  margin-bottom: 6px;
+}
+
+.AttachWall__icon {
+  grid-area: icon;
+  align-self: center;
+}
+
+.AttachWall__avatar {
+  grid-area: avatar;
+  align-self: center;
+}
+
+.AttachWall__name {
+  grid-area: name;
+  /* align-self: end; */
+  font: var(--smallFont);
+  font-weight: 500;
+  color: var(--vkui--color_text_link);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.AttachWall__date {
+  grid-area: date;
+  /* align-self: start; */
+  font: var(--smallFont);
+  color: var(--vkui--color_text_subhead);
+  text-align: unset;
+  margin-right: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.AttachWall__text + .AttachWall__attaches {
+  margin-top: 6px;
+}
+
+.AttachWall__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--vkui--color_background_content);
+  color: var(--vkui--color_text_subhead);
+  padding: 12px;
+  gap: 8px;
+  border-radius: 8px;
+  max-width: 300px;
+  min-height: 128px;
+}
+
+.AttachWall__empty {
+  color: var(--vkui--color_text_secondary);
+}
+
+.AttachWall__openButton {
+  margin-top: 8px;
+  width: 100%;
+}

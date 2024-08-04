@@ -1,7 +1,11 @@
 .Button {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 8px;
   padding: 0 16px;
+  user-select: none;
   transition: opacity var(--fastTransition), background-color var(--fastTransition);
 }
 
@@ -11,12 +15,12 @@
 }
 
 .Button[disabled] {
+  pointer-events: none;
   opacity: 0.6;
-  cursor: default;
 }
 
 /* Сдвигаем содержимое на пиксель вниз */
-.Button:not([disabled]):active .Button__in {
+.Button:active .Button__in {
   position: relative;
   top: 1px;
 }
@@ -60,7 +64,7 @@
   background: var(--vkui--color_background_secondary);
 }
 
-.Button--secondary:not([disabled]):hover,
+.Button--secondary:hover,
 .Button--secondary:active {
   background: var(--vkui--color_background_secondary--hover);
   opacity: 1;
@@ -71,7 +75,7 @@
   background: var(--vkui--color_transparent);
 }
 
-.Button--tertiary:not([disabled]):hover,
+.Button--tertiary:hover,
 .Button--tertiary:active {
   background: var(--vkui--color_transparent--hover);
 }
@@ -87,7 +91,7 @@
   border: 1px solid var(--vkui--color_stroke_accent_themed);
 }
 
-.Button--outline:not([disabled]):hover,
+.Button--outline:hover,
 .Button--outline:active {
   background: var(--vkui--color_transparent--hover);
 }

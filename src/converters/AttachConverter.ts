@@ -1,8 +1,12 @@
 import { BaseImage } from 'model/api-types/objects/BaseImage'
-import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'
+import {
+  MessagesMessageAttachment,
+  MessagesMessageAttachmentWall
+} from 'model/api-types/objects/MessagesMessageAttachment'
 import { PhotosPhotoSize } from 'model/api-types/objects/PhotosPhotoSize'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
+import { insertPeers } from 'actions'
 import { isNonEmptyArray } from 'misc/utils'
 
 export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attach.Attaches {
@@ -41,16 +45,10 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
           break
         }
 
-        const ownerId = Peer.resolveId(apiAttach.photo.owner_id)
-        if (!Peer.isUserPeerId(ownerId) && !Peer.isGroupPeerId(ownerId)) {
-          addUnknown(apiAttach)
-          break
-        }
-
         const photo: Attach.Photo = {
           kind: 'Photo',
           id: apiAttach.photo.id,
-          ownerId,
+          ownerId: Peer.resolveOwnerId(apiAttach.photo.owner_id),
           accessKey: apiAttach.photo.access_key,
           image: apiAttach.photo.orig_photo
         }
@@ -79,6 +77,18 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
         break
       }
 
+      case 'wall': {
+        const wall = apiAttach.wall && fromApiAttachWall(apiAttach.wall)
+
+        if (!wall) {
+          addUnknown(apiAttach)
+          break
+        }
+
+        attaches.wall = wall
+        break
+      }
+
       default: {
         addUnknown(apiAttach)
         break
@@ -87,6 +97,38 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
   }
 
   return attaches
+}
+
+function fromApiAttachWall(apiWall: MessagesMessageAttachmentWall): Attach.Wall | undefined {
+  const rawOwnerId = apiWall.owner_id ?? apiWall.to_id
+
+  if (!apiWall.id || !rawOwnerId || !apiWall.from_id) {
+    return
+  }
+
+  if (apiWall.from) {
+    insertPeers(
+      'first_name' in apiWall.from
+        ? { profiles: [apiWall.from] }
+        : { groups: [apiWall.from] }
+    )
+  }
+
+  return {
+    kind: 'Wall',
+    id: apiWall.id,
+    ownerId: Peer.resolveOwnerId(rawOwnerId),
+    authorId: Peer.resolveOwnerId(apiWall.from_id),
+    accessKey: apiWall.access_key,
+    createdAt: (apiWall.date ?? 0) * 1000,
+    text: apiWall.text ?? '',
+    attaches: fromApiAttaches(apiWall.attachments ?? []),
+    isDeleted: !!apiWall.is_deleted,
+    donutPlaceholder: apiWall.donut?.placeholder?.text,
+    repost: apiWall.copy_history?.[0]
+      ? fromApiAttachWall(apiWall.copy_history[0])
+      : undefined
+  }
 }
 
 function fromApiImageList(apiImages: BaseImage[]): Attach.ImageList | undefined {

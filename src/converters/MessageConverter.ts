@@ -8,15 +8,10 @@ import { fromApiConvoStyle } from 'converters/ConvoConverter'
 import { isNonEmptyArray, NonEmptyArray, typeguard } from 'misc/utils'
 
 export function fromApiMessage(message: MessagesMessage): Message.Message {
-  const authorId = Peer.resolveId(message.from_id)
-  if (!Peer.isUserPeerId(authorId) && !Peer.isGroupPeerId(authorId)) {
-    throw new Error('[fromApiMessage] message.from_id neither UserId nor GroupId')
-  }
-
   const baseMessage = {
     peerId: Peer.resolveId(message.peer_id),
     cmid: Message.resolveCmid(message.conversation_message_id),
-    authorId,
+    authorId: Peer.resolveOwnerId(message.from_id),
     isOut: message.out === 1,
     sentAt: message.date * 1000
   } satisfies Partial<Message.Message>
@@ -103,12 +98,10 @@ function fromApiMessageAction(action: MessagesMessageAction): Message.ServiceAct
         return { type: 'unknown' }
       }
 
-      const peerId = Peer.resolveId(action.member_id)
-      if (!Peer.isUserPeerId(peerId) && !Peer.isGroupPeerId(peerId)) {
-        return { type: 'unknown' }
+      return {
+        type: action.type,
+        peerId: Peer.resolveOwnerId(action.member_id)
       }
-
-      return { type: action.type, peerId }
     }
 
     case 'chat_invite_user_by_message_request':
@@ -163,11 +156,6 @@ function fromApiForeignMessage(
   rootPeerId: Peer.Id,
   rootCmid: Message.Cmid
 ): Message.Foreign {
-  const authorId = Peer.resolveId(foreignMessage.from_id)
-  if (!Peer.isUserPeerId(authorId) && !Peer.isGroupPeerId(authorId)) {
-    throw new Error('[fromApiForeignMessage] foreignMessage.from_id neither UserId nor GroupId')
-  }
-
   return {
     kind: 'Foreign',
     peerId: foreignMessage.peer_id
@@ -176,7 +164,7 @@ function fromApiForeignMessage(
     cmid: Message.resolveCmid(foreignMessage.conversation_message_id),
     rootPeerId,
     rootCmid,
-    authorId,
+    authorId: Peer.resolveOwnerId(foreignMessage.from_id),
     sentAt: foreignMessage.date * 1000,
     text: foreignMessage.text,
     attaches: fromApiAttaches(foreignMessage.attachments ?? []),
@@ -216,11 +204,6 @@ function fromApiForwardedMessages(
 }
 
 export function fromApiPinnedMessage(pinnedMessage: MessagesPinnedMessage): Message.Pinned {
-  const authorId = Peer.resolveId(pinnedMessage.from_id)
-  if (!Peer.isUserPeerId(authorId) && !Peer.isGroupPeerId(authorId)) {
-    throw new Error('[fromApiPinnedMessage] pinnedMessage.from_id neither UserId nor GroupId')
-  }
-
   const peerId = Peer.resolveId(pinnedMessage.peer_id)
   const cmid = Message.resolveCmid(pinnedMessage.conversation_message_id)
 
@@ -228,7 +211,7 @@ export function fromApiPinnedMessage(pinnedMessage: MessagesPinnedMessage): Mess
     kind: 'Pinned',
     peerId,
     cmid,
-    authorId,
+    authorId: Peer.resolveOwnerId(pinnedMessage.from_id),
     sentAt: pinnedMessage.date * 1000,
     text: pinnedMessage.text,
     attaches: fromApiAttaches(pinnedMessage.attachments ?? []),

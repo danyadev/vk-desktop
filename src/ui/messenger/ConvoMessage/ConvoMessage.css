@@ -36,6 +36,7 @@
 }
 
 .ConvoMessage__author + .ConvoMessage__attaches,
-.ConvoMessage__text + .ConvoMessage__attaches {
+.ConvoMessage__text + .ConvoMessage__attaches,
+.ConvoMessage__reply + .ConvoMessage__attaches {
   margin-top: 6px;
 }
