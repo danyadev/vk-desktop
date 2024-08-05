@@ -33,15 +33,15 @@
   opacity: 0.1;
 }
 
-.ReplyMessage__name {
-  color: var(--vkui--color_text_link);
-  font-weight: 500;
-  margin-bottom: 2px;
-}
-
 .ReplyMessage__name,
 .ReplyMessage__text {
+  font: var(--smallFont);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ReplyMessage__name {
+  color: var(--vkui--color_text_link);
+  font-weight: 500;
 }

@@ -21,7 +21,6 @@
 
 .AttachWall__name {
   grid-area: name;
-  /* align-self: end; */
   font: var(--smallFont);
   font-weight: 500;
   color: var(--vkui--color_text_link);
@@ -32,17 +31,16 @@
 
 .AttachWall__date {
   grid-area: date;
-  /* align-self: start; */
   font: var(--smallFont);
   color: var(--vkui--color_text_subhead);
-  text-align: unset;
-  margin-right: auto;
+  max-width: fit-content;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.AttachWall__text + .AttachWall__attaches {
+.AttachWall__text + .AttachWall__attaches,
+.AttachWall__text + .AttachWall__repost {
   margin-top: 6px;
 }
 
@@ -63,6 +61,22 @@
 
 .AttachWall__empty {
   color: var(--vkui--color_text_secondary);
+}
+
+.AttachWall__repost {
+  position: relative;
+  padding-left: 10px;
+}
+
+.AttachWall__repost::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  content: '';
+  background-color: var(--vkui--color_stroke_accent_themed);
+  opacity: 0.24;
 }
 
 .AttachWall__openButton {

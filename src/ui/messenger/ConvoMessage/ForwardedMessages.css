@@ -21,31 +21,32 @@
     'avatar name'
     'avatar date';
   grid-template-columns: auto 1fr;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .ForwardedMessage__avatar {
   grid-area: avatar;
+  align-self: center;
   margin-right: 8px;
+}
+
+.ForwardedMessage__name,
+.ForwardedMessage__date {
+  font: var(--smallFont);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ForwardedMessage__name {
   grid-area: name;
   color: var(--vkui--color_text_link);
-  font: 500 var(--smallFontSize) / var(--smallLineHeight) var(--fontFamily);
+  font-weight: 500;
 }
 
 .ForwardedMessage__date {
   grid-area: date;
-  font: var(--smallFontSize) / var(--smallLineHeight) var(--fontFamily);
   color: var(--vkui--color_text_subhead);
-}
-
-.ForwardedMessage__name,
-.ForwardedMessage__date {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .ForwardedMessage__text + .ForwardedMessage__attaches {

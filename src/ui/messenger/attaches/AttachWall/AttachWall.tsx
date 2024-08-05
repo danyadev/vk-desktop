@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
-import { useEnv } from 'hooks'
+import { useEnv, useFormatDate } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
@@ -11,10 +11,12 @@ import './AttachWall.css'
 
 type Props = {
   wall: Attach.Wall
+  isRepost?: boolean
 }
 
 export const AttachWall = defineComponent<Props>((props) => {
   const { lang } = useEnv()
+  const formatDate = useFormatDate({ relativeTime: false })
 
   return () => {
     const author = Peer.safeGet(props.wall.authorId)
@@ -34,7 +36,7 @@ export const AttachWall = defineComponent<Props>((props) => {
 
           <span class="AttachWall__name">{Peer.name(author)}</span>
           <Link class="AttachWall__date" href={wallLink}>
-            date
+            {formatDate(props.wall.createdAt)}
           </Link>
         </div>
 
@@ -67,12 +69,18 @@ export const AttachWall = defineComponent<Props>((props) => {
           </span>
         )}
 
-        <Button class="AttachWall__openButton" href={wallLink} size="small" mode="outline">
-          {lang.use('me_attach_wall_open_button')}
-        </Button>
+        {props.wall.repost && (
+          <AttachWall class="AttachWall__repost" wall={props.wall.repost} isRepost />
+        )}
+
+        {!props.isRepost && (
+          <Button class="AttachWall__openButton" href={wallLink} size="small" mode="outline">
+            {lang.use('me_attach_wall_open_button')}
+          </Button>
+        )}
       </div>
     )
   }
 }, {
-  props: ['wall']
+  props: ['wall', 'isRepost']
 })

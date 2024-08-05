@@ -5,6 +5,7 @@ import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv, useNow } from 'hooks'
+import { ONE_DAY, ONE_HOUR, ONE_MINUTE, ONE_MONTH, ONE_WEEK } from 'misc/dateTime'
 import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Counter } from 'ui/ui/Counter/Counter'
@@ -99,11 +100,6 @@ const MessageDate = defineComponent<{ message: Message.Message }>(({ message }) 
   const now = useNow(10000)
 
   const getDate = () => {
-    const ONE_MINUTE = 60 * 1000
-    const ONE_HOUR = 60 * ONE_MINUTE
-    const ONE_DAY = 24 * ONE_HOUR
-    const ONE_WEEK = 7 * ONE_DAY
-    const ONE_MONTH = 4 * ONE_WEEK
     const diff = now.value - message.sentAt
 
     switch (true) {
