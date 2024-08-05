@@ -1,3 +1,9 @@
+export const ONE_MINUTE = 60 * 1000
+export const ONE_HOUR = 60 * ONE_MINUTE
+export const ONE_DAY = 24 * ONE_HOUR
+export const ONE_WEEK = 7 * ONE_DAY
+export const ONE_MONTH = 30 * ONE_DAY
+
 export function shortenCount(count: number) {
   // Аналог (dividend / divisor).toFixed(1), но с округлением в меньшую сторону
   const divideCount = (dividend: number, divisor: number): number => {

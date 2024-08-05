@@ -5,6 +5,11 @@
     'photo caption';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr;
+  transition: opacity var(--fastTransition);
+}
+
+.AttachLink:hover {
+  opacity: 0.85;
 }
 
 .AttachLink__photo {

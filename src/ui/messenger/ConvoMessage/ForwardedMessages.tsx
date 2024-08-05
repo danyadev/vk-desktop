@@ -2,7 +2,7 @@ import { defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { useEnv } from 'hooks'
+import { useEnv, useFormatDate } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
@@ -14,6 +14,7 @@ type Props = {
 
 export const ForwardedMessages = defineComponent<Props>((props) => {
   const { lang } = useEnv()
+  const formatDate = useFormatDate({ relativeTime: false })
 
   return () => (
     props.messages.map((message) => {
@@ -24,12 +25,6 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
         !hasAttaches &&
         !message.replyMessage &&
         !message.forwardedMessages
-      const date = lang.dateTimeFormatter({
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }).format(message.sentAt)
 
       return (
         <div class="ForwardedMessage">
@@ -37,7 +32,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
             <Avatar class="ForwardedMessage__avatar" peer={author} size={32} />
             <div class="ForwardedMessage__name">{Peer.name(author)}</div>
             <div class="ForwardedMessage__date">
-              {date}
+              {formatDate(message.sentAt)}
               {message.updatedAt && (' · ' + lang.use('me_edited_label'))}
             </div>
           </div>

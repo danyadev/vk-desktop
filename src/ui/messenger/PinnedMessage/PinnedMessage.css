@@ -31,6 +31,11 @@
   font-weight: 500;
 }
 
+.PinnedMessage__date {
+  color: var(--vkui--color_text_secondary);
+  font-weight: 400;
+}
+
 .PinnedMessage__content {
   grid-area: content;
   align-self: start;

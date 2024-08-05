@@ -1,14 +1,14 @@
-import { isPreviousDay, isSameDay } from 'misc/dateTime'
-import { useEnv } from './useEnv'
-import { useNow } from './useNow'
+import { useEnv, useNow } from 'hooks'
+import { isPreviousDay, isSameDay, ONE_DAY, ONE_HOUR, ONE_MINUTE } from 'misc/dateTime'
 
-export const useFormatDate = () => {
+type Options = {
+  relativeTime?: boolean
+}
+
+export const useFormatDate = (options: Options = {}) => {
   const { lang } = useEnv()
   const now = useNow(10000)
-
-  const ONE_MINUTE = 60 * 1000
-  const ONE_HOUR = 60 * ONE_MINUTE
-  const ONE_DAY = 24 * ONE_HOUR
+  const { relativeTime = true } = options
 
   return (timestamp: number) => {
     const nowTimestamp = now.value
@@ -25,15 +25,15 @@ export const useFormatDate = () => {
     }).format(timestamp)
 
     switch (true) {
-      case diff < ONE_MINUTE: {
+      case relativeTime && diff < ONE_MINUTE: {
         return lang.use('date_a_moment_ago')
       }
 
-      case diff < ONE_HOUR: {
+      case relativeTime && diff < ONE_HOUR: {
         return lang.usePlural('date_minutes_ago', Math.floor((diff % ONE_HOUR) / ONE_MINUTE))
       }
 
-      case diff <= 3 * ONE_HOUR: {
+      case relativeTime && diff <= 3 * ONE_HOUR: {
         return lang.usePlural('date_hours_ago', Math.floor((diff % ONE_DAY) / ONE_HOUR))
       }
 
