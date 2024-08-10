@@ -103,3 +103,9 @@ export function resolveCmid(cmid: number, allowZero = false): Cmid {
 
   return cmid as Cmid
 }
+
+export function isUnread(message: Message, convo: Convo.Convo): boolean {
+  return message.isOut
+    ? message.cmid > convo.outReadBy
+    : message.cmid > convo.inReadBy
+}

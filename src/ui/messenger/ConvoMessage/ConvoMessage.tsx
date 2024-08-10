@@ -6,6 +6,7 @@ import { useEnv } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { ForwardedMessages } from 'ui/messenger/ConvoMessage/ForwardedMessages'
 import { ReplyMessage } from 'ui/messenger/ConvoMessage/ReplyMessage'
+import { MessageStatusIcon } from 'ui/ui/MessageStatusIcon/MessageStatusIcon'
 import './ConvoMessage.css'
 
 type Props = {
@@ -57,6 +58,9 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             {lang
               .dateTimeFormatter({ hour: '2-digit', minute: '2-digit' })
               .format(message.sentAt)}
+            <span class="ConvoMessage__status">
+              <MessageStatusIcon message={props.message} />
+            </span>
           </span>
         </div>
       </div>

@@ -1,5 +1,5 @@
 .MessagePreview {
-  color: var(--vkd--color_text_accent_themed);
+  color: var(---vkui--color_text_accent_themed);
 }
 
 .MessagePreview--accent {

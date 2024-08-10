@@ -2,10 +2,10 @@
   display: grid;
   position: relative;
   grid-template-areas:
-    'avatar name name'
-    'avatar message indicators';
+    'avatar name name name'
+    'avatar message indicators status';
   grid-template-rows: 1fr 1fr;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   row-gap: 2px;
   padding: 6px 8px;
   margin: 2px 0;
@@ -91,4 +91,10 @@
   right: 2px;
   border: 2px solid var(--vkui--color_background_content);
   min-width: 24px;
+}
+
+.ConvoListItem__status {
+  grid-area: status;
+  align-self: center;
+  margin-left: 5px;
 }

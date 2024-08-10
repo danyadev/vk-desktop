@@ -11,7 +11,9 @@ interface BaseConvo {
   enabledNotifications: boolean
   majorSortId: number
   minorSortId: number
+  /** Cmid последнего прочитанного входящего сообщения (inbox) */
   inReadBy: Message.Cmid
+  /** Cmid последнего прочитанного исходящего сообщения (outbox) */
   outReadBy: Message.Cmid
 }
 

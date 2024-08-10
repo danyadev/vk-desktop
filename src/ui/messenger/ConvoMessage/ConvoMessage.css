@@ -25,10 +25,18 @@
 .ConvoMessage__time {
   position: relative;
   float: right;
+  font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
   margin: 4px 0 4px 6px;
   bottom: -6px;
-  color: var(--vkui--color_text_secondary);
-  font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
+  color: var(--vkui--color_text_accent_themed);
+}
+
+.ConvoMessage__status {
+  display: inline-flex;
+  align-items: center;
+  height: var(--messageDateFontSize);
+  vertical-align: bottom;
+  margin-left: 3px;
 }
 
 .ConvoMessage__empty {
