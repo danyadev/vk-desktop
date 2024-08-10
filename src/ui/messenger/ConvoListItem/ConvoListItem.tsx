@@ -6,10 +6,10 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv, useNow } from 'hooks'
 import { ONE_DAY, ONE_HOUR, ONE_MINUTE, ONE_MONTH, ONE_WEEK } from 'misc/dateTime'
+import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
 import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Counter } from 'ui/ui/Counter/Counter'
-import { MessageStatusIcon } from 'ui/ui/MessageStatusIcon/MessageStatusIcon'
 import { Icon16Muted } from 'assets/icons'
 import './ConvoListItem.css'
 
@@ -90,7 +90,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           />
         </div>
         {lastMessage.value && (
-          <MessageStatusIcon
+          <MessageOutStatusIcon
             class="ConvoListItem__status"
             message={lastMessage.value}
           />
