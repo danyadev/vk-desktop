@@ -1,4 +1,3 @@
-.status {
-  width: 16px;
-  height: 16px;
+.MessageStatusIcon {
+  color: var(--vkui--color_icon_accent_themed);
 }

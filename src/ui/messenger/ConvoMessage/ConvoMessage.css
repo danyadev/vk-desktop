@@ -28,7 +28,15 @@
   font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
   margin: 4px 0 4px 6px;
   bottom: -6px;
-  color: var(--vkui--color_text_secondary);
+  color: var(--vkui--color_text_accent_themed);
+}
+
+.ConvoMessage__status {
+  display: inline-flex;
+  align-items: center;
+  height: var(--messageDateFontSize);
+  vertical-align: bottom;
+  margin-left: 3px;
 }
 
 .ConvoMessage__empty {
@@ -39,12 +47,4 @@
 .ConvoMessage__text + .ConvoMessage__attaches,
 .ConvoMessage__reply + .ConvoMessage__attaches {
   margin-top: 6px;
-}
-
-.ConvoMessage__status {
-  align-items: center;
-  display: inline-flex;
-  height: var(--messageDateFontSize);
-  vertical-align: bottom;
-  margin-left: 2px;
 }

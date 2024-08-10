@@ -69,12 +69,10 @@ img, svg {
 
 [data-scheme] {
   --vkd--color_field_background_in_layer: var(--vkui--color_field_background);
-  --vkd--color_background_accent_themed: var(--vkui--color_background_accent_themed);
-  --vkd--color_text_accent_themed: var(--vkui--color_text_accent_themed);
+  --vkd--color_background_convo_history: var(--vkui--color_background);
   --vkd--color_background_message_out: #cce4ff;
   --vkd--color_background_message: #fff;
   --vkd--color_background_composer: #fff;
-  --vkd--color_background_convo_history: var(--vkui--color_background);
 }
 
 [data-scheme='vkui-dark'], [data-scheme='vkcom-dark'] {
@@ -85,10 +83,22 @@ img, svg {
 
 [data-scheme='vkui-dark'] {
   /* Цвета из vkcom-dark, чтобы не было выжигания глаз от #fff */
-  --vkd--color_background_accent_themed: #e1e3e6;
-  --vkd--color_text_accent_themed: #e1e3e6;
+  --vkui--color_background_accent_themed: #e1e3e6;
+  --vkui--color_text_accent_themed: #e1e3e6;
+  --vkui--color_icon_accent_themed: #e1e3e6;
 }
 
 [data-scheme='vkcom-dark'] {
   --vkd--color_field_background_in_layer: var(--vkui--color_background_content);
+}
+
+[data-scheme='vkcom-light'] {
+  /* themed вариант почему-то темнее, чем обычный, и только на vkcom теме */
+  --vkui--color_text_accent_themed: var(--vkui--color_text_accent);
+  --vkui--color_text_accent_themed--hover: var(--vkui--color_text_accent--hover);
+  --vkui--color_text_accent_themed--active: var(--vkui--color_text_accent--active);
+
+  --vkui--color_icon_accent_themed: var(--vkui--color_icon_accent);
+  --vkui--color_icon_accent_themed--hover: var(--vkui--color_icon_accent--hover);
+  --vkui--color_icon_accent_themed--active: var(--vkui--color_icon_accent--active);
 }

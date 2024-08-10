@@ -16,13 +16,11 @@ export const MessageStatusIcon = defineComponent<Props>((props) => {
     }
 
     const convo = Convo.safeGet(props.message.peerId)
-    const hasUnreadMessage = Message.isUnread(props.message, convo)
+    const isMessageUnread = Message.isUnread(props.message, convo)
 
-    return (
-      hasUnreadMessage
-        ? <Icon16CheckOutline class={['status', props.class]} />
-        : <Icon16CheckDoubleOutline class={['status', props.class]} />
-    )
+    return isMessageUnread
+      ? <Icon16CheckOutline class={['MessageStatusIcon', props.class]} />
+      : <Icon16CheckDoubleOutline class={['MessageStatusIcon', props.class]} />
   }
 }, {
   props: ['message', 'class']
