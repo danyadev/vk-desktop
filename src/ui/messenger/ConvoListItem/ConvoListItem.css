@@ -95,6 +95,6 @@
 
 .ConvoListItem__status {
   grid-area: status;
-  align-self: flex-end;
+  align-self: center;
   margin-left: 5px;
 }

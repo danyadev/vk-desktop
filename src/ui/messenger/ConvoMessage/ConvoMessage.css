@@ -42,6 +42,9 @@
 }
 
 .ConvoMessage__status {
+  align-items: center;
+  display: inline-flex;
+  height: var(--messageDateFontSize);
+  vertical-align: bottom;
   margin-left: 2px;
-  padding-bottom: 1px;
 }

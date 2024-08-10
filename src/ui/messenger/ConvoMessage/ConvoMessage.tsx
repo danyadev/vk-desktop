@@ -58,7 +58,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             {lang
               .dateTimeFormatter({ hour: '2-digit', minute: '2-digit' })
               .format(message.sentAt)}
-            <MessageStatusIcon class="ConvoMessage__status" message={props.message} />
+            <span class="ConvoMessage__status"><MessageStatusIcon message={props.message} /></span>
           </span>
 
         </div>
