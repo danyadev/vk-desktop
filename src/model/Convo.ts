@@ -2,6 +2,7 @@ import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
+import { exhaustivenessCheck } from 'misc/utils'
 
 export type Convo = UserConvo | GroupConvo | ChatConvo
 
@@ -67,15 +68,63 @@ export function safeGet(id: Peer.UserId): UserConvo
 export function safeGet(id: Peer.GroupId): GroupConvo
 export function safeGet(id: Peer.ChatId): ChatConvo
 export function safeGet(id: Peer.Id): Convo
-export function safeGet(id: Peer.Id): unknown {
+export function safeGet(id: Peer.Id): Convo {
   const { convos } = useConvosStore()
   const convo = convos.get(id)
 
-  if (!convo) {
-    throw new Error('Convo.safeGet: expected convo for ' + id)
+  if (convo) {
+    return convo
   }
 
-  return convo
+  if (import.meta.env.DEV) {
+    console.warn('Convo.safeGet: expected convo for ' + id)
+  }
+
+  return mock(id)
+}
+
+function mock(id: Peer.UserId): UserConvo
+function mock(id: Peer.GroupId): GroupConvo
+function mock(id: Peer.ChatId): ChatConvo
+function mock(id: Peer.Id): Convo
+function mock(id: Peer.Id): Convo {
+  const base: BaseConvo = {
+    history: [],
+    unreadCount: 0,
+    enabledNotifications: true,
+    majorSortId: 0,
+    minorSortId: 0,
+    inReadBy: Message.resolveCmid(0, true),
+    outReadBy: Message.resolveCmid(0, true)
+  }
+
+  if (Peer.isUserPeerId(id)) {
+    return {
+      kind: 'UserConvo',
+      id,
+      ...base
+    }
+  }
+
+  if (Peer.isGroupPeerId(id)) {
+    return {
+      kind: 'GroupConvo',
+      id,
+      ...base
+    }
+  }
+
+  if (Peer.isChatPeerId(id)) {
+    return {
+      kind: 'ChatConvo',
+      id,
+      isCasper: false,
+      isChannel: false,
+      ...base
+    }
+  }
+
+  exhaustivenessCheck(id)
 }
 
 export function sorter(a: Convo, b: Convo) {

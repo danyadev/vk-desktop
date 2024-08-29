@@ -140,15 +140,59 @@ export function safeGet(id: UserId): User
 export function safeGet(id: GroupId): Group
 export function safeGet(id: ChatId): Chat
 export function safeGet(id: Id): Peer
-export function safeGet(id: Id): unknown {
+export function safeGet(id: Id): Peer {
   const { peers } = usePeersStore()
   const peer = peers.get(id)
 
-  if (!peer) {
-    throw new Error('Peer.safeGet: expected peer for ' + id)
+  if (peer) {
+    return peer
   }
 
-  return peer
+  if (import.meta.env.DEV) {
+    console.warn('Peer.safeGet: expected peer for ' + id)
+  }
+
+  return mock(id)
+}
+
+function mock(id: UserId): User
+function mock(id: GroupId): Group
+function mock(id: ChatId): Chat
+function mock(id: Id): Peer
+function mock(id: Id): Peer {
+  if (isUserPeerId(id)) {
+    return {
+      kind: 'User',
+      id,
+      firstName: 'User',
+      firstNameAcc: 'User',
+      lastName: String(id),
+      lastNameAcc: String(id),
+      gender: 'unknown',
+      onlineInfo: { visible: false }
+    } satisfies User
+  }
+
+  if (isGroupPeerId(id)) {
+    return {
+      kind: 'Group',
+      id,
+      name: `Group ${id}`,
+      screenName: `club${toRealId(id)}`,
+      membersCount: 0
+    } satisfies Group
+  }
+
+  if (isChatPeerId(id)) {
+    return {
+      kind: 'Chat',
+      id,
+      title: `Chat ${id}`,
+      membersCount: 0
+    } satisfies Chat
+  }
+
+  exhaustivenessCheck(id)
 }
 
 export function name(peer: Peer, nameCase?: 'acc'): string {
