@@ -109,7 +109,6 @@ export function resolveRealId(realId: number, kind: Peer['kind']): Id {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function toRealId(peerId: Id): number {
   if (isUserPeerId(peerId)) {
     return peerId

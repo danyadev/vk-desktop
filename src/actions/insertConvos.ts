@@ -4,7 +4,10 @@ import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { fromApiConvo } from 'converters/ConvoConverter'
 
-export function insertConvos(conversations: MessagesConversationWithMessage[]) {
+export function insertConvos(
+  conversations: MessagesConversationWithMessage[],
+  { merge = false, addToList = true } = {}
+) {
   const { convoList, convos } = useConvosStore()
   const { peers } = usePeersStore()
 
@@ -12,11 +15,18 @@ export function insertConvos(conversations: MessagesConversationWithMessage[]) {
     const { convo, peer } = fromApiConvo(apiConvo.conversation, apiConvo.last_message)
 
     if (convo) {
-      convoList.peerIds.push(convo.id)
-      // Мы держим конву в актуальном состоянии через лонгполл.
-      // Перезапись конвы в кеше сбросила бы список сообщений
-      if (!convos.get(convo.id)) {
+      const localConvo = convos.get(convo.id)
+
+      if (localConvo && merge) {
+        convo.history = localConvo.history
+      }
+
+      if (!localConvo || merge) {
         convos.set(convo.id, convo)
+      }
+
+      if (addToList) {
+        convoList.peerIds.push(convo.id)
       }
     }
 

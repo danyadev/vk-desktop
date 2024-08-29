@@ -33,12 +33,12 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
 
 export const ConvoWrapper = defineComponent(() => {
   const route = useRoute()
-  const { convos, connection } = useConvosStore()
+  const { connection } = useConvosStore()
 
   const convo = computed(() => {
     const rawPeerId = Number(route.params.peerId)
     const peerId = rawPeerId && Peer.resolveId(rawPeerId)
-    return peerId && convos.get(peerId)
+    return peerId && Convo.get(peerId)
   })
 
   watchEffect(() => {

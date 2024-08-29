@@ -24,7 +24,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   const peer = computed(() => Peer.safeGet(props.convo.id))
   const lastMessage = computed(() => History.lastItem(props.convo.history))
   const active = computed(() => router.currentRoute.value.path === `/convo/${props.convo.id}`)
-  const authorName = useAuthorName(lastMessage, props.convo)
+  const authorName = useAuthorName(lastMessage, computed(() => props.convo))
 
   function openConvo() {
     router.push('/convo/' + props.convo.id)
@@ -80,7 +80,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             )}
           </span>
           <span class="ConvoListItem__date">
-            {lastMessage.value && <MessageDate message={lastMessage.value} />}
+            {lastMessage.value && <MessageDate sentAt={lastMessage.value.sentAt} />}
           </span>
         </div>
         <div class="ConvoListItem__indicators">
@@ -102,12 +102,12 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   props: ['convo', 'compact']
 })
 
-const MessageDate = defineComponent<{ message: Message.Message }>(({ message }) => {
+const MessageDate = defineComponent<{ sentAt: number }>((props) => {
   const { lang } = useEnv()
   const now = useNow(10000)
 
   const getDate = () => {
-    const diff = now.value - message.sentAt
+    const diff = now.value - props.sentAt
 
     switch (true) {
       case diff < ONE_MINUTE:
@@ -135,13 +135,13 @@ const MessageDate = defineComponent<{ message: Message.Message }>(({ message }) 
 
       default: {
         const isSameYear =
-          new Date(now.value).getFullYear() === new Date(message.sentAt).getFullYear()
+          new Date(now.value).getFullYear() === new Date(props.sentAt).getFullYear()
 
         const options: Intl.DateTimeFormatOptions = isSameYear
           ? { day: 'numeric', month: 'short' }
           : { day: 'numeric', month: 'numeric', year: '2-digit' }
 
-        return lang.dateTimeFormatter(options).format(message.sentAt)
+        return lang.dateTimeFormatter(options).format(props.sentAt)
       }
     }
   }
@@ -151,10 +151,10 @@ const MessageDate = defineComponent<{ message: Message.Message }>(({ message }) 
     return date && ` · ${date}`
   }
 }, {
-  props: ['message']
+  props: ['sentAt']
 })
 
-function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Convo.Convo) {
+function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Ref<Convo.Convo>) {
   const { lang } = useEnv()
 
   return computed(() => {
@@ -170,7 +170,7 @@ function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Conv
       }) + ' '
     }
 
-    if (convo.kind === 'ChatConvo' && !convo.isChannel) {
+    if (convo.value.kind === 'ChatConvo' && !convo.value.isChannel) {
       const author = Peer.safeGet(message.authorId)
       return lang.use('me_convo_list_author', {
         author: Peer.firstName(author)
