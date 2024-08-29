@@ -1,4 +1,4 @@
-import { ENGINE_VERSION } from 'env/Engine'
+import * as IEngine from 'env/IEngine'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
 import { useEnv } from 'hooks'
@@ -16,7 +16,7 @@ export async function loadInitialData(onError: () => void) {
   try {
     const [longpollParams, conversations] = await api.fetchParallel([
       api.buildMethod('messages.getLongPollServer', {
-        lp_version: ENGINE_VERSION,
+        lp_version: IEngine.VERSION,
         need_pts: 1
       }),
       api.buildMethod('messages.getConversations', {
@@ -34,7 +34,6 @@ export async function loadInitialData(onError: () => void) {
 
     connection.status = 'connected'
     engine.start(longpollParams)
-    engine.stop()
 
     convoList.loading = false
     convoList.hasMore = conversations.items.length === CONVOS_PER_PAGE

@@ -25,7 +25,7 @@ export const Avatar = defineComponent<Props>((props) => {
     }
 
     return (
-      <span class={['Avatar', `Avatar--color-${props.peer.id % 6}`]} style={style}>
+      <span class={['Avatar', `Avatar--color-${Math.abs(props.peer.id) % 6}`]} style={style}>
         {Peer.initials(props.peer)}
       </span>
     )

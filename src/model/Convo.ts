@@ -64,13 +64,21 @@ export type Style =
   | 'gifts'
   | 'sberkot'
 
+export function get(id: Peer.UserId): UserConvo | undefined
+export function get(id: Peer.GroupId): GroupConvo | undefined
+export function get(id: Peer.ChatId): ChatConvo | undefined
+export function get(id: Peer.Id): Convo | undefined
+export function get(id: Peer.Id): Convo | undefined {
+  const { convos } = useConvosStore()
+  return convos.get(id)
+}
+
 export function safeGet(id: Peer.UserId): UserConvo
 export function safeGet(id: Peer.GroupId): GroupConvo
 export function safeGet(id: Peer.ChatId): ChatConvo
 export function safeGet(id: Peer.Id): Convo
 export function safeGet(id: Peer.Id): Convo {
-  const { convos } = useConvosStore()
-  const convo = convos.get(id)
+  const convo = get(id)
 
   if (convo) {
     return convo

@@ -57,3 +57,34 @@ export type MessagesGetLongPollServerParams = {
 }
 
 export type MessagesGetLongPollServerResponse = MessagesLongpollCredentials
+
+// messages.getLongPollHistory
+export type MessagesGetLongPollHistoryParams = {
+  pts: number
+  lp_version: number
+  msgs_limit: number
+  events_limit: number
+  // - при указании last_n сдвигается вперед from_pts и теряются старые события
+  // - а если не указывать, то применяются лимиты выше, и при выходе за них приходит more: 1
+  last_n: number
+  credentials?: 0 | 1
+  extended: 1
+  fields: string
+}
+
+export type MessagesGetLongPollHistoryResponse = {
+  history: Array<Array<string | number>>
+  from_pts: number
+  new_pts: number
+  conversations: MessagesConversation[]
+  messages: {
+    count: number
+    items: MessagesMessage[]
+  }
+  more?: boolean
+  credentials?: MessagesLongpollCredentials
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+  // contacts?: MessagesContact[]
+  // incognito_members?: MessagesExtendedIncognitoMember[]
+}

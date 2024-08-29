@@ -25,6 +25,8 @@ import {
   MessagesGetConversationsResponse,
   MessagesGetHistoryParams,
   MessagesGetHistoryResponse,
+  MessagesGetLongPollHistoryParams,
+  MessagesGetLongPollHistoryResponse,
   MessagesGetLongPollServerParams,
   MessagesGetLongPollServerResponse
 } from 'model/api-types/methods/Messages'
@@ -108,6 +110,10 @@ export type Methods = {
   'messages.getLongPollServer': {
     params: MessagesGetLongPollServerParams
     response: MessagesGetLongPollServerResponse
+  }
+  'messages.getLongPollHistory': {
+    params: MessagesGetLongPollHistoryParams
+    response: MessagesGetLongPollHistoryResponse
   }
 
   'users.get': {

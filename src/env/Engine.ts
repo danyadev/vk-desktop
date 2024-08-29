@@ -1,8 +1,7 @@
 import * as IEngine from 'env/IEngine'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
+import { handleEngineUpdates } from 'actions'
 import { toUrlParams } from 'misc/utils'
-
-export const ENGINE_VERSION = 21
 
 const ENGINE_MAX_CONNECTION_DURATION_SEC = 20
 const ENGINE_FETCH_TIMEOUT = (ENGINE_MAX_CONNECTION_DURATION_SEC + 5) * 1000
@@ -16,15 +15,19 @@ const ENGINE_MODE =
 
 export class Engine {
   active = false
-  version = ENGINE_VERSION
+  version = IEngine.VERSION
   credentials: MessagesLongpollCredentials | null = null
 
   async start(credentials: MessagesLongpollCredentials) {
+    if (this.active) {
+      throw new Error('[engine] Движок уже запущен')
+    }
+
     this.active = true
     this.credentials = credentials
 
     while (this.active) {
-      const { server, key, ts } = this.credentials
+      const { server, key, ts, pts } = this.credentials
       const timeoutSignal = AbortSignal.timeout(ENGINE_FETCH_TIMEOUT)
 
       const result = await fetch(`https://${server}?act=a_check`, {
@@ -52,9 +55,7 @@ export class Engine {
       this.credentials.ts = result.ts
       this.credentials.pts = result.pts
 
-      // for (const update of result.updates) {
-      //   console.log(update)
-      // }
+      await handleEngineUpdates(pts, result.updates)
     }
   }
 
