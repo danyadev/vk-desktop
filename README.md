@@ -1,8 +1,10 @@
 # VK Desktop
 
-Вы находитесь на ветке, в которой приложение переписывается с нуля.  
-Посмотреть на список изменений можно
-[здесь](https://github.com/danyadev/vk-desktop/blob/netflixAdaptation/CHANGELOG.md).
+В данный момент приложение переписывается с нуля.  
+Посмотреть на список изменений с последней версии можно
+[здесь](https://github.com/danyadev/vk-desktop/blob/master/CHANGELOG.md).
+
+<img width="1162" alt="image" src="https://user-images.githubusercontent.com/35631027/155030916-775ce8f8-27bd-41dd-991b-154769116e66.png">
 
 ## Скачать VK Desktop
 
@@ -40,7 +42,6 @@ npm i -g yarn
 ```bash
 $ git clone https://github.com/danyadev/vk-desktop.git # Клонирование репозитория
 $ cd vk-desktop # Переход в папку приложения
-$ git checkout netflixAdaptation
 $ yarn # Установка всех зависимостей в проекте
 ```
 
