@@ -1,0 +1,67 @@
+.AttachLink {
+  display: grid;
+  grid-template-areas:
+    'photo title'
+    'photo caption';
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: auto 1fr;
+  transition: opacity var(--fastTransition);
+}
+
+.AttachLink:hover {
+  opacity: 0.85;
+}
+
+.AttachLink__photo {
+  grid-area: photo;
+  position: relative;
+  width: 36px;
+  height: 36px;
+  margin-right: 8px;
+}
+
+.AttachLink__photoImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.AttachLink__photo--placeholder {
+  padding: 6px;
+}
+
+.AttachLink__photo::before,
+.AttachLink__photo--placeholder::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 8px;
+}
+
+.AttachLink__photo::before {
+  border: solid 0.5px var(--vkui--color_image_border_alpha);
+}
+
+.AttachLink__photo--placeholder::after {
+  background: var(--vkui--color_background_accent_themed);
+  opacity: 0.1;
+}
+
+.AttachLink__title {
+  grid-area: title;
+}
+
+.AttachLink__caption {
+  grid-area: caption;
+  color: var(--vkui--color_text_subhead);
+}
+
+.AttachLink__title,
+.AttachLink__caption {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

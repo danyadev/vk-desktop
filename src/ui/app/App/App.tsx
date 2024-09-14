@@ -1,0 +1,62 @@
+import { ipcRenderer, IpcRendererEvent } from 'electron'
+import { defineComponent } from 'vue'
+import { RouterView } from 'vue-router'
+import { useMainSettingsStore } from 'store/mainSettings'
+import { useEnv, useGlobalModal } from 'hooks'
+import { subscribeToElectronEvent } from 'misc/utils'
+import { isMacOS } from 'misc/constants'
+import { exposeFeatures } from './exposeFeatures'
+import { useThemeScheme } from './useThemeScheme'
+import { Titlebar } from 'ui/app/Titlebar/Titlebar'
+import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
+import { ModalsContainer } from 'ui/modals/parts'
+import './App.css'
+
+export const App = defineComponent(() => {
+  const { lang } = useEnv()
+  const scheme = useThemeScheme()
+  const mainSettings = useMainSettingsStore()
+
+  exposeFeatures()
+
+  if (isMacOS) {
+    ipcRenderer.send('menu:build', lang.useRaw('app_menu_labels'))
+  }
+
+  subscribeToElectronEvent(() => {
+    const onBoundsChange = (event: IpcRendererEvent, bounds: Electron.Rectangle) => {
+      mainSettings.bounds = bounds
+    }
+
+    ipcRenderer.on('bounds-change', onBoundsChange)
+    return () => ipcRenderer.off('bounds-change', onBoundsChange)
+  })
+
+  return () => (
+    <div class="root" data-scheme={scheme.value}>
+      {mainSettings.useCustomTitlebar && <Titlebar />}
+
+      <div class={['App', { 'App--isMacOS': isMacOS }]}>
+        <RouterView />
+
+        <ModalsContainer />
+        <GlobalModals />
+      </div>
+    </div>
+  )
+})
+
+const GlobalModals = defineComponent(() => {
+  const { captchaModal } = useGlobalModal()
+  const modals = [
+    [captchaModal, CaptchaModal]
+  ] as const
+
+  return () => (
+    modals.map(([modal, Modal]) => (
+      // Параметры появляются при открытии модалки,
+      // а удаляются только после окончания анимации закрытия модалки
+      modal.params && <Modal {...modal.params} />
+    ))
+  )
+})

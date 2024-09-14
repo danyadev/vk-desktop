@@ -1,0 +1,7 @@
+.ModalBody {
+  min-width: 300px;
+}
+
+.ModalBody--standard {
+  padding: 15px 20px;
+}

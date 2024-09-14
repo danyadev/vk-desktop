@@ -1,0 +1,59 @@
+.Input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--vkui--color_field_background);
+  border: 1px solid var(--vkui--color_field_border_alpha);
+  border-radius: 8px;
+  transition: border-color var(--fastTransition);
+}
+
+.Input--inLayer {
+  background: var(--vkd--color_field_background_in_layer);
+}
+
+.Input:hover {
+  border-color: var(--vkui--color_field_border_alpha--hover);
+}
+
+.Input:focus-within {
+  border-color: var(--vkui--color_stroke_accent);
+}
+
+.Input__el {
+  background: none;
+  border: none;
+  width: 100%;
+  color: var(--vkui--color_text_primary);
+  font: var(--font);
+  line-height: 22px;
+  padding: 7px 10px;
+}
+
+.Input__el:disabled {
+  opacity: 0.64;
+}
+
+.Input__el::placeholder {
+  color: var(--vkui--color_text_secondary);
+}
+
+.Input--hasBefore .Input__el {
+  padding-left: 0;
+}
+
+.Input--hasAfter .Input__el {
+  padding-right: 0;
+}
+
+.Input__before,
+.Input__after {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 36px;
+  height: 100%;
+  color: var(--vkui--color_icon_secondary);
+}

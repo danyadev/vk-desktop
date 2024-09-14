@@ -2,19 +2,22 @@
   "productName": "VK Desktop",
   "appId": "ru.danyadev.vkdesktop",
   "artifactName": "VK Desktop ${os} ${arch}.${ext}",
-  "electronVersion": "12.2.3",
+  "electronVersion": "22.3.27",
   "npmRebuild": false,
   "asar": true,
   "directories": {
     "output": "app"
   },
   "files": [
-    "!node_modules/**/*",
-    "node_modules/@electron/remote",
     "package.json",
-    { "from": "main-process", "to": "", "filter": "**/*" },
+    "!node_modules",
+    { "from": "app", "to": "", "filter": "index.js" },
     { "from": "app/dist", "to": "dist", "filter": "**/*" }
   ],
+  "extraMetadata": {
+    "name": "vk-desktop",
+    "main": "index.js"
+  },
   "win": {
     "target": [{
       "target": "dir",
@@ -34,6 +37,6 @@
       "target": "dmg",
       "arch": ["arm64", "x64"]
     },
-    "electronLanguages": ["ru", "en", "uk"]
+    "electronLanguages": ["ru", "en"]
   }
 }

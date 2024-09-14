@@ -1,0 +1,60 @@
+.ModalView {
+  width: 100%;
+  height: 100%;
+}
+
+.ModalView--hidden {
+  display: none;
+}
+
+.ModalView__backdrop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  cursor: pointer;
+  visibility: visible;
+}
+
+.ModalView:not(.ModalView--noBackdrop) .ModalView__backdrop {
+  background-color: var(--vkui--color_overlay_primary);
+}
+
+.ModalView__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  padding: 20px;
+  visibility: hidden;
+}
+
+.ModalView__content {
+  background-color: var(--vkui--color_background_modal);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.24);
+  visibility: visible;
+}
+
+.ModalViewAnimation-enter-active,
+.ModalViewAnimation-leave-active {
+  transition: opacity var(--slowTransition);
+}
+
+.ModalViewAnimation-enter-from,
+.ModalViewAnimation-leave-to {
+  opacity: 0;
+}
+
+.ModalViewAnimation-enter-active .ModalView__container,
+.ModalViewAnimation-leave-active .ModalView__container {
+  transition: transform var(--slowTransition);
+}
+
+.ModalViewAnimation-enter-from .ModalView__container {
+  transform: translateY(-25px);
+}
+
+.ModalViewAnimation-leave-to .ModalView__container {
+  transform: translateY(25px);
+}

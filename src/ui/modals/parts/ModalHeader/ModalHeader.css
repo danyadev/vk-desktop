@@ -1,0 +1,25 @@
+.ModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+  padding-left: 20px;
+  font-weight: 500;
+}
+
+.ModalHeader__closeIcon {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 15px;
+  cursor: pointer;
+}
+
+.ModalHeader__closeIcon svg {
+  opacity: 0.7;
+  transition: opacity var(--mediumTransition);
+}
+
+.ModalHeader__closeIcon:hover svg {
+  opacity: 1;
+}

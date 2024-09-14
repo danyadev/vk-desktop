@@ -1,0 +1,7 @@
+.MessagePreview {
+  color: var(--vkui--color_text_accent_themed);
+}
+
+.MessagePreview--accent {
+  color: var(--vkui--color_text_accent);
+}

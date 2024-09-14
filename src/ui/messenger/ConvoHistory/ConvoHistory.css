@@ -1,0 +1,38 @@
+.ConvoHistory {
+  height: 100%;
+  overflow: auto;
+}
+
+.ConvoHistory__content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  max-width: var(--convoHistoryMaxWidth);
+  margin: 0 auto;
+  padding: var(--convoHistoryIndent);
+}
+
+.ConvoHistory__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vkui--color_text_subhead);
+  height: 100%;
+}
+
+.ConvoHistory__topFiller {
+  flex: 1;
+}
+
+.ConvoHistory__spinner {
+  margin: 16px auto;
+}
+
+.ConvoHistory__loadError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--vkui--color_text_subhead);
+  margin: 24px 0;
+  gap: 10px;
+}

@@ -1,0 +1,64 @@
+.ForwardedMessage {
+  position: relative;
+  padding-left: 10px;
+  margin-top: 8px;
+}
+
+.ForwardedMessage::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  content: '';
+  background-color: var(--vkui--color_stroke_accent_themed);
+  opacity: 0.24;
+}
+
+.ForwardedMessage__header {
+  display: grid;
+  grid-template-areas:
+    'avatar name'
+    'avatar date';
+  grid-template-columns: auto 1fr;
+  margin-bottom: 6px;
+}
+
+.ForwardedMessage__avatar {
+  grid-area: avatar;
+  align-self: center;
+  margin-right: 8px;
+}
+
+.ForwardedMessage__name,
+.ForwardedMessage__date {
+  font: var(--smallFont);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ForwardedMessage__name {
+  grid-area: name;
+  color: var(--vkui--color_text_link);
+  font-weight: 500;
+}
+
+.ForwardedMessage__date {
+  grid-area: date;
+  color: var(--vkui--color_text_subhead);
+}
+
+.ForwardedMessage__text + .ForwardedMessage__attaches {
+  margin-top: 6px;
+}
+
+.ForwardedMessage__nested {
+  font-weight: 500;
+  color: var(--vkui--color_text_accent);
+  padding: 4px 0;
+}
+
+.ForwardedMessage__empty {
+  color: var(--vkui--color_text_secondary);
+}

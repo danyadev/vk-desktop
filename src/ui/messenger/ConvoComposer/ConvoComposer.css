@@ -1,0 +1,31 @@
+.ConvoComposer {
+  flex: none;
+  padding: 0 var(--convoHistoryIndent) var(--convoHistoryIndent) var(--convoHistoryIndent);
+  margin: 0 auto;
+  width: 100%;
+  max-width: var(--convoHistoryMaxWidth);
+  background: var(--vkd--color_background_convo_history);
+}
+
+.ConvoComposer__panel {
+  display: flex;
+  align-items: flex-end;
+  background: var(--vkd--color_background_composer);
+  padding: 4px 6px;
+  border-radius: 12px;
+  box-shadow: var(--vkui--elevation3);
+}
+
+.ConvoComposer__input {
+  width: 100%;
+  margin: 8px 6px;
+  font: var(--font);
+  max-height: calc(10 * var(--lineHeight));
+  overflow: auto;
+}
+
+.ConvoComposer__input:empty::before {
+  content: attr(placeholder);
+  pointer-events: none;
+  color: var(--vkui--color_text_secondary);
+}

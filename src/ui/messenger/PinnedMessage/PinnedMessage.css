@@ -1,0 +1,42 @@
+.PinnedMessage {
+  display: grid;
+  grid-template-areas:
+    'icon name'
+    'icon content';
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: auto 1fr;
+  flex: none;
+  height: 48px;
+  border-bottom: 1px solid var(--vkui--color_separator_primary);
+}
+
+.PinnedMessage__icon {
+  grid-area: icon;
+  height: 100%;
+  margin: 0 12px;
+}
+
+.PinnedMessage__name,
+.PinnedMessage__content {
+  font: var(--smallFont);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.PinnedMessage__name {
+  grid-area: name;
+  align-self: end;
+  color: var(--vkui--color_text_link);
+  font-weight: 500;
+}
+
+.PinnedMessage__date {
+  color: var(--vkui--color_text_secondary);
+  font-weight: 400;
+}
+
+.PinnedMessage__content {
+  grid-area: content;
+  align-self: start;
+}

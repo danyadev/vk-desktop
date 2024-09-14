@@ -1,0 +1,31 @@
+.MessagesStack {
+  display: flex;
+  align-items: flex-end;
+  padding: 4px 0;
+}
+
+.MessagesStack__avatar {
+  position: sticky;
+  bottom: 4px;
+  margin-right: 8px;
+}
+
+.MessagesStack__messages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.MessagesStack--out .MessagesStack__messages {
+  align-items: flex-end;
+}
+
+.MessagesStack__message {
+  max-width: 85%;
+}
+
+.MessagesStack__message--centered {
+  margin: 0 auto;
+}

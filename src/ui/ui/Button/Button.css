@@ -1,0 +1,97 @@
+.Button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 0 16px;
+  user-select: none;
+  transition: opacity var(--fastTransition), background-color var(--fastTransition);
+}
+
+.Button:hover,
+.Button:active {
+  opacity: 0.92;
+}
+
+.Button[disabled] {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Сдвигаем содержимое на пиксель вниз */
+.Button:active .Button__in {
+  position: relative;
+  top: 1px;
+}
+
+.Button--loading .Button__in {
+  visibility: hidden;
+}
+
+.Button__spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.Button--wide {
+  width: 100%;
+}
+
+.Button--small {
+  height: 26px;
+}
+
+.Button--medium {
+  height: 30px;
+}
+
+.Button--large {
+  height: 36px;
+}
+
+.Button--primary {
+  color: var(--vkui--color_text_contrast_themed);
+  background: var(--vkui--color_background_accent_themed);
+}
+
+.Button--secondary {
+  color: var(--vkui--color_text_primary);
+  background: var(--vkui--color_background_secondary);
+}
+
+.Button--secondary:hover,
+.Button--secondary:active {
+  background: var(--vkui--color_background_secondary--hover);
+  opacity: 1;
+}
+
+.Button--tertiary {
+  color: var(--vkui--color_text_primary);
+  background: var(--vkui--color_transparent);
+}
+
+.Button--tertiary:hover,
+.Button--tertiary:active {
+  background: var(--vkui--color_transparent--hover);
+}
+
+.Button--destructive {
+  color: var(--vkui--color_text_contrast);
+  background: var(--vkui--color_background_negative);
+}
+
+.Button--outline {
+  color: var(--vkui--color_text_accent_themed);
+  background: var(--vkui--color_transparent);
+  border: 1px solid var(--vkui--color_stroke_accent_themed);
+}
+
+.Button--outline:hover,
+.Button--outline:active {
+  background: var(--vkui--color_transparent--hover);
+}

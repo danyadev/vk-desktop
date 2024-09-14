@@ -1,0 +1,104 @@
+@font-face {
+  font-family: Roboto VK;
+  font-weight: 400;
+  font-display: block;
+  src: url('assets/Roboto-VK-400.woff2');
+}
+
+@font-face {
+  font-family: Roboto VK;
+  font-weight: 500;
+  font-display: block;
+  src: url('assets/Roboto-VK-500.woff2');
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+img, svg {
+  vertical-align: middle;
+}
+
+:where(button) {
+  all: unset;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+}
+
+:where(a) {
+  all: unset;
+  cursor: pointer;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:focus {
+  outline: none;
+}
+
+:root {
+  --fontFamily: 'BlinkMacSystemFont', 'Roboto VK';
+  --fontSize: 14px;
+  --smallFontSize: 13px;
+  --lineHeight: 18px;
+  --smallLineHeight: 14px;
+  --font: var(--fontSize) / var(--lineHeight) var(--fontFamily);
+  --smallFont: var(--smallFontSize) / var(--lineHeight) var(--fontFamily);
+
+  --messageDateFontSize: 11px;
+  --messageDateLineHeight: 11px;
+  --convoHistoryMaxWidth: 740px;
+  --convoHistoryIndent: 16px;
+
+  --fastTransition: 0.15s;
+  --mediumTransition: 0.2s;
+  --slowTransition: 0.3s;
+
+  --zIndexModals: 1;
+}
+
+[data-scheme] {
+  --vkd--color_field_background_in_layer: var(--vkui--color_field_background);
+  --vkd--color_background_convo_history: var(--vkui--color_background);
+  --vkd--color_background_message_out: #cce4ff;
+  --vkd--color_background_message: #fff;
+  --vkd--color_background_composer: #fff;
+}
+
+[data-scheme='vkui-dark'], [data-scheme='vkcom-dark'] {
+  --vkd--color_background_message_out: #454647;
+  --vkd--color_background_message: #333;
+  --vkd--color_background_composer: #292929;
+}
+
+[data-scheme='vkui-dark'] {
+  /* Цвета из vkcom-dark, чтобы не было выжигания глаз от #fff */
+  --vkui--color_background_accent_themed: #e1e3e6;
+  --vkui--color_text_accent_themed: #e1e3e6;
+  --vkui--color_icon_accent_themed: #e1e3e6;
+}
+
+[data-scheme='vkcom-dark'] {
+  --vkd--color_field_background_in_layer: var(--vkui--color_background_content);
+}
+
+[data-scheme='vkcom-light'] {
+  /* themed вариант почему-то темнее, чем обычный, и только на vkcom теме */
+  --vkui--color_text_accent_themed: var(--vkui--color_text_accent);
+  --vkui--color_text_accent_themed--hover: var(--vkui--color_text_accent--hover);
+  --vkui--color_text_accent_themed--active: var(--vkui--color_text_accent--active);
+
+  --vkui--color_icon_accent_themed: var(--vkui--color_icon_accent);
+  --vkui--color_icon_accent_themed--hover: var(--vkui--color_icon_accent--hover);
+  --vkui--color_icon_accent_themed--active: var(--vkui--color_icon_accent--active);
+}

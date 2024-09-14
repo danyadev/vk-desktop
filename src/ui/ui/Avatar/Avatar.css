@@ -1,0 +1,32 @@
+.Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  color: #fff;
+  flex: none;
+}
+
+.Avatar--color-0 {
+  background: radial-gradient(circle at center 0px, #ff6952, #e6404b);
+}
+
+.Avatar--color-1 {
+  background: radial-gradient(circle at center 0px, #ffb829, #fa7f14);
+}
+
+.Avatar--color-2 {
+  background: radial-gradient(circle at center 0px, #ffdc50, #f2b40b);
+}
+
+.Avatar--color-3 {
+  background: radial-gradient(circle at center 0px, #78e070, #46b864);
+}
+
+.Avatar--color-4 {
+  background: radial-gradient(circle at center 0px, #78f1fa, #46bddb);
+}
+
+.Avatar--color-5 {
+  background: radial-gradient(circle at center 0px, #e664fa, #a73ddb);
+}

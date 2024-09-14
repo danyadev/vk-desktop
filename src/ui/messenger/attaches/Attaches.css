@@ -1,0 +1,8 @@
+.Attaches {
+  display: grid;
+  gap: 8px;
+}
+
+.Attaches__unknown {
+  color: var(--vkui--color_text_secondary);
+}

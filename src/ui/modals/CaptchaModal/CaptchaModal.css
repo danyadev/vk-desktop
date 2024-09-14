@@ -1,0 +1,20 @@
+.CaptchaModal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.CaptchaModal__img {
+  box-sizing: content-box;
+  /* Делаем картинку немного больше ее исходного разрешения, чтобы проще разглядеть капчу */
+  width: calc(130px * 1.25);
+  height: calc(50px * 1.25);
+  cursor: pointer;
+  border: 1px solid var(--vkui--color_separator_primary);
+}
+
+.CaptchaModal__input {
+  width: 200px;
+  margin-top: 20px;
+}

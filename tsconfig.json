@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "module": "es2022",
+    "target": "es2022",
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "types": ["vite/client", "user-agent-data-types"],
+
+    "allowSyntheticDefaultImports": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "sourceMap": true,
+    "strict": true,
+    "paths": {
+      "main-process/*": ["../main-process/*"],
+      "actions/*": ["./actions/*"],
+      "assets/*": ["./assets/*"],
+      "converters/*": ["./converters/*"],
+      "env/*": ["./env/*"],
+      "hooks/*": ["./hooks/*"],
+      "lang/*": ["./lang/*"],
+      "misc/*": ["./misc/*"],
+      "model/*": ["./model/*"],
+      "store/*": ["./store/*"],
+      "ui/*": ["./ui/*"]
+    }
+  },
+
+  "include": [
+    "src/**/*",
+    "main-process/**/*",
+    "scripts/*",
+    "build/*",
+    ".eslintrc.js",
+    ".eslintrc.full.js",
+    "vite.config.mts"
+  ],
+  "exclude": ["node_modules"]
+}

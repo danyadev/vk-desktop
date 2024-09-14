@@ -1,0 +1,18 @@
+.ConvoView {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.ConvoView__history {
+  height: 100%;
+  overflow: hidden;
+  background: var(--vkd--color_background_convo_history);
+}
+
+.ConvoWrapper__spinner {
+  display: flex;
+  height: 100%;
+  margin: auto;
+}

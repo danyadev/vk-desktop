@@ -3,166 +3,339 @@
 module.exports = {
   root: true,
 
-  parser: 'vue-eslint-parser',
+  parser: '@typescript-eslint/parser',
 
   parserOptions: {
-    parser: '@babel/eslint-parser',
-    requireConfigFile: false,
-    ecmaVersion: 2019
+    ecmaVersion: 2021,
+    tsconfigRootDir: __dirname,
+    project: true
   },
 
   env: {
     browser: true,
     node: true,
-    es2020: true
+    es2021: true
   },
 
-  plugins: ['import'],
+  plugins: ['import', 'simple-import-sort'],
 
   settings: {
     'import/resolver': {
-      webpack: { paths: ['./src'] },
-      node: { paths: ['./src'] }
+      typescript: {
+        project: 'tsconfig.json'
+      },
+      node: {
+        paths: ['./src']
+      }
     },
     'import/ignore': []
   },
 
   extends: [
-    // Включает максимальное количество правил
-    'plugin:vue/vue3-recommended'
+    'eslint:recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/stylistic'
   ],
 
-  globals: {
-    DEV_MODE: 'readonly',
-    API_HOST: 'readonly'
-  },
+  overrides: [
+    {
+      files: ['**/*.{ts,tsx}'],
+      extends: [
+        'plugin:@typescript-eslint/recommended-type-checked',
+        'plugin:@typescript-eslint/stylistic-type-checked'
+      ],
+      rules: {
+        '@typescript-eslint/consistent-type-definitions': 'off',
+        '@typescript-eslint/no-floating-promises': 'off',
+        '@typescript-eslint/no-misused-promises': ['error', {
+          checksVoidReturn: {
+            // fn(async () => {}), ожидая () => void
+            arguments: false,
+            // <div fn={async () => {}} />, ожидая () => void
+            attributes: false,
+            // fn: async () => {}, ожидая () => void
+            properties: false
+          }
+        }]
+      }
+    },
+    {
+      files: ['build/*.ts', '**/*.test.ts'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off'
+      }
+    }
+  ],
 
   rules: {
-    'array-bracket-spacing': 'error',
-    'arrow-body-style': 'error',
-    'arrow-parens': 'error',
-    'arrow-spacing': 'error',
-    'block-scoped-var': 'error',
-    'comma-dangle': 'error',
-    'comma-spacing': 'error',
-    'comma-style': 'error',
-    'computed-property-spacing': 'error',
-    'dot-notation': 'error',
-    'eol-last': 'error',
-    'eqeqeq': ['error', 'always', {
-      null: 'ignore'
-    }],
-    'for-direction': 'error',
-    'func-call-spacing': 'error',
-    'func-style': ['error', 'declaration', {
-      allowArrowFunctions: true
-    }],
-    'function-call-argument-newline': ['error', 'consistent'],
-    'function-paren-newline': ['error', 'consistent'],
-    'indent': ['error', 2, {
-      SwitchCase: 1
-    }],
-    'key-spacing': ['error', {
-      mode: 'minimum'
-    }],
-    'keyword-spacing': 'error',
-    'lines-between-class-members': 'error',
-    // max-len работает через vue/max-len
-    'new-cap': ['error', {
-      properties: false
-    }],
-    'new-parens': 'error',
-    'no-array-constructor': 'error',
-    'no-caller': 'error',
-    'no-class-assign': 'error',
-    'no-compare-neg-zero': 'error',
-    'no-cond-assign': 'error',
-    'no-confusing-arrow': 'error',
-    'no-const-assign': 'error',
+    //#region eslint
+    'no-constant-binary-expression': 'error',
     'no-constant-condition': ['error', {
+      // Разрешает while (true)
       checkLoops: false
     }],
     'no-constructor-return': 'error',
-    'no-div-regex': 'error',
-    'no-dupe-args': 'error',
-    'no-dupe-class-members': 'error',
-    'no-dupe-else-if': 'error',
-    'no-dupe-keys': 'error',
-    'no-duplicate-case': 'error',
-    'no-empty-character-class': 'error',
-    'no-empty-pattern': 'error',
-    'no-empty': 'error',
-    'no-ex-assign': 'error',
+    'no-new-native-nonconstructor': 'error',
+    'no-unmodified-loop-condition': 'error',
+    'no-unreachable-loop': 'error',
+    'no-unsafe-negation': ['error', {
+      // Запрещает выражения вида (!a < b)
+      enforceForOrderingRelations: true
+    }],
+    'no-unsafe-optional-chaining': ['error', {
+      // Запрещает математические операции с optional chaining: obj?.foo + bar
+      disallowArithmeticOperators: true
+    }],
+    'no-unused-private-class-members': 'error',
+    'use-isnan': ['error', {
+      // Запрещает arr.indexOf(NaN)
+      enforceForIndexOf: true
+    }],
+    'camelcase': ['error', {
+      // Отключает проверку ключей в объектах
+      properties: 'never'
+    }],
+    'curly': ['error', 'all'],
+    'eqeqeq': ['error', 'always'],
+    'func-style': ['error', 'declaration', {
+      // Разрешает стрелочные функции
+      allowArrowFunctions: true
+    }],
+    'new-cap': ['error', {
+      // Не ругается на lowercase 'object' в new Class.object()
+      properties: false
+    }],
+    'no-caller': 'error',
+    'no-confusing-arrow': 'error',
+    'no-eval': 'error',
     'no-extend-native': 'error',
     'no-extra-bind': 'error',
-    'no-extra-boolean-cast': 'error',
-    'no-func-assign': 'error',
-    'no-global-assign': 'error',
-    'no-implied-eval': 'error',
-    'no-import-assign': 'error',
-    'no-invalid-regexp': 'error',
-    'no-irregular-whitespace': 'error',
+    'no-extra-label': 'error',
+    'no-floating-decimal': 'error',
     'no-iterator': 'error',
-    'no-labels': 'error',
+    'no-label-var': 'error',
     'no-lonely-if': 'error',
-    'no-loss-of-precision': 'error',
-    'no-mixed-spaces-and-tabs': 'error',
+    'no-mixed-operators': 'error',
     'no-multi-assign': 'error',
-    'no-multi-spaces': ['error', {
-      ignoreEOLComments: true
-    }],
     'no-multi-str': 'error',
-    'no-multiple-empty-lines': ['error', {
-      max: 1
-    }],
-    'no-new-object': 'error',
-    'no-new-symbol': 'error',
-    'no-new-wrappers': 'error',
     'no-new': 'error',
-    'no-obj-calls': 'error',
+    'no-new-object': 'error',
+    'no-new-wrappers': 'error',
+    'no-octal-escape': 'error',
     'no-proto': 'error',
-    'no-prototype-builtins': 'error',
     'no-return-assign': 'error',
     'no-return-await': 'error',
-    'no-self-assign': 'error',
-    'no-self-compare': 'error',
     'no-sequences': 'error',
-    'no-shadow-restricted-names': 'error',
-    'no-this-before-super': 'error',
-    'no-throw-literal': 'error',
-    'no-trailing-spaces': 'error',
     'no-undef-init': 'error',
-    'no-undef': 'error',
     'no-unneeded-ternary': 'error',
-    'no-unreachable': 'error',
-    'no-unreachable-loop': 'error',
-    'no-unsafe-negation': 'error',
-    'no-unused-expressions': ['error', {
-      allowShortCircuit: true
-    }],
-    'no-unused-vars': 'error',
-    'no-useless-catch': 'error',
     'no-useless-computed-key': ['error', {
+      // Включает проверку для методов класса
       enforceForClassMembers: true
     }],
     'no-useless-concat': 'error',
-    'no-useless-constructor': 'error',
-    'no-useless-escape': 'error',
     'no-useless-rename': 'error',
     'no-useless-return': 'error',
     'no-var': 'error',
-    'no-whitespace-before-property': 'error',
-    'object-curly-newline': 'error',
-    'object-curly-spacing': ['error', 'always'],
     'object-shorthand': 'error',
     'one-var': ['error', 'never'],
     'operator-assignment': 'error',
-    'padded-blocks': ['error', 'never'],
     'prefer-arrow-callback': 'error',
     'prefer-const': ['error', {
+      // Разрешает let, если какая-то переменная при деструктуризации переопределяется
       destructuring: 'all'
     }],
-    'prefer-destructuring': ['error', {
+    'prefer-exponentiation-operator': 'error',
+    'prefer-numeric-literals': 'error',
+    'prefer-object-has-own': 'error',
+    'prefer-object-spread': 'error',
+    'prefer-regex-literals': 'error',
+    'prefer-rest-params': 'error',
+    'prefer-spread': 'error',
+    'quote-props': ['error', 'as-needed'],
+    'radix': ['error', 'as-needed'],
+    'spaced-comment': ['error', 'always', {
+      markers: ['#region', '#endregion']
+    }],
+    'yoda': 'error',
+    'array-bracket-newline': ['error', 'consistent'],
+    'array-bracket-spacing': 'error',
+    'arrow-parens': 'error',
+    'arrow-spacing': 'error',
+    'comma-style': 'error',
+    'computed-property-spacing': 'error',
+    'dot-location': ['error', 'property'],
+    // eol-last в full файле
+    'function-call-argument-newline': ['error', 'consistent'],
+    'function-paren-newline': ['error', 'consistent'],
+    'generator-star-spacing': ['error', {
+      // function* generator() {}
+      after: true,
+      // const generator = function*() {}
+      anonymous: 'neither',
+      // const obj = { *generator() {} }
+      method: 'before'
+    }],
+    'implicit-arrow-linebreak': 'error',
+    'indent': ['error', 2, {
+      // По умолчанию внутри switch была отключена табуляция
+      SwitchCase: 1
+    }],
+    'jsx-quotes': 'error',
+    'linebreak-style': 'error',
+    'max-len': ['error', {
+      code: 100,
+      ignoreStrings: true,
+      ignoreRegExpLiterals: true,
+      ignoreUrls: true
+    }],
+    'new-parens': 'error',
+    'no-multi-spaces': 'error',
+    'no-tabs': 'error',
+    // no-trailing-spaces в full файле
+    'no-whitespace-before-property': 'error',
+    'object-curly-newline': 'error',
+    'rest-spread-spacing': 'error',
+    'semi-spacing': 'error',
+    'semi-style': 'error',
+    'space-in-parens': 'error',
+    'space-unary-ops': 'error',
+    'switch-colon-spacing': 'error',
+    'template-curly-spacing': 'error',
+    'template-tag-spacing': 'error',
+    'yield-star-spacing': 'error',
+    'no-restricted-imports': ['error', {
+      patterns: [
+        {
+          group: ['actions/*'],
+          message: 'Use \'actions\' instead'
+        },
+        {
+          group: ['assets/icons/*'],
+          message: 'Use \'assets/icons\' instead'
+        },
+        {
+          group: ['hooks/*'],
+          message: 'Use \'hooks\' instead'
+        },
+        {
+          group: ['ui/modals/parts/*'],
+          message: 'Use \'ui/modals/parts\' instead'
+        }
+      ]
+    }],
+    //#endregion eslint
+
+    //#region eslint-plugin-import
+    'import/no-extraneous-dependencies': 'error',
+    'import/no-absolute-path': 'error',
+    'import/no-dynamic-require': 'error',
+    'import/no-self-import': 'error',
+    'import/no-useless-path-segments': ['error', {
+      noUselessIndex: true
+    }],
+    'import/extensions': ['error', 'always', {
+      js: 'never',
+      ts: 'never',
+      tsx: 'never'
+    }],
+    'import/first': 'error',
+    'import/newline-after-import': 'error',
+    'import/no-default-export': 'error',
+    'import/no-duplicates': 'error',
+    'import/no-restricted-paths': ['error', {
+      basePath: './src',
+      zones: [{
+        // Где применяются ограничения
+        target: ['lang', 'misc', 'model', 'store'],
+        // Откуда нельзя импортировать
+        from: ['actions', 'hooks', 'ui']
+      }, {
+        target: ['converters'],
+        from: ['hooks', 'ui']
+      }]
+    }],
+    //#endregion
+
+    'simple-import-sort/imports': ['error', {
+      groups: [[
+        ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
+        ...['^@?electron', '^vue', '^pinia', '^@?vite', '^@vkontakte/vk-qr'],
+        ...['^env', '^model', '^store', '^actions', '^converters', '^lang'],
+        ...['^hooks', '^misc/utils', '^misc'],
+        ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
+      ]]
+    }],
+
+    //#region @typescript-eslint
+    '@typescript-eslint/array-type': ['error', {
+      default: 'array-simple',
+      readonly: 'generic'
+    }],
+    '@typescript-eslint/ban-ts-comment': ['error', {
+      // Разрешаем только @ts-expect-error с описанием
+      'ts-expect-error': 'allow-with-description',
+      // Запрещаем разрешенный по умолчанию @ts-check
+      'ts-check': true
+    }],
+    '@typescript-eslint/member-delimiter-style': ['error', {
+      multiline: {
+        delimiter: 'none'
+      },
+      singleline: {
+        delimiter: 'comma'
+      }
+    }],
+    '@typescript-eslint/naming-convention': ['error', {
+      // Разрешаем называть типы только в PascalCase
+      selector: 'typeLike',
+      format: ['PascalCase']
+    }],
+    '@typescript-eslint/no-confusing-void-expression': ['error', {
+      // Разрешаем () => fnThatReturnVoid()
+      ignoreArrowShorthand: true
+    }],
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-extra-semi': 'error',
+    '@typescript-eslint/no-invalid-void-type': 'error',
+    '@typescript-eslint/no-non-null-assertion': 'error',
+    '@typescript-eslint/no-unsafe-unary-minus': 'error',
+    '@typescript-eslint/prefer-includes': 'error',
+    '@typescript-eslint/prefer-reduce-type-parameter': 'error',
+    '@typescript-eslint/restrict-plus-operands': 'error',
+    '@typescript-eslint/switch-exhaustiveness-check': ['error', {
+      requireDefaultForNonUnion: true
+    }],
+    '@typescript-eslint/ban-types': ['error', {
+      types: {
+        'JSX.Element': 'Use JSXElement type from misc/utils'
+      }
+    }],
+    '@typescript-eslint/no-array-delete': 'error',
+    '@typescript-eslint/use-unknown-in-catch-callback-variable': 'error',
+
+    /**
+     * Далее идут правила, которые расширяют eslint-правила.
+     * Сами оригинальные eslint-правила должны быть выключены
+     */
+    '@typescript-eslint/brace-style': 'error',
+    '@typescript-eslint/comma-spacing': 'error',
+    '@typescript-eslint/default-param-last': 'error',
+    '@typescript-eslint/func-call-spacing': 'error',
+    '@typescript-eslint/key-spacing': 'error',
+    '@typescript-eslint/keyword-spacing': 'error',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-unused-expressions': ['error', {
+      // Разрешает fn && fn()
+      allowShortCircuit: true
+    }],
+    // Включено в full файле
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-useless-constructor': 'error',
+    '@typescript-eslint/no-unnecessary-template-expression': 'error',
+    '@typescript-eslint/object-curly-spacing': ['error', 'always'],
+    '@typescript-eslint/prefer-destructuring': ['error', {
       // false здесь означает, что проверяться такие кейсы не будут.
       // Для массивов я считаю нормальным многие варианты использования:
       // const id = match[1];
@@ -171,176 +344,23 @@ module.exports = {
         array: false,
         object: true
       },
+      // Отключаем форсирование выражений [foo] = array
       AssignmentExpression: {
         array: false,
         object: false
       }
     }],
-    'prefer-exponentiation-operator': 'error',
-    'prefer-numeric-literals': 'error',
-    'prefer-object-spread': 'error',
-    'prefer-regex-literals': 'error',
-    'prefer-spread': 'error',
-    'quote-props': ['error', 'as-needed'],
-    'quotes': ['error', 'single', {
+    '@typescript-eslint/quotes': ['error', 'single', {
       avoidEscape: true
     }],
-    'require-await': 'error',
-    'require-yield': 'error',
-    'rest-spread-spacing': 'error',
-    'semi-spacing': 'error',
-    'semi-style': 'error',
-    'semi': 'error',
-    'space-before-blocks': 'error',
-    'space-before-function-paren': ['error', {
+    '@typescript-eslint/semi': ['error', 'never'],
+    '@typescript-eslint/space-before-blocks': 'error',
+    '@typescript-eslint/space-before-function-paren': ['error', {
       anonymous: 'never',
       named: 'never',
       asyncArrow: 'always'
     }],
-    'space-in-parens': 'error',
-    'space-infix-ops': 'error',
-    'space-unary-ops': 'error',
-    'spaced-comment': 'error',
-    'switch-colon-spacing': 'error',
-    'template-curly-spacing': 'error',
-    'template-tag-spacing': 'error',
-    'use-isnan': ['error', {
-      enforceForSwitchCase: true,
-      enforceForIndexOf: true
-    }],
-    'valid-typeof': 'error',
-    'yield-star-spacing': 'error',
-    'yoda': 'error',
-
-    'import/default': 'error',
-    'import/export': 'error',
-    'import/extensions': ['error', 'always', {
-      js: 'never'
-    }],
-    'import/first': 'error',
-    'import/named': 'error',
-    'import/namespace': 'error',
-    'import/newline-after-import': 'error',
-    'import/no-duplicates': 'error',
-    'import/no-self-import': 'error',
-    'import/no-unresolved': 'error',
-    'import/no-unused-modules': ['error', {
-      unusedExports: true
-    }],
-    'import/no-useless-path-segments': ['error', {
-      noUselessIndex: true
-    }],
-    'import/order': ['error', {
-      groups: [
-        'builtin',
-        'external',
-        ['internal', 'parent', 'sibling', 'index']
-      ]
-    }],
-
-    // Включаем правила, которые не указаны в рекомендуемых
-    'vue/block-tag-newline': ['error', {
-      singleline: 'always',
-      multiline: 'always'
-    }],
-    'vue/component-name-in-template-casing': 'error',
-    'vue/html-comment-content-newline': 'error',
-    'vue/html-comment-content-spacing': 'error',
-    'vue/html-comment-indent': 'error',
-    'vue/no-bare-strings-in-template': 'error',
-    'vue/no-duplicate-attr-inheritance': 'error',
-    'vue/no-empty-component-block': 'error',
-    'vue/no-multiple-objects-in-class': 'error',
-    'vue/no-potential-component-option-typo': 'error',
-    'vue/no-restricted-v-bind': ['error', '/^v-/', 'click'],
-    'vue/no-static-inline-styles': 'error',
-    'vue/no-unused-properties': ['error', {
-      groups: ['props', 'setup']
-    }],
-    'vue/no-useless-mustaches': 'error',
-    'vue/no-useless-v-bind': 'error',
-    'vue/padding-line-between-blocks': 'error',
-    'vue/require-direct-export': 'error',
-    'vue/v-for-delimiter-style': ['error', 'of'],
-    'vue/v-on-event-hyphenation': ['error', 'never'],
-
-    // Включаем правила, идентичные eslint-base, но которые направлены на выражения в template
-    'vue/array-bracket-spacing': 'error',
-    'vue/arrow-spacing': 'error',
-    'vue/brace-style': 'error',
-    'vue/comma-dangle': 'error',
-    'vue/comma-spacing': 'error',
-    'vue/comma-style': 'error',
-    'vue/dot-notation': 'error',
-    'vue/eqeqeq': ['error', 'always', {
-      null: 'ignore'
-    }],
-    'vue/func-call-spacing': 'error',
-    'vue/key-spacing': ['error', {
-      mode: 'minimum'
-    }],
-    'vue/keyword-spacing': 'error',
-    'vue/max-len': ['error', {
-      code: 100,
-      ignoreStrings: true,
-      ignoreRegExpLiterals: true
-    }],
-    'vue/no-empty-pattern': 'error',
-    'vue/no-irregular-whitespace': 'error',
-    'vue/no-useless-concat': 'error',
-    'vue/object-curly-newline': 'error',
-    'vue/object-curly-spacing': ['error', 'always'],
-    'vue/space-in-parens': 'error',
-    'vue/space-infix-ops': 'error',
-    'vue/space-unary-ops': 'error',
-    'vue/template-curly-spacing': 'error',
-
-    // Изменяем уже включенные правила для соответствия своему стилю
-    'vue/attribute-hyphenation': ['error', 'never'],
-    'vue/comment-directive': ['error', {
-      reportUnusedDisableDirectives: true
-    }],
-    'vue/component-tags-order': ['error', {
-      order: ['template', 'script', 'style']
-    }],
-    'vue/html-self-closing': ['error', {
-      html: {
-        void: 'never',
-        normal: 'any',
-        component: 'always'
-      },
-      svg: 'always',
-      math: 'always'
-    }],
-    'vue/max-attributes-per-line': ['error', {
-      singleline: 4,
-      multiline: 1
-    }],
-    'vue/multi-word-component-names': 'off',
-    'vue/no-reserved-component-names': 'off',
-    'vue/no-v-html': 'off',
-    'vue/order-in-components': ['error', {
-      order: [
-        'props',
-        'components',
-        'setup'
-      ]
-    }],
-    'vue/prop-name-casing': 'off',
-    'vue/require-prop-types': 'off',
-    'vue/require-render-return': 'off',
-    'vue/singleline-html-element-content-newline': 'off',
-
-    // Отключаем правила, которые не имеют смысла, чтобы увеличить скорость проверки
-    'vue/no-arrow-functions-in-watch': 'off',
-    'vue/no-async-in-computed-properties': 'off',
-    'vue/no-deprecated-data-object-declaration': 'off',
-    'vue/no-shared-component-data': 'off',
-    'vue/return-in-computed-property': 'off',
-    'vue/require-default-prop': 'off',
-    'vue/valid-v-on': 'off',
-    'vue/valid-v-once': 'off',
-    'vue/valid-v-pre': 'off',
-    'vue/valid-v-text': 'off'
+    '@typescript-eslint/space-infix-ops': 'error'
+    //#endregion
   }
-};
+}
