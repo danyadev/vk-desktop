@@ -30,11 +30,14 @@ export function fromApiConvo(
   const baseConvo = {
     history,
     unreadCount: apiConvo.unread_count ?? 0,
-    enabledNotifications: !apiConvo.push_settings,
     majorSortId: apiConvo.sort_id?.major_id ?? 0,
     minorSortId: apiConvo.sort_id?.minor_id ?? 0,
     inReadBy: Message.resolveCmid(apiConvo.in_read_cmid, true),
-    outReadBy: Message.resolveCmid(apiConvo.out_read_cmid, true)
+    outReadBy: Message.resolveCmid(apiConvo.out_read_cmid, true),
+    notifications: {
+      enabled: !apiConvo.push_settings,
+      disabledUntil: apiConvo.push_settings?.disabled_until ?? 0
+    }
   } satisfies Partial<Convo.Convo>
 
   const peerId = Peer.resolveId(apiConvo.peer.id)

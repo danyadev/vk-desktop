@@ -24,7 +24,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
       <div class="ConvoView__history">
         <ConvoHistory convo={props.convo} />
       </div>
-      <ConvoComposer />
+      <ConvoComposer convo={props.convo} />
     </div>
   )
 }, {

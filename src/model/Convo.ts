@@ -9,13 +9,16 @@ export type Convo = UserConvo | GroupConvo | ChatConvo
 interface BaseConvo {
   history: History.History<Message.Message>
   unreadCount: number
-  enabledNotifications: boolean
   majorSortId: number
   minorSortId: number
   /** Cmid последнего прочитанного входящего сообщения (inbox) */
   inReadBy: Message.Cmid
   /** Cmid последнего прочитанного исходящего сообщения (outbox) */
   outReadBy: Message.Cmid
+  notifications: {
+    enabled: boolean
+    disabledUntil: number
+  }
 }
 
 interface UserConvo extends BaseConvo {
@@ -99,11 +102,14 @@ function mock(id: Peer.Id): Convo {
   const base: BaseConvo = {
     history: [],
     unreadCount: 0,
-    enabledNotifications: true,
     majorSortId: 0,
     minorSortId: 0,
     inReadBy: Message.resolveCmid(0, true),
-    outReadBy: Message.resolveCmid(0, true)
+    outReadBy: Message.resolveCmid(0, true),
+    notifications: {
+      enabled: true,
+      disabledUntil: 0
+    }
   }
 
   if (Peer.isUserPeerId(id)) {
@@ -157,4 +163,8 @@ export function insertMessages(
 
 export function isCasper(convo: Convo): boolean {
   return convo.kind === 'ChatConvo' && convo.isCasper
+}
+
+export function isChannel(convo: Convo): boolean {
+  return convo.kind === 'ChatConvo' && convo.isChannel
 }

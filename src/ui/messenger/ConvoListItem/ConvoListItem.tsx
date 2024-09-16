@@ -44,7 +44,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           <Counter
             class="ConvoListItem__compactCounter"
             count={props.convo.unreadCount}
-            mode={props.convo.enabledNotifications ? 'primary' : 'secondary'}
+            mode={props.convo.notifications.enabled ? 'primary' : 'secondary'}
           />
         </div>
       )
@@ -62,7 +62,9 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             {Peer.name(peer.value)}
           </span>
           <span class="ConvoListItem__nameIcons">
-            {!props.convo.enabledNotifications && <Icon16Muted color="var(--vkui--color_icon_tertiary)" />}
+            {!props.convo.notifications.enabled && (
+              <Icon16Muted color="var(--vkui--color_icon_tertiary)" />
+            )}
           </span>
         </div>
 
@@ -86,7 +88,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
         <div class="ConvoListItem__indicators">
           <Counter
             count={props.convo.unreadCount}
-            mode={props.convo.enabledNotifications ? 'primary' : 'secondary'}
+            mode={props.convo.notifications.enabled ? 'primary' : 'secondary'}
           />
         </div>
         {lastMessage.value && (

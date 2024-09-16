@@ -19,6 +19,12 @@
   opacity: 0.6;
 }
 
+.Button__in {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 /* Сдвигаем содержимое на пиксель вниз */
 .Button:active .Button__in {
   position: relative;
