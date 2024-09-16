@@ -36,7 +36,8 @@
   align-self: center;
 
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  gap: 3px;
   overflow: hidden;
   font-weight: 500;
 }
@@ -45,10 +46,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.ConvoListItem__nameIcons {
-  margin-left: 3px;
 }
 
 .ConvoListItem__message {

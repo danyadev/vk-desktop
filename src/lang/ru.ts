@@ -74,6 +74,8 @@ export const ru = {
   me_convo_list_empty: 'Список сообщений пуст',
   me_convo_list_loading_error: 'Ошибка загрузки',
   me_convo_list_retry_loading: 'Повторить',
+  me_convo_disable_notifications: 'Отключить уведомления',
+  me_convo_enable_notifications: 'Включить уведомления',
 
   me_messages_disappeared: {
     single: 'Сообщение исчезло',

@@ -1,4 +1,5 @@
 import { defineComponent } from 'vue'
+import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { NonEmptyArray } from 'misc/utils'
@@ -48,10 +49,13 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
   return () => {
     const [message] = props.messages
     const author = Peer.safeGet(message.authorId)
+    const convo = Convo.safeGet(message.peerId)
+    const isChat = Peer.isChatPeerId(convo.id)
+    const isChannel = Convo.isChannel(convo)
 
     return (
       <div class={['MessagesStack', message.isOut && 'MessagesStack--out']}>
-        {message.kind === 'Normal' && !message.isOut && Peer.isChatPeerId(message.peerId) && (
+        {message.kind === 'Normal' && !message.isOut && isChat && !isChannel && (
           <Avatar class="MessagesStack__avatar" peer={author} size={32} />
         )}
         <div class="MessagesStack__messages">

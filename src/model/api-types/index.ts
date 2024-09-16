@@ -31,6 +31,7 @@ import {
   MessagesGetLongPollServerResponse
 } from 'model/api-types/methods/Messages'
 import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
+import { AccountSetSilenceModeParams, AccountSetSilenceModeResponse } from './methods/Account'
 
 /**
  * Disclaimer:
@@ -92,6 +93,11 @@ export type Methods = {
   'captcha.force': {
     params: CaptchaForceParams
     response: CaptchaForceResponse
+  }
+
+  'account.setSilenceMode': {
+    params: AccountSetSilenceModeParams
+    response: AccountSetSilenceModeResponse
   }
 
   'groups.getById': {

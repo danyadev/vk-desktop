@@ -27,8 +27,17 @@
 .ConvoHeader__name {
   grid-area: name;
   align-self: end;
+
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
   font: var(--smallFont);
+  height: var(--lineHeight);
   font-weight: 500;
+  overflow: hidden;
+}
+
+.ConvoHeader__nameText {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

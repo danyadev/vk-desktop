@@ -7,7 +7,7 @@ import { exhaustivenessCheck } from 'misc/utils'
 import { shortenCount } from 'misc/dateTime'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
-import { Icon24ChevronCompactLeft } from 'assets/icons'
+import { Icon16Muted, Icon24ChevronCompactLeft } from 'assets/icons'
 import './ConvoHeader.css'
 
 type Props = {
@@ -22,6 +22,8 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
   const formatDate = useFormatDate()
 
   const peerInfo = computed<string>(() => {
+    const isChannel = Convo.isChannel(convo)
+
     switch (peer.kind) {
       case 'User': {
         if (peer.onlineInfo.isOnline) {
@@ -43,7 +45,8 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
       }
 
       case 'Chat': {
-        return lang.usePlural('me_chat_members_count', peer.membersCount, {
+        const langKey = isChannel ? 'me_group_members_count' : 'me_chat_members_count'
+        return lang.usePlural(langKey, peer.membersCount, {
           count: shortenCount(peer.membersCount)
         })
       }
@@ -61,9 +64,19 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
         class="ConvoHeader__back"
         onClick={() => router.back()}
       />
+
       <Avatar class="ConvoHeader__avatar" peer={peer} size={32} />
 
-      <span class="ConvoHeader__name">{Peer.name(peer)}</span>
+      <div class="ConvoHeader__name">
+        <span class="ConvoHeader__nameText">
+          {Peer.name(peer)}
+        </span>
+        <span class="ConvoHeader__nameIcons">
+          {!convo.notifications.enabled && (
+            <Icon16Muted color="var(--vkui--color_icon_tertiary)" />
+          )}
+        </span>
+      </div>
       <span class="ConvoHeader__info">{peerInfo.value}</span>
     </div>
   )

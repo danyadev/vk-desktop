@@ -12,8 +12,19 @@
   align-items: flex-end;
   background: var(--vkd--color_background_composer);
   padding: 4px 6px;
+  min-height: 42px;
   border-radius: 12px;
   box-shadow: var(--vkui--elevation3);
+}
+
+.ConvoComposer__panel--blocked {
+  align-items: center;
+  justify-content: center;
+}
+
+.ConvoComposer__actionButton {
+  color: var(--vkui--color_text_accent);
+  font-weight: 500;
 }
 
 .ConvoComposer__input {

@@ -1,5 +1,6 @@
 @font-face {
   font-family: Roboto VK;
+  ascent-override: 100%;
   font-weight: 400;
   font-display: block;
   src: url('assets/Roboto-VK-400.woff2');
@@ -7,6 +8,7 @@
 
 @font-face {
   font-family: Roboto VK;
+  ascent-override: 100%;
   font-weight: 500;
   font-display: block;
   src: url('assets/Roboto-VK-500.woff2');
