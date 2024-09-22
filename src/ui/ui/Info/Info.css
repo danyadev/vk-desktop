@@ -1,0 +1,11 @@
+.Info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.Info__text {
+  font: var(--smallFontSize);
+  color: var(--vkui--color_text_subhead);
+  letter-spacing: 0.2px;
+}

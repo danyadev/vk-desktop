@@ -2,7 +2,8 @@ import { defineComponent, ref } from 'vue'
 import * as Convo from 'model/Convo'
 import { useEnv } from 'hooks'
 import { Button } from 'ui/ui/Button/Button'
-import { Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
+import { Info } from 'ui/ui/Info/Info'
+import { Icon24Info, Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
 import './ConvoComposer.css'
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
   const loading = ref(false)
+  const isKicked = props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked'
 
   return () => {
     const isChannel = Convo.isChannel(props.convo)
@@ -42,11 +44,20 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         }]}
         >
           {!isChannel ? (
-            <div
-              class="ConvoComposer__input"
-              contenteditable
-              placeholder={lang.use('me_convo_composer_placeholder')}
-            />
+            <>
+              {!isKicked && <div
+                class="ConvoComposer__input"
+                contenteditable
+                placeholder={lang.use('me_convo_composer_placeholder')}
+              />}
+              {isKicked && <Info
+                class="ConvoComposer__info"
+                text={lang.use('me_chat_kick_user')}
+                before={
+                  <Icon24Info color="var(--vkui--color_accent_orange)" />
+                }
+              />}
+            </>
           ) : (
             <Button
               class="ConvoComposer__actionButton"

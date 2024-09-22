@@ -64,8 +64,8 @@ export const ru = {
   auth_qr_code_declined: 'Запрос на авторизацию отклонен',
   auth_qr_code_expired: 'Время действия QR-кода истекло',
 
-  me_chat_kick_user_self: 'Вы вышли из чата',
-  me_chat_kick_user: 'Вы исключены из чата',
+  me_chat_kick_user_self: 'Вы вышли из чата.',
+  me_chat_kick_user: 'Вы были исключены из чата.',
 
   me_convo_list_author: '{author}:',
   me_convo_list_author_you: 'Вы',
