@@ -5,6 +5,8 @@ import './assets/schemes/vkui-light.css'
 import './assets/schemes/vkui-dark.css'
 import './styles.css'
 import 'vue/jsx'
+// eslint-disable-next-line import/extensions
+import './vue-jsx-events.d.ts'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { initStores } from 'store/init'
