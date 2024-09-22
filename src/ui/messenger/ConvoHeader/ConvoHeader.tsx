@@ -19,6 +19,9 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
   const router = useRouter()
   const peer = Peer.safeGet(convo.id)
 
+  const kickUserSelf = convo.kind === 'ChatConvo' && convo.status === 'left'
+  const kickUser = convo.kind === 'ChatConvo' && convo.status === 'kicked'
+
   const formatDate = useFormatDate()
 
   const peerInfo = computed<string>(() => {
@@ -45,6 +48,10 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
       }
 
       case 'Chat': {
+        if (peer.membersCount === 0) {
+          return ''
+        }
+
         const langKey = isChannel ? 'me_group_members_count' : 'me_chat_members_count'
         return lang.usePlural(langKey, peer.membersCount, {
           count: shortenCount(peer.membersCount)
@@ -78,6 +85,8 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
         </span>
       </div>
       <span class="ConvoHeader__info">{peerInfo.value}</span>
+      {kickUserSelf && <span class="ConvoHeader__info">{lang.use('me_chat_kick_user_self')}</span>}
+      {kickUser && <span class="ConvoHeader__info">{lang.use('me_chat_kick_user')}</span>}
     </div>
   )
 }, {

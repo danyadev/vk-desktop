@@ -79,6 +79,7 @@ export function fromApiConvo(
           kind: 'ChatConvo',
           id: peerId,
           isChannel: !!apiConvo.chat_settings?.is_group_channel,
+          status: apiConvo.chat_settings?.state ?? 'out',
           isCasper: !!apiConvo.chat_settings?.is_disappearing,
           pinnedMessage: apiConvo.chat_settings?.pinned_message
             ? fromApiPinnedMessage(apiConvo.chat_settings.pinned_message)
