@@ -1,5 +1,3 @@
-import 'vue'
-
 /**
  * На данный момент тайпинги событий для JSX элементов содержат слишком мало информации.
  * В этом файле пытаемся исправить ситуацию, пока ее не решили сами разработчики:
@@ -14,7 +12,7 @@ interface SyntheticEvent<T = Element> extends Event {
   currentTarget: T & EventTarget
 }
 
-declare module '@vue/runtime-dom' {
+declare module 'vue' {
   /**
    * Дополняем интерфейсы атрибутов существующих элементов.
    * К сожалению, обновить типы напрямую в интерфейсе Events невозможно, потому что тайпскрипт
@@ -159,3 +157,5 @@ declare module '@vue/runtime-dom' {
   //   pseudoElement: string
   // }
 }
+
+export {}
