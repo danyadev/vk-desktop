@@ -34,10 +34,10 @@ interface GroupConvo extends BaseConvo {
 export interface ChatConvo extends BaseConvo {
   kind: 'ChatConvo'
   id: Peer.ChatId
+  status: 'in' | 'kicked' | 'left' | 'out'
   isChannel: boolean
   isCasper: boolean
   pinnedMessage?: Message.Pinned
-  status: 'in' | 'kicked' | 'left' | 'out'
 }
 
 export type Style =
@@ -132,8 +132,8 @@ function mock(id: Peer.Id): Convo {
   if (Peer.isChatPeerId(id)) {
     return {
       kind: 'ChatConvo',
-      status: 'out',
       id,
+      status: 'in',
       isCasper: false,
       isChannel: false,
       ...base

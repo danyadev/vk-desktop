@@ -42,5 +42,13 @@
 }
 
 .ConvoComposer__info {
+  display: flex;
+  align-items: center;
   align-self: center;
+  gap: 8px;
+}
+
+.ConvoComposer__text {
+  font: var(--smallFontSize);
+  color: var(--vkui--color_text_subhead);
 }

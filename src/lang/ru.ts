@@ -64,9 +64,6 @@ export const ru = {
   auth_qr_code_declined: 'Запрос на авторизацию отклонен',
   auth_qr_code_expired: 'Время действия QR-кода истекло',
 
-  me_chat_kick_user_self: 'Вы вышли из чата.',
-  me_chat_kick_user: 'Вы были исключены из чата.',
-
   me_convo_list_author: '{author}:',
   me_convo_list_author_you: 'Вы',
   me_convo_list_date_mins: '{mins}м',
@@ -111,6 +108,8 @@ export const ru = {
   me_user_was_online_a_long_time_ago: 'заходил давно',
   me_attach_wall_empty: 'Пустая запись',
   me_attach_wall_open_button: 'Открыть запись',
+  me_chat_leaved_status: 'Вы вышли из чата',
+  me_chat_kicked_status: 'Вы были исключены из чата',
 
   me_chat_members_count: {
     one: '{count} участник',

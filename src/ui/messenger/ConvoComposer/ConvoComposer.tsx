@@ -2,7 +2,6 @@ import { defineComponent, ref } from 'vue'
 import * as Convo from 'model/Convo'
 import { useEnv } from 'hooks'
 import { Button } from 'ui/ui/Button/Button'
-import { Info } from 'ui/ui/Info/Info'
 import { Icon24Info, Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
 import './ConvoComposer.css'
 
@@ -13,7 +12,6 @@ type Props = {
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
   const loading = ref(false)
-  const isKicked = props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked'
 
   return () => {
     const isChannel = Convo.isChannel(props.convo)
@@ -37,44 +35,52 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       }
     }
 
+    const renderPanel = () => {
+      if (isChannel) {
+        return (
+          <Button
+            class="ConvoComposer__actionButton"
+            mode="tertiary"
+            loading={loading.value}
+            onClick={toggleNotifications}
+            before={
+              props.convo.notifications.enabled
+                ? <Icon24MuteOutline />
+                : <Icon24VolumeOutline />
+            }
+          >
+            {props.convo.notifications.enabled
+              ? lang.use('me_convo_disable_notifications')
+              : lang.use('me_convo_enable_notifications')}
+          </Button>
+        )
+      }
+
+      if (props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked') {
+        return (
+          <div class="ConvoComposer__info">
+            <Icon24Info color="var(--vkui--color_accent_orange)" />
+            <span class="ConvoComposer__text">{lang.use('me_chat_kicked_status')}</span>
+          </div>
+        )
+      }
+
+      return (
+        <div
+          class="ConvoComposer__input"
+          contenteditable
+          placeholder={lang.use('me_convo_composer_placeholder')}
+        />
+      )
+    }
+
     return (
       <div class="ConvoComposer">
         <div class={['ConvoComposer__panel', {
           'ConvoComposer__panel--blocked': isChannel
         }]}
         >
-          {!isChannel ? (
-            <>
-              {!isKicked && <div
-                class="ConvoComposer__input"
-                contenteditable
-                placeholder={lang.use('me_convo_composer_placeholder')}
-              />}
-              {isKicked && <Info
-                class="ConvoComposer__info"
-                text={lang.use('me_chat_kick_user')}
-                before={
-                  <Icon24Info color="var(--vkui--color_accent_orange)" />
-                }
-              />}
-            </>
-          ) : (
-            <Button
-              class="ConvoComposer__actionButton"
-              mode="tertiary"
-              loading={loading.value}
-              onClick={toggleNotifications}
-              before={
-                props.convo.notifications.enabled
-                  ? <Icon24MuteOutline />
-                  : <Icon24VolumeOutline />
-              }
-            >
-              {props.convo.notifications.enabled
-                ? lang.use('me_convo_disable_notifications')
-                : lang.use('me_convo_enable_notifications')}
-            </Button>
-          )}
+          {renderPanel()}
         </div>
       </div>
     )
