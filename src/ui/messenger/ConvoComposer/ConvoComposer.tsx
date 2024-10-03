@@ -36,10 +36,19 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
 
     const renderPanel = () => {
+      if (props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked') {
+        return (
+          <div class="ConvoComposer__restriction">
+            <Icon24Info color="var(--vkui--color_accent_orange)" />
+            {lang.use('me_chat_kicked_status')}
+          </div>
+        )
+      }
+
       if (isChannel) {
         return (
           <Button
-            class="ConvoComposer__actionButton"
+            class="ConvoComposer__muteChannelButton"
             mode="tertiary"
             loading={loading.value}
             onClick={toggleNotifications}
@@ -56,15 +65,6 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         )
       }
 
-      if (props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked') {
-        return (
-          <div class="ConvoComposer__info">
-            <Icon24Info color="var(--vkui--color_accent_orange)" />
-            <span class="ConvoComposer__text">{lang.use('me_chat_kicked_status')}</span>
-          </div>
-        )
-      }
-
       return (
         <div
           class="ConvoComposer__input"
@@ -76,12 +76,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
     return (
       <div class="ConvoComposer">
-        <div class={['ConvoComposer__panel', {
-          'ConvoComposer__panel--blocked': isChannel
-        }]}
-        >
-          {renderPanel()}
-        </div>
+        <div class="ConvoComposer__panel">{renderPanel()}</div>
       </div>
     )
   }
