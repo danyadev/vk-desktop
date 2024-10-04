@@ -66,8 +66,8 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
         const link: Attach.Link = {
           kind: 'Link',
           url: apiAttach.link.url,
-          title: apiAttach.link.title ?? '',
-          caption: apiAttach.link.caption ?? apiAttach.link.url,
+          title: apiAttach.link.title || apiAttach.link.description || '',
+          caption: apiAttach.link.caption || apiAttach.link.url,
           imageSizes: apiAttach.link.photo?.sizes
             ? fromApiImageSizes(apiAttach.link.photo.sizes)
             : undefined

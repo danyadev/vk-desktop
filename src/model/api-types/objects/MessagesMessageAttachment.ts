@@ -139,6 +139,7 @@ type MessagesMessageAttachmentsSticker = {
 type MessagesMessageAttachmentLink = {
   url: string
   title?: string
+  description?: string
   caption?: string
   photo?: PhotosPhoto
 }

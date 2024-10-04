@@ -1,9 +1,7 @@
 .ConvoComposer {
-  flex: none;
+  display: flex;
+  justify-content: center;
   padding: 0 var(--convoHistoryIndent) var(--convoHistoryIndent) var(--convoHistoryIndent);
-  margin: 0 auto;
-  width: 100%;
-  max-width: var(--convoHistoryMaxWidth);
   background: var(--vkd--color_background_convo_history);
 }
 
@@ -12,6 +10,8 @@
   align-items: center;
   background: var(--vkd--color_background_composer);
   padding: 4px 6px;
+  width: 100%;
+  max-width: calc(var(--convoHistoryMaxWidth) - 2 * var(--convoHistoryIndent));
   min-height: 42px;
   border-radius: 12px;
   box-shadow: var(--vkui--elevation3);

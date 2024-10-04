@@ -302,6 +302,11 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'error',
     '@typescript-eslint/no-unsafe-unary-minus': 'error',
     '@typescript-eslint/prefer-includes': 'error',
+    '@typescript-eslint/prefer-nullish-coalescing': ['error', {
+      ignorePrimitives: {
+        string: true
+      }
+    }],
     '@typescript-eslint/prefer-reduce-type-parameter': 'error',
     '@typescript-eslint/restrict-plus-operands': 'error',
     '@typescript-eslint/switch-exhaustiveness-check': ['error', {

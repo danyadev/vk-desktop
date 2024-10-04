@@ -75,7 +75,7 @@ export function fromApiConvo(
       }
 
       if (!apiConvo.chat_settings) {
-        console.warn(apiConvo)
+        console.warn('Chat without chat_settings', apiConvo)
         throw new Error('Chat without chat_settings: ' + peerId)
       }
 
