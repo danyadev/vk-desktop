@@ -13,7 +13,10 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
     cmid: Message.resolveCmid(message.conversation_message_id),
     authorId: Peer.resolveOwnerId(message.from_id),
     isOut: message.out === 1,
-    sentAt: message.date * 1000
+    sentAt: message.date * 1000,
+    updatedAt: message.update_time
+      ? message.update_time * 1000
+      : undefined
   } satisfies Partial<Message.Message>
 
   if (message.action) {
@@ -25,13 +28,8 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
   }
 
   if (message.is_expired) {
-    if (!message.update_time) {
-      throw new Error('[fromApiMessage Expired] No message.update_time')
-    }
-
     return {
       kind: 'Expired',
-      updatedAt: message.update_time * 1000,
       ...baseMessage
     }
   }
@@ -50,9 +48,6 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
       baseMessage.peerId,
       baseMessage.cmid
     ),
-    updatedAt: message.update_time
-      ? message.update_time * 1000
-      : undefined,
     ...baseMessage
   }
 }
@@ -146,7 +141,7 @@ function fromApiMessageAction(action: MessagesMessageAction): Message.ServiceAct
 
     default:
       typeguard(action.type)
-      console.warn(action)
+      console.warn('Unknown service action type', action)
       return { type: 'unknown' }
   }
 }
