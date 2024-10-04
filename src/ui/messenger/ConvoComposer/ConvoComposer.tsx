@@ -2,7 +2,7 @@ import { defineComponent, ref } from 'vue'
 import * as Convo from 'model/Convo'
 import { useEnv } from 'hooks'
 import { Button } from 'ui/ui/Button/Button'
-import { Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
+import { Icon24Info, Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
 import './ConvoComposer.css'
 
 type Props = {
@@ -35,36 +35,48 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       }
     }
 
+    const renderPanel = () => {
+      if (props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked') {
+        return (
+          <div class="ConvoComposer__restriction">
+            <Icon24Info color="var(--vkui--color_accent_orange)" />
+            {lang.use('me_chat_kicked_status')}
+          </div>
+        )
+      }
+
+      if (isChannel) {
+        return (
+          <Button
+            class="ConvoComposer__muteChannelButton"
+            mode="tertiary"
+            loading={loading.value}
+            onClick={toggleNotifications}
+            before={
+              props.convo.notifications.enabled
+                ? <Icon24MuteOutline />
+                : <Icon24VolumeOutline />
+            }
+          >
+            {props.convo.notifications.enabled
+              ? lang.use('me_convo_disable_notifications')
+              : lang.use('me_convo_enable_notifications')}
+          </Button>
+        )
+      }
+
+      return (
+        <div
+          class="ConvoComposer__input"
+          contenteditable
+          placeholder={lang.use('me_convo_composer_placeholder')}
+        />
+      )
+    }
+
     return (
       <div class="ConvoComposer">
-        <div class={['ConvoComposer__panel', {
-          'ConvoComposer__panel--blocked': isChannel
-        }]}
-        >
-          {!isChannel ? (
-            <div
-              class="ConvoComposer__input"
-              contenteditable
-              placeholder={lang.use('me_convo_composer_placeholder')}
-            />
-          ) : (
-            <Button
-              class="ConvoComposer__actionButton"
-              mode="tertiary"
-              loading={loading.value}
-              onClick={toggleNotifications}
-              before={
-                props.convo.notifications.enabled
-                  ? <Icon24MuteOutline />
-                  : <Icon24VolumeOutline />
-              }
-            >
-              {props.convo.notifications.enabled
-                ? lang.use('me_convo_disable_notifications')
-                : lang.use('me_convo_enable_notifications')}
-            </Button>
-          )}
-        </div>
+        <div class="ConvoComposer__panel">{renderPanel()}</div>
       </div>
     )
   }

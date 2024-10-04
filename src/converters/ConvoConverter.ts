@@ -74,13 +74,19 @@ export function fromApiConvo(
         throw new Error('Chat with out of range id: ' + peerId)
       }
 
+      if (!apiConvo.chat_settings) {
+        console.warn(apiConvo)
+        throw new Error('Chat without chat_settings: ' + peerId)
+      }
+
       return {
         convo: {
           kind: 'ChatConvo',
           id: peerId,
-          isChannel: !!apiConvo.chat_settings?.is_group_channel,
-          isCasper: !!apiConvo.chat_settings?.is_disappearing,
-          pinnedMessage: apiConvo.chat_settings?.pinned_message
+          status: apiConvo.chat_settings.state,
+          isChannel: !!apiConvo.chat_settings.is_group_channel,
+          isCasper: !!apiConvo.chat_settings.is_disappearing,
+          pinnedMessage: apiConvo.chat_settings.pinned_message
             ? fromApiPinnedMessage(apiConvo.chat_settings.pinned_message)
             : undefined,
           ...baseConvo
@@ -88,10 +94,10 @@ export function fromApiConvo(
         peer: {
           kind: 'Chat',
           id: peerId,
-          title: apiConvo.chat_settings?.title ?? '',
-          photo50: apiConvo.chat_settings?.photo?.photo_50,
-          photo100: apiConvo.chat_settings?.photo?.photo_100,
-          membersCount: apiConvo.chat_settings?.members_count ?? 0
+          title: apiConvo.chat_settings.title,
+          photo50: apiConvo.chat_settings.photo?.photo_50,
+          photo100: apiConvo.chat_settings.photo?.photo_100,
+          membersCount: apiConvo.chat_settings.members_count ?? 0
         }
       }
 

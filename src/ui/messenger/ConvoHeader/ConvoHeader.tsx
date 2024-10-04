@@ -45,6 +45,14 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
       }
 
       case 'Chat': {
+        if (convo.kind === 'ChatConvo' && convo.status === 'left') {
+          return lang.use('me_chat_leaved_status')
+        }
+
+        if (convo.kind === 'ChatConvo' && convo.status === 'kicked') {
+          return lang.use('me_chat_kicked_status')
+        }
+
         const langKey = isChannel ? 'me_group_members_count' : 'me_chat_members_count'
         return lang.usePlural(langKey, peer.membersCount, {
           count: shortenCount(peer.membersCount)

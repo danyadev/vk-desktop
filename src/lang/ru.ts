@@ -108,6 +108,8 @@ export const ru = {
   me_user_was_online_a_long_time_ago: 'заходил давно',
   me_attach_wall_empty: 'Пустая запись',
   me_attach_wall_open_button: 'Открыть запись',
+  me_chat_leaved_status: 'Вы вышли из чата',
+  me_chat_kicked_status: 'Вы были исключены из чата',
 
   me_chat_members_count: {
     one: '{count} участник',

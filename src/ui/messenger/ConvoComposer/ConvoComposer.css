@@ -9,22 +9,12 @@
 
 .ConvoComposer__panel {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   background: var(--vkd--color_background_composer);
   padding: 4px 6px;
   min-height: 42px;
   border-radius: 12px;
   box-shadow: var(--vkui--elevation3);
-}
-
-.ConvoComposer__panel--blocked {
-  align-items: center;
-  justify-content: center;
-}
-
-.ConvoComposer__actionButton {
-  color: var(--vkui--color_text_accent);
-  font-weight: 500;
 }
 
 .ConvoComposer__input {
@@ -39,4 +29,18 @@
   content: attr(placeholder);
   pointer-events: none;
   color: var(--vkui--color_text_secondary);
+}
+
+.ConvoComposer__restriction {
+  display: flex;
+  align-items: center;
+  margin: 0 4px;
+  gap: 8px;
+  color: var(--vkui--color_text_subhead);
+}
+
+.ConvoComposer__muteChannelButton {
+  color: var(--vkui--color_text_accent);
+  font-weight: 500;
+  margin: 0 auto;
 }
