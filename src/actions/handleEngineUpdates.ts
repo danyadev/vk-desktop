@@ -12,7 +12,7 @@ export async function handleEngineUpdates(fromPts: number, updates: IEngine.Upda
   const { api } = useEnv()
 
   const hasUsefulUpdates = updates.some(([eventId]) => (
-    (eventId >= 10002 && eventId <= 10007) || eventId === 10018
+    (eventId >= 10002 && eventId <= 10007) || eventId === 10018 || eventId === 114
   ))
   if (!hasUsefulUpdates) {
     return
@@ -139,6 +139,16 @@ export async function handleEngineUpdates(fromPts: number, updates: IEngine.Upda
             addToList: false
           })
         }
+        break
+      }
+
+      case 114: {
+        const [, setting] = update
+        const peerId = Peer.resolveId(setting.peer_id)
+        const convo = Convo.safeGet(peerId)
+
+        convo.notifications.enabled = Boolean(setting.sound)
+        convo.notifications.disabledUntil = setting.disabled_until
         break
       }
     }
