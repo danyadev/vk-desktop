@@ -146,16 +146,13 @@ export async function handleEngineUpdates(fromPts: number, updates: IEngine.Upda
         const [, setting] = update
         const peerId = Peer.resolveId(setting.peer_id)
 
-        const apiConvo = glphResponse.conversations.find((apiConvo) => (
-          apiConvo.peer.id === peerId
-        ))
-
-        if (apiConvo) {
-          const convo = Convo.safeGet(peerId)
-
-          convo.notifications.enabled = setting.disabled_until === 0 && true
-          convo.notifications.disabledUntil = setting.disabled_until * 1000
+        const convo = Convo.get(peerId)
+        if (!convo) {
+          break
         }
+
+        convo.notifications.enabled = setting.disabled_until === 0
+        convo.notifications.disabledUntil = setting.disabled_until * 1000
         break
       }
     }
