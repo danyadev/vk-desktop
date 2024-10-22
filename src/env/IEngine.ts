@@ -20,6 +20,7 @@ export type Update =
   | Update10006
   | Update10007
   | Update10018
+  | Update114
 
 // Изменение флагов сообщения
 type Update10002 = [
@@ -131,4 +132,14 @@ type Update10018 = [
   randomId: Update10004[9],
   messageId: Update10004[10],
   updateTimestampInSeconds: number
+]
+
+// Изменение настроек пуш-уведомлений в беседе
+type Update114 = [
+  type: 114,
+  data: {
+    peer_id: number
+    sound: 0 | 1
+    disabled_until: number
+  }
 ]
