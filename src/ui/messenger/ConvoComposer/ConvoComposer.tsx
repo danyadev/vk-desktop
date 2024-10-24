@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, KeyboardEvent, ref } from 'vue'
 import * as Convo from 'model/Convo'
 import { useEnv } from 'hooks'
 import { Button } from 'ui/ui/Button/Button'
@@ -12,6 +12,41 @@ type Props = {
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
   const loading = ref(false)
+  const newMessage = ref('')
+  const randomIds = ref<number[]>([])
+  const repetId = ref(0)
+
+  const printMessage = (event: KeyboardEvent<HTMLElement>) => {
+    newMessage.value = event.currentTarget.textContent ?? ''
+
+    if (event.code === 'Enter' && !event.shiftKey) {
+      sendMessage()
+
+      event.currentTarget.textContent = ''
+      event.currentTarget.contentEditable = 'inherit'
+      event.currentTarget.contentEditable = 'plaintext-only'
+    }
+  }
+
+  const sendMessage = async () => {
+    try {
+      do {
+        const randomNumber = Math.random()
+        const id = Math.random() * randomNumber
+        repetId.value = id
+
+        randomIds.value.push(id)
+      } while (repetId.value !== randomIds.value[randomIds.value.length - 1])
+
+      await api.fetch('messages.send', {
+        peer_id: props.convo.id,
+        random_id: randomIds.value[randomIds.value.length - 1] ?? Math.random(),
+        message: newMessage.value
+      })
+    } catch (error) {
+      console.warn(error)
+    }
+  }
 
   const toggleNotifications = async () => {
     try {
@@ -63,6 +98,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
     return (
       <span
+        onKeydown={printMessage}
         class="ConvoComposer__input"
         contenteditable="plaintext-only"
         placeholder={lang.use('me_convo_composer_placeholder')}
