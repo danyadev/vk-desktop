@@ -32,8 +32,8 @@ export function fromApiConvo(
     unreadCount: apiConvo.unread_count ?? 0,
     majorSortId: apiConvo.sort_id?.major_id ?? 0,
     minorSortId: apiConvo.sort_id?.minor_id ?? 0,
-    inReadBy: Message.resolveCmid(apiConvo.in_read_cmid, true),
-    outReadBy: Message.resolveCmid(apiConvo.out_read_cmid, true),
+    inReadBy: apiConvo.in_read_cmid,
+    outReadBy: apiConvo.out_read_cmid,
     notifications: {
       enabled: !apiConvo.push_settings,
       disabledUntil: (apiConvo.push_settings?.disabled_until ?? 0) * 1000

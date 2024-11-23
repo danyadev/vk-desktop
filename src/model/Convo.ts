@@ -11,10 +11,10 @@ interface BaseConvo {
   unreadCount: number
   majorSortId: number
   minorSortId: number
-  /** Cmid последнего прочитанного входящего сообщения (inbox) */
-  inReadBy: Message.Cmid
-  /** Cmid последнего прочитанного исходящего сообщения (outbox) */
-  outReadBy: Message.Cmid
+  /** Cmid последнего прочитанного входящего сообщения (inbox), может быть 0 */
+  inReadBy: number
+  /** Cmid последнего прочитанного исходящего сообщения (outbox), может быть 0 */
+  outReadBy: number
   notifications: {
     enabled: boolean
     disabledUntil: number
@@ -105,8 +105,8 @@ function mock(id: Peer.Id): Convo {
     unreadCount: 0,
     majorSortId: 0,
     minorSortId: 0,
-    inReadBy: Message.resolveCmid(0, true),
-    outReadBy: Message.resolveCmid(0, true),
+    inReadBy: 0,
+    outReadBy: 0,
     notifications: {
       enabled: true,
       disabledUntil: 0

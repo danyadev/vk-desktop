@@ -156,7 +156,9 @@ function fromApiForeignMessage(
     peerId: foreignMessage.peer_id
       ? Peer.resolveId(foreignMessage.peer_id)
       : undefined,
-    cmid: Message.resolveCmid(foreignMessage.conversation_message_id),
+    cmid: foreignMessage.conversation_message_id
+      ? Message.resolveCmid(foreignMessage.conversation_message_id)
+      : undefined,
     rootPeerId,
     rootCmid,
     authorId: Peer.resolveOwnerId(foreignMessage.from_id),
