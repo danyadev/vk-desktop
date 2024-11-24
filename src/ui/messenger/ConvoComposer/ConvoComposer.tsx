@@ -1,8 +1,11 @@
-import { defineComponent, ref } from 'vue'
+import { ChangeEvent, computed, defineComponent, KeyboardEvent, MouseEvent, ref, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import { useEnv } from 'hooks'
+import { random } from 'misc/utils'
+import { INTEGER_BOUNDARY } from 'misc/constants'
 import { Button } from 'ui/ui/Button/Button'
-import { Icon24Info, Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
+import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { Icon24Info, Icon24MuteOutline, Icon24Send, Icon24VolumeOutline } from 'assets/icons'
 import './ConvoComposer.css'
 
 type Props = {
@@ -12,6 +15,48 @@ type Props = {
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
   const loading = ref(false)
+  const text = ref('')
+  const $input = shallowRef<HTMLDivElement | null>(null)
+
+  const isEmpty = computed(() => text.value.trim() === '')
+
+  const sendMessage = async () => {
+    try {
+      await api.fetch('messages.send', {
+        peer_id: props.convo.id,
+        random_id: random(-INTEGER_BOUNDARY, INTEGER_BOUNDARY),
+        message: text.value
+      })
+
+      if ($input.value) {
+        text.value = ''
+        $input.value.textContent = ''
+      }
+    } catch (error) {
+      console.warn(error)
+    }
+  }
+
+  const onFromButton = async (event: MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+    await sendMessage()
+  }
+
+  const onFromKeyboard = async (event: KeyboardEvent<HTMLElement>) => {
+    if (event.code === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+
+      if (isEmpty.value) {
+        return
+      }
+
+      await sendMessage()
+    }
+  }
+
+  const printMessage = (event: ChangeEvent<HTMLElement>) => {
+    text.value = event.currentTarget.textContent ?? ''
+  }
 
   const toggleNotifications = async () => {
     try {
@@ -62,14 +107,25 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
 
     return (
-      <span
-        class="ConvoComposer__input"
-        contenteditable="plaintext-only"
-        placeholder={lang.use('me_convo_composer_placeholder')}
-      />
+      <>
+        <span
+          class="ConvoComposer__input"
+          contenteditable="plaintext-only"
+          role="textbox"
+          placeholder={lang.use('me_convo_composer_placeholder')}
+          ref={$input}
+          onKeydown={onFromKeyboard}
+          onInput={printMessage}
+        />
+        <ButtonIcon
+          class="ConvoComposer__send"
+          disabled={isEmpty.value}
+          icon={<Icon24Send />}
+          onMousedown={onFromButton}
+        />
+      </>
     )
   }
-
   return () => (
     <div class="ConvoComposer">
       <div class="ConvoComposer__panel">

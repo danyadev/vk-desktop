@@ -31,6 +31,24 @@
   color: var(--vkui--color_text_secondary);
 }
 
+.ConvoComposer__send {
+  padding-right: 6px;
+  color: var(--vkui--color_icon_accent);
+  opacity: 0.8;
+  transition: 0.2s opacity;
+}
+
+.ConvoComposer__send:hover {
+  color: var(--vkui--color_icon_accent);
+  opacity: 1;
+}
+
+.ConvoComposer__send[disabled] {
+  pointer-events: none;
+  opacity: 0.8;
+  background-color: transparent;
+}
+
 .ConvoComposer__restriction {
   display: flex;
   align-items: center;

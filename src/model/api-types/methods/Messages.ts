@@ -88,3 +88,15 @@ export type MessagesGetLongPollHistoryResponse = {
   // contacts?: MessagesContact[]
   // incognito_members?: MessagesExtendedIncognitoMember[]
 }
+
+// messages.send
+export type MessagesSendParams = {
+  peer_id: number
+  random_id: number
+  message: string
+}
+
+export type MessagesSendResponse = {
+  cmid: number
+  message_id: number
+}

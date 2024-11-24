@@ -1,4 +1,4 @@
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, shallowRef } from 'vue'
+import { computed, defineComponent, nextTick, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, ref, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
@@ -21,6 +21,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const { loadConvoHistoryLock, savedConvoScroll } = useConvosStore()
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
+  const scrollHeight = ref(0)
 
   onMounted(() => {
     const scrollTop = savedConvoScroll.get(convo.id)
@@ -32,6 +33,30 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   onBeforeUnmount(() => {
     if ($historyElement.value) {
       savedConvoScroll.set(convo.id, $historyElement.value.scrollTop)
+    }
+  })
+
+  onBeforeUpdate(() => {
+    if ($historyElement.value) {
+      scrollHeight.value = $historyElement.value.scrollHeight
+    }
+  })
+
+  onUpdated(() => {
+    if (!$historyElement.value) {
+      return
+    }
+
+    /**
+    * scrollTop - высота от начала элемена до вьюпорта, offsetHeight - высота вьюпорта.
+    * Их сумма - высота от нижней видимой границы до верхней существующей границы контента.
+    * Если мы находимся в самом низу, то она будет совпадать с общей высотой, но если
+    * мы проскроллим вверх, появляется контент снизу вьюпорта, который не виден нам
+    */
+    const upperContentHeight = $historyElement.value.scrollTop + $historyElement.value.offsetHeight
+
+    if (scrollHeight.value <= upperContentHeight) {
+      $historyElement.value.scrollTo(0, $historyElement.value.scrollHeight)
     }
   })
 

@@ -12,6 +12,11 @@ interface SyntheticEvent<T = Element> extends Event {
   currentTarget: T & EventTarget
 }
 
+interface UIEvent<T = Element> extends SyntheticEvent<T> {
+  detail: number
+  view: Window
+}
+
 declare module 'vue' {
   /**
    * Дополняем интерфейсы атрибутов существующих элементов.
@@ -20,14 +25,17 @@ declare module 'vue' {
    */
 
   interface HTMLAttributes {
+    onInput?: (event: InputEvent<HTMLElement>) => void
     onKeydown?: (event: KeyboardEvent<HTMLElement>) => void
     onFocusin?: (event: FocusEvent<HTMLElement>) => void
     onFocusout?: (event: FocusEvent<HTMLElement>) => void
+    onMousedown?: (event: MouseEvent<HTMLElement>) => void
+    onClick?: (event: MouseEvent<HTMLElement>) => void
   }
 
   interface InputHTMLAttributes {
-    onInput?: (event: InputEvent<HTMLInputElement>) => void
     onKeydown?: (event: KeyboardEvent<HTMLInputElement>) => void
+    onInput?: (event: InputEvent<HTMLInputElement>) => void
   }
 
   /**
@@ -90,34 +98,30 @@ declare module 'vue' {
   // interface InvalidEvent<T = Element> extends SyntheticEvent<T> {
   //   target: EventTarget & T
   // }
-  //
-  // interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
-  //   target: EventTarget & T
-  // }
-  //
-  // interface MouseEvent<T = Element> extends UIEvent<T> {
-  //   altKey: boolean
-  //   button: number
-  //   buttons: number
-  //   clientX: number
-  //   clientY: number
-  //   ctrlKey: boolean
-  //   /**
-  //    * See [DOM Level 3 Events spec](https://www.w3.org/TR/uievents-key/#keys-modifier)
-  //    * for a list of valid (case-sensitive) arguments to this method.
-  //    */
-  //   getModifierState(key: string): boolean
-  //   metaKey: boolean
-  //   movementX: number
-  //   movementY: number
-  //   pageX: number
-  //   pageY: number
-  //   relatedTarget: EventTarget | null
-  //   screenX: number
-  //   screenY: number
-  //   shiftKey: boolean
-  // }
-  //
+
+  interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
+    target: T & EventTarget
+  }
+
+  interface MouseEvent<T = Element> extends UIEvent<T> {
+    altKey: boolean
+    button: number
+    buttons: number
+    clientX: number
+    clientY: number
+    ctrlKey: boolean
+    getModifierState(key: string): boolean
+    metaKey: boolean
+    movementX: number
+    movementY: number
+    pageX: number
+    pageY: number
+    relatedTarget: EventTarget | null
+    screenX: number
+    screenY: number
+    shiftKey: boolean
+  }
+
   // interface TouchEvent<T = Element> extends UIEvent<T> {
   //   altKey: boolean
   //   changedTouches: TouchList
@@ -132,12 +136,7 @@ declare module 'vue' {
   //   targetTouches: TouchList
   //   touches: TouchList
   // }
-  //
-  // interface UIEvent<T = Element> extends SyntheticEvent<T> {
-  //   detail: number
-  //   view: Window
-  // }
-  //
+
   // interface WheelEvent<T = Element> extends MouseEvent<T> {
   //   deltaMode: number
   //   deltaX: number

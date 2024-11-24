@@ -7,7 +7,6 @@
   user-select: none;
   font: var(--font);
   text-rendering: optimizeSpeed;
-  -webkit-rtl-ordering: visual;
 }
 
 .App {
