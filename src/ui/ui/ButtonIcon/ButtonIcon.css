@@ -9,9 +9,9 @@
 }
 
 .ButtonIcon[disabled] {
-  cursor: default;
   pointer-events: none;
   opacity: 0.6;
+  transition: var(--mediumTransition) opacity;
 }
 
 .ButtonIcon--hoverBackground:hover {

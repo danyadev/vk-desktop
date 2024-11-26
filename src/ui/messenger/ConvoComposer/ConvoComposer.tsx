@@ -1,4 +1,4 @@
-import { ChangeEvent, computed, defineComponent, KeyboardEvent, ref, shallowRef } from 'vue'
+import { ChangeEvent, computed, defineComponent, KeyboardEvent, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import { useEnv } from 'hooks'
 import { isEventWithModifier, random } from 'misc/utils'
@@ -14,8 +14,8 @@ type Props = {
 
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
-  const loading = ref(false)
-  const text = ref('')
+  const loading = shallowRef(false)
+  const text = shallowRef('')
   const $input = shallowRef<HTMLDivElement | null>(null)
 
   const isEmpty = computed(() => text.value.trim() === '')

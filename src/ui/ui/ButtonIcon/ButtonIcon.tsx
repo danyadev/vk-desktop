@@ -12,13 +12,13 @@ type Props = {
 
 export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
   const { isFocused, onBlur, onFocus } = useFocusVisible()
-  const { addHoverBackground = true } = props
+
   return () => (
     <button
       type="button"
       class={['ButtonIcon', {
         'ButtonIcon--stretched': props.stretched,
-        'ButtonIcon--hoverBackground': addHoverBackground
+        'ButtonIcon--hoverBackground': props.addHoverBackground ?? true
       }]}
       onBlur={onBlur}
       onFocus={onFocus}

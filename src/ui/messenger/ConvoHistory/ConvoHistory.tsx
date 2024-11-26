@@ -1,4 +1,4 @@
-import { computed, defineComponent, nextTick, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, ref, shallowRef } from 'vue'
+import { computed, defineComponent, nextTick, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
@@ -21,7 +21,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const { loadConvoHistoryLock, savedConvoScroll } = useConvosStore()
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
-  const scrollHeight = ref(0)
+  const scrollHeight = shallowRef(0)
 
   onMounted(() => {
     const scrollTop = savedConvoScroll.get(convo.id)
@@ -60,7 +60,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
      * Если мы находимся в самом низу, то она будет совпадать с общей высотой, но если
      * мы проскроллим вверх, появляется контент под вьюпортом, который нам не виден.
      * Тогда сумма не совпадет и мы поймем что юзер не находится внизу
-    */
+     */
     const upperContentHeight = $historyElement.value.scrollTop + $historyElement.value.offsetHeight
 
     if (scrollHeight.value <= upperContentHeight) {

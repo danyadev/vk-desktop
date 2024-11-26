@@ -59,6 +59,7 @@ module.exports = {
             properties: false
           }
         }],
+        // Включено в full файле
         '@typescript-eslint/no-unused-vars': 'off'
       }
     },

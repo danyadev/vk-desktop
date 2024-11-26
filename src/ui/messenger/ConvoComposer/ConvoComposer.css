@@ -35,11 +35,10 @@
   padding-right: 6px;
   color: var(--vkui--color_icon_accent);
   opacity: 0.8;
-  transition: 0.2s opacity;
+  transition: var(--mediumTransition) opacity;
 }
 
 .ConvoComposer__send:hover {
-  color: var(--vkui--color_icon_accent);
   opacity: 1;
 }
 

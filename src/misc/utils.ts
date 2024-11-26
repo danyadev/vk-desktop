@@ -145,6 +145,7 @@ export function isEventWithModifier(event: MouseEvent | KeyboardEvent): boolean 
     event.metaKey ||
     event.altKey ||
     event.shiftKey ||
+    // Нажатие на колесико мыши
     (event instanceof MouseEvent && event.button === 1)
   )
 }
