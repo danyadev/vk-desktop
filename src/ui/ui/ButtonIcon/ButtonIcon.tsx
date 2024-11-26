@@ -7,15 +7,19 @@ import './ButtonIcon.css'
 type Props = {
   icon?: JSXElement
   stretched?: boolean
+  addHoverBackground?: boolean
 } & ButtonHTMLAttributes
 
 export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
   const { isFocused, onBlur, onFocus } = useFocusVisible()
-
+  const { addHoverBackground = true } = props
   return () => (
     <button
       type="button"
-      class={['ButtonIcon', props.stretched && 'ButtonIcon--stretched']}
+      class={['ButtonIcon', {
+        'ButtonIcon--stretched': props.stretched,
+        'ButtonIcon--hoverBackground': addHoverBackground
+      }]}
       onBlur={onBlur}
       onFocus={onFocus}
     >
@@ -25,5 +29,5 @@ export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
     </button>
   )
 }, {
-  props: ['icon', 'stretched']
+  props: ['icon', 'stretched', 'addHoverBackground']
 })

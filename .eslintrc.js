@@ -58,7 +58,8 @@ module.exports = {
             // fn: async () => {}, ожидая () => void
             properties: false
           }
-        }]
+        }],
+        '@typescript-eslint/no-unused-vars': 'off'
       }
     },
     {
@@ -336,7 +337,6 @@ module.exports = {
       allowShortCircuit: true
     }],
     // Включено в full файле
-    '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
     '@typescript-eslint/no-unnecessary-template-expression': 'error',
     '@typescript-eslint/object-curly-spacing': ['error', 'always'],

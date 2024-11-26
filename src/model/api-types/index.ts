@@ -123,7 +123,6 @@ export type Methods = {
     params: MessagesGetLongPollHistoryParams
     response: MessagesGetLongPollHistoryResponse
   }
-
   'messages.send': {
     params: MessagesSendParams
     response: MessagesSendResponse

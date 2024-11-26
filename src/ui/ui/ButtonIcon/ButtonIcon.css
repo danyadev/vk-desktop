@@ -8,12 +8,14 @@
   transition: background-color var(--fastTransition);
 }
 
-.ButtonIcon:hover {
-  background: var(--vkui--color_transparent--hover);
-}
-
 .ButtonIcon[disabled] {
   cursor: default;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.ButtonIcon--hoverBackground:hover {
+  background: var(--vkui--color_transparent--hover);
 }
 
 .ButtonIcon--stretched {

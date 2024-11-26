@@ -1,7 +1,7 @@
-import { ChangeEvent, computed, defineComponent, KeyboardEvent, MouseEvent, ref, shallowRef } from 'vue'
+import { ChangeEvent, computed, defineComponent, KeyboardEvent, ref, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import { useEnv } from 'hooks'
-import { random } from 'misc/utils'
+import { isEventWithModifier, random } from 'misc/utils'
 import { INTEGER_BOUNDARY } from 'misc/constants'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -37,24 +37,20 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
   }
 
-  const onFromButton = async (event: MouseEvent<HTMLElement>) => {
-    event.preventDefault()
-    await sendMessage()
-  }
-
-  const onFromKeyboard = async (event: KeyboardEvent<HTMLElement>) => {
-    if (event.code === 'Enter' && !event.shiftKey) {
+  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.code === 'Enter' && !isEventWithModifier(event)) {
+      // Предотвращаем перенос строки
       event.preventDefault()
 
       if (isEmpty.value) {
         return
       }
 
-      await sendMessage()
+      sendMessage()
     }
   }
 
-  const printMessage = (event: ChangeEvent<HTMLElement>) => {
+  const onInput = (event: ChangeEvent<HTMLElement>) => {
     text.value = event.currentTarget.textContent ?? ''
   }
 
@@ -114,18 +110,22 @@ export const ConvoComposer = defineComponent<Props>((props) => {
           role="textbox"
           placeholder={lang.use('me_convo_composer_placeholder')}
           ref={$input}
-          onKeydown={onFromKeyboard}
-          onInput={printMessage}
+          onKeydown={onKeyDown}
+          onInput={onInput}
         />
         <ButtonIcon
           class="ConvoComposer__send"
           disabled={isEmpty.value}
           icon={<Icon24Send />}
-          onMousedown={onFromButton}
+          addHoverBackground={false}
+          onClick={sendMessage}
+          // Предотвращаем сброс фокуса с поля ввода
+          onMousedown={(event) => event.preventDefault()}
         />
       </>
     )
   }
+
   return () => (
     <div class="ConvoComposer">
       <div class="ConvoComposer__panel">

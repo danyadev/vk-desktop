@@ -1,5 +1,5 @@
 import * as electron from '@electron/remote'
-import { ComponentPublicInstance, onScopeDispose, Ref, unref } from 'vue'
+import { ComponentPublicInstance, KeyboardEvent, type MouseEvent, onScopeDispose, Ref, unref } from 'vue'
 
 export { debounce } from 'main-process/shared'
 
@@ -137,4 +137,14 @@ export function unrefElement(ref: Ref<RefElement>): ExplicitRefElement {
   }
 
   return raw
+}
+
+export function isEventWithModifier(event: MouseEvent | KeyboardEvent): boolean {
+  return (
+    event.ctrlKey ||
+    event.metaKey ||
+    event.altKey ||
+    event.shiftKey ||
+    (event instanceof MouseEvent && event.button === 1)
+  )
 }

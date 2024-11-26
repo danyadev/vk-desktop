@@ -43,12 +43,6 @@
   opacity: 1;
 }
 
-.ConvoComposer__send[disabled] {
-  pointer-events: none;
-  opacity: 0.8;
-  background-color: transparent;
-}
-
 .ConvoComposer__restriction {
   display: flex;
   align-items: center;
