@@ -337,7 +337,6 @@ module.exports = {
       // Разрешает fn && fn()
       allowShortCircuit: true
     }],
-    // Включено в full файле
     '@typescript-eslint/no-useless-constructor': 'error',
     '@typescript-eslint/no-unnecessary-template-expression': 'error',
     '@typescript-eslint/object-curly-spacing': ['error', 'always'],

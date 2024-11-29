@@ -21,7 +21,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const { loadConvoHistoryLock, savedConvoScroll } = useConvosStore()
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
-  const scrollHeight = shallowRef(0)
+  const prevScrollHeight = shallowRef(0)
 
   onMounted(() => {
     const scrollTop = savedConvoScroll.get(convo.id)
@@ -38,7 +38,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
   onBeforeUpdate(() => {
     if ($historyElement.value) {
-      scrollHeight.value = $historyElement.value.scrollHeight
+      prevScrollHeight.value = $historyElement.value.scrollHeight
     }
   })
 
@@ -63,7 +63,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
      */
     const upperContentHeight = $historyElement.value.scrollTop + $historyElement.value.offsetHeight
 
-    if (scrollHeight.value <= upperContentHeight) {
+    if (prevScrollHeight.value <= upperContentHeight) {
       $historyElement.value.scrollTo(0, $historyElement.value.scrollHeight)
     }
   })

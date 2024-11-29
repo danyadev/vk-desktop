@@ -15,13 +15,16 @@ type Props = {
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
   const loading = shallowRef(false)
+  const isLoading = shallowRef(false)
   const text = shallowRef('')
-  const $input = shallowRef<HTMLDivElement | null>(null)
+  const $input = shallowRef<HTMLSpanElement | null>(null)
 
   const isEmpty = computed(() => text.value.trim() === '')
 
   const sendMessage = async () => {
     try {
+      isLoading.value = true
+
       await api.fetch('messages.send', {
         peer_id: props.convo.id,
         random_id: random(-INTEGER_BOUNDARY, INTEGER_BOUNDARY),
@@ -34,6 +37,8 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       }
     } catch (error) {
       console.warn(error)
+    } finally {
+      isLoading.value = false
     }
   }
 
@@ -116,6 +121,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         <ButtonIcon
           class="ConvoComposer__send"
           disabled={isEmpty.value}
+          loading={isLoading.value}
           icon={<Icon24Send />}
           addHoverBackground={false}
           onClick={sendMessage}

@@ -5,17 +5,32 @@
   flex: none;
   position: relative;
   border-radius: 6px;
-  transition: background-color var(--fastTransition);
+  transition: background-color var(--fastTransition), opacity var(--fastTransition);
 }
 
 .ButtonIcon[disabled] {
   pointer-events: none;
+}
+
+.ButtonIcon[disabled]:not(.ButtonIcon--loading) {
   opacity: 0.6;
-  transition: var(--mediumTransition) opacity;
 }
 
 .ButtonIcon--hoverBackground:hover {
   background: var(--vkui--color_transparent--hover);
+}
+
+.ButtonIcon__spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.ButtonIcon--loading .ButtonIcon__in {
+  visibility: hidden;
 }
 
 .ButtonIcon--stretched {
