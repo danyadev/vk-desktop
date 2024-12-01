@@ -63,7 +63,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
      */
     const upperContentHeight = $historyElement.value.scrollTop + $historyElement.value.offsetHeight
 
-    if (prevScrollHeight.value <= upperContentHeight) {
+    if (prevScrollHeight.value === upperContentHeight) {
       $historyElement.value.scrollTo(0, $historyElement.value.scrollHeight)
     }
   })

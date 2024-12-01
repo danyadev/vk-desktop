@@ -10,9 +10,6 @@
 
 .ButtonIcon[disabled] {
   pointer-events: none;
-}
-
-.ButtonIcon[disabled]:not(.ButtonIcon--loading) {
   opacity: 0.6;
 }
 

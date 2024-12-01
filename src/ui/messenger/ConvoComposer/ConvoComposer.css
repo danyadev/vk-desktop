@@ -32,12 +32,12 @@
 }
 
 .ConvoComposer__send {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   align-self: flex-end;
   color: var(--vkui--color_icon_accent);
   opacity: 0.8;
-  transition: opacity var(--mediumTransition);
+  transition: opacity var(--fastTransition);
 }
 
 .ConvoComposer__send:hover {

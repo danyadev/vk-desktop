@@ -2,9 +2,8 @@ import { ButtonHTMLAttributes, defineComponent } from 'vue'
 import { useFocusVisible } from 'hooks'
 import { JSXElement } from 'misc/utils'
 import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
+import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ButtonIcon.css'
-
-import { Spinner } from '../Spinner/Spinner'
 
 type Props = {
   icon?: JSXElement
@@ -15,7 +14,6 @@ type Props = {
 
 export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
   const { isFocused, onBlur, onFocus } = useFocusVisible()
-  console.log(props.loading)
 
   return () => (
     <button

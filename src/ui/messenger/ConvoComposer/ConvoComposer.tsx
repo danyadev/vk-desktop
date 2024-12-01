@@ -14,8 +14,8 @@ type Props = {
 
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
-  const loading = shallowRef(false)
-  const isLoading = shallowRef(false)
+  const isNotificationsUpdating = shallowRef(false)
+  const isMessageSending = shallowRef(false)
   const text = shallowRef('')
   const $input = shallowRef<HTMLSpanElement | null>(null)
 
@@ -23,7 +23,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
   const sendMessage = async () => {
     try {
-      isLoading.value = true
+      isMessageSending.value = true
 
       await api.fetch('messages.send', {
         peer_id: props.convo.id,
@@ -38,7 +38,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     } catch (error) {
       console.warn(error)
     } finally {
-      isLoading.value = false
+      isMessageSending.value = false
     }
   }
 
@@ -61,7 +61,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
   const toggleNotifications = async () => {
     try {
-      loading.value = true
+      isNotificationsUpdating.value = true
 
       await api.fetch('account.setSilenceMode', {
         peer_id: props.convo.id,
@@ -71,7 +71,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
       props.convo.notifications.enabled = !props.convo.notifications.enabled
     } finally {
-      loading.value = false
+      isNotificationsUpdating.value = false
     }
   }
 
@@ -92,7 +92,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         <Button
           class="ConvoComposer__muteChannelButton"
           mode="tertiary"
-          loading={loading.value}
+          loading={isNotificationsUpdating.value}
           onClick={toggleNotifications}
           before={
             props.convo.notifications.enabled
@@ -121,7 +121,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         <ButtonIcon
           class="ConvoComposer__send"
           disabled={isEmpty.value}
-          loading={isLoading.value}
+          loading={isMessageSending.value}
           icon={<Icon24Send />}
           addHoverBackground={false}
           onClick={sendMessage}
