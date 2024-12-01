@@ -28,7 +28,9 @@ import {
   MessagesGetLongPollHistoryParams,
   MessagesGetLongPollHistoryResponse,
   MessagesGetLongPollServerParams,
-  MessagesGetLongPollServerResponse
+  MessagesGetLongPollServerResponse,
+  MessagesSendParams,
+  MessagesSendResponse
 } from 'model/api-types/methods/Messages'
 import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
 import { AccountSetSilenceModeParams, AccountSetSilenceModeResponse } from './methods/Account'
@@ -120,6 +122,10 @@ export type Methods = {
   'messages.getLongPollHistory': {
     params: MessagesGetLongPollHistoryParams
     response: MessagesGetLongPollHistoryResponse
+  }
+  'messages.send': {
+    params: MessagesSendParams
+    response: MessagesSendResponse
   }
 
   'users.get': {

@@ -1,8 +1,11 @@
-import { defineComponent, ref } from 'vue'
+import { ChangeEvent, computed, defineComponent, KeyboardEvent, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import { useEnv } from 'hooks'
+import { isEventWithModifier, random } from 'misc/utils'
+import { INTEGER_BOUNDARY } from 'misc/constants'
 import { Button } from 'ui/ui/Button/Button'
-import { Icon24Info, Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
+import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { Icon24Info, Icon24MuteOutline, Icon24Send, Icon24VolumeOutline } from 'assets/icons'
 import './ConvoComposer.css'
 
 type Props = {
@@ -11,11 +14,54 @@ type Props = {
 
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
-  const loading = ref(false)
+  const isNotificationsUpdating = shallowRef(false)
+  const isMessageSending = shallowRef(false)
+  const text = shallowRef('')
+  const $input = shallowRef<HTMLSpanElement | null>(null)
+
+  const isEmpty = computed(() => text.value.trim() === '')
+
+  const sendMessage = async () => {
+    try {
+      isMessageSending.value = true
+
+      await api.fetch('messages.send', {
+        peer_id: props.convo.id,
+        random_id: random(-INTEGER_BOUNDARY, INTEGER_BOUNDARY),
+        message: text.value
+      })
+
+      if ($input.value) {
+        text.value = ''
+        $input.value.textContent = ''
+      }
+    } catch (error) {
+      console.warn(error)
+    } finally {
+      isMessageSending.value = false
+    }
+  }
+
+  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.code === 'Enter' && !isEventWithModifier(event)) {
+      // Предотвращаем перенос строки
+      event.preventDefault()
+
+      if (isEmpty.value) {
+        return
+      }
+
+      sendMessage()
+    }
+  }
+
+  const onInput = (event: ChangeEvent<HTMLElement>) => {
+    text.value = event.currentTarget.textContent ?? ''
+  }
 
   const toggleNotifications = async () => {
     try {
-      loading.value = true
+      isNotificationsUpdating.value = true
 
       await api.fetch('account.setSilenceMode', {
         peer_id: props.convo.id,
@@ -25,7 +71,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
       props.convo.notifications.enabled = !props.convo.notifications.enabled
     } finally {
-      loading.value = false
+      isNotificationsUpdating.value = false
     }
   }
 
@@ -46,7 +92,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         <Button
           class="ConvoComposer__muteChannelButton"
           mode="tertiary"
-          loading={loading.value}
+          loading={isNotificationsUpdating.value}
           onClick={toggleNotifications}
           before={
             props.convo.notifications.enabled
@@ -62,11 +108,27 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
 
     return (
-      <span
-        class="ConvoComposer__input"
-        contenteditable="plaintext-only"
-        placeholder={lang.use('me_convo_composer_placeholder')}
-      />
+      <>
+        <span
+          class="ConvoComposer__input"
+          contenteditable="plaintext-only"
+          role="textbox"
+          placeholder={lang.use('me_convo_composer_placeholder')}
+          ref={$input}
+          onKeydown={onKeyDown}
+          onInput={onInput}
+        />
+        <ButtonIcon
+          class="ConvoComposer__send"
+          disabled={isEmpty.value}
+          loading={isMessageSending.value}
+          icon={<Icon24Send />}
+          addHoverBackground={false}
+          onClick={sendMessage}
+          // Предотвращаем сброс фокуса с поля ввода
+          onMousedown={(event) => event.preventDefault()}
+        />
+      </>
     )
   }
 

@@ -2,11 +2,14 @@ import { ButtonHTMLAttributes, defineComponent } from 'vue'
 import { useFocusVisible } from 'hooks'
 import { JSXElement } from 'misc/utils'
 import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
+import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ButtonIcon.css'
 
 type Props = {
   icon?: JSXElement
   stretched?: boolean
+  addHoverBackground?: boolean
+  loading?: boolean
 } & ButtonHTMLAttributes
 
 export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
@@ -15,15 +18,22 @@ export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
   return () => (
     <button
       type="button"
-      class={['ButtonIcon', props.stretched && 'ButtonIcon--stretched']}
+      class={['ButtonIcon', {
+        'ButtonIcon--stretched': props.stretched,
+        'ButtonIcon--hoverBackground': props.addHoverBackground ?? true,
+        'ButtonIcon--loading': props.loading
+      }]}
       onBlur={onBlur}
       onFocus={onFocus}
     >
-      {props.icon}
-      {slots.default?.()}
+      <span class="ButtonIcon__in">
+        {props.icon}
+        {slots.default?.()}
+      </span>
+      {props.loading && <Spinner class="ButtonIcon__spinner" color="inherit" />}
       <FocusVisible isFocused={isFocused.value} />
     </button>
   )
 }, {
-  props: ['icon', 'stretched']
+  props: ['icon', 'stretched', 'addHoverBackground', 'loading']
 })
