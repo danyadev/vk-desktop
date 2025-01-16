@@ -241,7 +241,7 @@ export const ru = {
   me_message_attach_wall: 'Запись',
   me_message_attach_wall_reply: 'Комментарий',
   me_message_attach_event: 'Мероприятие',
-  me_message_attach_audio_message: 'Аудиосообщение',
+  me_message_attach_voice: 'Аудиосообщение',
   me_message_attach_audio_playlist: 'Плейлист',
   me_message_attach_artist: 'Исполнитель',
   me_message_attach_curator: 'Куратор',

@@ -31,7 +31,7 @@ function copyDate(date: Date) {
   return new Date(date.getTime())
 }
 
-function startOfDay(date: Date) {
+export function startOfDay(date: Date) {
   const copy = new Date(date.getTime())
   copy.setHours(0, 0, 0, 0)
   return copy
