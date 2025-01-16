@@ -7,6 +7,7 @@ export type Attaches = {
   sticker?: Sticker
   photos?: NonEmptyArray<Photo>
   links?: NonEmptyArray<Link>
+  voice?: Voice
   wall?: Wall
   unknown?: NonEmptyArray<Unknown>
 }
@@ -36,6 +37,19 @@ export type Link = {
   title: string
   caption: string
   imageSizes?: ImageSizes
+}
+
+export type Voice = {
+  kind: 'Voice'
+  id: number
+  ownerId: Peer.OwnerId
+  accessKey: string
+  linkMp3: string
+  linkOgg: string
+  duration: number
+  waveform: number[]
+  transcript: string
+  transcriptState: 'in_progress' | 'done' | 'error'
 }
 
 export type Wall = {
@@ -112,7 +126,8 @@ export function preview(attach: Attach, lang: ILang.Lang): string {
 
   switch (attach.kind) {
     case 'Sticker':
-    case 'Wall': {
+    case 'Wall':
+    case 'Voice': {
       const lowerCaseName = attach.kind.toLowerCase() as Lowercase<typeof attach.kind>
       return lang.use(`me_message_attach_${lowerCaseName}`)
     }
@@ -133,13 +148,15 @@ function previewUnknown(unknown: NonNullable<Attaches['unknown']>, lang: ILang.L
         unknown.filter(({ type }) => type === firstType).length
       )
 
+    case 'audio_message':
+      return lang.use('me_message_attach_voice')
+
     case 'gift':
     case 'sticker':
     case 'ugc_sticker':
     case 'wall':
     case 'wall_reply':
     case 'event':
-    case 'audio_message':
     case 'audio_playlist':
     case 'artist':
     case 'curator':

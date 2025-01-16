@@ -39,6 +39,27 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
         break
       }
 
+      case 'audio_message': {
+        if (!apiAttach.audio_message) {
+          addUnknown(apiAttach)
+          break
+        }
+
+        attaches.voice = {
+          kind: 'Voice',
+          id: apiAttach.audio_message.id,
+          ownerId: Peer.resolveOwnerId(apiAttach.audio_message.owner_id),
+          accessKey: apiAttach.audio_message.access_key,
+          linkMp3: apiAttach.audio_message.link_mp3,
+          linkOgg: apiAttach.audio_message.link_ogg,
+          duration: apiAttach.audio_message.duration,
+          waveform: apiAttach.audio_message.waveform,
+          transcript: apiAttach.audio_message.transcript,
+          transcriptState: apiAttach.audio_message.transcript_state
+        }
+        break
+      }
+
       case 'photo': {
         if (!apiAttach.photo?.orig_photo) {
           addUnknown(apiAttach)
