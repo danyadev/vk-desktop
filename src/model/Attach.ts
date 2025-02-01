@@ -48,7 +48,7 @@ export type Voice = {
   linkOgg: string
   duration: number
   waveform: number[]
-  transcript: string
+  transcript?: string
   transcriptState: 'in_progress' | 'done' | 'error'
 }
 

@@ -1,7 +1,8 @@
-import { defineComponent, InputEvent, shallowRef } from 'vue'
+import { computed, defineComponent, InputEvent, shallowRef } from 'vue'
 import * as Attach from 'model/Attach'
+import { useEnv } from 'hooks'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
-import { Icon32PauseCircle, Icon32PlayCircle } from 'assets/icons'
+import { Icon20ChevronUp, Icon20TextOutline, Icon32PauseCircle, Icon32PlayCircle } from 'assets/icons'
 import './AttachVoice.css'
 
 type Props = {
@@ -9,27 +10,51 @@ type Props = {
 }
 
 export const AttachVoice = defineComponent<Props>((props) => {
+  const { lang } = useEnv()
+
   const audio = new Audio(props.voice.linkMp3)
   const isPause = shallowRef(false)
   const range = shallowRef(0)
   const isRange = shallowRef(false)
   const requestId = shallowRef(-1)
+  const isHiddenCollapse = shallowRef(true)
+
+  const transcriptNotReady = computed(() => {
+    return !props.voice.transcript ||
+    props.voice.transcript.trim() === '' ||
+    props.voice.transcriptState === 'error' ||
+    props.voice.transcriptState === 'in_progress'
+  })
+
+  const text = computed(() => {
+    if (props.voice.transcript && props.voice.transcript.trim() === '') {
+      return lang.use('me_voice_transcription_empty')
+    }
+
+    if (props.voice.transcriptState === 'error') {
+      return lang.use('me_voice_transcription_empty')
+    }
+
+    if (props.voice.transcriptState === 'in_progress') {
+      return lang.use('me_voice_transcription_in_progress')
+    }
+
+    return props.voice.transcript
+  })
 
   const getCurrentTime = () => {
-    const cureentTime = audio.currentTime === 0
+    const currentTime = audio.currentTime === 0
       ? props.voice.duration
       : audio.currentTime
 
     const date = new Date()
-    date.setMinutes(0, cureentTime)
+    date.setMinutes(0, currentTime)
 
     return date.getMinutes() + ':' + String(date.getSeconds()).padStart(2, '0')
   }
 
   const moveRange = (event: InputEvent<HTMLInputElement>) => {
-    const currentNumber = (+event.target.value / 100) * props.voice.duration
-    audio.currentTime = currentNumber
-
+    audio.currentTime = (+event.target.value / 100) * props.voice.duration
     requestId.value = requestAnimationFrame(updateRange)
   }
 
@@ -63,30 +88,46 @@ export const AttachVoice = defineComponent<Props>((props) => {
 
   return () => (
     <div class="AttachVoice">
-      <div class="AttachVoice__top">
+      <div class="AttachVoice__player">
         <ButtonIcon
           onClick={toggleAudio}
           icon={isPause.value ? <Icon32PauseCircle /> : <Icon32PlayCircle />}
         />
         <div class="AttachVoice__track">
-          <input
-            class="AttachVoice__range"
-            type="range"
-            id="track"
-            name="track"
-            value={range.value}
-            min="0"
-            max="100"
-            onChange={(event) => moveRange(event)}
-            onTouchstart={() => (isRange.value = true)}
-            onTouchend={() => (isRange.value = false)}
-            onMousedown={() => (isRange.value = true)}
-            onMouseup={() => (isRange.value = false)}
+          <div class="AttachVoice__trackContent">
+            <input
+              class="AttachVoice__range"
+              type="range"
+              id="track"
+              name="track"
+              value={range.value}
+              min="0"
+              max="100"
+              onChange={(event) => moveRange(event)}
+              onTouchstart={() => (isRange.value = true)}
+              onTouchend={() => (isRange.value = false)}
+              onMousedown={() => (isRange.value = true)}
+              onMouseup={() => (isRange.value = false)}
+            />
+            <span class="AttachVoice__time">{getCurrentTime()}</span>
+          </div>
+          <ButtonIcon
+            class="AttachVoice__button"
+            icon={isHiddenCollapse.value ? <Icon20TextOutline /> : <Icon20ChevronUp />}
+            onClick={() => (isHiddenCollapse.value = !isHiddenCollapse.value)}
           />
-          <span class="AttachVoice__time">{getCurrentTime()}</span>
         </div>
       </div>
-      <div class="AttachVoice__bottom">Тут будет открывашка.</div>
+      <div class="AttachVoice__transcript">
+        <div class={['AttachVoice__collapse', {
+          'AttachVoice__collapse--open': !isHiddenCollapse.value,
+          'AttachVoice__collapse--close': isHiddenCollapse.value,
+          'AttachVoice__collapse--faded': transcriptNotReady.value
+        }]}
+        >
+          {text.value}
+        </div>
+      </div>
     </div>
   )
 }, {
