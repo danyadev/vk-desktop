@@ -152,7 +152,7 @@ type MessagesMessageAttachmentAudioMessage = {
   link_ogg: string
   duration: number
   waveform: number[]
-  transcript: string
+  transcript?: string
   transcript_state: 'in_progress' | 'done' | 'error'
 }
 

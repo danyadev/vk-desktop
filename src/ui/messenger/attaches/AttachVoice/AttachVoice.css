@@ -1,15 +1,43 @@
-.AttachVoice__top {
+.AttachVoice {
+  overflow: hidden;
+}
+
+.AttachVoice__player {
   display: flex;
   gap: 8px;
   color: var(--vkui--color_background_accent_themed);
 }
 
+.AttachVoice__track {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.AttachVoice__trackContent {
+  padding-top: 2px;
+  flex: 1 1 auto;
+}
+
 .AttachVoice__range {
+  position: relative;
+  width: 100%;
   appearance: none;
   cursor: pointer;
   height: 3px;
-  background-color: var(--vkui--color_text_secondary);
+  background: none;
   overflow: hidden;
+}
+
+.AttachVoice__range::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--vkui--color_text_secondary);
+  opacity: 0.2;
 }
 
 .AttachVoice__range::-webkit-slider-thumb {
@@ -17,7 +45,32 @@
   height: 3px;
   width: 2px;
   cursor: pointer;
-  box-shadow: -100px 0 0 100px var(--vkui--color_background_accent_themed);
+  box-shadow: -300px 0 0 300px var(--vkui--color_background_accent_themed);
+}
+
+.AttachVoice__button {
+  position: relative;
+  align-self: flex-start;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  margin-top: 2px;
+  margin-left: 12px;
+  padding: 2px 6px;
+  color: var(--vkui--color_icon_accent);
+}
+
+.AttachVoice__button::before {
+  content: '';
+  border-radius: inherit;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--vkui--color_background_accent);
+  opacity: 0.12;
+  transition: opacity 0.14s;
 }
 
 .AttachVoice__time {
@@ -26,6 +79,39 @@
   font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
 }
 
-.AttachVoice__details {
-  color: black;
+.AttachVoice__transcript {
+  display: flex;
+  padding-top: 4px;
+}
+
+.AttachVoice__collapse {
+  position: relative;
+  overflow: hidden;
+  padding-left: 10px;
+}
+
+.AttachVoice__collapse::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--vkui--color_stroke_accent);
+}
+
+.AttachVoice__collapse--open {
+  height: auto;
+}
+
+.AttachVoice__collapse--close {
+  height: 0;
+  white-space: pre;
+}
+
+.AttachVoice__collapse--faded {
+  opacity: 0.4;
+  font-size: 15px;
 }
