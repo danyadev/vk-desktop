@@ -35,7 +35,10 @@ export function fromApiConvo(
     inReadBy: apiConvo.in_read_cmid,
     outReadBy: apiConvo.out_read_cmid,
     notifications: {
-      enabled: !apiConvo.push_settings,
+      enabled: (
+        !apiConvo.push_settings?.disabled_until &&
+        !apiConvo.push_settings?.disabled_forever
+      ),
       disabledUntil: (apiConvo.push_settings?.disabled_until ?? 0) * 1000
     }
   } satisfies Partial<Convo.Convo>
