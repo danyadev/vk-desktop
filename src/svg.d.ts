@@ -4,6 +4,6 @@ declare module '*.svg' {
   const src: FunctionalComponent<SVGAttributes>
 
   // @ts-expect-error Переопределяем экспорт для svg файлов
-  // eslint-disable-next-line import/no-unused-modules, import/no-default-export
+  // eslint-disable-next-line import-x/no-unused-modules, import-x/no-default-export
   export default src
 }

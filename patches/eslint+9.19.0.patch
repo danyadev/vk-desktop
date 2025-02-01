@@ -1,0 +1,44 @@
+diff --git a/node_modules/eslint/bin/eslint.js b/node_modules/eslint/bin/eslint.js
+index 5ba2ff5..ed7d4ba 100755
+--- a/node_modules/eslint/bin/eslint.js
++++ b/node_modules/eslint/bin/eslint.js
+@@ -158,7 +158,7 @@ ${getErrorMessage(error)}`;
+     const exitCode = await cli.execute(
+         process.argv,
+         process.argv.includes("--stdin") ? await readStdin() : null,
+-        true
++        false
+     );
+ 
+     /*
+diff --git a/node_modules/eslint/lib/api.js b/node_modules/eslint/lib/api.js
+index a134ecd..6821835 100644
+--- a/node_modules/eslint/lib/api.js
++++ b/node_modules/eslint/lib/api.js
+@@ -9,11 +9,12 @@
+ // Requirements
+ //-----------------------------------------------------------------------------
+ 
+-const { ESLint, shouldUseFlatConfig } = require("./eslint/eslint");
++const { shouldUseFlatConfig } = require("./eslint/eslint");
+ const { LegacyESLint } = require("./eslint/legacy-eslint");
+ const { Linter } = require("./linter");
+ const { RuleTester } = require("./rule-tester");
+ const { SourceCode } = require("./languages/js/source-code");
++const ESLint = LegacyESLint;
+ 
+ //-----------------------------------------------------------------------------
+ // Functions
+diff --git a/node_modules/eslint/lib/eslint/eslint.js b/node_modules/eslint/lib/eslint/eslint.js
+index 89583d5..e06d6a8 100644
+--- a/node_modules/eslint/lib/eslint/eslint.js
++++ b/node_modules/eslint/lib/eslint/eslint.js
+@@ -1104,7 +1104,7 @@ class ESLint {
+  * @returns {Promise<boolean>} Whether flat config should be used.
+  */
+ async function shouldUseFlatConfig() {
+-    return (process.env.ESLINT_USE_FLAT_CONFIG !== "false");
++    return false;
+ }
+ 
+ //------------------------------------------------------------------------------

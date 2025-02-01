@@ -6,7 +6,7 @@ import electronRenderer from 'vite-plugin-electron-renderer'
 import { collectUnusedCssVariables } from './build/collectUnusedCssVariables'
 import { svgLoader } from './build/svgLoader'
 
-// eslint-disable-next-line import/no-default-export, import/no-unused-modules
+// eslint-disable-next-line import-x/no-default-export, import-x/no-unused-modules
 export default defineConfig(async ({ mode }) => {
   const unusedSymbols = await collectUnusedCssVariables(mode)
 
@@ -74,5 +74,5 @@ export default defineConfig(async ({ mode }) => {
       isolate: false,
       pool: 'threads'
     }
-  } as UserConfig
+  } satisfies UserConfig
 })

@@ -104,8 +104,9 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
         }
 
         // При загрузке вокруг кмида этого сообщения может не оказаться, тогда мы возьмем следующее
-        const aroundMessage = insertedMessages.find(({ cmid }) => (cmid >= startCmid))
-          ?? insertedMessages.at(-1)
+        const aroundMessage =
+          insertedMessages.find(({ cmid }) => (cmid >= startCmid)) ??
+          insertedMessages.at(-1)
 
         const messageElement = aroundMessage && historyElement.querySelector(
           `.MessagesStack__message[data-cmid="${aroundMessage.cmid}"]`

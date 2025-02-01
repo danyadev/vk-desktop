@@ -25,7 +25,7 @@ export function getColorBackgroundContent(theme: ActualTheme, scheme: Appearance
 export function debounce<T extends ((...args: never[]) => void)>(fn: T, delay: number) {
   let timerId: NodeJS.Timeout | null = null
 
-  return function(this: unknown, ...args: Parameters<T>) {
+  return function (this: unknown, ...args: Parameters<T>) {
     if (timerId) {
       clearTimeout(timerId)
     }
