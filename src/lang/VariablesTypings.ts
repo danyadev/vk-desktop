@@ -26,7 +26,6 @@ type ExtractFromEntry<T extends string | Record<string, string>, Vars extends st
       : Vars
 
 export type VariablesTypings<Variables = string | number> = {
-  [Key in keyof Dictionary as ExtractFromEntry<Dictionary[Key]> extends [] ? never : Key]: {
-    [K in ExtractFromEntry<Dictionary[Key]>[number]]: Variables
-  }
+  [Key in keyof Dictionary as ExtractFromEntry<Dictionary[Key]> extends [] ? never : Key]:
+    Record<ExtractFromEntry<Dictionary[Key]>[number], Variables>
 }

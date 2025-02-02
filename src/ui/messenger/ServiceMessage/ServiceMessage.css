@@ -1,5 +1,5 @@
 .ServiceMessage {
   color: var(--vkui--color_text_subhead);
-  word-break: break-word;
+  overflow-wrap: break-word;
   text-align: center;
 }

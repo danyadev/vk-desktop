@@ -1,37 +1,33 @@
 # VK Desktop
 
-В данный момент приложение переписывается с нуля.  
-Посмотреть на список изменений с последней версии можно
-[здесь](https://github.com/danyadev/vk-desktop/blob/master/CHANGELOG.md).
-
 <img width="1162" alt="image" src="https://user-images.githubusercontent.com/35631027/155030916-775ce8f8-27bd-41dd-991b-154769116e66.png">
 
 ## Скачать VK Desktop
 
-__Новых версий переписанного приложения на данный момент нет.__
+В данный момент в разработке новая крупная версия, следить за списком изменений можно
+[здесь](https://github.com/danyadev/vk-desktop/blob/master/CHANGELOG.md).
 
-Скачать последнюю версию приложения всегда можно [здесь](https://github.com/danyadev/vk-desktop/releases).
+Все версии приложения со списком изменений расположены в
+[разделе релизов](https://github.com/danyadev/vk-desktop/releases).
 
-## Как открыть DevTools
+Поддерживается Windows 7+, macOS 10.13+ (включая arm64) и Linux
+
+## Как открыть DevTools в приложении
 
 Windows и Linux: `Ctrl + Shift + I`  
 MacOS: `Cmd + Option + I`
 
 ## Получение логов
 
-__На данный момент информация неактуальна. Для версии 1.0.0-* логи не генерируются.__
-
-Для исправления некоторых ошибок разработчику могут понадобиться логи,
-которые можно найти по соответствующему пути для каждой системы:
-
 * **Windows**: `%appdata%/vk-desktop/logs/`
 * **macOS**: `~/Library/Logs/vk-desktop/`
 * **Linux**: `~/.config/vk-desktop/logs/`
 
+__Для версии 1.0.0-dev логи не генерируются.__
+
 ## Сборка приложения
 
-У вас должен быть установлен [Node.js](http://nodejs.org) и [Git](https://git-scm.com/downloads).  
-Поддерживаемые версии Node.js: `18+`, `20+` и выше
+У вас должен быть установлен [Node.js](http://nodejs.org) 20.9.0+ и [Git](https://git-scm.com/downloads).
 
 Для установки зависимостей нужен yarn:
 ```bash

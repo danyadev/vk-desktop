@@ -78,7 +78,7 @@
 .Auth__accountName {
   display: -webkit-box;
   text-align: center;
-  word-break: break-word;
+  overflow-wrap: break-word;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;

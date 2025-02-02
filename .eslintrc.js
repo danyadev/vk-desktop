@@ -1,4 +1,4 @@
-/* eslint-disable quote-props */
+/* eslint-disable @stylistic/quote-props */
 
 module.exports = {
   root: true,
@@ -8,7 +8,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2023,
     tsconfigRootDir: __dirname,
-    project: true
+    projectService: true
   },
 
   env: {
@@ -17,10 +17,10 @@ module.exports = {
     es2021: true
   },
 
-  plugins: ['import', 'simple-import-sort'],
+  plugins: ['import-x', 'simple-import-sort', '@stylistic', '@stylistic/js'],
 
   settings: {
-    'import/resolver': {
+    'import-x/resolver': {
       typescript: {
         project: 'tsconfig.json'
       },
@@ -28,20 +28,21 @@ module.exports = {
         paths: ['./src']
       }
     },
-    'import/ignore': []
+    'import-x/ignore': []
   },
 
   extends: [
     'eslint:recommended',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
+    'plugin:import-x/recommended',
+    'plugin:import-x/typescript',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/stylistic'
+    'plugin:@typescript-eslint/stylistic',
+    'plugin:@stylistic/recommended-extends'
   ],
 
   overrides: [
     {
-      files: ['**/*.{ts,tsx}'],
+      files: ['**/*.{ts,tsx,mts}'],
       extends: [
         'plugin:@typescript-eslint/recommended-type-checked',
         'plugin:@typescript-eslint/stylistic-type-checked'
@@ -59,6 +60,9 @@ module.exports = {
             properties: false
           }
         }],
+        '@typescript-eslint/only-throw-error': 'off',
+        '@typescript-eslint/prefer-promise-reject-errors': 'off',
+        '@typescript-eslint/prefer-regexp-exec': 'off',
         // Включено в full файле
         '@typescript-eslint/no-unused-vars': 'off'
       }
@@ -66,7 +70,7 @@ module.exports = {
     {
       files: ['build/*.ts', '**/*.test.ts'],
       rules: {
-        'import/no-extraneous-dependencies': 'off'
+        'import-x/no-extraneous-dependencies': 'off'
       }
     }
   ],
@@ -110,16 +114,13 @@ module.exports = {
       properties: false
     }],
     'no-caller': 'error',
-    'no-confusing-arrow': 'error',
     'no-eval': 'error',
     'no-extend-native': 'error',
     'no-extra-bind': 'error',
     'no-extra-label': 'error',
-    'no-floating-decimal': 'error',
     'no-iterator': 'error',
     'no-label-var': 'error',
     'no-lonely-if': 'error',
-    'no-mixed-operators': 'error',
     'no-multi-assign': 'error',
     'no-multi-str': 'error',
     'no-new': 'error',
@@ -128,7 +129,6 @@ module.exports = {
     'no-octal-escape': 'error',
     'no-proto': 'error',
     'no-return-assign': 'error',
-    'no-return-await': 'error',
     'no-sequences': 'error',
     'no-undef-init': 'error',
     'no-unneeded-ternary': 'error',
@@ -155,98 +155,28 @@ module.exports = {
     'prefer-regex-literals': 'error',
     'prefer-rest-params': 'error',
     'prefer-spread': 'error',
-    'quote-props': ['error', 'as-needed'],
     'radix': ['error', 'as-needed'],
-    'spaced-comment': ['error', 'always', {
-      markers: ['#region', '#endregion']
-    }],
     'yoda': 'error',
-    'array-bracket-newline': ['error', 'consistent'],
-    'array-bracket-spacing': 'error',
-    'arrow-parens': 'error',
-    'arrow-spacing': 'error',
-    'comma-style': 'error',
-    'computed-property-spacing': 'error',
-    'dot-location': ['error', 'property'],
-    // eol-last в full файле
-    'function-call-argument-newline': ['error', 'consistent'],
-    'function-paren-newline': ['error', 'consistent'],
-    'generator-star-spacing': ['error', {
-      // function* generator() {}
-      after: true,
-      // const generator = function*() {}
-      anonymous: 'neither',
-      // const obj = { *generator() {} }
-      method: 'before'
-    }],
-    'implicit-arrow-linebreak': 'error',
-    'indent': ['error', 2, {
-      // По умолчанию внутри switch была отключена табуляция
-      SwitchCase: 1
-    }],
-    'jsx-quotes': 'error',
-    'linebreak-style': 'error',
-    'max-len': ['error', {
-      code: 100,
-      ignoreStrings: true,
-      ignoreRegExpLiterals: true,
-      ignoreUrls: true
-    }],
-    'new-parens': 'error',
-    'no-multi-spaces': 'error',
-    'no-tabs': 'error',
-    // no-trailing-spaces в full файле
-    'no-whitespace-before-property': 'error',
-    'object-curly-newline': 'error',
-    'rest-spread-spacing': 'error',
-    'semi-spacing': 'error',
-    'semi-style': 'error',
-    'space-in-parens': 'error',
-    'space-unary-ops': 'error',
-    'switch-colon-spacing': 'error',
-    'template-curly-spacing': 'error',
-    'template-tag-spacing': 'error',
-    'yield-star-spacing': 'error',
-    'no-restricted-imports': ['error', {
-      patterns: [
-        {
-          group: ['actions/*'],
-          message: 'Use \'actions\' instead'
-        },
-        {
-          group: ['assets/icons/*'],
-          message: 'Use \'assets/icons\' instead'
-        },
-        {
-          group: ['hooks/*'],
-          message: 'Use \'hooks\' instead'
-        },
-        {
-          group: ['ui/modals/parts/*'],
-          message: 'Use \'ui/modals/parts\' instead'
-        }
-      ]
-    }],
     //#endregion eslint
 
     //#region eslint-plugin-import
-    'import/no-extraneous-dependencies': 'error',
-    'import/no-absolute-path': 'error',
-    'import/no-dynamic-require': 'error',
-    'import/no-self-import': 'error',
-    'import/no-useless-path-segments': ['error', {
+    'import-x/no-extraneous-dependencies': 'error',
+    'import-x/no-absolute-path': 'error',
+    'import-x/no-dynamic-require': 'error',
+    'import-x/no-self-import': 'error',
+    'import-x/no-useless-path-segments': ['error', {
       noUselessIndex: true
     }],
-    'import/extensions': ['error', 'always', {
+    'import-x/extensions': ['error', 'always', {
       js: 'never',
       ts: 'never',
       tsx: 'never'
     }],
-    'import/first': 'error',
-    'import/newline-after-import': 'error',
-    'import/no-default-export': 'error',
-    'import/no-duplicates': 'error',
-    'import/no-restricted-paths': ['error', {
+    'import-x/first': 'error',
+    'import-x/newline-after-import': 'error',
+    'import-x/no-default-export': 'error',
+    'import-x/no-duplicates': 'error',
+    'import-x/no-restricted-paths': ['error', {
       basePath: './src',
       zones: [{
         // Где применяются ограничения
@@ -272,21 +202,19 @@ module.exports = {
 
     //#region @typescript-eslint
     '@typescript-eslint/array-type': ['error', {
-      default: 'array-simple',
-      readonly: 'generic'
+      default: 'array-simple', // string[] / Array<string | number>
+      readonly: 'generic' // ReadonlyArray<string> / ReadonlyArray<string | number>
     }],
     '@typescript-eslint/ban-ts-comment': ['error', {
-      // Разрешаем только @ts-expect-error с описанием
-      'ts-expect-error': 'allow-with-description',
       // Запрещаем разрешенный по умолчанию @ts-check
       'ts-check': true
     }],
-    '@typescript-eslint/member-delimiter-style': ['error', {
-      multiline: {
-        delimiter: 'none'
-      },
-      singleline: {
-        delimiter: 'comma'
+    '@typescript-eslint/no-restricted-types': ['error', {
+      types: {
+        'JSX.Element': {
+          message: 'Use JSXElement type from misc/utils',
+          fixWith: 'JSXElement'
+        }
       }
     }],
     '@typescript-eslint/naming-convention': ['error', {
@@ -298,40 +226,28 @@ module.exports = {
       // Разрешаем () => fnThatReturnVoid()
       ignoreArrowShorthand: true
     }],
-    '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/no-extra-semi': 'error',
     '@typescript-eslint/no-invalid-void-type': 'error',
     '@typescript-eslint/no-non-null-assertion': 'error',
-    '@typescript-eslint/no-unsafe-unary-minus': 'error',
-    '@typescript-eslint/prefer-includes': 'error',
     '@typescript-eslint/prefer-nullish-coalescing': ['error', {
       ignorePrimitives: {
         string: true
       }
     }],
     '@typescript-eslint/prefer-reduce-type-parameter': 'error',
-    '@typescript-eslint/restrict-plus-operands': 'error',
     '@typescript-eslint/switch-exhaustiveness-check': ['error', {
-      requireDefaultForNonUnion: true
-    }],
-    '@typescript-eslint/ban-types': ['error', {
-      types: {
-        'JSX.Element': 'Use JSXElement type from misc/utils'
-      }
+      requireDefaultForNonUnion: true,
+      considerDefaultExhaustiveForUnions: true
     }],
     '@typescript-eslint/no-array-delete': 'error',
     '@typescript-eslint/use-unknown-in-catch-callback-variable': 'error',
+    '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
+    '@typescript-eslint/no-unnecessary-type-arguments': 'error',
 
     /**
      * Далее идут правила, которые расширяют eslint-правила.
      * Сами оригинальные eslint-правила должны быть выключены
      */
-    '@typescript-eslint/brace-style': 'error',
-    '@typescript-eslint/comma-spacing': 'error',
     '@typescript-eslint/default-param-last': 'error',
-    '@typescript-eslint/func-call-spacing': 'error',
-    '@typescript-eslint/key-spacing': 'error',
-    '@typescript-eslint/keyword-spacing': 'error',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-unused-expressions': ['error', {
       // Разрешает fn && fn()
@@ -339,7 +255,6 @@ module.exports = {
     }],
     '@typescript-eslint/no-useless-constructor': 'error',
     '@typescript-eslint/no-unnecessary-template-expression': 'error',
-    '@typescript-eslint/object-curly-spacing': ['error', 'always'],
     '@typescript-eslint/prefer-destructuring': ['error', {
       // false здесь означает, что проверяться такие кейсы не будут.
       // Для массивов я считаю нормальным многие варианты использования:
@@ -355,17 +270,111 @@ module.exports = {
         object: false
       }
     }],
-    '@typescript-eslint/quotes': ['error', 'single', {
-      avoidEscape: true
+    '@typescript-eslint/no-restricted-imports': ['error', {
+      patterns: [
+        {
+          group: ['actions/*'],
+          message: 'Use \'actions\' instead'
+        },
+        {
+          group: ['assets/icons/*'],
+          message: 'Use \'assets/icons\' instead'
+        },
+        {
+          group: ['hooks/*'],
+          message: 'Use \'hooks\' instead'
+        },
+        {
+          group: ['ui/modals/parts/*'],
+          message: 'Use \'ui/modals/parts\' instead'
+        }
+      ]
     }],
-    '@typescript-eslint/semi': ['error', 'never'],
-    '@typescript-eslint/space-before-blocks': 'error',
-    '@typescript-eslint/space-before-function-paren': ['error', {
-      anonymous: 'never',
+    //#endregion
+
+    //#region stylistic
+    '@stylistic/array-bracket-newline': ['error', 'consistent'],
+    '@stylistic/array-element-newline': ['error', 'consistent'],
+    '@stylistic/arrow-parens': ['off', 'always'],
+    '@stylistic/brace-style': ['error', '1tbs'],
+    '@stylistic/comma-dangle': ['error', 'never'],
+    // Не считает комментарии за элементы
+    // https://github.com/eslint-stylistic/eslint-stylistic/issues/675
+    // '@stylistic/curly-newline': ['error', { minElements: 1 }],
+    '@stylistic/function-call-argument-newline': ['error', 'consistent'],
+    '@stylistic/function-call-spacing': 'error',
+    '@stylistic/function-paren-newline': ['error', 'multiline-arguments'],
+    '@stylistic/generator-star-spacing': ['error', {
+      // function* generator() {}
+      after: true,
+      // const generator = function*() {}
+      anonymous: 'neither',
+      // const obj = { *generator() {} }
+      method: 'before'
+    }],
+    '@stylistic/implicit-arrow-linebreak': 'error',
+    // Включаем только js правила, потому что ts работает очень плохо
+    '@stylistic/indent': 'off',
+    '@stylistic/js/indent': ['error', 2, {
+      // По умолчанию внутри switch была отключена табуляция
+      SwitchCase: 1
+    }],
+    // Считает юнион типы за бинарные операции
+    // https://github.com/eslint-stylistic/eslint-stylistic/issues/676
+    '@stylistic/indent-binary-ops': 'off',
+    '@stylistic/jsx-curly-spacing': ['error', {
+      when: 'never',
+      children: true,
+      attributes: true
+    }],
+    '@stylistic/jsx-first-prop-new-line': ['error', 'multiline'],
+    '@stylistic/jsx-one-expression-per-line': 'off',
+    '@stylistic/jsx-self-closing-comp': 'error',
+    '@stylistic/jsx-wrap-multilines': ['error', {
+      declaration: 'parens-new-line',
+      assignment: 'parens-new-line',
+      return: 'parens-new-line',
+      arrow: 'parens-new-line',
+      condition: 'parens-new-line',
+      logical: 'parens-new-line',
+      prop: 'ignore',
+      propertyValue: 'parens-new-line'
+    }],
+    '@stylistic/linebreak-style': 'error',
+    '@stylistic/max-len': ['error', {
+      code: 100,
+      ignoreStrings: true,
+      ignoreRegExpLiterals: true,
+      ignoreUrls: true
+    }],
+    '@stylistic/multiline-ternary': ['error', 'always-multiline', { ignoreJSX: true }],
+    '@stylistic/no-confusing-arrow': 'error',
+    '@stylistic/no-extra-semi': 'error',
+    // Включено в full файле
+    '@stylistic/no-multiple-empty-lines': 'off',
+    // Включено в full файле
+    '@stylistic/no-trailing-spaces': 'off',
+    '@stylistic/object-curly-newline': ['error', { consistent: true }],
+    '@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
+    '@stylistic/operator-linebreak': ['error', 'after', {
+      overrides: {
+        '?': 'before',
+        ':': 'before'
+      }
+    }],
+    // Включено в full файле
+    '@stylistic/padded-blocks': 'off',
+    '@stylistic/quote-props': ['error', 'as-needed'],
+    '@stylistic/semi-style': 'error',
+    '@stylistic/space-before-function-paren': ['error', {
       named: 'never',
-      asyncArrow: 'always'
+      asyncArrow: 'always',
+      anonymous: 'always'
     }],
-    '@typescript-eslint/space-infix-ops': 'error'
+    '@stylistic/spaced-comment': ['error', 'always', {
+      markers: ['#region', '#endregion']
+    }],
+    '@stylistic/switch-colon-spacing': 'error'
     //#endregion
   }
 }

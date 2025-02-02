@@ -19,6 +19,8 @@
     "isolatedModules": true,
     "sourceMap": true,
     "strict": true,
+    // Чтобы projectService: true работал и не ругался что он не видит .js файлы
+    "allowJs": true,
     "paths": {
       "main-process/*": ["../main-process/*"],
       "actions/*": ["./actions/*"],

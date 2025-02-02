@@ -45,6 +45,7 @@
 }
 
 .ConvoList__list {
+  /* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
   overflow: overlay;
   height: 100%;
   padding: 6px 8px;

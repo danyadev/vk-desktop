@@ -8,7 +8,7 @@ export type Opaque<Type, Token = unknown> = Type & {
 }
 
 // Тип JSX.Element запрещен в пользу JSXElement, здесь его единственное использование
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-restricted-types
 export type JSXElement = JSX.Element | string | number | null | false
 
 type ExplicitRefElement = HTMLElement | SVGElement | null
