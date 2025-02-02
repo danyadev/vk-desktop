@@ -2,7 +2,7 @@ import { computed, defineComponent, InputEvent, shallowRef } from 'vue'
 import * as Attach from 'model/Attach'
 import { useEnv } from 'hooks'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
-import { Icon20ChevronUp, Icon20TextOutline, Icon32PauseCircle, Icon32PlayCircle } from 'assets/icons'
+import { Icon16Text, Icon20ChevronUp, Icon32PauseCircle, Icon32PlayCircle } from 'assets/icons'
 import './AttachVoice.css'
 
 type Props = {
@@ -113,21 +113,23 @@ export const AttachVoice = defineComponent<Props>((props) => {
           </div>
           <ButtonIcon
             class="AttachVoice__button"
-            icon={isHiddenCollapse.value ? <Icon20TextOutline /> : <Icon20ChevronUp />}
+            icon={isHiddenCollapse.value ? <Icon16Text /> : <Icon20ChevronUp />}
             onClick={() => (isHiddenCollapse.value = !isHiddenCollapse.value)}
           />
         </div>
       </div>
-      <div class="AttachVoice__transcript">
-        <div class={['AttachVoice__collapse', {
-          'AttachVoice__collapse--open': !isHiddenCollapse.value,
-          'AttachVoice__collapse--close': isHiddenCollapse.value,
-          'AttachVoice__collapse--faded': transcriptNotReady.value
-        }]}
-        >
-          {text.value}
+      {!isHiddenCollapse.value && (
+        <div class="AttachVoice__transcript">
+          <div class={['AttachVoice__collapse', {
+            'AttachVoice__collapse--open': !isHiddenCollapse.value,
+            'AttachVoice__collapse--close': isHiddenCollapse.value,
+            'AttachVoice__collapse--faded': transcriptNotReady.value
+          }]}
+          >
+            {text.value}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }, {
