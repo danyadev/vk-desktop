@@ -15,7 +15,6 @@
 }
 
 .AttachVoice__trackContent {
-  padding-top: 2px;
   flex: 1 1 auto;
 }
 
@@ -74,20 +73,19 @@
 }
 
 .AttachVoice__time {
-  display: block;
-  padding: 2px 0;
+  display: inline-block;
   font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
 }
 
 .AttachVoice__transcript {
   display: flex;
-  padding-top: 4px;
+  margin-top: 8px;
 }
 
 .AttachVoice__collapse {
   position: relative;
   overflow: hidden;
-  padding-left: 10px;
+  padding-left: 12px;
 }
 
 .AttachVoice__collapse::before {
