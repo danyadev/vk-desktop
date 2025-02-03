@@ -124,6 +124,7 @@
   align-items: center;
   margin: 4px;
   gap: 4px;
+  user-select: text;
 }
 
 .Auth__footerLinks {
