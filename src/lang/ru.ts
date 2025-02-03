@@ -39,7 +39,7 @@ export const ru = {
   auth_hide_password: 'Скрыть пароль',
   auth_by_qr_code: 'Войти по QR-коду',
   auth_by_qr_code_title: 'Вход по QR-коду',
-  auth_by_qr_code_description: 'Отсканируйте QR-код, либо перейдите по ссылке в браузере, где вы уже авторизованы',
+  auth_by_qr_code_description: 'Отсканируйте QR-код, либо перейдите по ссылке с мобильного устройства',
   auth_register: 'Зарегистрироваться',
   auth_forgot_password: 'Забыли пароль?',
   auth_account_delete: 'Удалить',

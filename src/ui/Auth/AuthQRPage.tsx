@@ -4,8 +4,9 @@ import { QrCodeAuth, QrCodeAuthEvent } from 'model/QrCodeAuth'
 import { useEnv } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
-import { Link } from 'ui/ui/Link/Link'
+import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
+import { Icon16CheckOutline, Icon16CopyOutline } from 'assets/icons'
 
 type Props = {
   onCancel: () => void
@@ -17,6 +18,7 @@ type State = {
   qrCodeHtml: string | null
   loading: boolean
   error: string | null
+  copyTimerId: number
 }
 
 export const AuthQRPage = defineComponent<Props>((props) => {
@@ -26,7 +28,8 @@ export const AuthQRPage = defineComponent<Props>((props) => {
     qrCodeUrl: null,
     qrCodeHtml: null,
     loading: false,
-    error: null
+    error: null,
+    copyTimerId: 0
   })
 
   function onEvent(event: QrCodeAuthEvent) {
@@ -59,6 +62,18 @@ export const AuthQRPage = defineComponent<Props>((props) => {
     }
   }
 
+  async function onCopyLink() {
+    if (!state.qrCodeUrl) {
+      return
+    }
+
+    await navigator.clipboard.writeText(state.qrCodeUrl)
+    window.clearTimeout(state.copyTimerId)
+    state.copyTimerId = window.setTimeout(() => {
+      state.copyTimerId = 0
+    }, 2000)
+  }
+
   function onCloseErrorModal() {
     state.error = null
     props.onCancel()
@@ -85,9 +100,16 @@ export const AuthQRPage = defineComponent<Props>((props) => {
           ? <div class="Auth__QR" v-html={state.qrCodeHtml} />
           : <div class="Auth__QR"><Spinner size="regular" /></div>}
 
-        <Link class="Auth__QRLink" href={state.qrCodeUrl ?? ''}>
-          {state.qrCodeUrl ?? <Spinner />}
-        </Link>
+        <ButtonText class="Auth__QRLink" onClick={onCopyLink}>
+          {state.qrCodeUrl ? (
+            <>
+              {state.copyTimerId ? <Icon16CheckOutline /> : <Icon16CopyOutline />}
+              {state.qrCodeUrl}
+            </>
+          ) : (
+            <Spinner />
+          )}
+        </ButtonText>
 
         <Button
           wide
