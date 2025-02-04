@@ -34,7 +34,7 @@ export type MessagesMessageAttachment = {
   market_album?: unknown
   call?: unknown
   graffiti?: unknown
-  audio_message?: unknown
+  audio_message?: MessagesMessageAttachmentAudioMessage
   artist?: unknown
   event?: unknown
   mini_app?: unknown
@@ -142,6 +142,18 @@ type MessagesMessageAttachmentLink = {
   description?: string
   caption?: string
   photo?: PhotosPhoto
+}
+
+type MessagesMessageAttachmentAudioMessage = {
+  id: number
+  owner_id: number
+  access_key: string
+  link_mp3: string
+  link_ogg: string
+  duration: number
+  waveform: number[]
+  transcript?: string
+  transcript_state: 'in_progress' | 'done' | 'error'
 }
 
 export type MessagesMessageAttachmentWall = {

@@ -37,6 +37,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
   return {
     kind: 'Normal',
     text: message.text,
+    wasListened: message.was_listened ?? false,
     attaches: fromApiAttaches(message.attachments ?? []),
     replyMessage: message.reply_message && fromApiForeignMessage(
       message.reply_message,
@@ -164,6 +165,7 @@ function fromApiForeignMessage(
     authorId: Peer.resolveOwnerId(foreignMessage.from_id),
     sentAt: foreignMessage.date * 1000,
     text: foreignMessage.text,
+    wasListened: false,
     attaches: fromApiAttaches(foreignMessage.attachments ?? []),
     replyMessage: foreignMessage.reply_message && fromApiForeignMessage(
       foreignMessage.reply_message,
@@ -211,6 +213,7 @@ export function fromApiPinnedMessage(pinnedMessage: MessagesPinnedMessage): Mess
     authorId: Peer.resolveOwnerId(pinnedMessage.from_id),
     sentAt: pinnedMessage.date * 1000,
     text: pinnedMessage.text,
+    wasListened: false,
     attaches: fromApiAttaches(pinnedMessage.attachments ?? []),
     replyMessage: pinnedMessage.reply_message && fromApiForeignMessage(
       pinnedMessage.reply_message,

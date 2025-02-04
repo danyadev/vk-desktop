@@ -43,7 +43,13 @@ export const ConvoMessage = defineComponent<Props>((props) => {
           )}
 
           {message.text && <span class="ConvoMessage__text">{message.text}</span>}
-          {hasAttaches && <Attaches class="ConvoMessage__attaches" attaches={message.attaches} />}
+          {hasAttaches && (
+            <Attaches
+              class="ConvoMessage__attaches"
+              attaches={message.attaches}
+              isWasListened={message.wasListened}
+            />
+          )}
 
           {isEmpty && (
             <span class="ConvoMessage__empty">
