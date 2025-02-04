@@ -20,6 +20,7 @@ export interface Normal extends BaseMessage {
   kind: 'Normal'
   text: string
   attaches: Attach.Attaches
+  wasListened: boolean
   replyMessage?: Foreign
   forwardedMessages?: NonEmptyArray<Foreign>
 }

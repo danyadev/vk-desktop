@@ -7,6 +7,7 @@ import './AttachVoice.css'
 
 type Props = {
   voice: Attach.Voice
+  isWasListened?: boolean
 }
 
 export const AttachVoice = defineComponent<Props>((props) => {
@@ -19,6 +20,8 @@ export const AttachVoice = defineComponent<Props>((props) => {
   const requestId = shallowRef(-1)
   const isHiddenCollapse = shallowRef(true)
 
+  console.log(props.isWasListened, props.voice.transcript)
+
   const transcriptNotReady = computed(() => {
     return !props.voice.transcript ||
     props.voice.transcript.trim() === '' ||
@@ -27,7 +30,7 @@ export const AttachVoice = defineComponent<Props>((props) => {
   })
 
   const text = computed(() => {
-    if (props.voice.transcript && props.voice.transcript.trim() === '') {
+    if (!props.voice.transcript || props.voice.transcript.trim() === '') {
       return lang.use('me_voice_transcription_empty')
     }
 
@@ -41,6 +44,19 @@ export const AttachVoice = defineComponent<Props>((props) => {
 
     return props.voice.transcript
   })
+
+  const getCircleMask = () => {
+    if (props.isWasListened) {
+      return
+    }
+
+    return (
+      <>
+        <rect width="100%" height="100%" fill="white" />
+        <circle cx="27" cy="27" r="5" />
+      </>
+    )
+  }
 
   const getCurrentTime = () => {
     const currentTime = audio.currentTime === 0
@@ -91,13 +107,29 @@ export const AttachVoice = defineComponent<Props>((props) => {
       <div class="AttachVoice__player">
         <ButtonIcon
           onClick={toggleAudio}
-          icon={isPause.value ? <Icon32PauseCircle /> : <Icon32PlayCircle />}
+          icon={isPause.value
+            ? (
+              <Icon32PauseCircle
+                id="circle"
+                renderMask={getCircleMask}
+                insert={<circle cx="27" cy="27" r="3" fill="currentColor" />}
+              />
+            )
+            : (
+              <Icon32PlayCircle
+                id="circle"
+                renderMask={getCircleMask}
+                insert={<circle cx="27" cy="27" r="3" fill="currentColor" />}
+              />
+            )}
         />
+
         <div class="AttachVoice__track">
           <div class="AttachVoice__trackContent">
             <input
               class="AttachVoice__range"
               type="range"
+              step="0.1"
               id="track"
               name="track"
               value={range.value}
@@ -120,11 +152,12 @@ export const AttachVoice = defineComponent<Props>((props) => {
       </div>
       {!isHiddenCollapse.value && (
         <div class="AttachVoice__transcript">
-          <div class={['AttachVoice__collapse', {
-            'AttachVoice__collapse--open': !isHiddenCollapse.value,
-            'AttachVoice__collapse--close': isHiddenCollapse.value,
-            'AttachVoice__collapse--faded': transcriptNotReady.value
-          }]}
+          <div
+            class={['AttachVoice__collapse', {
+              'AttachVoice__collapse--open': !isHiddenCollapse.value,
+              'AttachVoice__collapse--close': isHiddenCollapse.value,
+              'AttachVoice__collapse--faded': transcriptNotReady.value
+            }]}
           >
             {text.value}
           </div>
@@ -133,5 +166,5 @@ export const AttachVoice = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['voice']
+  props: ['voice', 'isWasListened']
 })
