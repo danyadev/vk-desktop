@@ -1,11 +1,17 @@
 .AttachPhotos {
   display: flex;
-  flex-wrap: wrap;
+  flex-flow: column wrap;
+  gap: 4px;
+}
+
+.AttachPhotos__row {
+  display: flex;
   gap: 4px;
 }
 
 .AttachPhoto {
   width: fit-content;
+  min-width: 0;
   max-width: 100%;
   max-height: 128px;
   border-radius: 8px;
