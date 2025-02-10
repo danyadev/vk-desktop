@@ -1,6 +1,7 @@
 .AttachPhotos {
   display: flex;
-  flex-flow: column wrap;
+  flex-direction: column;
+  flex-wrap: wrap;
   gap: 4px;
 }
 

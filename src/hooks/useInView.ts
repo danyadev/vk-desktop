@@ -22,10 +22,12 @@ export function useInView() {
   return { ref, inView }
 }
 
-function useIntersectionObserver(ref: Ref<RefElement>, callback: IntersectionObserverCallback) {
-  watchPostEffect(() => {
-    const target = unrefElement(ref)
-
+function useIntersectionObserver(
+  targetRef: Ref<RefElement>,
+  callback: IntersectionObserverCallback
+) {
+  watchPostEffect((onCleanup) => {
+    const target = unrefElement(targetRef)
     if (!target) {
       return
     }
@@ -33,8 +35,8 @@ function useIntersectionObserver(ref: Ref<RefElement>, callback: IntersectionObs
     const observer = new IntersectionObserver(callback)
     observer.observe(target)
 
-    return () => {
+    onCleanup(() => {
       observer.disconnect()
-    }
+    })
   })
 }

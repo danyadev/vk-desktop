@@ -6,13 +6,14 @@ type LayoutItem = {
   photo: Attach.Photo
 }
 
-export function generatePhotosLayout(photos: Attach.Photo[]) {
+export function generatePhotosLayout(photos: Attach.Photo[], maxWidth: number, maxHeight: number) {
   const layoutItems = photos.map<LayoutItem>((photo) => ({
     width: photo.image.width,
     height: photo.image.height,
     photo
   }))
   const layout = groupPhotosIntoRows(layoutItems)
+  console.log(maxWidth, maxHeight)
 
   return layout
 }

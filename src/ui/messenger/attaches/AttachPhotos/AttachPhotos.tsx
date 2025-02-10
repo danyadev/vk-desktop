@@ -1,4 +1,4 @@
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, Ref } from 'vue'
 import * as Attach from 'model/Attach'
 import { NonEmptyArray } from 'misc/utils'
 import { generatePhotosLayout } from './generatePhotosLayout'
@@ -6,10 +6,17 @@ import './AttachPhotos.css'
 
 type Props = {
   photos: NonEmptyArray<Attach.Photo>
+  historyContainerWidth: Ref<number>
 }
 
 export const AttachPhotos = defineComponent<Props>((props) => {
-  const layout = computed(() => generatePhotosLayout(props.photos))
+  // TODO: аттач может рисоваться из записи на стене или пересланного,
+  // поэтому стоит считать максимальную ширину сообщения в ConvoMessage
+  // и уточнять значение по мере продвижения значения
+  const maxWidth = computed(() => (
+    props.historyContainerWidth.value
+  ))
+  const layout = computed(() => generatePhotosLayout(props.photos, maxWidth.value, 500))
 
   return () => (
     <div class="AttachPhotos">
@@ -23,5 +30,5 @@ export const AttachPhotos = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['photos']
+  props: ['photos', 'historyContainerWidth']
 })
