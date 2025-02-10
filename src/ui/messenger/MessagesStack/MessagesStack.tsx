@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue'
+import { defineComponent, Ref } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
@@ -11,6 +11,7 @@ import './MessagesStack.css'
 
 type MessagesStackProps = {
   messages: NonEmptyArray<Message.Message>
+  historyContainerWidth: Ref<number>
 }
 
 export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
@@ -22,6 +23,7 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
             <ConvoMessage
               message={message}
               showName={index === 0 && Peer.isChatPeerId(message.peerId)}
+              historyContainerWidth={props.historyContainerWidth}
             />
           </div>
         )
@@ -65,5 +67,5 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
     )
   }
 }, {
-  props: ['messages']
+  props: ['messages', 'historyContainerWidth']
 })
