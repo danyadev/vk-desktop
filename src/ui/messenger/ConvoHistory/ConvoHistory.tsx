@@ -1,10 +1,20 @@
-import { computed, defineComponent, nextTick, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, shallowRef } from 'vue'
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onBeforeUpdate,
+  onMounted,
+  onUpdated,
+  Ref,
+  shallowRef
+} from 'vue'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
-import { useEnv } from 'hooks'
+import { useEnv, useResizeObserver } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 import { Button } from 'ui/ui/Button/Button'
@@ -22,6 +32,11 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const prevScrollHeight = shallowRef(0)
+
+  const contentWidth = shallowRef(0)
+  const $historyContent = useResizeObserver((entry) => {
+    contentWidth.value = entry.contentRect.width
+  })
 
   onMounted(() => {
     const scrollTop = savedConvoScroll.get(convo.id)
@@ -178,12 +193,12 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
     return (
       <div class="ConvoHistory" ref={$historyElement}>
-        <div class="ConvoHistory__content">
+        <div class="ConvoHistory__content" ref={$historyContent}>
           <div class="ConvoHistory__topFiller" />
 
           {gapBefore && renderLoader('up', gapBefore.toId, gapBefore)}
 
-          <HistoryMessages items={items} />
+          <HistoryMessages items={items} historyContainerWidth={contentWidth} />
 
           {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
         </div>
@@ -196,6 +211,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
 type HistoryMessagesProps = {
   items: Array<History.Item<Message.Message>>
+  historyContainerWidth: Ref<number>
 }
 
 const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
@@ -221,8 +237,10 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
       return stacks
     }, new Array<NonEmptyArray<Message.Message>>())
 
-    return stacks.map((messages) => <MessagesStack messages={messages} />)
+    return stacks.map((messages) => (
+      <MessagesStack messages={messages} historyContainerWidth={props.historyContainerWidth} />
+    ))
   }
 }, {
-  props: ['items']
+  props: ['items', 'historyContainerWidth']
 })

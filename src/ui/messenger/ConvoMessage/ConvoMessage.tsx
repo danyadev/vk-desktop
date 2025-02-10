@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue'
+import { defineComponent, Ref } from 'vue'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
@@ -12,6 +12,7 @@ import './ConvoMessage.css'
 type Props = {
   message: Message.Normal
   showName: boolean
+  historyContainerWidth: Ref<number>
 }
 
 export const ConvoMessage = defineComponent<Props>((props) => {
@@ -43,7 +44,13 @@ export const ConvoMessage = defineComponent<Props>((props) => {
           )}
 
           {message.text && <span class="ConvoMessage__text">{message.text}</span>}
-          {hasAttaches && <Attaches class="ConvoMessage__attaches" attaches={message.attaches} />}
+          {hasAttaches && (
+            <Attaches
+              class="ConvoMessage__attaches"
+              attaches={message.attaches}
+              historyContainerWidth={props.historyContainerWidth}
+            />
+          )}
 
           {isEmpty && (
             <span class="ConvoMessage__empty">
@@ -69,5 +76,5 @@ export const ConvoMessage = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['message', 'showName']
+  props: ['message', 'showName', 'historyContainerWidth']
 })
