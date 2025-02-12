@@ -2,6 +2,7 @@ import { computed, defineComponent, Ref } from 'vue'
 import * as Attach from 'model/Attach'
 import { NonEmptyArray } from 'misc/utils'
 import { generatePhotosLayout } from './generatePhotosLayout'
+import { useMeasureMaxWidth } from './useMeasureMaxWidth'
 import './AttachPhotos.css'
 
 type Props = {
@@ -10,12 +11,7 @@ type Props = {
 }
 
 export const AttachPhotos = defineComponent<Props>((props) => {
-  // TODO: аттач может рисоваться из записи на стене или пересланного,
-  // поэтому стоит считать максимальную ширину сообщения в ConvoMessage
-  // и уточнять значение по мере продвижения значения
-  const maxWidth = computed(() => (
-    props.historyContainerWidth.value
-  ))
+  const { measureElRef, maxWidth, isMeasured } = useMeasureMaxWidth()
   const layout = computed(() => generatePhotosLayout(props.photos, maxWidth.value, 500))
 
   return () => (
@@ -27,6 +23,13 @@ export const AttachPhotos = defineComponent<Props>((props) => {
           ))}
         </span>
       ))}
+
+      {!isMeasured.value && (
+        <div
+          ref={measureElRef}
+          style={{ width: '100vw', maxWidth: '100%', marginTop: '-4px' }}
+        />
+      )}
     </div>
   )
 }, {

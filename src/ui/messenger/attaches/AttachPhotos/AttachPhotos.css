@@ -3,6 +3,7 @@
   flex-direction: column;
   flex-wrap: wrap;
   gap: 4px;
+  min-width: 0;
 }
 
 .AttachPhotos__row {

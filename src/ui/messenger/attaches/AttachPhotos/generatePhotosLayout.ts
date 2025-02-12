@@ -13,7 +13,7 @@ export function generatePhotosLayout(photos: Attach.Photo[], maxWidth: number, m
     photo
   }))
   const layout = groupPhotosIntoRows(layoutItems)
-  console.log(maxWidth, maxHeight)
+  console.log('maxWidth:', maxWidth)
 
   return layout
 }
