@@ -10,7 +10,7 @@ export type UsersUser = {
   photo_50?: string
   photo_100?: string
   photo_base?: string
-  online_info: {
+  online_info?: {
     visible: boolean
     last_seen?: number
     is_online?: boolean

@@ -18,14 +18,14 @@ export function fromApiUser(apiUser: UsersUser): Peer.User {
         ? 'male'
         : 'unknown',
     onlineInfo: {
-      visible: apiUser.online_info.visible,
-      lastSeen: apiUser.online_info.last_seen
+      visible: !!apiUser.online_info?.visible,
+      lastSeen: apiUser.online_info?.last_seen
         ? apiUser.online_info.last_seen * 1000
         : undefined,
-      isOnline: apiUser.online_info.is_online,
-      isMobile: apiUser.online_info.is_mobile,
-      status: apiUser.online_info.status,
-      appId: apiUser.online_info.app_id
+      isOnline: apiUser.online_info?.is_online,
+      isMobile: apiUser.online_info?.is_mobile,
+      status: apiUser.online_info?.status,
+      appId: apiUser.online_info?.app_id
     }
   }
 }
