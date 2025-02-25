@@ -5,6 +5,7 @@
   flex: none;
   position: relative;
   border-radius: 6px;
+  line-height: 0;
   transition: background-color var(--fastTransition), opacity var(--fastTransition);
 }
 

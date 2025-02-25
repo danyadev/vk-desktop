@@ -1,21 +1,14 @@
-.AttachVoice {
-  overflow: hidden;
-}
-
 .AttachVoice__player {
   display: flex;
   gap: 8px;
-  color: var(--vkui--color_background_accent_themed);
+}
+
+.AttachVoice__playButton {
+  color: var(--vkui--color_text_accent_themed);
 }
 
 .AttachVoice__track {
-  display: flex;
-  align-items: center;
   flex-grow: 1;
-}
-
-.AttachVoice__trackContent {
-  flex: 1 1 auto;
 }
 
 .AttachVoice__range {
@@ -47,19 +40,17 @@
   box-shadow: -300px 0 0 300px var(--vkui--color_background_accent_themed);
 }
 
-.AttachVoice__button {
-  position: relative;
+.AttachVoice__toggleTranscription {
   align-self: flex-start;
-  border: none;
+  height: 20px;
+  width: 30px;
+  color: var(--vkui--color_text_accent_themed);
   border-radius: 8px;
-  background: none;
   margin-top: 2px;
-  margin-left: 12px;
   padding: 2px 6px;
-  color: var(--vkui--color_icon_accent);
 }
 
-.AttachVoice__button::before {
+.AttachVoice__toggleTranscription::before {
   content: '';
   border-radius: inherit;
   position: absolute;
@@ -68,31 +59,34 @@
   left: 0;
   right: 0;
   background: var(--vkui--color_background_accent);
-  opacity: 0.12;
-  transition: opacity 0.14s;
+  opacity: 0.1;
+  transition: opacity var(--fastTransition);
+}
+
+.AttachVoice__toggleTranscription:hover::before {
+  opacity: 0.2;
 }
 
 .AttachVoice__time {
-  display: inline-block;
   font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
+  color: var(--vkui--color_text_accent_themed);
 }
 
 .AttachVoice__transcript {
+  position: relative;
   display: flex;
   margin-top: 8px;
-}
-
-.AttachVoice__collapse {
-  position: relative;
-  overflow: hidden;
   padding-left: 12px;
 }
 
-.AttachVoice__collapse::before {
+.AttachVoice__transcript--notReady {
+  opacity: 0.4;
+}
+
+.AttachVoice__transcript::before {
   content: '';
   position: absolute;
-  top: 1px;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 2px;
   height: 100%;
@@ -100,16 +94,6 @@
   background: var(--vkui--color_stroke_accent);
 }
 
-.AttachVoice__collapse--open {
-  height: auto;
-}
-
-.AttachVoice__collapse--close {
-  height: 0;
-  white-space: pre;
-}
-
-.AttachVoice__collapse--faded {
+.AttachVoice__transcript:not(.AttachVoice__transcript--notReady)::before {
   opacity: 0.4;
-  font-size: 15px;
 }

@@ -17,29 +17,20 @@ export const AttachVoice = defineComponent<Props>((props) => {
   const range = shallowRef(0)
   const isRange = shallowRef(false)
   const requestId = shallowRef(-1)
-  const isHiddenCollapse = shallowRef(true)
+  const showTranscript = shallowRef(false)
 
-  const transcriptNotReady = computed(() => {
-    return !props.voice.transcript ||
-    props.voice.transcript.trim() === '' ||
-    props.voice.transcriptState === 'error' ||
-    props.voice.transcriptState === 'in_progress'
-  })
-
-  const text = computed(() => {
-    if (props.voice.transcript && props.voice.transcript.trim() === '') {
-      return lang.use('me_voice_transcription_empty')
-    }
-
+  const transcriptNotReadyStatus = computed(() => {
     if (props.voice.transcriptState === 'error') {
-      return lang.use('me_voice_transcription_empty')
+      return lang.use('me_voice_transcription_error')
     }
 
     if (props.voice.transcriptState === 'in_progress') {
       return lang.use('me_voice_transcription_in_progress')
     }
 
-    return props.voice.transcript
+    if (!props.voice.transcript) {
+      return lang.use('me_voice_transcript_empty')
+    }
   })
 
   const getCurrentTime = () => {
@@ -90,44 +81,46 @@ export const AttachVoice = defineComponent<Props>((props) => {
     <div class="AttachVoice">
       <div class="AttachVoice__player">
         <ButtonIcon
+          class="AttachVoice__playButton"
+          addHoverBackground={false}
           onClick={toggleAudio}
-          icon={isPause.value ? <Icon32PauseCircle /> : <Icon32PlayCircle />}
+          icon={
+            isPause.value
+              ? <Icon32PauseCircle withUnlistenedDot={!props.voice.wasListened} />
+              : <Icon32PlayCircle withUnlistenedDot={!props.voice.wasListened} />
+          }
         />
+
         <div class="AttachVoice__track">
-          <div class="AttachVoice__trackContent">
-            <input
-              class="AttachVoice__range"
-              type="range"
-              id="track"
-              name="track"
-              value={range.value}
-              min="0"
-              max="100"
-              onChange={(event) => moveRange(event)}
-              onTouchstart={() => (isRange.value = true)}
-              onTouchend={() => (isRange.value = false)}
-              onMousedown={() => (isRange.value = true)}
-              onMouseup={() => (isRange.value = false)}
-            />
-            <span class="AttachVoice__time">{getCurrentTime()}</span>
-          </div>
-          <ButtonIcon
-            class="AttachVoice__button"
-            icon={isHiddenCollapse.value ? <Icon16Text /> : <Icon20ChevronUp />}
-            onClick={() => (isHiddenCollapse.value = !isHiddenCollapse.value)}
+          <input
+            class="AttachVoice__range"
+            type="range"
+            step="0.1"
+            value={range.value}
+            min="0"
+            max="100"
+            onChange={(event) => moveRange(event)}
+            onTouchstart={() => (isRange.value = true)}
+            onTouchend={() => (isRange.value = false)}
+            onMousedown={() => (isRange.value = true)}
+            onMouseup={() => (isRange.value = false)}
           />
+          <span class="AttachVoice__time">{getCurrentTime()}</span>
         </div>
+        <ButtonIcon
+          class="AttachVoice__toggleTranscription"
+          addHoverBackground={false}
+          icon={showTranscript.value ? <Icon20ChevronUp /> : <Icon16Text />}
+          onClick={() => (showTranscript.value = !showTranscript.value)}
+        />
       </div>
-      {!isHiddenCollapse.value && (
-        <div class="AttachVoice__transcript">
-          <div class={['AttachVoice__collapse', {
-            'AttachVoice__collapse--open': !isHiddenCollapse.value,
-            'AttachVoice__collapse--close': isHiddenCollapse.value,
-            'AttachVoice__collapse--faded': transcriptNotReady.value
+      {showTranscript.value && (
+        <div
+          class={['AttachVoice__transcript', {
+            'AttachVoice__transcript--notReady': transcriptNotReadyStatus.value
           }]}
-          >
-            {text.value}
-          </div>
+        >
+          {transcriptNotReadyStatus.value ?? props.voice.transcript}
         </div>
       )}
     </div>

@@ -9,7 +9,10 @@ import * as Peer from 'model/Peer'
 import { insertPeers } from 'actions'
 import { isNonEmptyArray } from 'misc/utils'
 
-export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attach.Attaches {
+export function fromApiAttaches(
+  apiAttaches: MessagesMessageAttachment[],
+  wasVoiceMessageListened: boolean
+): Attach.Attaches {
   const attaches: Attach.Attaches = {}
 
   const addUnknown = (attach: MessagesMessageAttachment) => {
@@ -54,7 +57,8 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
           linkOgg: apiAttach.audio_message.link_ogg,
           duration: apiAttach.audio_message.duration,
           waveform: apiAttach.audio_message.waveform,
-          transcript: apiAttach.audio_message.transcript,
+          wasListened: wasVoiceMessageListened,
+          transcript: apiAttach.audio_message.transcript?.trim() ?? '',
           transcriptState: apiAttach.audio_message.transcript_state
         }
         break
@@ -144,7 +148,7 @@ function fromApiAttachWall(apiWall: MessagesMessageAttachmentWall): Attach.Wall 
     accessKey: apiWall.access_key,
     createdAt: (apiWall.date ?? 0) * 1000,
     text: apiWall.text ?? '',
-    attaches: fromApiAttaches(apiWall.attachments ?? []),
+    attaches: fromApiAttaches(apiWall.attachments ?? [], true),
     isDeleted: !!apiWall.is_deleted,
     donutPlaceholder: apiWall.donut?.placeholder?.text,
     repost: apiWall.copy_history?.[0]
