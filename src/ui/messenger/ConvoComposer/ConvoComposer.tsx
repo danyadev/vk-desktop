@@ -17,7 +17,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const isNotificationsUpdating = shallowRef(false)
   const isMessageSending = shallowRef(false)
   const text = shallowRef('')
-  const $input = shallowRef<HTMLSpanElement | null>(null)
+  const $input = shallowRef<HTMLElement | null>(null)
 
   const isEmpty = computed(() => text.value.trim() === '')
 

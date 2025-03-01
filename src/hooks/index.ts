@@ -1,4 +1,5 @@
 export { useEnv } from './useEnv'
+export { useFloating } from './useFloating'
 export { useFocusVisible } from './useFocusVisible'
 export { useFormatDate } from './useFormatDate'
 export { useGlobalModal } from './useGlobalModal'

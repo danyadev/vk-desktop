@@ -4,16 +4,21 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
-import { useEnv, useViewer } from 'hooks'
+import { useEnv, useFloating, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { Floating } from 'ui/ui/Floating/Floating'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
+import { ActionMenu } from 'ui/ui/menu/ActionMenu/ActionMenu'
+import { ActionMenuItem } from 'ui/ui/menu/ActionMenuItem/ActionMenuItem'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
-import { Icon24DoorArrowRightOutline } from 'assets/icons'
+import { Icon24DoorArrowRightOutline, Icon24MoreHorizontal, Icon28SettingsOutline } from 'assets/icons'
 import './ConvoList.css'
+
+import { flip, offset, shift } from '@floating-ui/dom'
 
 type Props = {
   class?: ClassName
@@ -21,6 +26,17 @@ type Props = {
 }
 
 export const ConvoList = defineComponent<Props>((props) => {
+  const { refs } = useFloating({
+    placement: 'bottom-start',
+    middleware: [
+      offset(({ rects }) => ({
+        alignmentAxis: -rects.floating.width
+      })),
+      shift(),
+      flip()
+    ]
+  }, 'var(--vkui--color_transparent--hover)')
+
   const { lang } = useEnv()
   const viewer = useViewer()
   const { convoList, connection } = useConvosStore()
@@ -35,11 +51,43 @@ export const ConvoList = defineComponent<Props>((props) => {
             <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
             <span class="ConvoList__headerStatus">{connection.status}</span>
 
-            <ButtonIcon
-              class="ConvoList__headerExitIcon"
-              icon={<Icon24DoorArrowRightOutline color="var(--vkui--color_icon_negative)" />}
-              onClick={logout}
-            />
+            <Floating
+              setFloating={refs.setFloating}
+              setReference={refs.setReference}
+              button={
+                <ButtonIcon
+                  class="ConvoList__burgerMenu"
+                  addHoverBackground={false}
+                  icon={
+                    <Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />
+                  }
+                />
+              }
+            >
+              <ActionMenu
+                actions={[
+                  <ActionMenuItem
+                    text="Настройки"
+                    icon={
+                      <Icon28SettingsOutline
+                        width="20"
+                        color="var(--vkui--color_icon_secondary)"
+                      />
+                    }
+                  />,
+                  <ActionMenuItem
+                    text="Выход"
+                    onClick={logout}
+                    icon={
+                      <Icon24DoorArrowRightOutline
+                        width="20"
+                        color="var(--vkui--color_icon_negative)"
+                      />
+                    }
+                  />
+                ]}
+              />
+            </Floating>
           </>
         )}
       </div>
