@@ -1,39 +1,49 @@
-import { onMounted, ref } from 'vue'
+import { ComponentPublicInstance, onUnmounted, shallowRef, watchEffect } from 'vue'
 
-import { computePosition } from '@floating-ui/dom'
+import { autoUpdate, computePosition, ComputePositionConfig } from '@floating-ui/dom'
 
-function useFloating() {
-  const $floatingRef = ref<HTMLElement | null>(null)
-  const $referenceRef = ref<Element | null>(null)
+export function useFloating(options: Partial<ComputePositionConfig>) {
+  const $floatingRef = shallowRef<HTMLElement | null>(null)
+  const $referenceRef = shallowRef<HTMLElement | null>(null)
+  const cleanup = shallowRef<unknown>(null)
 
-  const setReference = (element: Element) => {
-    $referenceRef.value = element
+  const setReference = (element: Element | ComponentPublicInstance | null) => {
+    if (element instanceof HTMLElement) {
+      $referenceRef.value = element
+    }
   }
 
-  const setFloating = (element: HTMLElement) => {
-    $floatingRef.value = element
+  const setFloating = (element: Element | ComponentPublicInstance | null) => {
+    if (element instanceof HTMLElement) {
+      $floatingRef.value = element
+    }
   }
 
-  async function updatePosition() {
-    const referenceValue = $referenceRef.value
-    const floatingValue = $floatingRef.value
-
-    if (referenceValue && floatingValue) {
+  async function update() {
+    if ($referenceRef.value && $floatingRef.value) {
       try {
-        const { x, y } = await computePosition(referenceValue, floatingValue)
+        const { x, y } = await computePosition($referenceRef.value, $floatingRef.value, options)
 
-        Object.assign(floatingValue.style, {
-          left: `${x}px`,
-          top: `${y}px`
-        })
+        $floatingRef.value.style.left = `${x}px`
+        $floatingRef.value.style.top = `${y}px`
       } catch (error) {
         console.warn(error)
       }
     }
   }
 
-  onMounted(() => {
-    updatePosition()
+  watchEffect(() => {
+    if ($referenceRef.value && $floatingRef.value) {
+      cleanup.value = autoUpdate(
+        $referenceRef.value,
+        $floatingRef.value,
+        update
+      )
+    }
+  })
+
+  onUnmounted(() => {
+    cleanup.value = null
   })
 
   return {
@@ -43,5 +53,3 @@ function useFloating() {
     }
   }
 }
-
-console.log(useFloating())

@@ -1,0 +1,10 @@
+.Floating__Reference {
+  display: inline-flex;
+}
+
+.Floating__content {
+  width: max-content;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

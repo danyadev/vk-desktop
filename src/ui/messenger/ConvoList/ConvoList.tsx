@@ -1,19 +1,22 @@
-import { defineComponent } from 'vue'
+import { defineComponent, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
-import { useEnv, useViewer } from 'hooks'
+import { useEnv, useFloating, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { Floating } from 'ui/ui/Floating/Floating'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24DoorArrowRightOutline } from 'assets/icons'
 import './ConvoList.css'
+
+import { flip, offset } from '@floating-ui/dom'
 
 type Props = {
   class?: ClassName
@@ -21,12 +24,32 @@ type Props = {
 }
 
 export const ConvoList = defineComponent<Props>((props) => {
+  const { refs } = useFloating({
+    middleware: [flip(), offset(10)]
+  })
+
   const { lang } = useEnv()
   const viewer = useViewer()
   const { convoList, connection } = useConvosStore()
+  const showContent = shallowRef(true)
 
   return () => (
     <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
+      <div>
+        <Floating
+          setFloating={refs.setFloating}
+          setReference={refs.setReference}
+          showContent={showContent.value}
+          button={
+            <button
+              onClick={() => (showContent.value = !showContent.value)}
+            >Click
+            </button>
+          }
+        >
+          <div>111</div>
+        </Floating>
+      </div>
       <div class="ConvoList__header">
         <Avatar class="ConvoList__headerAvatar" peer={viewer} size={32} />
 
