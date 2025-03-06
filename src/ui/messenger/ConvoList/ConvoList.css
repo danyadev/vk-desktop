@@ -1,4 +1,5 @@
 .ConvoList__header {
+  position: relative;
   display: grid;
   grid-template-areas:
     'avatar name exitIcon'
@@ -38,9 +39,24 @@
   color: var(--vkui--color_text_secondary);
 }
 
+/* .ConvoList__burgerMenu {
+  padding: 10px;
+} */
+
+.ConvoList__Floating {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: var(--vkui--color_background_content);
+  border-radius: 10px;
+  border: 0.5px solid var(--vkui--color_transparent--active);
+  padding: 5px 10px;
+}
+
 .ConvoList__headerExitIcon {
   grid-area: exitIcon;
-  margin-left: auto;
   padding: 2px;
 }
 

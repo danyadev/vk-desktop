@@ -5,17 +5,25 @@ import './Floating.css'
 type Props = {
   setReference: (element: Element | ComponentPublicInstance | null) => void
   setFloating: (element: Element | ComponentPublicInstance | null) => void
-  showContent: boolean
   button: JSXElement
+  showContent?: boolean
+  hover?: boolean
 }
 
 export const Floating = defineComponent<Props>((props, { slots }) => {
+  const { showContent = false, hover = true } = props
+
   return () => {
     return (
       <>
         <div ref={props.setReference} class="Floating__Reference">{props.button}</div>
-        <div ref={props.setFloating} class="Floating__content">
-          {!props.showContent && slots.default?.()}
+        <div
+          ref={props.setFloating}
+          class={['Floating__content', {
+            'Floating__content--hoverEffect': hover
+          }]}
+        >
+          {!showContent && slots.default?.()}
         </div>
       </>
     )

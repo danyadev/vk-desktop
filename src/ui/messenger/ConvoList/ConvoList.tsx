@@ -1,4 +1,4 @@
-import { defineComponent, shallowRef } from 'vue'
+import { defineComponent } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
@@ -13,10 +13,10 @@ import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Floating } from 'ui/ui/Floating/Floating'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
-import { Icon24DoorArrowRightOutline } from 'assets/icons'
+import { Icon24DoorArrowRightOutline, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoList.css'
 
-import { flip, offset } from '@floating-ui/dom'
+import { flip, offset, shift } from '@floating-ui/dom'
 
 type Props = {
   class?: ClassName
@@ -25,31 +25,18 @@ type Props = {
 
 export const ConvoList = defineComponent<Props>((props) => {
   const { refs } = useFloating({
-    middleware: [flip(), offset(10)]
+    placement: 'bottom-start',
+    middleware: [flip(), shift(), offset(({ rects }) => ({
+      alignmentAxis: -rects.floating.width + 30
+    }))]
   })
 
   const { lang } = useEnv()
   const viewer = useViewer()
   const { convoList, connection } = useConvosStore()
-  const showContent = shallowRef(true)
 
   return () => (
     <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
-      <div>
-        <Floating
-          setFloating={refs.setFloating}
-          setReference={refs.setReference}
-          showContent={showContent.value}
-          button={
-            <button
-              onClick={() => (showContent.value = !showContent.value)}
-            >Click
-            </button>
-          }
-        >
-          <div>111</div>
-        </Floating>
-      </div>
       <div class="ConvoList__header">
         <Avatar class="ConvoList__headerAvatar" peer={viewer} size={32} />
 
@@ -58,11 +45,25 @@ export const ConvoList = defineComponent<Props>((props) => {
             <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
             <span class="ConvoList__headerStatus">{connection.status}</span>
 
-            <ButtonIcon
-              class="ConvoList__headerExitIcon"
-              icon={<Icon24DoorArrowRightOutline color="var(--vkui--color_icon_negative)" />}
-              onClick={logout}
-            />
+            <Floating
+              setFloating={refs.setFloating}
+              setReference={refs.setReference}
+              button={
+                <ButtonIcon class="ConvoList__burgerMenu" icon={<Icon24MoreHorizontal />} />
+              }
+            >
+              <div class="ConvoList__Floating">
+                <ButtonIcon stretched>Настройки</ButtonIcon>
+                <ButtonIcon
+                  class="ConvoList__headerExitIcon"
+                  stretched
+                  icon={<Icon24DoorArrowRightOutline color="var(--vkui--color_icon_negative)" />}
+                  onClick={logout}
+                >
+                  Выход
+                </ButtonIcon>
+              </div>
+            </Floating>
           </>
         )}
       </div>

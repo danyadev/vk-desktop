@@ -3,8 +3,21 @@
 }
 
 .Floating__content {
-  width: max-content;
   position: absolute;
+  display: none;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
   top: 0;
   left: 0;
+  z-index: 10;
+}
+
+.Floating__content:not(.Floating__content--hoverEffect) {
+  display: flex;
+}
+
+.Floating__Reference:hover + .Floating__content--hoverEffect,
+.Floating__content--hoverEffect:hover {
+  display: flex;
 }
