@@ -97,7 +97,11 @@ export type GetMessengerTokenPayload = {
 // VK Messenger Desktop
 export const MESSENGER_APP_ID = 51453752
 export const MESSENGER_APP_SECRET = '4UyuCUsdK8pVCNoeQuGi'
-export const MESSENGER_APP_SCOPE = 'all'
+// Самые максимальные доступные скоупы для этого приложения.
+// Узнать актуальное значение можно, если получить токен без скоупов через qr code
+// и вызвать account.getAppPermissions.
+// friends, photos, audio, video, stories, messages, wall, docs, groups, stats
+export const MESSENGER_APP_SCOPE = 1454174
 
 export async function getMessengerSilentToken(
   login: string,

@@ -1,6 +1,7 @@
 import * as IApi from 'env/IApi'
 import * as ILang from 'env/ILang'
 import * as Auth from 'model/Auth'
+import { QrCodeAuth } from 'model/QrCodeAuth'
 import { useConvosStore } from 'store/convos'
 import { useMainSettingsStore } from 'store/mainSettings'
 import { usePeersStore } from 'store/peers'
@@ -27,6 +28,7 @@ type ExposedFeatures = {
   engine: ReturnType<typeof useEnv>['engine']
   lang: ILang.Lang
   auth: typeof Auth
+  QrCodeAuth: typeof QrCodeAuth
   utils: typeof utils
 }
 const exposedWindow = window as typeof window & ExposedFeatures
@@ -43,5 +45,6 @@ export function exposeFeatures() {
   exposedWindow.engine = engine
   exposedWindow.lang = lang
   exposedWindow.auth = { ...Auth }
+  exposedWindow.QrCodeAuth = QrCodeAuth
   exposedWindow.utils = { ...utils }
 }
