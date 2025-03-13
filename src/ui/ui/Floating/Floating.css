@@ -4,20 +4,25 @@
 
 .Floating__content {
   position: absolute;
-  display: none;
+  display: flex;
   align-items: center;
   width: 100%;
   padding: 10px;
   top: 0;
   left: 0;
   z-index: 10;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--fastTransition) ease, visibility var(--fastTransition) ease;
 }
 
 .Floating__content:not(.Floating__content--hoverEffect) {
-  display: flex;
+  visibility: visible;
+  opacity: 1;
 }
 
 .Floating__Reference:hover + .Floating__content--hoverEffect,
 .Floating__content--hoverEffect:hover {
-  display: flex;
+  visibility: visible;
+  opacity: 1;
 }

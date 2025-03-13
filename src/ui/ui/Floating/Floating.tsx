@@ -29,5 +29,5 @@ export const Floating = defineComponent<Props>((props, { slots }) => {
     )
   }
 }, {
-  props: ['button', 'setReference', 'setFloating', 'showContent']
+  props: ['button', 'setReference', 'setFloating', 'showContent', 'hover']
 })

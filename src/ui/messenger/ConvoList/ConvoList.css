@@ -2,8 +2,8 @@
   position: relative;
   display: grid;
   grid-template-areas:
-    'avatar name exitIcon'
-    'avatar status exitIcon';
+    'avatar name menu'
+    'avatar status menu';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -39,11 +39,11 @@
   color: var(--vkui--color_text_secondary);
 }
 
-/* .ConvoList__burgerMenu {
-  padding: 10px;
-} */
+.ConvoList__burgerMenu {
+  grid-area: menu;
+}
 
-.ConvoList__Floating {
+.ConvoList__navigation {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -55,9 +55,20 @@
   padding: 5px 10px;
 }
 
+.ConvoList__settings {
+  padding: 4px 8px;
+}
+
 .ConvoList__headerExitIcon {
-  grid-area: exitIcon;
-  padding: 2px;
+  padding: 4px 8px;
+}
+
+.ConvoList__settings span {
+  gap: 12px;
+}
+
+.ConvoList__headerExitIcon span {
+  gap: 12px;
 }
 
 .ConvoList__list {

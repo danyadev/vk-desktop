@@ -13,7 +13,7 @@ import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Floating } from 'ui/ui/Floating/Floating'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
-import { Icon24DoorArrowRightOutline, Icon24MoreHorizontal } from 'assets/icons'
+import { Icon24DoorArrowRightOutline, Icon24MoreHorizontal, Icon28SettingsOutline } from 'assets/icons'
 import './ConvoList.css'
 
 import { flip, offset, shift } from '@floating-ui/dom'
@@ -26,9 +26,13 @@ type Props = {
 export const ConvoList = defineComponent<Props>((props) => {
   const { refs } = useFloating({
     placement: 'bottom-start',
-    middleware: [flip(), shift(), offset(({ rects }) => ({
-      alignmentAxis: -rects.floating.width + 30
-    }))]
+    middleware: [
+      offset(({ rects }) => ({
+        alignmentAxis: -rects.floating.width
+      })),
+      shift(),
+      flip()
+    ]
   })
 
   const { lang } = useEnv()
@@ -49,20 +53,37 @@ export const ConvoList = defineComponent<Props>((props) => {
               setFloating={refs.setFloating}
               setReference={refs.setReference}
               button={
-                <ButtonIcon class="ConvoList__burgerMenu" icon={<Icon24MoreHorizontal />} />
+                <ButtonIcon
+                  class="ConvoList__burgerMenu"
+                  icon={
+                    <Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />
+                  }
+                />
               }
             >
-              <div class="ConvoList__Floating">
-                <ButtonIcon stretched>Настройки</ButtonIcon>
-                <ButtonIcon
+              <nav class="ConvoList__navigation">
+                <Button
+                  class="ConvoList__settings"
+                  mode="tertiary"
+                  wide
+                  before={
+                    <Icon28SettingsOutline width="20" color="var(--vkui--color_icon_secondary)" />
+                  }
+                >
+                  Настройки
+                </Button>
+                <Button
                   class="ConvoList__headerExitIcon"
-                  stretched
-                  icon={<Icon24DoorArrowRightOutline color="var(--vkui--color_icon_negative)" />}
+                  mode="tertiary"
+                  wide
+                  before={
+                    <Icon24DoorArrowRightOutline width="20" color="var(--vkui--color_icon_negative)" />
+                  }
                   onClick={logout}
                 >
                   Выход
-                </ButtonIcon>
-              </div>
+                </Button>
+              </nav>
             </Floating>
           </>
         )}
