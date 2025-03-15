@@ -1,11 +1,22 @@
-import { computed, defineComponent, nextTick, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, shallowRef } from 'vue'
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onBeforeUpdate,
+  onMounted,
+  onUpdated,
+  provide,
+  shallowRef
+} from 'vue'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
-import { useEnv } from 'hooks'
+import { useEnv, useResizeObserver } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
+import { convoHistoryContextInjectKey } from 'misc/providers'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 import { Button } from 'ui/ui/Button/Button'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
@@ -22,6 +33,18 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const prevScrollHeight = shallowRef(0)
+
+  const historyWidth = shallowRef(0)
+  const historyHeight = shallowRef(0)
+  useResizeObserver($historyElement, (entry) => {
+    historyWidth.value = entry.contentRect.width
+    historyHeight.value = entry.contentRect.height
+  })
+
+  provide(convoHistoryContextInjectKey, {
+    historyViewportWidth: historyWidth,
+    historyViewportHeight: historyHeight
+  })
 
   onMounted(() => {
     const scrollTop = savedConvoScroll.get(convo.id)

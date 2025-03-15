@@ -18,7 +18,7 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
     switch (message.kind) {
       case 'Normal':
         return (
-          <div class="MessagesStack__message" data-cmid={message.cmid}>
+          <div key={message.cmid} class="MessagesStack__message" data-cmid={message.cmid}>
             <ConvoMessage
               message={message}
               showName={index === 0 && Peer.isChatPeerId(message.peerId)}
@@ -28,6 +28,7 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
       case 'Service':
         return (
           <div
+            key={message.cmid}
             class="MessagesStack__message MessagesStack__message--centered"
             data-cmid={message.cmid}
           >
@@ -37,6 +38,7 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
       case 'Expired':
         return (
           <div
+            key={message.cmid}
             class="MessagesStack__message MessagesStack__message--centered"
             data-cmid={message.cmid}
           >
