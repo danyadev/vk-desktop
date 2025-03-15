@@ -1,27 +1,13 @@
-import { shallowRef, watch } from 'vue'
-import { useResizeObserver } from 'hooks'
-import { debounce, RefElement, unrefElement } from 'misc/utils'
+import { Ref, shallowRef, watch } from 'vue'
+import { RefElement, unrefElement } from 'misc/utils'
 
-export function useMeasureMaxWidth() {
+export function useMeasureMaxWidth(invalidateKey: Ref<unknown>) {
   const maxWidth = shallowRef(0)
   const isMeasured = shallowRef(false)
   const measureElRef = shallowRef<RefElement>(null)
-  let skipResize = false
 
-  const parentRef = useResizeObserver(debounce(() => {
-    if (skipResize) {
-      skipResize = false
-      return
-    }
-
+  watch(invalidateKey, () => {
     isMeasured.value = false
-  }, 1000 / 30))
-
-  watch(measureElRef, () => {
-    const parent = unrefElement(measureElRef)?.parentElement
-    if (parent) {
-      parentRef.value = parent
-    }
   })
 
   watch([isMeasured, measureElRef], () => {
@@ -36,7 +22,6 @@ export function useMeasureMaxWidth() {
 
     maxWidth.value = target.clientWidth
     isMeasured.value = true
-    skipResize = true
   }, { flush: 'post' })
 
   return { measureElRef, maxWidth, isMeasured }

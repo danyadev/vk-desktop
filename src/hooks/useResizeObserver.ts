@@ -1,9 +1,10 @@
-import { shallowRef, watchPostEffect } from 'vue'
+import { Ref, watchPostEffect } from 'vue'
 import { RefElement, unrefElement } from 'misc/utils'
 
-export function useResizeObserver(onResize: (entry: ResizeObserverEntry) => void) {
-  const targetRef = shallowRef<RefElement>(null)
-
+export function useResizeObserver(
+  targetRef: Ref<RefElement>,
+  onResize: (entry: ResizeObserverEntry) => void
+) {
   watchPostEffect((onCleanup) => {
     const target = unrefElement(targetRef)
     if (!target) {
@@ -21,6 +22,4 @@ export function useResizeObserver(onResize: (entry: ResizeObserverEntry) => void
       observer.disconnect()
     })
   })
-
-  return targetRef
 }

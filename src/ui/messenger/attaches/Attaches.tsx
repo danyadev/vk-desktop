@@ -1,4 +1,4 @@
-import { defineComponent, Ref } from 'vue'
+import { defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
 import { useEnv } from 'hooks'
 import { ClassName } from 'misc/utils'
@@ -11,7 +11,6 @@ import './Attaches.css'
 type Props = {
   attaches: Attach.Attaches
   class: ClassName
-  historyContainerWidth: Ref<number>
 }
 
 export const Attaches = defineComponent<Props>((props) => {
@@ -20,12 +19,7 @@ export const Attaches = defineComponent<Props>((props) => {
   return () => (
     <div class={['Attaches', props.class]}>
       {props.attaches.sticker && <AttachSticker sticker={props.attaches.sticker} />}
-      {props.attaches.photos && (
-        <AttachPhotos
-          photos={props.attaches.photos}
-          historyContainerWidth={props.historyContainerWidth}
-        />
-      )}
+      {props.attaches.photos && <AttachPhotos photos={props.attaches.photos} />}
       {props.attaches.links?.map((link) => <AttachLink link={link} />)}
       {props.attaches.wall && <AttachWall wall={props.attaches.wall} />}
       {props.attaches.unknown?.map((unknown) => (
@@ -36,5 +30,5 @@ export const Attaches = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['attaches', 'class', 'historyContainerWidth']
+  props: ['attaches', 'class']
 })

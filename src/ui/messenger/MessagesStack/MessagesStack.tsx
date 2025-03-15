@@ -1,4 +1,4 @@
-import { defineComponent, Ref } from 'vue'
+import { defineComponent } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
@@ -11,7 +11,6 @@ import './MessagesStack.css'
 
 type MessagesStackProps = {
   messages: NonEmptyArray<Message.Message>
-  historyContainerWidth: Ref<number>
 }
 
 export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
@@ -19,17 +18,17 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
     switch (message.kind) {
       case 'Normal':
         return (
-          <div class="MessagesStack__message" data-cmid={message.cmid}>
+          <div key={message.cmid} class="MessagesStack__message" data-cmid={message.cmid}>
             <ConvoMessage
               message={message}
               showName={index === 0 && Peer.isChatPeerId(message.peerId)}
-              historyContainerWidth={props.historyContainerWidth}
             />
           </div>
         )
       case 'Service':
         return (
           <div
+            key={message.cmid}
             class="MessagesStack__message MessagesStack__message--centered"
             data-cmid={message.cmid}
           >
@@ -39,6 +38,7 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
       case 'Expired':
         return (
           <div
+            key={message.cmid}
             class="MessagesStack__message MessagesStack__message--centered"
             data-cmid={message.cmid}
           >
@@ -67,5 +67,5 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
     )
   }
 }, {
-  props: ['messages', 'historyContainerWidth']
+  props: ['messages']
 })

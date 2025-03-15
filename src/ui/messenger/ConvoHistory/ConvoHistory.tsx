@@ -6,7 +6,7 @@ import {
   onBeforeUpdate,
   onMounted,
   onUpdated,
-  Ref,
+  provide,
   shallowRef
 } from 'vue'
 import * as Convo from 'model/Convo'
@@ -16,6 +16,7 @@ import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv, useResizeObserver } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
+import { convoHistoryContextInjectKey } from 'misc/providers'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 import { Button } from 'ui/ui/Button/Button'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
@@ -33,9 +34,16 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const prevScrollHeight = shallowRef(0)
 
-  const contentWidth = shallowRef(0)
-  const $historyContent = useResizeObserver((entry) => {
-    contentWidth.value = entry.contentRect.width
+  const historyWidth = shallowRef(0)
+  const historyHeight = shallowRef(0)
+  useResizeObserver($historyElement, (entry) => {
+    historyWidth.value = entry.contentRect.width
+    historyHeight.value = entry.contentRect.height
+  })
+
+  provide(convoHistoryContextInjectKey, {
+    historyViewportWidth: historyWidth,
+    historyViewportHeight: historyHeight
   })
 
   onMounted(() => {
@@ -193,12 +201,12 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
     return (
       <div class="ConvoHistory" ref={$historyElement}>
-        <div class="ConvoHistory__content" ref={$historyContent}>
+        <div class="ConvoHistory__content">
           <div class="ConvoHistory__topFiller" />
 
           {gapBefore && renderLoader('up', gapBefore.toId, gapBefore)}
 
-          <HistoryMessages items={items} historyContainerWidth={contentWidth} />
+          <HistoryMessages items={items} />
 
           {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
         </div>
@@ -211,7 +219,6 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
 type HistoryMessagesProps = {
   items: Array<History.Item<Message.Message>>
-  historyContainerWidth: Ref<number>
 }
 
 const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
@@ -237,10 +244,8 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
       return stacks
     }, new Array<NonEmptyArray<Message.Message>>())
 
-    return stacks.map((messages) => (
-      <MessagesStack messages={messages} historyContainerWidth={props.historyContainerWidth} />
-    ))
+    return stacks.map((messages) => <MessagesStack messages={messages} />)
   }
 }, {
-  props: ['items', 'historyContainerWidth']
+  props: ['items']
 })
