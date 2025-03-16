@@ -1,0 +1,8 @@
+.PhotoViewerModal {
+  height: 100%;
+}
+
+.PhotoViewerModal__photo {
+  max-width: 100%;
+  max-height: 100%;
+}

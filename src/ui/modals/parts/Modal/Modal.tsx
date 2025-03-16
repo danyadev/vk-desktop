@@ -1,6 +1,7 @@
 import { defineComponent } from 'vue'
 import { ClassName, JSXElement } from 'misc/utils'
 import { ModalBody, ModalFooter, ModalHeader, ModalView } from 'ui/modals/parts'
+import './Modal.css'
 
 type Props = {
   /** Открыта ли модалка */
@@ -16,8 +17,8 @@ type Props = {
   /** Заголовок в шапке модалки */
   title: string | JSXElement
   /** Убирает стандартные отступы для контента модалки */
-  withCustomLayout?: boolean
-  /** Класс, который пробрасывается во враппер контента модалки */
+  withoutBodyPadding?: boolean
+  /** Класс, который пробрасывается в тело с контентом модалки */
   class?: ClassName
   /** Кнопки в футере модалки */
   buttons?: JSXElement | JSXElement[]
@@ -34,16 +35,15 @@ export const Modal = defineComponent<Props>((props, { slots }) => {
       noBackdrop={props.noBackdrop}
       onVisibilityChange={props.onVisibilityChange}
     >
-      <ModalHeader title={props.title} onClose={props.onClose} />
-      <ModalBody
-        withCustomLayout={props.withCustomLayout}
-        class={props.class}
-      >
-        {slots.default?.()}
-      </ModalBody>
-      {props.buttons && (
-        <ModalFooter buttons={props.buttons} leftContent={props.footerLeftContent} />
-      )}
+      <div class="Modal">
+        <ModalHeader title={props.title} onClose={props.onClose} />
+        <ModalBody withoutPadding={props.withoutBodyPadding} class={props.class}>
+          {slots.default?.()}
+        </ModalBody>
+        {props.buttons && (
+          <ModalFooter buttons={props.buttons} leftContent={props.footerLeftContent} />
+        )}
+      </div>
     </ModalView>
   )
 }, {
@@ -54,7 +54,7 @@ export const Modal = defineComponent<Props>((props, { slots }) => {
     'noBackdrop',
     'onVisibilityChange',
     'title',
-    'withCustomLayout',
+    'withoutBodyPadding',
     'class',
     'buttons',
     'footerLeftContent'

@@ -50,7 +50,8 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
           id: apiAttach.photo.id,
           ownerId: Peer.resolveOwnerId(apiAttach.photo.owner_id),
           accessKey: apiAttach.photo.access_key,
-          image: apiAttach.photo.orig_photo
+          image: apiAttach.photo.orig_photo,
+          sizes: fromApiImageSizes(apiAttach.photo.sizes ?? [])
         }
 
         attaches.photos = [...(attaches.photos ?? []), photo]

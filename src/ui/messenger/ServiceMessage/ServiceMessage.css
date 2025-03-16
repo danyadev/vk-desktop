@@ -1,5 +1,16 @@
 .ServiceMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   color: var(--vkui--color_text_subhead);
   overflow-wrap: break-word;
   text-align: center;
+  gap: 10px;
+}
+
+.ServiceMessage__photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  cursor: pointer;
 }

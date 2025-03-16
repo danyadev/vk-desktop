@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { useEnv } from 'hooks'
+import { useEnv, useGlobalModal } from 'hooks'
 import './ServiceMessage.css'
 
 type Props = {
@@ -9,10 +9,32 @@ type Props = {
 }
 
 export const ServiceMessage = defineComponent<Props>((props) => {
+  const { photoViewerModal } = useGlobalModal()
+
   return () => {
+    const photoUpdateAction = props.message.action.type === 'chat_photo_update'
+      ? props.message.action
+      : undefined
+
     return (
       <div class="ServiceMessage">
         <PlainServiceMessage message={props.message} />
+
+        {photoUpdateAction?.photo && (
+          <img
+            class="ServiceMessage__photo"
+            src={
+              photoUpdateAction.photo.sizes.get('p')?.url ??
+              photoUpdateAction.photo.sizes.get('x')?.url ??
+              photoUpdateAction.photo.image.url
+            }
+            onClick={() => {
+              if (photoUpdateAction.photo) {
+                photoViewerModal.open({ photo: photoUpdateAction.photo })
+              }
+            }}
+          />
+        )}
       </div>
     )
   }

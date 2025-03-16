@@ -59,7 +59,7 @@ export type ServiceAction =
     }
   | {
       type: 'chat_photo_update'
-      photo?: { photo50: string, photo100: string, photo200: string }
+      photo?: Attach.Photo
     }
   | {
       type:

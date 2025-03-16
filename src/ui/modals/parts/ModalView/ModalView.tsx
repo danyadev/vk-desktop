@@ -1,5 +1,6 @@
 import { defineComponent, shallowRef, Teleport, Transition, watch } from 'vue'
 import { useIsMounted } from 'hooks'
+import { ClassName } from 'misc/utils'
 import { useFocusTrap } from './useFocusTrap'
 import './ModalView.css'
 
@@ -10,8 +11,6 @@ type Props = {
   hidden?: boolean
   /** Обработчик закрытия при клике на крестик и бэкграунд */
   onClose: () => void
-  /** Убирает темный фон под модалкой */
-  noBackdrop?: boolean
   /**
    * Функция, сообщающая о смене актуальной видимости модалки.
    * isVisible = true выставляется перед началом анимации появления модалки
@@ -22,13 +21,16 @@ type Props = {
    * <opened = false> -> [анимация скрытия модалки] -> <isVisible = false>
    */
   onVisibilityChange?: (isVisible: boolean) => void
+  /** Убирает темный фон под модалкой */
+  noBackdrop?: boolean
+  class?: ClassName
 }
 
 export const ModalView = defineComponent<Props>((props, { slots }) => {
   const isMounted = useIsMounted()
   const isModalVisible = shallowRef(false)
-  const $modalContent = shallowRef<HTMLDivElement | null>(null)
-  const { onFocusIn, onFocusOut } = useFocusTrap($modalContent)
+  const $modalContainer = shallowRef<HTMLDivElement | null>(null)
+  const { onFocusIn, onFocusOut } = useFocusTrap($modalContainer)
 
   /**
    * Фокусируемся на модалке при ее показе, чтобы сбросить фокус с предыдущего элемента,
@@ -39,17 +41,17 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
    *
    * Ну и чтобы Esc отрабатывал правильно при открытой модалке
    */
-  watch($modalContent, () => {
-    if (!$modalContent.value) {
+  watch($modalContainer, () => {
+    if (!$modalContainer.value) {
       return
     }
 
     // Если внутри модалки уже есть фокус, то не перебиваем фокус на корень модалки
-    if ($modalContent.value.contains(document.activeElement)) {
+    if ($modalContainer.value.contains(document.activeElement)) {
       return
     }
 
-    $modalContent.value.focus()
+    $modalContainer.value.focus()
   })
 
   function onBeforeAppear() {
@@ -116,17 +118,15 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
               }]}
             >
               <div class="ModalView__backdrop" onClick={props.onClose} />
-              <div class="ModalView__container">
-                <div
-                  class="ModalView__content"
-                  tabindex="-1"
-                  onKeydown={(event) => event.key === 'Escape' && props.onClose()}
-                  onFocusin={onFocusIn}
-                  onFocusout={onFocusOut}
-                  ref={$modalContent}
-                >
-                  {slots.default?.()}
-                </div>
+              <div
+                class={['ModalView__container', props.class]}
+                tabindex="-1"
+                onKeydown={(event) => event.key === 'Escape' && props.onClose()}
+                onFocusin={onFocusIn}
+                onFocusout={onFocusOut}
+                ref={$modalContainer}
+              >
+                {slots.default?.()}
               </div>
             </div>
           )}
@@ -135,5 +135,5 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
     )
   }
 }, {
-  props: ['opened', 'hidden', 'onClose', 'noBackdrop', 'onVisibilityChange']
+  props: ['opened', 'hidden', 'onClose', 'onVisibilityChange', 'noBackdrop', 'class']
 })

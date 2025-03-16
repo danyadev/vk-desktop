@@ -1,6 +1,7 @@
 import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
 import { MessagesPinnedMessage } from 'model/api-types/objects/MessagesPinnedMessage'
+import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { fromApiAttaches } from 'converters/AttachConverter'
@@ -19,10 +20,12 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
       : undefined
   } satisfies Partial<Message.Message>
 
+  const attaches = fromApiAttaches(message.attachments ?? [])
+
   if (message.action) {
     return {
       kind: 'Service',
-      action: fromApiMessageAction(message.action),
+      action: fromApiMessageAction(message.action, attaches.photos?.[0]),
       ...baseMessage
     }
   }
@@ -37,7 +40,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
   return {
     kind: 'Normal',
     text: message.text,
-    attaches: fromApiAttaches(message.attachments ?? []),
+    attaches,
     replyMessage: message.reply_message && fromApiForeignMessage(
       message.reply_message,
       baseMessage.peerId,
@@ -52,7 +55,10 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
   }
 }
 
-function fromApiMessageAction(action: MessagesMessageAction): Message.ServiceAction {
+function fromApiMessageAction(
+  action: MessagesMessageAction,
+  photo?: Attach.Photo
+): Message.ServiceAction {
   switch (action.type) {
     case 'chat_create':
       return {
@@ -68,14 +74,7 @@ function fromApiMessageAction(action: MessagesMessageAction): Message.ServiceAct
       }
 
     case 'chat_photo_update':
-      return {
-        type: action.type,
-        photo: action.photo && {
-          photo50: action.photo.photo_50,
-          photo100: action.photo.photo_100,
-          photo200: action.photo.photo_200
-        }
-      }
+      return { type: action.type, photo }
 
     case 'chat_photo_remove':
     case 'chat_kick_don':

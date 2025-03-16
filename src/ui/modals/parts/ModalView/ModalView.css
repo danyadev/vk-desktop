@@ -1,6 +1,7 @@
 .ModalView {
   width: 100%;
   height: 100%;
+  visibility: hidden;
 }
 
 .ModalView--hidden {
@@ -26,14 +27,12 @@
   align-items: center;
   min-height: 100%;
   padding: 20px;
-  visibility: hidden;
+  visibility: visible;
+  pointer-events: none;
 }
 
-.ModalView__content {
-  background-color: var(--vkui--color_background_modal);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.24);
-  visibility: visible;
+.ModalView__container > * {
+  pointer-events: all;
 }
 
 .ModalViewAnimation-enter-active,

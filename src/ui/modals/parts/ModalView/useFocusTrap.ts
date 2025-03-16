@@ -1,4 +1,5 @@
 import { FocusEvent, onBeforeMount, onUnmounted, Ref } from 'vue'
+import { NonEmptyArray } from 'misc/utils'
 
 export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
   let initialFocusedElement: Element | null = null
@@ -59,7 +60,7 @@ export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
      * Если значение null, то мы вышли за пределы focusRoot обычным путем - через Tab
      */
     if (event.relatedTarget === null) {
-      focusableElements[0]?.focus()
+      focusableElements[0].focus()
     }
 
     /**
@@ -74,7 +75,7 @@ export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
   return { onFocusIn, onFocusOut }
 }
 
-function getAllFocusableElements(parent: HTMLElement): HTMLElement[] {
+function getAllFocusableElements(parent: HTMLElement): NonEmptyArray<HTMLElement> {
   const focusableElementsSelectors = [
     'a[href]',
     'button',
@@ -88,9 +89,14 @@ function getAllFocusableElements(parent: HTMLElement): HTMLElement[] {
     'video'
   ]
 
-  const nodeList = parent.querySelectorAll(
+  const nodeList = parent.querySelectorAll<HTMLElement>(
     `:where(${focusableElementsSelectors.join(',')}):not([disabled])`
   )
 
-  return [].slice.call(nodeList)
+  const [firstNode, ...rest] = nodeList
+  if (firstNode) {
+    return [firstNode, ...rest]
+  }
+
+  return [parent]
 }

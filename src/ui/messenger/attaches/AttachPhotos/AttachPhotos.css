@@ -19,4 +19,5 @@
   flex-grow: 1;
   object-fit: cover;
   border-radius: 2px;
+  cursor: pointer;
 }

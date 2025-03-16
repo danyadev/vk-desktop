@@ -3,17 +3,16 @@ import { ClassName } from 'misc/utils'
 import './ModalBody.css'
 
 type Props = {
-  /** Убирает стандартные отступы */
-  withCustomLayout?: boolean
+  withoutPadding?: boolean
   class?: ClassName
 }
 
 export const ModalBody = defineComponent<Props>((props, { slots }) => {
   return () => (
-    <div class={['ModalBody', !props.withCustomLayout && 'ModalBody--standard']}>
+    <div class={['ModalBody', !props.withoutPadding && 'ModalBody--withPadding']}>
       {slots.default?.()}
     </div>
   )
 }, {
-  props: ['withCustomLayout']
+  props: ['withoutPadding']
 })

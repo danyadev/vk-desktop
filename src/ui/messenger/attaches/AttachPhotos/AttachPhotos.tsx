@@ -1,5 +1,6 @@
 import { computed, defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
+import { useGlobalModal } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { useConvoHistoryContext } from 'misc/providers'
 import { generatePhotosLayout } from './generatePhotosLayout'
@@ -15,6 +16,7 @@ export const AttachPhotos = defineComponent<Props>((props) => {
   const { measureElRef, maxWidth, isMeasured } = useMeasureMaxWidth(historyViewportWidth)
   const maxHeight = computed(() => Math.min(historyViewportHeight.value * 0.9, 500))
   const layout = computed(() => generatePhotosLayout(props.photos, maxWidth.value, maxHeight.value))
+  const { photoViewerModal } = useGlobalModal()
 
   return () => (
     <div class="AttachPhotos">
@@ -26,6 +28,7 @@ export const AttachPhotos = defineComponent<Props>((props) => {
               src={photo.photo.image.url}
               width={photo.width}
               height={photo.height}
+              onClick={() => photoViewerModal.open({ photo: photo.photo })}
             />
           ))}
         </span>

@@ -27,6 +27,7 @@ export type Photo = {
   ownerId: Peer.OwnerId
   accessKey?: string
   image: Image
+  sizes: ImageSizes
 }
 
 export type Link = {

@@ -10,6 +10,7 @@ import { useThemeScheme } from './useThemeScheme'
 import { Titlebar } from 'ui/app/Titlebar/Titlebar'
 import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
 import { ModalsContainer } from 'ui/modals/parts'
+import { PhotoViewerModal } from 'ui/modals/PhotoViewerModal/PhotoViewerModal'
 import './App.css'
 
 export const App = defineComponent(() => {
@@ -47,16 +48,12 @@ export const App = defineComponent(() => {
 })
 
 const GlobalModals = defineComponent(() => {
-  const { captchaModal } = useGlobalModal()
-  const modals = [
-    [captchaModal, CaptchaModal]
-  ] as const
+  const { captchaModal, photoViewerModal } = useGlobalModal()
 
-  return () => (
-    modals.map(([modal, Modal]) => (
-      // Параметры появляются при открытии модалки,
-      // а удаляются только после окончания анимации закрытия модалки
-      modal.params && <Modal {...modal.params} />
-    ))
-  )
+  return () => [
+    // Параметры появляются при открытии модалки,
+    // а удаляются только после окончания анимации закрытия модалки
+    captchaModal.params && <CaptchaModal {...captchaModal.params} />,
+    photoViewerModal.params && <PhotoViewerModal {...photoViewerModal.params} />
+  ]
 })
