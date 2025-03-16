@@ -4,9 +4,9 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useEnv } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
-import { ForwardedMessages } from 'ui/messenger/ConvoMessage/ForwardedMessages'
-import { ReplyMessage } from 'ui/messenger/ConvoMessage/ReplyMessage'
+import { ForwardedMessages } from 'ui/messenger/ForwardedMessages/ForwardedMessages'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
+import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
 import './ConvoMessage.css'
 
 type Props = {

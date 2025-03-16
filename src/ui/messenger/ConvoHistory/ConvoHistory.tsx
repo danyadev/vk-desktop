@@ -33,9 +33,11 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const prevScrollHeight = shallowRef(0)
+  let newConvoHistoryJustRendered = false
 
   const historyWidth = shallowRef(0)
   const historyHeight = shallowRef(0)
+
   useResizeObserver($historyElement, (entry) => {
     historyWidth.value = entry.contentRect.width
     historyHeight.value = entry.contentRect.height
@@ -66,6 +68,11 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   })
 
   onUpdated(() => {
+    if (newConvoHistoryJustRendered) {
+      newConvoHistoryJustRendered = false
+      return
+    }
+
     if (!$historyElement.value) {
       return
     }
@@ -75,18 +82,18 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
      * но впоследствии ререндера оказались выше.
      * Основной сценарий - когда мы или собеседник написали новое сообщение
      *
-     * scrollTop - высота от начала контента до начала вьюпорта;
+     * scrollTop - высота от верха контента до верха вьюпорта;
      * offsetHeight - высота вьюпорта;
      * scrollHeight - общая высота контента.
      *
-     * Сумма scrollTop и offsetHeight равна высоте от начала контента до конца вьюпорта.
+     * Сумма scrollTop и offsetHeight равна высоте от верха контента до конца вьюпорта.
      * Если мы находимся в самом низу, то она будет совпадать с общей высотой, но если
      * мы проскроллим вверх, появляется контент под вьюпортом, который нам не виден.
      * Тогда сумма не совпадет и мы поймем что юзер не находится внизу
      */
     const upperContentHeight = $historyElement.value.scrollTop + $historyElement.value.offsetHeight
 
-    if (prevScrollHeight.value === upperContentHeight) {
+    if (prevScrollHeight.value - upperContentHeight < 20) {
       $historyElement.value.scrollTo(0, $historyElement.value.scrollHeight)
     }
   })
@@ -109,6 +116,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
        * компонент и обновлен дом, из-за чего мы не можем достать предыдущий scrollHeight
        */
       onHistoryInserted(insertedMessages) {
+        newConvoHistoryJustRendered = true
         correctScrollPosition(insertedMessages, direction, startCmid)
       }
     })
