@@ -280,7 +280,7 @@ export class Api implements IApi.Api {
         ...params
       }
 
-      const result = await fetch(`https://api.vk.com/method/${method}`, {
+      const response = await fetch(`https://api.vk.com/method/${method}`, {
         method: 'POST',
         body: toUrlParams(fullParams),
         headers: {
@@ -289,16 +289,16 @@ export class Api implements IApi.Api {
           ...fetchOptions.headers
         },
         signal: abortController.signal
-      }).then<IApi.Result<Methods[Method]['response']>>((response) => {
-        window.clearTimeout(abortTimeoutId)
-
-        if (!response.ok) {
-          const errorReason = `api responded with status ${response.status}`
-          return Promise.reject(new IApi.FetchError('ServerError', errorReason))
-        }
-
-        return response.json()
       })
+
+      window.clearTimeout(abortTimeoutId)
+
+      if (!response.ok) {
+        const errorReason = `api responded with status ${response.status}`
+        return Promise.reject(new IApi.FetchError('ServerError', errorReason))
+      }
+
+      const result = await response.json() as IApi.Result<Methods[Method]['response']>
 
       if ('error' in result) {
         return Promise.reject(new IApi.MethodError(method, result.error))
@@ -315,7 +315,7 @@ export class Api implements IApi.Api {
 
       return result.response
     } catch (error) {
-      console.warn(error)
+      console.warn('[Api]', error)
       return Promise.reject(new IApi.FetchError('NetworkError', String(error)))
     } finally {
       this.semaphore.release()
