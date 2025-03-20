@@ -35,3 +35,8 @@
   width: 100%;
   height: 100%;
 }
+
+.ButtonIcon--shiftOnClick:active .ButtonIcon__in {
+  position: relative;
+  top: 1px;
+}

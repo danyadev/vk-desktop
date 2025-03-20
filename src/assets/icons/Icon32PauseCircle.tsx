@@ -1,8 +1,6 @@
-import { defineComponent, useId } from 'vue'
+import { defineComponent, SVGAttributes, useId } from 'vue'
 
-type Props = {
-  withUnlistenedDot?: boolean
-}
+type Props = SVGAttributes & { withUnlistenedDot?: boolean }
 
 export const Icon32PauseCircle = defineComponent<Props>((props) => {
   const id = useId()

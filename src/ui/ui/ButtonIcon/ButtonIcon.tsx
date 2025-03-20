@@ -10,30 +10,34 @@ type Props = {
   stretched?: boolean
   addHoverBackground?: boolean
   loading?: boolean
+  shiftOnClick?: boolean
 } & ButtonHTMLAttributes
 
 export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
   const { isFocused, onBlur, onFocus } = useFocusVisible()
 
-  return () => (
-    <button
-      type="button"
-      class={['ButtonIcon', {
-        'ButtonIcon--stretched': props.stretched,
-        'ButtonIcon--hoverBackground': props.addHoverBackground ?? true,
-        'ButtonIcon--loading': props.loading
-      }]}
-      onBlur={onBlur}
-      onFocus={onFocus}
-    >
-      <span class="ButtonIcon__in">
-        {props.icon}
-        {slots.default?.()}
-      </span>
-      {props.loading && <Spinner class="ButtonIcon__spinner" color="inherit" />}
-      <FocusVisible isFocused={isFocused.value} />
-    </button>
-  )
+  return () => {
+    return (
+      <button
+        type="button"
+        class={['ButtonIcon', {
+          'ButtonIcon--shiftOnClick': props.shiftOnClick ?? false,
+          'ButtonIcon--stretched': props.stretched,
+          'ButtonIcon--hoverBackground': props.addHoverBackground ?? true,
+          'ButtonIcon--loading': props.loading
+        }]}
+        onBlur={onBlur}
+        onFocus={onFocus}
+      >
+        <span class="ButtonIcon__in">
+          {props.icon}
+          {slots.default?.()}
+        </span>
+        {props.loading && <Spinner class="ButtonIcon__spinner" color="inherit" />}
+        <FocusVisible isFocused={isFocused.value} />
+      </button>
+    )
+  }
 }, {
-  props: ['icon', 'stretched', 'addHoverBackground', 'loading']
+  props: ['icon', 'stretched', 'addHoverBackground', 'loading', 'shiftOnClick']
 })
