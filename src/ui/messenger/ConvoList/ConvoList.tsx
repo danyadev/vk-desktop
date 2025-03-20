@@ -12,6 +12,8 @@ import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Floating } from 'ui/ui/Floating/Floating'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
+import { ActionMenu } from 'ui/ui/menu/ActionMenu/ActionMenu'
+import { ActionMenuItem } from 'ui/ui/menu/ActionMenuItem/ActionMenuItem'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24DoorArrowRightOutline, Icon24MoreHorizontal, Icon28SettingsOutline } from 'assets/icons'
 import './ConvoList.css'
@@ -33,7 +35,7 @@ export const ConvoList = defineComponent<Props>((props) => {
       shift(),
       flip()
     ]
-  })
+  }, 'var(--vkui--color_transparent--hover)')
 
   const { lang } = useEnv()
   const viewer = useViewer()
@@ -55,35 +57,36 @@ export const ConvoList = defineComponent<Props>((props) => {
               button={
                 <ButtonIcon
                   class="ConvoList__burgerMenu"
+                  addHoverBackground={false}
                   icon={
                     <Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />
                   }
                 />
               }
             >
-              <nav class="ConvoList__navigation">
-                <Button
-                  class="ConvoList__settings"
-                  mode="tertiary"
-                  wide
-                  before={
-                    <Icon28SettingsOutline width="20" color="var(--vkui--color_icon_secondary)" />
-                  }
-                >
-                  Настройки
-                </Button>
-                <Button
-                  class="ConvoList__headerExitIcon"
-                  mode="tertiary"
-                  wide
-                  before={
-                    <Icon24DoorArrowRightOutline width="20" color="var(--vkui--color_icon_negative)" />
-                  }
-                  onClick={logout}
-                >
-                  Выход
-                </Button>
-              </nav>
+              <ActionMenu
+                actions={[
+                  <ActionMenuItem
+                    text="Настройки"
+                    icon={
+                      <Icon28SettingsOutline
+                        width="20"
+                        color="var(--vkui--color_icon_secondary)"
+                      />
+                    }
+                  />,
+                  <ActionMenuItem
+                    text="Выход"
+                    onClick={logout}
+                    icon={
+                      <Icon24DoorArrowRightOutline
+                        width="20"
+                        color="var(--vkui--color_icon_negative)"
+                      />
+                    }
+                  />
+                ]}
+              />
             </Floating>
           </>
         )}

@@ -55,22 +55,6 @@
   padding: 5px 10px;
 }
 
-.ConvoList__settings {
-  padding: 4px 8px;
-}
-
-.ConvoList__headerExitIcon {
-  padding: 4px 8px;
-}
-
-.ConvoList__settings span {
-  gap: 12px;
-}
-
-.ConvoList__headerExitIcon span {
-  gap: 12px;
-}
-
 .ConvoList__list {
   /* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
   overflow: overlay;
