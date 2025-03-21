@@ -18,6 +18,7 @@ export { default as Icon24DoorArrowRightOutline } from './Icon24DoorArrowRightOu
 export { default as Icon24HideOutline } from './Icon24HideOutline.svg'
 export { default as Icon24Info } from './Icon24Info.svg'
 export { default as Icon24LinkExternalOutline } from './Icon24LinkExternalOutline.svg'
+export { default as Icon24MoreHorizontal } from './Icon24MoreHorizontal.svg'
 export { default as Icon24MuteOutline } from './Icon24MuteOutline.svg'
 export { default as Icon24Send } from './Icon24Send.svg'
 export { default as Icon24Spinner } from './Icon24Spinner.svg'
