@@ -35,6 +35,7 @@ declare module 'vue' {
 
   interface InputHTMLAttributes {
     onKeydown?: (event: KeyboardEvent<HTMLInputElement>) => void
+    onChange?: (event: InputEvent<HTMLInputElement>) => void
     onInput?: (event: InputEvent<HTMLInputElement>) => void
   }
 

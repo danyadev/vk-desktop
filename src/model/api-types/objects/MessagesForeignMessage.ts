@@ -15,9 +15,9 @@ export type MessagesForeignMessage = {
   reply_message?: MessagesForeignMessage
   text: string
   update_time?: number
-  was_listened?: boolean
   was_played?: boolean
   payload?: string
   is_expired?: boolean
   is_unavailable?: boolean
+  was_listened?: boolean
 }

@@ -9,7 +9,10 @@ import * as Peer from 'model/Peer'
 import { insertPeers } from 'actions'
 import { isNonEmptyArray } from 'misc/utils'
 
-export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attach.Attaches {
+export function fromApiAttaches(
+  apiAttaches: MessagesMessageAttachment[],
+  wasVoiceMessageListened: boolean
+): Attach.Attaches {
   const attaches: Attach.Attaches = {}
 
   const addUnknown = (attach: MessagesMessageAttachment) => {
@@ -35,6 +38,28 @@ export function fromApiAttaches(apiAttaches: MessagesMessageAttachment[]): Attac
           packId: apiAttach.sticker.product_id,
           images: fromApiImageList(apiAttach.sticker.images ?? []),
           imagesWithBackground: fromApiImageList(apiAttach.sticker.images_with_background ?? [])
+        }
+        break
+      }
+
+      case 'audio_message': {
+        if (!apiAttach.audio_message) {
+          addUnknown(apiAttach)
+          break
+        }
+
+        attaches.voice = {
+          kind: 'Voice',
+          id: apiAttach.audio_message.id,
+          ownerId: Peer.resolveOwnerId(apiAttach.audio_message.owner_id),
+          accessKey: apiAttach.audio_message.access_key,
+          linkMp3: apiAttach.audio_message.link_mp3,
+          linkOgg: apiAttach.audio_message.link_ogg,
+          duration: apiAttach.audio_message.duration,
+          waveform: apiAttach.audio_message.waveform,
+          wasListened: wasVoiceMessageListened,
+          transcript: apiAttach.audio_message.transcript?.trim() ?? '',
+          transcriptState: apiAttach.audio_message.transcript_state
         }
         break
       }
@@ -123,7 +148,7 @@ function fromApiAttachWall(apiWall: MessagesMessageAttachmentWall): Attach.Wall 
     accessKey: apiWall.access_key,
     createdAt: (apiWall.date ?? 0) * 1000,
     text: apiWall.text ?? '',
-    attaches: fromApiAttaches(apiWall.attachments ?? []),
+    attaches: fromApiAttaches(apiWall.attachments ?? [], true),
     isDeleted: !!apiWall.is_deleted,
     donutPlaceholder: apiWall.donut?.placeholder?.text,
     repost: apiWall.copy_history?.[0]
