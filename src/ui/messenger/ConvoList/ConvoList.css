@@ -1,8 +1,9 @@
 .ConvoList__header {
+  position: relative;
   display: grid;
   grid-template-areas:
-    'avatar name exitIcon'
-    'avatar status exitIcon';
+    'avatar name menu'
+    'avatar status menu';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -38,10 +39,20 @@
   color: var(--vkui--color_text_secondary);
 }
 
-.ConvoList__headerExitIcon {
-  grid-area: exitIcon;
-  margin-left: auto;
-  padding: 2px;
+.ConvoList__burgerMenu {
+  grid-area: menu;
+}
+
+.ConvoList__navigation {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: var(--vkui--color_background_content);
+  border-radius: 10px;
+  border: 0.5px solid var(--vkui--color_transparent--active);
+  padding: 5px 10px;
 }
 
 .ConvoList__list {
