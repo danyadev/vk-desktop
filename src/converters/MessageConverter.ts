@@ -20,7 +20,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
       : undefined
   } satisfies Partial<Message.Message>
 
-  const attaches = fromApiAttaches(message.attachments ?? [], true)
+  const attaches = fromApiAttaches(message.attachments ?? [], !!message.was_listened)
 
   if (message.action) {
     return {
@@ -40,7 +40,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
   return {
     kind: 'Normal',
     text: message.text,
-    attaches: fromApiAttaches(message.attachments ?? [], !!message.was_listened),
+    attaches,
     replyMessage: message.reply_message && fromApiForeignMessage(
       message.reply_message,
       baseMessage.peerId,

@@ -13,11 +13,12 @@ export const AttachVoice = defineComponent<Props>((props) => {
   const { lang } = useEnv()
 
   const audio = new Audio(props.voice.linkMp3)
-  const isPause = shallowRef(false)
-  const range = shallowRef(0)
-  const isRange = shallowRef(false)
-  const requestId = shallowRef(-1)
+  const isPlaying = shallowRef(false)
+  const isDraggingProgress = shallowRef(false)
+  const progress = shallowRef(0)
+  const time = shallowRef(formatTime(props.voice.duration))
   const showTranscript = shallowRef(false)
+  let rAFId = 0
 
   const transcriptNotReadyStatus = computed(() => {
     if (props.voice.transcriptState === 'error') {
@@ -33,49 +34,46 @@ export const AttachVoice = defineComponent<Props>((props) => {
     }
   })
 
-  const getCurrentTime = () => {
-    const currentTime = audio.currentTime === 0
-      ? props.voice.duration
-      : audio.currentTime
-
-    const date = new Date()
-    date.setMinutes(0, currentTime)
-
-    return date.getMinutes() + ':' + String(date.getSeconds()).padStart(2, '0')
-  }
-
-  const moveRange = (event: InputEvent<HTMLInputElement>) => {
+  const onRangeChange = (event: InputEvent<HTMLInputElement>) => {
     audio.currentTime = (+event.target.value / 100) * props.voice.duration
-    requestId.value = requestAnimationFrame(updateRange)
+    rAFId = requestAnimationFrame(updateProgress)
   }
 
-  const updateRange = () => {
-    if (isRange.value) {
+  const updateProgress = () => {
+    if (isDraggingProgress.value) {
       return
     }
 
-    range.value = (audio.currentTime / props.voice.duration) * 100
-    requestId.value = requestAnimationFrame(updateRange)
+    progress.value = (audio.currentTime / props.voice.duration)
+    rAFId = requestAnimationFrame(updateProgress)
   }
 
-  const toggleAudio = () => {
-    if (!isPause.value) {
-      requestId.value = requestAnimationFrame(updateRange)
-      isPause.value = true
+  const togglePlay = () => {
+    if (isPlaying.value) {
+      audio.pause()
+    } else {
       audio.play()
-      return
     }
-
-    cancelAnimationFrame(requestId.value)
-    audio.pause()
-    isPause.value = false
   }
 
-  audio.onended = () => {
-    cancelAnimationFrame(requestId.value)
-    isPause.value = false
-    range.value = 0
-  }
+  audio.addEventListener('play', () => {
+    isPlaying.value = true
+    rAFId = requestAnimationFrame(updateProgress)
+  })
+
+  audio.addEventListener('pause', () => {
+    isPlaying.value = false
+    cancelAnimationFrame(rAFId)
+  })
+
+  audio.addEventListener('timeupdate', () => {
+    const currentTime = audio.currentTime === 0 ? props.voice.duration : audio.currentTime
+    time.value = formatTime(currentTime)
+  })
+
+  audio.addEventListener('ended', () => {
+    progress.value = 0
+  })
 
   return () => (
     <div class="AttachVoice">
@@ -83,9 +81,9 @@ export const AttachVoice = defineComponent<Props>((props) => {
         <ButtonIcon
           class="AttachVoice__playButton"
           addHoverBackground={false}
-          onClick={toggleAudio}
+          onClick={togglePlay}
           icon={
-            isPause.value
+            isPlaying.value
               ? <Icon32PauseCircle withUnlistenedDot={!props.voice.wasListened} />
               : <Icon32PlayCircle withUnlistenedDot={!props.voice.wasListened} />
           }
@@ -96,19 +94,20 @@ export const AttachVoice = defineComponent<Props>((props) => {
             class="AttachVoice__range"
             type="range"
             step="0.1"
-            value={range.value}
+            value={progress.value * 100}
             min="0"
             max="100"
-            onChange={(event) => moveRange(event)}
-            onTouchstart={() => (isRange.value = true)}
-            onTouchend={() => (isRange.value = false)}
-            onMousedown={() => (isRange.value = true)}
-            onMouseup={() => (isRange.value = false)}
+            onChange={(event) => onRangeChange(event)}
+            onTouchstart={() => (isDraggingProgress.value = true)}
+            onTouchend={() => (isDraggingProgress.value = false)}
+            onMousedown={() => (isDraggingProgress.value = true)}
+            onMouseup={() => (isDraggingProgress.value = false)}
           />
-          <span class="AttachVoice__time">{getCurrentTime()}</span>
+          <span class="AttachVoice__time">{time.value}</span>
         </div>
         <ButtonIcon
           class="AttachVoice__toggleTranscription"
+          shiftOnClick
           addHoverBackground={false}
           icon={showTranscript.value ? <Icon20ChevronUp /> : <Icon16Text />}
           onClick={() => (showTranscript.value = !showTranscript.value)}
@@ -128,3 +127,9 @@ export const AttachVoice = defineComponent<Props>((props) => {
 }, {
   props: ['voice']
 })
+
+const formatTime = (seconds: number) => {
+  const date = new Date()
+  date.setMinutes(0, seconds)
+  return date.getMinutes() + ':' + String(date.getSeconds()).padStart(2, '0')
+}

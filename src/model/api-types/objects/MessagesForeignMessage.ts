@@ -11,11 +11,11 @@ export type MessagesForeignMessage = {
   fwd_messages?: MessagesForeignMessage[]
   geo?: MessagesMessageAttachmentGeo
   id?: number
-  was_listened?: boolean
   peer_id?: number
   reply_message?: MessagesForeignMessage
   text: string
   update_time?: number
+  was_listened?: boolean
   was_played?: boolean
   payload?: string
   is_expired?: boolean
