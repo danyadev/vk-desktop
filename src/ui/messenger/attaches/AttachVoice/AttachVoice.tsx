@@ -1,4 +1,4 @@
-import { computed, defineComponent, InputEvent, shallowRef } from 'vue'
+import { computed, defineComponent, InputEvent, onUnmounted, shallowRef } from 'vue'
 import * as Attach from 'model/Attach'
 import { useEnv } from 'hooks'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -35,16 +35,17 @@ export const AttachVoice = defineComponent<Props>((props) => {
   })
 
   const onRangeChange = (event: InputEvent<HTMLInputElement>) => {
+    audio.pause()
     audio.currentTime = (+event.target.value / 100) * props.voice.duration
-    rAFId = requestAnimationFrame(updateProgress)
+    progress.value = audio.currentTime / props.voice.duration
+    audio.play()
   }
 
   const updateProgress = () => {
-    if (isDraggingProgress.value) {
-      return
+    if (!isDraggingProgress.value) {
+      progress.value = audio.currentTime / props.voice.duration
     }
 
-    progress.value = (audio.currentTime / props.voice.duration)
     rAFId = requestAnimationFrame(updateProgress)
   }
 
@@ -72,8 +73,30 @@ export const AttachVoice = defineComponent<Props>((props) => {
   })
 
   audio.addEventListener('ended', () => {
-    progress.value = 0
+    if (!isDraggingProgress.value) {
+      progress.value = 0
+    }
   })
+
+  onUnmounted(() => {
+    audio.pause()
+  })
+
+  const inputElement = computed(() => (
+    <input
+      class="AttachVoice__range"
+      type="range"
+      step="0.1"
+      value={progress.value * 100}
+      min="0"
+      max="100"
+      onChange={(event) => onRangeChange(event)}
+      onTouchstart={() => (isDraggingProgress.value = true)}
+      onTouchend={() => (isDraggingProgress.value = false)}
+      onMousedown={() => (isDraggingProgress.value = true)}
+      onMouseup={() => (isDraggingProgress.value = false)}
+    />
+  ))
 
   return () => (
     <div class="AttachVoice">
@@ -90,19 +113,7 @@ export const AttachVoice = defineComponent<Props>((props) => {
         />
 
         <div class="AttachVoice__track">
-          <input
-            class="AttachVoice__range"
-            type="range"
-            step="0.1"
-            value={progress.value * 100}
-            min="0"
-            max="100"
-            onChange={(event) => onRangeChange(event)}
-            onTouchstart={() => (isDraggingProgress.value = true)}
-            onTouchend={() => (isDraggingProgress.value = false)}
-            onMousedown={() => (isDraggingProgress.value = true)}
-            onMouseup={() => (isDraggingProgress.value = false)}
-          />
+          {inputElement.value}
           <span class="AttachVoice__time">{time.value}</span>
         </div>
         <ButtonIcon
