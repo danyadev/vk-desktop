@@ -10,6 +10,7 @@ type Props = {
   stretched?: boolean
   addHoverBackground?: boolean
   loading?: boolean
+  shiftOnClick?: boolean
 } & ButtonHTMLAttributes
 
 export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
@@ -19,6 +20,7 @@ export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
     <button
       type="button"
       class={['ButtonIcon', {
+        'ButtonIcon--shiftOnClick': props.shiftOnClick,
         'ButtonIcon--stretched': props.stretched,
         'ButtonIcon--hoverBackground': props.addHoverBackground ?? true,
         'ButtonIcon--loading': props.loading
@@ -35,5 +37,5 @@ export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
     </button>
   )
 }, {
-  props: ['icon', 'stretched', 'addHoverBackground', 'loading']
+  props: ['icon', 'stretched', 'addHoverBackground', 'loading', 'shiftOnClick']
 })

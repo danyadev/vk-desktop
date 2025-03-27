@@ -111,6 +111,10 @@ export const ru = {
   me_chat_leaved_status: 'Вы вышли из чата',
   me_chat_kicked_status: 'Вы были исключены из чата',
 
+  me_voice_transcription_error: 'Ошибка составления транскрипции',
+  me_voice_transcription_in_progress: 'Расшифровка...',
+  me_voice_transcript_empty: 'Слова не распознаны',
+
   me_chat_members_count: {
     one: '{count} участник',
     few: '{count} участника',
@@ -241,7 +245,7 @@ export const ru = {
   me_message_attach_wall: 'Запись',
   me_message_attach_wall_reply: 'Комментарий',
   me_message_attach_event: 'Мероприятие',
-  me_message_attach_audio_message: 'Аудиосообщение',
+  me_message_attach_voice: 'Аудиосообщение',
   me_message_attach_audio_playlist: 'Плейлист',
   me_message_attach_artist: 'Исполнитель',
   me_message_attach_curator: 'Куратор',

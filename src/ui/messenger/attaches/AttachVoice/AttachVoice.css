@@ -1,0 +1,96 @@
+.AttachVoice__player {
+  display: flex;
+  gap: 8px;
+}
+
+.AttachVoice__playButton {
+  color: var(--vkui--color_text_accent_themed);
+}
+
+.AttachVoice__track {
+  flex-grow: 1;
+}
+
+.AttachVoice__range {
+  position: relative;
+  width: 100%;
+  appearance: none;
+  cursor: pointer;
+  height: 3px;
+  background: none;
+  overflow: hidden;
+}
+
+.AttachVoice__range::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--vkui--color_background_accent_themed);
+  opacity: 0.2;
+}
+
+.AttachVoice__range::-webkit-slider-thumb {
+  appearance: none;
+  height: 3px;
+  width: 2px;
+  cursor: pointer;
+  box-shadow: -300px 0 0 300px var(--vkui--color_background_accent_themed);
+}
+
+.AttachVoice__toggleTranscription {
+  align-self: flex-start;
+  height: 20px;
+  width: 30px;
+  color: var(--vkui--color_text_accent_themed);
+  border-radius: 8px;
+  margin-top: 2px;
+  padding: 2px 6px;
+}
+
+.AttachVoice__toggleTranscription::before {
+  content: '';
+  border-radius: inherit;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--vkui--color_background_accent_themed);
+  opacity: 0.1;
+  transition: opacity var(--fastTransition);
+}
+
+.AttachVoice__toggleTranscription:hover::before {
+  opacity: 0.2;
+}
+
+.AttachVoice__time {
+  font: var(--messageDateFontSize) / var(--messageDateLineHeight) var(--fontFamily);
+  color: var(--vkui--color_text_accent_themed);
+}
+
+.AttachVoice__transcript {
+  position: relative;
+  display: flex;
+  margin-top: 8px;
+  padding-left: 12px;
+}
+
+.AttachVoice__transcript--notReady {
+  color: var(--vkui--color_text_secondary);
+}
+
+.AttachVoice__transcript::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--vkui--color_stroke_accent_themed);
+  opacity: 0.24;
+}

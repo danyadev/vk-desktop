@@ -20,7 +20,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
       : undefined
   } satisfies Partial<Message.Message>
 
-  const attaches = fromApiAttaches(message.attachments ?? [])
+  const attaches = fromApiAttaches(message.attachments ?? [], !!message.was_listened)
 
   if (message.action) {
     return {
@@ -163,7 +163,7 @@ function fromApiForeignMessage(
     authorId: Peer.resolveOwnerId(foreignMessage.from_id),
     sentAt: foreignMessage.date * 1000,
     text: foreignMessage.text,
-    attaches: fromApiAttaches(foreignMessage.attachments ?? []),
+    attaches: fromApiAttaches(foreignMessage.attachments ?? [], !!foreignMessage.was_listened),
     replyMessage: foreignMessage.reply_message && fromApiForeignMessage(
       foreignMessage.reply_message,
       rootPeerId,
@@ -210,7 +210,7 @@ export function fromApiPinnedMessage(pinnedMessage: MessagesPinnedMessage): Mess
     authorId: Peer.resolveOwnerId(pinnedMessage.from_id),
     sentAt: pinnedMessage.date * 1000,
     text: pinnedMessage.text,
-    attaches: fromApiAttaches(pinnedMessage.attachments ?? []),
+    attaches: fromApiAttaches(pinnedMessage.attachments ?? [], true),
     replyMessage: pinnedMessage.reply_message && fromApiForeignMessage(
       pinnedMessage.reply_message,
       peerId,
