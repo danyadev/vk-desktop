@@ -63,7 +63,7 @@ function groupPhotosIntoRows(layoutItems: LayoutItem[]) {
   const preferVerticalPositioning = layoutItems.reduce(
     (ratio, photo) => ratio + photo.width / photo.height,
     0
-  ) / count > 1
+  ) / count > 1.2
 
   // [[1], ([2]), ([3])]
   // or

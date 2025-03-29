@@ -51,10 +51,10 @@ img, svg {
 :root {
   --fontFamily: 'BlinkMacSystemFont', 'Roboto VK';
   --fontSize: 14px;
-  --smallFontSize: 13px;
   --lineHeight: 18px;
-  --smallLineHeight: 14px;
   --font: var(--fontSize) / var(--lineHeight) var(--fontFamily);
+  --smallFontSize: 13px;
+  --smallLineHeight: 14px;
   --smallFont: var(--smallFontSize) / var(--lineHeight) var(--fontFamily);
 
   --messageDateFontSize: 11px;
@@ -66,9 +66,9 @@ img, svg {
   --mediumTransition: 0.2s;
   --slowTransition: 0.3s;
 
-  --zIndexModals: 1;
-  --zIndexPopovers: 2;
-  --zIndexPopoversBackdropBypass: 3;
+  --zIndexModal: 1;
+  --zIndexPopper: 2;
+  --zIndexPopperBackdropBypass: 3;
 }
 
 [data-scheme] {

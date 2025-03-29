@@ -3,8 +3,18 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
+  font-weight: 500;
   color: #fff;
   flex: none;
+}
+
+.Avatar--size-32 {
+  font-size: var(--smallFontSize);
+}
+
+.Avatar--size-48,
+.Avatar--size-56 {
+  font-size: calc(var(--smallFontSize) + 4px);
 }
 
 .Avatar--color-0 {

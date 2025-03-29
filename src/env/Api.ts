@@ -14,6 +14,12 @@ const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500
 const API_RATE_LIMIT_WINDOW = 1000
 
+const METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN: Array<keyof Methods> = [
+  // 'messages.getConversations',
+  // 'messages.getHistory',
+  // 'messages.getLongPollHistory'
+]
+
 export class Api implements IApi.Api {
   private semaphore = new Semaphore(3, API_RATE_LIMIT_WINDOW)
   private globalErrorHandler?: Promise<unknown>
@@ -25,6 +31,8 @@ export class Api implements IApi.Api {
   ): Promise<Methods[Method]['response']> {
     const { retries = 0 } = fetchOptions
     let takenAttempts = 0
+
+    fetchOptions.messengerToken ??= METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN.includes(method)
 
     while (true) {
       takenAttempts++
@@ -99,6 +107,10 @@ export class Api implements IApi.Api {
       return `API.${method}(${JSON.stringify(params)})`
     })
 
+    fetchOptions.messengerToken ??= methods.some((method) => (
+      method && METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN.includes(method[0])
+    ))
+
     return this.fetch('execute', {
       code: [
         'return [',
@@ -136,6 +148,10 @@ export class Api implements IApi.Api {
     const waitExpressions = methods.map((methodInfo, index) => {
       return methodInfo ? `wait(m${index})` : 'null'
     })
+
+    fetchOptions.messengerToken ??= methods.some((method) => (
+      method && METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN.includes(method[0])
+    ))
 
     return this.fetch('execute', {
       code: [

@@ -15,7 +15,7 @@
 }
 
 .ButtonIcon--hoverBackground:hover,
-.ButtonIcon--hoverBackground.Popover__trigger--active {
+.ButtonIcon--hoverBackground.Popper__trigger--active {
   background: var(--vkui--color_transparent--hover);
 }
 

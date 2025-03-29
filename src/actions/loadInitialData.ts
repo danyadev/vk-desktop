@@ -13,6 +13,8 @@ export async function loadInitialData(onError: () => void) {
     return
   }
 
+  connection.status = 'init'
+
   try {
     const [longpollParams, conversations] = await api.fetchParallel([
       api.buildMethod('messages.getLongPollServer', {

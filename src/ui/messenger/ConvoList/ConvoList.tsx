@@ -13,7 +13,7 @@ import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
-import { Popover } from 'ui/ui/Popover/Popover'
+import { Popper } from 'ui/ui/Popper/Popper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24DoorArrowRightOutline, Icon24GearOutline, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoList.css'
@@ -38,7 +38,7 @@ export const ConvoList = defineComponent<Props>((props) => {
             <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
             <span class="ConvoList__headerStatus">{connection.status}</span>
 
-            <Popover
+            <Popper
               closeOnContentClick
               content={
                 <ActionMenu>
@@ -69,7 +69,7 @@ export const ConvoList = defineComponent<Props>((props) => {
                 icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
                 shiftOnClick
               />
-            </Popover>
+            </Popper>
           </>
         )}
       </div>

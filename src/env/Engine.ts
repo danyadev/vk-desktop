@@ -1,5 +1,6 @@
 import * as IEngine from 'env/IEngine'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
+import { useConvosStore } from 'store/convos'
 import { handleEngineUpdates } from 'actions'
 import { toUrlParams } from 'misc/utils'
 
@@ -19,6 +20,8 @@ export class Engine {
   credentials: MessagesLongpollCredentials | null = null
 
   async start(credentials: MessagesLongpollCredentials) {
+    const { connection } = useConvosStore()
+
     if (this.active) {
       throw new Error('[engine] Движок уже запущен')
     }
@@ -48,6 +51,7 @@ export class Engine {
           case 2:
           case 4:
           default:
+            connection.status = 'syncing'
             throw new Error('[engine] Фейл ' + JSON.stringify(result))
         }
       }

@@ -1,33 +1,33 @@
-.Popover__backdrop {
+.Popper__backdrop {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: var(--zIndexPopovers);
+  z-index: var(--zIndexPopper);
 }
 
-.Popover__trigger--active {
+.Popper__trigger--active {
   /* Чтобы триггер оставался доступным и на нем мог сохраняться cursor: pointer */
-  z-index: var(--zIndexPopoversBackdropBypass);
+  z-index: var(--zIndexPopperBackdropBypass);
 }
 
-.Popover {
+.Popper {
   position: absolute;
-  z-index: var(--zIndexPopovers);
+  z-index: var(--zIndexPopper);
 }
 
-.Popover--enter-active,
-.Popover--leave-active {
+.Popper--enter-active,
+.Popper--leave-active {
   transition: opacity var(--mediumTransition), transform var(--mediumTransition);
 }
 
-.Popover--enter-from,
-.Popover--leave-to {
+.Popper--enter-from,
+.Popper--leave-to {
   opacity: 0;
   transform: scale(0.95);
 }
 
-.Popover--placement-bottom-end {
+.Popper--placement-bottom-end {
   transform-origin: top right;
 }

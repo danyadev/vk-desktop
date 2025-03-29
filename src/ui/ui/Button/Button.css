@@ -11,7 +11,7 @@
 
 .Button:hover,
 .Button:active,
-.Button.Popover__trigger--active {
+.Button.Popper__trigger--active {
   opacity: 0.92;
 }
 
@@ -73,7 +73,7 @@
 
 .Button--secondary:hover,
 .Button--secondary:active,
-.Button--secondary.Popover__trigger--active {
+.Button--secondary.Popper__trigger--active {
   background: var(--vkui--color_background_secondary--hover);
   opacity: 1;
 }
@@ -85,7 +85,7 @@
 
 .Button--tertiary:hover,
 .Button--tertiary:active,
-.Button--tertiary.Popover__trigger--active {
+.Button--tertiary.Popper__trigger--active {
   background: var(--vkui--color_transparent--hover);
 }
 
@@ -102,6 +102,6 @@
 
 .Button--outline:hover,
 .Button--outline:active,
-.Button--outline.Popover__trigger--active {
+.Button--outline.Popper__trigger--active {
   background: var(--vkui--color_transparent--hover);
 }

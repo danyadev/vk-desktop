@@ -2,7 +2,7 @@ import { defineComponent, HTMLAttributes, shallowRef, Teleport, Transition, watc
 import { flip, offset, Placement, shift } from '@floating-ui/dom'
 import { JSXElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
-import './Popover.css'
+import './Popper.css'
 
 type Props = {
   content: JSXElement
@@ -11,7 +11,7 @@ type Props = {
   closeOnContentClick?: boolean
 }
 
-export const Popover = defineComponent<Props>((props, { slots }) => {
+export const Popper = defineComponent<Props>((props, { slots }) => {
   const showContent = shallowRef(false)
   const isPointingAtTrigger = shallowRef(false)
   const isPointingAtContent = shallowRef(false)
@@ -47,7 +47,7 @@ export const Popover = defineComponent<Props>((props, { slots }) => {
     <>
       <RenderSlotWithRef
         ref={setTriggerRef}
-        class={showContent.value && 'Popover__trigger--active'}
+        class={showContent.value && 'Popper__trigger--active'}
         onClick={() => (showContent.value = !showContent.value)}
         onMouseenter={() => (isPointingAtTrigger.value = true)}
         onMouseleave={() => (isPointingAtTrigger.value = false)}
@@ -58,15 +58,15 @@ export const Popover = defineComponent<Props>((props, { slots }) => {
       <Teleport to=".App">
         {showContent.value && !props.showOnHover && (
           <div
-            class="Popover__backdrop"
+            class="Popper__backdrop"
             onClick={() => (showContent.value = false)}
           />
         )}
-        <Transition name="Popover-">
+        <Transition name="Popper-">
           {showContent.value && (
             <div
               ref={setContentRef}
-              class={['Popover', `Popover--placement-${placement}`]}
+              class={['Popper', `Popper--placement-${placement}`]}
               onClick={() => props.closeOnContentClick && (showContent.value = false)}
               onMouseenter={() => (isPointingAtContent.value = true)}
               onMouseleave={() => (isPointingAtContent.value = false)}
