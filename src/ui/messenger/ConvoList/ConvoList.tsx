@@ -7,12 +7,15 @@ import { loadMoreConvos } from 'actions'
 import { useEnv, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
+import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
+import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
+import { Popover } from 'ui/ui/Popover/Popover'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
-import { Icon24DoorArrowRightOutline } from 'assets/icons'
+import { Icon24DoorArrowRightOutline, Icon24GearOutline, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoList.css'
 
 type Props = {
@@ -35,11 +38,38 @@ export const ConvoList = defineComponent<Props>((props) => {
             <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
             <span class="ConvoList__headerStatus">{connection.status}</span>
 
-            <ButtonIcon
-              class="ConvoList__headerExitIcon"
-              icon={<Icon24DoorArrowRightOutline color="var(--vkui--color_icon_negative)" />}
-              onClick={logout}
-            />
+            <Popover
+              closeOnContentClick
+              content={
+                <ActionMenu>
+                  <ActionMenuItem
+                    text="Настройки"
+                    icon={
+                      <Icon24GearOutline
+                        width="20"
+                        color="var(--vkui--color_icon_secondary)"
+                      />
+                    }
+                  />
+                  <ActionMenuItem
+                    text="Выход"
+                    onClick={logout}
+                    icon={
+                      <Icon24DoorArrowRightOutline
+                        width="20"
+                        color="var(--vkui--color_icon_negative)"
+                      />
+                    }
+                  />
+                </ActionMenu>
+              }
+            >
+              <ButtonIcon
+                class="ConvoList__burgerMenu"
+                icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
+                shiftOnClick
+              />
+            </Popover>
           </>
         )}
       </div>

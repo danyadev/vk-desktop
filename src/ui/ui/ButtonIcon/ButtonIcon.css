@@ -14,7 +14,8 @@
   opacity: 0.6;
 }
 
-.ButtonIcon--hoverBackground:hover {
+.ButtonIcon--hoverBackground:hover,
+.ButtonIcon--hoverBackground.Popover__trigger--active {
   background: var(--vkui--color_transparent--hover);
 }
 

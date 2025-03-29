@@ -11,8 +11,10 @@ export type Opaque<Type, Token = unknown> = Type & {
 // eslint-disable-next-line @typescript-eslint/no-restricted-types
 export type JSXElement = JSX.Element | string | number | null | false
 
-type ExplicitRefElement = HTMLElement | SVGElement | null
-export type RefElement = ExplicitRefElement | ComponentPublicInstance
+type NormalElement = HTMLElement | SVGElement | null
+type RawElement = NormalElement | Element
+export type RefElement = NormalElement | ComponentPublicInstance
+export type RawRefElement = RawElement | ComponentPublicInstance
 
 type ClassNameUnit = string | false | 0
 export type ClassName =
@@ -129,14 +131,18 @@ export async function getPlatform() {
     : navigator.userAgentData?.platform ?? 'Unknown'
 }
 
-export function unrefElement(ref: Ref<RefElement>): ExplicitRefElement {
-  const raw = unref(ref)
+export function unrefElement(ref: Ref<RawRefElement> | RawRefElement): NormalElement {
+  let raw = unref(ref)
 
   if (raw && '$el' in raw) {
-    return raw.$el as ExplicitRefElement
+    raw = raw.$el as Element
   }
 
-  return raw
+  if (raw instanceof HTMLElement || raw instanceof SVGElement) {
+    return raw
+  }
+
+  return null
 }
 
 export function isEventWithModifier(event: MouseEvent | KeyboardEvent): boolean {

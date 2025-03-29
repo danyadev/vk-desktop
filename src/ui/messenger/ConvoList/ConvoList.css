@@ -1,8 +1,8 @@
 .ConvoList__header {
   display: grid;
   grid-template-areas:
-    'avatar name exitIcon'
-    'avatar status exitIcon';
+    'avatar name menu'
+    'avatar status menu';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -38,9 +38,8 @@
   color: var(--vkui--color_text_secondary);
 }
 
-.ConvoList__headerExitIcon {
-  grid-area: exitIcon;
-  margin-left: auto;
+.ConvoList__burgerMenu {
+  grid-area: menu;
   padding: 2px;
 }
 

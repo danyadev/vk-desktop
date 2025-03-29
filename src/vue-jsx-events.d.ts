@@ -30,6 +30,8 @@ declare module 'vue' {
     onFocusin?: (event: FocusEvent<HTMLElement>) => void
     onFocusout?: (event: FocusEvent<HTMLElement>) => void
     onMousedown?: (event: MouseEvent<HTMLElement>) => void
+    onMouseenter?: (event: MouseEvent<HTMLElement>) => void
+    onMouseleave?: (event: MouseEvent<HTMLElement>) => void
     onClick?: (event: MouseEvent<HTMLElement>) => void
   }
 

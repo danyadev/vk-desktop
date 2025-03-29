@@ -1,0 +1,33 @@
+.Popover__backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--zIndexPopovers);
+}
+
+.Popover__trigger--active {
+  /* Чтобы триггер оставался доступным и на нем мог сохраняться cursor: pointer */
+  z-index: var(--zIndexPopoversBackdropBypass);
+}
+
+.Popover {
+  position: absolute;
+  z-index: var(--zIndexPopovers);
+}
+
+.Popover--enter-active,
+.Popover--leave-active {
+  transition: opacity var(--mediumTransition), transform var(--mediumTransition);
+}
+
+.Popover--enter-from,
+.Popover--leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.Popover--placement-bottom-end {
+  transform-origin: top right;
+}

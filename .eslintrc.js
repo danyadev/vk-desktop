@@ -193,7 +193,7 @@ module.exports = {
     'simple-import-sort/imports': ['error', {
       groups: [[
         ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
-        ...['^@?electron', '^vue', '^pinia', '^@?vite', '^@vkontakte/vk-qr'],
+        ...['^@?electron', '^@?vite', '^vue', '^pinia', '^@vkontakte/vk-qr', '^@floating-ui/dom'],
         ...['^env', '^model', '^store', '^actions', '^converters', '^lang'],
         ...['^hooks', '^misc/utils', '^misc'],
         ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
