@@ -1,5 +1,4 @@
 .ConvoList__header {
-  position: relative;
   display: grid;
   grid-template-areas:
     'avatar name menu'
@@ -41,18 +40,7 @@
 
 .ConvoList__burgerMenu {
   grid-area: menu;
-}
-
-.ConvoList__navigation {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  background-color: var(--vkui--color_background_content);
-  border-radius: 10px;
-  border: 0.5px solid var(--vkui--color_transparent--active);
-  padding: 5px 10px;
+  padding: 2px;
 }
 
 .ConvoList__list {

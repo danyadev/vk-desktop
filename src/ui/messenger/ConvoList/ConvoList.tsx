@@ -4,21 +4,19 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
-import { useEnv, useFloating, useViewer } from 'hooks'
+import { useEnv, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
+import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
+import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
-import { Floating } from 'ui/ui/Floating/Floating'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
-import { ActionMenu } from 'ui/ui/menu/ActionMenu/ActionMenu'
-import { ActionMenuItem } from 'ui/ui/menu/ActionMenuItem/ActionMenuItem'
+import { Popover } from 'ui/ui/Popover/Popover'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
-import { Icon24DoorArrowRightOutline, Icon24MoreHorizontal, Icon28SettingsOutline } from 'assets/icons'
+import { Icon24DoorArrowRightOutline, Icon24GearOutline, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoList.css'
-
-import { flip, offset, shift } from '@floating-ui/dom'
 
 type Props = {
   class?: ClassName
@@ -26,17 +24,6 @@ type Props = {
 }
 
 export const ConvoList = defineComponent<Props>((props) => {
-  const { refs } = useFloating({
-    placement: 'bottom-start',
-    middleware: [
-      offset(({ rects }) => ({
-        alignmentAxis: -rects.floating.width
-      })),
-      shift(),
-      flip()
-    ]
-  }, 'var(--vkui--color_transparent--hover)')
-
   const { lang } = useEnv()
   const viewer = useViewer()
   const { convoList, connection } = useConvosStore()
@@ -51,30 +38,19 @@ export const ConvoList = defineComponent<Props>((props) => {
             <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
             <span class="ConvoList__headerStatus">{connection.status}</span>
 
-            <Floating
-              setFloating={refs.setFloating}
-              setReference={refs.setReference}
-              button={
-                <ButtonIcon
-                  class="ConvoList__burgerMenu"
-                  addHoverBackground={false}
-                  icon={
-                    <Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />
-                  }
-                />
-              }
-            >
-              <ActionMenu
-                actions={[
+            <Popover
+              closeOnContentClick
+              content={
+                <ActionMenu>
                   <ActionMenuItem
                     text="Настройки"
                     icon={
-                      <Icon28SettingsOutline
+                      <Icon24GearOutline
                         width="20"
                         color="var(--vkui--color_icon_secondary)"
                       />
                     }
-                  />,
+                  />
                   <ActionMenuItem
                     text="Выход"
                     onClick={logout}
@@ -85,9 +61,15 @@ export const ConvoList = defineComponent<Props>((props) => {
                       />
                     }
                   />
-                ]}
+                </ActionMenu>
+              }
+            >
+              <ButtonIcon
+                class="ConvoList__burgerMenu"
+                icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
+                shiftOnClick
               />
-            </Floating>
+            </Popover>
           </>
         )}
       </div>

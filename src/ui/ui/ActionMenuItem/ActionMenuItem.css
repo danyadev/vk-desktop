@@ -2,13 +2,10 @@
   width: 100%;
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 4px 8px;
   border-radius: 6px;
   transition: background-color var(--fastTransition);
-}
-
-.ActionMenuItem--withIcon {
-  gap: 12px;
 }
 
 .ActionMenuItem:hover {

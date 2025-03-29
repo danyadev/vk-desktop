@@ -9,13 +9,8 @@ type Props = {
 
 export const ActionMenuItem = defineComponent<Props>((props) => {
   return () => (
-    <button
-      class={['ActionMenuItem', {
-        'ActionMenuItem--withIcon': props.icon
-      }]}
-      type="button"
-    >
-      <span>{props.icon}</span>
+    <button class="ActionMenuItem" type="button">
+      {props.icon && <span>{props.icon}</span>}
       <span>{props.text}</span>
     </button>
   )
