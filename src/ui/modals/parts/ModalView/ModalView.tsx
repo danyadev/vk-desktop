@@ -29,30 +29,6 @@ type Props = {
 export const ModalView = defineComponent<Props>((props, { slots }) => {
   const isMounted = useIsMounted()
   const isModalVisible = shallowRef(false)
-  const $modalContainer = shallowRef<HTMLDivElement | null>(null)
-  const { onFocusIn, onFocusOut } = useFocusTrap($modalContainer)
-
-  /**
-   * Фокусируемся на модалке при ее показе, чтобы сбросить фокус с предыдущего элемента,
-   * который теперь находится под модалкой, например кнопки или поля ввода.
-   *
-   * Это нужно, чтобы случайно не совершать действия, которые не планировалось совершать,
-   * например при нажатии на Enter или Escape
-   *
-   * Ну и чтобы Esc отрабатывал правильно при открытой модалке
-   */
-  watch($modalContainer, () => {
-    if (!$modalContainer.value) {
-      return
-    }
-
-    // Если внутри модалки уже есть фокус, то не перебиваем фокус на корень модалки
-    if ($modalContainer.value.contains(document.activeElement)) {
-      return
-    }
-
-    $modalContainer.value.focus()
-  })
 
   function onBeforeAppear() {
     isModalVisible.value = true
@@ -110,30 +86,61 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
           onBeforeAppear={onBeforeAppear}
           onAfterLeave={onAfterLeave}
         >
-          {props.opened && (
-            <div
-              class={['ModalView', {
-                'ModalView--hidden': props.hidden,
-                'ModalView--noBackdrop': props.noBackdrop
-              }]}
-            >
-              <div class="ModalView__backdrop" onClick={props.onClose} />
-              <div
-                class={['ModalView__container', props.class]}
-                tabindex="-1"
-                onKeydown={(event) => event.key === 'Escape' && props.onClose()}
-                onFocusin={onFocusIn}
-                onFocusout={onFocusOut}
-                ref={$modalContainer}
-              >
-                {slots.default?.()}
-              </div>
-            </div>
-          )}
+          {props.opened && <View {...props}>{slots.default?.()}</View>}
         </Transition>
       </Teleport>
     )
   }
 }, {
   props: ['opened', 'hidden', 'onClose', 'onVisibilityChange', 'noBackdrop', 'class']
+})
+
+const View = defineComponent<Props>((props, { slots }) => {
+  const $modalContainer = shallowRef<HTMLDivElement | null>(null)
+  const { onFocusIn, onFocusOut } = useFocusTrap($modalContainer)
+
+  /**
+   * Фокусируемся на модалке при ее показе, чтобы сбросить фокус с предыдущего элемента,
+   * который теперь находится под модалкой, например кнопки или поля ввода.
+   *
+   * Это нужно, чтобы случайно не совершать действия, которые не планировалось совершать,
+   * например при нажатии на Enter или Escape
+   *
+   * Ну и чтобы Esc отрабатывал правильно при открытой модалке
+   */
+  watch($modalContainer, () => {
+    if (!$modalContainer.value) {
+      return
+    }
+
+    // Если внутри модалки уже есть фокус, то не перебиваем фокус на корень модалки
+    if ($modalContainer.value.contains(document.activeElement)) {
+      return
+    }
+
+    $modalContainer.value.focus()
+  })
+
+  return () => (
+    <div
+      class={['ModalView', {
+        'ModalView--hidden': props.hidden,
+        'ModalView--noBackdrop': props.noBackdrop
+      }]}
+    >
+      <div class="ModalView__backdrop" onClick={props.onClose} />
+      <div
+        class={['ModalView__container', props.class]}
+        tabindex="-1"
+        onKeydown={(event) => event.key === 'Escape' && props.onClose()}
+        onFocusin={onFocusIn}
+        onFocusout={onFocusOut}
+        ref={$modalContainer}
+      >
+        {slots.default?.()}
+      </div>
+    </div>
+  )
+}, {
+  props: ['hidden', 'onClose', 'noBackdrop', 'class']
 })

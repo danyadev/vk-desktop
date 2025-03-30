@@ -6,7 +6,8 @@ import { PhotoViewerModalProps } from 'ui/modals/PhotoViewerModal/PhotoViewerMod
 export const useGlobalModal = createSingletonHook(() => {
   return {
     captchaModal: createGlobalModal<CaptchaModalParams>('CaptchaModal'),
-    photoViewerModal: createGlobalModal<PhotoViewerModalProps>('PhotoViewerModal')
+    photoViewerModal: createGlobalModal<PhotoViewerModalProps>('PhotoViewerModal'),
+    settingsModal: createGlobalModal<object>('SettingsModal')
   }
 })
 

@@ -1,9 +1,16 @@
 import { FocusEvent, onBeforeMount, onUnmounted, Ref } from 'vue'
 import { NonEmptyArray } from 'misc/utils'
 
+/**
+ * Храним количество активных фокус трапов, чтобы задерживать фокус только
+ * для последнего вызванного хука, так как сфокусированный элемент может быть только один
+ */
+let lastTrapIndex = 0
+
 export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
   let initialFocusedElement: Element | null = null
   let isPageBecomeActive = false
+  const currentTrapIndex = ++lastTrapIndex
 
   onBeforeMount(() => {
     initialFocusedElement = document.activeElement
@@ -13,6 +20,7 @@ export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
     if (initialFocusedElement instanceof HTMLElement) {
       initialFocusedElement.focus()
     }
+    lastTrapIndex--
   })
 
   /**
@@ -20,6 +28,10 @@ export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
    * event.target - текущий сфокусированный элемент
    */
   function onFocusIn(event: FocusEvent<HTMLElement>) {
+    if (currentTrapIndex !== lastTrapIndex) {
+      return
+    }
+
     /**
      * Произошла активация окна страницы, фокус автоматически выставился на то место,
      * где он был в момент деактивации окна страницы.
@@ -36,6 +48,10 @@ export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
    * event.relatedTarget - текущий сфокусированный элемент
    */
   async function onFocusOut(event: FocusEvent<HTMLElement>) {
+    if (currentTrapIndex !== lastTrapIndex) {
+      return
+    }
+
     /**
      * Сначала происходит событие onFocusOut, затем фокус переводится на новый элемент.
      * Если мы попытаемся вручную выставить фокус сразу при onFocusOut, не дожидаясь onFocusIn,

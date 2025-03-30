@@ -1,4 +1,4 @@
-import { defineComponent, HTMLAttributes, shallowRef, Teleport, Transition, watch } from 'vue'
+import { defineComponent, HTMLAttributes, KeyboardEvent, shallowRef, Teleport, Transition, watch } from 'vue'
 import { flip, offset, Placement, shift } from '@floating-ui/dom'
 import { JSXElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
@@ -26,7 +26,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
 
     if (isPointingAtTrigger.value || isPointingAtContent.value) {
       showContent.value = true
-    } else {
+    } else if (showContent.value) {
       hideContentTimeout = window.setTimeout(() => {
         showContent.value = false
       }, 250)
@@ -43,6 +43,13 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     ]
   })
 
+  const handleEscape = (event: KeyboardEvent) => {
+    if (!props.showOnHover && event.key === 'Escape') {
+      event.stopPropagation()
+      showContent.value = false
+    }
+  }
+
   return () => (
     <>
       <RenderSlotWithRef
@@ -51,6 +58,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
         onClick={() => (showContent.value = !showContent.value)}
         onMouseenter={() => (isPointingAtTrigger.value = true)}
         onMouseleave={() => (isPointingAtTrigger.value = false)}
+        onKeydown={handleEscape}
       >
         {slots.default?.()}
       </RenderSlotWithRef>
@@ -70,6 +78,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
               onClick={() => props.closeOnContentClick && (showContent.value = false)}
               onMouseenter={() => (isPointingAtContent.value = true)}
               onMouseleave={() => (isPointingAtContent.value = false)}
+              onKeydown={handleEscape}
             >
               {props.content}
             </div>

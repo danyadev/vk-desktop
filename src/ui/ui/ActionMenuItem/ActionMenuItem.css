@@ -8,6 +8,7 @@
   transition: background-color var(--fastTransition);
 }
 
-.ActionMenuItem:hover {
+.ActionMenuItem:hover,
+.ActionMenuItem:focus {
   background-color: var(--vkui--color_transparent--hover);
 }

@@ -31,6 +31,8 @@ export const ru = {
     many: '{0} дней назад'
   },
 
+  select_not_selected: 'Не выбрано',
+
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
   auth_submit: 'Войти',
@@ -312,6 +314,17 @@ export const ru = {
 
   confirmAccountDelete_title: 'Удаление аккаунта',
   confirmAccountDelete_confirm: 'Вы действительно хотите удалить аккаунт {userName}?',
+
+  settings_title: 'Настройки',
+  settings_theme_description: 'Тема:',
+  settings_theme_system: 'Системная',
+  settings_theme_light: 'Светлая',
+  settings_theme_dark: 'Темная',
+  settings_alwaysOnTop_description: 'Показывать окно поверх остальных окон',
+  settings_useCustomTitlebar_description: 'Отключить рамку окна и заменить заголовок окна',
+
+  settings_changeWindowSetting_title: 'Изменение настройки окна',
+  settings_changeWindowSetting_description: 'Изменение вступит в силу после перезагрузки приложения',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',

@@ -28,7 +28,7 @@
   color: var(--vkui--color_text_primary);
   font: var(--font);
   line-height: 22px;
-  padding: 7px 10px;
+  padding: 6px 10px;
 }
 
 .Input__el:disabled {

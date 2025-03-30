@@ -2,6 +2,7 @@ import { defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
 import { useEnv, useFormatDate } from 'hooks'
+import { ClassName } from 'misc/utils'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
@@ -12,6 +13,7 @@ import './AttachWall.css'
 type Props = {
   wall: Attach.Wall
   isRepost?: boolean
+  class?: ClassName
 }
 
 export const AttachWall = defineComponent<Props>((props) => {

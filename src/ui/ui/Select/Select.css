@@ -1,0 +1,85 @@
+.Select {
+  position: relative;
+}
+
+.Select__field {
+  display: flex;
+  padding: 5px 0 5px 10px;
+  background: var(--vkui--color_field_background);
+  border: 1px solid var(--vkui--color_field_border_alpha);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color var(--fastTransition);
+}
+
+.Select--inLayer .Select__field {
+  background: var(--vkd--color_field_background_in_layer);
+}
+
+.Select--expanded .Select__field {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.Select__field:hover,
+.Select__field:focus,
+.Select--expanded .Select__field {
+  border-color: var(--vkui--color_field_border_alpha--hover);
+}
+
+.Select__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  line-height: 24px;
+}
+
+.Select__value--empty {
+  color: var(--vkui--color_text_secondary);
+}
+
+.Select__chevron {
+  flex: none;
+  margin: 0 6px;
+  color: var(--vkui--color_icon_secondary);
+}
+
+.Select__options {
+  position: absolute;
+  width: 100%;
+  max-height: 150px;
+  overflow: auto;
+  z-index: 1;
+  background: var(--vkui--color_background_contrast_themed);
+  border: 1px solid var(--vkui--color_field_border_alpha);
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.Select__option {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  gap: 4px;
+  cursor: pointer;
+  transition: background var(--fastTransition);
+}
+
+.Select__option:hover,
+.Select__option:focus {
+  background: var(--vkui--color_transparent--hover);
+}
+
+.Select__optionText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Select__checkedOptionIcon {
+  margin-left: auto;
+  flex: none;
+  color: var(--vkui--color_icon_accent_themed);
+}
