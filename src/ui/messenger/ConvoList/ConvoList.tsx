@@ -4,7 +4,7 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
-import { useEnv, useViewer } from 'hooks'
+import { useEnv, useGlobalModal, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
@@ -27,6 +27,7 @@ export const ConvoList = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const viewer = useViewer()
   const { convoList, connection } = useConvosStore()
+  const { settingsModal } = useGlobalModal()
 
   return () => (
     <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
@@ -43,6 +44,7 @@ export const ConvoList = defineComponent<Props>((props) => {
               content={
                 <ActionMenu>
                   <ActionMenuItem
+                    onClick={() => settingsModal.open({})}
                     text="Настройки"
                     icon={
                       <Icon24GearOutline
@@ -52,8 +54,8 @@ export const ConvoList = defineComponent<Props>((props) => {
                     }
                   />
                   <ActionMenuItem
-                    text="Выход"
                     onClick={logout}
+                    text="Выход"
                     icon={
                       <Icon24DoorArrowRightOutline
                         width="20"

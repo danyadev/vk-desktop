@@ -6,7 +6,7 @@ import { currentWindow } from 'misc/utils'
 import { shouldUseCustomTitlebar } from 'main-process/shared'
 
 export type AppearanceScheme = 'vkcom' | 'vkui'
-type AppearanceTheme = 'light' | 'dark' | 'system'
+export type AppearanceTheme = 'light' | 'dark' | 'system'
 
 export type MainSettings = {
   bounds: Electron.Rectangle
