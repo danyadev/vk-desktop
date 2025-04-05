@@ -20,6 +20,12 @@ export type Update =
   | Update10006
   | Update10007
   | Update10018
+  | Update63
+  | Update64
+  | Update65
+  | Update66
+  | Update67
+  | Update68
   | Update114
 
 // Изменение флагов сообщения
@@ -132,6 +138,60 @@ type Update10018 = [
   randomId: Update10004[9],
   messageId: Update10004[10],
   updateTimestampInSeconds: number
+]
+
+// Тайпинг ввода текста
+type Update63 = [
+  type: 63,
+  peerId: number,
+  typingPeerIds: number[],
+  totalCount: number,
+  timestamp: number
+]
+
+// Тайпинг записи голосового
+type Update64 = [
+  type: 64,
+  peerId: number,
+  typingPeerIds: number[],
+  totalCount: number,
+  timestamp: number
+]
+
+// Тайпинг загрузки фото
+type Update65 = [
+  type: 65,
+  peerId: number,
+  typingPeerIds: number[],
+  totalCount: number,
+  timestamp: number
+]
+
+// Тайпинг загрузки видео
+type Update66 = [
+  type: 66,
+  peerId: number,
+  typingPeerIds: number[],
+  totalCount: number,
+  timestamp: number
+]
+
+// Тайпинг загрузки файла
+type Update67 = [
+  type: 67,
+  peerId: number,
+  typingPeerIds: number[],
+  totalCount: number,
+  timestamp: number
+]
+
+// Тайпинг записи видеосообщения
+type Update68 = [
+  type: 68,
+  peerId: number,
+  typingPeerIds: number[],
+  totalCount: number,
+  timestamp: number
 ]
 
 // Изменение настроек пуш-уведомлений в беседе

@@ -1,4 +1,5 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, RouteRecordInfo } from 'vue-router'
+import * as Peer from 'model/Peer'
 import { useViewerStore } from 'store/viewer'
 import { Auth } from 'ui/Auth/Auth'
 import { ConvoWrapper } from 'ui/messenger/ConvoView/ConvoView'
@@ -19,6 +20,7 @@ export const router = createRouter({
       },
       children: [
         {
+          name: 'NoConvo',
           path: '/',
           component: NoConvo
         },
@@ -30,8 +32,36 @@ export const router = createRouter({
       ]
     },
     {
+      name: 'Auth',
       path: '/auth',
       component: Auth
     }
   ]
 })
+
+interface RouteNamedMap {
+  NoConvo: RouteRecordInfo<
+    'NoConvo',
+    '/',
+    Record<never, never>,
+    Record<never, never>
+  >
+  Convo: RouteRecordInfo<
+    'Convo',
+    '/convo/:peerId',
+    { peerId: Peer.Id },
+    { peerId: string }
+  >
+  Auth: RouteRecordInfo<
+    'Auth',
+    '/auth',
+    Record<never, never>,
+    Record<never, never>
+  >
+}
+
+declare module 'vue-router' {
+  interface TypesConfig {
+    RouteNamedMap: RouteNamedMap
+  }
+}

@@ -155,3 +155,18 @@ export function isEventWithModifier(event: MouseEvent | KeyboardEvent): boolean 
     (event instanceof MouseEvent && event.button === 1)
   )
 }
+
+export function getMapValueOrSetDefault<K, V>(
+  map: Map<K, V>,
+  key: NoInfer<K>,
+  defaults: NoInfer<V>
+): V {
+  const value = map.get(key)
+
+  if (value === undefined) {
+    map.set(key, defaults)
+    return defaults
+  }
+
+  return value
+}
