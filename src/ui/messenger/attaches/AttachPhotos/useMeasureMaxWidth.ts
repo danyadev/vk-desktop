@@ -8,7 +8,7 @@ export function useMeasureMaxWidth(invalidateKey: Ref<unknown>) {
 
   watch(invalidateKey, () => {
     isMeasured.value = false
-  })
+  }, { flush: 'pre' })
 
   watch([isMeasured, measureElRef], () => {
     if (isMeasured.value) {
