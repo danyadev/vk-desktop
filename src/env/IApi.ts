@@ -27,7 +27,7 @@ export type MethodParams<Method extends keyof Methods> = Methods[Method]['params
 export type FetchManyRequestMethod<Method extends keyof Methods = keyof Methods> = [
   Method,
   MethodParams<Method>
-] | false | null | undefined
+] | false | null | 0 | undefined
 export type FetchManyResponseMethod<RequestMethod extends FetchManyRequestMethod> =
   RequestMethod extends Truthy<RequestMethod>
     ? Methods[RequestMethod[0]]['response']
