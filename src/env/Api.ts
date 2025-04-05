@@ -98,6 +98,10 @@ export class Api implements IApi.Api {
   ): Promise<{
     [Index in keyof CurrentMethodsList]: IApi.FetchManyResponseMethod<CurrentMethodsList[Index]>
   }> {
+    if (!methods.some(Boolean)) {
+      return Promise.resolve(methods.map(() => null)) as Promise<never>
+    }
+
     const methodsCalls = methods.map((methodInfo) => {
       if (!methodInfo) {
         return 'null'
@@ -137,6 +141,10 @@ export class Api implements IApi.Api {
   ): Promise<{
     [Index in keyof CurrentMethodsList]: IApi.FetchManyResponseMethod<CurrentMethodsList[Index]>
   }> {
+    if (!methods.some(Boolean)) {
+      return Promise.resolve(methods.map(() => null)) as Promise<never>
+    }
+
     const forkDeclarations = methods.map((methodInfo, index) => {
       if (!methodInfo) {
         return ''

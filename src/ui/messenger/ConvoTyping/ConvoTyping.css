@@ -1,0 +1,127 @@
+.ConvoTyping {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 6px;
+}
+
+.ConvoTyping__indicator {
+  display: flex;
+  margin-top: 1px;
+}
+
+.ConvoTyping__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ConvoTyping__indicator .ConvoTyping__particle,
+.ConvoTyping__indicator::before,
+.ConvoTyping__indicator::after {
+  background: currentcolor;
+  animation: none 1s linear infinite;
+}
+
+.ConvoTyping__indicator--text .ConvoTyping__particle,
+.ConvoTyping__indicator--text::before,
+.ConvoTyping__indicator--text::after {
+  width: 4px;
+  height: 4px;
+  border-radius: 3px;
+  animation-name: typing-animation-text;
+}
+
+.ConvoTyping__indicator--text .ConvoTyping__particle,
+.ConvoTyping__indicator--voice .ConvoTyping__particle {
+  margin: 1px 2px;
+}
+
+.ConvoTyping__indicator--text::before,
+.ConvoTyping__indicator--voice::before {
+  content: '';
+  margin: 1px;
+  animation-delay: calc(1s * -1 / 6);
+}
+
+.ConvoTyping__indicator--text::after,
+.ConvoTyping__indicator--voice::after {
+  content: '';
+  margin: 1px;
+  animation-delay: calc(1s * 1 / 6);
+}
+
+@keyframes typing-animation-text {
+  0%,
+  66.7%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  33.3% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+.ConvoTyping__indicator--voice .ConvoTyping__particle,
+.ConvoTyping__indicator--voice::before,
+.ConvoTyping__indicator--voice::after {
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  transform: scaleY(0.45);
+  animation-name: typing-animation-voice;
+}
+
+@keyframes typing-animation-voice {
+  0%,
+  66.7%,
+  100% {
+    opacity: 0.4;
+    transform: scaleY(0.67);
+  }
+
+  33.3% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+.ConvoTyping__indicator--file {
+  position: relative;
+  width: 20px;
+  height: 6px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ConvoTyping__indicator--file::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 2px;
+  opacity: 0.3;
+}
+
+.ConvoTyping__indicator--file::after {
+  content: '';
+  width: 50%;
+  height: 100%;
+  border-radius: 2px;
+  animation-name: typing-animation-file;
+}
+
+@keyframes typing-animation-file {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(200%);
+  }
+}

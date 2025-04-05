@@ -1,11 +1,14 @@
 import { computed, defineComponent, Ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { useConvosStore } from 'store/convos'
 import { useEnv, useNow } from 'hooks'
+import { isNonEmptyArray } from 'misc/utils'
 import { ONE_DAY, ONE_HOUR, ONE_MINUTE, ONE_MONTH, ONE_WEEK } from 'misc/dateTime'
+import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
 import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
@@ -20,14 +23,21 @@ type Props = {
 
 export const ConvoListItem = defineComponent<Props>((props) => {
   const router = useRouter()
+  const route = useRoute()
   const { lang } = useEnv()
+  const { typings } = useConvosStore()
   const peer = computed(() => Peer.safeGet(props.convo.id))
   const lastMessage = computed(() => History.lastItem(props.convo.history))
-  const active = computed(() => router.currentRoute.value.path === `/convo/${props.convo.id}`)
+  const active = computed(() => route.name === 'Convo' && +route.params.peerId === props.convo.id)
   const authorName = useAuthorName(lastMessage, computed(() => props.convo))
 
   function openConvo() {
-    router.push('/convo/' + props.convo.id)
+    router.push({
+      name: 'Convo',
+      params: {
+        peerId: props.convo.id
+      }
+    })
   }
 
   return () => {
@@ -50,6 +60,8 @@ export const ConvoListItem = defineComponent<Props>((props) => {
       )
     }
 
+    const typingUsers = typings.get(props.convo.id)
+
     return (
       <div
         class={['ConvoListItem', { 'ConvoListItem--active': active.value }]}
@@ -69,21 +81,34 @@ export const ConvoListItem = defineComponent<Props>((props) => {
         </div>
 
         <div class="ConvoListItem__message">
-          <span class="ConvoListItem__text">
-            {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
-            {lastMessage.value ? (
-              <MessagePreview message={lastMessage.value} />
-            ) : (
-              <span class="MessagePreview">
-                {Convo.isCasper(props.convo)
-                  ? lang.usePlural('me_messages_disappeared', 1)
-                  : lang.use('me_convo_list_empty_convo')}
+          {typingUsers && isNonEmptyArray(typingUsers) ? (
+            <ConvoTyping
+              class="ConvoListItem__typing"
+              typingUsers={typingUsers}
+              namesLimit={
+                props.convo.kind === 'UserConvo' || props.convo.kind === 'GroupConvo' ? 0 : 2
+              }
+              short
+            />
+          ) : (
+            <>
+              <span class="ConvoListItem__text">
+                {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
+                {lastMessage.value ? (
+                  <MessagePreview message={lastMessage.value} />
+                ) : (
+                  <span class="MessagePreview">
+                    {Convo.isCasper(props.convo)
+                      ? lang.usePlural('me_messages_disappeared', 1)
+                      : lang.use('me_convo_list_empty_convo')}
+                  </span>
+                )}
               </span>
-            )}
-          </span>
-          <span class="ConvoListItem__date">
-            {lastMessage.value && <MessageDate sentAt={lastMessage.value.sentAt} />}
-          </span>
+              <span class="ConvoListItem__date">
+                {lastMessage.value && <MessageDate sentAt={lastMessage.value.sentAt} />}
+              </span>
+            </>
+          )}
         </div>
         <div class="ConvoListItem__indicators">
           <Counter

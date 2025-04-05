@@ -2,6 +2,12 @@ import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 
+export type TypingUser = {
+  peerId: Peer.Id
+  type: 'text' | 'voice' | 'photo' | 'video' | 'file' | 'videomessage'
+  cancelTypingTimeoutId: number
+}
+
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>
   convoList: {
@@ -15,6 +21,7 @@ type Convos = {
   }
   loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, 'loading' | 'error'>
   savedConvoScroll: Map<Peer.Id, number>
+  typings: Map<Peer.Id, TypingUser[]>
 }
 
 export const useConvosStore = defineStore('convos', {
@@ -30,7 +37,8 @@ export const useConvosStore = defineStore('convos', {
       status: 'init'
     },
     loadConvoHistoryLock: new Map(),
-    savedConvoScroll: new Map()
+    savedConvoScroll: new Map(),
+    typings: new Map()
   })
 })
 

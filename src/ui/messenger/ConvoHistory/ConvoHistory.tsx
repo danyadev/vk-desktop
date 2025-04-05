@@ -15,8 +15,9 @@ import * as Message from 'model/Message'
 import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv, useResizeObserver } from 'hooks'
-import { NonEmptyArray } from 'misc/utils'
+import { isNonEmptyArray, NonEmptyArray } from 'misc/utils'
 import { convoHistoryContextInjectKey } from 'misc/providers'
+import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 import { Button } from 'ui/ui/Button/Button'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
@@ -29,7 +30,7 @@ type Props = {
 
 export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   const { lang } = useEnv()
-  const { loadConvoHistoryLock, savedConvoScroll } = useConvosStore()
+  const { loadConvoHistoryLock, savedConvoScroll, typings } = useConvosStore()
   const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const prevScrollHeight = shallowRef(0)
@@ -49,10 +50,17 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
   })
 
   onMounted(() => {
+    if (!$historyElement.value) {
+      return
+    }
+
     const scrollTop = savedConvoScroll.get(convo.id)
     if ($historyElement.value && scrollTop !== undefined) {
       $historyElement.value.scrollTop = scrollTop
     }
+
+    historyWidth.value = $historyElement.value.offsetWidth
+    historyHeight.value = $historyElement.value.offsetHeight
   })
 
   onBeforeUnmount(() => {
@@ -207,6 +215,8 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
       )
     }
 
+    const typingUsers = typings.get(convo.id)
+
     return (
       <div class="ConvoHistory" ref={$historyElement}>
         <div class="ConvoHistory__content">
@@ -217,6 +227,17 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
           <HistoryMessages items={items} />
 
           {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
+
+          <div class="ConvoHistory__footer">
+            {!gapAfter && typingUsers && isNonEmptyArray(typingUsers) && (
+              <ConvoTyping
+                typingUsers={typingUsers}
+                namesLimit={
+                  convo.kind === 'UserConvo' || convo.kind === 'GroupConvo' ? 0 : undefined
+                }
+              />
+            )}
+          </div>
         </div>
       </div>
     )

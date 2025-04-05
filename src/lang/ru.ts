@@ -128,6 +128,40 @@ export const ru = {
     many: '{count} подписчиков'
   },
 
+  me_convo_typing_text: {
+    one: 'печатает',
+    few: 'печатают',
+    many: 'печатают'
+  },
+  me_convo_typing_voice: {
+    one: 'записывает аудио',
+    few: 'записывают аудио',
+    many: 'записывают аудио'
+  },
+  me_convo_typing_photo: {
+    one: 'отправляет фото',
+    few: 'отправляют фото',
+    many: 'отправляют фото'
+  },
+  me_convo_typing_video: {
+    one: 'отправляет видео',
+    few: 'отправляют видео',
+    many: 'отправляют видео'
+  },
+  me_convo_typing_file: {
+    one: 'отправляет файл',
+    few: 'отправляют файл',
+    many: 'отправляют файл'
+  },
+  me_convo_typing_videomessage: {
+    one: 'записывает видеосообщение',
+    few: 'записывают видеосообщение',
+    many: 'записывают видеосообщение'
+  },
+  me_convo_typing_names_separator: ', ',
+  me_convo_typing_last_name_separator: ' и ',
+  me_convo_typing_rest_count: 'еще {count}',
+
   // region service messages
   me_service_chat_create: {
     male: '{author} создал чат «{title}»',

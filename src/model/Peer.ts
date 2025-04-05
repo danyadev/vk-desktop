@@ -109,7 +109,7 @@ export function resolveRealId(realId: number, kind: Peer['kind']): Id {
   }
 }
 
-function toRealId(peerId: Id): number {
+export function toRealId(peerId: Id): number {
   if (isUserPeerId(peerId)) {
     return peerId
   }

@@ -1,13 +1,11 @@
 import { defineComponent } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
-import { ClassName } from 'misc/utils'
 import { Icon16CheckDoubleOutline, Icon16CheckOutline } from 'assets/icons'
 import './MessageOutStatusIcon.css'
 
 type Props = {
   message: Message.Message
-  class?: ClassName
 }
 
 export const MessageOutStatusIcon = defineComponent<Props>((props) => {

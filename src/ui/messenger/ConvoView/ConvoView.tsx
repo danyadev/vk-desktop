@@ -32,7 +32,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
 })
 
 export const ConvoWrapper = defineComponent(() => {
-  const route = useRoute()
+  const route = useRoute('Convo')
   const { connection } = useConvosStore()
 
   const convo = computed(() => {

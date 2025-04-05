@@ -9,7 +9,7 @@
   min-height: 100%;
   max-width: var(--convoHistoryMaxWidth);
   margin: 0 auto;
-  padding: var(--convoHistoryIndent);
+  padding: var(--convoHistoryIndent) var(--convoHistoryIndent) 0 var(--convoHistoryIndent);
 }
 
 .ConvoHistory__placeholder {
@@ -35,4 +35,10 @@
   color: var(--vkui--color_text_subhead);
   margin: 24px 0;
   gap: 10px;
+}
+
+.ConvoHistory__footer {
+  height: 40px;
+  padding: 10px var(--convoHistoryIndent);
+  color: var(--vkui--color_text_subhead);
 }
