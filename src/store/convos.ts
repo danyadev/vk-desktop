@@ -39,7 +39,24 @@ export const useConvosStore = defineStore('convos', {
     loadConvoHistoryLock: new Map(),
     savedConvoScroll: new Map(),
     typings: new Map()
-  })
+  }),
+
+  actions: {
+    stopTyping(convoId: Peer.Id, typingPeerId: Peer.Id) {
+      const typingPeers = this.typings.get(convoId)
+      if (!typingPeers) {
+        return
+      }
+
+      const typingPeer = typingPeers.find(({ peerId }) => typingPeerId === peerId)
+      if (!typingPeer) {
+        return
+      }
+
+      window.clearTimeout(typingPeer.cancelTypingTimeoutId)
+      typingPeers.splice(typingPeers.indexOf(typingPeer), 1)
+    }
+  }
 })
 
 // defineStore оборачивает стейт в UnwrapRef, заставляя IDE показывать полный бред.

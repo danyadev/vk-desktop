@@ -21,7 +21,7 @@ const MESSAGE_FLAGS = {
 const TYPING_DURATION = 5000
 
 export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]) {
-  const { typings } = useConvosStore()
+  const convosStore = useConvosStore()
   const {
     apiConvosMap,
     apiMessagesMap,
@@ -42,19 +42,35 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
-        const convo = Convo.get(peerId)
-        if (!convo) {
+        const apiConvo = apiConvosMap.get(peerId)
+        if (!apiConvo) {
+          console.warn('[handleEngineUpdates] no convo', apiConvosMap, update)
           break
         }
 
         if (isDeleteMessageUpdate) {
-          History.removeNode(convo.history, cmid)
-          break
-        }
+          insertConvos([{ conversation: apiConvo }], {
+            merge: true,
+            addToList: false
+          })
 
-        const apiConvo = apiConvosMap.get(peerId)
-        if (!apiConvo) {
-          console.warn('[handleEngineUpdates] no convo', apiConvosMap, update)
+          const convo = Convo.safeGet(peerId)
+
+          History.removeNode(convo.history, cmid)
+
+          const lastMessageCmid =
+            apiConvo.last_conversation_message_id &&
+            Message.resolveCmid(apiConvo.last_conversation_message_id)
+          const apiLastMessage = lastMessageCmid && apiMessagesMap.get(peerId)?.get(lastMessageCmid)
+
+          if (apiLastMessage && !History.lastItem(convo.history)) {
+            const message = fromApiMessage(apiLastMessage)
+            Convo.insertMessages(convo, [message], {
+              up: true,
+              down: false,
+              aroundId: message.cmid
+            })
+          }
           break
         }
 
@@ -69,6 +85,8 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
           merge: true,
           addToList: false
         })
+
+        const convo = Convo.safeGet(peerId)
 
         Convo.insertMessages(convo, [message], {
           up: true,
@@ -115,6 +133,10 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
           down: true,
           aroundId: cmid
         })
+
+        if (update[0] === 10004 || update[0] === 10005) {
+          convosStore.stopTyping(peerId, message.authorId)
+        }
         break
       }
 
@@ -146,21 +168,19 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
           break
         }
 
-        const typingPeers = getMapValueOrSetDefault(typings, peerId, [])
+        const typingPeers = getMapValueOrSetDefault(convosStore.typings, peerId, [])
 
         for (const rawTypingPeerId of rawTypingPeerIds) {
           const typingPeerId = Peer.resolveId(rawTypingPeerId)
           const typingPeer = typingPeers.find(({ peerId }) => typingPeerId === peerId)
 
-          const cancelTypingTimeoutId = window.setTimeout(() => {
-            const index = typingPeers.findIndex(({ peerId }) => typingPeerId === peerId)
-            if (index !== -1) {
-              typingPeers.splice(index, 1)
-            }
-          }, durationLeft)
+          const cancelTypingTimeoutId = window.setTimeout(
+            () => convosStore.stopTyping(peerId, typingPeerId),
+            durationLeft
+          )
 
           if (typingPeer) {
-            clearTimeout(typingPeer.cancelTypingTimeoutId)
+            window.clearTimeout(typingPeer.cancelTypingTimeoutId)
             typingPeer.cancelTypingTimeoutId = cancelTypingTimeoutId
           } else {
             typingPeers.push({
