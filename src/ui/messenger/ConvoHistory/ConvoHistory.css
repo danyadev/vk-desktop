@@ -38,7 +38,9 @@
 }
 
 .ConvoHistory__footer {
-  height: 40px;
-  padding: 10px var(--convoHistoryIndent);
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 4px;
   color: var(--vkui--color_text_subhead);
 }

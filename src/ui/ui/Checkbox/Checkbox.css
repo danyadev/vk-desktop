@@ -7,18 +7,18 @@
   /* Для FocusVisible */
   border-radius: 4px;
   cursor: pointer;
+  transition: opacity var(--fastTransition);
+}
+
+.Checkbox:hover {
+  opacity: 0.8;
 }
 
 .Checkbox__icon {
   flex: none;
   color: var(--vkui--color_icon_accent_themed);
-  transition: opacity var(--fastTransition);
 }
 
 .Checkbox--off .Checkbox__icon {
   color: var(--vkui--color_icon_tertiary);
-}
-
-.Checkbox:hover .Checkbox__icon {
-  opacity: 0.8;
 }

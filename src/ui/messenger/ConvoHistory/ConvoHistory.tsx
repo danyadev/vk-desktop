@@ -49,18 +49,21 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     historyViewportHeight: historyHeight
   })
 
-  onMounted(() => {
+  onMounted(async () => {
     if (!$historyElement.value) {
       return
     }
 
-    const scrollTop = savedConvoScroll.get(convo.id)
-    if ($historyElement.value && scrollTop !== undefined) {
-      $historyElement.value.scrollTop = scrollTop
-    }
-
     historyWidth.value = $historyElement.value.offsetWidth
     historyHeight.value = $historyElement.value.offsetHeight
+
+    const scrollTop = savedConvoScroll.get(convo.id)
+    if (scrollTop !== undefined) {
+      // После первого рендера в истории могут произойти некоторые изменения, например
+      // просчитаться актуальные размеры сеток фотографий, поэтому ждем дополнительный тик.
+      await nextTick()
+      $historyElement.value.scrollTop = scrollTop
+    }
   })
 
   onBeforeUnmount(() => {

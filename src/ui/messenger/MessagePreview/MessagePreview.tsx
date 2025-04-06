@@ -64,6 +64,14 @@ const getAttachmentPreview = (
   const kindsCount = Attach.kindsCount(message.attaches)
   const count = Attach.count(message.attaches)
 
+  if (
+    kindsCount === 2 &&
+    message.attaches.unknown?.length === 1 && message.attaches.unknown[0].type === 'story' &&
+    message.attaches.sticker
+  ) {
+    return lang.use('me_message_attach_story_reaction')
+  }
+
   if (kindsCount > 1) {
     return lang.usePlural('me_message_attaches', count)
   }

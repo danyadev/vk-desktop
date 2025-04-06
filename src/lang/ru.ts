@@ -303,6 +303,7 @@ export const ru = {
   me_message_attach_widget: 'Виджет',
   me_message_attach_question: 'Вопрос',
   me_message_attach_donut_link: 'Сообщество с VK Donut',
+  me_message_attach_story_reaction: 'Реакция на историю',
   // endregion
 
   me_convo_styles: {
