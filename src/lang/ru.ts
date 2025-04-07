@@ -103,6 +103,7 @@ export const ru = {
   me_convo_composer_placeholder: 'Напишите сообщение...',
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
   me_convo_empty_placeholder: 'История переписки пуста',
+  me_convo_unread_messages: 'Новые сообщения',
   me_convo_loading_error: 'Ошибка загрузки',
   me_convo_retry_loading: 'Повторить',
   me_edited_label: 'ред.',

@@ -16,6 +16,7 @@ import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv, useResizeObserver } from 'hooks'
 import { isNonEmptyArray, NonEmptyArray } from 'misc/utils'
+import { isSameDay } from 'misc/dateTime'
 import { convoHistoryContextInjectKey } from 'misc/providers'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
@@ -227,7 +228,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
           {gapBefore && renderLoader('up', gapBefore.toId, gapBefore)}
 
-          <HistoryMessages items={items} />
+          <HistoryMessages items={items} convo={convo} />
 
           {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
 
@@ -251,33 +252,77 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
 type HistoryMessagesProps = {
   items: Array<History.Item<Message.Message>>
+  convo: Convo.Convo
 }
 
-const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
-  return () => {
-    const stacks = props.items.reduce((stacks, item, index) => {
-      const lastStack = stacks.at(-1)
-      const prevItem = props.items[index - 1]
+type HistoryBlock =
+  | { kind: 'Date', date: number }
+  | { kind: 'Stack', stack: NonEmptyArray<Message.Message> }
+  | { kind: 'Unread' }
 
+const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
+  const { lang } = useEnv()
+
+  const blocks = computed(() => {
+    return props.items.reduce((blocks, item, index) => {
+      const prevBlock = blocks.at(-1)
+      const prevMessage = props.items[index - 1]?.item
       const message = item.item
-      const prevMessage = prevItem?.item
 
       if (
-        !lastStack ||
-        !prevMessage ||
+        Message.isUnread(message, props.convo) &&
+        (!prevMessage || !Message.isUnread(prevMessage, props.convo))
+      ) {
+        blocks.push({ kind: 'Unread' })
+      }
+
+      if (
+        !prevBlock || !prevMessage ||
+        !isSameDay(new Date(prevMessage.sentAt), new Date(message.sentAt))
+      ) {
+        blocks.push({ kind: 'Date', date: message.sentAt })
+        blocks.push({ kind: 'Stack', stack: [message] })
+        return blocks
+      }
+
+      if (
+        prevBlock.kind !== 'Stack' ||
         prevMessage.kind !== message.kind ||
         prevMessage.authorId !== message.authorId
       ) {
-        stacks.push([message])
-      } else {
-        lastStack.push(message)
+        blocks.push({ kind: 'Stack', stack: [message] })
+        return blocks
       }
 
-      return stacks
-    }, new Array<NonEmptyArray<Message.Message>>())
+      prevBlock.stack.push(message)
+      return blocks
+    }, new Array<HistoryBlock>())
+  })
 
-    return stacks.map((messages) => <MessagesStack messages={messages} />)
-  }
+  return () => blocks.value.map((block) => {
+    switch (block.kind) {
+      case 'Stack':
+        return <MessagesStack messages={block.stack} />
+
+      case 'Date': {
+        const isSameYear = new Date().getFullYear() === new Date(block.date).getFullYear()
+        const date = lang.dateTimeFormatter({
+          day: 'numeric',
+          month: 'long',
+          year: isSameYear ? undefined : 'numeric'
+        }).format(block.date)
+
+        return <div class="ConvoHistory__dateBlock">{date}</div>
+      }
+
+      case 'Unread':
+        return (
+          <div class="ConvoHistory__unreadBlock">
+            {lang.use('me_convo_unread_messages')}
+          </div>
+        )
+    }
+  })
 }, {
-  props: ['items']
+  props: ['items', 'convo']
 })
