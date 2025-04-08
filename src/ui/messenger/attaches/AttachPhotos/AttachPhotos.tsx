@@ -14,8 +14,10 @@ type Props = {
 export const AttachPhotos = defineComponent<Props>((props) => {
   const { historyViewportWidth, historyViewportHeight } = useConvoHistoryContext()
   const { measureElRef, maxWidth, isMeasured } = useMeasureMaxWidth(historyViewportWidth)
-  const maxHeight = computed(() => Math.min(historyViewportHeight.value * 0.9, 500))
-  const layout = computed(() => generatePhotosLayout(props.photos, maxWidth.value, maxHeight.value))
+  const layout = computed(() => {
+    const maxHeight = Math.min(historyViewportHeight.value * 0.9, 500)
+    return generatePhotosLayout(props.photos, maxWidth.value, maxHeight)
+  })
   const { photoViewerModal } = useGlobalModal()
 
   return () => (
@@ -37,7 +39,7 @@ export const AttachPhotos = defineComponent<Props>((props) => {
       {!isMeasured.value && (
         <div
           ref={measureElRef}
-          style={{ width: '100vw', maxWidth: '100%', marginTop: '-4px' }}
+          style={{ width: '100vw', maxWidth: '100%' }}
         />
       )}
     </div>

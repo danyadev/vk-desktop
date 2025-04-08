@@ -3,6 +3,8 @@ export type RuPluralRules = 'one' | 'few' | 'many'
 export const ru = {
   vk_desktop_label: 'VK Desktop',
 
+  date_today: 'сегодня',
+  date_yesterday: 'вчера',
   date_today_at_time: 'сегодня в {time}',
   date_yesterday_at_time: 'вчера в {time}',
 

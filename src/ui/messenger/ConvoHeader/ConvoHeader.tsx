@@ -14,15 +14,15 @@ type Props = {
   convo: Convo.Convo
 }
 
-export const ConvoHeader = defineComponent<Props>(({ convo }) => {
+export const ConvoHeader = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const router = useRouter()
-  const peer = Peer.safeGet(convo.id)
+  const peer = Peer.safeGet(props.convo.id)
 
   const formatDate = useFormatDate()
 
   const peerInfo = computed<string>(() => {
-    const isChannel = Convo.isChannel(convo)
+    const isChannel = Convo.isChannel(props.convo)
 
     switch (peer.kind) {
       case 'User': {
@@ -45,11 +45,11 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
       }
 
       case 'Chat': {
-        if (convo.kind === 'ChatConvo' && convo.status === 'left') {
+        if (props.convo.kind === 'ChatConvo' && props.convo.status === 'left') {
           return lang.use('me_chat_leaved_status')
         }
 
-        if (convo.kind === 'ChatConvo' && convo.status === 'kicked') {
+        if (props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked') {
           return lang.use('me_chat_kicked_status')
         }
 
@@ -70,7 +70,7 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
       <ButtonIcon
         icon={<Icon24ChevronCompactLeft color="var(--vkui--color_icon_secondary)" />}
         class="ConvoHeader__back"
-        onClick={() => router.back()}
+        onClick={() => router.replace({ name: 'NoConvo' })}
       />
 
       <Avatar class="ConvoHeader__avatar" peer={peer} size={32} />
@@ -80,7 +80,7 @@ export const ConvoHeader = defineComponent<Props>(({ convo }) => {
           {Peer.name(peer)}
         </span>
         <span class="ConvoHeader__nameIcons">
-          {!convo.notifications.enabled && (
+          {!props.convo.notifications.enabled && (
             <Icon16Muted color="var(--vkui--color_icon_tertiary)" />
           )}
         </span>

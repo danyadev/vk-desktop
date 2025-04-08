@@ -22,20 +22,19 @@ export function generatePhotosLayout(
   const maxHeight = initialMaxHeight - GAP * (rowsCount - 1)
   let totalHeight = 0
 
-  const maxTotalWidth = layout.reduce((maxWidth, row) => {
-    const totalWidth = row.reduce((width, photo) => width + photo.width, 0)
-    return totalWidth > maxWidth ? totalWidth : maxWidth
+  const totalWidth = layout.reduce((totalWidth, row) => {
+    const rowWidth = row.reduce((width, photo) => width + photo.width, 0)
+    return Math.max(rowWidth, totalWidth)
   }, 0)
 
   for (const row of layout) {
     const photosInRowCount = row.length
-
     const maxWidth = initialMaxWidth - GAP * (photosInRowCount - 1)
 
     const rowAspectRatio =
       row.reduce((ratio, photo) => ratio + (photo.width / photo.height), 0)
 
-    const rowHeight = Math.min(maxTotalWidth, maxWidth) / rowAspectRatio
+    const rowHeight = Math.min(totalWidth, maxWidth) / rowAspectRatio
     totalHeight += rowHeight
 
     for (const photo of row) {

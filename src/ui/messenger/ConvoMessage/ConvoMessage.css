@@ -29,6 +29,7 @@
   margin: 4px 0 4px 6px;
   bottom: -6px;
   color: var(--vkui--color_text_secondary);
+  user-select: none;
 }
 
 .ConvoMessage--out .ConvoMessage__time {

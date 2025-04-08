@@ -42,7 +42,7 @@ export const ConvoWrapper = defineComponent(() => {
   })
 
   watchEffect(() => {
-    if (!convo.value && connection.status !== 'init' && connection.status !== 'initFailed') {
+    if (!convo.value && connection.status === 'connected') {
       alert('необходима загрузка конвы')
     }
   })

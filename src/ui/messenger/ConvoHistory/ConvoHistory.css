@@ -47,31 +47,25 @@
 
 .ConvoHistory__dateBlock {
   font: var(--smallFont);
-  padding: 4px 12px;
-  margin: 4px auto;
-  border-radius: 12px;
-  color: var(--vkui--color_text_contrast);
-  background: var(--vkui--color_overlay_primary);
+  color: var(--vkui--color_text_subhead);
+  margin: 8px auto;
 }
 
 .ConvoHistory__unreadBlock {
-  font: var(--smallFont);
   position: relative;
-  text-align: center;
-  padding: 4px 12px;
-  margin: 4px 0;
-  color: var(--vkui--color_text_contrast);
-  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font: var(--smallFont);
+  color: var(--vkui--color_text_subhead);
+  margin: 8px auto;
 }
 
-.ConvoHistory__unreadBlock::before {
+.ConvoHistory__unreadBlock::before,
+.ConvoHistory__unreadBlock::after {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 200vw;
-  height: 100%;
-  transform: translateX(-50%);
-  background-color: var(--vkui--color_overlay_primary);
-  z-index: -1;
+  height: 1px;
+  flex: 1;
+  background: var(--vkui--color_separator_secondary);
 }

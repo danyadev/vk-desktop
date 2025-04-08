@@ -7,7 +7,8 @@ import {
   onMounted,
   onUpdated,
   provide,
-  shallowRef
+  shallowRef,
+  watch
 } from 'vue'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
@@ -16,7 +17,7 @@ import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv, useResizeObserver } from 'hooks'
 import { isNonEmptyArray, NonEmptyArray } from 'misc/utils'
-import { isSameDay } from 'misc/dateTime'
+import { isPreviousDay, isSameDay } from 'misc/dateTime'
 import { convoHistoryContextInjectKey } from 'misc/providers'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
@@ -29,10 +30,10 @@ type Props = {
   convo: Convo.Convo
 }
 
-export const ConvoHistory = defineComponent<Props>(({ convo }) => {
+export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const { loadConvoHistoryLock, savedConvoScroll, typings } = useConvosStore()
-  const historySlice = computed(() => History.around(convo.history, convo.inReadBy))
+  const historySlice = computed(() => History.around(props.convo.history, props.convo.inReadBy))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const prevScrollHeight = shallowRef(0)
   let newConvoHistoryJustRendered = false
@@ -50,16 +51,18 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     historyViewportHeight: historyHeight
   })
 
-  onMounted(async () => {
+  watch($historyElement, () => {
     if (!$historyElement.value) {
       return
     }
 
     historyWidth.value = $historyElement.value.offsetWidth
     historyHeight.value = $historyElement.value.offsetHeight
+  })
 
-    const scrollTop = savedConvoScroll.get(convo.id)
-    if (scrollTop !== undefined) {
+  onMounted(async () => {
+    const scrollTop = savedConvoScroll.get(props.convo.id)
+    if ($historyElement.value && scrollTop !== undefined) {
       // После первого рендера в истории могут произойти некоторые изменения, например
       // просчитаться актуальные размеры сеток фотографий, поэтому ждем дополнительный тик.
       await nextTick()
@@ -69,7 +72,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
   onBeforeUnmount(() => {
     if ($historyElement.value) {
-      savedConvoScroll.set(convo.id, $historyElement.value.scrollTop)
+      savedConvoScroll.set(props.convo.id, $historyElement.value.scrollTop)
     }
   })
 
@@ -116,7 +119,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     gap: History.Gap
   ) => {
     loadConvoHistory({
-      peerId: convo.id,
+      peerId: props.convo.id,
       startCmid,
       gap,
       direction,
@@ -134,30 +137,39 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     })
   }
 
-  const correctScrollPosition = (
+  const correctScrollPosition = async (
     insertedMessages: Message.Message[],
     direction: 'around' | 'up' | 'down',
     startCmid: Message.Cmid
   ) => {
     if (direction === 'around') {
-      nextTick(() => {
-        const historyElement = $historyElement.value
-        if (!historyElement) {
+      await nextTick()
+
+      const historyElement = $historyElement.value
+      if (!historyElement) {
+        return
+      }
+
+      if (startCmid === props.convo.inReadBy) {
+        const unreadBlock = historyElement.querySelector<HTMLElement>('.ConvoHistory__unreadBlock')
+        if (unreadBlock) {
+          historyElement.scrollTop =
+            unreadBlock.offsetTop - historyElement.offsetTop - historyHeight.value / 4
           return
         }
+      }
 
-        // При загрузке вокруг кмида этого сообщения может не оказаться, тогда мы возьмем следующее
-        const aroundMessage =
-          insertedMessages.find(({ cmid }) => (cmid >= startCmid)) ??
-          insertedMessages.at(-1)
+      // При загрузке вокруг кмида этого сообщения может не оказаться, тогда мы возьмем следующее
+      const aroundMessage =
+        insertedMessages.find(({ cmid }) => (cmid >= startCmid)) ??
+        insertedMessages.at(-1)
 
-        const messageElement = aroundMessage && historyElement.querySelector(
-          `.MessagesStack__message[data-cmid="${aroundMessage.cmid}"]`
-        )
-        messageElement?.scrollIntoView({
-          block: 'center',
-          behavior: 'instant'
-        })
+      const messageElement = aroundMessage && historyElement.querySelector(
+        `.MessagesStack__message[data-cmid="${aroundMessage.cmid}"]`
+      )
+      messageElement?.scrollIntoView({
+        block: 'center',
+        behavior: 'instant'
       })
     }
 
@@ -168,9 +180,8 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
       }
 
       const { scrollTop, scrollHeight } = historyElement
-      nextTick(() => {
-        historyElement.scrollTop = scrollTop + historyElement.scrollHeight - scrollHeight
-      })
+      await nextTick()
+      historyElement.scrollTop = scrollTop + historyElement.scrollHeight - scrollHeight
     }
   }
 
@@ -179,7 +190,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
     startId: number,
     gap: History.Gap
   ) => {
-    const lockStatus = loadConvoHistoryLock.get(`${convo.id}-${direction}`)
+    const lockStatus = loadConvoHistoryLock.get(`${props.convo.id}-${direction}`)
     const onLoad = () => loadHistory(direction, Message.resolveCmid(startId), gap)
 
     if (lockStatus === 'error') {
@@ -219,7 +230,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
       )
     }
 
-    const typingUsers = typings.get(convo.id)
+    const typingUsers = typings.get(props.convo.id)
 
     return (
       <div class="ConvoHistory" ref={$historyElement}>
@@ -228,7 +239,7 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
 
           {gapBefore && renderLoader('up', gapBefore.toId, gapBefore)}
 
-          <HistoryMessages items={items} convo={convo} />
+          <HistoryMessages items={items} convo={props.convo} />
 
           {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
 
@@ -237,7 +248,9 @@ export const ConvoHistory = defineComponent<Props>(({ convo }) => {
               <ConvoTyping
                 typingUsers={typingUsers}
                 namesLimit={
-                  convo.kind === 'UserConvo' || convo.kind === 'GroupConvo' ? 0 : undefined
+                  props.convo.kind === 'UserConvo' || props.convo.kind === 'GroupConvo'
+                    ? 0
+                    : undefined
                 }
               />
             )}
@@ -258,23 +271,25 @@ type HistoryMessagesProps = {
 type HistoryBlock =
   | { kind: 'Date', date: number }
   | { kind: 'Stack', stack: NonEmptyArray<Message.Message> }
-  | { kind: 'Unread' }
+  | { kind: 'Unread', inReadBy: number }
 
 const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
   const { lang } = useEnv()
 
   const blocks = computed(() => {
     return props.items.reduce((blocks, item, index) => {
-      const prevBlock = blocks.at(-1)
       const prevMessage = props.items[index - 1]?.item
       const message = item.item
 
       if (
+        !message.isOut &&
         Message.isUnread(message, props.convo) &&
         (!prevMessage || !Message.isUnread(prevMessage, props.convo))
       ) {
-        blocks.push({ kind: 'Unread' })
+        blocks.push({ kind: 'Unread', inReadBy: props.convo.inReadBy })
       }
+
+      const prevBlock = blocks.at(-1)
 
       if (
         !prevBlock || !prevMessage ||
@@ -302,22 +317,37 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
   return () => blocks.value.map((block) => {
     switch (block.kind) {
       case 'Stack':
-        return <MessagesStack messages={block.stack} />
+        return (
+          <MessagesStack
+            key={`stack-${block.stack[0].cmid}-${block.stack.at(-1)?.cmid}`}
+            messages={block.stack}
+          />
+        )
 
       case 'Date': {
-        const isSameYear = new Date().getFullYear() === new Date(block.date).getFullYear()
-        const date = lang.dateTimeFormatter({
-          day: 'numeric',
-          month: 'long',
-          year: isSameYear ? undefined : 'numeric'
-        }).format(block.date)
+        const blockDate = new Date(block.date)
+        const nowDate = new Date()
+        let date: string
 
-        return <div class="ConvoHistory__dateBlock">{date}</div>
+        if (isSameDay(nowDate, blockDate)) {
+          date = lang.use('date_today')
+        } else if (isPreviousDay(nowDate, blockDate)) {
+          date = lang.use('date_yesterday')
+        } else {
+          const isSameYear = nowDate.getFullYear() === blockDate.getFullYear()
+          date = lang.dateTimeFormatter({
+            day: 'numeric',
+            month: 'long',
+            year: isSameYear ? undefined : 'numeric'
+          }).format(block.date)
+        }
+
+        return <div class="ConvoHistory__dateBlock" key={`date-${block.date}`}>{date}</div>
       }
 
       case 'Unread':
         return (
-          <div class="ConvoHistory__unreadBlock">
+          <div class="ConvoHistory__unreadBlock" key={`unread-${block.inReadBy}`}>
             {lang.use('me_convo_unread_messages')}
           </div>
         )
