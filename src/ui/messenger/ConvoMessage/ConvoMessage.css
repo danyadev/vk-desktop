@@ -39,6 +39,7 @@
 .ConvoMessage__status {
   display: inline-flex;
   align-items: center;
+  width: 14px;
   height: var(--messageDateFontSize);
   vertical-align: bottom;
   margin-left: 3px;

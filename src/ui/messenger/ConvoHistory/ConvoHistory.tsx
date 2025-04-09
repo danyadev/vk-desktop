@@ -138,7 +138,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   }
 
   const correctScrollPosition = async (
-    insertedMessages: Message.Message[],
+    insertedMessages: Message.Confirmed[],
     direction: 'around' | 'up' | 'down',
     startCmid: Message.Cmid
   ) => {
@@ -213,6 +213,10 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   return () => {
     const { items, matchedAroundId, gapBefore, gapAround, gapAfter } = historySlice.value
+    const messages = [
+      ...items.map(({ item }) => item),
+      ...props.convo.pendingMessages
+    ]
 
     if (gapAround) {
       return (
@@ -222,7 +226,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       )
     }
 
-    if (items.length === 0) {
+    if (messages.length === 0) {
       return (
         <div class="ConvoHistory__placeholder">
           {lang.use('me_convo_empty_placeholder')}
@@ -239,7 +243,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
           {gapBefore && renderLoader('up', gapBefore.toId, gapBefore)}
 
-          <HistoryMessages items={items} convo={props.convo} />
+          <HistoryMessages messages={messages} convo={props.convo} />
 
           {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
 
@@ -264,7 +268,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 })
 
 type HistoryMessagesProps = {
-  items: Array<History.Item<Message.Message>>
+  messages: Message.Message[]
   convo: Convo.Convo
 }
 
@@ -277,9 +281,8 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
   const { lang } = useEnv()
 
   const blocks = computed(() => {
-    return props.items.reduce((blocks, item, index) => {
-      const prevMessage = props.items[index - 1]?.item
-      const message = item.item
+    return props.messages.reduce((blocks, message, index) => {
+      const prevMessage = props.messages[index - 1]
 
       if (
         !message.isOut &&
@@ -316,13 +319,14 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
 
   return () => blocks.value.map((block) => {
     switch (block.kind) {
-      case 'Stack':
-        return (
-          <MessagesStack
-            key={`stack-${block.stack[0].cmid}-${block.stack.at(-1)?.cmid}`}
-            messages={block.stack}
-          />
-        )
+      case 'Stack': {
+        const start = block.stack[0]
+        const end = block.stack.at(-1)
+        const startKey = start.kind === 'Pending' ? start.randomId : start.cmid
+        const endKey = end?.kind === 'Pending' ? end.randomId : end?.cmid
+
+        return <MessagesStack key={`stack-${startKey}-${endKey}`} messages={block.stack} />
+      }
 
       case 'Date': {
         const blockDate = new Date(block.date)
@@ -354,5 +358,5 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
     }
   })
 }, {
-  props: ['items', 'convo']
+  props: ['messages', 'convo']
 })

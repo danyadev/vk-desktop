@@ -5,15 +5,17 @@ import { NonEmptyArray, Opaque } from 'misc/utils'
 
 export type Cmid = Opaque<number, Message>
 
-export type Message = Normal | Service | Expired
+export type Message = Confirmed | Pending
+export type Confirmed = Normal | Service | Expired
 
-interface BaseMessage {
+export interface BaseMessage {
   peerId: Peer.Id
   cmid: Cmid
   authorId: Peer.OwnerId
   isOut: boolean
   sentAt: number
   updatedAt?: number
+  randomId: number
 }
 
 export interface Normal extends BaseMessage {
@@ -33,7 +35,7 @@ export interface Expired extends BaseMessage {
   kind: 'Expired'
 }
 
-export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'isOut'> {
+export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'isOut' | 'randomId'> {
   kind: 'Foreign'
   peerId?: Peer.Id
   cmid?: Cmid
@@ -42,9 +44,17 @@ export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'isOu
   isUnavailable: boolean
 }
 
-export interface Pinned extends Omit<Normal, 'kind' | 'isOut' | 'updatedAt'> {
+export interface Pinned extends Omit<Normal, 'kind' | 'isOut' | 'updatedAt' | 'randomId'> {
   kind: 'Pinned'
   isUnavailable: boolean
+}
+
+export interface Pending extends Omit<Normal, 'kind' | 'cmid' | 'isOut'> {
+  kind: 'Pending'
+  /** Проставляется после ответа messages.send, если движок не успел отдать сообщение быстрее */
+  cmid?: Cmid
+  isOut: true
+  isFailed: boolean
 }
 
 export type ServiceAction =
@@ -106,6 +116,10 @@ export function resolveCmid(cmid: number): Cmid {
 }
 
 export function isUnread(message: Message, convo: Convo.Convo): boolean {
+  if (message.kind === 'Pending') {
+    return true
+  }
+
   return message.isOut
     ? message.cmid > convo.outReadBy
     : message.cmid > convo.inReadBy

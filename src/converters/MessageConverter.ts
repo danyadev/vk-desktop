@@ -8,7 +8,7 @@ import { fromApiAttaches } from 'converters/AttachConverter'
 import { fromApiConvoStyle } from 'converters/ConvoConverter'
 import { isNonEmptyArray, NonEmptyArray, typeguard } from 'misc/utils'
 
-export function fromApiMessage(message: MessagesMessage): Message.Message {
+export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
   const baseMessage = {
     peerId: Peer.resolveId(message.peer_id),
     cmid: Message.resolveCmid(message.conversation_message_id),
@@ -17,8 +17,9 @@ export function fromApiMessage(message: MessagesMessage): Message.Message {
     sentAt: message.date * 1000,
     updatedAt: message.update_time
       ? message.update_time * 1000
-      : undefined
-  } satisfies Partial<Message.Message>
+      : undefined,
+    randomId: message.random_id ?? 0
+  } satisfies Message.BaseMessage
 
   const attaches = fromApiAttaches(message.attachments ?? [], !!message.was_listened)
 

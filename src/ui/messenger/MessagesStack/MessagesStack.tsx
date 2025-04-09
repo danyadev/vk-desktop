@@ -25,6 +25,21 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
             />
           </div>
         )
+
+      case 'Pending':
+        return (
+          <div
+            key={message.randomId}
+            class="MessagesStack__message"
+            data-randomId={message.randomId}
+          >
+            <ConvoMessage
+              message={message}
+              showName={index === 0 && Peer.isChatPeerId(message.peerId)}
+            />
+          </div>
+        )
+
       case 'Service':
         return (
           <div
@@ -35,6 +50,7 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
             <ServiceMessage message={message} />
           </div>
         )
+
       case 'Expired':
         return (
           <div

@@ -2,7 +2,6 @@ import * as IEngine from 'env/IEngine'
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import * as Convo from 'model/Convo'
-import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
@@ -42,6 +41,10 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
+        if (!convosStore.convos.has(peerId)) {
+          break
+        }
+
         const apiConvo = apiConvosMap.get(peerId)
         if (!apiConvo) {
           console.warn('[handleEngineUpdates] no convo', apiConvosMap, update)
@@ -55,15 +58,21 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
           })
 
           const convo = Convo.safeGet(peerId)
+          const message = Convo.findMessage(convo, cmid)
 
-          History.removeNode(convo.history, cmid)
+          if (!message) {
+            break
+          }
+
+          Convo.removeMessage(convo, cmid)
+          Convo.removePendingMessage(convo, message.randomId)
 
           const lastMessageCmid =
             apiConvo.last_conversation_message_id &&
             Message.resolveCmid(apiConvo.last_conversation_message_id)
           const apiLastMessage = lastMessageCmid && apiMessagesMap.get(peerId)?.get(lastMessageCmid)
 
-          if (apiLastMessage && !History.lastItem(convo.history)) {
+          if (apiLastMessage && !Convo.lastMessage(convo)) {
             const message = fromApiMessage(apiLastMessage)
             Convo.insertMessages(convo, [message], {
               up: true,
@@ -133,6 +142,7 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
           down: true,
           aroundId: cmid
         })
+        Convo.removePendingMessage(convo, message.randomId)
 
         if (update[0] === 10004 || update[0] === 10005) {
           convosStore.stopTyping(peerId, message.authorId)

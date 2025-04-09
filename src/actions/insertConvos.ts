@@ -17,6 +17,10 @@ export function insertConvos(
     if (convo) {
       const localConvo = convos.get(convo.id)
 
+      if (localConvo) {
+        convo.pendingMessages = localConvo.pendingMessages
+      }
+
       if (localConvo && merge) {
         convo.history = localConvo.history
       }

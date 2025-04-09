@@ -1,7 +1,6 @@
 import { computed, defineComponent, Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as Convo from 'model/Convo'
-import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
@@ -27,7 +26,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const { typings } = useConvosStore()
   const peer = computed(() => Peer.safeGet(props.convo.id))
-  const lastMessage = computed(() => History.lastItem(props.convo.history))
+  const lastMessage = computed(() => Convo.lastMessage(props.convo, true))
   const active = computed(() => route.name === 'Convo' && +route.params.peerId === props.convo.id)
   const authorName = useAuthorName(lastMessage, computed(() => props.convo))
 
