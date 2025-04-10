@@ -10,7 +10,7 @@ import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
 import './ConvoMessage.css'
 
 type Props = {
-  message: Message.Normal
+  message: Message.Normal | Message.Pending
   showName: boolean
 }
 

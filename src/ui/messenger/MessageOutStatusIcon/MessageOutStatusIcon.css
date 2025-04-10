@@ -1,3 +1,14 @@
 .MessageOutStatusIcon {
   color: var(--vkui--color_icon_accent_themed);
 }
+
+.MessageOutStatusIcon--pending,
+.MessageOutStatusIcon--failed {
+  margin: 2px;
+}
+
+.MessageOutStatusIcon--failed {
+  color: var(--vkui--color_icon_negative);
+  /* Браузер почему-то очень плохо рендерит круг в этой иконке, округляем вручную */
+  border-radius: 50%;
+}

@@ -7,7 +7,8 @@ import { exhaustivenessCheck } from 'misc/utils'
 export type Convo = UserConvo | GroupConvo | ChatConvo
 
 interface BaseConvo {
-  history: History.History<Message.Message>
+  history: History.History<Message.Confirmed>
+  pendingMessages: Message.Pending[]
   unreadCount: number
   majorSortId: number
   minorSortId: number
@@ -102,6 +103,7 @@ function mock(id: Peer.Id): Convo
 function mock(id: Peer.Id): Convo {
   const base: BaseConvo = {
     history: [],
+    pendingMessages: [],
     unreadCount: 0,
     majorSortId: 0,
     minorSortId: 0,
@@ -151,9 +153,19 @@ export function sorter(a: Convo, b: Convo) {
   return b.minorSortId - a.minorSortId
 }
 
+export function lastMessage(convo: Convo, allowPending?: false): Message.Confirmed | undefined
+export function lastMessage(convo: Convo, allowPending: true): Message.Message | undefined
+export function lastMessage(convo: Convo, allowPending?: boolean): Message.Message | undefined {
+  if (allowPending && convo.pendingMessages.length) {
+    return convo.pendingMessages.at(-1)
+  }
+
+  return History.lastItem(convo.history)
+}
+
 export function insertMessages(
   convo: Convo,
-  messages: Message.Message[],
+  messages: Message.Confirmed[],
   hasMore: { up: boolean, down: boolean, aroundId: number }
 ) {
   History.insert(
@@ -161,6 +173,31 @@ export function insertMessages(
     messages.map((message) => History.toItem(message.cmid, message)),
     hasMore
   )
+}
+
+export function removeMessage(convo: Convo, cmid: Message.Cmid) {
+  History.removeNode(convo.history, cmid)
+}
+
+export function removePendingMessage(convo: Convo, randomId: number) {
+  if (randomId === 0) {
+    return
+  }
+
+  const index = convo.pendingMessages.findIndex(
+    (pending) => pending.randomId === randomId
+  )
+  if (index !== -1) {
+    convo.pendingMessages.splice(index, 1)
+  }
+}
+
+export function findMessage(convo: Convo, cmid: Message.Cmid): Message.Confirmed | undefined {
+  const node = History.findNode(convo.history, cmid)
+
+  if (node && node.kind !== 'Gap') {
+    return node.item
+  }
 }
 
 export function isCasper(convo: Convo): boolean {

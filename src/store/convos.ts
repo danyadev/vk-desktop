@@ -20,6 +20,7 @@ type Convos = {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
   loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, 'loading' | 'error'>
+  sendingMessageLock: Set<Peer.Id>
   savedConvoScroll: Map<Peer.Id, number>
   typings: Map<Peer.Id, TypingUser[]>
 }
@@ -37,6 +38,7 @@ export const useConvosStore = defineStore('convos', {
       status: 'init'
     },
     loadConvoHistoryLock: new Map(),
+    sendingMessageLock: new Set(),
     savedConvoScroll: new Map(),
     typings: new Map()
   }),

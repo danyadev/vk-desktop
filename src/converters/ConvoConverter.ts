@@ -15,7 +15,7 @@ export function fromApiConvo(
   | { convo?: Exclude<Convo.Convo, Convo.ChatConvo>, peer?: undefined } {
   const lastMessage = apiLastMessage && fromApiMessage(apiLastMessage)
   const lastCmid = apiConvo.last_conversation_message_id
-  const history: History.History<Message.Message> = []
+  const history: History.History<Message.Confirmed> = []
 
   if (lastMessage) {
     if (lastCmid > 1) {
@@ -29,6 +29,7 @@ export function fromApiConvo(
 
   const baseConvo = {
     history,
+    pendingMessages: [],
     unreadCount: apiConvo.unread_count ?? 0,
     majorSortId: apiConvo.sort_id?.major_id ?? 0,
     minorSortId: apiConvo.sort_id?.minor_id ?? 0,

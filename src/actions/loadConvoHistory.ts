@@ -13,7 +13,7 @@ type Props = {
   startCmid: Message.Cmid
   gap: History.Gap
   direction: 'around' | 'up' | 'down'
-  onHistoryInserted: (messages: Message.Message[]) => void
+  onHistoryInserted: (messages: Message.Confirmed[]) => void
 }
 
 export async function loadConvoHistory({

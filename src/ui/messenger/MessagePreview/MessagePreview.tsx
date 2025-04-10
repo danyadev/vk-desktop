@@ -58,7 +58,7 @@ export const MessagePreview = defineComponent<Props>((props) => {
 })
 
 const getAttachmentPreview = (
-  message: Message.Normal | Message.Foreign | Message.Pinned,
+  message: Message.Normal | Message.Pending | Message.Foreign | Message.Pinned,
   lang: ILang.Lang
 ) => {
   const kindsCount = Attach.kindsCount(message.attaches)

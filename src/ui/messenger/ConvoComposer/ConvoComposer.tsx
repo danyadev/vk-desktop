@@ -1,8 +1,8 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
+import { sendMessage } from 'actions'
 import { useEnv } from 'hooks'
-import { isEventWithModifier, random } from 'misc/utils'
-import { INTEGER_BOUNDARY } from 'misc/constants'
+import { isEventWithModifier } from 'misc/utils'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Icon24Info, Icon24MuteOutline, Icon24Send, Icon24VolumeOutline } from 'assets/icons'
@@ -15,31 +15,16 @@ type Props = {
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, api } = useEnv()
   const isNotificationsUpdating = shallowRef(false)
-  const isMessageSending = shallowRef(false)
   const text = shallowRef('')
   const $input = shallowRef<HTMLSpanElement | null>(null)
 
   const isEmpty = computed(() => text.value.trim() === '')
 
-  const sendMessage = async () => {
-    try {
-      isMessageSending.value = true
+  const onMessageSend = () => {
+    sendMessage(props.convo.id, text.value)
 
-      await api.fetch('messages.send', {
-        peer_id: props.convo.id,
-        random_id: random(-INTEGER_BOUNDARY, INTEGER_BOUNDARY),
-        message: text.value
-      })
-
-      if ($input.value) {
-        text.value = ''
-        $input.value.textContent = ''
-      }
-    } catch (error) {
-      console.warn(error)
-    } finally {
-      isMessageSending.value = false
-    }
+    text.value = ''
+    $input.value && ($input.value.innerText = '')
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -51,12 +36,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         return
       }
 
-      sendMessage()
+      onMessageSend()
     }
   }
 
   const onInput = (event: ChangeEvent<HTMLElement>) => {
-    text.value = event.currentTarget.textContent ?? ''
+    text.value = event.currentTarget.innerText ?? ''
   }
 
   const toggleNotifications = async () => {
@@ -76,8 +61,6 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const renderPanel = () => {
-    const isChannel = Convo.isChannel(props.convo)
-
     if (props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked') {
       return (
         <div class="ConvoComposer__restriction">
@@ -87,7 +70,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       )
     }
 
-    if (isChannel) {
+    if (Convo.isChannel(props.convo)) {
       return (
         <Button
           class="ConvoComposer__muteChannelButton"
@@ -121,10 +104,9 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         <ButtonIcon
           class="ConvoComposer__send"
           disabled={isEmpty.value}
-          loading={isMessageSending.value}
           icon={<Icon24Send />}
           addHoverBackground={false}
-          onClick={sendMessage}
+          onClick={onMessageSend}
           // Предотвращаем сброс фокуса с поля ввода
           onMousedown={(event) => event.preventDefault()}
         />
