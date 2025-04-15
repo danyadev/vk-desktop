@@ -42,6 +42,13 @@ module.exports = {
 
   overrides: [
     {
+      files: ['**/*.stories.tsx'],
+      rules: {
+        'import-x/no-unused-modules': 'off',
+        'import-x/no-default-export': 'off'
+      }
+    },
+    {
       files: ['**/*.{ts,tsx,mts}'],
       extends: [
         'plugin:@typescript-eslint/recommended-type-checked',

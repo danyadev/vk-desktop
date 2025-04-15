@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "yarn run dist && yarn run pack",
     "tsc": "tsc --noEmit",
+    "sb": "storybook dev --port 6006",
+    "electron:sb": "set VITE_DEV_SERVER_URL=http://localhost:6006 && electron .",
     "test": "vitest run",
     "test-watch": "vitest watch",
     "lint:eslint": "eslint -c .eslintrc.full.js src main-process scripts *.{js,mts} --ext .js,.ts,.tsx,.mjs,.mts",
@@ -37,10 +39,13 @@
     "@floating-ui/dom": "1.6.13",
     "@vkontakte/vk-qr": "2.1.1",
     "pinia": "2.3.1",
-    "vue": "https://pkg.pr.new/vue@13119",
+    "storybook": "^8.6.11",
+    "vue": "3.5.13",
     "vue-router": "4.5.0"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.12",
+    "@storybook/vue3-vite": "8.0.5",
     "@stylistic/eslint-plugin": "3.0.1",
     "@stylistic/eslint-plugin-js": "3.0.1",
     "@stylistic/stylelint-config": "2.0.0",
