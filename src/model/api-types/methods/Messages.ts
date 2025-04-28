@@ -100,3 +100,11 @@ export type MessagesSendResponse = {
   cmid: number
   message_id: number
 }
+
+export type MessagesMarkAsPlayedParams = {
+  peer_id: number
+  cmid: number
+  group_id?: number
+}
+
+export type MessagesMarkAsPlayedResponse = 1

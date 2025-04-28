@@ -29,6 +29,8 @@ import {
   MessagesGetLongPollHistoryResponse,
   MessagesGetLongPollServerParams,
   MessagesGetLongPollServerResponse,
+  MessagesMarkAsPlayedParams,
+  MessagesMarkAsPlayedResponse,
   MessagesSendParams,
   MessagesSendResponse
 } from 'model/api-types/methods/Messages'
@@ -126,6 +128,11 @@ export type Methods = {
   'messages.send': {
     params: MessagesSendParams
     response: MessagesSendResponse
+  }
+
+  'messages.markAsPlayed': {
+    params: MessagesMarkAsPlayedParams
+    response: MessagesMarkAsPlayedResponse
   }
 
   'users.get': {
