@@ -52,7 +52,7 @@ export type MessagesGetHistoryResponse = {
 // messages.getLongPollServer
 export type MessagesGetLongPollServerParams = {
   lp_version: number
-  need_pts: 1
+  need_pts: 0 | 1
   group_id?: number
 }
 

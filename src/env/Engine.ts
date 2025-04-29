@@ -2,7 +2,8 @@ import * as IEngine from 'env/IEngine'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import { useConvosStore } from 'store/convos'
 import { handleEngineUpdates } from 'actions'
-import { toUrlParams } from 'misc/utils'
+import { useEnv } from 'hooks'
+import { sleep, toUrlParams } from 'misc/utils'
 
 const ENGINE_MAX_CONNECTION_DURATION_SEC = 20
 const ENGINE_FETCH_TIMEOUT = (ENGINE_MAX_CONNECTION_DURATION_SEC + 5) * 1000
@@ -20,6 +21,7 @@ export class Engine {
   credentials: MessagesLongpollCredentials | null = null
 
   async start(credentials: MessagesLongpollCredentials) {
+    const { api } = useEnv()
     const { connection } = useConvosStore()
 
     if (this.active) {
@@ -43,12 +45,33 @@ export class Engine {
           wait: ENGINE_MAX_CONNECTION_DURATION_SEC
         }),
         signal: timeoutSignal
-      }).then<IEngine.Response>((response) => response.json())
+      })
+        .then<IEngine.Response>((response) => response.json())
+        .catch(() => null)
+
+      if (!result) {
+        // Получили ошибку сети, просто делаем запрос еще раз
+        await sleep(2500)
+        continue
+      }
 
       if ('failed' in result) {
         switch (result.failed) {
+          case 2: {
+            try {
+              const { key } = await api.fetch('messages.getLongPollServer', {
+                lp_version: this.version,
+                need_pts: 0
+              }, { retries: Infinity })
+
+              this.credentials.key = key
+              continue
+            } catch {
+              throw new Error('[engine] Couldn\'t obtain a new key')
+            }
+          }
+
           case 1:
-          case 2:
           case 4:
           default:
             connection.status = 'syncing'

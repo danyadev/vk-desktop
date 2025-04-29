@@ -1,5 +1,5 @@
 .ModalBody {
-  min-width: 300px;
+  min-width: min(300px, 100%);
 }
 
 .ModalBody--withPadding {

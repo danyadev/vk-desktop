@@ -313,7 +313,7 @@ async function loadMissingData(
       group_ids: missingGroups.join(','),
       fields: PEER_FIELDS
     })
-  ])
+  ], { retries: Infinity })
 
   if (glphResponse && glphResponse.from_pts > pts) {
     throw new Error('[loadMissingData] glph история обрезалась')

@@ -1,8 +1,6 @@
 .AttachPhotos {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  flex-wrap: wrap;
   gap: 3px;
   border-radius: 8px;
   overflow: hidden;

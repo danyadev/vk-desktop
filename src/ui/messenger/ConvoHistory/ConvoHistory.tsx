@@ -153,6 +153,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       if (startCmid === props.convo.inReadBy) {
         const unreadBlock = historyElement.querySelector<HTMLElement>('.ConvoHistory__unreadBlock')
         if (unreadBlock) {
+          // Скроллим к блоку непрочитанных так, чтобы он начинался на верхней 1/4 части вьюпорта
           historyElement.scrollTop =
             unreadBlock.offsetTop - historyElement.offsetTop - historyHeight.value / 4
           return
@@ -195,7 +196,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
     if (lockStatus === 'error') {
       return (
-        <div class="ConvoHistory__loadError">
+        <div class="ConvoHistory__loadError" key={startId}>
           {lang.use('me_convo_loading_error')}
           <Button onClick={onLoad}>
             {lang.use('me_convo_retry_loading')}
