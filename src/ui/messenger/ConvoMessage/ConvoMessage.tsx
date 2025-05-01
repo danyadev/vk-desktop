@@ -17,7 +17,7 @@ type Props = {
 
 export const ConvoMessage = defineComponent<Props>((props) => {
   const { lang } = useEnv()
-  const { cmidToScrollToByConvo } = useConvosStore()
+  const { scrollAnchors } = useConvosStore()
 
   return () => {
     const { message, showName } = props
@@ -46,7 +46,10 @@ export const ConvoMessage = defineComponent<Props>((props) => {
               reply={message.replyMessage}
               onClick={() => {
                 if (message.replyMessage?.cmid) {
-                  cmidToScrollToByConvo.set(message.peerId, message.replyMessage.cmid)
+                  scrollAnchors.set(message.peerId, {
+                    kind: 'Message',
+                    cmid: message.replyMessage.cmid
+                  })
                 }
               }}
             />

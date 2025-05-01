@@ -9,6 +9,11 @@ export type TypingUser = {
   cancelTypingTimeoutId: number
 }
 
+export type ScrollAnchor =
+  | { kind: 'Message', cmid: Message.Cmid, inProgress?: true }
+  | { kind: 'Unread', cmid: Message.Cmid, inProgress?: true }
+  | { kind: 'None' }
+
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>
   convoList: {
@@ -22,8 +27,8 @@ type Convos = {
   }
   loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, 'loading' | 'error'>
   sendMessageLock: Set<Peer.Id>
-  savedScrollByConvo: Map<Peer.Id, number>
-  cmidToScrollToByConvo: Map<Peer.Id, Message.Cmid>
+  savedScrollPositions: Map<Peer.Id, number>
+  scrollAnchors: Map<Peer.Id, ScrollAnchor>
   typings: Map<Peer.Id, TypingUser[]>
 }
 
@@ -41,8 +46,8 @@ export const useConvosStore = defineStore('convos', {
     },
     loadConvoHistoryLock: new Map(),
     sendMessageLock: new Set(),
-    savedScrollByConvo: new Map(),
-    cmidToScrollToByConvo: new Map(),
+    savedScrollPositions: new Map(),
+    scrollAnchors: new Map(),
     typings: new Map()
   }),
 

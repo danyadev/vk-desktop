@@ -38,6 +38,7 @@
   left: -100vw;
   width: 200vw;
   height: calc(100% + 4px * 2);
+  pointer-events: none;
   background: white;
   opacity: 0;
   visibility: hidden;

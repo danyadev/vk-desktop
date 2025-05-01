@@ -13,10 +13,25 @@ export function insertPeers({ profiles, groups }: Props) {
 
   for (const apiUser of profiles ?? []) {
     const user = fromApiUser(apiUser)
-    peers.set(user.id, user)
+    const existingUser = peers.get(user.id)
+
+    if (existingUser) {
+      // Большинство полей являются примитивами, которые меняются крайне редко, поэтому
+      // выгодно сохранить старый объект, чтобы был меньше шанс перерисовки
+      Object.assign(existingUser, user)
+    } else {
+      peers.set(user.id, user)
+    }
   }
+
   for (const apiGroup of groups ?? []) {
     const group = fromApiGroup(apiGroup)
-    peers.set(group.id, group)
+    const existingGroup = peers.get(group.id)
+
+    if (existingGroup) {
+      Object.assign(existingGroup, group)
+    } else {
+      peers.set(group.id, group)
+    }
   }
 }

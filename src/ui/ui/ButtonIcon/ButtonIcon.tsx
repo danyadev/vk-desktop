@@ -8,7 +8,7 @@ import './ButtonIcon.css'
 type Props = {
   icon?: JSXElement
   stretched?: boolean
-  addHoverBackground?: boolean
+  withHoverBackground?: boolean
   loading?: boolean
   shiftOnClick?: boolean
 } & ButtonHTMLAttributes
@@ -22,7 +22,7 @@ export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
       class={['ButtonIcon', {
         'ButtonIcon--shiftOnClick': props.shiftOnClick,
         'ButtonIcon--stretched': props.stretched,
-        'ButtonIcon--hoverBackground': props.addHoverBackground ?? true,
+        'ButtonIcon--hoverBackground': props.withHoverBackground ?? true,
         'ButtonIcon--loading': props.loading
       }]}
       onBlur={onBlur}
@@ -37,5 +37,5 @@ export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
     </button>
   )
 }, {
-  props: ['icon', 'stretched', 'addHoverBackground', 'loading', 'shiftOnClick']
+  props: ['icon', 'stretched', 'withHoverBackground', 'loading', 'shiftOnClick']
 })

@@ -9,6 +9,7 @@
   cursor: pointer;
   height: 48px;
   border-bottom: 1px solid var(--vkui--color_separator_primary);
+  background: var(--vkui--color_background_content);
 }
 
 .PinnedMessage__icon {

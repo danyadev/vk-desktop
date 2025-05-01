@@ -19,25 +19,29 @@ type Props = {
 export const ForwardedMessages = defineComponent<Props>((props) => {
   const router = useRouter()
   const { lang } = useEnv()
-  const { cmidToScrollToByConvo } = useConvosStore()
+  const { scrollAnchors } = useConvosStore()
   const formatDate = useFormatDate({ relativeTime: false })
 
   const goToMessage = (message: Message.Foreign) => {
-    console.log(message)
     if (!message.peerId || !message.cmid) {
       return
     }
 
-    router.push({
-      name: 'Convo',
-      params: {
-        peerId: message.peerId
-      },
-      query: {
-        canGoBack: 1
-      }
+    if (message.peerId !== message.rootPeerId) {
+      router.push({
+        name: 'Convo',
+        params: {
+          peerId: message.peerId
+        },
+        query: {
+          canGoBack: 1
+        }
+      })
+    }
+    scrollAnchors.set(message.peerId, {
+      kind: 'Message',
+      cmid: message.cmid
     })
-    cmidToScrollToByConvo.set(message.peerId, message.cmid)
   }
 
   return () => (
@@ -65,7 +69,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
               <ButtonIcon
                 class="ForwardedMessage__goToMessage"
                 shiftOnClick
-                addHoverBackground={false}
+                withHoverBackground={false}
                 icon={<Icon20MessageArrowRightOutline />}
                 onClick={() => goToMessage(message)}
               />

@@ -26,7 +26,11 @@ export function insertConvos(
         convo.historyAroundCmid = localConvo.historyAroundCmid
       }
 
-      convos.set(convo.id, convo)
+      if (!localConvo) {
+        convos.set(convo.id, convo)
+      } else {
+        Object.assign(localConvo, convo)
+      }
 
       if (addToList && !convoList.peerIds.includes(convo.id)) {
         convoList.peerIds.push(convo.id)
@@ -34,7 +38,12 @@ export function insertConvos(
     }
 
     if (peer) {
-      peers.set(peer.id, peer)
+      const localPeer = peers.get(peer.id)
+      if (localPeer) {
+        Object.assign(localPeer, peer)
+      } else {
+        peers.set(peer.id, peer)
+      }
     }
   }
 

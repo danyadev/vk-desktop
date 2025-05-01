@@ -12,11 +12,11 @@ import './MessagesStack.css'
 
 type MessagesStackProps = {
   messages: NonEmptyArray<Message.Message>
-  messageElements: Map<Message.Cmid, HTMLElement>
+  messageElements: Map<Message.Cmid | 'unread', HTMLElement>
 }
 
 export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
-  const { cmidToScrollToByConvo } = useConvosStore()
+  const { scrollAnchors } = useConvosStore()
   const highlightedMessages = ref(new Set<Message.Cmid>()).value
 
   const setMessageRef = (cmid: Message.Cmid, element: RawRefElement) => {
@@ -29,10 +29,12 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
 
   const renderMessage = (message: Message.Message, index: number) => {
     const highlighted = message.cmid && highlightedMessages.has(message.cmid)
+    const scrollAnchor = scrollAnchors.get(message.peerId)
 
     if (
       message.cmid &&
-      cmidToScrollToByConvo.get(message.peerId) === message.cmid &&
+      scrollAnchor?.kind === 'Message' &&
+      scrollAnchor.cmid === message.cmid &&
       !highlighted
     ) {
       highlightedMessages.add(message.cmid)

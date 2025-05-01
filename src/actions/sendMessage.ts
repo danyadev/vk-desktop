@@ -54,12 +54,16 @@ function toPendingMessage(peerId: Peer.Id, text: string): Message.Pending {
   return {
     kind: 'Pending',
     peerId,
+    cmid: undefined,
     randomId,
     authorId: viewer.id,
     isOut: true,
     sentAt: Date.now(),
+    updatedAt: undefined,
     text,
     attaches: {},
+    replyMessage: undefined,
+    forwardedMessages: undefined,
     isFailed: false
   }
 }

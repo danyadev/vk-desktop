@@ -39,7 +39,7 @@ export interface ChatConvo extends BaseConvo {
   status: 'in' | 'kicked' | 'left' | 'out'
   isChannel: boolean
   isCasper: boolean
-  pinnedMessage?: Message.Pinned
+  pinnedMessage: Message.Pinned | undefined
 }
 
 export type Style =
@@ -140,6 +140,7 @@ function mock(id: Peer.Id): Convo {
       status: 'in',
       isCasper: false,
       isChannel: false,
+      pinnedMessage: undefined,
       ...base
     }
   }

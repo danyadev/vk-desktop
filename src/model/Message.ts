@@ -14,7 +14,7 @@ export interface BaseMessage {
   authorId: Peer.OwnerId
   isOut: boolean
   sentAt: number
-  updatedAt?: number
+  updatedAt: number | undefined
   randomId: number
 }
 
@@ -22,8 +22,8 @@ export interface Normal extends BaseMessage {
   kind: 'Normal'
   text: string
   attaches: Attach.Attaches
-  replyMessage?: Foreign
-  forwardedMessages?: NonEmptyArray<Foreign>
+  replyMessage: Foreign | undefined
+  forwardedMessages: NonEmptyArray<Foreign> | undefined
 }
 
 export interface Service extends BaseMessage {
@@ -37,8 +37,8 @@ export interface Expired extends BaseMessage {
 
 export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'isOut' | 'randomId'> {
   kind: 'Foreign'
-  peerId?: Peer.Id
-  cmid?: Cmid
+  peerId: Peer.Id | undefined
+  cmid: Cmid | undefined
   rootCmid: Cmid
   rootPeerId: Peer.Id
   isUnavailable: boolean
@@ -52,7 +52,7 @@ export interface Pinned extends Omit<Normal, 'kind' | 'isOut' | 'updatedAt' | 'r
 export interface Pending extends Omit<Normal, 'kind' | 'cmid' | 'isOut'> {
   kind: 'Pending'
   /** Проставляется после ответа messages.send, если движок не успел отдать сообщение быстрее */
-  cmid?: Cmid
+  cmid: Cmid | undefined
   isOut: true
   isFailed: boolean
 }
@@ -69,7 +69,7 @@ export type ServiceAction =
     }
   | {
       type: 'chat_photo_update'
-      photo?: Attach.Photo
+      photo: Attach.Photo | undefined
     }
   | {
       type:
