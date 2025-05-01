@@ -7,7 +7,8 @@ import './ReplyMessage.css'
 
 type Props = {
   reply: Message.Foreign
-  class: ClassName
+  onClick: () => void
+  class?: ClassName
 }
 
 export const ReplyMessage = defineComponent<Props>((props) => {
@@ -15,7 +16,7 @@ export const ReplyMessage = defineComponent<Props>((props) => {
     const author = Peer.safeGet(props.reply.authorId)
 
     return (
-      <div class={['ReplyMessage', props.class]}>
+      <div class="ReplyMessage">
         <div class="ReplyMessage__name">
           {Peer.name(author)}
         </div>
@@ -26,5 +27,5 @@ export const ReplyMessage = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['reply', 'class']
+  props: ['reply']
 })

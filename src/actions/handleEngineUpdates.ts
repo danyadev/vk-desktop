@@ -53,7 +53,6 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
 
         if (isDeleteMessageUpdate) {
           insertConvos([{ conversation: apiConvo }], {
-            merge: true,
             addToList: false
           })
 
@@ -91,7 +90,6 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
         }
 
         insertConvos([{ conversation: apiConvo }], {
-          merge: true,
           addToList: false
         })
 
@@ -131,7 +129,6 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
         }
 
         insertConvos([{ conversation: apiConvo }], {
-          merge: true,
           addToList: update[0] === 10004 || isRestoreMessageUpdate
         })
 
@@ -157,7 +154,6 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
         const apiConvo = apiConvosMap.get(peerId)
         if (apiConvo) {
           insertConvos([{ conversation: apiConvo }], {
-            merge: true,
             addToList: false
           })
         }

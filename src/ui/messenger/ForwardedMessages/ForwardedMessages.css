@@ -18,9 +18,9 @@
 .ForwardedMessage__header {
   display: grid;
   grid-template-areas:
-    'avatar name'
-    'avatar date';
-  grid-template-columns: auto 1fr;
+    'avatar name goToMessage'
+    'avatar date goToMessage';
+  grid-template-columns: auto 1fr auto;
   margin-bottom: 6px;
 }
 
@@ -47,6 +47,17 @@
 .ForwardedMessage__date {
   grid-area: date;
   color: var(--vkui--color_text_subhead);
+}
+
+.ForwardedMessage__goToMessage {
+  grid-area: goToMessage;
+  color: var(--vkui--color_text_accent_themed);
+  margin: auto 0 auto 8px;
+  transition: opacity var(--fastTransition);
+}
+
+.ForwardedMessage__goToMessage:hover {
+  opacity: 0.8;
 }
 
 .ForwardedMessage__text + .ForwardedMessage__attaches {

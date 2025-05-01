@@ -70,7 +70,13 @@ export const ConvoHeader = defineComponent<Props>((props) => {
       <ButtonIcon
         icon={<Icon24ChevronCompactLeft color="var(--vkui--color_icon_secondary)" />}
         class="ConvoHeader__back"
-        onClick={() => router.replace({ name: 'NoConvo' })}
+        onClick={() => {
+          if (router.currentRoute.value.query.canGoBack) {
+            router.back()
+          } else {
+            router.replace({ name: 'NoConvo' })
+          }
+        }}
       />
 
       <Avatar class="ConvoHeader__avatar" peer={peer} size={32} />

@@ -7,6 +7,7 @@ import {
   onMounted,
   onUpdated,
   provide,
+  ref,
   shallowRef,
   watch
 } from 'vue'
@@ -32,9 +33,18 @@ type Props = {
 
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useEnv()
-  const { loadConvoHistoryLock, savedConvoScroll, typings } = useConvosStore()
-  const historySlice = computed(() => History.around(props.convo.history, props.convo.inReadBy))
+  const {
+    loadConvoHistoryLock,
+    savedScrollByConvo,
+    cmidToScrollToByConvo,
+    typings
+  } = useConvosStore()
+  const cmidToScrollTo = computed(() => cmidToScrollToByConvo.get(props.convo.id))
+  const historySlice = computed(() => (
+    History.around(props.convo.history, props.convo.historyAroundCmid, !!cmidToScrollTo.value)
+  ))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
+  const messageElements = ref(new Map<Message.Cmid, HTMLElement>()).value
   const prevScrollHeight = shallowRef(0)
   let newConvoHistoryJustRendered = false
 
@@ -61,7 +71,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   })
 
   onMounted(async () => {
-    const scrollTop = savedConvoScroll.get(props.convo.id)
+    if (scrollToRequestedCmidIfNeeded(true)) {
+      return
+    }
+
+    const scrollTop = savedScrollByConvo.get(props.convo.id)
     if ($historyElement.value && scrollTop !== undefined) {
       // После первого рендера в истории могут произойти некоторые изменения, например
       // просчитаться актуальные размеры сеток фотографий, поэтому ждем дополнительный тик.
@@ -72,7 +86,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   onBeforeUnmount(() => {
     if ($historyElement.value) {
-      savedConvoScroll.set(props.convo.id, $historyElement.value.scrollTop)
+      savedScrollByConvo.set(props.convo.id, $historyElement.value.scrollTop)
     }
   })
 
@@ -112,6 +126,44 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       $historyElement.value.scrollTo(0, $historyElement.value.scrollHeight)
     }
   })
+
+  const scrollToRequestedCmidIfNeeded = (instant: boolean) => {
+    if (!cmidToScrollTo.value) {
+      return
+    }
+
+    const messageEl = messageElements.get(cmidToScrollTo.value)
+    if (messageEl) {
+      // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
+      nextTick(() => {
+        messageEl.scrollIntoView({
+          behavior: instant ? 'instant' : 'smooth',
+          block: 'center'
+        })
+        cmidToScrollToByConvo.delete(props.convo.id)
+      })
+
+      return true
+    }
+
+    if (props.convo.historyAroundCmid !== cmidToScrollTo.value) {
+      props.convo.historyAroundCmid = cmidToScrollTo.value
+    } else if (!historySlice.value.gapAround) {
+      // Сообщения не оказалось в истории даже после загрузки истории вокруг кмида
+      // TODO: показать модалку с превью сообщения
+      // TODO: возвращаться обратно к сообщению откуда мы пытались перейти к другому сообщению
+      // (либо предварительно смотреть в апи наличие сообщения и не грузить историю вообще)
+      cmidToScrollToByConvo.delete(props.convo.id)
+    }
+  }
+
+  watch(
+    [cmidToScrollTo, historySlice],
+    ([cmid], [prevCmid]) => {
+      scrollToRequestedCmidIfNeeded(cmid === prevCmid)
+    },
+    { flush: 'post' }
+  )
 
   const loadHistory = (
     direction: 'around' | 'up' | 'down',
@@ -165,9 +217,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         insertedMessages.find(({ cmid }) => (cmid >= startCmid)) ??
         insertedMessages.at(-1)
 
-      const messageElement = aroundMessage && historyElement.querySelector(
-        `.MessagesStack__message[data-cmid="${aroundMessage.cmid}"]`
-      )
+      const messageElement = aroundMessage && messageElements.get(aroundMessage.cmid)
       messageElement?.scrollIntoView({
         block: 'center',
         behavior: 'instant'
@@ -244,7 +294,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
           {gapBefore && renderLoader('up', gapBefore.toId, gapBefore)}
 
-          <HistoryMessages messages={messages} convo={props.convo} />
+          <HistoryMessages
+            messages={messages}
+            messageElements={messageElements}
+            convo={props.convo}
+          />
 
           {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
 
@@ -270,6 +324,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
 type HistoryMessagesProps = {
   messages: Message.Message[]
+  messageElements: Map<Message.Cmid, HTMLElement>
   convo: Convo.Convo
 }
 
@@ -326,7 +381,13 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
         const startKey = start.kind === 'Pending' ? start.randomId : start.cmid
         const endKey = end?.kind === 'Pending' ? end.randomId : end?.cmid
 
-        return <MessagesStack key={`stack-${startKey}-${endKey}`} messages={block.stack} />
+        return (
+          <MessagesStack
+            key={`stack-${startKey}-${endKey}`}
+            messages={block.stack}
+            messageElements={props.messageElements}
+          />
+        )
       }
 
       case 'Date': {
@@ -359,5 +420,5 @@ const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
     }
   })
 }, {
-  props: ['messages', 'convo']
+  props: ['messages', 'messageElements', 'convo']
 })

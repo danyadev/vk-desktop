@@ -39,10 +39,6 @@ export const router = createRouter({
   ]
 })
 
-// router.beforeEach((to, from) => {
-//   to.meta.prevRoute = from
-// })
-
 interface RouteNamedMap {
   NoConvo: RouteRecordInfo<
     'NoConvo',
@@ -68,8 +64,4 @@ declare module 'vue-router' {
   interface TypesConfig {
     RouteNamedMap: RouteNamedMap
   }
-
-  // interface RouteMeta {
-  //   prevRoute: RouteLocationNormalized
-  // }
 }

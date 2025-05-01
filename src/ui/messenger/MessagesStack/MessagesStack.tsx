@@ -1,8 +1,9 @@
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { NonEmptyArray } from 'misc/utils'
+import { useConvosStore } from 'store/convos'
+import { NonEmptyArray, RawRefElement } from 'misc/utils'
 import { ConvoMessage } from 'ui/messenger/ConvoMessage/ConvoMessage'
 import { ExpiredMessage } from 'ui/messenger/ExpiredMessage/ExpiredMessage'
 import { ServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
@@ -11,14 +12,41 @@ import './MessagesStack.css'
 
 type MessagesStackProps = {
   messages: NonEmptyArray<Message.Message>
+  messageElements: Map<Message.Cmid, HTMLElement>
 }
 
 export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
+  const { cmidToScrollToByConvo } = useConvosStore()
+  const highlightedMessages = ref(new Set<Message.Cmid>()).value
+
+  const setMessageRef = (cmid: Message.Cmid, element: RawRefElement) => {
+    if (element instanceof HTMLElement) {
+      props.messageElements.set(cmid, element)
+    } else {
+      props.messageElements.delete(cmid)
+    }
+  }
+
   const renderMessage = (message: Message.Message, index: number) => {
+    const highlighted = message.cmid && highlightedMessages.has(message.cmid)
+
+    if (
+      message.cmid &&
+      cmidToScrollToByConvo.get(message.peerId) === message.cmid &&
+      !highlighted
+    ) {
+      highlightedMessages.add(message.cmid)
+      setTimeout(() => message.cmid && highlightedMessages.delete(message.cmid), 1000)
+    }
+
     switch (message.kind) {
       case 'Normal':
         return (
-          <div key={message.cmid} class="MessagesStack__message" data-cmid={message.cmid}>
+          <div
+            key={message.cmid}
+            class={['MessagesStack__message', highlighted && 'MessagesStack__message--highlighted']}
+            ref={(el) => setMessageRef(message.cmid, el)}
+          >
             <ConvoMessage
               message={message}
               showName={index === 0 && Peer.isChatPeerId(message.peerId)}
@@ -28,11 +56,7 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
 
       case 'Pending':
         return (
-          <div
-            key={message.randomId}
-            class="MessagesStack__message"
-            data-randomId={message.randomId}
-          >
+          <div key={message.randomId} class="MessagesStack__message">
             <ConvoMessage
               message={message}
               showName={index === 0 && Peer.isChatPeerId(message.peerId)}
@@ -44,8 +68,11 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
         return (
           <div
             key={message.cmid}
-            class="MessagesStack__message MessagesStack__message--centered"
-            data-cmid={message.cmid}
+            class={[
+              'MessagesStack__message MessagesStack__message--centered',
+              highlighted && 'MessagesStack__message--highlighted'
+            ]}
+            ref={(el) => setMessageRef(message.cmid, el)}
           >
             <ServiceMessage message={message} />
           </div>
@@ -55,8 +82,11 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
         return (
           <div
             key={message.cmid}
-            class="MessagesStack__message MessagesStack__message--centered"
-            data-cmid={message.cmid}
+            class={[
+              'MessagesStack__message MessagesStack__message--centered',
+              highlighted && 'MessagesStack__message--highlighted'
+            ]}
+            ref={(el) => setMessageRef(message.cmid, el)}
           >
             <ExpiredMessage count={1} />
           </div>
@@ -83,5 +113,5 @@ export const MessagesStack = defineComponent<MessagesStackProps>((props) => {
     )
   }
 }, {
-  props: ['messages']
+  props: ['messages', 'messageElements']
 })

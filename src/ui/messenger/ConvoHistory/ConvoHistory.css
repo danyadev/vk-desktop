@@ -1,6 +1,9 @@
 .ConvoHistory {
   height: 100%;
-  overflow: auto;
+  /* Для подсвечивания сообщения мы создаем ::after элемент, растянутый на 200vw и сдвинутый на 100vw, */
+  /* чтобы подсветился фон по всей ширине истории, но по какой-то причине этот absolute ::after элемент */
+  /* создает горизонтальный скролл... и overflow-x: hidden фиксит его */
+  overflow: hidden auto;
 }
 
 .ConvoHistory__content {

@@ -6,7 +6,7 @@ import { fromApiConvo } from 'converters/ConvoConverter'
 
 export function insertConvos(
   conversations: MessagesConversationWithMessage[],
-  { merge = false, addToList = true } = {}
+  { mergeHistory = true, addToList = true } = {}
 ) {
   const { convoList, convos } = useConvosStore()
   const { peers } = usePeersStore()
@@ -21,15 +21,14 @@ export function insertConvos(
         convo.pendingMessages = localConvo.pendingMessages
       }
 
-      if (localConvo && merge) {
+      if (localConvo && mergeHistory) {
         convo.history = localConvo.history
+        convo.historyAroundCmid = localConvo.historyAroundCmid
       }
 
-      if (!localConvo || merge) {
-        convos.set(convo.id, convo)
-      }
+      convos.set(convo.id, convo)
 
-      if (addToList) {
+      if (addToList && !convoList.peerIds.includes(convo.id)) {
         convoList.peerIds.push(convo.id)
       }
     }
@@ -39,7 +38,7 @@ export function insertConvos(
     }
   }
 
-  convoList.peerIds = [...new Set(convoList.peerIds)]
+  convoList.peerIds = convoList.peerIds
     .map(Convo.safeGet)
     .sort(Convo.sorter)
     .map((convo) => convo.id)

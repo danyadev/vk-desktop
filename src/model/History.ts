@@ -47,7 +47,7 @@ export function lastItem<T>(history: History<T>): T | undefined {
  * Возвращает часть истории, непрерывно доступной вокруг aroundId,
  * то есть список элементов до первого гэпа с обеих сторон от aroundId
  */
-export function around<T>(history: History<T>, aroundId: number): {
+export function around<T>(history: History<T>, aroundId: number, strictlyIncludeId?: boolean): {
   items: Array<Item<T>>
   matchedAroundId: number
   gapBefore?: Gap
@@ -116,17 +116,19 @@ export function around<T>(history: History<T>, aroundId: number): {
   }
 
   if (aroundNode.kind === 'Gap') {
-    /**
-     * Если мы попались на граничный гэп рядом с историей, то отдадим эту историю
-     */
-    const prevNode = history[aroundIndex - 1]
-    if (prevNode && prevNode.kind !== 'Gap' && aroundNode.fromId === aroundId) {
-      return around(history, prevNode.id)
-    }
+    if (!strictlyIncludeId) {
+      /**
+       * Если мы попались на граничный гэп рядом с историей, то отдадим эту историю
+       */
+      const prevNode = history[aroundIndex - 1]
+      if (prevNode && prevNode.kind !== 'Gap' && aroundNode.fromId === aroundId) {
+        return around(history, prevNode.id)
+      }
 
-    const nextNode = history[aroundIndex + 1]
-    if (nextNode && nextNode.kind !== 'Gap' && aroundNode.toId === aroundId) {
-      return around(history, nextNode.id)
+      const nextNode = history[aroundIndex + 1]
+      if (nextNode && nextNode.kind !== 'Gap' && aroundNode.toId === aroundId) {
+        return around(history, nextNode.id)
+      }
     }
 
     return {
