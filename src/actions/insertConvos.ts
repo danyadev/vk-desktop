@@ -19,17 +19,20 @@ export function insertConvos(
 
       if (localConvo) {
         convo.pendingMessages = localConvo.pendingMessages
-      }
 
-      if (localConvo && mergeHistory) {
-        convo.history = localConvo.history
-        convo.historyAroundCmid = localConvo.historyAroundCmid
-      }
+        if (mergeHistory) {
+          convo.history = localConvo.history
+          convo.historyAroundCmid = localConvo.historyAroundCmid
+        }
 
-      if (!localConvo) {
-        convos.set(convo.id, convo)
-      } else {
+        // Само присваивание нового объекта является триггером для перерисовки всех компонентов,
+        // где был запрошен указанный пир, поэтому для дальнейшей оптимизации можно не создавать
+        // новый объект, а перезаписывать его поля, многие их которых почти никогда не меняются.
+        // Это безопасно: все объекты одинакового типа (kind) имеют полный и одинаковый набор полей,
+        // опциональные поля всегда заполняются как явный undefined, сохраняя единую форму
         Object.assign(localConvo, convo)
+      } else {
+        convos.set(convo.id, convo)
       }
 
       if (addToList && !convoList.peerIds.includes(convo.id)) {

@@ -77,7 +77,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   })
 
   onMounted(async () => {
-    if (scrollToRequestedCmidIfNeeded(true)) {
+    if (scrollToAnchorIfNeeded(true)) {
       return
     }
 
@@ -100,9 +100,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     const historyElement = $historyElement.value
     if (historyElement) {
       /**
-       * scrollTop - высота от верха контента до верха вьюпорта;
-       * offsetHeight - высота вьюпорта;
-       * scrollHeight - общая высота контента.
+       * scrollTop - высота от верха контента до верха вьюпорта
+       * offsetHeight - высота вьюпорта
+       * scrollHeight - общая высота контента
        */
       const heightBelowViewport =
         historyElement.scrollHeight - historyElement.scrollTop - historyElement.offsetHeight
@@ -138,7 +138,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     }
   })
 
-  const scrollToRequestedCmidIfNeeded = (instant: boolean) => {
+  const scrollToAnchorIfNeeded = (instant: boolean) => {
     const anchor = scrollAnchor.value
     if (anchor.kind === 'None' || anchor.inProgress) {
       return
@@ -151,19 +151,20 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     const behavior = instant ? 'instant' : 'smooth'
 
     if (element && historyElement) {
-      // Мы убираем якорь при событии scrollend, которое не вызывается, если скролла не произошло,
-      // поэтому заранее убираем якорь, если элемент уже во вьюпорте, поэтому будет не страшно,
-      // что с некоторым шансом доскрола не произойдет
-      if (behavior === 'smooth' && !isElementInViewport(historyElement, element)) {
-        scrollAnchors.set(props.convo.id, { ...anchor, inProgress: true })
-      } else {
-        scrollAnchors.set(props.convo.id, { kind: 'None' })
-      }
       // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
       nextTick(() => {
+        // Мы убираем якорь при событии scrollend, которое не вызывается, если скролла не произошло,
+        // поэтому заранее убираем якорь, если элемент уже во вьюпорте, поэтому будет не страшно,
+        // что с некоторым шансом доскрола не произойдет
+        if (behavior === 'smooth' && !isElementInViewport(historyElement, element)) {
+          scrollAnchors.set(props.convo.id, { ...anchor, inProgress: true })
+        } else {
+          scrollAnchors.set(props.convo.id, { kind: 'None' })
+        }
+
         element.scrollIntoView({
-          behavior,
-          block: 'center'
+          block: 'center',
+          behavior
         })
       })
 
@@ -172,48 +173,52 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
     if (props.convo.historyAroundCmid !== anchor.cmid) {
       props.convo.historyAroundCmid = anchor.cmid
-    } else if (!historySlice.value.gapAround) {
-      // Сообщения не оказалось в истории даже после загрузки истории вокруг кмида
-      // TODO: показать модалку с превью сообщения
-      // TODO: возвращаться обратно к сообщению откуда мы пытались перейти к другому сообщению
-      // (либо предварительно смотреть в апи наличие сообщения и не грузить историю вообще)
+      return
+    }
 
-      // Пока не реализована обработка ненайденного сообщения, скроллим к ближайшему следующему
-      const messageCmids = [...messageElements.keys()]
-        .filter((key) => key !== 'unread')
-        .sort((a, b) => a - b)
-      const messageCmid =
-        messageCmids.find((cmid) => (cmid >= anchor.cmid)) ??
-        messageCmids.at(-1)
-      const messageEl = messageCmid && messageElements.get(messageCmid)
+    if (historySlice.value.gapAround) {
+      return
+    }
 
-      if (
-        !messageEl ||
-        !historyElement ||
-        behavior === 'instant' ||
-        !isElementInViewport(historyElement, messageEl)
-      ) {
-        scrollAnchors.set(props.convo.id, { kind: 'None' })
-      } else {
-        scrollAnchors.set(props.convo.id, { ...anchor, inProgress: true })
-      }
+    // Сообщения не оказалось в истории даже после загрузки истории вокруг кмида
+    // TODO: показать модалку с превью сообщения
+    // TODO: возвращаться обратно к сообщению откуда мы пытались перейти к другому сообщению
+    // (либо предварительно смотреть в апи наличие сообщения и не грузить историю вообще)
 
-      if (messageEl) {
-        nextTick(() => {
-          messageEl.scrollIntoView({
-            behavior,
-            block: 'center'
-          })
+    // Пока не реализована обработка ненайденного сообщения, скроллим к ближайшему следующему
+    const messageCmids = [...messageElements.keys()]
+      .filter((key) => key !== 'unread')
+      .sort((a, b) => a - b)
+    const messageCmid =
+      messageCmids.find((cmid) => (cmid >= anchor.cmid)) ??
+      messageCmids.at(-1)
+    const messageElement = messageCmid && messageElements.get(messageCmid)
+
+    if (messageElement && historyElement) {
+      nextTick(() => {
+        if (behavior === 'smooth' && !isElementInViewport(historyElement, messageElement)) {
+          scrollAnchors.set(props.convo.id, { ...anchor, inProgress: true })
+        } else {
+          scrollAnchors.set(props.convo.id, { kind: 'None' })
+        }
+
+        messageElement.scrollIntoView({
+          block: 'center',
+          behavior
         })
-        return true
-      }
+      })
+
+      return true
     }
   }
 
   watch(
     [scrollAnchor, historySlice],
     ([anchor], [prevAnchor]) => {
-      scrollToRequestedCmidIfNeeded(
+      // выставляем instant если это не первый запрос на скролл к якорю,
+      // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
+      // и больше нет изначальной позиции, откуда можно применить анимацию
+      scrollToAnchorIfNeeded(
         anchor.kind !== 'None' &&
         anchor.kind === prevAnchor.kind &&
         anchor.cmid === prevAnchor.cmid
@@ -249,6 +254,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     if (props.convo.inReadBy && props.convo.inReadBy > props.convo.historyAroundCmid) {
       scrollAnchors.set(props.convo.id, { kind: 'Unread', cmid: props.convo.inReadBy })
     } else {
+      // TODO: опция для отключения выделения
       scrollAnchors.set(props.convo.id, { kind: 'Message', cmid: lastMessage.cmid })
     }
   }
@@ -282,13 +288,13 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     direction: 'around' | 'up' | 'down',
     startCmid: Message.Cmid
   ) => {
+    const historyElement = $historyElement.value
+    if (!historyElement) {
+      return
+    }
+
     if (direction === 'around') {
       await nextTick()
-
-      const historyElement = $historyElement.value
-      if (!historyElement) {
-        return
-      }
 
       if (startCmid === props.convo.inReadBy) {
         const unreadElement = messageElements.get('unread')
@@ -310,17 +316,16 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         block: 'center',
         behavior: 'instant'
       })
+      return
     }
 
-    if (direction === 'up') {
-      const historyElement = $historyElement.value
-      if (!historyElement) {
-        return
-      }
+    const { scrollTop, scrollHeight } = historyElement
+    await nextTick()
 
-      const { scrollTop, scrollHeight } = historyElement
-      await nextTick()
+    if (direction === 'up') {
       historyElement.scrollTop = scrollTop + historyElement.scrollHeight - scrollHeight
+    } else {
+      historyElement.scrollTop = scrollTop
     }
   }
 

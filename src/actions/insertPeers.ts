@@ -13,12 +13,15 @@ export function insertPeers({ profiles, groups }: Props) {
 
   for (const apiUser of profiles ?? []) {
     const user = fromApiUser(apiUser)
-    const existingUser = peers.get(user.id)
+    const localUser = peers.get(user.id)
 
-    if (existingUser) {
-      // Большинство полей являются примитивами, которые меняются крайне редко, поэтому
-      // выгодно сохранить старый объект, чтобы был меньше шанс перерисовки
-      Object.assign(existingUser, user)
+    if (localUser) {
+      // Само присваивание нового объекта является триггером для перерисовки всех компонентов,
+      // где был запрошен указанный пир, поэтому для дальнейшей оптимизации можно не создавать
+      // новый объект, а перезаписывать его поля, многие их которых почти никогда не меняются.
+      // Это безопасно: все объекты одинакового типа (kind) имеют полный и одинаковый набор полей,
+      // опциональные поля всегда заполняются как явный undefined, сохраняя единую форму
+      Object.assign(localUser, user)
     } else {
       peers.set(user.id, user)
     }
@@ -26,10 +29,10 @@ export function insertPeers({ profiles, groups }: Props) {
 
   for (const apiGroup of groups ?? []) {
     const group = fromApiGroup(apiGroup)
-    const existingGroup = peers.get(group.id)
+    const localGroup = peers.get(group.id)
 
-    if (existingGroup) {
-      Object.assign(existingGroup, group)
+    if (localGroup) {
+      Object.assign(localGroup, group)
     } else {
       peers.set(group.id, group)
     }
