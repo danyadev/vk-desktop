@@ -101,6 +101,7 @@ export type MessagesSendResponse = {
   message_id: number
 }
 
+// messages.markAsPlayed
 export type MessagesMarkAsPlayedParams = {
   peer_id: number
   cmid: number

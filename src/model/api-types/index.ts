@@ -129,7 +129,6 @@ export type Methods = {
     params: MessagesSendParams
     response: MessagesSendResponse
   }
-
   'messages.markAsPlayed': {
     params: MessagesMarkAsPlayedParams
     response: MessagesMarkAsPlayedResponse

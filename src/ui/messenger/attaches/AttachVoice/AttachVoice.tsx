@@ -7,8 +7,8 @@ import { Icon16Text, Icon20ChevronUp, Icon32PauseCircle, Icon32PlayCircle } from
 import './AttachVoice.css'
 
 type Props = {
-  message?: Message.Message | Message.Foreign
   voice: Attach.Voice
+  message?: Message.Message | Message.Foreign
 }
 
 export const AttachVoice = defineComponent<Props>((props) => {
@@ -59,21 +59,25 @@ export const AttachVoice = defineComponent<Props>((props) => {
     }
   }
 
-  const updateWasListened = () => {
-    if (props.message?.cmid) {
-      api.fetch('messages.markAsPlayed', {
-        peer_id: props.voice.ownerId,
-        cmid: props.message.cmid
-      })
-    } else {
-      console.error('Not cmid and message')
+  const markAsListened = () => {
+    if (props.voice.wasListened) {
+      return
     }
+
+    if (!props.message?.peerId || !props.message.cmid || props.message.isOut) {
+      return
+    }
+
+    props.voice.wasListened = true
+
+    api.fetch('messages.markAsPlayed', {
+      peer_id: props.message.peerId,
+      cmid: props.message.cmid
+    })
   }
 
   audio.addEventListener('play', () => {
-    if (!props.voice.wasListened) {
-      updateWasListened()
-    }
+    markAsListened()
 
     isPlaying.value = true
     rAFId = requestAnimationFrame(updateProgress)

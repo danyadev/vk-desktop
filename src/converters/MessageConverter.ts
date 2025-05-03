@@ -4,6 +4,7 @@ import { MessagesPinnedMessage } from 'model/api-types/objects/MessagesPinnedMes
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { useViewerStore } from 'store/viewer'
 import { fromApiAttaches } from 'converters/AttachConverter'
 import { fromApiConvoStyle } from 'converters/ConvoConverter'
 import { isNonEmptyArray, NonEmptyArray, typeguard } from 'misc/utils'
@@ -151,6 +152,8 @@ function fromApiForeignMessage(
   rootPeerId: Peer.Id,
   rootCmid: Message.Cmid
 ): Message.Foreign {
+  const viewer = useViewerStore()
+
   return {
     kind: 'Foreign',
     peerId: foreignMessage.peer_id
@@ -162,6 +165,7 @@ function fromApiForeignMessage(
     rootPeerId,
     rootCmid,
     authorId: Peer.resolveOwnerId(foreignMessage.from_id),
+    isOut: foreignMessage.from_id === viewer.id,
     sentAt: foreignMessage.date * 1000,
     text: foreignMessage.text,
     attaches: fromApiAttaches(foreignMessage.attachments ?? [], !!foreignMessage.was_listened),
@@ -201,6 +205,8 @@ function fromApiForwardedMessages(
 }
 
 export function fromApiPinnedMessage(pinnedMessage: MessagesPinnedMessage): Message.Pinned {
+  const viewer = useViewerStore()
+
   const peerId = Peer.resolveId(pinnedMessage.peer_id)
   const cmid = Message.resolveCmid(pinnedMessage.conversation_message_id)
 
@@ -209,6 +215,7 @@ export function fromApiPinnedMessage(pinnedMessage: MessagesPinnedMessage): Mess
     peerId,
     cmid,
     authorId: Peer.resolveOwnerId(pinnedMessage.from_id),
+    isOut: pinnedMessage.from_id === viewer.id,
     sentAt: pinnedMessage.date * 1000,
     text: pinnedMessage.text,
     attaches: fromApiAttaches(pinnedMessage.attachments ?? [], true),
