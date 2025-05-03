@@ -19,7 +19,7 @@ import * as Peer from 'model/Peer'
 import { ScrollAnchor, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv, useResizeObserver } from 'hooks'
-import { isElementInViewport, isNonEmptyArray } from 'misc/utils'
+import { isNonEmptyArray } from 'misc/utils'
 import { convoHistoryContextInjectKey } from 'misc/providers'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
@@ -140,27 +140,19 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   const scrollToAnchorIfNeeded = (instant: boolean) => {
     const anchor = scrollAnchor.value
-    if (anchor.kind === 'None' || anchor.inProgress) {
+    if (anchor.kind === 'None') {
       return
     }
 
     const element = scrollAnchor.value.kind === 'Unread'
       ? messageElements.get('unread') ?? messageElements.get(anchor.cmid)
       : messageElements.get(anchor.cmid)
-    const historyElement = $historyElement.value
     const behavior = instant ? 'instant' : 'smooth'
 
-    if (element && historyElement) {
+    if (element) {
       // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
       nextTick(() => {
-        // Мы убираем якорь при событии scrollend, которое не вызывается, если скролла не произошло,
-        // поэтому заранее убираем якорь, если элемент уже во вьюпорте, поэтому будет не страшно,
-        // что с некоторым шансом доскрола не произойдет
-        if (behavior === 'smooth' && !isElementInViewport(historyElement, element)) {
-          scrollAnchors.set(props.convo.id, { ...anchor, inProgress: true })
-        } else {
-          scrollAnchors.set(props.convo.id, { kind: 'None' })
-        }
+        scrollAnchors.set(props.convo.id, { kind: 'None' })
 
         element.scrollIntoView({
           block: 'center',
@@ -194,13 +186,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       messageCmids.at(-1)
     const messageElement = messageCmid && messageElements.get(messageCmid)
 
-    if (messageElement && historyElement) {
+    if (messageElement) {
       nextTick(() => {
-        if (behavior === 'smooth' && !isElementInViewport(historyElement, messageElement)) {
-          scrollAnchors.set(props.convo.id, { ...anchor, inProgress: true })
-        } else {
-          scrollAnchors.set(props.convo.id, { kind: 'None' })
-        }
+        scrollAnchors.set(props.convo.id, { kind: 'None' })
 
         messageElement.scrollIntoView({
           block: 'center',
@@ -215,7 +203,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   watch(
     [scrollAnchor, historySlice],
     ([anchor], [prevAnchor]) => {
-      // выставляем instant если это не первый запрос на скролл к якорю,
+      // Выставляем instant если это не первый запрос на скролл к якорю,
       // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
       // и больше нет изначальной позиции, откуда можно применить анимацию
       scrollToAnchorIfNeeded(
@@ -237,12 +225,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       historyElement.scrollHeight - historyElement.scrollTop - historyElement.offsetHeight
 
     showHopNavigation.value = distanceFromBottom > SHOW_HOP_NAVIGATION_THRESHOLD
-  }
-
-  const onScrollEnd = () => {
-    if (scrollAnchor.value.kind !== 'None' && scrollAnchor.value.inProgress) {
-      scrollAnchors.set(props.convo.id, { kind: 'None' })
-    }
   }
 
   const handleHopNavigation = () => {
@@ -288,13 +270,15 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     direction: 'around' | 'up' | 'down',
     startCmid: Message.Cmid
   ) => {
-    const historyElement = $historyElement.value
-    if (!historyElement) {
-      return
-    }
-
     if (direction === 'around') {
       await nextTick()
+
+      // В случае around элемент нужно доставать только после nextTick,
+      // так как до этого момента он еще не успел замениться с лоадера чата
+      const historyElement = $historyElement.value
+      if (!historyElement) {
+        return
+      }
 
       if (startCmid === props.convo.inReadBy) {
         const unreadElement = messageElements.get('unread')
@@ -316,6 +300,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         block: 'center',
         behavior: 'instant'
       })
+      return
+    }
+
+    const historyElement = $historyElement.value
+    if (!historyElement) {
       return
     }
 
@@ -362,12 +351,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
     return (
       <div class="ConvoHistory">
-        <div
-          class="ConvoHistory__scroll"
-          ref={$historyElement}
-          onScrollPassive={onScroll}
-          onScrollendPassive={onScrollEnd}
-        >
+        <div class="ConvoHistory__scroll" ref={$historyElement} onScrollPassive={onScroll}>
           <div class="ConvoHistory__content">
             <div class="ConvoHistory__topFiller" />
 

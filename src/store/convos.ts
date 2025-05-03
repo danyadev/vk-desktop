@@ -10,8 +10,8 @@ export type TypingUser = {
 }
 
 export type ScrollAnchor =
-  | { kind: 'Message', cmid: Message.Cmid, inProgress?: true }
-  | { kind: 'Unread', cmid: Message.Cmid, inProgress?: true }
+  | { kind: 'Message', cmid: Message.Cmid }
+  | { kind: 'Unread', cmid: Message.Cmid }
   | { kind: 'None' }
 
 type Convos = {

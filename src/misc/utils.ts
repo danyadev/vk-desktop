@@ -171,9 +171,9 @@ export function getMapValueOrSetDefault<K, V>(
   return value
 }
 
-export function isElementInViewport(viewport: HTMLElement, element: HTMLElement): boolean {
-  const viewportRect = viewport.getBoundingClientRect()
-  const elementRect = element.getBoundingClientRect()
-
-  return elementRect.top >= viewportRect.top && elementRect.bottom <= viewportRect.bottom
-}
+// export function isElementInViewport(viewport: HTMLElement, element: HTMLElement): boolean {
+//   const viewportRect = viewport.getBoundingClientRect()
+//   const elementRect = element.getBoundingClientRect()
+//
+//   return elementRect.top >= viewportRect.top && elementRect.bottom <= viewportRect.bottom
+// }
