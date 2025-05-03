@@ -26,7 +26,7 @@ export async function loadInitialData(onError: () => void) {
         extended: 1,
         fields: PEER_FIELDS
       })
-    ])
+    ], { retries: 2 })
 
     insertPeers({
       profiles: conversations.profiles,
@@ -39,6 +39,14 @@ export async function loadInitialData(onError: () => void) {
 
     convoList.loading = false
     convoList.hasMore = conversations.items.length === CONVOS_PER_PAGE
+
+    if (!import.meta.env.DEV) {
+      try {
+        api.fetch('stats.trackVisitor', {})
+      } catch {
+        // не страшно
+      }
+    }
   } catch (err) {
     console.warn('[loadInitialData] loading error', err)
     connection.status = 'initFailed'

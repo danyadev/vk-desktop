@@ -34,6 +34,7 @@ import {
   MessagesSendParams,
   MessagesSendResponse
 } from 'model/api-types/methods/Messages'
+import { StatsTrackVisitorParams, StatsTrackVisitorResponse } from 'model/api-types/methods/Stats'
 import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
 import { AccountSetSilenceModeParams, AccountSetSilenceModeResponse } from './methods/Account'
 
@@ -137,5 +138,10 @@ export type Methods = {
   'users.get': {
     params: UsersGetParams
     response: UsersGetResponse
+  }
+
+  'stats.trackVisitor': {
+    params: StatsTrackVisitorParams
+    response: StatsTrackVisitorResponse
   }
 }
