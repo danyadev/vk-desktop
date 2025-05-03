@@ -34,6 +34,8 @@ export const ru = {
   },
 
   select_not_selected: 'Не выбрано',
+  load_error: 'Ошибка загрузки',
+  retry_loading: 'Повторить',
 
   auth_login_placeholder: 'Телефон или почта',
   auth_password_placeholder: 'Пароль',
@@ -76,8 +78,6 @@ export const ru = {
   me_convo_list_date_weeks: '{weeks}н',
   me_convo_list_empty_convo: 'Пустой диалог',
   me_convo_list_empty: 'Список сообщений пуст',
-  me_convo_list_loading_error: 'Ошибка загрузки',
-  me_convo_list_retry_loading: 'Повторить',
   me_convo_disable_notifications: 'Отключить уведомления',
   me_convo_enable_notifications: 'Включить уведомления',
 
@@ -106,8 +106,6 @@ export const ru = {
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
   me_convo_empty_placeholder: 'История переписки пуста',
   me_convo_unread_messages: 'Новые сообщения',
-  me_convo_loading_error: 'Ошибка загрузки',
-  me_convo_retry_loading: 'Повторить',
   me_edited_label: 'ред.',
   me_user_online: 'online',
   me_user_was_online_a_long_time_ago: 'заходил давно',

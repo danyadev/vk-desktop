@@ -26,6 +26,20 @@ export type MessagesGetConversationsResponse = {
   // contacts?: MessagesContact[]
 }
 
+// messages.getConversationsById
+export type MessagesGetConversationsByIdParams = {
+  peer_ids: string | number
+  extended: 1
+  fields: string
+}
+
+export type MessagesGetConversationsByIdResponse = {
+  count: number
+  items: MessagesConversation[]
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+}
+
 // messages.getHistory
 export type MessagesGetHistoryParams = {
   peer_id: number

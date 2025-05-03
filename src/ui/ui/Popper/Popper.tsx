@@ -1,7 +1,8 @@
-import { defineComponent, HTMLAttributes, KeyboardEvent, shallowRef, Teleport, Transition, watch } from 'vue'
+import { defineComponent, KeyboardEvent, shallowRef, Teleport, Transition, watch } from 'vue'
 import { flip, offset, Placement, shift } from '@floating-ui/dom'
 import { JSXElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
+import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithProps'
 import './Popper.css'
 
 type Props = {
@@ -52,7 +53,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
 
   return () => (
     <>
-      <RenderSlotWithRef
+      <RenderSlotWithProps
         ref={setTriggerRef}
         class={showContent.value && 'Popper__trigger--active'}
         onClick={() => (showContent.value = !showContent.value)}
@@ -61,7 +62,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
         onKeydown={handleEscape}
       >
         {slots.default?.()}
-      </RenderSlotWithRef>
+      </RenderSlotWithProps>
 
       <Teleport to=".App">
         {showContent.value && !props.showOnHover && (
@@ -89,36 +90,4 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
   )
 }, {
   props: ['content', 'placement', 'showOnHover', 'closeOnContentClick']
-})
-
-const RenderSlotWithRef = defineComponent<HTMLAttributes>((props, { slots }) => {
-  return () => {
-    /**
-     * Слот это всегда массив или undefined. Не знаю почему массив, там всегда один элемент.
-     *
-     * Этот один элемент это всегда фрагмент, поэтому мы сначала достаем его.
-     *
-     * А вот дети у фрагмента это как раз массив элементов, которые и были переданы в качестве
-     * детей компоненту.
-     * Важно: дети могут быть так же фрагментами или компонентами, которые начинаются с
-     * фрагмента, и в таком случае реф будет на фрагменте, а не на нужном элементе,
-     * а такого не следует допускать.
-     *
-     * Проблема в том, что если поставить реф на фрагмент, он будет указывать на пустую text ноду,
-     * находящуюся перед содержимым фрагмента, а оно может быть как пустое, так и с несколькими
-     * элементами, количество которых мы не знаем, что делает невозможным какое-либо взаимодействие
-     * с этой пустой text нодой
-     */
-    const [fragment] = slots.default?.() ?? []
-
-    if (!fragment || !Array.isArray(fragment.children)) {
-      return fragment
-    }
-
-    if (fragment.children.length > 1) {
-      throw new Error('RenderSlotWithRef expected 1 child, got: ' + fragment.children.length)
-    }
-
-    return fragment.children[0]
-  }
 })

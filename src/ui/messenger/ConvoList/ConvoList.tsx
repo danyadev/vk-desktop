@@ -10,9 +10,9 @@ import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
-import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
+import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Popper } from 'ui/ui/Popper/Popper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24DoorArrowRightOutline, Icon24GearOutline, Icon24MoreHorizontal } from 'assets/icons'
@@ -87,14 +87,7 @@ export const ConvoList = defineComponent<Props>((props) => {
           </div>
         )}
 
-        {convoList.loadError && (
-          <div class="ConvoList__error">
-            {lang.use('me_convo_list_loading_error')}
-            <Button onClick={loadMoreConvos}>
-              {lang.use('me_convo_list_retry_loading')}
-            </Button>
-          </div>
-        )}
+        {convoList.loadError && <LoadError onRetry={loadMoreConvos} />}
 
         {convoList.hasMore && !convoList.loadError && (
           <IntersectionWrapper onIntersect={loadMoreConvos} key={convoList.peerIds.length}>

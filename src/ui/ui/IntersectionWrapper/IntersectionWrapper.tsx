@@ -1,6 +1,6 @@
 import { defineComponent, watch } from 'vue'
 import { useInView } from 'hooks'
-import './IntersectionWrapper.css'
+import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithProps'
 
 type Props = {
   onIntersect: () => void
@@ -13,9 +13,7 @@ export const IntersectionWrapper = defineComponent<Props>((props, { slots }) => 
     inView.value && props.onIntersect()
   })
 
-  return () => (
-    <div class="IntersectionWrapper" ref={ref}>{slots.default?.()}</div>
-  )
+  return () => <RenderSlotWithProps ref={ref}>{slots.default?.()}</RenderSlotWithProps>
 }, {
   props: ['onIntersect']
 })

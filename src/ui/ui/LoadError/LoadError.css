@@ -1,0 +1,8 @@
+.LoadError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--vkui--color_text_subhead);
+  margin: 24px 0;
+  gap: 10px;
+}

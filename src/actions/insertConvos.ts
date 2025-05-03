@@ -1,5 +1,6 @@
 import { MessagesConversationWithMessage } from 'model/api-types/objects/MessagesConversationWithMessage'
 import * as Convo from 'model/Convo'
+import * as History from 'model/History'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { fromApiConvo } from 'converters/ConvoConverter'
@@ -21,6 +22,13 @@ export function insertConvos(
         convo.pendingMessages = localConvo.pendingMessages
 
         if (mergeHistory) {
+          const messages = convo.history.filter((node) => node.kind === 'Item')
+          History.insert(localConvo.history, messages, {
+            up: true,
+            down: true,
+            aroundId: 0
+          })
+
           convo.history = localConvo.history
           convo.historyAroundCmid = localConvo.historyAroundCmid
         }

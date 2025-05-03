@@ -23,9 +23,9 @@ import { isNonEmptyArray } from 'misc/utils'
 import { convoHistoryContextInjectKey } from 'misc/providers'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
-import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
+import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24ChevronDown } from 'assets/icons'
 import './ConvoHistory.css'
@@ -430,7 +430,6 @@ type HistoryLoaderProps = {
 
 const HistoryLoader = defineComponent<HistoryLoaderProps>((props) => {
   const { loadConvoHistoryLock } = useConvosStore()
-  const { lang } = useEnv()
 
   return () => {
     const lockStatus = loadConvoHistoryLock.get(`${props.peerId}-${props.direction}`)
@@ -441,18 +440,11 @@ const HistoryLoader = defineComponent<HistoryLoaderProps>((props) => {
     )
 
     if (lockStatus === 'error') {
-      return (
-        <div class="ConvoHistory__loadError" key={props.startId}>
-          {lang.use('me_convo_loading_error')}
-          <Button onClick={onLoad}>
-            {lang.use('me_convo_retry_loading')}
-          </Button>
-        </div>
-      )
+      return <LoadError onRetry={onLoad} key={props.startId} />
     }
 
     return (
-      <IntersectionWrapper key={props.startId} onIntersect={onLoad}>
+      <IntersectionWrapper onIntersect={onLoad} key={props.startId}>
         <Spinner size="regular" class="ConvoHistory__spinner" />
       </IntersectionWrapper>
     )

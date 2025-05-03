@@ -9,7 +9,7 @@ import { usePeersStore } from 'store/peers'
 import { insertConvos, insertPeers } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
 import { useEnv } from 'hooks'
-import { getMapValueOrSetDefault } from 'misc/utils'
+import { getMapValueWithDefaults } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
 
 const MESSAGE_FLAGS = {
@@ -174,7 +174,7 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
           break
         }
 
-        const typingPeers = getMapValueOrSetDefault(convosStore.typings, peerId, [])
+        const typingPeers = getMapValueWithDefaults(convosStore.typings, peerId, [])
 
         for (const rawTypingPeerId of rawTypingPeerIds) {
           const typingPeerId = Peer.resolveId(rawTypingPeerId)
@@ -327,7 +327,7 @@ async function loadMissingData(
     const peerId = Peer.resolveId(apiMessage.peer_id)
     const cmid = Message.resolveCmid(apiMessage.conversation_message_id)
 
-    const mapWithMessages = getMapValueOrSetDefault(apiMessagesMap, peerId, new Map())
+    const mapWithMessages = getMapValueWithDefaults(apiMessagesMap, peerId, new Map())
     mapWithMessages.set(cmid, apiMessage)
   }
 

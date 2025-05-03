@@ -156,19 +156,17 @@ export function isEventWithModifier(event: MouseEvent | KeyboardEvent): boolean 
   )
 }
 
-export function getMapValueOrSetDefault<K, V>(
+export function getMapValueWithDefaults<K, V>(
   map: Map<K, V>,
   key: NoInfer<K>,
   defaults: NoInfer<V>
 ): V {
-  const value = map.get(key)
-
-  if (value === undefined) {
-    map.set(key, defaults)
-    return defaults
+  if (map.has(key)) {
+    return map.get(key) as V
   }
 
-  return value
+  map.set(key, defaults)
+  return defaults
 }
 
 // export function isElementInViewport(viewport: HTMLElement, element: HTMLElement): boolean {

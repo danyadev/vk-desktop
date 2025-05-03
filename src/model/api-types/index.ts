@@ -21,6 +21,7 @@ import {
 import { CaptchaForceParams, CaptchaForceResponse } from 'model/api-types/methods/Captcha'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
 import {
+  MessagesGetConversationsByIdParams, MessagesGetConversationsByIdResponse,
   MessagesGetConversationsParams,
   MessagesGetConversationsResponse,
   MessagesGetHistoryParams,
@@ -113,6 +114,10 @@ export type Methods = {
   'messages.getConversations': {
     params: MessagesGetConversationsParams
     response: MessagesGetConversationsResponse
+  }
+  'messages.getConversationsById': {
+    params: MessagesGetConversationsByIdParams
+    response: MessagesGetConversationsByIdResponse
   }
   'messages.getHistory': {
     params: MessagesGetHistoryParams
