@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
+import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 
 export type TypingUser = {
@@ -7,6 +8,11 @@ export type TypingUser = {
   type: 'text' | 'voice' | 'photo' | 'video' | 'file' | 'videomessage'
   cancelTypingTimeoutId: number
 }
+
+export type ScrollAnchor =
+  | { kind: 'Message', cmid: Message.Cmid, inProgress?: true }
+  | { kind: 'Unread', cmid: Message.Cmid, inProgress?: true }
+  | { kind: 'None' }
 
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>
@@ -20,8 +26,9 @@ type Convos = {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
   loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, 'loading' | 'error'>
-  sendingMessageLock: Set<Peer.Id>
-  savedConvoScroll: Map<Peer.Id, number>
+  sendMessageLock: Set<Peer.Id>
+  savedScrollPositions: Map<Peer.Id, number>
+  scrollAnchors: Map<Peer.Id, ScrollAnchor>
   typings: Map<Peer.Id, TypingUser[]>
 }
 
@@ -38,8 +45,9 @@ export const useConvosStore = defineStore('convos', {
       status: 'init'
     },
     loadConvoHistoryLock: new Map(),
-    sendingMessageLock: new Set(),
-    savedConvoScroll: new Map(),
+    sendMessageLock: new Set(),
+    savedScrollPositions: new Map(),
+    scrollAnchors: new Map(),
     typings: new Map()
   }),
 

@@ -16,9 +16,9 @@ export function sendMessage(peerId: Peer.Id, text: string) {
 
 async function sendNextPendingMessage(convo: Convo.Convo) {
   const { api } = useEnv()
-  const { sendingMessageLock } = useConvosStore()
+  const { sendMessageLock } = useConvosStore()
 
-  if (sendingMessageLock.has(convo.id)) {
+  if (sendMessageLock.has(convo.id)) {
     return
   }
 
@@ -29,7 +29,7 @@ async function sendNextPendingMessage(convo: Convo.Convo) {
     return
   }
 
-  sendingMessageLock.add(convo.id)
+  sendMessageLock.add(convo.id)
 
   try {
     const { cmid } = await api.fetch('messages.send', {
@@ -43,7 +43,7 @@ async function sendNextPendingMessage(convo: Convo.Convo) {
     pending.isFailed = true
   }
 
-  sendingMessageLock.delete(convo.id)
+  sendMessageLock.delete(convo.id)
   sendNextPendingMessage(convo)
 }
 
@@ -54,12 +54,16 @@ function toPendingMessage(peerId: Peer.Id, text: string): Message.Pending {
   return {
     kind: 'Pending',
     peerId,
+    cmid: undefined,
     randomId,
     authorId: viewer.id,
     isOut: true,
     sentAt: Date.now(),
+    updatedAt: undefined,
     text,
     attaches: {},
+    replyMessage: undefined,
+    forwardedMessages: undefined,
     isFailed: false
   }
 }

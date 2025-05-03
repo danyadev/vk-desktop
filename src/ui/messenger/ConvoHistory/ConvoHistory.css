@@ -1,6 +1,15 @@
 .ConvoHistory {
+  position: relative;
+  overflow: hidden;
   height: 100%;
-  overflow: auto;
+}
+
+.ConvoHistory__scroll {
+  height: 100%;
+  /* Для подсвечивания сообщения мы создаем ::after элемент, растянутый на 200vw и сдвинутый на 100vw, */
+  /* чтобы подсветился фон по всей ширине истории, но по какой-то причине этот absolute ::after элемент */
+  /* создает горизонтальный скролл... и overflow-x: hidden фиксит его */
+  overflow: hidden auto;
 }
 
 .ConvoHistory__content {
@@ -45,6 +54,44 @@
   color: var(--vkui--color_text_subhead);
 }
 
+.ConvoHistory__hopNavigation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: absolute;
+  pointer-events: none;
+  max-width: var(--convoHistoryMaxWidth);
+  left: 0;
+  right: 0;
+  bottom: var(--convoHistoryIndent);
+  padding: 0 var(--convoHistoryIndent);
+  margin: 0 auto;
+}
+
+.ConvoHistory__hopNavigation--enter-active,
+.ConvoHistory__hopNavigation--leave-active {
+  transition: opacity var(--mediumTransition);
+}
+
+.ConvoHistory__hopNavigation--enter-from,
+.ConvoHistory__hopNavigation--leave-to {
+  opacity: 0;
+}
+
+.ConvoHistory__hopNavigationButton {
+  pointer-events: auto;
+  background: var(--vkui--color_background_content);
+  color: var(--vkui--color_icon_secondary);
+  padding: 8px;
+  border-radius: 50%;
+  box-shadow: var(--vkui--elevation2);
+  transition: background-color var(--fastTransition);
+}
+
+.ConvoHistory__hopNavigationButton:hover {
+  background: var(--vkui--color_background_content--hover);
+}
+
 .ConvoHistory__dateBlock {
   font: var(--smallFont);
   color: var(--vkui--color_text_subhead);
@@ -52,14 +99,12 @@
 }
 
 .ConvoHistory__unreadBlock {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 100%;
   font: var(--smallFont);
   color: var(--vkui--color_text_subhead);
-  margin: 8px auto;
+  margin: 8px -100%;
 }
 
 .ConvoHistory__unreadBlock::before,

@@ -9,13 +9,14 @@ export type Convo = UserConvo | GroupConvo | ChatConvo
 interface BaseConvo {
   history: History.History<Message.Confirmed>
   pendingMessages: Message.Pending[]
+  historyAroundCmid: Message.Cmid | 0
   unreadCount: number
   majorSortId: number
   minorSortId: number
-  /** Cmid последнего прочитанного входящего сообщения (inbox), может быть 0 */
-  inReadBy: number
-  /** Cmid последнего прочитанного исходящего сообщения (outbox), может быть 0 */
-  outReadBy: number
+  /** Cmid последнего прочитанного входящего сообщения (inbox) */
+  inReadBy: Message.Cmid | 0
+  /** Cmid последнего прочитанного исходящего сообщения (outbox) */
+  outReadBy: Message.Cmid | 0
   notifications: {
     enabled: boolean
     disabledUntil: number
@@ -38,7 +39,7 @@ export interface ChatConvo extends BaseConvo {
   status: 'in' | 'kicked' | 'left' | 'out'
   isChannel: boolean
   isCasper: boolean
-  pinnedMessage?: Message.Pinned
+  pinnedMessage: Message.Pinned | undefined
 }
 
 export type Style =
@@ -104,6 +105,7 @@ function mock(id: Peer.Id): Convo {
   const base: BaseConvo = {
     history: [],
     pendingMessages: [],
+    historyAroundCmid: 0,
     unreadCount: 0,
     majorSortId: 0,
     minorSortId: 0,
@@ -138,6 +140,7 @@ function mock(id: Peer.Id): Convo {
       status: 'in',
       isCasper: false,
       isChannel: false,
+      pinnedMessage: undefined,
       ...base
     }
   }

@@ -6,7 +6,7 @@ import { fromApiConvo } from 'converters/ConvoConverter'
 
 export function insertConvos(
   conversations: MessagesConversationWithMessage[],
-  { merge = false, addToList = true } = {}
+  { mergeHistory = true, addToList = true } = {}
 ) {
   const { convoList, convos } = useConvosStore()
   const { peers } = usePeersStore()
@@ -19,27 +19,38 @@ export function insertConvos(
 
       if (localConvo) {
         convo.pendingMessages = localConvo.pendingMessages
-      }
 
-      if (localConvo && merge) {
-        convo.history = localConvo.history
-      }
+        if (mergeHistory) {
+          convo.history = localConvo.history
+          convo.historyAroundCmid = localConvo.historyAroundCmid
+        }
 
-      if (!localConvo || merge) {
+        // Само присваивание нового объекта является триггером для перерисовки всех компонентов,
+        // где был запрошен указанный пир, поэтому для дальнейшей оптимизации можно не создавать
+        // новый объект, а перезаписывать его поля, многие их которых почти никогда не меняются.
+        // Это безопасно: все объекты одинакового типа (kind) имеют полный и одинаковый набор полей,
+        // опциональные поля всегда заполняются как явный undefined, сохраняя единую форму
+        Object.assign(localConvo, convo)
+      } else {
         convos.set(convo.id, convo)
       }
 
-      if (addToList) {
+      if (addToList && !convoList.peerIds.includes(convo.id)) {
         convoList.peerIds.push(convo.id)
       }
     }
 
     if (peer) {
-      peers.set(peer.id, peer)
+      const localPeer = peers.get(peer.id)
+      if (localPeer) {
+        Object.assign(localPeer, peer)
+      } else {
+        peers.set(peer.id, peer)
+      }
     }
   }
 
-  convoList.peerIds = [...new Set(convoList.peerIds)]
+  convoList.peerIds = convoList.peerIds
     .map(Convo.safeGet)
     .sort(Convo.sorter)
     .map((convo) => convo.id)

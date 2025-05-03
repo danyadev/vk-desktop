@@ -8,6 +8,7 @@ import './PinnedMessage.css'
 
 type Props = {
   pinnedMessage: Message.Pinned
+  onClick: () => void
 }
 
 export const PinnedMessage = defineComponent<Props>((props) => {

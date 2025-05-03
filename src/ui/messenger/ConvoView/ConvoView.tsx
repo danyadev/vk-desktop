@@ -15,18 +15,30 @@ type ConvoViewProps = {
 }
 
 const ConvoView = defineComponent<ConvoViewProps>((props) => {
-  return () => (
-    <div class="ConvoView">
-      <ConvoHeader convo={props.convo} />
-      {props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage && (
-        <PinnedMessage pinnedMessage={props.convo.pinnedMessage} />
-      )}
-      <div class="ConvoView__history">
+  const { scrollAnchors } = useConvosStore()
+
+  return () => {
+    const pinnedMessage = props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage
+
+    return (
+      <div class="ConvoView">
+        <ConvoHeader convo={props.convo} />
+        {pinnedMessage && (
+          <PinnedMessage
+            pinnedMessage={pinnedMessage}
+            onClick={() => {
+              scrollAnchors.set(props.convo.id, {
+                kind: 'Message',
+                cmid: pinnedMessage.cmid
+              })
+            }}
+          />
+        )}
         <ConvoHistory convo={props.convo} />
+        <ConvoComposer convo={props.convo} />
       </div>
-      <ConvoComposer convo={props.convo} />
-    </div>
-  )
+    )
+  }
 }, {
   props: ['convo']
 })

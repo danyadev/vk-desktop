@@ -68,7 +68,9 @@ function createWindow(params: Electron.BrowserWindowConstructorOptions = {}) {
     webPreferences: {
       webSecurity: false,
       contextIsolation: false,
-      nodeIntegration: true
+      nodeIntegration: true,
+      // https://chromium.googlesource.com/chromium/src/+/refs/tags/108.0.5359.215/third_party/blink/renderer/platform/runtime_enabled_features.json5#2303
+      enableBlinkFeatures: 'ScrollEndEvents'
     },
     ...params
   })

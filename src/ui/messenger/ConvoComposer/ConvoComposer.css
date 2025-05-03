@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   padding: 0 var(--convoHistoryIndent) var(--convoHistoryIndent) var(--convoHistoryIndent);
-  background: var(--vkd--color_background_convo_history);
 }
 
 .ConvoComposer__panel {

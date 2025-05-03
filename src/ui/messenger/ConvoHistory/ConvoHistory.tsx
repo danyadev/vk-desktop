@@ -7,35 +7,51 @@ import {
   onMounted,
   onUpdated,
   provide,
+  ref,
   shallowRef,
+  Transition,
   watch
 } from 'vue'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
-import { useConvosStore } from 'store/convos'
+import * as Peer from 'model/Peer'
+import { ScrollAnchor, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv, useResizeObserver } from 'hooks'
-import { isNonEmptyArray, NonEmptyArray } from 'misc/utils'
-import { isPreviousDay, isSameDay } from 'misc/dateTime'
+import { isElementInViewport, isNonEmptyArray } from 'misc/utils'
 import { convoHistoryContextInjectKey } from 'misc/providers'
+import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
-import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 import { Button } from 'ui/ui/Button/Button'
+import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
+import { Icon24ChevronDown } from 'assets/icons'
 import './ConvoHistory.css'
 
 type Props = {
   convo: Convo.Convo
 }
 
+const PINNED_TO_BOTTOM_THRESHOLD = 20
+const SHOW_HOP_NAVIGATION_THRESHOLD = 200
+
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useEnv()
-  const { loadConvoHistoryLock, savedConvoScroll, typings } = useConvosStore()
-  const historySlice = computed(() => History.around(props.convo.history, props.convo.inReadBy))
+  const { savedScrollPositions, scrollAnchors, typings } = useConvosStore()
+  const scrollAnchor = computed<ScrollAnchor>(
+    () => scrollAnchors.get(props.convo.id) ?? { kind: 'None' }
+  )
+  const historySlice = computed(() => History.around(
+    props.convo.history,
+    props.convo.historyAroundCmid,
+    scrollAnchor.value.kind !== 'None'
+  ))
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
-  const prevScrollHeight = shallowRef(0)
+  const messageElements = ref(new Map<Message.Cmid | 'unread', HTMLElement>()).value
+  const prevPinnedToBottom = shallowRef(false)
+  const showHopNavigation = shallowRef(false)
   let newConvoHistoryJustRendered = false
 
   const historyWidth = shallowRef(0)
@@ -61,10 +77,14 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   })
 
   onMounted(async () => {
-    const scrollTop = savedConvoScroll.get(props.convo.id)
+    if (scrollToAnchorIfNeeded(true)) {
+      return
+    }
+
+    const scrollTop = savedScrollPositions.get(props.convo.id)
     if ($historyElement.value && scrollTop !== undefined) {
       // После первого рендера в истории могут произойти некоторые изменения, например
-      // просчитаться актуальные размеры сеток фотографий, поэтому ждем дополнительный тик.
+      // просчитаться актуальные размеры сеток фотографий, поэтому ждем дополнительный тик
       await nextTick()
       $historyElement.value.scrollTop = scrollTop
     }
@@ -72,46 +92,172 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   onBeforeUnmount(() => {
     if ($historyElement.value) {
-      savedConvoScroll.set(props.convo.id, $historyElement.value.scrollTop)
+      savedScrollPositions.set(props.convo.id, $historyElement.value.scrollTop)
     }
   })
 
   onBeforeUpdate(() => {
-    if ($historyElement.value) {
-      prevScrollHeight.value = $historyElement.value.scrollHeight
+    const historyElement = $historyElement.value
+    if (historyElement) {
+      /**
+       * scrollTop - высота от верха контента до верха вьюпорта
+       * offsetHeight - высота вьюпорта
+       * scrollHeight - общая высота контента
+       */
+      const heightBelowViewport =
+        historyElement.scrollHeight - historyElement.scrollTop - historyElement.offsetHeight
+      prevPinnedToBottom.value = heightBelowViewport <= PINNED_TO_BOTTOM_THRESHOLD
     }
   })
 
-  onUpdated(() => {
-    if (newConvoHistoryJustRendered) {
+  onUpdated(async () => {
+    if (newConvoHistoryJustRendered || scrollAnchor.value.kind !== 'None') {
       newConvoHistoryJustRendered = false
       return
     }
 
-    if (!$historyElement.value) {
+    const historyElement = $historyElement.value
+    if (!historyElement) {
       return
     }
+
+    // Чтобы фотографии успели высчитать свое значение
+    await nextTick()
 
     /**
      * Автоматически скроллим до низа истории, если перед ререндером мы находились внизу,
      * но впоследствии ререндера оказались выше.
      * Основной сценарий - когда мы или собеседник написали новое сообщение
-     *
-     * scrollTop - высота от верха контента до верха вьюпорта;
-     * offsetHeight - высота вьюпорта;
-     * scrollHeight - общая высота контента.
-     *
-     * Сумма scrollTop и offsetHeight равна высоте от верха контента до конца вьюпорта.
-     * Если мы находимся в самом низу, то она будет совпадать с общей высотой, но если
-     * мы проскроллим вверх, появляется контент под вьюпортом, который нам не виден.
-     * Тогда сумма не совпадет и мы поймем что юзер не находится внизу
      */
-    const upperContentHeight = $historyElement.value.scrollTop + $historyElement.value.offsetHeight
+    const { scrollHeight, scrollTop, offsetHeight } = historyElement
+    const heightBelowViewport = scrollHeight - scrollTop - offsetHeight
+    const isPinnedToBottom = heightBelowViewport <= PINNED_TO_BOTTOM_THRESHOLD
 
-    if (prevScrollHeight.value - upperContentHeight < 20) {
-      $historyElement.value.scrollTo(0, $historyElement.value.scrollHeight)
+    if (prevPinnedToBottom.value && !isPinnedToBottom) {
+      historyElement.scrollTo(0, scrollHeight)
     }
   })
+
+  const scrollToAnchorIfNeeded = (instant: boolean) => {
+    const anchor = scrollAnchor.value
+    if (anchor.kind === 'None' || anchor.inProgress) {
+      return
+    }
+
+    const element = scrollAnchor.value.kind === 'Unread'
+      ? messageElements.get('unread') ?? messageElements.get(anchor.cmid)
+      : messageElements.get(anchor.cmid)
+    const historyElement = $historyElement.value
+    const behavior = instant ? 'instant' : 'smooth'
+
+    if (element && historyElement) {
+      // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
+      nextTick(() => {
+        // Мы убираем якорь при событии scrollend, которое не вызывается, если скролла не произошло,
+        // поэтому заранее убираем якорь, если элемент уже во вьюпорте, поэтому будет не страшно,
+        // что с некоторым шансом доскрола не произойдет
+        if (behavior === 'smooth' && !isElementInViewport(historyElement, element)) {
+          scrollAnchors.set(props.convo.id, { ...anchor, inProgress: true })
+        } else {
+          scrollAnchors.set(props.convo.id, { kind: 'None' })
+        }
+
+        element.scrollIntoView({
+          block: 'center',
+          behavior
+        })
+      })
+
+      return true
+    }
+
+    if (props.convo.historyAroundCmid !== anchor.cmid) {
+      props.convo.historyAroundCmid = anchor.cmid
+      return
+    }
+
+    if (historySlice.value.gapAround) {
+      return
+    }
+
+    // Сообщения не оказалось в истории даже после загрузки истории вокруг кмида
+    // TODO: показать модалку с превью сообщения
+    // TODO: возвращаться обратно к сообщению откуда мы пытались перейти к другому сообщению
+    // (либо предварительно смотреть в апи наличие сообщения и не грузить историю вообще)
+
+    // Пока не реализована обработка ненайденного сообщения, скроллим к ближайшему следующему
+    const messageCmids = [...messageElements.keys()]
+      .filter((key) => key !== 'unread')
+      .sort((a, b) => a - b)
+    const messageCmid =
+      messageCmids.find((cmid) => (cmid >= anchor.cmid)) ??
+      messageCmids.at(-1)
+    const messageElement = messageCmid && messageElements.get(messageCmid)
+
+    if (messageElement && historyElement) {
+      nextTick(() => {
+        if (behavior === 'smooth' && !isElementInViewport(historyElement, messageElement)) {
+          scrollAnchors.set(props.convo.id, { ...anchor, inProgress: true })
+        } else {
+          scrollAnchors.set(props.convo.id, { kind: 'None' })
+        }
+
+        messageElement.scrollIntoView({
+          block: 'center',
+          behavior
+        })
+      })
+
+      return true
+    }
+  }
+
+  watch(
+    [scrollAnchor, historySlice],
+    ([anchor], [prevAnchor]) => {
+      // выставляем instant если это не первый запрос на скролл к якорю,
+      // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
+      // и больше нет изначальной позиции, откуда можно применить анимацию
+      scrollToAnchorIfNeeded(
+        anchor.kind !== 'None' &&
+        anchor.kind === prevAnchor.kind &&
+        anchor.cmid === prevAnchor.cmid
+      )
+    },
+    { flush: 'post' }
+  )
+
+  const onScroll = () => {
+    const historyElement = $historyElement.value
+    if (!historyElement) {
+      return
+    }
+
+    const distanceFromBottom =
+      historyElement.scrollHeight - historyElement.scrollTop - historyElement.offsetHeight
+
+    showHopNavigation.value = distanceFromBottom > SHOW_HOP_NAVIGATION_THRESHOLD
+  }
+
+  const onScrollEnd = () => {
+    if (scrollAnchor.value.kind !== 'None' && scrollAnchor.value.inProgress) {
+      scrollAnchors.set(props.convo.id, { kind: 'None' })
+    }
+  }
+
+  const handleHopNavigation = () => {
+    const lastMessage = Convo.lastMessage(props.convo)
+    if (!lastMessage) {
+      return
+    }
+
+    if (props.convo.inReadBy && props.convo.inReadBy > props.convo.historyAroundCmid) {
+      scrollAnchors.set(props.convo.id, { kind: 'Unread', cmid: props.convo.inReadBy })
+    } else {
+      // TODO: опция для отключения выделения
+      scrollAnchors.set(props.convo.id, { kind: 'Message', cmid: lastMessage.cmid })
+    }
+  }
 
   const loadHistory = (
     direction: 'around' | 'up' | 'down',
@@ -142,20 +288,20 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     direction: 'around' | 'up' | 'down',
     startCmid: Message.Cmid
   ) => {
+    const historyElement = $historyElement.value
+    if (!historyElement) {
+      return
+    }
+
     if (direction === 'around') {
       await nextTick()
 
-      const historyElement = $historyElement.value
-      if (!historyElement) {
-        return
-      }
-
       if (startCmid === props.convo.inReadBy) {
-        const unreadBlock = historyElement.querySelector<HTMLElement>('.ConvoHistory__unreadBlock')
-        if (unreadBlock) {
+        const unreadElement = messageElements.get('unread')
+        if (unreadElement) {
           // Скроллим к блоку непрочитанных так, чтобы он начинался на верхней 1/4 части вьюпорта
           historyElement.scrollTop =
-            unreadBlock.offsetTop - historyElement.offsetTop - historyHeight.value / 4
+            unreadElement.offsetTop - historyElement.offsetTop - historyHeight.value / 4
           return
         }
       }
@@ -165,51 +311,22 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         insertedMessages.find(({ cmid }) => (cmid >= startCmid)) ??
         insertedMessages.at(-1)
 
-      const messageElement = aroundMessage && historyElement.querySelector(
-        `.MessagesStack__message[data-cmid="${aroundMessage.cmid}"]`
-      )
+      const messageElement = aroundMessage && messageElements.get(aroundMessage.cmid)
       messageElement?.scrollIntoView({
         block: 'center',
         behavior: 'instant'
       })
+      return
     }
+
+    const { scrollTop, scrollHeight } = historyElement
+    await nextTick()
 
     if (direction === 'up') {
-      const historyElement = $historyElement.value
-      if (!historyElement) {
-        return
-      }
-
-      const { scrollTop, scrollHeight } = historyElement
-      await nextTick()
       historyElement.scrollTop = scrollTop + historyElement.scrollHeight - scrollHeight
+    } else {
+      historyElement.scrollTop = scrollTop
     }
-  }
-
-  const renderLoader = (
-    direction: 'around' | 'up' | 'down',
-    startId: number,
-    gap: History.Gap
-  ) => {
-    const lockStatus = loadConvoHistoryLock.get(`${props.convo.id}-${direction}`)
-    const onLoad = () => loadHistory(direction, Message.resolveCmid(startId), gap)
-
-    if (lockStatus === 'error') {
-      return (
-        <div class="ConvoHistory__loadError" key={startId}>
-          {lang.use('me_convo_loading_error')}
-          <Button onClick={onLoad}>
-            {lang.use('me_convo_retry_loading')}
-          </Button>
-        </div>
-      )
-    }
-
-    return (
-      <IntersectionWrapper key={startId} onIntersect={onLoad}>
-        <Spinner size="regular" class="ConvoHistory__spinner" />
-      </IntersectionWrapper>
-    )
   }
 
   return () => {
@@ -222,7 +339,13 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     if (gapAround) {
       return (
         <div class="ConvoHistory__placeholder">
-          {renderLoader('around', matchedAroundId, gapAround)}
+          <HistoryLoader
+            direction="around"
+            startId={matchedAroundId}
+            gap={gapAround}
+            peerId={props.convo.id}
+            loadHistory={loadHistory}
+          />
         </div>
       )
     }
@@ -238,29 +361,70 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     const typingUsers = typings.get(props.convo.id)
 
     return (
-      <div class="ConvoHistory" ref={$historyElement}>
-        <div class="ConvoHistory__content">
-          <div class="ConvoHistory__topFiller" />
+      <div class="ConvoHistory">
+        <div
+          class="ConvoHistory__scroll"
+          ref={$historyElement}
+          onScrollPassive={onScroll}
+          onScrollendPassive={onScrollEnd}
+        >
+          <div class="ConvoHistory__content">
+            <div class="ConvoHistory__topFiller" />
 
-          {gapBefore && renderLoader('up', gapBefore.toId, gapBefore)}
-
-          <HistoryMessages messages={messages} convo={props.convo} />
-
-          {gapAfter && renderLoader('down', gapAfter.fromId, gapAfter)}
-
-          <div class="ConvoHistory__footer">
-            {!gapAfter && typingUsers && isNonEmptyArray(typingUsers) && (
-              <ConvoTyping
-                typingUsers={typingUsers}
-                namesLimit={
-                  props.convo.kind === 'UserConvo' || props.convo.kind === 'GroupConvo'
-                    ? 0
-                    : undefined
-                }
+            {gapBefore && (
+              <HistoryLoader
+                direction="up"
+                startId={gapBefore.toId}
+                gap={gapBefore}
+                peerId={props.convo.id}
+                loadHistory={loadHistory}
               />
             )}
+
+            <HistoryMessages
+              messages={messages}
+              messageElements={messageElements}
+              convo={props.convo}
+            />
+
+            {gapAfter && (
+              <HistoryLoader
+                direction="down"
+                startId={gapAfter.fromId}
+                gap={gapAfter}
+                peerId={props.convo.id}
+                loadHistory={loadHistory}
+              />
+            )}
+
+            <div class="ConvoHistory__footer">
+              {!gapAfter && typingUsers && isNonEmptyArray(typingUsers) && (
+                <ConvoTyping
+                  typingUsers={typingUsers}
+                  namesLimit={
+                    props.convo.kind === 'UserConvo' || props.convo.kind === 'GroupConvo'
+                      ? 0
+                      : undefined
+                  }
+                />
+              )}
+            </div>
           </div>
         </div>
+
+        <Transition name="ConvoHistory__hopNavigation-">
+          {(showHopNavigation.value || gapAfter) && (
+            <div class="ConvoHistory__hopNavigation">
+              <ButtonIcon
+                class="ConvoHistory__hopNavigationButton"
+                shiftOnClick
+                withHoverBackground={false}
+                icon={<Icon24ChevronDown />}
+                onClick={handleHopNavigation}
+              />
+            </div>
+          )}
+        </Transition>
       </div>
     )
   }
@@ -268,96 +432,47 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   props: ['convo']
 })
 
-type HistoryMessagesProps = {
-  messages: Message.Message[]
-  convo: Convo.Convo
+type HistoryLoaderProps = {
+  peerId: Peer.Id
+  direction: 'around' | 'up' | 'down'
+  startId: number
+  gap: History.Gap
+  loadHistory: (
+    direction: 'around' | 'up' | 'down',
+    startCmid: Message.Cmid,
+    gap: History.Gap
+  ) => void
 }
 
-type HistoryBlock =
-  | { kind: 'Date', date: number }
-  | { kind: 'Stack', stack: NonEmptyArray<Message.Message> }
-  | { kind: 'Unread', inReadBy: number }
-
-const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
+const HistoryLoader = defineComponent<HistoryLoaderProps>((props) => {
+  const { loadConvoHistoryLock } = useConvosStore()
   const { lang } = useEnv()
 
-  const blocks = computed(() => {
-    return props.messages.reduce((blocks, message, index) => {
-      const prevMessage = props.messages[index - 1]
+  return () => {
+    const lockStatus = loadConvoHistoryLock.get(`${props.peerId}-${props.direction}`)
+    const onLoad = () => props.loadHistory(
+      props.direction,
+      Message.resolveCmid(props.startId),
+      props.gap
+    )
 
-      if (
-        !message.isOut &&
-        Message.isUnread(message, props.convo) &&
-        (!prevMessage || !Message.isUnread(prevMessage, props.convo))
-      ) {
-        blocks.push({ kind: 'Unread', inReadBy: props.convo.inReadBy })
-      }
-
-      const prevBlock = blocks.at(-1)
-
-      if (
-        !prevBlock || !prevMessage ||
-        !isSameDay(new Date(prevMessage.sentAt), new Date(message.sentAt))
-      ) {
-        blocks.push({ kind: 'Date', date: message.sentAt })
-        blocks.push({ kind: 'Stack', stack: [message] })
-        return blocks
-      }
-
-      if (
-        prevBlock.kind !== 'Stack' ||
-        prevMessage.kind !== message.kind ||
-        prevMessage.authorId !== message.authorId
-      ) {
-        blocks.push({ kind: 'Stack', stack: [message] })
-        return blocks
-      }
-
-      prevBlock.stack.push(message)
-      return blocks
-    }, new Array<HistoryBlock>())
-  })
-
-  return () => blocks.value.map((block) => {
-    switch (block.kind) {
-      case 'Stack': {
-        const start = block.stack[0]
-        const end = block.stack.at(-1)
-        const startKey = start.kind === 'Pending' ? start.randomId : start.cmid
-        const endKey = end?.kind === 'Pending' ? end.randomId : end?.cmid
-
-        return <MessagesStack key={`stack-${startKey}-${endKey}`} messages={block.stack} />
-      }
-
-      case 'Date': {
-        const blockDate = new Date(block.date)
-        const nowDate = new Date()
-        let date: string
-
-        if (isSameDay(nowDate, blockDate)) {
-          date = lang.use('date_today')
-        } else if (isPreviousDay(nowDate, blockDate)) {
-          date = lang.use('date_yesterday')
-        } else {
-          const isSameYear = nowDate.getFullYear() === blockDate.getFullYear()
-          date = lang.dateTimeFormatter({
-            day: 'numeric',
-            month: 'long',
-            year: isSameYear ? undefined : 'numeric'
-          }).format(block.date)
-        }
-
-        return <div class="ConvoHistory__dateBlock" key={`date-${block.date}`}>{date}</div>
-      }
-
-      case 'Unread':
-        return (
-          <div class="ConvoHistory__unreadBlock" key={`unread-${block.inReadBy}`}>
-            {lang.use('me_convo_unread_messages')}
-          </div>
-        )
+    if (lockStatus === 'error') {
+      return (
+        <div class="ConvoHistory__loadError" key={props.startId}>
+          {lang.use('me_convo_loading_error')}
+          <Button onClick={onLoad}>
+            {lang.use('me_convo_retry_loading')}
+          </Button>
+        </div>
+      )
     }
-  })
+
+    return (
+      <IntersectionWrapper key={props.startId} onIntersect={onLoad}>
+        <Spinner size="regular" class="ConvoHistory__spinner" />
+      </IntersectionWrapper>
+    )
+  }
 }, {
-  props: ['messages', 'convo']
+  props: ['peerId', 'direction', 'startId', 'gap', 'loadHistory']
 })

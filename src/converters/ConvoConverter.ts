@@ -27,14 +27,22 @@ export function fromApiConvo(
     history.push(History.toGap(1, lastCmid))
   }
 
+  const inReadBy = apiConvo.in_read_cmid
+    ? Message.resolveCmid(apiConvo.in_read_cmid)
+    : 0
+  const outReadBy = apiConvo.out_read_cmid
+    ? Message.resolveCmid(apiConvo.out_read_cmid)
+    : 0
+
   const baseConvo = {
     history,
     pendingMessages: [],
+    historyAroundCmid: inReadBy,
     unreadCount: apiConvo.unread_count ?? 0,
     majorSortId: apiConvo.sort_id?.major_id ?? 0,
     minorSortId: apiConvo.sort_id?.minor_id ?? 0,
-    inReadBy: apiConvo.in_read_cmid,
-    outReadBy: apiConvo.out_read_cmid,
+    inReadBy,
+    outReadBy,
     notifications: {
       enabled: (
         !apiConvo.push_settings?.disabled_until &&

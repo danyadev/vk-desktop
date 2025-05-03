@@ -64,7 +64,8 @@ module.exports = {
         '@typescript-eslint/prefer-promise-reject-errors': 'off',
         '@typescript-eslint/prefer-regexp-exec': 'off',
         // Включено в full файле
-        '@typescript-eslint/no-unused-vars': 'off'
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-misused-spread': 'error'
       }
     },
     {

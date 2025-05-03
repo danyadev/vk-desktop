@@ -20,7 +20,11 @@ export const Messenger = defineComponent(() => {
 
   function onKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape' && route.name === 'Convo') {
-      router.push({ name: 'NoConvo' })
+      if (route.query.canGoBack) {
+        router.back()
+      } else {
+        router.push({ name: 'NoConvo' })
+      }
     }
   }
 

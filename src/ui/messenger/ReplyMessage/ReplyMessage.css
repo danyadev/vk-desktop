@@ -44,4 +44,5 @@
 .ReplyMessage__name {
   color: var(--vkui--color_text_link);
   font-weight: 500;
+  margin-top: -2px;
 }

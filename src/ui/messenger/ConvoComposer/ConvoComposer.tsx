@@ -105,7 +105,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
           class="ConvoComposer__send"
           disabled={isEmpty.value}
           icon={<Icon24Send />}
-          addHoverBackground={false}
+          withHoverBackground={false}
           onClick={onMessageSend}
           // Предотвращаем сброс фокуса с поля ввода
           onMousedown={(event) => event.preventDefault()}

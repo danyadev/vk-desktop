@@ -23,9 +23,29 @@
 }
 
 .MessagesStack__message {
+  position: relative;
   max-width: 85%;
 }
 
 .MessagesStack__message--centered {
   margin: 0 auto;
+}
+
+.MessagesStack__message::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -100vw;
+  width: 200vw;
+  height: calc(100% + 4px * 2);
+  pointer-events: none;
+  background: white;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--slowTransition), visibility var(--slowTransition);
+}
+
+.MessagesStack__message--highlighted::after {
+  opacity: 0.1;
+  visibility: visible;
 }
