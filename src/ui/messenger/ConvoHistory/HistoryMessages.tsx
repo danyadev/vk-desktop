@@ -69,20 +69,10 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
 
   return () => blocks.value.map((block) => {
     switch (block.kind) {
-      case 'Stack': {
-        const start = block.stack[0]
-        const end = block.stack.at(-1)
-        const startKey = start.kind === 'Pending' ? start.randomId : start.cmid
-        const endKey = end?.kind === 'Pending' ? end.randomId : end?.cmid
-
-        return (
-          <MessagesStack
-            key={`stack-${startKey}-${endKey}`}
-            messages={block.stack}
-            setMessageRef={setMessageRef}
-          />
-        )
-      }
+      case 'Stack':
+        // Не указываем key, чтобы vue сам определял, какие стеки нужно создать, а какие обновить.
+        // Нет способа выразить key так, чтобы он не менялся при изменении того же стека(
+        return <MessagesStack messages={block.stack} setMessageRef={setMessageRef} />
 
       case 'Date': {
         const blockDate = new Date(block.date)
