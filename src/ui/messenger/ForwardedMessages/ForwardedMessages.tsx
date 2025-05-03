@@ -79,7 +79,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
 
           {message.text && <span class="ForwardedMessage__text">{message.text}</span>}
           {hasAttaches && (
-            <Attaches class="ForwardedMessage__attaches" attaches={message.attaches} />
+            <Attaches class="ForwardedMessage__attaches" attaches={message.attaches} message={message} />
           )}
 
           {message.replyMessage && (

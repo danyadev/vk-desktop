@@ -35,7 +35,7 @@ export interface Expired extends BaseMessage {
   kind: 'Expired'
 }
 
-export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'isOut' | 'randomId'> {
+export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'randomId'> {
   kind: 'Foreign'
   peerId: Peer.Id | undefined
   cmid: Cmid | undefined
@@ -44,7 +44,7 @@ export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'isOu
   isUnavailable: boolean
 }
 
-export interface Pinned extends Omit<Normal, 'kind' | 'isOut' | 'updatedAt' | 'randomId'> {
+export interface Pinned extends Omit<Normal, 'kind' | 'updatedAt' | 'randomId'> {
   kind: 'Pinned'
   isUnavailable: boolean
 }

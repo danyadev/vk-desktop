@@ -1,5 +1,6 @@
 import { computed, defineComponent, InputEvent, onUnmounted, shallowRef } from 'vue'
 import * as Attach from 'model/Attach'
+import * as Message from 'model/Message'
 import { useEnv } from 'hooks'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Icon16Text, Icon20ChevronUp, Icon32PauseCircle, Icon32PlayCircle } from 'assets/icons'
@@ -7,10 +8,11 @@ import './AttachVoice.css'
 
 type Props = {
   voice: Attach.Voice
+  message?: Message.Message | Message.Foreign
 }
 
 export const AttachVoice = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang, api } = useEnv()
 
   const audio = new Audio(props.voice.linkMp3)
   const isPlaying = shallowRef(false)
@@ -57,7 +59,26 @@ export const AttachVoice = defineComponent<Props>((props) => {
     }
   }
 
+  const markAsListened = () => {
+    if (props.voice.wasListened) {
+      return
+    }
+
+    if (!props.message?.peerId || !props.message.cmid || props.message.isOut) {
+      return
+    }
+
+    props.voice.wasListened = true
+
+    api.fetch('messages.markAsPlayed', {
+      peer_id: props.message.peerId,
+      cmid: props.message.cmid
+    })
+  }
+
   audio.addEventListener('play', () => {
+    markAsListened()
+
     isPlaying.value = true
     rAFId = requestAnimationFrame(updateProgress)
   })
@@ -136,7 +157,7 @@ export const AttachVoice = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['voice']
+  props: ['voice', 'message']
 })
 
 const formatTime = (seconds: number) => {

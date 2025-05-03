@@ -1,5 +1,6 @@
 import { defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
+import * as Message from 'model/Message'
 import { useEnv } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { AttachVoice } from './AttachVoice/AttachVoice'
@@ -11,6 +12,7 @@ import './Attaches.css'
 
 type Props = {
   attaches: Attach.Attaches
+  message?: Message.Message | Message.Foreign
   class: ClassName
 }
 
@@ -23,7 +25,7 @@ export const Attaches = defineComponent<Props>((props) => {
       {props.attaches.photos && <AttachPhotos photos={props.attaches.photos} />}
       {props.attaches.links?.map((link) => <AttachLink link={link} />)}
       {props.attaches.wall && <AttachWall wall={props.attaches.wall} />}
-      {props.attaches.voice && <AttachVoice voice={props.attaches.voice} />}
+      {props.attaches.voice && <AttachVoice voice={props.attaches.voice} message={props.message} />}
       {props.attaches.unknown?.map((unknown) => (
         <div class="Attaches__unknown">
           {lang.use('me_unknown_attach')} ({unknown.type})
@@ -32,5 +34,5 @@ export const Attaches = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['attaches', 'class']
+  props: ['attaches', 'message', 'class']
 })
