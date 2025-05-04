@@ -39,7 +39,7 @@
   width: 200vw;
   height: calc(100% + 4px * 2);
   pointer-events: none;
-  background: white;
+  background: var(--vkui--color_background_content_inverse);
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--slowTransition), visibility var(--slowTransition);

@@ -1,4 +1,8 @@
 import {
+  AccountSetSilenceModeParams,
+  AccountSetSilenceModeResponse
+} from 'model/api-types/methods/Account'
+import {
   AuthCheckAuthCodeParams,
   AuthCheckAuthCodeResponse,
   AuthExchangeSilentAuthTokenParams,
@@ -21,7 +25,8 @@ import {
 import { CaptchaForceParams, CaptchaForceResponse } from 'model/api-types/methods/Captcha'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
 import {
-  MessagesGetConversationsByIdParams, MessagesGetConversationsByIdResponse,
+  MessagesGetConversationsByIdParams,
+  MessagesGetConversationsByIdResponse,
   MessagesGetConversationsParams,
   MessagesGetConversationsResponse,
   MessagesGetHistoryParams,
@@ -35,9 +40,14 @@ import {
   MessagesSendParams,
   MessagesSendResponse
 } from 'model/api-types/methods/Messages'
+import {
+  PhotosGetMessagesUploadServerParams,
+  PhotosGetMessagesUploadServerResponse,
+  PhotosSaveMessagesPhotoParams,
+  PhotosSaveMessagesPhotoResponse
+} from 'model/api-types/methods/Photos'
 import { StatsTrackVisitorParams, StatsTrackVisitorResponse } from 'model/api-types/methods/Stats'
 import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
-import { AccountSetSilenceModeParams, AccountSetSilenceModeResponse } from './methods/Account'
 
 /**
  * Disclaimer:
@@ -143,6 +153,15 @@ export type Methods = {
   'users.get': {
     params: UsersGetParams
     response: UsersGetResponse
+  }
+
+  'photos.getMessagesUploadServer': {
+    params: PhotosGetMessagesUploadServerParams
+    response: PhotosGetMessagesUploadServerResponse
+  }
+  'photos.saveMessagesPhoto': {
+    params: PhotosSaveMessagesPhotoParams
+    response: PhotosSaveMessagesPhotoResponse
   }
 
   'stats.trackVisitor': {

@@ -13,6 +13,7 @@ export type Attaches = {
 }
 
 type Attach = NonNullable<Attaches[keyof Attaches]>
+// type SingleAttach = Flatten<Attach>
 
 export type Sticker = {
   kind: 'Sticker'
@@ -107,6 +108,42 @@ export function count(attaches: Attaches): number {
 
     return count + attachItemsLength
   }, 0)
+}
+
+export function ids(attaches: Attaches) {
+  const ids = []
+
+  for (const attach of Object.values(attaches).flat()) {
+    switch (attach.kind) {
+      case 'Photo':
+        ids.push(
+          `photo${attach.ownerId}_${attach.id}` +
+          (attach.accessKey ? `_${attach.accessKey}` : '')
+        )
+        break
+
+      case 'Wall':
+        ids.push(
+          `wall${attach.ownerId}_${attach.id}` +
+          (attach.accessKey ? `_${attach.accessKey}` : '')
+        )
+        break
+
+      case 'Voice':
+        ids.push(`doc${attach.ownerId}_${attach.id}_${attach.accessKey}`)
+        break
+
+      case 'Link':
+        ids.push(attach.url)
+        break
+
+      case 'Sticker': // Отправляется отдельным полем sticker_id
+      case 'Unknown':
+        break
+    }
+  }
+
+  return ids.join(',')
 }
 
 export function preview(attach: Attach, lang: ILang.Lang): string {

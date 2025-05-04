@@ -31,7 +31,7 @@ export const AttachWall = defineComponent<Props>((props) => {
     return (
       <div class="AttachWall">
         <div class="AttachWall__header">
-          <Icon16Repost class="AttachWall__icon" color="var(--vkui--color_icon_tertiary_alpha)" />
+          <Icon16Repost class="AttachWall__icon" color="var(--vkui--color_icon_secondary_alpha)" />
           <Avatar class="AttachWall__avatar" peer={author} size={32} />
 
           <span class="AttachWall__name">{Peer.name(author)}</span>

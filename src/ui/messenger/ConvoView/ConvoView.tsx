@@ -52,11 +52,8 @@ export const ConvoWrapper = defineComponent(() => {
   const { connection } = useConvosStore()
   const { api } = useEnv()
 
-  const peerId = computed(() => {
-    const rawPeerId = Number(route.params.peerId)
-    return rawPeerId && Peer.resolveId(rawPeerId)
-  })
-  const convo = computed(() => peerId.value && Convo.get(peerId.value))
+  const peerId = computed(() => Peer.resolveId(Number(route.params.peerId)))
+  const convo = computed(() => Convo.get(peerId.value))
   const isLoadingFailed = shallowRef(false)
 
   const loadConvo = async () => {

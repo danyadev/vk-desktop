@@ -108,6 +108,7 @@ export type MessagesSendParams = {
   peer_id: number
   random_id: number
   message: string
+  attachment?: string
 }
 
 export type MessagesSendResponse = {

@@ -84,9 +84,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             <ConvoTyping
               class="ConvoListItem__typing"
               typingUsers={typingUsers}
-              namesLimit={
-                props.convo.kind === 'UserConvo' || props.convo.kind === 'GroupConvo' ? 0 : 2
-              }
+              namesLimit={props.convo.kind === 'ChatConvo' ? 2 : 0}
               short
             />
           ) : (

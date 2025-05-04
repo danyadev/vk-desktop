@@ -385,11 +385,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
               {!gapAfter && typingUsers && isNonEmptyArray(typingUsers) && (
                 <ConvoTyping
                   typingUsers={typingUsers}
-                  namesLimit={
-                    props.convo.kind === 'UserConvo' || props.convo.kind === 'GroupConvo'
-                      ? 0
-                      : undefined
-                  }
+                  namesLimit={props.convo.kind === 'ChatConvo' ? undefined : 0}
                 />
               )}
             </div>
