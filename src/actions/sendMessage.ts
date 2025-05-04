@@ -1,3 +1,4 @@
+import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
@@ -6,9 +7,9 @@ import { useEnv, useViewer } from 'hooks'
 import { random } from 'misc/utils'
 import { INTEGER_BOUNDARY } from 'misc/constants'
 
-export function sendMessage(peerId: Peer.Id, text: string) {
+export function sendMessage(peerId: Peer.Id, text: string, attaches: Attach.Attaches) {
   const convo = Convo.safeGet(peerId)
-  const pendingMessage = toPendingMessage(peerId, text)
+  const pendingMessage = toPendingMessage(peerId, text, attaches)
 
   convo.pendingMessages.push(pendingMessage)
   sendNextPendingMessage(convo)
@@ -35,7 +36,8 @@ async function sendNextPendingMessage(convo: Convo.Convo) {
     const { cmid } = await api.fetch('messages.send', {
       peer_id: pending.peerId,
       random_id: pending.randomId,
-      message: pending.text
+      message: pending.text,
+      attachment: Attach.ids(pending.attaches)
     })
     pending.cmid = Message.resolveCmid(cmid)
   } catch (err) {
@@ -47,7 +49,11 @@ async function sendNextPendingMessage(convo: Convo.Convo) {
   sendNextPendingMessage(convo)
 }
 
-function toPendingMessage(peerId: Peer.Id, text: string): Message.Pending {
+function toPendingMessage(
+  peerId: Peer.Id,
+  text: string,
+  attaches: Attach.Attaches
+): Message.Pending {
   const viewer = useViewer()
   const randomId = random(-INTEGER_BOUNDARY, INTEGER_BOUNDARY)
 
@@ -61,7 +67,7 @@ function toPendingMessage(peerId: Peer.Id, text: string): Message.Pending {
     sentAt: Date.now(),
     updatedAt: undefined,
     text,
-    attaches: {},
+    attaches,
     replyMessage: undefined,
     forwardedMessages: undefined,
     isFailed: false

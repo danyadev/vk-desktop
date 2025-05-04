@@ -3,6 +3,7 @@ import {
   MessagesMessageAttachment,
   MessagesMessageAttachmentWall
 } from 'model/api-types/objects/MessagesMessageAttachment'
+import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
 import { PhotosPhotoSize } from 'model/api-types/objects/PhotosPhotoSize'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
@@ -65,18 +66,11 @@ export function fromApiAttaches(
       }
 
       case 'photo': {
-        if (!apiAttach.photo?.orig_photo) {
+        const photo = apiAttach.photo && fromApiAttachPhoto(apiAttach.photo)
+
+        if (!photo) {
           addUnknown(apiAttach)
           break
-        }
-
-        const photo: Attach.Photo = {
-          kind: 'Photo',
-          id: apiAttach.photo.id,
-          ownerId: Peer.resolveOwnerId(apiAttach.photo.owner_id),
-          accessKey: apiAttach.photo.access_key,
-          image: apiAttach.photo.orig_photo,
-          sizes: fromApiImageSizes(apiAttach.photo.sizes ?? [])
         }
 
         attaches.photos = [...(attaches.photos ?? []), photo]
@@ -154,6 +148,21 @@ function fromApiAttachWall(apiWall: MessagesMessageAttachmentWall): Attach.Wall 
     repost: apiWall.copy_history?.[0]
       ? fromApiAttachWall(apiWall.copy_history[0])
       : undefined
+  }
+}
+
+export function fromApiAttachPhoto(apiPhoto: PhotosPhoto): Attach.Photo | undefined {
+  if (!apiPhoto.orig_photo) {
+    return
+  }
+
+  return {
+    kind: 'Photo',
+    id: apiPhoto.id,
+    ownerId: Peer.resolveOwnerId(apiPhoto.owner_id),
+    accessKey: apiPhoto.access_key,
+    image: apiPhoto.orig_photo,
+    sizes: fromApiImageSizes(apiPhoto.sizes ?? [])
   }
 }
 

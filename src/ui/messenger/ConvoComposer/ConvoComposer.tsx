@@ -1,8 +1,12 @@
-import { ChangeEvent, computed, defineComponent, KeyboardEvent, shallowRef } from 'vue'
+import { ChangeEvent, computed, defineComponent, KeyboardEvent, ref, shallowRef } from 'vue'
+import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
+import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import { sendMessage } from 'actions'
+import { fromApiAttachPhoto } from 'converters/AttachConverter'
 import { useEnv } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
+import { ConvoComposerMedia } from 'ui/messenger/ConvoComposer/ConvoComposerMedia'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Icon24Info, Icon24MuteOutline, Icon24Send, Icon24VolumeOutline } from 'assets/icons'
@@ -12,17 +16,54 @@ type Props = {
   convo: Convo.Convo
 }
 
-export const ConvoComposer = defineComponent<Props>((props) => {
-  const { lang, api } = useEnv()
-  const isNotificationsUpdating = shallowRef(false)
-  const text = shallowRef('')
-  const $input = shallowRef<HTMLSpanElement | null>(null)
+export type UploadedMediaItem = {
+  kind: 'Photo'
+  progress: number
+  failed: boolean
+  file: File
+  photo?: PhotosPhoto
+}
 
-  const isEmpty = computed(() => text.value.trim() === '')
+export const ConvoComposer = defineComponent<Props>((props) => {
+  const { lang, api, uploader } = useEnv()
+  const $input = shallowRef<HTMLSpanElement | null>(null)
+  const areNotificationsUpdating = shallowRef(false)
+  const text = shallowRef('')
+  const uploadedMedia = ref<UploadedMediaItem[]>([])
+
+  const canSendMessage = computed(() => {
+    const hasAttaches = uploadedMedia.value.length > 0
+    if (!hasAttaches && text.value.trim() === '') {
+      return false
+    }
+
+    const allAttachesReady = uploadedMedia.value.every((media) => media.photo)
+    if (!allAttachesReady) {
+      return false
+    }
+
+    return true
+  })
 
   const onMessageSend = () => {
-    sendMessage(props.convo.id, text.value)
+    const attaches = uploadedMedia.value.reduce<Attach.Attaches>((attaches, media) => {
+      const photo = media.photo && fromApiAttachPhoto(media.photo)
+      if (!photo) {
+        return attaches
+      }
 
+      if (attaches.photos) {
+        attaches.photos.push(photo)
+      } else {
+        attaches.photos = [photo]
+      }
+
+      return attaches
+    }, {})
+
+    sendMessage(props.convo.id, text.value, attaches)
+
+    uploadedMedia.value = []
     text.value = ''
     $input.value && ($input.value.innerText = '')
   }
@@ -32,7 +73,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       // Предотвращаем перенос строки
       event.preventDefault()
 
-      if (isEmpty.value) {
+      if (!canSendMessage.value) {
         return
       }
 
@@ -44,9 +85,39 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     text.value = event.currentTarget.innerText ?? ''
   }
 
+  const onPaste = (event: ClipboardEvent) => {
+    for (const file of event.clipboardData?.files ?? []) {
+      if (uploader.isPhotoFile(file)) {
+        event.preventDefault()
+
+        const length = uploadedMedia.value.push({
+          kind: 'Photo',
+          progress: 0,
+          failed: false,
+          file
+        })
+        const media = uploadedMedia.value[length - 1]
+        if (!media) {
+          return
+        }
+
+        uploader
+          .uploadPhoto(file, props.convo.id, (progress: number) => {
+            media.progress = progress
+          })
+          .then((photo) => {
+            media.photo = photo
+          })
+          .catch(() => {
+            media.failed = true
+          })
+      }
+    }
+  }
+
   const toggleNotifications = async () => {
     try {
-      isNotificationsUpdating.value = true
+      areNotificationsUpdating.value = true
 
       await api.fetch('account.setSilenceMode', {
         peer_id: props.convo.id,
@@ -56,7 +127,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
       props.convo.notifications.enabled = !props.convo.notifications.enabled
     } finally {
-      isNotificationsUpdating.value = false
+      areNotificationsUpdating.value = false
     }
   }
 
@@ -75,7 +146,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         <Button
           class="ConvoComposer__muteChannelButton"
           mode="tertiary"
-          loading={isNotificationsUpdating.value}
+          loading={areNotificationsUpdating.value}
           onClick={toggleNotifications}
           before={
             props.convo.notifications.enabled
@@ -100,10 +171,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
           ref={$input}
           onKeydown={onKeyDown}
           onInput={onInput}
+          onPaste={onPaste}
         />
         <ButtonIcon
           class="ConvoComposer__send"
-          disabled={isEmpty.value}
+          disabled={!canSendMessage.value}
           icon={<Icon24Send />}
           withHoverBackground={false}
           onClick={onMessageSend}
@@ -116,8 +188,18 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
   return () => (
     <div class="ConvoComposer">
-      <div class="ConvoComposer__panel">
-        {renderPanel()}
+      <div class="ConvoComposer__inner">
+        {uploadedMedia.value.length > 0 && (
+          <div class="ConvoComposer__attaches">
+            {uploadedMedia.value.map((media) => (
+              <ConvoComposerMedia media={media} />
+            ))}
+          </div>
+        )}
+
+        <div class="ConvoComposer__panel">
+          {renderPanel()}
+        </div>
       </div>
     </div>
   )

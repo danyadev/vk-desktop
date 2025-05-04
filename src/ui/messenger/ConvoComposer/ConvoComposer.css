@@ -4,16 +4,27 @@
   padding: 0 var(--convoHistoryIndent) var(--convoHistoryIndent) var(--convoHistoryIndent);
 }
 
+.ConvoComposer__inner {
+  background: var(--vkd--color_background_composer);
+  width: 100%;
+  max-width: calc(var(--convoHistoryMaxWidth) - 2 * var(--convoHistoryIndent));
+  border-radius: 12px;
+  box-shadow: var(--vkui--elevation3);
+}
+
+.ConvoComposer__attaches {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  overflow: auto;
+  border-bottom: 1px solid var(--vkui--color_separator_primary);
+}
+
 .ConvoComposer__panel {
   display: flex;
   align-items: center;
-  background: var(--vkd--color_background_composer);
   padding: 4px 6px;
-  width: 100%;
-  max-width: calc(var(--convoHistoryMaxWidth) - 2 * var(--convoHistoryIndent));
   min-height: 42px;
-  border-radius: 12px;
-  box-shadow: var(--vkui--elevation3);
 }
 
 .ConvoComposer__input {

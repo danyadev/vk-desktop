@@ -187,6 +187,9 @@ module.exports = {
       }, {
         target: ['converters'],
         from: ['hooks', 'ui']
+      }, {
+        target: ['model/api-types'],
+        from: ['model/!(api-types)']
       }]
     }],
     //#endregion
