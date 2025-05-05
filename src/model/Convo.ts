@@ -2,7 +2,7 @@ import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
-import { exhaustivenessCheck } from 'misc/utils'
+import { exhaustivenessCheck, NonEmptyArray } from 'misc/utils'
 
 export type Convo = UserConvo | GroupConvo | ChatConvo
 
@@ -40,6 +40,7 @@ export interface ChatConvo extends BaseConvo {
   isChannel: boolean
   isCasper: boolean
   pinnedMessage: Message.Pinned | undefined
+  mentionedCmids: NonEmptyArray<Message.Cmid> | undefined
 }
 
 export type Style =
@@ -141,6 +142,7 @@ function mock(id: Peer.Id): Convo {
       isCasper: false,
       isChannel: false,
       pinnedMessage: undefined,
+      mentionedCmids: undefined,
       ...base
     }
   }

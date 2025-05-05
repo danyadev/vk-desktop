@@ -12,7 +12,7 @@ import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageO
 import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Counter } from 'ui/ui/Counter/Counter'
-import { Icon16Muted } from 'assets/icons'
+import { Icon12Mention, Icon16Muted } from 'assets/icons'
 import './ConvoListItem.css'
 
 type Props = {
@@ -55,6 +55,9 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             count={props.convo.unreadCount}
             mode={props.convo.notifications.enabled ? 'primary' : 'secondary'}
           />
+          {props.convo.kind === 'ChatConvo' && props.convo.mentionedCmids && (
+            <Icon12Mention class="ConvoListItem__mentioned ConvoListItem__compactMentioned" />
+          )}
         </div>
       )
     }
@@ -108,6 +111,9 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           )}
         </div>
         <div class="ConvoListItem__indicators">
+          {props.convo.kind === 'ChatConvo' && props.convo.mentionedCmids && (
+            <Icon12Mention class="ConvoListItem__mentioned" />
+          )}
           <Counter
             count={props.convo.unreadCount}
             mode={props.convo.notifications.enabled ? 'primary' : 'secondary'}
