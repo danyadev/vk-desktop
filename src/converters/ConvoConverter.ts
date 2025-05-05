@@ -4,7 +4,7 @@ import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { typeguard } from 'misc/utils'
+import { isNonEmptyArray, typeguard } from 'misc/utils'
 import { fromApiMessage, fromApiPinnedMessage } from './MessageConverter'
 
 export function fromApiConvo(
@@ -81,7 +81,7 @@ export function fromApiConvo(
         }
       }
 
-    case 'chat':
+    case 'chat': {
       if (!Peer.isChatPeerId(peerId)) {
         throw new Error('Chat with out of range id: ' + peerId)
       }
@@ -91,10 +91,15 @@ export function fromApiConvo(
         throw new Error('Chat without chat_settings: ' + peerId)
       }
 
+      const mentionedCmids = apiConvo.mention_cmids?.map(Message.resolveCmid)
+
       return {
         convo: {
           kind: 'ChatConvo',
           id: peerId,
+          mentionedCmids: mentionedCmids && isNonEmptyArray(mentionedCmids)
+            ? mentionedCmids
+            : undefined,
           status: apiConvo.chat_settings.state,
           isChannel: !!apiConvo.chat_settings.is_group_channel,
           isCasper: !!apiConvo.chat_settings.is_disappearing,
@@ -112,6 +117,7 @@ export function fromApiConvo(
           membersCount: apiConvo.chat_settings.members_count ?? 0
         }
       }
+    }
 
     case 'email': // Устаревший тип чата, не будет поддержан
     case 'contact': // В данный момент не поддерживаем

@@ -76,10 +76,30 @@
 .ConvoListItem__indicators {
   grid-area: indicators;
   align-self: center;
+  display: flex;
+  gap: 5px;
 }
 
 .ConvoListItem__indicators:not(:empty) {
   margin-left: 5px;
+}
+
+.ConvoListItem__mentioned {
+  width: 20px;
+  height: 20px;
+  padding: 4px;
+  color: var(--vkui--color_text_contrast_themed);
+  background: var(--vkui--color_background_accent_themed);
+  border-radius: 50%;
+}
+
+.ConvoListItem__compactMentioned {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--vkui--color_background_content);
 }
 
 .ConvoListItem__compactCounter {
