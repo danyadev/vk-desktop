@@ -43,11 +43,13 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const scrollAnchor = computed<ScrollAnchor>(
     () => scrollAnchors.get(props.convo.id) ?? { kind: 'None' }
   )
+
   const historySlice = computed(() => History.around(
     props.convo.history,
     props.convo.historyAroundCmid,
     scrollAnchor.value.kind !== 'None'
   ))
+
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const messageElements = ref(new Map<Message.Cmid | 'unread', HTMLElement>()).value
   const prevPinnedToBottom = shallowRef(false)
@@ -236,8 +238,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     if (props.convo.inReadBy && props.convo.inReadBy > props.convo.historyAroundCmid) {
       scrollAnchors.set(props.convo.id, { kind: 'Unread', cmid: props.convo.inReadBy })
     } else {
-      // TODO: опция для отключения выделения
-      scrollAnchors.set(props.convo.id, { kind: 'Message', cmid: lastMessage.cmid })
+      scrollAnchors.set(props.convo.id, {
+        kind: 'Message',
+        cmid: lastMessage.cmid,
+        highlight: false
+      })
     }
   }
 

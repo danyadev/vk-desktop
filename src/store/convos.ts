@@ -10,7 +10,7 @@ export type TypingUser = {
 }
 
 export type ScrollAnchor =
-  | { kind: 'Message', cmid: Message.Cmid }
+  | { kind: 'Message', cmid: Message.Cmid, highlight?: boolean }
   | { kind: 'Unread', cmid: Message.Cmid }
   | { kind: 'None' }
 
