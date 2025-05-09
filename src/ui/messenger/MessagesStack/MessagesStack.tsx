@@ -56,7 +56,11 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
   const highlighted = shallowRef(false)
 
   watch(() => scrollAnchors.get(props.message.peerId), (anchor) => {
-    if (anchor?.kind === 'Message' && anchor.cmid === props.message.cmid) {
+    if (
+      anchor?.kind === 'Message' &&
+      anchor.cmid === props.message.cmid &&
+      anchor.highlight !== false
+    ) {
       highlighted.value = true
       setTimeout(() => (highlighted.value = false), 1000)
     }
