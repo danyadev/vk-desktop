@@ -416,6 +416,11 @@ describe(History.insert.name, () => {
     expect(insert([3, [4, 5]], [], { down: false, aroundId: 4 }))
       .toEqual([3])
 
+    expect(insert([[1, 2], 3], [3], { up: false, down: false, aroundId: 0 }))
+      .toEqual([3])
+    expect(insert([3, [4, 5]], [3], { up: false, down: false, aroundId: 0 }))
+      .toEqual([3])
+
     // В реальности мы грузим историю на основе существующего гэпа, поэтому мы не умеем
     // и собственно нам и не надо уметь удалять гэпы с двух сторон одновременно
     expect(insert([[1, 2], 3, [4, 5]], [], { up: false, down: false, aroundId: 2 }))

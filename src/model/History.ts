@@ -260,16 +260,32 @@ export function insert<T>(
 
   const newNodes: History<T> = []
 
-  // Если стартовый гэп начался до вставляемых элементов, то надо сохранить кусок гэпа до нас
-  if (hasMore.up && startNode.kind === 'Gap' && startNode.fromId < firstItem.id) {
-    newNodes.push(toGap(startNode.fromId, firstItem.id - 1))
+  if (hasMore.up) {
+    // Если стартовый гэп начался до вставляемых элементов, то надо сохранить кусок гэпа до нас
+    if (startNode.kind === 'Gap' && startNode.fromId < firstItem.id) {
+      newNodes.push(toGap(startNode.fromId, firstItem.id - 1))
+    }
+  } else {
+    // Если выше больше нет истории, удаляем потенциальный гэп выше
+    const prevNode = history[startIndex - 1]
+    if (prevNode?.kind === 'Gap') {
+      startIndex--
+    }
   }
 
   newNodes.push(...items)
 
-  // Если конечный гэп продолжается после нас, то нужно сохранить кусок гэпа после нас
-  if (hasMore.down && endNode.kind === 'Gap' && endNode.toId > lastItem.id) {
-    newNodes.push(toGap(lastItem.id + 1, endNode.toId))
+  if (hasMore.down) {
+    // Если конечный гэп продолжается после нас, то нужно сохранить кусок гэпа после нас
+    if (endNode.kind === 'Gap' && endNode.toId > lastItem.id) {
+      newNodes.push(toGap(lastItem.id + 1, endNode.toId))
+    }
+  } else {
+    // Если ниже больше нет истории, удаляем потенциальный гэп ниже
+    const nextNode = history[endIndex + 1]
+    if (nextNode?.kind === 'Gap') {
+      endIndex++
+    }
   }
 
   history.splice(startIndex, endIndex - startIndex + 1, ...newNodes)
