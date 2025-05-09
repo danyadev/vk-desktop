@@ -8,7 +8,7 @@
     "moduleResolution": "bundler",
     "jsx": "preserve",
     "jsxImportSource": "vue",
-    "types": ["vite/client", "user-agent-data-types"],
+    "types": ["vite/client", "user-agent-data-types", "@types/wicg-file-system-access"],
 
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,

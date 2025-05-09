@@ -70,6 +70,7 @@ export const ConvoHeader = defineComponent<Props>((props) => {
       <ButtonIcon
         icon={<Icon24ChevronCompactLeft color="var(--vkui--color_icon_secondary)" />}
         class="ConvoHeader__back"
+        withHoverBackground
         onClick={() => {
           if (router.currentRoute.value.query.canGoBack) {
             router.back()

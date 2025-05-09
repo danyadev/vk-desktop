@@ -1,5 +1,5 @@
 import { defineComponent, KeyboardEvent, shallowRef, Teleport, Transition, watch } from 'vue'
-import { flip, offset, Placement, shift } from '@floating-ui/dom'
+import { flip, offset, OffsetOptions, Placement, shift } from '@floating-ui/dom'
 import { JSXElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
 import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithProps'
@@ -8,6 +8,7 @@ import './Popper.css'
 type Props = {
   content: JSXElement
   placement?: Placement
+  offset?: OffsetOptions
   showOnHover?: boolean
   closeOnContentClick?: boolean
 }
@@ -38,7 +39,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
   const { setTriggerRef, setContentRef } = useFloatingUI({
     placement,
     middleware: [
-      offset(4),
+      offset(props.offset ?? 4),
       shift(),
       flip()
     ]
@@ -89,5 +90,5 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     </>
   )
 }, {
-  props: ['content', 'placement', 'showOnHover', 'closeOnContentClick']
+  props: ['content', 'placement', 'offset', 'showOnHover', 'closeOnContentClick']
 })

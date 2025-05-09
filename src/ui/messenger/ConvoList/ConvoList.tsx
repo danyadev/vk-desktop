@@ -69,6 +69,7 @@ export const ConvoList = defineComponent<Props>((props) => {
               <ButtonIcon
                 class="ConvoList__burgerMenu"
                 icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
+                withHoverBackground
                 shiftOnClick
               />
             </Popper>

@@ -31,3 +31,7 @@
 .Popper--placement-bottom-end {
   transform-origin: top right;
 }
+
+.Popper--placement-top-start {
+  transform-origin: bottom left;
+}

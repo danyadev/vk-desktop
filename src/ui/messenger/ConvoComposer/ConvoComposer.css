@@ -41,17 +41,26 @@
   color: var(--vkui--color_text_secondary);
 }
 
+.ConvoComposer__addAttaches,
 .ConvoComposer__send {
   width: 34px;
   height: 34px;
   align-self: flex-end;
-  color: var(--vkui--color_icon_accent);
   opacity: 0.8;
   transition: opacity var(--fastTransition);
 }
 
+.ConvoComposer__addAttaches:hover,
 .ConvoComposer__send:hover {
   opacity: 1;
+}
+
+.ConvoComposer__addAttaches {
+  color: var(--vkui--color_icon_medium);
+}
+
+.ConvoComposer__send {
+  color: var(--vkui--color_icon_accent);
 }
 
 .ConvoComposer__restriction {

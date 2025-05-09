@@ -67,6 +67,7 @@ export const AuthMultiaccount = defineComponent(() => {
         <ButtonIcon
           class="Auth__accountToggleDeleteModeButton"
           onClick={() => (isDeleteModeActive.value = !isDeleteModeActive.value)}
+          withHoverBackground
         >
           <Icon20TrashOutline
             color={

@@ -7,9 +7,19 @@ import { fromApiAttachPhoto } from 'converters/AttachConverter'
 import { useEnv } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ConvoComposerMedia } from 'ui/messenger/ConvoComposer/ConvoComposerMedia'
+import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
+import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
-import { Icon24Info, Icon24MuteOutline, Icon24Send, Icon24VolumeOutline } from 'assets/icons'
+import { Popper } from 'ui/ui/Popper/Popper'
+import {
+  Icon20PictureOutline,
+  Icon24AddCircleOutline,
+  Icon24Info,
+  Icon24MuteOutline,
+  Icon24Send,
+  Icon24VolumeOutline
+} from 'assets/icons'
 import './ConvoComposer.css'
 
 type Props = {
@@ -89,30 +99,34 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     for (const file of event.clipboardData?.files ?? []) {
       if (uploader.isPhotoFile(file)) {
         event.preventDefault()
-
-        const length = uploadedMedia.value.push({
-          kind: 'Photo',
-          progress: 0,
-          failed: false,
-          file
-        })
-        const media = uploadedMedia.value[length - 1]
-        if (!media) {
-          return
-        }
-
-        uploader
-          .uploadPhoto(file, props.convo.id, (progress: number) => {
-            media.progress = progress
-          })
-          .then((photo) => {
-            media.photo = photo
-          })
-          .catch(() => {
-            media.failed = true
-          })
+        uploadPhoto(file)
       }
     }
+  }
+
+  const uploadPhoto = (file: File) => {
+    const length = uploadedMedia.value.push({
+      kind: 'Photo',
+      progress: 0,
+      failed: false,
+      file
+    })
+    // Достаем значение из массива, чтобы получить реактивную версию объекта
+    const media = uploadedMedia.value[length - 1]
+    if (!media) {
+      return
+    }
+
+    uploader
+      .uploadPhoto(file, props.convo.id, (progress: number) => {
+        media.progress = progress
+      })
+      .then((photo) => {
+        media.photo = photo
+      })
+      .catch(() => {
+        media.failed = true
+      })
   }
 
   const toggleNotifications = async () => {
@@ -163,6 +177,43 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
     return (
       <>
+        <Popper
+          placement="top-start"
+          offset={{
+            // Отступ слева кнопки, чтобы начало меню совпадало с началом поля ввода
+            crossAxis: -6,
+            // Отступ сверху кнопки (4px) + дефолтный отступ от элемента у поппера (4px)
+            mainAxis: 8
+          }}
+          closeOnContentClick
+          content={
+            <ActionMenu>
+              <ActionMenuItem
+                icon={<Icon20PictureOutline />}
+                text="Фото"
+                onClick={async () => {
+                  const handles = await showOpenFilePicker({
+                    excludeAcceptAllOption: true,
+                    multiple: true,
+                    types: [{
+                      accept: {
+                        'image/*': ['.png', '.jpg', '.jpeg', '.gif']
+                      }
+                    }]
+                  }).catch(() => [])
+
+                  for (const handle of handles) {
+                    const file = await handle.getFile()
+                    uploadPhoto(file)
+                  }
+                }}
+              />
+            </ActionMenu>
+          }
+        >
+          <ButtonIcon class="ConvoComposer__addAttaches" icon={<Icon24AddCircleOutline />} />
+        </Popper>
+
         <span
           class="ConvoComposer__input"
           contenteditable="plaintext-only"
@@ -173,11 +224,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
           onInput={onInput}
           onPaste={onPaste}
         />
+
         <ButtonIcon
           class="ConvoComposer__send"
           disabled={!canSendMessage.value}
           icon={<Icon24Send />}
-          withHoverBackground={false}
           onClick={onMessageSend}
           // Предотвращаем сброс фокуса с поля ввода
           onMousedown={(event) => event.preventDefault()}
@@ -191,8 +242,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       <div class="ConvoComposer__inner">
         {uploadedMedia.value.length > 0 && (
           <div class="ConvoComposer__attaches">
-            {uploadedMedia.value.map((media) => (
-              <ConvoComposerMedia media={media} />
+            {uploadedMedia.value.map((media, index) => (
+              <ConvoComposerMedia
+                media={media}
+                onRemove={() => uploadedMedia.value.splice(index, 1)}
+              />
             ))}
           </div>
         )}

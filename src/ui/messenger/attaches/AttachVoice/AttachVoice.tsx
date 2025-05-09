@@ -124,7 +124,6 @@ export const AttachVoice = defineComponent<Props>((props) => {
       <div class="AttachVoice__player">
         <ButtonIcon
           class="AttachVoice__playButton"
-          withHoverBackground={false}
           onClick={togglePlay}
           icon={
             isPlaying.value
@@ -140,7 +139,6 @@ export const AttachVoice = defineComponent<Props>((props) => {
         <ButtonIcon
           class="AttachVoice__toggleTranscription"
           shiftOnClick
-          withHoverBackground={false}
           icon={showTranscript.value ? <Icon20ChevronUp /> : <Icon16Text />}
           onClick={() => (showTranscript.value = !showTranscript.value)}
         />

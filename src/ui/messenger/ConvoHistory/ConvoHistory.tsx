@@ -403,7 +403,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
               <ButtonIcon
                 class="ConvoHistory__hopNavigationButton"
                 shiftOnClick
-                withHoverBackground={false}
                 icon={<Icon24ChevronDown />}
                 onClick={handleHopNavigation}
               />

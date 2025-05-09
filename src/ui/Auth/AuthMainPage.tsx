@@ -52,6 +52,7 @@ export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
               icon={showPassword.value ? <Icon24HideOutline /> : <Icon24ViewOutline />}
               title={lang.use(showPassword.value ? 'auth_hide_password' : 'auth_show_password')}
               onClick={() => (showPassword.value = !showPassword.value)}
+              withHoverBackground
               stretched
             />
           }

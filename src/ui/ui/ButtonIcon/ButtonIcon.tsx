@@ -22,7 +22,7 @@ export const ButtonIcon = defineComponent<Props>((props, { slots }) => {
       class={['ButtonIcon', {
         'ButtonIcon--shiftOnClick': props.shiftOnClick,
         'ButtonIcon--stretched': props.stretched,
-        'ButtonIcon--hoverBackground': props.withHoverBackground ?? true,
+        'ButtonIcon--hoverBackground': props.withHoverBackground,
         'ButtonIcon--loading': props.loading
       }]}
       onBlur={onBlur}

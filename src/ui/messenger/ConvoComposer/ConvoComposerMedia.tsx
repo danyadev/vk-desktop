@@ -2,11 +2,14 @@ import { defineComponent, onUnmounted } from 'vue'
 import { fromApiAttachPhoto } from 'converters/AttachConverter'
 import { useGlobalModal } from 'hooks'
 import { UploadedMediaItem } from 'ui/messenger/ConvoComposer/ConvoComposer'
+import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { CircleProgressBar } from 'ui/ui/CircleProgressBar/CircleProgressBar'
+import { Icon24Cancel } from 'assets/icons'
 import './ConvoComposerMedia.css'
 
 type Props = {
   media: UploadedMediaItem
+  onRemove: () => void
 }
 
 export const ConvoComposerMedia = defineComponent<Props>((props) => {
@@ -23,6 +26,11 @@ export const ConvoComposerMedia = defineComponent<Props>((props) => {
 
     return (
       <div class={['ConvoComposerMedia', photo && 'ConvoComposerMedia--clickable']}>
+        <ButtonIcon
+          class="ConvoComposerMedia__remove"
+          icon={<Icon24Cancel width={16} height={16} />}
+          onClick={props.onRemove}
+        />
         <img
           src={src}
           class="ConvoComposerMedia__img"
@@ -38,5 +46,5 @@ export const ConvoComposerMedia = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['media']
+  props: ['media', 'onRemove']
 })

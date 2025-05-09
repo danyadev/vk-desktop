@@ -20,6 +20,12 @@ module.exports = {
       max: 1
     }],
     '@stylistic/no-trailing-spaces': 'error',
-    '@stylistic/padded-blocks': ['error', 'never']
+    '@stylistic/padded-blocks': ['error', 'never'],
+
+    ...(process.env.CI && {
+      'no-console': ['error', {
+        allow: ['warn', 'error']
+      }]
+    })
   }
 }

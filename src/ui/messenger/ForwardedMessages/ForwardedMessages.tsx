@@ -70,7 +70,6 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
               <ButtonIcon
                 class="ForwardedMessage__goToMessage"
                 shiftOnClick
-                withHoverBackground={false}
                 icon={<Icon20MessageArrowRightOutline />}
                 onClick={() => goToMessage(message)}
               />
