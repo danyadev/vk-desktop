@@ -12,7 +12,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            files: '"app/VK Desktop linux x64.zip" "app/VK Desktop linux ia32.zip"'
+            files: '"app/VK Desktop linux x64.zip" "app/VK Desktop linux arm64.zip"'
           - os: windows-latest
             files: '"app/VK Desktop Setup x64.exe" "app/VK Desktop Setup x32.exe"'
           - os: macos-latest
