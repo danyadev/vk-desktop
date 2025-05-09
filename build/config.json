@@ -27,7 +27,7 @@
   "linux": {
     "target": [{
       "target": "zip",
-      "arch": ["x64", "ia32"]
+      "arch": ["x64"]
     }]
   },
   "mac": {
