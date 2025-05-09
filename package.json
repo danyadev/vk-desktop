@@ -1,6 +1,6 @@
 {
   "name": "vk-desktop-dev",
-  "version": "1.0.0-dev.0",
+  "version": "1.0.0-alpha.0",
   "description": "Мессенджер ВКонтакте",
   "main": "app/index.js",
   "scripts": {
@@ -52,7 +52,7 @@
     "@vkontakte/vkui-tokens": "4.59.0",
     "@vue/compiler-sfc": "https://pkg.pr.new/vuejs/core/@vue/compiler-sfc@cf9276c77880f0cce06c80c20950ce58f7c6b316",
     "electron": "22.3.27",
-    "electron-builder": "26.0.1",
+    "electron-builder": "26.0.15",
     "eslint": "9.19.0",
     "eslint-import-resolver-typescript": "3.7.0",
     "eslint-plugin-import-x": "4.6.1",

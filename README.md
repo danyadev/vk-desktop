@@ -1,11 +1,8 @@
 # VK Desktop
 
-<img width="1162" alt="image" src="https://user-images.githubusercontent.com/35631027/155030916-775ce8f8-27bd-41dd-991b-154769116e66.png">
+<img width="1154" src="https://github.com/user-attachments/assets/4347a206-fd96-4765-9667-46718cabea05" />
 
 ## Скачать VK Desktop
-
-В данный момент в разработке новая крупная версия, следить за списком изменений можно
-[здесь](https://github.com/danyadev/vk-desktop/blob/master/CHANGELOG.md).
 
 Все версии приложения со списком изменений расположены в
 [разделе релизов](https://github.com/danyadev/vk-desktop/releases).
@@ -19,11 +16,20 @@ MacOS: `Cmd + Option + I`
 
 ## Получение логов
 
+__Для версии 1.0.0-alpha логи не генерируются.__
+
 * **Windows**: `%appdata%/vk-desktop/logs/`
 * **macOS**: `~/Library/Logs/vk-desktop/`
 * **Linux**: `~/.config/vk-desktop/logs/`
 
-__Для версии 1.0.0-dev логи не генерируются.__
+## Если не запускается приложение на macOS
+
+Это связано с тем, что приложение не было подписано, потому что это стоит 100$ в год.
+
+Чтобы разрешить запуск, нужно вызвать эту команду в консоли:
+```bash
+xattr -r -d com.apple.quarantine /Applications/VK\ Desktop.app
+```
 
 ## Сборка приложения
 
