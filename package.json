@@ -36,9 +36,9 @@
     "@electron/remote": "2.1.2",
     "@floating-ui/dom": "1.6.13",
     "@vkontakte/vk-qr": "2.1.1",
-    "pinia": "2.3.1",
+    "pinia": "3.0.2",
     "vue": "https://pkg.pr.new/vue@13119",
-    "vue-router": "4.5.0"
+    "vue-router": "4.5.1"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "3.0.1",
@@ -50,7 +50,7 @@
     "@typescript-eslint/parser": "8.31.1",
     "@vitejs/plugin-vue-jsx": "4.1.1",
     "@vkontakte/vkui-tokens": "4.59.0",
-    "@vue/compiler-sfc": "https://pkg.pr.new/vuejs/core/@vue/compiler-sfc@cf9276c77880f0cce06c80c20950ce58f7c6b316",
+    "@vue/compiler-sfc": "https://pkg.pr.new/vuejs/core/@vue/compiler-sfc@5e1f00a",
     "electron": "22.3.27",
     "electron-builder": "26.0.15",
     "eslint": "9.19.0",
@@ -66,9 +66,9 @@
     "stylelint-config-standard": "37.0.0",
     "typescript": "5.8.3",
     "user-agent-data-types": "0.4.2",
-    "vite": "6.0.11",
+    "vite": "6.3.5",
     "vite-plugin-electron": "0.29.0",
     "vite-plugin-electron-renderer": "0.14.6",
-    "vitest": "3.0.4"
+    "vitest": "3.1.3"
   }
 }
