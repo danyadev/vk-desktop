@@ -40,6 +40,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   }
 
   return () => {
+    const typingUsers = typings.get(props.convo.id)
     if (props.compact) {
       return (
         <div
@@ -48,7 +49,23 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           }]}
           onClick={openConvo}
         >
-          <Avatar class="ConvoListItem__avatar" peer={peer.value} size={48} />
+          <div class="ConvoListItem__avatar">
+            {typingUsers && isNonEmptyArray(typingUsers) && (
+              <div class="ConvoListItem__compact--typing">
+                <ConvoTyping
+                  class="ConvoListItem__typing"
+                  typingUsers={typingUsers}
+                  namesLimit={props.convo.kind === 'ChatConvo' ? 2 : 0}
+                  showText={true}
+                />
+              </div>
+            )}
+
+            <Avatar
+              peer={peer.value}
+              size={48}
+            />
+          </div>
 
           <Counter
             class="ConvoListItem__compactCounter"
@@ -61,8 +78,6 @@ export const ConvoListItem = defineComponent<Props>((props) => {
         </div>
       )
     }
-
-    const typingUsers = typings.get(props.convo.id)
 
     return (
       <div

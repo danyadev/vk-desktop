@@ -22,12 +22,31 @@
   background: var(--vkui--color_transparent--active);
 }
 
+.ConvoListItem--compact {
+  position: relative;
+}
+
+.ConvoListItem__compact--typing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  border-radius: 50%;
+}
+
 .ConvoListItem__avatar {
   grid-area: avatar;
   margin-right: 10px;
 }
 
 .ConvoListItem--compact .ConvoListItem__avatar {
+  position: relative;
   margin-right: 0;
 }
 

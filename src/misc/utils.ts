@@ -16,11 +16,10 @@ type RawElement = NormalElement | Element
 export type RefElement = NormalElement | ComponentPublicInstance
 export type RawRefElement = RawElement | ComponentPublicInstance
 
-type ClassNameUnit = string | false | 0
+type ClassNameUnit = string | false | 0 | Record<string, boolean>
 export type ClassName =
   | ClassNameUnit
   | ClassNameUnit[]
-  | Record<string, boolean>
 
 export type Truthy<T> = T extends false | '' | 0 | null | undefined | 0n ? never : T
 

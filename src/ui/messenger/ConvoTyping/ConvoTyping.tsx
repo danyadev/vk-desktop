@@ -9,9 +9,11 @@ type Props = {
   typingUsers: NonEmptyArray<TypingUser>
   namesLimit?: number
   short?: boolean
+  showText?: boolean
 }
 
 export const ConvoTyping = defineComponent<Props>((props) => {
+  const { showText = false } = props
   const { lang } = useEnv()
 
   const text = computed(() => {
@@ -63,11 +65,10 @@ export const ConvoTyping = defineComponent<Props>((props) => {
         <span class={['ConvoTyping__indicator', `ConvoTyping__indicator--${type}`]}>
           <div class="ConvoTyping__particle" />
         </span>
-
-        <span class="ConvoTyping__text">{text.value}</span>
+        {!showText && <span class="ConvoTyping__text">{text.value}</span>}
       </div>
     )
   }
 }, {
-  props: ['typingUsers', 'namesLimit', 'short']
+  props: ['typingUsers', 'namesLimit', 'short', 'showText']
 })
