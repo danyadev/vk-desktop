@@ -1,6 +1,7 @@
 .AttachPhotos {
   display: flex;
   flex-direction: column;
+  max-height: 700px;
   gap: 3px;
   border-radius: 8px;
   overflow: hidden;
@@ -8,13 +9,18 @@
 
 .AttachPhotos__row {
   display: flex;
+  min-height: 0;
   gap: 3px;
 }
 
 .AttachPhoto {
-  flex-grow: 1;
-  object-fit: contain;
+  width: auto;
+  height: 100%;
+  min-width: 50px;
   min-height: 50px;
+  max-height: 500px;
+  flex: auto;
+  object-fit: scale-down;
   border-radius: 2px;
   cursor: pointer;
   background: var(--vkui--color_background_secondary_alpha);

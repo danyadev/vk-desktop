@@ -6,7 +6,6 @@ import {
   onBeforeUpdate,
   onMounted,
   onUpdated,
-  provide,
   ref,
   shallowRef,
   Transition,
@@ -18,9 +17,8 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { ScrollAnchor, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
-import { useEnv, useResizeObserver } from 'hooks'
+import { useEnv } from 'hooks'
 import { isNonEmptyArray } from 'misc/utils'
-import { convoHistoryContextInjectKey } from 'misc/providers'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -55,28 +53,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const prevPinnedToBottom = shallowRef(false)
   const showHopNavigation = shallowRef(false)
   let newConvoHistoryJustRendered = false
-
-  const historyWidth = shallowRef(0)
-  const historyHeight = shallowRef(0)
-
-  useResizeObserver($historyElement, (entry) => {
-    historyWidth.value = entry.contentRect.width
-    historyHeight.value = entry.contentRect.height
-  })
-
-  provide(convoHistoryContextInjectKey, {
-    historyViewportWidth: historyWidth,
-    historyViewportHeight: historyHeight
-  })
-
-  watch($historyElement, () => {
-    if (!$historyElement.value) {
-      return
-    }
-
-    historyWidth.value = $historyElement.value.offsetWidth
-    historyHeight.value = $historyElement.value.offsetHeight
-  })
 
   onMounted(async () => {
     if (scrollToAnchorIfNeeded(true)) {
@@ -290,7 +266,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         if (unreadElement) {
           // Скроллим к блоку непрочитанных так, чтобы он начинался на верхней 1/4 части вьюпорта
           historyElement.scrollTop =
-            unreadElement.offsetTop - historyElement.offsetTop - historyHeight.value / 4
+            unreadElement.offsetTop - historyElement.offsetTop - historyElement.offsetHeight / 4
           return
         }
       }
