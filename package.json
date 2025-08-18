@@ -23,7 +23,8 @@
   "author": "danyadev <danyadev@mail.ru>",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=20.9.0",
+    "yarn": "^1.22.22"
   },
   "lint-staged": {
     "*.{js,ts,tsx,mjs,mts}": [

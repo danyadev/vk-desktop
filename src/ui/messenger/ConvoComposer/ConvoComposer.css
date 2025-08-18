@@ -16,7 +16,7 @@
   display: flex;
   gap: 12px;
   padding: 12px;
-  overflow: auto;
+  overflow: overlay;
   border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
@@ -32,7 +32,7 @@
   margin: 8px 6px;
   font: var(--font);
   max-height: calc(10 * var(--lineHeight));
-  overflow: auto;
+  overflow: overlay;
 }
 
 .ConvoComposer__input:empty::before {

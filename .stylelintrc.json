@@ -21,12 +21,21 @@
     }],
     "declaration-property-value-no-unknown": [true, {
       "ignoreProperties": {
-        "overflow": ["overlay"]
+        "overflow": ["overlay", "overlay hidden", "hidden overlay"]
       }
+    }],
+    "declaration-property-value-keyword-no-deprecated": [true, {
+      "ignoreKeywords": ["overlay", "overlay hidden", "hidden overlay"]
     }],
     "declaration-block-no-redundant-longhand-properties": [true, {
       "ignoreShorthands": ["inset", "grid-template", "flex-flow"]
     }],
+    "declaration-property-value-disallowed-list": {
+      "// overflow note": "Используем только overlay, чтобы на винде и линуксе были скроллбары как на макоси",
+      "overflow": ["visible", "auto", "hidden auto", "auto hidden"],
+      "overflow-x": ["visible", "auto"],
+      "overflow-y": ["visible", "auto"]
+    },
 
     "@stylistic/string-quotes": "single",
     "@stylistic/selector-list-comma-newline-after": null
