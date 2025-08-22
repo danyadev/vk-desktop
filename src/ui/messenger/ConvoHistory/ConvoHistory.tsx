@@ -3,9 +3,7 @@ import {
   defineComponent,
   nextTick,
   onBeforeUnmount,
-  onBeforeUpdate,
   onMounted,
-  onUpdated,
   ref,
   shallowRef,
   Transition,
@@ -18,7 +16,7 @@ import * as Peer from 'model/Peer'
 import { ScrollAnchor, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { useEnv } from 'hooks'
-import { isNonEmptyArray } from 'misc/utils'
+import { isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -32,8 +30,9 @@ type Props = {
   convo: Convo.Convo
 }
 
-const PINNED_TO_BOTTOM_THRESHOLD = 20
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
+// Равен высоте футера чата, так как только при ее видимости браузер будет сохранять ее во вьюпорте
+const PINNED_TO_BOTTOM_THRESHOLD = 32
 
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useEnv()
@@ -41,29 +40,24 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const scrollAnchor = computed<ScrollAnchor>(
     () => scrollAnchors.get(props.convo.id) ?? { kind: 'None' }
   )
-
   const historySlice = computed(() => History.around(
     props.convo.history,
-    props.convo.historyAroundCmid,
+    props.convo.historySliceAnchorCmid,
     scrollAnchor.value.kind !== 'None'
   ))
 
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const messageElements = ref(new Map<Message.Cmid | 'unread', HTMLElement>()).value
-  const prevPinnedToBottom = shallowRef(false)
+  const pinnedToBottom = shallowRef(false)
   const showHopNavigation = shallowRef(false)
-  let newConvoHistoryJustRendered = false
 
-  onMounted(async () => {
+  onMounted(() => {
     if (scrollToAnchorIfNeeded(true)) {
       return
     }
 
     const scrollTop = savedScrollPositions.get(props.convo.id)
     if ($historyElement.value && scrollTop !== undefined) {
-      // После первого рендера в истории могут произойти некоторые изменения, например
-      // просчитаться актуальные размеры сеток фотографий, поэтому ждем дополнительный тик
-      await nextTick()
       $historyElement.value.scrollTop = scrollTop
     }
   })
@@ -71,48 +65,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   onBeforeUnmount(() => {
     if ($historyElement.value) {
       savedScrollPositions.set(props.convo.id, $historyElement.value.scrollTop)
-    }
-  })
-
-  onBeforeUpdate(() => {
-    const historyElement = $historyElement.value
-    if (historyElement) {
-      /**
-       * scrollTop - высота от верха контента до верха вьюпорта
-       * offsetHeight - высота вьюпорта
-       * scrollHeight - общая высота контента
-       */
-      const heightBelowViewport =
-        historyElement.scrollHeight - historyElement.scrollTop - historyElement.offsetHeight
-      prevPinnedToBottom.value = heightBelowViewport <= PINNED_TO_BOTTOM_THRESHOLD
-    }
-  })
-
-  onUpdated(async () => {
-    if (newConvoHistoryJustRendered || scrollAnchor.value.kind !== 'None') {
-      newConvoHistoryJustRendered = false
-      return
-    }
-
-    const historyElement = $historyElement.value
-    if (!historyElement) {
-      return
-    }
-
-    // Чтобы фотографии успели высчитать свое значение
-    await nextTick()
-
-    /**
-     * Автоматически скроллим до низа истории, если перед ререндером мы находились внизу,
-     * но впоследствии ререндера оказались выше.
-     * Основной сценарий - когда мы или собеседник написали новое сообщение
-     */
-    const { scrollHeight, scrollTop, offsetHeight } = historyElement
-    const heightBelowViewport = scrollHeight - scrollTop - offsetHeight
-    const isPinnedToBottom = heightBelowViewport <= PINNED_TO_BOTTOM_THRESHOLD
-
-    if (prevPinnedToBottom.value && !isPinnedToBottom) {
-      historyElement.scrollTo(0, scrollHeight)
     }
   })
 
@@ -141,8 +93,8 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       return true
     }
 
-    if (props.convo.historyAroundCmid !== anchor.cmid) {
-      props.convo.historyAroundCmid = anchor.cmid
+    if (props.convo.historySliceAnchorCmid !== anchor.cmid) {
+      props.convo.historySliceAnchorCmid = anchor.cmid
       return
     }
 
@@ -193,7 +145,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     { flush: 'post' }
   )
 
-  const onScroll = () => {
+  const onScroll = throttle(() => {
     const historyElement = $historyElement.value
     if (!historyElement) {
       return
@@ -203,7 +155,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       historyElement.scrollHeight - historyElement.scrollTop - historyElement.offsetHeight
 
     showHopNavigation.value = distanceFromBottom > SHOW_HOP_NAVIGATION_THRESHOLD
-  }
+    pinnedToBottom.value =
+      !historySlice.value.gapAfter && distanceFromBottom < PINNED_TO_BOTTOM_THRESHOLD
+  }, 50)
 
   const handleHopNavigation = () => {
     const lastMessage = Convo.lastMessage(props.convo)
@@ -211,7 +165,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       return
     }
 
-    if (props.convo.inReadBy && props.convo.inReadBy > props.convo.historyAroundCmid) {
+    if (props.convo.inReadBy && props.convo.inReadBy > props.convo.historySliceAnchorCmid) {
       scrollAnchors.set(props.convo.id, { kind: 'Unread', cmid: props.convo.inReadBy })
     } else {
       scrollAnchors.set(props.convo.id, {
@@ -240,7 +194,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
        * компонент и обновлен дом, из-за чего мы не можем достать предыдущий scrollHeight
        */
       onHistoryInserted(insertedMessages) {
-        newConvoHistoryJustRendered = true
         correctScrollPosition(insertedMessages, direction, startCmid)
       }
     })
@@ -285,18 +238,13 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     }
 
     const historyElement = $historyElement.value
-    if (!historyElement) {
+    if (!historyElement || direction !== 'up') {
       return
     }
 
     const { scrollTop, scrollHeight } = historyElement
     await nextTick()
-
-    if (direction === 'up') {
-      historyElement.scrollTop = scrollTop + historyElement.scrollHeight - scrollHeight
-    } else {
-      historyElement.scrollTop = scrollTop
-    }
+    historyElement.scrollTop = scrollTop + historyElement.scrollHeight - scrollHeight
   }
 
   return () => {
@@ -333,7 +281,12 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     return (
       <div class="ConvoHistory">
         <div class="ConvoHistory__scroll" ref={$historyElement} onScrollPassive={onScroll}>
-          <div class="ConvoHistory__content">
+          <div
+            class={[
+              'ConvoHistory__content',
+              pinnedToBottom.value && 'ConvoHistory__content--pinnedToBottom'
+            ]}
+          >
             <div class="ConvoHistory__topFiller" />
 
             {gapBefore && (

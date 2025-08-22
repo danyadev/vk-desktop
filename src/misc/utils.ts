@@ -54,6 +54,34 @@ export function typeguard(_unused: never) {
   // Функция предназначена для того, чтобы падать по типам при передаче неправильного значения
 }
 
+/**
+ * Вызывает целевую функцию через delay мс после предыдущей вызова целевой функции
+ */
+export function throttle<
+  Args extends unknown[],
+  T extends ((...args: Args) => void)
+>(fn: T, delay: number) {
+  let timerId = 0
+  let lastCallTimestamp = 0
+
+  return function (this: unknown, ...args: Args) {
+    clearTimeout(timerId)
+
+    const lastCallDelta = Date.now() - lastCallTimestamp
+
+    if (lastCallDelta >= delay) {
+      fn.apply(this, args)
+      lastCallTimestamp = Date.now()
+      return
+    }
+
+    timerId = window.setTimeout(() => {
+      fn.apply(this, args)
+      lastCallTimestamp = Date.now()
+    }, delay - lastCallDelta)
+  }
+}
+
 const getSegmenter = createSingletonHook(() => new Intl.Segmenter())
 
 export function getFirstLetter(string: string): string {

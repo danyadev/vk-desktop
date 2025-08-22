@@ -30,7 +30,7 @@ export function insertConvos(
           })
 
           convo.history = localConvo.history
-          convo.historyAroundCmid = localConvo.historyAroundCmid
+          convo.historySliceAnchorCmid = localConvo.historySliceAnchorCmid
         }
 
         // Само присваивание нового объекта является триггером для перерисовки всех компонентов,
