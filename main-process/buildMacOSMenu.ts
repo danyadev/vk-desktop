@@ -43,6 +43,7 @@ export function buildMacOSMenu(
       label: labels.viewMenuTitle,
       submenu: [
         { role: 'reload', label: labels.reload },
+        { role: 'forceReload' },
         { role: 'toggleDevTools' },
         { type: 'separator' },
         { role: 'resetZoom', label: labels.resetZoom },

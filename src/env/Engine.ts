@@ -51,11 +51,14 @@ export class Engine {
 
       if (!result) {
         // Получили ошибку сети, просто делаем запрос еще раз
+        connection.status = 'syncing'
         await sleep(2500)
         continue
       }
 
       if ('failed' in result) {
+        connection.status = 'syncing'
+
         switch (result.failed) {
           case 2: {
             try {
@@ -74,11 +77,11 @@ export class Engine {
           case 1:
           case 4:
           default:
-            connection.status = 'syncing'
             throw new Error('[engine] Фейл ' + JSON.stringify(result))
         }
       }
 
+      connection.status = 'connected'
       this.credentials.ts = result.ts
       this.credentials.pts = result.pts
 
