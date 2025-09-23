@@ -3,8 +3,6 @@
   flex-direction: column;
   max-height: 700px;
   gap: 3px;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .AttachPhotos__row {
@@ -13,15 +11,29 @@
   gap: 3px;
 }
 
-.AttachPhoto {
-  width: auto;
-  height: 100%;
+.AttachPhotos__row:first-child .AttachPhotos__photo:first-child {
+  border-top-left-radius: 8px;
+}
+
+.AttachPhotos__row:first-child .AttachPhotos__photo:last-child {
+  border-top-right-radius: 8px;
+}
+
+.AttachPhotos__row:last-child .AttachPhotos__photo:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+.AttachPhotos__row:last-child .AttachPhotos__photo:last-child {
+  border-bottom-right-radius: 8px;
+}
+
+.AttachPhotos__photo {
   min-width: 50px;
   min-height: 50px;
   max-height: 500px;
-  flex: auto;
-  object-fit: scale-down;
   border-radius: 2px;
-  cursor: pointer;
+  overflow: hidden;
+  flex: auto;
   background: var(--vkui--color_background_secondary_alpha);
+  cursor: pointer;
 }
