@@ -67,6 +67,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           // - Если сообщение было с упоминанием/реакцией/исчезанием, нужно обновить их список
           Convo.removeMessage(convo, cmid)
           Convo.removePendingMessage(convo, message.randomId)
+          // TODO: пересортировать список чатов и при необходимости удалять чат из списка
           break
         }
 

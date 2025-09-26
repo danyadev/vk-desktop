@@ -1,5 +1,6 @@
 import { MessagesConversationWithMessage } from 'model/api-types/objects/MessagesConversationWithMessage'
 import * as Convo from 'model/Convo'
+import * as Folders from 'model/Folders'
 import * as History from 'model/History'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
@@ -9,7 +10,7 @@ export function insertConvos(
   conversations: MessagesConversationWithMessage[],
   { addToList = true } = {}
 ) {
-  const { convoList, convos } = useConvosStore()
+  const { convoList, convos, folders } = useConvosStore()
   const { peers } = usePeersStore()
 
   for (const apiConvo of conversations) {
@@ -40,6 +41,8 @@ export function insertConvos(
       } else {
         convos.set(convo.id, convo)
       }
+
+      Folders.refresh(folders, convo, !addToList)
 
       if (addToList && !convoList.peerIds.includes(convo.id)) {
         convoList.peerIds.push(convo.id)

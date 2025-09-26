@@ -1,5 +1,6 @@
-import { defineComponent } from 'vue'
+import { computed, defineComponent, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
+import * as Folders from 'model/Folders'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
@@ -26,8 +27,13 @@ type Props = {
 export const ConvoList = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const viewer = useViewer()
-  const { convoList, connection } = useConvosStore()
+  const { connection, folders } = useConvosStore()
   const { settingsModal } = useGlobalModal()
+
+  const activeFolder = shallowRef<Folders.Folder>(folders.main)
+  const sortedConvos = computed(() => (
+    [...activeFolder.value.peerIds].map(Convo.safeGet).sort(Convo.sorter)
+  ))
 
   return () => (
     <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
@@ -78,20 +84,20 @@ export const ConvoList = defineComponent<Props>((props) => {
       </div>
 
       <div class="ConvoList__list">
-        {convoList.peerIds.map((id) => (
-          <ConvoListItem key={id} convo={Convo.safeGet(id)} compact={props.compact} />
+        {sortedConvos.value.map((convo) => (
+          <ConvoListItem key={convo.id} convo={convo} compact={props.compact} />
         ))}
 
-        {convoList.peerIds.length === 0 && !convoList.hasMore && (
+        {sortedConvos.value.length === 0 && activeFolder.value.status === 'loaded' && (
           <div class="ConvoList__empty">
             {lang.use('me_convo_list_empty')}
           </div>
         )}
 
-        {convoList.loadError && <LoadError onRetry={loadMoreConvos} />}
+        {activeFolder.value.status === 'error' && <LoadError onRetry={loadMoreConvos} />}
 
-        {convoList.hasMore && !convoList.loadError && (
-          <IntersectionWrapper onIntersect={loadMoreConvos} key={convoList.peerIds.length}>
+        {activeFolder.value.status === 'hasMore' && (
+          <IntersectionWrapper onIntersect={loadMoreConvos} key={sortedConvos.value.length}>
             <Spinner size="regular" class="ConvoList__spinner" />
           </IntersectionWrapper>
         )}
