@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
-import * as Folders from 'model/Folders'
+import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 
@@ -23,7 +23,7 @@ type Convos = {
     loading: boolean
     loadError: boolean
   }
-  folders: Folders.Folders
+  lists: Lists.Lists
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
@@ -43,7 +43,7 @@ export const useConvosStore = defineStore('convos', {
       loading: true,
       loadError: false
     },
-    folders: Folders.defaults(),
+    lists: Lists.defaults(),
     connection: {
       status: 'init'
     },

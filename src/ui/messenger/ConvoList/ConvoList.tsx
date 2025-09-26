@@ -1,6 +1,4 @@
-import { computed, defineComponent, shallowRef } from 'vue'
-import * as Convo from 'model/Convo'
-import * as Folders from 'model/Folders'
+import { defineComponent } from 'vue'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
@@ -18,6 +16,7 @@ import { Popper } from 'ui/ui/Popper/Popper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24DoorArrowRightOutline, Icon24GearOutline, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoList.css'
+import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
 
 type Props = {
   class?: ClassName
@@ -27,13 +26,9 @@ type Props = {
 export const ConvoList = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const viewer = useViewer()
-  const { connection, folders } = useConvosStore()
+  const { connection } = useConvosStore()
   const { settingsModal } = useGlobalModal()
-
-  const activeFolder = shallowRef<Folders.Folder>(folders.main)
-  const sortedConvos = computed(() => (
-    [...activeFolder.value.peerIds].map(Convo.safeGet).sort(Convo.sorter)
-  ))
+  const { selectedList, sortedConvoList } = useConvoList()
 
   return () => (
     <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
@@ -84,20 +79,20 @@ export const ConvoList = defineComponent<Props>((props) => {
       </div>
 
       <div class="ConvoList__list">
-        {sortedConvos.value.map((convo) => (
+        {sortedConvoList.map((convo) => (
           <ConvoListItem key={convo.id} convo={convo} compact={props.compact} />
         ))}
 
-        {sortedConvos.value.length === 0 && activeFolder.value.status === 'loaded' && (
+        {sortedConvoList.length === 0 && selectedList.status === 'loaded' && (
           <div class="ConvoList__empty">
             {lang.use('me_convo_list_empty')}
           </div>
         )}
 
-        {activeFolder.value.status === 'error' && <LoadError onRetry={loadMoreConvos} />}
+        {selectedList.status === 'error' && <LoadError onRetry={loadMoreConvos} />}
 
-        {activeFolder.value.status === 'hasMore' && (
-          <IntersectionWrapper onIntersect={loadMoreConvos} key={sortedConvos.value.length}>
+        {selectedList.status === 'hasMore' && (
+          <IntersectionWrapper onIntersect={loadMoreConvos} key={sortedConvoList.length}>
             <Spinner size="regular" class="ConvoList__spinner" />
           </IntersectionWrapper>
         )}
