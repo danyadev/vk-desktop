@@ -6,6 +6,7 @@ export type Lists = {
   archive: ArchiveList
   folders: FolderList[]
 }
+export type List = MainList | ArchiveList | FolderList
 
 interface BaseList {
   peerIds: Set<Peer.Id>

@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue'
+import { defineComponent, shallowRef } from 'vue'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
@@ -28,7 +28,8 @@ export const ConvoList = defineComponent<Props>((props) => {
   const viewer = useViewer()
   const { connection } = useConvosStore()
   const { settingsModal } = useGlobalModal()
-  const { selectedList, sortedConvoList } = useConvoList()
+  const unread = shallowRef(false)
+  const { convoList } = useConvoList(unread)
 
   return () => (
     <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
@@ -79,20 +80,20 @@ export const ConvoList = defineComponent<Props>((props) => {
       </div>
 
       <div class="ConvoList__list">
-        {sortedConvoList.map((convo) => (
+        {convoList.convos.map((convo) => (
           <ConvoListItem key={convo.id} convo={convo} compact={props.compact} />
         ))}
 
-        {sortedConvoList.length === 0 && selectedList.status === 'loaded' && (
+        {convoList.convos.length === 0 && convoList.status === 'loaded' && (
           <div class="ConvoList__empty">
             {lang.use('me_convo_list_empty')}
           </div>
         )}
 
-        {selectedList.status === 'error' && <LoadError onRetry={loadMoreConvos} />}
+        {convoList.status === 'error' && <LoadError onRetry={loadMoreConvos} />}
 
-        {selectedList.status === 'hasMore' && (
-          <IntersectionWrapper onIntersect={loadMoreConvos} key={sortedConvoList.length}>
+        {convoList.status === 'hasMore' && (
+          <IntersectionWrapper onIntersect={loadMoreConvos} key={convoList.convos.length}>
             <Spinner size="regular" class="ConvoList__spinner" />
           </IntersectionWrapper>
         )}

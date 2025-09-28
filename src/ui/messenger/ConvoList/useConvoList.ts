@@ -1,48 +1,38 @@
-import { computed, reactive, shallowRef } from 'vue'
+import { computed, reactive, Ref, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
+import * as Lists from 'model/Lists'
 import { useConvosStore } from 'store/convos'
 
-type ListSelector =
-  | { kind: 'List', name: 'main' | 'archive', unread: boolean }
-  | { kind: 'Folder', id: number, unread: boolean }
+type ListOptions =
+  | { name: 'main' | 'archive' }
+  | { name: 'folder', folderId: number }
 
-const DEFAULT_SELECTOR = { kind: 'List', name: 'main', unread: false } satisfies ListSelector
-
-export const useConvoList = () => {
+export const useConvoList = (unread: Ref<boolean>) => {
   const { lists } = useConvosStore()
-  const listSelector = shallowRef<ListSelector>(DEFAULT_SELECTOR)
-  const selectList = (selector: ListSelector) => {
-    listSelector.value = selector
+  const list = shallowRef<Lists.List>(lists.main)
+
+  const selectList = (listOptions: ListOptions) => {
+    if (listOptions.name === 'folder') {
+      const folder = lists.folders.find((folder) => folder.id === listOptions.folderId)
+      list.value = folder ?? lists.main
+    } else {
+      list.value = lists[listOptions.name]
+    }
   }
 
-  const selectedList = computed(() => {
-    const selector = listSelector.value
+  const convoList = computed(() => {
+    const peerIds = unread.value
+      ? list.value.unreadPeerIds
+      : list.value.peerIds
 
-    if (selector.kind === 'List') {
-      return lists[selector.name]
+    return {
+      convos: [...peerIds].map(Convo.safeGet).sort(Convo.sorter),
+      status: list.value.status
     }
-
-    const folder = lists.folders.find((folder) => folder.id === selector.id)
-
-    if (!folder) {
-      selectList(DEFAULT_SELECTOR)
-      return lists.main
-    }
-
-    return folder
-  })
-
-  const sortedConvoList = computed(() => {
-    const peerIds = listSelector.value.unread
-      ? selectedList.value.unreadPeerIds
-      : selectedList.value.peerIds
-
-    return [...peerIds].map(Convo.safeGet).sort(Convo.sorter)
   })
 
   return reactive({
-    selectedList,
-    selectList,
-    sortedConvoList
+    convoList,
+    selectList
   })
 }
