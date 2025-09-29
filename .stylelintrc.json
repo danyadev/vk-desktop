@@ -13,7 +13,6 @@
     "length-zero-no-unit": null,
     "custom-property-pattern": "[a-z][a-zA-Z0-9_-]?",
     "font-family-name-quotes": "always-where-required",
-    "color-function-notation": "legacy",
     "alpha-value-notation": "number",
     "media-feature-name-value-no-unknown": true,
     "value-keyword-case": ["lower", {
