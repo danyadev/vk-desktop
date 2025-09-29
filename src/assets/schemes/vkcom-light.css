@@ -12,6 +12,7 @@
   --vkui--elevation2: 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 4px rgba(0, 0, 0, 0.06);
   --vkui--elevation3: 0px 0px 2px rgba(0, 0, 0, 0.08), 0px 4px 16px rgba(0, 0, 0, 0.08);
   --vkui--elevation4: 0px 0px 8px rgba(0, 0, 0, 0.12), 0px 16px 16px rgba(0, 0, 0, 0.16);
+  --vkui--blur_m: 16px;
   --vkui--font_family_fallbacks: -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Geneva, "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee", "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian", "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana, sans-serif;
   --vkui--font_family_accent: "VK Sans Display", "VK Sans Display Faux", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Geneva, "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee", "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian", "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana, sans-serif;
   --vkui--font_family_base: -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Geneva, "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee", "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian", "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana, sans-serif;
@@ -64,11 +65,11 @@
   --vkui--font_title2--font_size: 20px;
   --vkui--font_title2--line_height: 24px;
   --vkui--font_title2--font_family: -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Geneva, "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee", "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian", "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana, sans-serif;
-  --vkui--font_title2--font_weight: 600;
+  --vkui--font_title2--font_weight: 500;
   --vkui--font_title2--font_size--regular: 20px;
   --vkui--font_title2--line_height--regular: 24px;
   --vkui--font_title2--font_family--regular: -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Geneva, "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee", "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian", "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana, sans-serif;
-  --vkui--font_title2--font_weight--regular: 600;
+  --vkui--font_title2--font_weight--regular: 500;
   --vkui--font_title3--font_size: 17px;
   --vkui--font_title3--line_height: 22px;
   --vkui--font_title3--font_family: -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Geneva, "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee", "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian", "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana, sans-serif;
@@ -120,12 +121,12 @@
   --vkui--font_footnote_caps--font_size: 13px;
   --vkui--font_footnote_caps--line_height: 16px;
   --vkui--font_footnote_caps--font_family: -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Geneva, "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee", "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian", "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana, sans-serif;
-  --vkui--font_footnote_caps--font_weight: 400;
+  --vkui--font_footnote_caps--font_weight: 600;
   --vkui--font_footnote_caps--text_transform: uppercase;
   --vkui--font_footnote_caps--font_size--regular: 13px;
   --vkui--font_footnote_caps--line_height--regular: 16px;
   --vkui--font_footnote_caps--font_family--regular: -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Geneva, "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee", "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian", "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana, sans-serif;
-  --vkui--font_footnote_caps--font_weight--regular: 400;
+  --vkui--font_footnote_caps--font_weight--regular: 600;
   --vkui--font_footnote_caps--text_transform--regular: uppercase;
   --vkui--font_caption1--font_size: 12px;
   --vkui--font_caption1--line_height: 14px;
@@ -338,6 +339,7 @@
   --vkui--animation_easing_platform: cubic-bezier(0.4, 0, 0.2, 1);
   --vkui--opacity_disable: 0.4;
   --vkui--opacity_disable_accessibility: 0.64;
+  --vkui--opacity_active: 0.72;
   --vkui--z_index_modal: 99;
   --vkui--z_index_popout: 100;
   --vkui--theme_inherits_from: vkBase;

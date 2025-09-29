@@ -23,7 +23,7 @@
   "author": "danyadev <danyadev@mail.ru>",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=20.9.0",
+    "node": "^20.19.0 || >=22.12.0",
     "yarn": "^1.22.22"
   },
   "lint-staged": {
@@ -34,41 +34,41 @@
     "*.css": "stylelint"
   },
   "dependencies": {
-    "@electron/remote": "2.1.2",
-    "@floating-ui/dom": "1.6.13",
+    "@electron/remote": "2.1.3",
+    "@floating-ui/dom": "1.7.4",
     "@vkontakte/vk-qr": "2.1.1",
-    "pinia": "3.0.2",
-    "vue": "https://pkg.pr.new/vue@13119",
+    "pinia": "3.0.3",
+    "vue": "https://pkg.pr.new/danyadev/vuejs-core/vue@37fda96",
     "vue-router": "4.5.1"
   },
   "devDependencies": {
-    "@eslint/js": "9.36.0",
+    "@eslint/js": "9.37.0",
     "@stylistic/eslint-plugin": "5.4.0",
     "@stylistic/stylelint-config": "3.0.1",
     "@stylistic/stylelint-plugin": "4.0.0",
-    "@types/wicg-file-system-access": "2023.10.6",
-    "@vitejs/plugin-vue-jsx": "4.1.1",
-    "@vkontakte/vkui-tokens": "4.59.0",
-    "@vue/compiler-sfc": "https://pkg.pr.new/vuejs/core/@vue/compiler-sfc@5e1f00a",
+    "@types/wicg-file-system-access": "2023.10.7",
+    "@vitejs/plugin-vue-jsx": "5.1.1",
+    "@vkontakte/vkui-tokens": "4.70.0",
+    "@vue/compiler-sfc": "https://pkg.pr.new/danyadev/vuejs-core/@vue/compiler-sfc@37fda96",
     "electron": "22.3.27",
     "electron-builder": "26.0.15",
-    "eslint": "9.36.0",
+    "eslint": "9.37.0",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import-x": "4.16.1",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "globals": "16.4.0",
     "husky": "9.1.7",
     "innosetup-compiler": "6.3.1",
-    "lightningcss": "1.29.1",
-    "lint-staged": "15.4.3",
-    "stylelint": "16.24.0",
+    "lightningcss": "1.30.2",
+    "lint-staged": "16.2.3",
+    "stylelint": "16.25.0",
     "stylelint-config-standard": "39.0.0",
-    "typescript": "5.8.3",
-    "typescript-eslint": "8.44.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.45.0",
     "user-agent-data-types": "0.4.2",
-    "vite": "6.3.5",
+    "vite": "7.1.9",
     "vite-plugin-electron": "0.29.0",
     "vite-plugin-electron-renderer": "0.14.6",
-    "vitest": "3.1.3"
+    "vitest": "3.2.4"
   }
 }

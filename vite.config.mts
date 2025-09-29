@@ -12,7 +12,7 @@ export default defineConfig(async ({ mode }) => {
 
   return {
     build: {
-      target: 'esnext',
+      target: ['chrome108', 'node16'],
       modulePreload: {
         polyfill: false
       },

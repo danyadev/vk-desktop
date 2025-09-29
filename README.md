@@ -33,7 +33,7 @@ xattr -r -d com.apple.quarantine /Applications/VK\ Desktop.app
 
 ## Сборка приложения
 
-У вас должен быть установлен [Node.js](http://nodejs.org) 20.9.0+ и [Git](https://git-scm.com/downloads).
+У вас должен быть установлен [Node.js](http://nodejs.org) 20.19.0+ или 22.12.0+ и [Git](https://git-scm.com/downloads).
 
 Для установки зависимостей нужен yarn:
 ```bash

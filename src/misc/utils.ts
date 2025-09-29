@@ -85,7 +85,7 @@ export function throttle<
 const getSegmenter = createSingletonHook(() => new Intl.Segmenter())
 
 export function getFirstLetter(string: string): string {
-  return getSegmenter().segment(string).containing(0).segment
+  return getSegmenter().segment(string).containing(0)?.segment ?? ''
 }
 
 export function toUrlParams(object: Record<string, string | number | null | undefined>) {
