@@ -1,4 +1,4 @@
-import { ipcRenderer, IpcRendererEvent } from 'electron'
+import { ipcRenderer, IpcRendererEvent, Rectangle } from 'electron'
 import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
 import { useMainSettingsStore } from 'store/mainSettings'
@@ -26,7 +26,7 @@ export const App = defineComponent(() => {
   }
 
   subscribeToElectronEvent(() => {
-    const onBoundsChange = (event: IpcRendererEvent, bounds: Electron.Rectangle) => {
+    const onBoundsChange = (event: IpcRendererEvent, bounds: Rectangle) => {
       mainSettings.bounds = bounds
     }
 

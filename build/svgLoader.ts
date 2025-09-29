@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs'
 import { Plugin } from 'vite'
-
 import { compileTemplate } from '@vue/compiler-sfc'
 
 type Options = {

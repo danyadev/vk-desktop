@@ -1,10 +1,12 @@
-module.exports = {
-  extends: [
-    '.eslintrc.js'
-  ],
+import { defineConfig } from 'eslint/config'
+import mainConfig from './eslint.config.mjs'
 
-  reportUnusedDisableDirectives: true,
-
+export default defineConfig([{
+  extends: [mainConfig],
+  linterOptions: {
+    reportUnusedDisableDirectives: 'error',
+    reportUnusedInlineConfigs: 'error'
+  },
   rules: {
     'import-x/no-unused-modules': ['error', {
       unusedExports: true
@@ -13,7 +15,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', {
       caughtErrors: 'all',
       varsIgnorePattern: '^_typeguard\\d?$',
-      argsIgnorePattern: '^_unused\\d?$'
+      argsIgnorePattern: '^_'
     }],
 
     '@stylistic/no-multiple-empty-lines': ['error', {
@@ -28,4 +30,4 @@ module.exports = {
       }]
     })
   }
-}
+}])

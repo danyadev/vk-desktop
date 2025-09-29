@@ -1,6 +1,5 @@
 import fs from 'fs/promises'
 import path from 'path'
-
 import {
   getDeclarationVarObject
 } from '@vkontakte/vkui-tokens/themes/vkBase/cssVars/declarations/onlyVariables.js'

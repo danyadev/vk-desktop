@@ -1,0 +1,2 @@
+// import-x/no-unused-modules требует пустой файл, чтобы правильно работать:
+// https://github.com/import-js/eslint-plugin-import/issues/3079
