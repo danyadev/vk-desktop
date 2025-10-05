@@ -49,7 +49,9 @@ export function fromApiConvo(
         !apiConvo.push_settings?.disabled_forever
       ),
       disabledUntil: (apiConvo.push_settings?.disabled_until ?? 0) * 1000
-    }
+    },
+    folderIds: apiConvo.folder_ids ?? [],
+    flags: apiConvo.peer_flags ?? 0
   }
 
   const peerId = Peer.resolveId(apiConvo.peer.id)

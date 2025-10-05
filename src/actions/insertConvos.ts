@@ -44,7 +44,6 @@ export function insertConvos(
       if (list) {
         Lists.push(list, convo)
       }
-      // Lists.refresh(lists, convo)
     }
 
     if (peer) {

@@ -1,6 +1,7 @@
 import * as electron from '@electron/remote'
 import {
-  ComponentPublicInstance, EffectScope,
+  ComponentPublicInstance,
+  EffectScope,
   effectScope,
   KeyboardEvent,
   type MouseEvent,

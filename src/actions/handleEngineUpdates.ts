@@ -3,6 +3,7 @@ import { MessagesConversation } from 'model/api-types/objects/MessagesConversati
 import { MessagesGetDiffContentInput } from 'model/api-types/objects/MessagesGetDiffContentInput'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import * as Convo from 'model/Convo'
+import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
@@ -17,7 +18,7 @@ const TYPING_DURATION = 5000
 
 export async function handleEngineUpdates(updates: IEngine.Update[]) {
   const convosStore = useConvosStore()
-  const { convos, typings } = convosStore
+  const { convos, lists, typings } = convosStore
   const {
     apiConvosMap,
     apiMessagesMap,
@@ -67,7 +68,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           // - Если сообщение было с упоминанием/реакцией/исчезанием, нужно обновить их список
           Convo.removeMessage(convo, cmid)
           Convo.removePendingMessage(convo, message.randomId)
-          // TODO: пересортировать список чатов и при необходимости удалять чат из списка
+          Lists.refresh(lists, convo)
           break
         }
 
@@ -129,6 +130,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           aroundId: cmid
         })
         Convo.removePendingMessage(convo, message.randomId)
+        Lists.refresh(lists, convo)
 
         if (eventId === 10004 || eventId === 10005) {
           convosStore.stopTyping(peerId, message.authorId)

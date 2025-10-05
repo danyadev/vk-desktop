@@ -14,10 +14,10 @@ export const useConvoList = () => {
   const selectList = (config: ListConfig) => {
     if (config.name === 'folder' || config.name === 'unreadFolder') {
       const sublist = config.name === 'folder' ? 'all' : 'unread'
-      const folder = lists.folders.find((folderCouple) => (
-        folderCouple[sublist].id === config.folderId
-      ))
-      list.value = folder ? folder[sublist] : lists.main
+      const folder = lists.folders.get(config.folderId)
+      if (folder) {
+        list.value = folder[sublist]
+      }
     } else {
       list.value = lists[config.name]
     }

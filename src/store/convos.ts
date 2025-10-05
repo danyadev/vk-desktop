@@ -17,13 +17,6 @@ export type ScrollAnchor =
 
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>
-  /** @deprecated */
-  convoList: {
-    peerIds: Peer.Id[]
-    hasMore: boolean
-    loading: boolean
-    loadError: boolean
-  }
   lists: Lists.Lists
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
@@ -38,12 +31,6 @@ type Convos = {
 export const useConvosStore = defineStore('convos', {
   state: (): Convos => ({
     convos: new Map(),
-    convoList: {
-      peerIds: [],
-      hasMore: true,
-      loading: true,
-      loadError: false
-    },
     lists: Lists.defaults(),
     connection: {
       status: 'init'

@@ -43,6 +43,8 @@ export interface BaseConvo {
     enabled: boolean
     disabledUntil: number
   }
+  folderIds: number[]
+  flags: number
 }
 
 interface UserConvo extends BaseConvo {
@@ -93,6 +95,11 @@ export type Style =
   | 'gifts'
   | 'sberkot'
 
+export const flags = {
+  markedUnread: 1 << 20,
+  archived: 1 << 23
+}
+
 export function get(id: Peer.UserId): UserConvo | undefined
 export function get(id: Peer.GroupId): GroupConvo | undefined
 export function get(id: Peer.ChatId): ChatConvo | undefined
@@ -137,7 +144,9 @@ function mock(id: Peer.Id): Convo {
     notifications: {
       enabled: true,
       disabledUntil: 0
-    }
+    },
+    folderIds: [],
+    flags: 0
   }
 
   if (Peer.isUserPeerId(id)) {
@@ -259,6 +268,14 @@ export function findMessage(convo: Convo, cmid: Message.Cmid): Message.Confirmed
   if (node && node.kind !== 'Gap') {
     return node.item
   }
+}
+
+export function hasFlag(convo: Convo, flag: number) {
+  return (convo.flags & flag) > 0
+}
+
+export function isUnread(convo: Convo): boolean {
+  return convo.unreadCount > 0 || hasFlag(convo, flags.markedUnread)
 }
 
 export function isCasper(convo: Convo): boolean {
