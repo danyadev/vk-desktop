@@ -41,8 +41,8 @@
     "main-process/**/*",
     "scripts/*",
     "build/*",
-    ".eslintrc.js",
-    ".eslintrc.full.js",
+    "eslint.config.mjs",
+    "eslint.config.full.mjs",
     "vite.config.mts"
   ],
   "exclude": ["node_modules"]

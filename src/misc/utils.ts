@@ -46,11 +46,11 @@ export function random(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-export function exhaustivenessCheck(_unused: never): never {
+export function exhaustivenessCheck(_never: never): never {
   throw new Error('Exhaustiveness failure! This should never happen.')
 }
 
-export function typeguard(_unused: never) {
+export function typeguard(_never: never) {
   // Функция предназначена для того, чтобы падать по типам при передаче неправильного значения
 }
 
@@ -85,7 +85,7 @@ export function throttle<
 const getSegmenter = createSingletonHook(() => new Intl.Segmenter())
 
 export function getFirstLetter(string: string): string {
-  return getSegmenter().segment(string).containing(0).segment
+  return getSegmenter().segment(string).containing(0)?.segment ?? ''
 }
 
 export function toUrlParams(object: Record<string, string | number | null | undefined>) {
