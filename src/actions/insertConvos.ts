@@ -1,5 +1,4 @@
 import { MessagesConversationWithMessage } from 'model/api-types/objects/MessagesConversationWithMessage'
-import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Lists from 'model/Lists'
 import { useConvosStore } from 'store/convos'
@@ -8,9 +7,9 @@ import { fromApiConvo } from 'converters/ConvoConverter'
 
 export function insertConvos(
   conversations: MessagesConversationWithMessage[],
-  { addToList = true } = {}
+  { listToInsert }: { listToInsert?: Lists.List } = {}
 ) {
-  const { convoList, convos, lists } = useConvosStore()
+  const { convos } = useConvosStore()
   const { peers } = usePeersStore()
 
   for (const apiConvo of conversations) {
@@ -42,11 +41,10 @@ export function insertConvos(
         convos.set(convo.id, convo)
       }
 
-      Lists.refresh(lists, convo, !addToList)
-
-      if (addToList && !convoList.peerIds.includes(convo.id)) {
-        convoList.peerIds.push(convo.id)
+      if (listToInsert) {
+        Lists.push(listToInsert, convo)
       }
+      // Lists.refresh(lists, convo)
     }
 
     if (peer) {
@@ -58,9 +56,4 @@ export function insertConvos(
       }
     }
   }
-
-  convoList.peerIds = convoList.peerIds
-    .map(Convo.safeGet)
-    .sort(Convo.sorter)
-    .map((convo) => convo.id)
 }

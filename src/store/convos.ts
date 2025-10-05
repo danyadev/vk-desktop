@@ -17,6 +17,7 @@ export type ScrollAnchor =
 
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>
+  /** @deprecated */
   convoList: {
     peerIds: Peer.Id[]
     hasMore: boolean

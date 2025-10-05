@@ -6,7 +6,7 @@ import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
 export async function loadInitialData(onError: () => void) {
   const { api, engine } = useEnv()
-  const { convoList, connection } = useConvosStore()
+  const { lists, connection } = useConvosStore()
 
   // Не инициализируем повторно приложение во время разработки
   if (import.meta.env.DEV && connection.status !== 'init' && connection.status !== 'initFailed') {
@@ -32,13 +32,12 @@ export async function loadInitialData(onError: () => void) {
       profiles: conversations.profiles,
       groups: conversations.groups
     })
-    insertConvos(conversations.items)
+    insertConvos(conversations.items, { listToInsert: lists.main.all })
+
+    lists.main.all.status = conversations.items.length === CONVOS_PER_PAGE ? 'hasMore' : 'complete'
 
     connection.status = 'connected'
     engine.start(longpollParams)
-
-    convoList.loading = false
-    convoList.hasMore = conversations.items.length === CONVOS_PER_PAGE
 
     if (!import.meta.env.DEV) {
       try {

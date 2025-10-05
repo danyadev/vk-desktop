@@ -1,26 +1,20 @@
-import * as Convo from 'model/Convo'
-import { useConvosStore } from 'store/convos'
+import * as Lists from 'model/Lists'
 import { insertConvos, insertPeers } from 'actions'
 import { useEnv } from 'hooks'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
-export async function loadMoreConvos() {
+export async function loadMoreConvos(list: Lists.List) {
   const { api } = useEnv()
-  const { convoList } = useConvosStore()
 
-  if (convoList.loading) {
+  if (list.status === 'loading') {
     return
   }
 
   try {
-    const lastConvoId = convoList.peerIds.at(-1)
-    const convo = lastConvoId && Convo.safeGet(lastConvoId)
-
-    convoList.loading = true
-    convoList.loadError = false
+    list.status = 'loading'
 
     const response = await api.fetch('messages.getConversations', {
-      start_from_minor_sort_id: convo?.minorSortId ?? 0,
+      start_from_minor_sort_id: list.boundary.minorId,
       count: CONVOS_PER_PAGE,
       fields: PEER_FIELDS,
       extended: 1
@@ -30,13 +24,11 @@ export async function loadMoreConvos() {
       profiles: response.profiles,
       groups: response.groups
     })
-    insertConvos(response.items)
+    insertConvos(response.items, { listToInsert: list })
 
-    convoList.hasMore = response.items.length === CONVOS_PER_PAGE
+    list.status = response.items.length === CONVOS_PER_PAGE ? 'hasMore' : 'complete'
   } catch (err) {
     console.warn('[loadMoreConvos] loading error', err)
-    convoList.loadError = true
-  } finally {
-    convoList.loading = false
+    list.status = 'error'
   }
 }

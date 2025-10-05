@@ -1,10 +1,11 @@
-import { defineComponent, shallowRef } from 'vue'
+import { defineComponent } from 'vue'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
 import { useEnv, useGlobalModal, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
+import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
@@ -16,7 +17,6 @@ import { Popper } from 'ui/ui/Popper/Popper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24DoorArrowRightOutline, Icon24GearOutline, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoList.css'
-import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
 
 type Props = {
   class?: ClassName
@@ -28,8 +28,7 @@ export const ConvoList = defineComponent<Props>((props) => {
   const viewer = useViewer()
   const { connection } = useConvosStore()
   const { settingsModal } = useGlobalModal()
-  const unread = shallowRef(false)
-  const { convoList } = useConvoList(unread)
+  const { convoList } = useConvoList()
 
   return () => (
     <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
@@ -84,16 +83,19 @@ export const ConvoList = defineComponent<Props>((props) => {
           <ConvoListItem key={convo.id} convo={convo} compact={props.compact} />
         ))}
 
-        {convoList.convos.length === 0 && convoList.status === 'loaded' && (
+        {convoList.convos.length === 0 && convoList.status === 'complete' && (
           <div class="ConvoList__empty">
             {lang.use('me_convo_list_empty')}
           </div>
         )}
 
-        {convoList.status === 'error' && <LoadError onRetry={loadMoreConvos} />}
+        {convoList.status === 'error' && <LoadError onRetry={() => loadMoreConvos(convoList.list.value)} />}
 
         {convoList.status === 'hasMore' && (
-          <IntersectionWrapper onIntersect={loadMoreConvos} key={convoList.convos.length}>
+          <IntersectionWrapper
+            onIntersect={() => loadMoreConvos(convoList.list.value)}
+            key={convoList.convos.length}
+          >
             <Spinner size="regular" class="ConvoList__spinner" />
           </IntersectionWrapper>
         )}
