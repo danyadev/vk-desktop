@@ -7,7 +7,7 @@ import { fromApiConvo } from 'converters/ConvoConverter'
 
 export function insertConvos(
   conversations: MessagesConversationWithMessage[],
-  { listToInsert }: { listToInsert?: Lists.List } = {}
+  { list }: { list?: Lists.List } = {}
 ) {
   const { convos } = useConvosStore()
   const { peers } = usePeersStore()
@@ -41,8 +41,8 @@ export function insertConvos(
         convos.set(convo.id, convo)
       }
 
-      if (listToInsert) {
-        Lists.push(listToInsert, convo)
+      if (list) {
+        Lists.push(list, convo)
       }
       // Lists.refresh(lists, convo)
     }

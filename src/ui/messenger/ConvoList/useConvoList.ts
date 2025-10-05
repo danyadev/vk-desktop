@@ -1,40 +1,33 @@
-import { computed, reactive, shallowRef } from 'vue'
+import { computed, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
 import { useConvosStore } from 'store/convos'
 
 type ListConfig =
-  | { name: 'main' | 'archive', unread: boolean }
-  | { name: 'folder', folderId: number, unread: boolean }
+  | { name: 'main' | 'unread' | 'archive' }
+  | { name: 'folder' | 'unreadFolder', folderId: number }
 
 export const useConvoList = () => {
   const { lists } = useConvosStore()
-  const list = shallowRef<Lists.List>(lists.main.all)
+  const list = shallowRef<Lists.List>(lists.main)
 
   const selectList = (config: ListConfig) => {
-    const sublist = config.unread ? 'unread' : 'all'
-
-    if (config.name === 'folder') {
+    if (config.name === 'folder' || config.name === 'unreadFolder') {
+      const sublist = config.name === 'folder' ? 'all' : 'unread'
       const folder = lists.folders.find((folderCouple) => (
         folderCouple[sublist].id === config.folderId
       ))
-      list.value = (folder ?? lists.main)[sublist]
+      list.value = folder ? folder[sublist] : lists.main
     } else {
-      list.value = lists[config.name][sublist]
+      list.value = lists[config.name]
     }
   }
 
-  const convoList = computed(() => {
-    console.log('computed', list.value.peerIds)
-    return {
-      convos: [...list.value.peerIds].map(Convo.safeGet).sort(Convo.sorter),
-      status: list.value.status,
-      list
-    }
-  })
+  const convoList = computed(() => [...list.value.peerIds].map(Convo.safeGet).sort(Convo.sorter))
 
-  return reactive({
-    convoList,
-    selectList
-  })
+  return computed(() => ({
+    convoList: convoList.value,
+    selectList,
+    list: list.value
+  }))
 }

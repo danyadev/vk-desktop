@@ -1,11 +1,16 @@
-import { shallowRef } from 'vue'
+import { onScopeDispose, shallowRef } from 'vue'
+import { createSharedComposable } from 'misc/utils'
 
-export function useNow(interval: number) {
+export const useNow = createSharedComposable((interval: number) => {
   const now = shallowRef(Date.now())
 
-  setInterval(() => {
+  const intervalId = setInterval(() => {
     now.value = Date.now()
   }, interval)
 
+  onScopeDispose(() => {
+    clearInterval(intervalId)
+  })
+
   return now
-}
+})

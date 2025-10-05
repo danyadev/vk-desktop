@@ -21,6 +21,7 @@ const METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN: Array<keyof Methods> = [
 ]
 
 export class Api implements IApi.Api {
+  // TODO: сделать Map<AccessToken, Semaphore>
   private semaphore = new Semaphore(3, API_RATE_LIMIT_WINDOW)
   private globalErrorHandler?: Promise<unknown>
 

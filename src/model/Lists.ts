@@ -2,16 +2,18 @@ import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 
 export type Lists = {
-  main: ListCouple<MainList>
-  archive: ListCouple<ArchiveList>
-  folders: Array<ListCouple<FolderList>>
+  main: MainList<'main'>
+  unread: MainList<'unread'>
+  archive: MainList<'archive'>
+  folders: Array<{
+    all: FolderList<'folder'>
+    unread: FolderList<'unreadFolder'>
+  }>
 }
-type ListCouple<T extends BaseList> = { all: T, unread: T }
-export type List = MainList | ArchiveList | FolderList
+export type List = MainList | FolderList
 
 interface BaseList {
   peerIds: Set<Peer.Id>
-  unread: boolean
   status: 'hasMore' | 'loading' | 'complete' | 'error'
   boundary: {
     majorId: number
@@ -19,16 +21,18 @@ interface BaseList {
   }
 }
 
-export interface MainList extends BaseList {
-  name: 'main'
+interface MainList<
+  Name extends 'main' | 'unread' | 'archive' = 'main' | 'unread' | 'archive'
+> extends BaseList {
+  kind: 'MainList'
+  name: Name
 }
 
-export interface ArchiveList extends BaseList {
-  name: 'archive'
-}
-
-interface FolderList extends BaseList {
-  name: 'folder'
+interface FolderList<
+  Name extends 'folder' | 'unreadFolder' = 'folder' | 'unreadFolder'
+> extends BaseList {
+  kind: 'FolderList'
+  name: Name
   // TODO: разобраться с форматом, я хз есть ли там айди
   id: number
 }
@@ -36,23 +40,17 @@ interface FolderList extends BaseList {
 export function defaults(): Lists {
   const getBaseList = (): BaseList => ({
     peerIds: new Set(),
-    unread: false,
     status: 'hasMore',
     boundary: {
-      majorId: 0,
-      minorId: 0
+      majorId: Infinity,
+      minorId: Infinity
     }
   })
 
   return {
-    main: {
-      all: { ...getBaseList(), name: 'main', status: 'loading' },
-      unread: { ...getBaseList(), name: 'main', unread: true }
-    },
-    archive: {
-      all: { ...getBaseList(), name: 'archive' },
-      unread: { ...getBaseList(), name: 'archive', unread: true }
-    },
+    main: { ...getBaseList(), kind: 'MainList', name: 'main', status: 'loading' },
+    unread: { ...getBaseList(), kind: 'MainList', name: 'unread' },
+    archive: { ...getBaseList(), kind: 'MainList', name: 'archive' },
     folders: []
   }
 }
@@ -61,12 +59,11 @@ export function defaults(): Lists {
  * Добавляет беседу в указанный лист
  */
 export function push(list: List, convo: Convo.Convo) {
-  console.log('Lists.push', list, convo.id)
-
-  if (convo.majorSortId < list.boundary.majorId) {
+  if (
+    convo.majorSortId < list.boundary.majorId ||
+    (convo.majorSortId === list.boundary.majorId && convo.minorSortId < list.boundary.minorId)
+  ) {
     list.boundary.majorId = convo.majorSortId
-    list.boundary.minorId = convo.minorSortId
-  } else if (convo.minorSortId < list.boundary.minorId) {
     list.boundary.minorId = convo.minorSortId
   }
 

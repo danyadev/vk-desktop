@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { useEnv, useFormatDate } from 'hooks'
-import { exhaustivenessCheck } from 'misc/utils'
 import { shortenCount } from 'misc/dateTime'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -22,7 +21,7 @@ export const ConvoHeader = defineComponent<Props>((props) => {
   const formatDate = useFormatDate()
 
   const peerInfo = computed<string>(() => {
-    const isChannel = Convo.isChannel(props.convo)
+    // TODO: показывать статус синхронизации или подключения, если что-то случилось с лп
 
     switch (peer.kind) {
       case 'User': {
@@ -53,14 +52,12 @@ export const ConvoHeader = defineComponent<Props>((props) => {
           return lang.use('me_chat_kicked_status')
         }
 
-        const langKey = isChannel ? 'me_group_members_count' : 'me_chat_members_count'
+        const langKey = Convo.isChannel(props.convo)
+          ? 'me_group_members_count'
+          : 'me_chat_members_count'
         return lang.usePlural(langKey, peer.membersCount, {
           count: shortenCount(peer.membersCount)
         })
-      }
-
-      default: {
-        return exhaustivenessCheck(peer)
       }
     }
   })

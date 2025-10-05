@@ -32,9 +32,9 @@ export async function loadInitialData(onError: () => void) {
       profiles: conversations.profiles,
       groups: conversations.groups
     })
-    insertConvos(conversations.items, { listToInsert: lists.main.all })
+    insertConvos(conversations.items, { list: lists.main })
 
-    lists.main.all.status = conversations.items.length === CONVOS_PER_PAGE ? 'hasMore' : 'complete'
+    lists.main.status = conversations.items.length === CONVOS_PER_PAGE ? 'hasMore' : 'complete'
 
     connection.status = 'connected'
     engine.start(longpollParams)
