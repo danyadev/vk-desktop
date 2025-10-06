@@ -16,8 +16,6 @@ const API_RATE_LIMIT_WINDOW = 1000
 
 const METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN: Array<keyof Methods> = [
   'messages.getConversations'
-  // 'messages.getHistory',
-  // 'messages.getLongPollHistory'
 ]
 
 export class Api implements IApi.Api {

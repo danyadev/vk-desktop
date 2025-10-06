@@ -44,7 +44,9 @@ export interface BaseConvo {
     disabledUntil: number
   }
   folderIds: number[]
-  flags: number
+  isArchived: boolean
+  // TODO: отразить в интерфейсе
+  isMarkedUnread: boolean
 }
 
 interface UserConvo extends BaseConvo {
@@ -146,7 +148,8 @@ function mock(id: Peer.Id): Convo {
       disabledUntil: 0
     },
     folderIds: [],
-    flags: 0
+    isArchived: false,
+    isMarkedUnread: false
   }
 
   if (Peer.isUserPeerId(id)) {
@@ -270,12 +273,8 @@ export function findMessage(convo: Convo, cmid: Message.Cmid): Message.Confirmed
   }
 }
 
-export function hasFlag(convo: Convo, flag: number) {
-  return (convo.flags & flag) > 0
-}
-
 export function isUnread(convo: Convo): boolean {
-  return convo.unreadCount > 0 || hasFlag(convo, flags.markedUnread)
+  return convo.unreadCount > 0 || convo.isMarkedUnread
 }
 
 export function isCasper(convo: Convo): boolean {
@@ -284,4 +283,15 @@ export function isCasper(convo: Convo): boolean {
 
 export function isChannel(convo: Convo): boolean {
   return convo.kind === 'ChatConvo' && convo.isChannel
+}
+
+/**
+ * Проверяет, что беседа не показывается в списке бесед.
+ * Пустая беседа не гарантирует что беседы нет в списке. Например, каспер чаты при "исчезании"
+ * не пропадают со своей позиции в списке.
+ * Не-пустая беседа так же не гарантирует что беседа есть в списке. Например, приветственные
+ * сообщения сообществ не поднимают беседу в списке
+ */
+export function isHidden(convo: Convo): boolean {
+  return convo.minorSortId === 0 && convo.pendingMessages.length === 0
 }

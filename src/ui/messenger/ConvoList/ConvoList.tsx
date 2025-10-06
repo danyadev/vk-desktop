@@ -26,12 +26,12 @@ type Props = {
 export const ConvoList = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const viewer = useViewer()
-  const { connection } = useConvosStore()
+  const { connection, lists } = useConvosStore()
   const { settingsModal } = useGlobalModal()
   const computedConvoList = useConvoList()
 
   return () => {
-    const { convoList, list } = computedConvoList.value
+    const { convoList, list, selectList } = computedConvoList.value
 
     return (
       <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
@@ -80,6 +80,24 @@ export const ConvoList = defineComponent<Props>((props) => {
             </>
           )}
         </div>
+
+        {!props.compact && (
+          <div class="ConvoList__folders">
+            {[
+              lists.main,
+              lists.unread,
+              lists.archive
+              // ...[...lists.folders.values()].map((folder) => folder.all)
+            ].map((listItem) => (
+              <div
+                class={['ConvoList__folder', list.name === listItem.name && 'ConvoList__folder--active']}
+                onClick={() => selectList({ name: listItem.name })}
+              >
+                {listItem.name}
+              </div>
+            ))}
+          </div>
+        )}
 
         <div class="ConvoList__list">
           {convoList.map((convo) => (

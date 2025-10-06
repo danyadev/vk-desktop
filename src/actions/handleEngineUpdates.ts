@@ -101,6 +101,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
 
         if (flags & (Message.flags.deleted | Message.flags.spam)) {
           Convo.restoreMessage(convo, message)
+          Lists.refresh(lists, convo)
         }
         break
       }
@@ -155,6 +156,28 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           convo.inReadBy = cmid
         } else {
           convo.outReadBy = cmid
+        }
+        break
+      }
+
+      case 10:
+      case 12: {
+        const [eventId, rawPeerId, flags] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const isFlagSet = eventId === 12
+
+        const convo = convos.get(peerId)
+        if (convo) {
+          if (flags & Convo.flags.archived) {
+            convo.isArchived = isFlagSet
+          }
+          if (flags & Convo.flags.markedUnread) {
+            convo.isMarkedUnread = isFlagSet
+          }
+
+          if (flags & (Convo.flags.archived | Convo.flags.markedUnread)) {
+            Lists.refresh(lists, convo)
+          }
         }
         break
       }
@@ -231,7 +254,7 @@ type MissingDataMeta = {
 
 function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
   const { peers } = usePeersStore()
-  const { convos } = useConvosStore()
+  const { convos, lists } = useConvosStore()
   const missingCmidsByConvo = new Map<Peer.Id, Message.Cmid[]>()
   const missingConvos: Peer.Id[] = []
   const missingUsers: number[] = []
@@ -300,6 +323,36 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
         if (eventId === 10004 || convos.has(peerId)) {
           missingConvos.push(peerId)
           addMissingCmid(peerId, cmid)
+        }
+        break
+      }
+
+      case 10:
+      case 12: {
+        const [eventId, rawPeerId, flags] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const action = eventId === 10 ? 'unset' : 'set'
+
+        // Если беседа переносится в другой лист, например из общего списка чата далеко снизу
+        // в уже загруженный небольшой архив, у нас в кеше не будет беседы, но ее нужно показать
+        // в архиве, так как он уже загружен либо беседа может находиться выше нижней границы
+        if (!convos.has(peerId)) {
+          // грузим беседу если она переходит main <- archive,
+          // либо main -> archive, но только если архив уже имеет определенную границу
+          if (
+            (flags & Convo.flags.archived) &&
+            (action === 'unset' || Lists.isInitialized(lists.archive))
+          ) {
+            missingConvos.push(peerId)
+            break
+          }
+
+          if (
+            (flags & Convo.flags.markedUnread) &&
+            (action === 'unset' || Lists.isInitialized(lists.unread))
+          ) {
+            missingConvos.push(peerId)
+          }
         }
         break
       }

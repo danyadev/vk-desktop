@@ -2,12 +2,12 @@ import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 
 export type Lists = {
-  main: MainList<'main'>
-  unread: MainList<'unread'>
-  archive: MainList<'archive'>
+  main: MainList
+  unread: MainList
+  archive: MainList
   folders: Map<number, {
-    all: FolderList<'folder'>
-    unread: FolderList<'unreadFolder'>
+    all: FolderList
+    unread: FolderList
   }>
 }
 export type List = MainList | FolderList
@@ -21,19 +21,14 @@ interface BaseList {
   }
 }
 
-interface MainList<
-  Name extends 'main' | 'unread' | 'archive' = 'main' | 'unread' | 'archive'
-> extends BaseList {
+interface MainList extends BaseList {
   kind: 'MainList'
-  name: Name
+  name: 'main' | 'unread' | 'archive'
 }
 
-interface FolderList<
-  Name extends 'folder' | 'unreadFolder' = 'folder' | 'unreadFolder'
-> extends BaseList {
+interface FolderList extends BaseList {
   kind: 'FolderList'
-  name: Name
-  // TODO: разобраться с форматом, я хз есть ли там айди
+  name: 'folder' | 'unreadFolder'
   id: number
 }
 
@@ -56,6 +51,14 @@ export function defaults(): Lists {
 }
 
 /**
+ * Проверяет, что лист хотя бы раз загружал беседы и как следствие может
+ * добавлять беседы в рамках List.refresh
+ */
+export function isInitialized(list: List) {
+  return list.boundary.majorId !== Infinity || list.status === 'complete'
+}
+
+/**
  * Добавляет беседу в указанный лист и увеличивает нижнюю границу при необходимости
  */
 export function push(list: List, convo: Convo.Convo) {
@@ -69,39 +72,46 @@ export function push(list: List, convo: Convo.Convo) {
 
 /**
  * Добавляет беседу в списки, если она подходит по условиям и находится в рамках известных границ,
- * либо удаляет из списка, если больше не подходит
+ * либо удаляет из списков, если больше не подходит
  */
 export function refresh(lists: Lists, convo: Convo.Convo) {
   for (const folderId of convo.folderIds) {
     const folder = lists.folders.get(folderId)
     if (folder) {
-      const sublist = Convo.isUnread(convo) ? 'unread' : 'all'
-      refreshInList(folder[sublist], convo)
+      folder.all.peerIds.delete(convo.id)
+      folder.unread.peerIds.delete(convo.id)
+
+      pushIfWithinBoundary(folder.all, convo)
+      if (Convo.isUnread(convo)) {
+        pushIfWithinBoundary(folder.unread, convo)
+      }
     }
   }
 
-  if (Convo.hasFlag(convo, Convo.flags.archived)) {
-    refreshInList(lists.archive, convo)
+  lists.archive.peerIds.delete(convo.id)
+  lists.unread.peerIds.delete(convo.id)
+  lists.main.peerIds.delete(convo.id)
+
+  if (convo.isArchived) {
+    pushIfWithinBoundary(lists.archive, convo)
     return
   }
 
   if (Convo.isUnread(convo)) {
-    refreshInList(lists.unread, convo)
+    pushIfWithinBoundary(lists.unread, convo)
   }
 
-  refreshInList(lists.main, convo)
+  pushIfWithinBoundary(lists.main, convo)
 }
 
-function refreshInList(list: List, convo: Convo.Convo) {
-  // Когда список уже полностью загружен, можно принимать и чаты за пределами границы.
+function pushIfWithinBoundary(list: List, convo: Convo.Convo) {
+  // Когда список уже полностью загружен, можно принимать чаты и за пределами границы.
   // Например, может прийти восстановление чата, но этот чат находится ниже последнего
   // известного нам чата
-  const allowOutsideBoundary = list.status === 'complete' && convo.minorSortId > 0
+  const allowOutsideBoundary = list.status === 'complete' && !Convo.isHidden(convo)
 
   if (isWithinBoundary(list, convo) || allowOutsideBoundary) {
-    list.peerIds.add(convo.id)
-  } else {
-    list.peerIds.delete(convo.id)
+    push(list, convo)
   }
 }
 

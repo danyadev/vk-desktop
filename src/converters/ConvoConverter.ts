@@ -51,7 +51,8 @@ export function fromApiConvo(
       disabledUntil: (apiConvo.push_settings?.disabled_until ?? 0) * 1000
     },
     folderIds: apiConvo.folder_ids ?? [],
-    flags: apiConvo.peer_flags ?? 0
+    isArchived: ((apiConvo.peer_flags ?? 0) & Convo.flags.archived) > 0,
+    isMarkedUnread: !!apiConvo.is_marked_unread
   }
 
   const peerId = Peer.resolveId(apiConvo.peer.id)
