@@ -42,7 +42,21 @@ type Update10003 = [
   cmid: number,
   flags: number,
   peerId: number
-  // В случае восстановления сообщения есть дополнительные поля
+] | Update10003Restore
+
+// Сброс флагов удаления сообщения
+type Update10003Restore = [
+  type: 10003,
+  cmid: Update10004[1],
+  flags: Update10004[2],
+  peerId: Update10004[4],
+  timestamp: Update10004[5],
+  text: Update10004[6],
+  additional: Update10004[7],
+  attachments: Update10004[8],
+  randomId: Update10004[9],
+  messageId: Update10004[10],
+  updateTimestampInSeconds: number
 ]
 
 // Новое сообщение

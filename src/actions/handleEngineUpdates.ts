@@ -1,5 +1,6 @@
 import * as IEngine from 'env/IEngine'
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
+import { MessagesGetDiffContentInput } from 'model/api-types/objects/MessagesGetDiffContentInput'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
@@ -12,94 +13,69 @@ import { useEnv } from 'hooks'
 import { getMapValueWithDefaults } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
 
-const MESSAGE_FLAGS = {
-  spam: 1 << 6,
-  deleted: 1 << 7
-}
-
 const TYPING_DURATION = 5000
 
-export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]) {
+export async function handleEngineUpdates(updates: IEngine.Update[]) {
   const convosStore = useConvosStore()
+  const { convos, typings } = convosStore
   const {
     apiConvosMap,
     apiMessagesMap,
     profiles,
     groups
-  } = await loadMissingData(pts, isDataMissing(updates))
+  } = await loadMissingData(collectMissingData(updates))
 
   insertPeers({
     profiles,
     groups
   })
 
+  insertConvos([...apiConvosMap.entries()].map(([peerId, apiConvo]) => {
+    const cmid = apiConvo.last_conversation_message_id
+      ? Message.resolveCmid(apiConvo.last_conversation_message_id)
+      : undefined
+
+    return {
+      conversation: apiConvo,
+      last_message: cmid && apiMessagesMap.get(peerId)?.get(cmid)
+    }
+  }))
+
   for (const update of updates) {
     switch (update[0]) {
       case 10002: {
         const [, rawCmid, flags, rawPeerId] = update
-        const isDeleteMessageUpdate = (flags & MESSAGE_FLAGS.deleted) > 0
+        const isDeleteMessageUpdate = (flags & (Message.flags.deleted | Message.flags.spam)) > 0
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
-        if (!convosStore.convos.has(peerId)) {
+        const convo = convos.get(peerId)
+        if (!convo) {
           break
         }
 
-        const apiConvo = apiConvosMap.get(peerId)
-        if (!apiConvo) {
-          console.warn('[handleEngineUpdates] no convo', apiConvosMap, update)
+        const message = Convo.findMessage(convo, cmid)
+        if (!message) {
           break
         }
 
         if (isDeleteMessageUpdate) {
-          insertConvos([{ conversation: apiConvo }], {
-            addToList: false
-          })
-
-          const convo = Convo.safeGet(peerId)
-          const message = Convo.findMessage(convo, cmid)
-
-          if (!message) {
-            break
-          }
-
+          // Мы уже загрузили беседу из апи вместо сложного обновления ее полей вручную:
+          // - Если сообщение было непрочитанным, нужно уменьшить счетчик
+          // - Если сообщение было на границе непрочитанности, нужно сдвинуть границу
+          // - Если сообщение было последним в списке, нужно заменить его на предыдущее
+          // - Если сообщение было с упоминанием/реакцией/исчезанием, нужно обновить их список
           Convo.removeMessage(convo, cmid)
           Convo.removePendingMessage(convo, message.randomId)
+          break
+        }
 
-          const lastMessageCmid =
-            apiConvo.last_conversation_message_id &&
-            Message.resolveCmid(apiConvo.last_conversation_message_id)
-          const apiLastMessage = lastMessageCmid && apiMessagesMap.get(peerId)?.get(lastMessageCmid)
-
-          if (apiLastMessage && !Convo.lastMessage(convo)) {
-            const message = fromApiMessage(apiLastMessage)
-            Convo.insertMessages(convo, [message], {
-              up: true,
-              down: false,
-              aroundId: message.cmid
-            })
+        if (flags & Message.flags.voiceListened) {
+          const voice = message.kind === 'Normal' && message.attaches.voice
+          if (voice) {
+            voice.wasListened = true
           }
-          break
         }
-
-        const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
-        const message = apiMessage && fromApiMessage(apiMessage)
-        if (!message) {
-          console.warn('[handleEngineUpdates] no message', apiMessagesMap, update)
-          break
-        }
-
-        insertConvos([{ conversation: apiConvo }], {
-          addToList: false
-        })
-
-        const convo = Convo.safeGet(peerId)
-
-        Convo.insertMessages(convo, [message], {
-          up: true,
-          down: true,
-          aroundId: cmid
-        })
         break
       }
 
@@ -107,16 +83,18 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
       case 10004:
       case 10005:
       case 10018: {
-        const rawCmid = update[1]
-        const rawPeerId = update[0] === 10004 ? update[4] : update[3]
+        const [eventId, rawCmid, flags] = update
+        const rawPeerId = eventId === 10004 ? update[4] : update[3]
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
-        const isRestoreMessageUpdate =
-          update[0] === 10003 &&
-          ((update[2] & MESSAGE_FLAGS.spam) > 0 || (update[2] & MESSAGE_FLAGS.deleted) > 0)
 
-        const apiConvo = apiConvosMap.get(peerId)
-        if (!apiConvo) {
+        if (eventId === 10003 && !(flags & (Message.flags.deleted | Message.flags.spam))) {
+          // Нам интересно только восстановление сообщения, остальные флаги бесполезны
+          break
+        }
+
+        const convo = convos.get(peerId)
+        if (!convo) {
           console.warn('[handleEngineUpdates] no convo', apiConvosMap, update)
           break
         }
@@ -128,20 +106,14 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
           break
         }
 
-        insertConvos([{ conversation: apiConvo }], {
-          addToList: update[0] === 10004 || isRestoreMessageUpdate
-        })
-
-        const convo = Convo.safeGet(peerId)
-
         Convo.insertMessages(convo, [message], {
           up: true,
-          down: true,
+          down: eventId !== 10004,
           aroundId: cmid
         })
         Convo.removePendingMessage(convo, message.randomId)
 
-        if (update[0] === 10004 || update[0] === 10005) {
+        if (eventId === 10004 || eventId === 10005) {
           convosStore.stopTyping(peerId, message.authorId)
         }
         break
@@ -149,13 +121,20 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
 
       case 10006:
       case 10007: {
-        const [, rawPeerId] = update
+        const [eventId, rawPeerId, rawCmid, unreadCount] = update
         const peerId = Peer.resolveId(rawPeerId)
-        const apiConvo = apiConvosMap.get(peerId)
-        if (apiConvo) {
-          insertConvos([{ conversation: apiConvo }], {
-            addToList: false
-          })
+        const cmid = Message.resolveCmid(rawCmid)
+
+        const convo = convos.get(peerId)
+        if (!convo) {
+          break
+        }
+
+        if (eventId === 10006) {
+          convo.unreadCount = unreadCount
+          convo.inReadBy = cmid
+        } else {
+          convo.outReadBy = cmid
         }
         break
       }
@@ -170,11 +149,11 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
         const peerId = Peer.resolveId(rawPeerId)
         const durationLeft = Date.now() + TYPING_DURATION - timestamp * 1000
 
-        if (durationLeft <= 0) {
+        if (!convos.has(peerId) || durationLeft <= 0) {
           break
         }
 
-        const typingPeers = getMapValueWithDefaults(convosStore.typings, peerId, [])
+        const typingPeers = getMapValueWithDefaults(typings, peerId, [])
 
         for (const rawTypingPeerId of rawTypingPeerIds) {
           const typingPeerId = Peer.resolveId(rawTypingPeerId)
@@ -210,7 +189,7 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
         const [, setting] = update
         const peerId = Peer.resolveId(setting.peer_id)
 
-        const convo = Convo.get(peerId)
+        const convo = convos.get(peerId)
         if (!convo) {
           break
         }
@@ -224,30 +203,79 @@ export async function handleEngineUpdates(pts: number, updates: IEngine.Update[]
 }
 
 type MissingDataMeta = {
-  needLongPollHistory: boolean
+  missingCmidsByConvo: Map<Peer.Id, Message.Cmid[]>
+  missingConvos: Peer.Id[]
   missingUsers: number[]
   missingGroups: number[]
 }
 
-function isDataMissing(updates: IEngine.Update[]): MissingDataMeta {
+function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
   const { peers } = usePeersStore()
-  const missingPeers = []
-  let needLongPollHistory = false
+  const { convos } = useConvosStore()
+  const missingCmidsByConvo = new Map<Peer.Id, Message.Cmid[]>()
+  const missingConvos: Peer.Id[] = []
+  const missingUsers: number[] = []
+  const missingGroups: number[] = []
+
+  const addMissingCmid = (peerId: Peer.Id, cmid: Message.Cmid) => {
+    const cmids = missingCmidsByConvo.get(peerId)
+    if (cmids) {
+      cmids.push(cmid)
+    } else {
+      missingCmidsByConvo.set(peerId, [cmid])
+    }
+  }
+
+  const addMissingPeer = (peerId: Peer.Id) => {
+    if (Peer.isUserPeerId(peerId)) {
+      missingUsers.push(Peer.toRealId(peerId))
+    } else if (Peer.isGroupPeerId(peerId)) {
+      missingGroups.push(Peer.toRealId(peerId))
+    }
+  }
 
   for (const update of updates) {
     switch (update[0]) {
       case 10002:
-      case 10003:
+      case 10003: {
+        const [eventId, rawCmid, flags, rawPeerId] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const cmid = Message.resolveCmid(rawCmid)
+
+        if (flags & (Message.flags.deleted | Message.flags.spam)) {
+          // Удаление сообщения.
+          // Нужна беседа для обновления счетчиков и последнее сообщение (они вернутся вместе),
+          // если его удалят и предыдущего не окажется в кеше
+          if (eventId === 10002 && convos.has(peerId)) {
+            missingConvos.push(peerId)
+          }
+
+          // Восстановление сообщения.
+          // Нужна беседа (счетчики тоже могут поменяться) и сообщение для восстановления
+          if (eventId === 10003) {
+            missingConvos.push(peerId)
+            addMissingCmid(peerId, cmid)
+          }
+        }
+        break
+      }
+
       case 10004:
       case 10005:
-      case 10018:
-        needLongPollHistory = true
-        break
+      case 10018: {
+        const [eventId, rawCmid] = update
+        const rawPeerId = eventId === 10004 ? update[4] : update[3]
+        const peerId = Peer.resolveId(rawPeerId)
+        const cmid = Message.resolveCmid(rawCmid)
 
-      case 10006:
-      case 10007:
-        needLongPollHistory = true
+        // Беседа нужна для обновления счетчиков. Даже при редактировании сообщения может
+        // поменяться количество упоминаний в чате
+        if (eventId === 10004 || convos.has(peerId)) {
+          missingConvos.push(peerId)
+          addMissingCmid(peerId, cmid)
+        }
         break
+      }
 
       case 63:
       case 64:
@@ -255,49 +283,65 @@ function isDataMissing(updates: IEngine.Update[]): MissingDataMeta {
       case 66:
       case 67:
       case 68: {
-        const [, , rawTypingPeerIds, , timestamp] = update
+        const [, rawPeerId, rawTypingPeerIds, , timestamp] = update
+        const peerId = Peer.resolveId(rawPeerId)
         const durationLeft = Date.now() + TYPING_DURATION - timestamp * 1000
 
-        if (durationLeft <= 0) {
+        if (!convos.has(peerId) || durationLeft <= 0) {
           break
         }
 
-        missingPeers.push(
-          ...rawTypingPeerIds
-            .map(Peer.resolveId)
-            .filter((peerId) => !peers.has(peerId))
-        )
+        for (const rawPeerId of rawTypingPeerIds) {
+          const peerId = Peer.resolveId(rawPeerId)
+          if (!peers.has(peerId)) {
+            addMissingPeer(peerId)
+          }
+        }
         break
       }
 
+      case 10006:
+      case 10007:
       case 114:
         break
     }
   }
 
-  const missingUsers = missingPeers.filter(Peer.isUserPeerId).map(Peer.toRealId)
-  const missingGroups = missingPeers.filter(Peer.isGroupPeerId).map(Peer.toRealId)
-
   return {
-    needLongPollHistory,
+    missingCmidsByConvo,
+    missingConvos,
     missingUsers,
     missingGroups
   }
 }
 
-async function loadMissingData(
-  pts: number,
-  { needLongPollHistory, missingUsers, missingGroups }: MissingDataMeta
-) {
+async function loadMissingData({
+  missingCmidsByConvo,
+  missingConvos,
+  missingUsers,
+  missingGroups
+}: MissingDataMeta) {
   const { api } = useEnv()
 
-  const [glphResponse, usersResponse, groupsResponse] = await api.fetchParallel([
-    needLongPollHistory && api.buildMethod('messages.getLongPollHistory', {
-      pts,
-      lp_version: IEngine.VERSION,
-      msgs_limit: 1100,
-      events_limit: 1100,
-      last_n: 1000,
+  const [
+    getDiffContentResponse,
+    convosResponse,
+    usersResponse,
+    groupsResponse
+  ] = await api.fetchParallel([
+    missingCmidsByConvo.size && api.buildMethod('messages.getDiffContent', {
+      conversation_messages: JSON.stringify(
+        [...missingCmidsByConvo.entries()].map(([peerId, cmids]) => ({
+          peer_id: peerId,
+          updated_cmids: cmids
+        })) satisfies MessagesGetDiffContentInput
+      ),
+      extended: 1,
+      fields: PEER_FIELDS
+    }),
+    missingConvos.length && api.buildMethod('messages.getConversationsById', {
+      peer_ids: missingConvos.join(','),
+      with_last_messages: 1,
       extended: 1,
       fields: PEER_FIELDS
     }),
@@ -311,22 +355,32 @@ async function loadMissingData(
     })
   ], { retries: Infinity })
 
-  if (glphResponse && glphResponse.from_pts > pts) {
-    throw new Error('[loadMissingData] glph история обрезалась')
-  }
-
   const apiConvosMap = new Map<Peer.Id, MessagesConversation>()
   const apiMessagesMap = new Map<Peer.Id, Map<Message.Cmid, MessagesMessage>>()
 
-  for (const apiConvo of glphResponse?.conversations ?? []) {
+  for (const contentEntry of getDiffContentResponse?.items ?? []) {
+    const { peer_id: rawPeerId, requested_messages: apiMessages } = contentEntry
+    if (!apiMessages) {
+      continue
+    }
+
+    const peerId = Peer.resolveId(rawPeerId)
+    const mapWithMessages = getMapValueWithDefaults(apiMessagesMap, peerId, new Map())
+
+    for (const apiMessage of apiMessages) {
+      const cmid = Message.resolveCmid(apiMessage.conversation_message_id)
+      mapWithMessages.set(cmid, apiMessage)
+    }
+  }
+
+  for (const apiConvo of convosResponse?.items ?? []) {
     const peerId = Peer.resolveId(apiConvo.peer.id)
     apiConvosMap.set(peerId, apiConvo)
   }
 
-  for (const apiMessage of glphResponse?.messages.items ?? []) {
+  for (const apiMessage of convosResponse?.last_messages ?? []) {
     const peerId = Peer.resolveId(apiMessage.peer_id)
     const cmid = Message.resolveCmid(apiMessage.conversation_message_id)
-
     const mapWithMessages = getMapValueWithDefaults(apiMessagesMap, peerId, new Map())
     mapWithMessages.set(cmid, apiMessage)
   }
@@ -335,12 +389,14 @@ async function loadMissingData(
     apiConvosMap,
     apiMessagesMap,
     profiles: [
-      ...glphResponse?.profiles ?? [],
+      ...getDiffContentResponse?.profiles ?? [],
+      ...convosResponse?.profiles ?? [],
       ...usersResponse ?? [],
       ...groupsResponse?.profiles ?? []
     ],
     groups: [
-      ...glphResponse?.groups ?? [],
+      ...getDiffContentResponse?.groups ?? [],
+      ...convosResponse?.groups ?? [],
       ...groupsResponse?.groups ?? []
     ]
   }

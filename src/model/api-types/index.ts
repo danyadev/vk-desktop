@@ -29,6 +29,8 @@ import {
   MessagesGetConversationsByIdResponse,
   MessagesGetConversationsParams,
   MessagesGetConversationsResponse,
+  MessagesGetDiffContentParams,
+  MessagesGetDiffContentResponse,
   MessagesGetHistoryParams,
   MessagesGetHistoryResponse,
   MessagesGetLongPollHistoryParams,
@@ -148,6 +150,10 @@ export type Methods = {
   'messages.markAsPlayed': {
     params: MessagesMarkAsPlayedParams
     response: MessagesMarkAsPlayedResponse
+  }
+  'messages.getDiffContent': {
+    params: MessagesGetDiffContentParams
+    response: MessagesGetDiffContentResponse
   }
 
   'users.get': {

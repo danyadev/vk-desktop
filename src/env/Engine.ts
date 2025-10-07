@@ -32,7 +32,7 @@ export class Engine {
     this.credentials = credentials
 
     while (this.active) {
-      const { server, key, ts, pts } = this.credentials
+      const { server, key, ts } = this.credentials
       const timeoutSignal = AbortSignal.timeout(ENGINE_FETCH_TIMEOUT)
 
       const result = await fetch(`https://${server}?act=a_check`, {
@@ -85,7 +85,7 @@ export class Engine {
       this.credentials.ts = result.ts
       this.credentials.pts = result.pts
 
-      await handleEngineUpdates(pts, result.updates)
+      await handleEngineUpdates(result.updates)
     }
   }
 
