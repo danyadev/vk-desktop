@@ -60,17 +60,28 @@ export const ConvoWrapper = defineComponent(() => {
     isLoadingFailed.value = false
 
     try {
-      const { items, profiles, groups } = await api.fetch('messages.getConversationsById', {
+      const {
+        items,
+        last_messages: apiLastMessages = [],
+        profiles,
+        groups
+      } = await api.fetch('messages.getConversationsById', {
         peer_ids: peerId.value,
+        with_last_messages: 1,
         extended: 1,
         fields: PEER_FIELDS
       })
-      insertConvos(
-        items.map((conversation) => ({ conversation })),
-        { addToList: false }
-      )
+
+      const [apiConvo] = items
+      const [apiLastMessage] = apiLastMessages
+      if (!apiConvo) {
+        throw new Error('No conversation fetched for ' + peerId.value)
+      }
+
+      insertConvos([{ conversation: apiConvo, last_message: apiLastMessage }])
       insertPeers({ profiles, groups })
-    } catch {
+    } catch (err) {
+      console.warn(err)
       isLoadingFailed.value = true
     }
   }

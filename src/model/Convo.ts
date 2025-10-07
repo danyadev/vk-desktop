@@ -6,7 +6,7 @@ import { exhaustivenessCheck, NonEmptyArray } from 'misc/utils'
 
 export type Convo = UserConvo | GroupConvo | ChatConvo
 
-interface BaseConvo {
+export interface BaseConvo {
   history: History.History<Message.Confirmed>
   pendingMessages: Message.Pending[]
   /**

@@ -129,7 +129,6 @@ export type MessagesConversation = {
   call_in_progress?: unknown
   spam_expiration?: number
   is_new?: boolean
-  is_archived?: boolean
   style?: string
   folder_ids?: number[]
   unread_reactions?: number[]

@@ -7,7 +7,7 @@ import { fromApiConvo } from 'converters/ConvoConverter'
 
 export function insertConvos(
   conversations: MessagesConversationWithMessage[],
-  { mergeHistory = true, addToList = true } = {}
+  { addToList = true } = {}
 ) {
   const { convoList, convos } = useConvosStore()
   const { peers } = usePeersStore()
@@ -19,19 +19,17 @@ export function insertConvos(
       const localConvo = convos.get(convo.id)
 
       if (localConvo) {
+        const messages = convo.history.filter((node) => node.kind === 'Item')
+        History.insert(localConvo.history, messages, {
+          up: true,
+          // Здесь может добавиться только одно сообщение - переданный last_message
+          down: false,
+          aroundId: 0
+        })
+
+        convo.history = localConvo.history
         convo.pendingMessages = localConvo.pendingMessages
-
-        if (mergeHistory) {
-          const messages = convo.history.filter((node) => node.kind === 'Item')
-          History.insert(localConvo.history, messages, {
-            up: true,
-            down: true,
-            aroundId: 0
-          })
-
-          convo.history = localConvo.history
-          convo.historySliceAnchorCmid = localConvo.historySliceAnchorCmid
-        }
+        convo.historySliceAnchorCmid = localConvo.historySliceAnchorCmid
 
         // Само присваивание нового объекта является триггером для перерисовки всех компонентов,
         // где был запрошен указанный пир, поэтому для дальнейшей оптимизации можно не создавать

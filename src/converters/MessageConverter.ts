@@ -10,7 +10,7 @@ import { fromApiConvoStyle } from 'converters/ConvoConverter'
 import { isNonEmptyArray, NonEmptyArray, typeguard } from 'misc/utils'
 
 export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
-  const baseMessage = {
+  const baseMessage: Message.BaseMessage = {
     peerId: Peer.resolveId(message.peer_id),
     cmid: Message.resolveCmid(message.conversation_message_id),
     authorId: Peer.resolveOwnerId(message.from_id),
@@ -20,7 +20,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
       ? message.update_time * 1000
       : undefined,
     randomId: message.random_id ?? 0
-  } satisfies Message.BaseMessage
+  }
 
   const attaches = fromApiAttaches(message.attachments ?? [], !!message.was_listened)
 

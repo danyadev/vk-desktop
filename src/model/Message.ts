@@ -107,6 +107,12 @@ export type ServiceAction =
     }
   | { type: 'unknown' }
 
+export const flags = {
+  spam: 1 << 6,
+  deleted: 1 << 7,
+  voiceListened: 1 << 12
+}
+
 export function resolveCmid(cmid: number): Cmid {
   if (cmid <= 0) {
     throw new Error('Message.Cmid = ' + cmid)

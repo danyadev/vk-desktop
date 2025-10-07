@@ -29,6 +29,7 @@ export type MessagesGetConversationsResponse = {
 // messages.getConversationsById
 export type MessagesGetConversationsByIdParams = {
   peer_ids: string | number
+  with_last_messages?: 0 | 1
   extended: 1
   fields: string
 }
@@ -36,6 +37,7 @@ export type MessagesGetConversationsByIdParams = {
 export type MessagesGetConversationsByIdResponse = {
   count: number
   items: MessagesConversation[]
+  last_messages?: MessagesMessage[]
   profiles?: UsersUser[]
   groups?: GroupsGroup[]
 }
@@ -124,3 +126,32 @@ export type MessagesMarkAsPlayedParams = {
 }
 
 export type MessagesMarkAsPlayedResponse = 1
+
+// messages.getDiffContent
+export type MessagesGetDiffContentParams = {
+  // JSON строка с типом MessagesGetDiffContentInput
+  conversation_messages: string
+  extended: 1
+  fields: string
+  group_id?: number
+}
+
+export type MessagesGetDiffContentResponse = {
+  items: Array<{
+    peer_id: number
+    messages?: MessagesMessage[]
+    requested_messages?: MessagesMessage[]
+    range_messages?: MessagesMessage[][]
+    reactions?: Array<{
+      cmid: number
+      counters: Array<{
+        reaction_id: number
+        count: number
+        user_ids: number[]
+      }>
+    }>
+  }>
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+  // contacts?: MessagesContact[]
+}

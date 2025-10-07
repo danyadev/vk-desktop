@@ -34,7 +34,7 @@ export function fromApiConvo(
     ? Message.resolveCmid(apiConvo.out_read_cmid)
     : 0
 
-  const baseConvo = {
+  const baseConvo: Convo.BaseConvo = {
     history,
     pendingMessages: [],
     historySliceAnchorCmid: inReadBy,
@@ -50,7 +50,7 @@ export function fromApiConvo(
       ),
       disabledUntil: (apiConvo.push_settings?.disabled_until ?? 0) * 1000
     }
-  } satisfies Partial<Convo.Convo>
+  }
 
   const peerId = Peer.resolveId(apiConvo.peer.id)
 
