@@ -172,6 +172,7 @@ function mock(id: Peer.Id): Convo {
   exhaustivenessCheck(id)
 }
 
+// TODO: поддержать pending сообщения
 export function sorter(a: Convo, b: Convo) {
   if (a.majorSortId !== b.majorSortId) {
     return b.majorSortId - a.majorSortId
@@ -199,6 +200,39 @@ export function insertMessages(
     convo.history,
     messages.map((message) => History.toItem(message.cmid, message)),
     hasMore
+  )
+}
+
+/**
+ * Восстанавливает удаленное сообщение.
+ * Добавляет сообщение в историю только если оно находится посреди или рядом с доступной историей
+ */
+export function restoreMessage(convo: Convo, message: Message.Confirmed) {
+  if (canInsertRestoredMessage(convo, message.cmid)) {
+    insertMessages(convo, [message], {
+      up: true,
+      down: true,
+      aroundId: message.cmid
+    })
+  }
+}
+
+/**
+ * Проверяет, что сообщение может быть добавлено к доступной локально истории,
+ * а не оторвано от нее и находится посреди гэпа
+ */
+export function canInsertRestoredMessage(convo: Convo, cmid: Message.Cmid) {
+  const node = History.findNode(convo.history, cmid)
+
+  return (
+    // Если сообщение восстанавливается посреди доступной истории, оно просто не найдется
+    !node ||
+    // Если сообщение нашлось, то тоже обновим его, могло прийти более актуальное сообщение
+    node.kind === 'Item' ||
+    // Если это начало гэпа, то дополним слайс истории выше, но убедимся, что это не верх истории
+    (node.fromId === cmid && convo.history[0] !== node) ||
+    // Если это конец гэпа, то дополним слайс истории ниже, либо выставим последнее сообщение
+    node.toId === cmid
   )
 }
 

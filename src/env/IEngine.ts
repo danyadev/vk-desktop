@@ -41,7 +41,8 @@ type Update10003 = [
   type: 10003,
   cmid: number,
   flags: number,
-  peerId: number
+  // По неведомой причине айди беседы может не прийти при восстановлении старых сообщений
+  peerId?: number
 ] | Update10003Restore
 
 // Сброс флагов удаления сообщения

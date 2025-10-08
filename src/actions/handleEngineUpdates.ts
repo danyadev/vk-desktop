@@ -79,30 +79,46 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         break
       }
 
-      case 10003:
-      case 10004:
-      case 10005:
-      case 10018: {
-        const [eventId, rawCmid, flags] = update
-        const rawPeerId = eventId === 10004 ? update[4] : update[3]
-        const peerId = Peer.resolveId(rawPeerId)
+      case 10003: {
+        const [, rawCmid, flags, rawPeerId] = update
+        const peerId = rawPeerId && Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
-        if (eventId === 10003 && !(flags & (Message.flags.deleted | Message.flags.spam))) {
-          // Нам интересно только восстановление сообщения, остальные флаги бесполезны
-          break
-        }
-
-        const convo = convos.get(peerId)
+        // TODO: проверить кейс с восстановлением непрочитанного сообщения с упоминанием:
+        // в таком случае мы должны обновить счетчик непрочитанных
+        const convo = peerId && convos.get(peerId)
         if (!convo) {
-          console.warn('[handleEngineUpdates] no convo', apiConvosMap, update)
           break
         }
 
         const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
         const message = apiMessage && fromApiMessage(apiMessage)
         if (!message) {
-          console.warn('[handleEngineUpdates] no message', apiMessagesMap, update)
+          break
+        }
+
+        if (flags & (Message.flags.deleted | Message.flags.spam)) {
+          Convo.restoreMessage(convo, message)
+        }
+        break
+      }
+
+      case 10004:
+      case 10005:
+      case 10018: {
+        const [eventId, rawCmid] = update
+        const rawPeerId = eventId === 10004 ? update[4] : update[3]
+        const peerId = Peer.resolveId(rawPeerId)
+        const cmid = Message.resolveCmid(rawCmid)
+
+        const convo = convos.get(peerId)
+        if (!convo) {
+          break
+        }
+
+        const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
+        const message = apiMessage && fromApiMessage(apiMessage)
+        if (!message) {
           break
         }
 
@@ -130,6 +146,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           break
         }
 
+        // TODO: обновлять счетчик упоминани
         if (eventId === 10006) {
           convo.unreadCount = unreadCount
           convo.inReadBy = cmid
@@ -239,8 +256,12 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
       case 10002:
       case 10003: {
         const [eventId, rawCmid, flags, rawPeerId] = update
-        const peerId = Peer.resolveId(rawPeerId)
+        const peerId = rawPeerId && Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
+
+        if (!peerId) {
+          break
+        }
 
         if (flags & (Message.flags.deleted | Message.flags.spam)) {
           // Удаление сообщения.
@@ -253,8 +274,11 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
           // Восстановление сообщения.
           // Нужна беседа (счетчики тоже могут поменяться) и сообщение для восстановления
           if (eventId === 10003) {
-            missingConvos.push(peerId)
-            addMissingCmid(peerId, cmid)
+            const convo = convos.get(peerId)
+            if (!convo || Convo.canInsertRestoredMessage(convo, cmid)) {
+              missingConvos.push(peerId)
+              addMissingCmid(peerId, cmid)
+            }
           }
         }
         break
