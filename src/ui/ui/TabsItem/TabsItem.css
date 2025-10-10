@@ -1,0 +1,37 @@
+.TabsItem {
+  position: relative;
+  color: var(--vkui--color_text_secondary);
+  font-weight: 500;
+  margin: 8px 0;
+  padding: 5px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background-color var(--fastTransition) ease-out,
+    color var(--fastTransition) ease-out,
+    box-shadow var(--fastTransition) ease-out;
+}
+
+.TabsItem::before {
+  position: absolute;
+  content: '';
+  inset: 0;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: border-color var(--fastTransition) ease-out;
+}
+
+.TabsItem--active {
+  color: var(--vkui--color_text_accent_themed);
+  background-color: var(--vkui--color_background_contrast_themed);
+  box-shadow: var(--vkui--elevation2);
+}
+
+.TabsItem--active::before {
+  border-color: var(--vkui--color_separator_primary);
+}
+
+.TabsItem:hover {
+  background-color: var(--vkui--color_background_contrast_themed--hover);
+}

@@ -1,5 +1,14 @@
 import * as electron from '@electron/remote'
-import { ComponentPublicInstance, KeyboardEvent, type MouseEvent, onScopeDispose, Ref, unref } from 'vue'
+import {
+  ComponentPublicInstance,
+  EffectScope,
+  effectScope,
+  KeyboardEvent,
+  type MouseEvent,
+  onScopeDispose,
+  Ref,
+  unref
+} from 'vue'
 
 export { debounce } from 'main-process/shared'
 
@@ -57,10 +66,7 @@ export function typeguard(_never: never) {
 /**
  * Вызывает целевую функцию через delay мс после предыдущей вызова целевой функции
  */
-export function throttle<
-  Args extends unknown[],
-  T extends ((...args: Args) => void)
->(fn: T, delay: number) {
+export function throttle<Args extends unknown[]>(fn: ((...args: Args) => void), delay: number) {
   let timerId = 0
   let lastCallTimestamp = 0
 
@@ -107,6 +113,43 @@ export function toUrlParams(object: Record<string, string | number | null | unde
 export function createSingletonHook<R extends object>(hook: (() => R)) {
   let hookResult: R | undefined
   return () => hookResult ?? (hookResult = hook())
+}
+
+/**
+ * Аналог createSingletonHook. Создает хук, который возвращает закешированное значение.
+ * Единственное отличие - если не осталось ни одного активного использования, кешированное
+ * значение удаляется и все эффекты внутри хука автоматически очищаются.
+ * См. https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md
+ */
+export function createSharedComposable<
+  Args extends unknown[],
+  Return
+>(composable: ((...args: Args) => Return)) {
+  let subscribers = 0
+  let state: Return | undefined
+  let scope: EffectScope | undefined
+
+  const dispose = () => {
+    if (scope && --subscribers === 0) {
+      scope.stop()
+      state = undefined
+      scope = undefined
+    }
+  }
+
+  return (...args: Args) => {
+    subscribers++
+
+    if (!state) {
+      scope = effectScope(true)
+      // run() возвращает undefined только если скоуп отключен, что в текущем коде невозможно
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      state = scope.run(() => composable(...args))!
+    }
+
+    onScopeDispose(dispose)
+    return state
+  }
 }
 
 export function subscribeToElectronEvent(subscribe: (() => () => void)) {

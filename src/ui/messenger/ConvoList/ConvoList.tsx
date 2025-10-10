@@ -1,11 +1,11 @@
 import { defineComponent } from 'vue'
-import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
 import { useEnv, useGlobalModal, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
+import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
@@ -15,6 +15,8 @@ import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapp
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Popper } from 'ui/ui/Popper/Popper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
+import { Tabs } from 'ui/ui/Tabs/Tabs'
+import { TabsItem } from 'ui/ui/TabsItem/TabsItem'
 import { Icon24DoorArrowRightOutline, Icon24GearOutline, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoList.css'
 
@@ -26,78 +28,99 @@ type Props = {
 export const ConvoList = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const viewer = useViewer()
-  const { convoList, connection } = useConvosStore()
+  const { connection, lists } = useConvosStore()
   const { settingsModal } = useGlobalModal()
+  const computedConvoList = useConvoList()
 
-  return () => (
-    <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
-      <div class="ConvoList__header">
-        <Avatar class="ConvoList__headerAvatar" peer={viewer} size={32} />
+  return () => {
+    const { convoList, list, selectList } = computedConvoList.value
+
+    return (
+      <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
+        <div class="ConvoList__header">
+          <Avatar class="ConvoList__headerAvatar" peer={viewer} size={32} />
+
+          {!props.compact && (
+            <>
+              <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
+              <span class="ConvoList__headerStatus">{connection.status}</span>
+
+              <Popper
+                closeOnContentClick
+                content={
+                  <ActionMenu>
+                    <ActionMenuItem
+                      onClick={() => settingsModal.open({})}
+                      text="Настройки"
+                      icon={
+                        <Icon24GearOutline
+                          width="20"
+                          color="var(--vkui--color_icon_secondary)"
+                        />
+                      }
+                    />
+                    <ActionMenuItem
+                      onClick={logout}
+                      text="Выход"
+                      icon={
+                        <Icon24DoorArrowRightOutline
+                          width="20"
+                          color="var(--vkui--color_icon_negative)"
+                        />
+                      }
+                    />
+                  </ActionMenu>
+                }
+              >
+                <ButtonIcon
+                  class="ConvoList__burgerMenu"
+                  icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
+                  withHoverBackground
+                  shiftOnClick
+                />
+              </Popper>
+            </>
+          )}
+        </div>
 
         {!props.compact && (
-          <>
-            <span class="ConvoList__headerName">{Peer.name(viewer)}</span>
-            <span class="ConvoList__headerStatus">{connection.status}</span>
+          <Tabs class="ConvoList__folders">
+            {[lists.main, lists.unread, lists.archive].map((listItem) => (
+              <TabsItem
+                active={list.name === listItem.name}
+                onClick={() => selectList({ name: listItem.name })}
+              >
+                {listItem.name}
+              </TabsItem>
+            ))}
+          </Tabs>
+        )}
 
-            <Popper
-              closeOnContentClick
-              content={
-                <ActionMenu>
-                  <ActionMenuItem
-                    onClick={() => settingsModal.open({})}
-                    text="Настройки"
-                    icon={
-                      <Icon24GearOutline
-                        width="20"
-                        color="var(--vkui--color_icon_secondary)"
-                      />
-                    }
-                  />
-                  <ActionMenuItem
-                    onClick={logout}
-                    text="Выход"
-                    icon={
-                      <Icon24DoorArrowRightOutline
-                        width="20"
-                        color="var(--vkui--color_icon_negative)"
-                      />
-                    }
-                  />
-                </ActionMenu>
-              }
+        <div class="ConvoList__list">
+          {convoList.map((convo) => (
+            <ConvoListItem key={convo.id} convo={convo} compact={props.compact} />
+          ))}
+
+          {convoList.length === 0 && list.status === 'complete' && (
+            <div class="ConvoList__empty">
+              {lang.use('me_convo_list_empty')}
+            </div>
+          )}
+
+          {list.status === 'error' && <LoadError onRetry={() => loadMoreConvos(list)} />}
+
+          {(list.status === 'loading' || list.status === 'hasMore') && (
+            <IntersectionWrapper
+              onIntersect={() => loadMoreConvos(list)}
+              key={convoList.length}
             >
-              <ButtonIcon
-                class="ConvoList__burgerMenu"
-                icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
-                withHoverBackground
-                shiftOnClick
-              />
-            </Popper>
-          </>
-        )}
+              <Spinner size="regular" class="ConvoList__spinner" />
+            </IntersectionWrapper>
+          )}
+        </div>
       </div>
-
-      <div class="ConvoList__list">
-        {convoList.peerIds.map((id) => (
-          <ConvoListItem key={id} convo={Convo.safeGet(id)} compact={props.compact} />
-        ))}
-
-        {convoList.peerIds.length === 0 && !convoList.hasMore && (
-          <div class="ConvoList__empty">
-            {lang.use('me_convo_list_empty')}
-          </div>
-        )}
-
-        {convoList.loadError && <LoadError onRetry={loadMoreConvos} />}
-
-        {convoList.hasMore && !convoList.loadError && (
-          <IntersectionWrapper onIntersect={loadMoreConvos} key={convoList.peerIds.length}>
-            <Spinner size="regular" class="ConvoList__spinner" />
-          </IntersectionWrapper>
-        )}
-      </div>
-    </div>
-  )
+    )
+  }
 }, {
   props: ['compact']
 })

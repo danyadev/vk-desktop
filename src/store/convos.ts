@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
+import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 
@@ -16,12 +17,7 @@ export type ScrollAnchor =
 
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>
-  convoList: {
-    peerIds: Peer.Id[]
-    hasMore: boolean
-    loading: boolean
-    loadError: boolean
-  }
+  lists: Lists.Lists
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
@@ -35,12 +31,7 @@ type Convos = {
 export const useConvosStore = defineStore('convos', {
   state: (): Convos => ({
     convos: new Map(),
-    convoList: {
-      peerIds: [],
-      hasMore: true,
-      loading: true,
-      loadError: false
-    },
+    lists: Lists.defaults(),
     connection: {
       status: 'init'
     },

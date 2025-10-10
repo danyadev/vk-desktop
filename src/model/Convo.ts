@@ -43,6 +43,10 @@ export interface BaseConvo {
     enabled: boolean
     disabledUntil: number
   }
+  folderIds: number[]
+  isArchived: boolean
+  // TODO: отразить в интерфейсе
+  isMarkedUnread: boolean
 }
 
 interface UserConvo extends BaseConvo {
@@ -93,6 +97,11 @@ export type Style =
   | 'gifts'
   | 'sberkot'
 
+export const flags = {
+  markedUnread: 1 << 20,
+  archived: 1 << 23
+}
+
 export function get(id: Peer.UserId): UserConvo | undefined
 export function get(id: Peer.GroupId): GroupConvo | undefined
 export function get(id: Peer.ChatId): ChatConvo | undefined
@@ -137,7 +146,10 @@ function mock(id: Peer.Id): Convo {
     notifications: {
       enabled: true,
       disabledUntil: 0
-    }
+    },
+    folderIds: [],
+    isArchived: false,
+    isMarkedUnread: false
   }
 
   if (Peer.isUserPeerId(id)) {
@@ -261,10 +273,25 @@ export function findMessage(convo: Convo, cmid: Message.Cmid): Message.Confirmed
   }
 }
 
+export function isUnread(convo: Convo): boolean {
+  return convo.unreadCount > 0 || convo.isMarkedUnread
+}
+
 export function isCasper(convo: Convo): boolean {
   return convo.kind === 'ChatConvo' && convo.isCasper
 }
 
 export function isChannel(convo: Convo): boolean {
   return convo.kind === 'ChatConvo' && convo.isChannel
+}
+
+/**
+ * Проверяет, что беседа не показывается в списке бесед.
+ * Пустая беседа не гарантирует что беседы нет в списке. Например, каспер чаты при "исчезании"
+ * не пропадают со своей позиции в списке.
+ * Не-пустая беседа так же не гарантирует что беседа есть в списке. Например, приветственные
+ * сообщения сообществ не поднимают беседу в списке
+ */
+export function isHidden(convo: Convo): boolean {
+  return convo.minorSortId === 0 && convo.pendingMessages.length === 0
 }

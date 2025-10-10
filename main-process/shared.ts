@@ -22,10 +22,7 @@ export function getColorBackgroundContent(theme: ActualTheme, scheme: Appearance
 /**
  * Вызывает целевую функцию через delay мс после последнего вызова обертки
  */
-export function debounce<
-  Args extends unknown[],
-  T extends ((...args: Args) => void)
->(fn: T, delay: number) {
+export function debounce<Args extends unknown[]>(fn: ((...args: Args) => void), delay: number) {
   let timerId: NodeJS.Timeout | null = null
 
   return function (this: unknown, ...args: Args) {

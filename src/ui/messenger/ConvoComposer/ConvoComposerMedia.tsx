@@ -12,6 +12,7 @@ type Props = {
   onRemove: () => void
 }
 
+// TODO: обработать media.failed
 export const ConvoComposerMedia = defineComponent<Props>((props) => {
   const { photoViewerModal } = useGlobalModal()
   const objectUrl = URL.createObjectURL(props.media.file)

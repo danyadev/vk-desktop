@@ -49,6 +49,10 @@
   padding: 6px 8px;
 }
 
+.ConvoList__folders + .ConvoList__list {
+  padding-top: 0;
+}
+
 .ConvoList__empty {
   display: flex;
   justify-content: center;

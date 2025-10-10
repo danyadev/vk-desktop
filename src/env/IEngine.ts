@@ -19,6 +19,8 @@ export type Update =
   | Update10005
   | Update10006
   | Update10007
+  | Update10
+  | Update12
   | Update10018
   | Update63
   | Update64
@@ -138,6 +140,20 @@ type Update10007 = [
   peerId: number,
   lastCmid: number,
   outUnreadCount: number
+]
+
+// Удаление указанных флагов беседы
+type Update10 = [
+  type: 10,
+  peerId: number,
+  flags: number
+]
+
+// Добавление указанных флагов беседы
+type Update12 = [
+  type: 12,
+  peerId: number,
+  flags: number
 ]
 
 // Обновление сообщения

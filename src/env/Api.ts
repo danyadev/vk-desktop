@@ -15,12 +15,11 @@ const API_MIN_RETRY_DELAY = 500
 const API_RATE_LIMIT_WINDOW = 1000
 
 const METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN: Array<keyof Methods> = [
-  // 'messages.getConversations',
-  // 'messages.getHistory',
-  // 'messages.getLongPollHistory'
+  'messages.getConversations'
 ]
 
 export class Api implements IApi.Api {
+  // TODO: сделать Map<AccessToken, Semaphore>
   private semaphore = new Semaphore(3, API_RATE_LIMIT_WINDOW)
   private globalErrorHandler?: Promise<unknown>
 
