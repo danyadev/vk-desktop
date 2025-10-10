@@ -15,6 +15,8 @@ import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapp
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Popper } from 'ui/ui/Popper/Popper'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
+import { Tabs } from 'ui/ui/Tabs/Tabs'
+import { TabsItem } from 'ui/ui/TabsItem/TabsItem'
 import { Icon24DoorArrowRightOutline, Icon24GearOutline, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoList.css'
 
@@ -82,21 +84,16 @@ export const ConvoList = defineComponent<Props>((props) => {
         </div>
 
         {!props.compact && (
-          <div class="ConvoList__folders">
-            {[
-              lists.main,
-              lists.unread,
-              lists.archive
-              // ...[...lists.folders.values()].map((folder) => folder.all)
-            ].map((listItem) => (
-              <div
-                class={['ConvoList__folder', list.name === listItem.name && 'ConvoList__folder--active']}
+          <Tabs class="ConvoList__folders">
+            {[lists.main, lists.unread, lists.archive].map((listItem) => (
+              <TabsItem
+                active={list.name === listItem.name}
                 onClick={() => selectList({ name: listItem.name })}
               >
                 {listItem.name}
-              </div>
+              </TabsItem>
             ))}
-          </div>
+          </Tabs>
         )}
 
         <div class="ConvoList__list">

@@ -1,0 +1,57 @@
+.HorizontalScroll {
+  position: relative;
+}
+
+.HorizontalScroll__in {
+  overflow: overlay;
+  padding: 0 12px;
+}
+
+.HorizontalScroll__in::-webkit-scrollbar {
+  display: none;
+}
+
+.HorizontalScroll__leftButton,
+.HorizontalScroll__rightButton {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 1;
+  padding: 8px;
+  color: var(--vkui--color_icon_secondary);
+  background: var(--vkui--color_background_contrast_themed);
+  box-shadow: var(--vkui--elevation3);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--fastTransition);
+}
+
+.HorizontalScroll--small .HorizontalScroll__leftButton,
+.HorizontalScroll--small .HorizontalScroll__rightButton {
+  padding: 4px;
+}
+
+.HorizontalScroll:hover .HorizontalScroll__leftButton,
+.HorizontalScroll:hover .HorizontalScroll__rightButton {
+  opacity: 0.85;
+}
+
+.HorizontalScroll:hover .HorizontalScroll__leftButton:hover,
+.HorizontalScroll:hover .HorizontalScroll__rightButton:hover {
+  opacity: 1;
+}
+
+.HorizontalScroll__leftButton {
+  left: 6px;
+  rotate: 180deg;
+}
+
+.HorizontalScroll__rightButton {
+  right: 6px;
+}
+
+.HorizontalScroll__button--enter-from,
+.HorizontalScroll__button--leave-to {
+  /* Перезаписываем значение из :hover */
+  opacity: 0 !important;
+}

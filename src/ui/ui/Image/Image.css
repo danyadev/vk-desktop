@@ -9,14 +9,11 @@
 .Image::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 1;
+  border: 1px solid rgb(255 255 255 / 0.06);
   border-radius: inherit;
   pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
 }
 
 .Image__img,
@@ -48,11 +45,12 @@
 
 .Image__previewImg {
   object-fit: contain;
-  filter: blur(8px) contrast(1.1) opacity(0.8);
+  filter: blur(8px) opacity(0.9);
 }
 
 .Image__reloadButton {
   padding: 8px;
+  color: var(--vkui--color_text_contrast);
   background: var(--vkui--color_overlay_primary);
   border-radius: 50%;
 }

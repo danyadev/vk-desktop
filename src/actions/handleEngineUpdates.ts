@@ -150,7 +150,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           break
         }
 
-        // TODO: обновлять счетчик упоминани
+        // TODO: обновлять счетчик упоминаний
         if (eventId === 10006) {
           convo.unreadCount = unreadCount
           convo.inReadBy = cmid

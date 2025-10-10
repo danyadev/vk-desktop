@@ -43,28 +43,13 @@
   padding: 2px;
 }
 
-.ConvoList__folders {
-  display: flex;
-  gap: 4px;
-  margin: 8px 10px;
-}
-
-.ConvoList__folder {
-  margin: 4px;
-  padding: 4px 8px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.ConvoList__folder--active {
-  box-shadow: var(--vkui--elevation2);
-  background: var(--vkui--color_background_contrast_themed);
-}
-
 .ConvoList__list {
   overflow: overlay;
   height: 100%;
   padding: 6px 8px;
+}
+
+.ConvoList__folders + .ConvoList__list {
   padding-top: 0;
 }
 

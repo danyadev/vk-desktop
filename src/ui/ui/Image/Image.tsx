@@ -36,7 +36,12 @@ export const Image = defineComponent<ImageProps>((props, { attrs }) => {
     <div
       class={['Image', !isLoaded.value && 'Image--loading', props.class]}
       style={{ aspectRatio: props.width / props.height }}
-      onClick={() => (isFailed.value = false)}
+      onClick={() => {
+        if (isFailed.value) {
+          isFailed.value = false
+          isPreviewFailed.value = false
+        }
+      }}
     >
       {!isLoaded.value && <img class="Image__placeholderImg" src={placeholderUrl} />}
 

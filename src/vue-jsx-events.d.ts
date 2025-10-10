@@ -34,6 +34,7 @@ declare module 'vue' {
     onMouseleave?: (event: MouseEvent<HTMLElement>) => void
     onClick?: (event: MouseEvent<HTMLElement>) => void
     onScrollPassive?: (event: Event) => void
+    onWheelPassive?: (event: WheelEvent) => void
   }
 
   interface InputHTMLAttributes {
