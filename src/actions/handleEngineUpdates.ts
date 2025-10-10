@@ -150,10 +150,21 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           break
         }
 
-        // TODO: обновлять счетчик упоминаний
         if (eventId === 10006) {
           convo.unreadCount = unreadCount
           convo.inReadBy = cmid
+
+          if (convo.kind === 'ChatConvo') {
+            for (const mentionedCmid of convo.mentionedCmids) {
+              if (mentionedCmid <= cmid) {
+                convo.mentionedCmids.delete(mentionedCmid)
+              }
+            }
+          }
+
+          if (unreadCount === 0) {
+            Lists.refresh(lists, convo)
+          }
         } else {
           convo.outReadBy = cmid
         }
