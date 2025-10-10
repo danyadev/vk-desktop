@@ -4,7 +4,7 @@ import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { isNonEmptyArray, typeguard } from 'misc/utils'
+import { typeguard } from 'misc/utils'
 import { fromApiMessage, fromApiPinnedMessage } from './MessageConverter'
 
 export function fromApiConvo(
@@ -94,15 +94,11 @@ export function fromApiConvo(
         throw new Error('Chat without chat_settings: ' + peerId)
       }
 
-      const mentionedCmids = apiConvo.mention_cmids?.map(Message.resolveCmid)
-
       return {
         convo: {
           kind: 'ChatConvo',
           id: peerId,
-          mentionedCmids: mentionedCmids && isNonEmptyArray(mentionedCmids)
-            ? mentionedCmids
-            : undefined,
+          mentionedCmids: new Set(apiConvo.mention_cmids?.map(Message.resolveCmid)),
           status: apiConvo.chat_settings.state,
           isChannel: !!apiConvo.chat_settings.is_group_channel,
           isCasper: !!apiConvo.chat_settings.is_disappearing,
