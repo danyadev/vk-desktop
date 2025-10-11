@@ -3,6 +3,7 @@ import { MessagesConversation } from 'model/api-types/objects/MessagesConversati
 import { MessagesGetDiffContentInput } from 'model/api-types/objects/MessagesGetDiffContentInput'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import * as Convo from 'model/Convo'
+import * as History from 'model/History'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
@@ -61,11 +62,16 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         }
 
         if (isDeleteMessageUpdate) {
-          // Мы уже загрузили беседу из апи вместо сложного обновления ее полей вручную:
-          // - Если сообщение было непрочитанным, нужно уменьшить счетчик
-          // - Если сообщение было на границе непрочитанности, нужно сдвинуть границу
-          // - Если сообщение было последним в списке, нужно заменить его на предыдущее
-          // - Если сообщение было с упоминанием/реакцией/исчезанием, нужно обновить их список
+          if (!apiConvosMap.has(peerId) && convo.kind === 'ChatConvo') {
+            if (convo.mentionedCmids.has(message.cmid)) {
+              convo.mentionedCmids.delete(message.cmid)
+            }
+
+            if (convo.unreadCount > 0 && Message.isUnread(message, convo)) {
+              convo.unreadCount--
+            }
+          }
+
           Convo.removeMessage(convo, cmid)
           Convo.removePendingMessage(convo, message.randomId)
           Lists.refresh(lists, convo)
@@ -300,18 +306,23 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
           break
         }
 
+        const convo = convos.get(peerId)
+
         if (flags & (Message.flags.deleted | Message.flags.spam)) {
           // Удаление сообщения.
-          // Нужна беседа для обновления счетчиков и последнее сообщение (они вернутся вместе),
-          // если его удалят и предыдущего не окажется в кеше
-          if (eventId === 10002 && convos.has(peerId)) {
-            missingConvos.push(peerId)
+          // Запрашиваем беседу (с последним сообщением), если удаляется последнее сообщение
+          // и у нас не оказалось предыдущего сообщения для отображения
+          if (eventId === 10002 && convo) {
+            const lastCmid = Convo.lastMessage(convo)?.cmid
+
+            if (lastCmid === cmid && !History.previousItem(convo.history, lastCmid)) {
+              missingConvos.push(peerId)
+            }
           }
 
           // Восстановление сообщения.
           // Нужна беседа (счетчики тоже могут поменяться) и сообщение для восстановления
           if (eventId === 10003) {
-            const convo = convos.get(peerId)
             if (!convo || Convo.canInsertRestoredMessage(convo, cmid)) {
               missingConvos.push(peerId)
               addMissingCmid(peerId, cmid)
