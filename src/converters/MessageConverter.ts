@@ -1,3 +1,4 @@
+import * as IEngine from 'env/IEngine'
 import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
 import { MessagesPinnedMessage } from 'model/api-types/objects/MessagesPinnedMessage'
@@ -53,6 +54,122 @@ export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
       baseMessage.peerId,
       baseMessage.cmid
     ),
+    ...baseMessage
+  }
+}
+
+export function fromEngineMessage(
+  update:
+    | IEngine.Update10003Restore
+    | IEngine.Update10004
+    | IEngine.Update10005
+    | IEngine.Update10018
+): Message.Confirmed {
+  const viewer = useViewerStore()
+
+  let rawCmid
+  let flags
+  let rawPeerId
+  let timestamp
+  let text
+  let additional
+  let attachments
+  let randomId
+  let updateTimestamp
+
+  if (update[0] === 10004) {
+    [
+      ,
+      rawCmid,
+      flags,,
+      rawPeerId,
+      timestamp,
+      text,
+      additional,
+      attachments,
+      randomId,,
+      updateTimestamp
+    ] = update
+  } else {
+    [
+      ,
+      rawCmid,
+      flags,
+      rawPeerId,
+      timestamp,
+      text,
+      additional,
+      attachments,
+      randomId,,
+      updateTimestamp
+    ] = update
+  }
+
+  const peerId = Peer.resolveId(rawPeerId)
+  // Сообщения в избранном приходят без флага out
+  const isOut = (flags & Message.flags.out) > 0 || viewer.id === peerId
+  const authorId = additional.from
+    ? Peer.resolveOwnerId(Number(additional.from))
+    : isOut
+      ? viewer.id
+      : Peer.resolveOwnerId(peerId)
+
+  const baseMessage: Message.BaseMessage = {
+    peerId: Peer.resolveId(rawPeerId),
+    cmid: Message.resolveCmid(rawCmid),
+    authorId,
+    isOut,
+    sentAt: timestamp * 1000,
+    updatedAt: updateTimestamp ? updateTimestamp * 1000 : undefined,
+    randomId
+  }
+
+  if (additional.source_act) {
+    return {
+      kind: 'Service',
+      action: fromApiMessageAction({
+        type: additional.source_act,
+        text: additional.source_text,
+        old_text: additional.source_old_text,
+        member_id: additional.source_mid
+          ? Number(additional.source_mid)
+          : undefined,
+        conversation_message_id: additional.source_chat_local_id
+          ? Number(additional.source_chat_local_id)
+          : undefined,
+        message: additional.source_message,
+        style: additional.source_style
+      }),
+      ...baseMessage
+    }
+  }
+
+  if (additional.is_expired === '1') {
+    return {
+      kind: 'Expired',
+      ...baseMessage
+    }
+  }
+
+  const attaches: Attach.Attaches = {}
+
+  if (attachments.attach1_type) {
+    attaches.unknown = [{
+      kind: 'Unknown',
+      type: attachments.attach1_type,
+      raw: attachments
+    }]
+  }
+
+  return {
+    kind: 'Normal',
+    // TODO: br and unescape
+    text,
+    // TODO: обработать приходящее поле attachments
+    attaches,
+    // TODO: находить сообщения в истории
+    replyMessage: undefined,
+    forwardedMessages: undefined,
     ...baseMessage
   }
 }
