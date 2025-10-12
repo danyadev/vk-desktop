@@ -1,5 +1,6 @@
 import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
 import { MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
+import { MessagesMessageAttachmentType } from 'model/api-types/objects/MessagesMessageAttachment'
 
 export const VERSION = 21
 
@@ -48,7 +49,7 @@ type Update10003 = [
 ] | Update10003Restore
 
 // Сброс флагов удаления сообщения
-type Update10003Restore = [
+export type Update10003Restore = [
   type: 10003,
   cmid: Update10004[1],
   flags: Update10004[2],
@@ -63,7 +64,7 @@ type Update10003Restore = [
 ]
 
 // Новое сообщение
-type Update10004 = [
+export type Update10004 = [
   type: 10004,
   cmid: number,
   flags: number,
@@ -74,9 +75,13 @@ type Update10004 = [
   additional: {
     from?: number
     marked_users?: Array<
+      // Список упомянутых пиров, включая ответ на сообщение
       | [1, number[]]
+      // @online и список пиров, которые были онлайн в момент меншена
       | [1, 'online', number[]]
+      // @all
       | [1, 'all']
+      // Исчезающее сообщение в обычном чате
       | [2, 'all']
     >
     source_act?: MessagesMessageAction['type']
@@ -89,21 +94,23 @@ type Update10004 = [
     pinned_at?: string
     expire_ttl?: string
     ttl?: string
-    is_expired?: string
-    is_silent?: string
+    is_expired?: '1'
+    is_silent?: '1'
+    is_translated?: '1'
     keyboard?: MessagesKeyboard
-    has_template?: string
+    has_template?: '1'
     payload?: string
   },
   attachments: {
     attachments?: string
     attach1_kind?: string
-    attach1_type?: string
+    attach1_type?: MessagesMessageAttachmentType
     attach1?: string
-    attach2_type?: string
+    attach2_type?: MessagesMessageAttachmentType
     attach2?: string
     reply?: string
-    fwd?: string
+    // Обозначает наличие пересланных или ответа на сообщение
+    fwd?: '0_0'
     geo?: string
   },
   randomId: number,
@@ -112,7 +119,7 @@ type Update10004 = [
 ]
 
 // Редактирование сообщения
-type Update10005 = [
+export type Update10005 = [
   type: 10005,
   cmid: Update10004[1],
   flags: Update10004[2],
@@ -157,7 +164,7 @@ type Update12 = [
 ]
 
 // Обновление сообщения
-type Update10018 = [
+export type Update10018 = [
   type: 10018,
   cmid: Update10004[1],
   flags: Update10004[2],

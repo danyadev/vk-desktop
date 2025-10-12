@@ -108,6 +108,7 @@ export type ServiceAction =
   | { type: 'unknown' }
 
 export const flags = {
+  out: 1 << 1,
   spam: 1 << 6,
   deleted: 1 << 7,
   voiceListened: 1 << 12

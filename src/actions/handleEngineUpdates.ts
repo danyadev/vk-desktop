@@ -9,8 +9,9 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
+import { useViewerStore } from 'store/viewer'
 import { insertConvos, insertPeers } from 'actions'
-import { fromApiMessage } from 'converters/MessageConverter'
+import { fromApiMessage, fromEngineMessage } from 'converters/MessageConverter'
 import { useEnv } from 'hooks'
 import { getMapValueWithDefaults } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
@@ -18,6 +19,7 @@ import { PEER_FIELDS } from 'misc/constants'
 const TYPING_DURATION = 5000
 
 export async function handleEngineUpdates(updates: IEngine.Update[]) {
+  const viewer = useViewerStore()
   const convosStore = useConvosStore()
   const { convos, lists, typings } = convosStore
   const {
@@ -62,13 +64,11 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         }
 
         if (isDeleteMessageUpdate) {
-          if (!apiConvosMap.has(peerId) && convo.kind === 'ChatConvo') {
-            if (convo.mentionedCmids.has(message.cmid)) {
-              convo.mentionedCmids.delete(message.cmid)
-            }
+          if (!apiConvosMap.has(peerId) && !message.isOut && Message.isUnread(message, convo)) {
+            convo.unreadCount--
 
-            if (convo.unreadCount > 0 && Message.isUnread(message, convo)) {
-              convo.unreadCount--
+            if (convo.kind === 'ChatConvo') {
+              convo.mentionedCmids.delete(message.cmid)
             }
           }
 
@@ -92,20 +92,36 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         const peerId = rawPeerId && Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
-        // TODO: проверить кейс с восстановлением непрочитанного сообщения с упоминанием:
-        // в таком случае мы должны обновить счетчик непрочитанных
         const convo = peerId && convos.get(peerId)
         if (!convo) {
           break
         }
 
         const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
-        const message = apiMessage && fromApiMessage(apiMessage)
+        const eventWithMessage = update.length === 11 && update
+        const message =
+          (apiMessage && fromApiMessage(apiMessage)) ??
+          (eventWithMessage && fromEngineMessage(update))
+
         if (!message) {
           break
         }
 
         if (flags & (Message.flags.deleted | Message.flags.spam)) {
+          if (
+            !apiConvosMap.has(peerId) &&
+            eventWithMessage &&
+            !message.isOut &&
+            Message.isUnread(message, convo)
+          ) {
+            convo.unreadCount++
+
+            const hasMentioned = hasMentionedInEngineMessage(eventWithMessage[6], viewer.id)
+            if (convo.kind === 'ChatConvo' && hasMentioned) {
+              convo.mentionedCmids.add(message.cmid)
+            }
+          }
+
           Convo.restoreMessage(convo, message)
           Lists.refresh(lists, convo)
         }
@@ -262,6 +278,41 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
   }
 }
 
+function isEngineMessageInsufficient(attachments: IEngine.Update10004[8]) {
+  if (attachments.attach1_type) {
+    return true
+  }
+
+  if (attachments.fwd) {
+    return true
+  }
+
+  return false
+}
+
+function hasMentionedInEngineMessage(additional: IEngine.Update10004[7], viewerId: Peer.OwnerId) {
+  for (const mark of additional.marked_users ?? []) {
+    // 1 означает упоминание
+    if (mark[0] !== 1) {
+      continue
+    }
+
+    if (mark[1] === 'all') {
+      return true
+    }
+
+    if (mark[1] === 'online' && mark[2].includes(viewerId)) {
+      return true
+    }
+
+    if (Array.isArray(mark[1]) && mark[1].includes(viewerId)) {
+      return true
+    }
+  }
+
+  return false
+}
+
 type MissingDataMeta = {
   missingCmidsByConvo: Map<Peer.Id, Message.Cmid[]>
   missingConvos: Peer.Id[]
@@ -309,22 +360,32 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
         const convo = convos.get(peerId)
 
         if (flags & (Message.flags.deleted | Message.flags.spam)) {
-          // Удаление сообщения.
-          // Запрашиваем беседу (с последним сообщением), если удаляется последнее сообщение
-          // и у нас не оказалось предыдущего сообщения для отображения
+          // Удаление сообщения
           if (eventId === 10002 && convo) {
             const lastCmid = Convo.lastMessage(convo)?.cmid
 
+            // Запрашиваем беседу (с последним сообщением), если удаляется последнее сообщение
+            // и у нас не оказалось предыдущего сообщения для отображения
             if (lastCmid === cmid && !History.previousItem(convo.history, lastCmid)) {
               missingConvos.push(peerId)
             }
           }
 
-          // Восстановление сообщения.
-          // Нужна беседа (счетчики тоже могут поменяться) и сообщение для восстановления
+          // Восстановление сообщения
           if (eventId === 10003) {
-            if (!convo || Convo.canInsertRestoredMessage(convo, cmid)) {
+            // Если нет беседы, то мы не знаем, восстановилось последнее сообщение в чате
+            // и оно поднимется в списке чатов (и нам надо его отобразить), или какое-то другое
+            if (!convo) {
               missingConvos.push(peerId)
+              break
+            }
+
+            if (!Convo.canInsertRestoredMessage(convo, cmid)) {
+              break
+            }
+
+            const eventWithMessage = update.length === 11 && update
+            if (!eventWithMessage || isEngineMessageInsufficient(eventWithMessage[7])) {
               addMissingCmid(peerId, cmid)
             }
           }
