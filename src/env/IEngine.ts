@@ -108,6 +108,7 @@ export type Update10004 = [
     attach1?: string
     attach2_type?: MessagesMessageAttachmentType
     attach2?: string
+    // JSON-строка с объектом ReplyMessageId
     reply?: string
     // Обозначает наличие пересланных или ответа на сообщение
     fwd?: '0_0'
@@ -117,6 +118,10 @@ export type Update10004 = [
   messageId: number,
   updateTimestamp: 0
 ]
+
+export type ReplyMessageId = {
+  conversation_message_id: number
+}
 
 // Редактирование сообщения
 export type Update10005 = [

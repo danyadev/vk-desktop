@@ -55,6 +55,14 @@ export function random(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
+export function unescape(text: string) {
+  return text
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+}
+
 export function exhaustivenessCheck(_never: never): never {
   throw new Error('Exhaustiveness failure! This should never happen.')
 }

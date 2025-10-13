@@ -1,14 +1,16 @@
 import * as IEngine from 'env/IEngine'
 import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
+import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'
 import { MessagesPinnedMessage } from 'model/api-types/objects/MessagesPinnedMessage'
 import * as Attach from 'model/Attach'
+import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useViewerStore } from 'store/viewer'
 import { fromApiAttaches } from 'converters/AttachConverter'
 import { fromApiConvoStyle } from 'converters/ConvoConverter'
-import { isNonEmptyArray, NonEmptyArray, typeguard } from 'misc/utils'
+import { isNonEmptyArray, NonEmptyArray, typeguard, unescape } from 'misc/utils'
 
 export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
   const baseMessage: Message.BaseMessage = {
@@ -63,7 +65,8 @@ export function fromEngineMessage(
     | IEngine.Update10003Restore
     | IEngine.Update10004
     | IEngine.Update10005
-    | IEngine.Update10018
+    | IEngine.Update10018,
+  convo?: Convo.Convo
 ): Message.Confirmed {
   const viewer = useViewerStore()
 
@@ -151,9 +154,26 @@ export function fromEngineMessage(
     }
   }
 
-  const attaches: Attach.Attaches = {}
+  let attaches: Attach.Attaches = {}
 
-  if (attachments.attach1_type) {
+  if (
+    attachments.attachments &&
+    attachments.attach1_type &&
+    !attachments.attach2_type
+  ) {
+    try {
+      const apiAttaches =
+        JSON.parse(attachments.attachments) as MessagesMessageAttachment[] | undefined
+
+      if (Array.isArray(apiAttaches)) {
+        attaches = fromApiAttaches(apiAttaches, (flags & Message.flags.voiceListened) > 0)
+      }
+    } catch {
+      // Нас подставили
+    }
+  }
+
+  if (!Attach.kindsCount(attaches) && attachments.attach1_type) {
     attaches.unknown = [{
       kind: 'Unknown',
       type: attachments.attach1_type,
@@ -161,14 +181,21 @@ export function fromEngineMessage(
     }]
   }
 
+  let replyMessage: Message.Foreign | undefined
+  if (attachments.reply && convo) {
+    const replyId = JSON.parse(attachments.reply) as IEngine.ReplyMessageId
+    const replyCmid = Message.resolveCmid(replyId.conversation_message_id)
+    const message = Convo.findMessage(convo, replyCmid)
+    if (message?.kind === 'Normal') {
+      replyMessage = Message.toForeign(message)
+    }
+  }
+
   return {
     kind: 'Normal',
-    // TODO: br and unescape
-    text,
-    // TODO: обработать приходящее поле attachments
+    text: unescape(text.replace(/<br\s*\/?>/gi, '\n')),
     attaches,
-    // TODO: находить сообщения в истории
-    replyMessage: undefined,
+    replyMessage,
     forwardedMessages: undefined,
     ...baseMessage
   }
