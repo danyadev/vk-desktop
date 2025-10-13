@@ -3,13 +3,15 @@ import { MessagesConversation } from 'model/api-types/objects/MessagesConversati
 import { MessagesGetDiffContentInput } from 'model/api-types/objects/MessagesGetDiffContentInput'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import * as Convo from 'model/Convo'
+import * as History from 'model/History'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
+import { useViewerStore } from 'store/viewer'
 import { insertConvos, insertPeers } from 'actions'
-import { fromApiMessage } from 'converters/MessageConverter'
+import { fromApiMessage, fromEngineMessage } from 'converters/MessageConverter'
 import { useEnv } from 'hooks'
 import { getMapValueWithDefaults } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
@@ -17,6 +19,7 @@ import { PEER_FIELDS } from 'misc/constants'
 const TYPING_DURATION = 5000
 
 export async function handleEngineUpdates(updates: IEngine.Update[]) {
+  const viewer = useViewerStore()
   const convosStore = useConvosStore()
   const { convos, lists, typings } = convosStore
   const {
@@ -61,13 +64,18 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         }
 
         if (isDeleteMessageUpdate) {
-          // Мы уже загрузили беседу из апи вместо сложного обновления ее полей вручную:
-          // - Если сообщение было непрочитанным, нужно уменьшить счетчик
-          // - Если сообщение было на границе непрочитанности, нужно сдвинуть границу
-          // - Если сообщение было последним в списке, нужно заменить его на предыдущее
-          // - Если сообщение было с упоминанием/реакцией/исчезанием, нужно обновить их список
+          if (!apiConvosMap.has(peerId) && !message.isOut && Message.isUnread(message, convo)) {
+            convo.unreadCount--
+
+            if (convo.kind === 'ChatConvo') {
+              convo.mentionedCmids.delete(message.cmid)
+            }
+          }
+
           Convo.removeMessage(convo, cmid)
-          Convo.removePendingMessage(convo, message.randomId)
+          if (message.isOut) {
+            Convo.removePendingMessage(convo, message.randomId)
+          }
           Lists.refresh(lists, convo)
           break
         }
@@ -86,20 +94,34 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         const peerId = rawPeerId && Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
-        // TODO: проверить кейс с восстановлением непрочитанного сообщения с упоминанием:
-        // в таком случае мы должны обновить счетчик непрочитанных
         const convo = peerId && convos.get(peerId)
         if (!convo) {
           break
         }
 
         const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
-        const message = apiMessage && fromApiMessage(apiMessage)
+        const eventWithMessage = update.length === 11 && update
+        const message =
+          (apiMessage && fromApiMessage(apiMessage)) ??
+          (eventWithMessage && fromEngineMessage(update))
+
         if (!message) {
           break
         }
 
         if (flags & (Message.flags.deleted | Message.flags.spam)) {
+          if (!apiConvosMap.has(peerId) && !message.isOut && Message.isUnread(message, convo)) {
+            convo.unreadCount++
+
+            if (
+              convo.kind === 'ChatConvo' &&
+              eventWithMessage &&
+              hasMentionedInEngineMessage(eventWithMessage[6], viewer.id)
+            ) {
+              convo.mentionedCmids.add(message.cmid)
+            }
+          }
+
           Convo.restoreMessage(convo, message)
           Lists.refresh(lists, convo)
         }
@@ -111,6 +133,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
       case 10018: {
         const [eventId, rawCmid] = update
         const rawPeerId = eventId === 10004 ? update[4] : update[3]
+        const additional = eventId === 10004 ? update[7] : update[6]
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
@@ -120,9 +143,20 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         }
 
         const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
-        const message = apiMessage && fromApiMessage(apiMessage)
-        if (!message) {
-          break
+        const message = apiMessage ? fromApiMessage(apiMessage) : fromEngineMessage(update)
+
+        if (!apiConvosMap.has(peerId) && !message.isOut) {
+          if (eventId === 10004) {
+            convo.unreadCount++
+          }
+
+          if (convo.kind === 'ChatConvo' && Message.isUnread(message, convo)) {
+            if (hasMentionedInEngineMessage(additional, viewer.id)) {
+              convo.mentionedCmids.add(message.cmid)
+            } else {
+              convo.mentionedCmids.delete(message.cmid)
+            }
+          }
         }
 
         Convo.insertMessages(convo, [message], {
@@ -130,7 +164,9 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           down: eventId !== 10004,
           aroundId: cmid
         })
-        Convo.removePendingMessage(convo, message.randomId)
+        if (message.isOut) {
+          Convo.removePendingMessage(convo, message.randomId)
+        }
         Lists.refresh(lists, convo)
 
         if (eventId === 10004 || eventId === 10005) {
@@ -150,10 +186,21 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           break
         }
 
-        // TODO: обновлять счетчик упоминаний
         if (eventId === 10006) {
           convo.unreadCount = unreadCount
           convo.inReadBy = cmid
+
+          if (convo.kind === 'ChatConvo') {
+            for (const mentionedCmid of convo.mentionedCmids) {
+              if (mentionedCmid <= cmid) {
+                convo.mentionedCmids.delete(mentionedCmid)
+              }
+            }
+          }
+
+          if (unreadCount === 0) {
+            Lists.refresh(lists, convo)
+          }
         } else {
           convo.outReadBy = cmid
         }
@@ -245,35 +292,70 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
   }
 }
 
+function isEngineMessageInsufficient(attachments: IEngine.Update10004[8]) {
+  if (attachments.attach1_type) {
+    return true
+  }
+
+  if (attachments.fwd) {
+    return true
+  }
+
+  return false
+}
+
+function hasMentionedInEngineMessage(additional: IEngine.Update10004[7], viewerId: Peer.OwnerId) {
+  for (const mark of additional.marked_users ?? []) {
+    // 1 означает упоминание
+    if (mark[0] !== 1) {
+      continue
+    }
+
+    if (mark[1] === 'all') {
+      return true
+    }
+
+    if (mark[1] === 'online' && mark[2].includes(viewerId)) {
+      return true
+    }
+
+    if (Array.isArray(mark[1]) && mark[1].includes(viewerId)) {
+      return true
+    }
+  }
+
+  return false
+}
+
 type MissingDataMeta = {
-  missingCmidsByConvo: Map<Peer.Id, Message.Cmid[]>
-  missingConvos: Peer.Id[]
-  missingUsers: number[]
-  missingGroups: number[]
+  missingCmidsByConvo: Map<Peer.Id, Set<Message.Cmid>>
+  missingConvos: Set<Peer.Id>
+  missingUsers: Set<number>
+  missingGroups: Set<number>
 }
 
 function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
   const { peers } = usePeersStore()
   const { convos, lists } = useConvosStore()
-  const missingCmidsByConvo = new Map<Peer.Id, Message.Cmid[]>()
-  const missingConvos: Peer.Id[] = []
-  const missingUsers: number[] = []
-  const missingGroups: number[] = []
+  const missingCmidsByConvo = new Map<Peer.Id, Set<Message.Cmid>>()
+  const missingConvos = new Set<Peer.Id>()
+  const missingUsers = new Set<number>()
+  const missingGroups = new Set<number>()
 
   const addMissingCmid = (peerId: Peer.Id, cmid: Message.Cmid) => {
     const cmids = missingCmidsByConvo.get(peerId)
     if (cmids) {
-      cmids.push(cmid)
+      cmids.add(cmid)
     } else {
-      missingCmidsByConvo.set(peerId, [cmid])
+      missingCmidsByConvo.set(peerId, new Set([cmid]))
     }
   }
 
   const addMissingPeer = (peerId: Peer.Id) => {
     if (Peer.isUserPeerId(peerId)) {
-      missingUsers.push(Peer.toRealId(peerId))
+      missingUsers.add(Peer.toRealId(peerId))
     } else if (Peer.isGroupPeerId(peerId)) {
-      missingGroups.push(Peer.toRealId(peerId))
+      missingGroups.add(Peer.toRealId(peerId))
     }
   }
 
@@ -289,20 +371,35 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
           break
         }
 
+        const convo = convos.get(peerId)
+
         if (flags & (Message.flags.deleted | Message.flags.spam)) {
-          // Удаление сообщения.
-          // Нужна беседа для обновления счетчиков и последнее сообщение (они вернутся вместе),
-          // если его удалят и предыдущего не окажется в кеше
-          if (eventId === 10002 && convos.has(peerId)) {
-            missingConvos.push(peerId)
+          // Удаление сообщения
+          if (eventId === 10002 && convo) {
+            const lastCmid = Convo.lastMessage(convo)?.cmid
+
+            // Запрашиваем беседу (с последним сообщением), если удаляется последнее сообщение
+            // и у нас не оказалось предыдущего сообщения для отображения
+            if (lastCmid === cmid && !History.previousItem(convo.history, lastCmid)) {
+              missingConvos.add(peerId)
+            }
           }
 
-          // Восстановление сообщения.
-          // Нужна беседа (счетчики тоже могут поменяться) и сообщение для восстановления
+          // Восстановление сообщения
           if (eventId === 10003) {
-            const convo = convos.get(peerId)
-            if (!convo || Convo.canInsertRestoredMessage(convo, cmid)) {
-              missingConvos.push(peerId)
+            // Если нет беседы, то мы не знаем, восстановилось последнее сообщение в чате
+            // и оно поднимется в списке чатов (и нам надо его отобразить), или какое-то другое
+            if (!convo) {
+              missingConvos.add(peerId)
+              break
+            }
+
+            if (!Convo.canInsertRestoredMessage(convo, cmid)) {
+              break
+            }
+
+            const eventWithMessage = update.length === 11 && update
+            if (!eventWithMessage || isEngineMessageInsufficient(eventWithMessage[7])) {
               addMissingCmid(peerId, cmid)
             }
           }
@@ -315,13 +412,18 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
       case 10018: {
         const [eventId, rawCmid] = update
         const rawPeerId = eventId === 10004 ? update[4] : update[3]
+        const attachments = eventId === 10004 ? update[8] : update[7]
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
-        // Беседа нужна для обновления счетчиков. Даже при редактировании сообщения может
-        // поменяться количество упоминаний в чате
-        if (eventId === 10004 || convos.has(peerId)) {
-          missingConvos.push(peerId)
+        const convo = convos.get(peerId)
+        const localMessage = eventId !== 10004 && convo && Convo.findMessage(convo, cmid)
+
+        if (eventId === 10004 && !convo) {
+          missingConvos.add(peerId)
+        }
+
+        if ((eventId === 10004 || localMessage) && isEngineMessageInsufficient(attachments)) {
           addMissingCmid(peerId, cmid)
         }
         break
@@ -343,7 +445,7 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
             (flags & Convo.flags.archived) &&
             (action === 'unset' || Lists.isInitialized(lists.archive))
           ) {
-            missingConvos.push(peerId)
+            missingConvos.add(peerId)
             break
           }
 
@@ -351,7 +453,7 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
             (flags & Convo.flags.markedUnread) &&
             (action === 'unset' || Lists.isInitialized(lists.unread))
           ) {
-            missingConvos.push(peerId)
+            missingConvos.add(peerId)
           }
         }
         break
@@ -411,26 +513,26 @@ async function loadMissingData({
   ] = await api.fetchParallel([
     missingCmidsByConvo.size && api.buildMethod('messages.getDiffContent', {
       conversation_messages: JSON.stringify(
-        [...missingCmidsByConvo.entries()].map(([peerId, cmids]) => ({
+        [...missingCmidsByConvo].map(([peerId, cmids]) => ({
           peer_id: peerId,
-          updated_cmids: cmids
+          updated_cmids: [...cmids]
         })) satisfies MessagesGetDiffContentInput
       ),
       extended: 1,
       fields: PEER_FIELDS
     }),
-    missingConvos.length && api.buildMethod('messages.getConversationsById', {
-      peer_ids: missingConvos.join(','),
+    missingConvos.size && api.buildMethod('messages.getConversationsById', {
+      peer_ids: [...missingConvos].join(','),
       with_last_messages: 1,
       extended: 1,
       fields: PEER_FIELDS
     }),
-    missingUsers.length && api.buildMethod('users.get', {
-      user_ids: missingUsers.join(','),
+    missingUsers.size && api.buildMethod('users.get', {
+      user_ids: [...missingUsers].join(','),
       fields: PEER_FIELDS
     }),
-    missingGroups.length && api.buildMethod('groups.getById', {
-      group_ids: missingGroups.join(','),
+    missingGroups.size && api.buildMethod('groups.getById', {
+      group_ids: [...missingGroups].join(','),
       fields: PEER_FIELDS
     })
   ], { retries: Infinity })

@@ -39,8 +39,8 @@ export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'rand
   kind: 'Foreign'
   peerId: Peer.Id | undefined
   cmid: Cmid | undefined
-  rootCmid: Cmid
   rootPeerId: Peer.Id
+  rootCmid: Cmid
   isUnavailable: boolean
 }
 
@@ -108,6 +108,7 @@ export type ServiceAction =
   | { type: 'unknown' }
 
 export const flags = {
+  out: 1 << 1,
   spam: 1 << 6,
   deleted: 1 << 7,
   voiceListened: 1 << 12
@@ -129,4 +130,14 @@ export function isUnread(message: Message, convo: Convo.Convo): boolean {
   return message.isOut
     ? message.cmid > convo.outReadBy
     : message.cmid > convo.inReadBy
+}
+
+export function toForeign(message: Normal): Foreign {
+  return {
+    ...message,
+    kind: 'Foreign',
+    rootPeerId: message.peerId,
+    rootCmid: message.cmid,
+    isUnavailable: false
+  }
 }

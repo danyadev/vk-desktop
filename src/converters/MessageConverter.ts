@@ -1,13 +1,16 @@
+import * as IEngine from 'env/IEngine'
 import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
+import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'
 import { MessagesPinnedMessage } from 'model/api-types/objects/MessagesPinnedMessage'
 import * as Attach from 'model/Attach'
+import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useViewerStore } from 'store/viewer'
 import { fromApiAttaches } from 'converters/AttachConverter'
 import { fromApiConvoStyle } from 'converters/ConvoConverter'
-import { isNonEmptyArray, NonEmptyArray, typeguard } from 'misc/utils'
+import { isNonEmptyArray, NonEmptyArray, typeguard, unescape } from 'misc/utils'
 
 export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
   const baseMessage: Message.BaseMessage = {
@@ -53,6 +56,147 @@ export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
       baseMessage.peerId,
       baseMessage.cmid
     ),
+    ...baseMessage
+  }
+}
+
+export function fromEngineMessage(
+  update:
+    | IEngine.Update10003Restore
+    | IEngine.Update10004
+    | IEngine.Update10005
+    | IEngine.Update10018,
+  convo?: Convo.Convo
+): Message.Confirmed {
+  const viewer = useViewerStore()
+
+  let rawCmid
+  let flags
+  let rawPeerId
+  let timestamp
+  let text
+  let additional
+  let attachments
+  let randomId
+  let updateTimestamp
+
+  if (update[0] === 10004) {
+    [
+      ,
+      rawCmid,
+      flags,,
+      rawPeerId,
+      timestamp,
+      text,
+      additional,
+      attachments,
+      randomId,,
+      updateTimestamp
+    ] = update
+  } else {
+    [
+      ,
+      rawCmid,
+      flags,
+      rawPeerId,
+      timestamp,
+      text,
+      additional,
+      attachments,
+      randomId,,
+      updateTimestamp
+    ] = update
+  }
+
+  const peerId = Peer.resolveId(rawPeerId)
+  // Сообщения в избранном приходят без флага out
+  const isOut = (flags & Message.flags.out) > 0 || viewer.id === peerId
+  const authorId = additional.from
+    ? Peer.resolveOwnerId(Number(additional.from))
+    : isOut
+      ? viewer.id
+      : Peer.resolveOwnerId(peerId)
+
+  const baseMessage: Message.BaseMessage = {
+    peerId: Peer.resolveId(rawPeerId),
+    cmid: Message.resolveCmid(rawCmid),
+    authorId,
+    isOut,
+    sentAt: timestamp * 1000,
+    updatedAt: updateTimestamp ? updateTimestamp * 1000 : undefined,
+    randomId
+  }
+
+  if (additional.source_act) {
+    return {
+      kind: 'Service',
+      action: fromApiMessageAction({
+        type: additional.source_act,
+        text: additional.source_text,
+        old_text: additional.source_old_text,
+        member_id: additional.source_mid
+          ? Number(additional.source_mid)
+          : undefined,
+        conversation_message_id: additional.source_chat_local_id
+          ? Number(additional.source_chat_local_id)
+          : undefined,
+        message: additional.source_message,
+        style: additional.source_style
+      }),
+      ...baseMessage
+    }
+  }
+
+  if (additional.is_expired === '1') {
+    return {
+      kind: 'Expired',
+      ...baseMessage
+    }
+  }
+
+  let attaches: Attach.Attaches = {}
+
+  if (
+    attachments.attachments &&
+    attachments.attach1_type &&
+    !attachments.attach2_type
+  ) {
+    try {
+      const apiAttaches =
+        JSON.parse(attachments.attachments) as MessagesMessageAttachment[] | undefined
+
+      if (Array.isArray(apiAttaches)) {
+        attaches = fromApiAttaches(apiAttaches, (flags & Message.flags.voiceListened) > 0)
+      }
+    } catch {
+      // Нас подставили
+    }
+  }
+
+  if (!Attach.kindsCount(attaches) && attachments.attach1_type) {
+    attaches.unknown = [{
+      kind: 'Unknown',
+      type: attachments.attach1_type,
+      raw: attachments
+    }]
+  }
+
+  let replyMessage: Message.Foreign | undefined
+  if (attachments.reply && convo) {
+    const replyId = JSON.parse(attachments.reply) as IEngine.ReplyMessageId
+    const replyCmid = Message.resolveCmid(replyId.conversation_message_id)
+    const message = Convo.findMessage(convo, replyCmid)
+    if (message?.kind === 'Normal') {
+      replyMessage = Message.toForeign(message)
+    }
+  }
+
+  return {
+    kind: 'Normal',
+    text: unescape(text.replace(/<br\s*\/?>/gi, '\n')),
+    attaches,
+    replyMessage,
+    forwardedMessages: undefined,
     ...baseMessage
   }
 }
