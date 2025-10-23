@@ -40,6 +40,7 @@ export type MessagesMessage = {
   is_expired?: boolean
   was_listened?: boolean
   was_played?: boolean
+  /** Note: значение выставляется при закреплении сообщения, но не снимается при откреплении */
   pinned_at?: number
   is_silent?: boolean
   from_app_id?: number

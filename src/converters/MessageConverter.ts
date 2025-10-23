@@ -56,17 +56,14 @@ export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
       baseMessage.peerId,
       baseMessage.cmid
     ),
+    hasMentioned: message.is_mentioned_user,
     ...baseMessage
   }
 }
 
 export function fromEngineMessage(
-  update:
-    | IEngine.Update10003Restore
-    | IEngine.Update10004
-    | IEngine.Update10005
-    | IEngine.Update10018,
-  convo?: Convo.Convo
+  update: IEngine.MessageUpdate,
+  convo: Convo.Convo | undefined
 ): Message.Confirmed {
   const viewer = useViewerStore()
 
@@ -161,15 +158,11 @@ export function fromEngineMessage(
     attachments.attach1_type &&
     !attachments.attach2_type
   ) {
-    try {
-      const apiAttaches =
-        JSON.parse(attachments.attachments) as MessagesMessageAttachment[] | undefined
+    const apiAttaches =
+      JSON.parse(attachments.attachments) as MessagesMessageAttachment[] | undefined
 
-      if (Array.isArray(apiAttaches)) {
-        attaches = fromApiAttaches(apiAttaches, (flags & Message.flags.voiceListened) > 0)
-      }
-    } catch {
-      // Нас подставили
+    if (Array.isArray(apiAttaches)) {
+      attaches = fromApiAttaches(apiAttaches, (flags & Message.flags.voiceListened) > 0)
     }
   }
 
@@ -197,8 +190,34 @@ export function fromEngineMessage(
     attaches,
     replyMessage,
     forwardedMessages: undefined,
+    hasMentioned: hasMentionedInEngineMessage(update, viewer.id),
     ...baseMessage
   }
+}
+
+function hasMentionedInEngineMessage(update: IEngine.MessageUpdate, viewerId: Peer.OwnerId) {
+  const additional = update[0] === 10004 ? update[7] : update[6]
+
+  for (const mark of additional.marked_users ?? []) {
+    // тип маркировки: 1 = упоминание, 2 = исчезающее сообщение
+    if (mark[0] !== 1) {
+      continue
+    }
+
+    if (mark[1] === 'all') {
+      return true
+    }
+
+    if (mark[1] === 'online' && mark[2].includes(viewerId)) {
+      return true
+    }
+
+    if (Array.isArray(mark[1]) && mark[1].includes(viewerId)) {
+      return true
+    }
+  }
+
+  return false
 }
 
 function fromApiMessageAction(
