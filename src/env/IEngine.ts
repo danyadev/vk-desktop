@@ -1,5 +1,6 @@
 import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
 import { MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
+import { MessagesMessageAttachmentType } from 'model/api-types/objects/MessagesMessageAttachment'
 
 export const VERSION = 21
 
@@ -29,6 +30,18 @@ export type Update =
   | Update67
   | Update68
   | Update114
+  | IncompleteUpdate
+
+type IncompleteUpdate =
+  | IncompleteUpdate10004
+  | IncompleteUpdate10005
+  | IncompleteUpdate10018
+
+export type MessageUpdate =
+  | Update10003Restore
+  | Update10004
+  | Update10005
+  | Update10018
 
 // Изменение флагов сообщения
 type Update10002 = [
@@ -74,9 +87,13 @@ type Update10004 = [
   additional: {
     from?: number
     marked_users?: Array<
+      // Список упомянутых пиров, включая ответ на сообщение
       | [1, number[]]
+      // @online и список пиров, которые были онлайн в момент меншена
       | [1, 'online', number[]]
+      // @all
       | [1, 'all']
+      // Исчезающее сообщение в обычном чате
       | [2, 'all']
     >
     source_act?: MessagesMessageAction['type']
@@ -86,29 +103,49 @@ type Update10004 = [
     source_style?: string
     source_chat_local_id?: string
     source_message?: string
+    /**
+     * Note: при закреплении сообщения приходит 10018 событие с этим полем, но при откреплении
+     * сообщения событие на снятие этого поля не приходит (как и не сбрасывается поле в апи объекте)
+     */
     pinned_at?: string
     expire_ttl?: string
     ttl?: string
-    is_expired?: string
-    is_silent?: string
+    is_expired?: '1'
+    is_silent?: '1'
+    is_translated?: '1'
     keyboard?: MessagesKeyboard
-    has_template?: string
+    has_template?: '1'
     payload?: string
   },
   attachments: {
     attachments?: string
+    attachments_count?: string
     attach1_kind?: string
-    attach1_type?: string
+    attach1_type?: MessagesMessageAttachmentType
     attach1?: string
-    attach2_type?: string
+    attach2_type?: MessagesMessageAttachmentType
     attach2?: string
+    // JSON-строка с объектом ReplyMessageId
     reply?: string
-    fwd?: string
+    // Обозначает наличие пересланных или ответа на сообщение
+    fwd?: '0_0'
     geo?: string
   },
   randomId: number,
   messageId: number,
   updateTimestamp: 0
+]
+
+export type ReplyMessageId = {
+  conversation_message_id: number
+}
+
+type IncompleteUpdate10004 = [
+  type: 10004,
+  cmid: Update10004[1],
+  flags: Update10004[2],
+  minorSortId: Update10004[3],
+  peerId: Update10004[4]
 ]
 
 // Редактирование сообщения
@@ -124,6 +161,13 @@ type Update10005 = [
   randomId: Update10004[9],
   messageId: Update10004[10],
   updateTimestampInSeconds: number
+]
+
+type IncompleteUpdate10005 = [
+  type: 10005,
+  cmid: Update10005[1],
+  flags: Update10005[2],
+  peerId: Update10005[3]
 ]
 
 // Прочтение входящих сообщений
@@ -169,6 +213,13 @@ type Update10018 = [
   randomId: Update10004[9],
   messageId: Update10004[10],
   updateTimestampInSeconds: number
+]
+
+type IncompleteUpdate10018 = [
+  type: 10018,
+  cmid: Update10018[1],
+  flags: Update10018[2],
+  peerId: Update10018[3]
 ]
 
 // Тайпинг ввода текста
@@ -234,3 +285,15 @@ type Update114 = [
     disabled_until: number
   }
 ]
+
+export function isIncompleteUpdate(update: Update): update is IncompleteUpdate {
+  switch (update[0]) {
+    case 10004:
+      return update.length !== 12
+    case 10005:
+    case 10018:
+      return update.length !== 11
+    default:
+      return false
+  }
+}

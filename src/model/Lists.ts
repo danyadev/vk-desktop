@@ -51,8 +51,8 @@ export function defaults(): Lists {
 }
 
 /**
- * Проверяет, что лист хотя бы раз загружал беседы и как следствие может
- * добавлять беседы в рамках List.refresh
+ * Проверяет, что в листе определились границы (после добавления хотя бы одной беседы)
+ * и он может принимать другие беседы
  */
 export function isInitialized(list: List) {
   return list.boundary.majorId !== Infinity || list.status === 'complete'
@@ -62,7 +62,7 @@ export function isInitialized(list: List) {
  * Добавляет беседу в указанный лист и увеличивает нижнюю границу при необходимости
  */
 export function push(list: List, convo: Convo.Convo) {
-  if (!isWithinBoundary(list, convo)) {
+  if (!isWithinBoundary(list, convo, false)) {
     list.boundary.majorId = convo.majorSortId
     list.boundary.minorId = convo.minorSortId
   }
@@ -71,53 +71,84 @@ export function push(list: List, convo: Convo.Convo) {
 }
 
 /**
- * Добавляет беседу в списки, если она подходит по условиям и находится в рамках известных границ,
- * либо удаляет из списков, если больше не подходит
+ * Рассчитывает, в каких листах должна находиться беседа, и добавляет или удаляет беседу из них
  */
 export function refresh(lists: Lists, convo: Convo.Convo) {
-  for (const folderId of convo.folderIds) {
-    const folder = lists.folders.get(folderId)
-    if (folder) {
-      folder.all.peerIds.delete(convo.id)
-      folder.unread.peerIds.delete(convo.id)
+  const allLists = getAllLists(lists)
+  const targetLists = getTargetLists(lists, convo)
 
-      pushIfWithinBoundary(folder.all, convo)
-      if (Convo.isUnread(convo)) {
-        pushIfWithinBoundary(folder.unread, convo)
-      }
+  for (const list of allLists) {
+    if (targetLists.has(list)) {
+      push(list, convo)
+    } else {
+      list.peerIds.delete(convo.id)
     }
   }
-
-  lists.archive.peerIds.delete(convo.id)
-  lists.unread.peerIds.delete(convo.id)
-  lists.main.peerIds.delete(convo.id)
-
-  if (convo.isArchived) {
-    pushIfWithinBoundary(lists.archive, convo)
-    return
-  }
-
-  if (Convo.isUnread(convo)) {
-    pushIfWithinBoundary(lists.unread, convo)
-  }
-
-  pushIfWithinBoundary(lists.main, convo)
 }
 
-function pushIfWithinBoundary(list: List, convo: Convo.Convo) {
+/**
+ * Проверяет, что беседа находится в рамках границы листа и может быть добавлена без появления гэпа
+ */
+function isWithinBoundary(list: List, convo: Convo.Convo, respectCompletedList = true) {
   // Когда список уже полностью загружен, можно принимать чаты и за пределами границы.
   // Например, может прийти восстановление чата, но этот чат находится ниже последнего
   // известного нам чата
-  const allowOutsideBoundary = list.status === 'complete' && !Convo.isHidden(convo)
-
-  if (isWithinBoundary(list, convo) || allowOutsideBoundary) {
-    push(list, convo)
+  if (respectCompletedList && list.status === 'complete' && !Convo.isHidden(convo)) {
+    return true
   }
-}
 
-function isWithinBoundary(list: List, convo: Convo.Convo) {
   return (
     convo.majorSortId > list.boundary.majorId ||
     (convo.majorSortId === list.boundary.majorId && convo.minorSortId >= list.boundary.minorId)
   )
+}
+
+/**
+ * Возвращает все листы в виде массива
+ */
+function getAllLists(lists: Lists): List[] {
+  return [
+    lists.main,
+    lists.unread,
+    lists.archive,
+    ...[...lists.folders.values()]
+      .map((folder) => [folder.all, folder.unread])
+      .flat()
+  ]
+}
+
+/**
+ * Определяет список листов, в которых должна находиться беседа
+ */
+function getTargetLists(lists: Lists, convo: Convo.Convo) {
+  const targetLists = new Set<List>()
+
+  for (const folderId of convo.folderIds) {
+    const folder = lists.folders.get(folderId)
+    if (folder) {
+      if (isWithinBoundary(folder.all, convo)) {
+        targetLists.add(folder.all)
+      }
+      if (Convo.isUnread(convo) && isWithinBoundary(folder.unread, convo)) {
+        targetLists.add(folder.unread)
+      }
+    }
+  }
+
+  if (convo.isArchived) {
+    if (isWithinBoundary(lists.archive, convo)) {
+      targetLists.add(lists.archive)
+    }
+    return targetLists
+  }
+
+  if (Convo.isUnread(convo) && isWithinBoundary(lists.unread, convo)) {
+    targetLists.add(lists.unread)
+  }
+
+  if (isWithinBoundary(lists.main, convo)) {
+    targetLists.add(lists.main)
+  }
+
+  return targetLists
 }
