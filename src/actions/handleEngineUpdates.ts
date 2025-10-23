@@ -9,7 +9,6 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useViewerStore } from 'store/viewer'
 import { insertConvos, insertPeers } from 'actions'
 import { fromApiMessage, fromEngineMessage } from 'converters/MessageConverter'
 import { useEnv } from 'hooks'
@@ -19,7 +18,6 @@ import { PEER_FIELDS } from 'misc/constants'
 const TYPING_DURATION = 5000
 
 export async function handleEngineUpdates(updates: IEngine.Update[]) {
-  const viewer = useViewerStore()
   const convosStore = useConvosStore()
   const { convos, lists, typings } = convosStore
   const {
@@ -103,7 +101,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         const eventWithMessage = update.length === 11 && update
         const message =
           (apiMessage && fromApiMessage(apiMessage)) ??
-          (eventWithMessage && fromEngineMessage(update))
+          (eventWithMessage && fromEngineMessage(update, convo))
 
         if (!message) {
           break
@@ -113,11 +111,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           if (!apiConvosMap.has(peerId) && !message.isOut && Message.isUnread(message, convo)) {
             convo.unreadCount++
 
-            if (
-              convo.kind === 'ChatConvo' &&
-              eventWithMessage &&
-              hasMentionedInEngineMessage(eventWithMessage[6], viewer.id)
-            ) {
+            if (convo.kind === 'ChatConvo' && message.kind === 'Normal' && message.hasMentioned) {
               convo.mentionedCmids.add(message.cmid)
             }
           }
@@ -133,7 +127,6 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
       case 10018: {
         const [eventId, rawCmid] = update
         const rawPeerId = eventId === 10004 ? update[4] : update[3]
-        const additional = eventId === 10004 ? update[7] : update[6]
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
@@ -143,15 +136,24 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         }
 
         const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
-        const message = apiMessage ? fromApiMessage(apiMessage) : fromEngineMessage(update)
+        const message = apiMessage
+          ? fromApiMessage(apiMessage)
+          : IEngine.isIncompleteUpdate(update)
+            ? undefined
+            : fromEngineMessage(update, convo)
 
-        if (!apiConvosMap.has(peerId) && !message.isOut) {
+        if (!message) {
+          break
+        }
+
+        if (!apiConvosMap.has(peerId)) {
           if (eventId === 10004) {
-            convo.unreadCount++
+            convo.minorSortId = update[3]
+            !message.isOut && convo.unreadCount++
           }
 
-          if (convo.kind === 'ChatConvo' && Message.isUnread(message, convo)) {
-            if (hasMentionedInEngineMessage(additional, viewer.id)) {
+          if (convo.kind === 'ChatConvo' && !message.isOut && Message.isUnread(message, convo)) {
+            if (message.kind === 'Normal' && message.hasMentioned) {
               convo.mentionedCmids.add(message.cmid)
             } else {
               convo.mentionedCmids.delete(message.cmid)
@@ -292,34 +294,37 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
   }
 }
 
-function isEngineMessageInsufficient(attachments: IEngine.Update10004[8]) {
+function isEngineMessageInsufficient(
+  update: IEngine.MessageUpdate,
+  convo: Convo.Convo | undefined
+) {
+  const attachments = update[0] === 10004 ? update[8] : update[7]
+
+  // Кроме факта наличия вложений нам может прийти массив attachments, который на данный момент
+  // может содержать только одно вложение: voice или sticker.
+  // Поэтому просто проверяем, что в сообщении только одно вложение и оно есть в attachments,
+  // иначе считаем что данных недостаточно
   if (attachments.attach1_type) {
-    return true
-  }
-
-  if (attachments.fwd) {
-    return true
-  }
-
-  return false
-}
-
-function hasMentionedInEngineMessage(additional: IEngine.Update10004[7], viewerId: Peer.OwnerId) {
-  for (const mark of additional.marked_users ?? []) {
-    // 1 означает упоминание
-    if (mark[0] !== 1) {
-      continue
-    }
-
-    if (mark[1] === 'all') {
+    if (attachments.attach2_type) {
       return true
     }
 
-    if (mark[1] === 'online' && mark[2].includes(viewerId)) {
+    if (!attachments.attachments || attachments.attachments_count !== '1') {
       return true
     }
+  }
 
-    if (Array.isArray(mark[1]) && mark[1].includes(viewerId)) {
+  // fwd это признак как пересланного, так и реплая, при этом вместе они прийти не могут,
+  // поэтому эта проверка проверяет наличие конкретно пересланных
+  if (attachments.fwd && !attachments.reply) {
+    return true
+  }
+
+  if (attachments.reply) {
+    const replyId = JSON.parse(attachments.reply) as IEngine.ReplyMessageId
+    const replyCmid = Message.resolveCmid(replyId.conversation_message_id)
+    const message = convo && Convo.findMessage(convo, replyCmid)
+    if (!message) {
       return true
     }
   }
@@ -399,8 +404,12 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
             }
 
             const eventWithMessage = update.length === 11 && update
-            if (!eventWithMessage || isEngineMessageInsufficient(eventWithMessage[7])) {
+            const engineMessage = eventWithMessage && fromEngineMessage(eventWithMessage, convo)
+
+            if (!eventWithMessage || isEngineMessageInsufficient(eventWithMessage, convo)) {
               addMissingCmid(peerId, cmid)
+            } else if (engineMessage && !peers.has(engineMessage.authorId)) {
+              addMissingPeer(engineMessage.authorId)
             }
           }
         }
@@ -412,19 +421,37 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
       case 10018: {
         const [eventId, rawCmid] = update
         const rawPeerId = eventId === 10004 ? update[4] : update[3]
-        const attachments = eventId === 10004 ? update[8] : update[7]
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
         const convo = convos.get(peerId)
         const localMessage = eventId !== 10004 && convo && Convo.findMessage(convo, cmid)
+        const maybeMissingMessage = eventId === 10004 || localMessage
+
+        // По какой-то причине движок решил не возвращать содержимое сообщения.
+        // В подавляющем большинстве случаев это происходит когда сообщение уже удалено
+        // и событие его удаления находится далее в списке событий.
+        // Однако возможна и ситуация, когда у движка просто в моменте не оказалось сообщения
+        if (IEngine.isIncompleteUpdate(update)) {
+          if (maybeMissingMessage) {
+            missingConvos.add(peerId)
+            addMissingCmid(peerId, cmid)
+          }
+          break
+        }
 
         if (eventId === 10004 && !convo) {
           missingConvos.add(peerId)
         }
 
-        if ((eventId === 10004 || localMessage) && isEngineMessageInsufficient(attachments)) {
+        if (maybeMissingMessage && isEngineMessageInsufficient(update, convo)) {
           addMissingCmid(peerId, cmid)
+          break
+        }
+
+        const engineMessage = fromEngineMessage(update, convo)
+        if (eventId === 10004 && !peers.has(engineMessage.authorId)) {
+          addMissingPeer(engineMessage.authorId)
         }
         break
       }

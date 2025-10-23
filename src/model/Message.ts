@@ -24,6 +24,8 @@ export interface Normal extends BaseMessage {
   attaches: Attach.Attaches
   replyMessage: Foreign | undefined
   forwardedMessages: NonEmptyArray<Foreign> | undefined
+  /** Упомянут ли текущий пользователь в сообщении. Реплай тоже считается */
+  hasMentioned: boolean
 }
 
 export interface Service extends BaseMessage {
@@ -35,7 +37,10 @@ export interface Expired extends BaseMessage {
   kind: 'Expired'
 }
 
-export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'randomId'> {
+export interface Foreign extends Omit<
+  Normal,
+  'kind' | 'peerId' | 'cmid' | 'randomId' | 'hasMentioned'
+> {
   kind: 'Foreign'
   peerId: Peer.Id | undefined
   cmid: Cmid | undefined
@@ -44,12 +49,12 @@ export interface Foreign extends Omit<Normal, 'kind' | 'peerId' | 'cmid' | 'rand
   isUnavailable: boolean
 }
 
-export interface Pinned extends Omit<Normal, 'kind' | 'updatedAt' | 'randomId'> {
+export interface Pinned extends Omit<Normal, 'kind' | 'updatedAt' | 'randomId' | 'hasMentioned'> {
   kind: 'Pinned'
   isUnavailable: boolean
 }
 
-export interface Pending extends Omit<Normal, 'kind' | 'cmid' | 'isOut'> {
+export interface Pending extends Omit<Normal, 'kind' | 'cmid' | 'isOut' | 'hasMentioned'> {
   kind: 'Pending'
   /** Проставляется после ответа messages.send, если движок не успел отдать сообщение быстрее */
   cmid: Cmid | undefined

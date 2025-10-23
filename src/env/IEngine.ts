@@ -30,6 +30,18 @@ export type Update =
   | Update67
   | Update68
   | Update114
+  | IncompleteUpdate
+
+type IncompleteUpdate =
+  | IncompleteUpdate10004
+  | IncompleteUpdate10005
+  | IncompleteUpdate10018
+
+export type MessageUpdate =
+  | Update10003Restore
+  | Update10004
+  | Update10005
+  | Update10018
 
 // Изменение флагов сообщения
 type Update10002 = [
@@ -49,7 +61,7 @@ type Update10003 = [
 ] | Update10003Restore
 
 // Сброс флагов удаления сообщения
-export type Update10003Restore = [
+type Update10003Restore = [
   type: 10003,
   cmid: Update10004[1],
   flags: Update10004[2],
@@ -64,7 +76,7 @@ export type Update10003Restore = [
 ]
 
 // Новое сообщение
-export type Update10004 = [
+type Update10004 = [
   type: 10004,
   cmid: number,
   flags: number,
@@ -91,6 +103,10 @@ export type Update10004 = [
     source_style?: string
     source_chat_local_id?: string
     source_message?: string
+    /**
+     * Note: при закреплении сообщения приходит 10018 событие с этим полем, но при откреплении
+     * сообщения событие на снятие этого поля не приходит (как и не сбрасывается поле в апи объекте)
+     */
     pinned_at?: string
     expire_ttl?: string
     ttl?: string
@@ -103,6 +119,7 @@ export type Update10004 = [
   },
   attachments: {
     attachments?: string
+    attachments_count?: string
     attach1_kind?: string
     attach1_type?: MessagesMessageAttachmentType
     attach1?: string
@@ -123,8 +140,16 @@ export type ReplyMessageId = {
   conversation_message_id: number
 }
 
+type IncompleteUpdate10004 = [
+  type: 10004,
+  cmid: Update10004[1],
+  flags: Update10004[2],
+  minorSortId: Update10004[3],
+  peerId: Update10004[4]
+]
+
 // Редактирование сообщения
-export type Update10005 = [
+type Update10005 = [
   type: 10005,
   cmid: Update10004[1],
   flags: Update10004[2],
@@ -136,6 +161,13 @@ export type Update10005 = [
   randomId: Update10004[9],
   messageId: Update10004[10],
   updateTimestampInSeconds: number
+]
+
+type IncompleteUpdate10005 = [
+  type: 10005,
+  cmid: Update10005[1],
+  flags: Update10005[2],
+  peerId: Update10005[3]
 ]
 
 // Прочтение входящих сообщений
@@ -169,7 +201,7 @@ type Update12 = [
 ]
 
 // Обновление сообщения
-export type Update10018 = [
+type Update10018 = [
   type: 10018,
   cmid: Update10004[1],
   flags: Update10004[2],
@@ -181,6 +213,13 @@ export type Update10018 = [
   randomId: Update10004[9],
   messageId: Update10004[10],
   updateTimestampInSeconds: number
+]
+
+type IncompleteUpdate10018 = [
+  type: 10018,
+  cmid: Update10018[1],
+  flags: Update10018[2],
+  peerId: Update10018[3]
 ]
 
 // Тайпинг ввода текста
@@ -246,3 +285,15 @@ type Update114 = [
     disabled_until: number
   }
 ]
+
+export function isIncompleteUpdate(update: Update): update is IncompleteUpdate {
+  switch (update[0]) {
+    case 10004:
+      return update.length !== 12
+    case 10005:
+    case 10018:
+      return update.length !== 11
+    default:
+      return false
+  }
+}
