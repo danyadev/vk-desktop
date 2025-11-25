@@ -231,6 +231,43 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         break
       }
 
+      case 52: {
+        const [, updateType, rawPeerId, extra] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const convo = convos.get(peerId)
+
+        if (!convo) {
+          break
+        }
+
+        switch (updateType) {
+          // Закрепление / редактирование / открепление закрепленного сообщения
+          case 5: {
+            if (convo.kind !== 'ChatConvo') {
+              break
+            }
+
+            // Если мы получили беседу из апи, значит мы уже применили закрепленное сообщение
+            if (apiConvosMap.has(peerId)) {
+              break
+            }
+
+            if (extra > 0) {
+              const cmid = Message.resolveCmid(extra)
+              const message = Convo.findMessage(convo, cmid)
+              if (message && message.kind === 'Normal') {
+                convo.pinnedMessage = Message.toPinned(message)
+              }
+            } else {
+              convo.pinnedMessage = undefined
+            }
+            break
+          }
+        }
+
+        break
+      }
+
       case 63:
       case 64:
       case 65:
@@ -483,6 +520,32 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
             missingConvos.add(peerId)
           }
         }
+        break
+      }
+
+      case 52: {
+        const [, updateType, rawPeerId, extra] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const convo = convos.get(peerId)
+
+        if (!convo) {
+          break
+        }
+
+        switch (updateType) {
+          case 5: {
+            if (extra > 0) {
+              const cmid = Message.resolveCmid(extra)
+              const message = Convo.findMessage(convo, cmid)
+
+              if (!message) {
+                missingConvos.add(peerId)
+              }
+            }
+            break
+          }
+        }
+
         break
       }
 
