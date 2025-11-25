@@ -23,6 +23,7 @@ export type Update =
   | Update10
   | Update12
   | Update10018
+  | Update52
   | Update63
   | Update64
   | Update65
@@ -220,6 +221,13 @@ type IncompleteUpdate10018 = [
   cmid: Update10018[1],
   flags: Update10018[2],
   peerId: Update10018[3]
+]
+
+type Update52 = [
+  type: 52,
+  updateType: 5,
+  peerId: number,
+  extra: number
 ]
 
 // Тайпинг ввода текста

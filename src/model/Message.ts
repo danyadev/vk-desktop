@@ -139,10 +139,35 @@ export function isUnread(message: Message, convo: Convo.Convo): boolean {
 
 export function toForeign(message: Normal): Foreign {
   return {
-    ...message,
     kind: 'Foreign',
+    peerId: message.peerId,
+    cmid: message.cmid,
     rootPeerId: message.peerId,
     rootCmid: message.cmid,
+    authorId: message.authorId,
+    isOut: message.isOut,
+    sentAt: message.sentAt,
+    text: message.text,
+    attaches: message.attaches,
+    replyMessage: message.replyMessage,
+    forwardedMessages: message.forwardedMessages,
+    updatedAt: message.updatedAt,
+    isUnavailable: false
+  }
+}
+
+export function toPinned(message: Normal): Pinned {
+  return {
+    kind: 'Pinned',
+    peerId: message.peerId,
+    cmid: message.cmid,
+    authorId: message.authorId,
+    isOut: message.isOut,
+    sentAt: message.sentAt,
+    text: message.text,
+    attaches: message.attaches,
+    replyMessage: message.replyMessage,
+    forwardedMessages: message.forwardedMessages,
     isUnavailable: false
   }
 }
