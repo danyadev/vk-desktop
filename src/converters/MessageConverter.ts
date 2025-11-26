@@ -13,6 +13,8 @@ import { fromApiConvoStyle } from 'converters/ConvoConverter'
 import { isNonEmptyArray, NonEmptyArray, typeguard, unescape } from 'misc/utils'
 
 export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
+  const viewer = useViewerStore()
+
   const baseMessage: Message.BaseMessage = {
     peerId: Peer.resolveId(message.peer_id),
     cmid: Message.resolveCmid(message.conversation_message_id),
@@ -42,21 +44,26 @@ export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
     }
   }
 
+  const replyMessage = message.reply_message && fromApiForeignMessage(
+    message.reply_message,
+    baseMessage.peerId,
+    baseMessage.cmid
+  )
+  const isRepliedToViewerMessage = !baseMessage.isOut && replyMessage?.authorId === viewer.id
+
   return {
     kind: 'Normal',
     text: message.text,
     attaches,
-    replyMessage: message.reply_message && fromApiForeignMessage(
-      message.reply_message,
-      baseMessage.peerId,
-      baseMessage.cmid
-    ),
+    replyMessage,
     forwardedMessages: fromApiForwardedMessages(
       message.fwd_messages ?? [],
       baseMessage.peerId,
       baseMessage.cmid
     ),
-    hasMentioned: message.is_mentioned_user,
+    // is_mentioned_user is false when replying to viewer's message,
+    // though engine still sends viewer's id in marked_users
+    hasMentioned: message.is_mentioned_user || isRepliedToViewerMessage,
     ...baseMessage
   }
 }
