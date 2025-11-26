@@ -22,7 +22,9 @@ export type Update =
   | Update10007
   | Update10
   | Update12
+  | Update10013
   | Update10018
+  | Update21
   | Update52
   | Update63
   | Update64
@@ -201,6 +203,15 @@ type Update12 = [
   flags: number
 ]
 
+// Удаление истории чата
+type Update10013 = [
+  type: 10013,
+  peerId: number,
+  lastCmid: number,
+  resetMinorId: 0 | 1,
+  lastMessageId: number
+]
+
 // Обновление сообщения
 type Update10018 = [
   type: 10018,
@@ -223,6 +234,14 @@ type IncompleteUpdate10018 = [
   peerId: Update10018[3]
 ]
 
+// Изменился minorId
+type Update21 = [
+  type: 21,
+  peerId: number,
+  minorId: number
+]
+
+// Изменение состояния беседы
 type Update52 = [
   type: 52,
   updateType: 5,

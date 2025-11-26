@@ -306,16 +306,16 @@ export function insert<T>(
   history.splice(startIndex, endIndex - startIndex + 1, ...newNodes)
 }
 
-/**
- * Находит ноду в истории двоичным поиском
- */
-export function findNode<T>(history: History<T>, id: number): Node<T> | null
-export function findNode<T>(history: History<T>, id: number, asIndex: true): number | null
-export function findNode<T>(
+enum CompareState {
+  FOUND = 0,
+  TO_THE_LEFT = 1,
+  TO_THE_RIGHT = -1
+}
+
+function binarySearch<T>(
   history: History<T>,
-  id: number,
-  asIndex?: true
-): Node<T> | number | null {
+  comparator: (node: Node<T>, index: number) => CompareState
+): number | null {
   let left = 0
   let right = history.length - 1
 
@@ -326,12 +326,11 @@ export function findNode<T>(
       return null
     }
 
-    const nodeStart = node.kind === 'Gap' ? node.fromId : node.id
-    const nodeEnd = node.kind === 'Gap' ? node.toId : node.id
+    const compared = comparator(node, mid)
 
-    if (id >= nodeStart && id <= nodeEnd) {
-      return asIndex ? mid : node
-    } else if (nodeEnd < id) {
+    if (compared === CompareState.FOUND) {
+      return mid
+    } else if (compared === CompareState.TO_THE_RIGHT) {
       left = mid + 1
     } else {
       right = mid - 1
@@ -339,6 +338,36 @@ export function findNode<T>(
   }
 
   return null
+}
+
+/**
+ * Находит ноду в истории двоичным поиском
+ */
+export function findNode<T>(history: History<T>, id: number): Node<T> | null
+export function findNode<T>(history: History<T>, id: number, asIndex: true): number | null
+export function findNode<T>(
+  history: History<T>,
+  id: number,
+  asIndex?: true
+): Node<T> | number | null {
+  const index = binarySearch(history, (node) => {
+    const nodeStart = node.kind === 'Gap' ? node.fromId : node.id
+    const nodeEnd = node.kind === 'Gap' ? node.toId : node.id
+
+    if (id > nodeEnd) {
+      return CompareState.TO_THE_RIGHT
+    }
+    if (id < nodeStart) {
+      return CompareState.TO_THE_LEFT
+    }
+    return CompareState.FOUND
+  })
+
+  if (asIndex || index === null) {
+    return index
+  }
+
+  return history[index] ?? null
 }
 
 /**
@@ -370,5 +399,48 @@ export function removeNode<T>(history: History<T>, id: number, removeWholeGap = 
 
   if (node.toId === id) {
     node.toId--
+  }
+}
+
+/**
+ * Удаляет историю вплоть до элемента upToId включительно
+ */
+export function clearHistory<T>(history: History<T>, upToId: number) {
+  const firstKeptNodeIndex = binarySearch(history, (node, index) => {
+    const nodeEnd = node.kind === 'Item' ? node.id : node.toId
+    if (nodeEnd <= upToId) {
+      // Эта нода будет удалена, ищем дальше
+      return CompareState.TO_THE_RIGHT
+    }
+
+    const prevNode = history[index - 1]
+    if (!prevNode) {
+      // Значит текущая нода это первая нода в истории
+      return CompareState.FOUND
+    }
+
+    const prevNodeEnd = prevNode.kind === 'Item' ? prevNode.id : prevNode.toId
+    if (prevNodeEnd <= upToId) {
+      // Предыдущая нода будет удалена, а текущая нода не будет удалена
+      return CompareState.FOUND
+    }
+
+    // Предыдущая нода не будет удалена, то есть мы ушли слишком далеко, идем назад
+    return CompareState.TO_THE_LEFT
+  })
+
+  const firstKeptNode = firstKeptNodeIndex !== null && history[firstKeptNodeIndex]
+  if (!firstKeptNode) {
+    // Нет оставшихся нод
+    history.length = 0
+    return
+  }
+
+  // Удаляем все ноды перед оставшимися
+  history.splice(0, firstKeptNodeIndex)
+
+  // Если удаляемая часть элементов частично задевает гэп, сдвигаем его границу
+  if (firstKeptNode.kind === 'Gap' && firstKeptNode.fromId <= upToId) {
+    firstKeptNode.fromId = upToId + 1
   }
 }
