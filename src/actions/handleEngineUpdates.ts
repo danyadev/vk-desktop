@@ -231,6 +231,31 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         break
       }
 
+      case 10013: {
+        const [, rawPeerId, lastCmid] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const convo = convos.get(peerId)
+        if (!convo) {
+          break
+        }
+
+        History.clearHistory(convo.history, lastCmid)
+        break
+      }
+
+      case 21: {
+        const [, rawPeerId, minorId] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const convo = convos.get(peerId)
+        if (!convo) {
+          break
+        }
+
+        convo.minorSortId = minorId
+        Lists.refresh(lists, convo)
+        break
+      }
+
       case 52: {
         const [, updateType, rawPeerId, extra] = update
         const peerId = Peer.resolveId(rawPeerId)
@@ -574,6 +599,8 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
 
       case 10006:
       case 10007:
+      case 10013:
+      case 21:
       case 114:
         break
     }
