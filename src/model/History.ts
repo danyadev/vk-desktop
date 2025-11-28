@@ -44,21 +44,6 @@ export function lastItem<T>(history: History<T>): T | undefined {
 }
 
 /**
- * Возвращает предыдущий элемент от указанного
- */
-export function previousItem<T>(history: History<T>, id: number): T | undefined {
-  const index = findNode(history, id, true)
-  if (index === null || index === 0) {
-    return
-  }
-
-  const previousNode = history[index - 1]
-  if (previousNode?.kind === 'Item') {
-    return previousNode.item
-  }
-}
-
-/**
  * Возвращает часть истории, непрерывно доступной вокруг aroundId,
  * то есть список элементов до первого гэпа с обеих сторон от aroundId
  */

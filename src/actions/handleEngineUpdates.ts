@@ -428,9 +428,73 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
 
   for (const update of updates) {
     switch (update[0]) {
-      case 10002:
+      case 10002: {
+        const [, rawCmid, flags, rawPeerId] = update
+        const peerId = rawPeerId && Peer.resolveId(rawPeerId)
+        const cmid = Message.resolveCmid(rawCmid)
+
+        if (!peerId) {
+          break
+        }
+
+        const convo = convos.get(peerId)
+        if (!convo) {
+          break
+        }
+
+        // Удаление сообщения
+        if (flags & (Message.flags.deleted | Message.flags.spam)) {
+          const lastCmid = Convo.lastMessage(convo)?.cmid
+          if (lastCmid !== cmid) {
+            break
+          }
+
+          // Список удаленных сообщений в текущем батче
+          const deletedCmids = new Set(
+            updates
+              .filter((update): update is IEngine.Update10002 => (
+                update[0] === 10002 &&
+                (update[2] & (Message.flags.deleted | Message.flags.spam)) > 0 &&
+                update[3] === peerId
+              ))
+              .map((update) => Message.resolveCmid(update[1]))
+          )
+
+          let isLastMessageMissing = true
+          for (let i = convo.history.length - 1; i >= 0; i--) {
+            const node = convo.history[i]
+            if (!node) {
+              continue
+            }
+
+            // Мы наткнулись на незагруженную часть истории, значит последнее сообщение в чате
+            // после удаления нам будет неизвестно
+            if (node.kind === 'Gap') {
+              break
+            }
+
+            // Мы нашли первое неудаленное сообщение, которое станет последним в чате
+            if (!deletedCmids.has(node.item.cmid)) {
+              isLastMessageMissing = false
+              break
+            }
+
+            // Все сообщения в чате удалены, гэпов в истории нет -> чат просто станет пустым
+            if (i === 0) {
+              isLastMessageMissing = false
+              break
+            }
+          }
+
+          if (isLastMessageMissing) {
+            missingConvos.add(peerId)
+          }
+        }
+        break
+      }
+
       case 10003: {
-        const [eventId, rawCmid, flags, rawPeerId] = update
+        const [, rawCmid, flags, rawPeerId] = update
         const peerId = rawPeerId && Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
 
@@ -440,39 +504,26 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
 
         const convo = convos.get(peerId)
 
+        // Восстановление сообщения
         if (flags & (Message.flags.deleted | Message.flags.spam)) {
-          // Удаление сообщения
-          if (eventId === 10002 && convo) {
-            const lastCmid = Convo.lastMessage(convo)?.cmid
-
-            // Запрашиваем беседу (с последним сообщением), если удаляется последнее сообщение
-            // и у нас не оказалось предыдущего сообщения для отображения
-            if (lastCmid === cmid && !History.previousItem(convo.history, lastCmid)) {
-              missingConvos.add(peerId)
-            }
+          // Если нет беседы, то мы не знаем, восстановилось последнее сообщение в чате
+          // и оно поднимется в списке чатов (и нам надо его отобразить), или какое-то другое
+          if (!convo) {
+            missingConvos.add(peerId)
+            break
           }
 
-          // Восстановление сообщения
-          if (eventId === 10003) {
-            // Если нет беседы, то мы не знаем, восстановилось последнее сообщение в чате
-            // и оно поднимется в списке чатов (и нам надо его отобразить), или какое-то другое
-            if (!convo) {
-              missingConvos.add(peerId)
-              break
-            }
+          if (!Convo.canInsertRestoredMessage(convo, cmid)) {
+            break
+          }
 
-            if (!Convo.canInsertRestoredMessage(convo, cmid)) {
-              break
-            }
+          const eventWithMessage = update.length === 11 && update
+          const engineMessage = eventWithMessage && fromEngineMessage(eventWithMessage, convo)
 
-            const eventWithMessage = update.length === 11 && update
-            const engineMessage = eventWithMessage && fromEngineMessage(eventWithMessage, convo)
-
-            if (!eventWithMessage || isEngineMessageInsufficient(eventWithMessage, convo)) {
-              addMissingCmid(peerId, cmid)
-            } else if (engineMessage && !peers.has(engineMessage.authorId)) {
-              addMissingPeer(engineMessage.authorId)
-            }
+          if (!eventWithMessage || isEngineMessageInsufficient(eventWithMessage, convo)) {
+            addMissingCmid(peerId, cmid)
+          } else if (engineMessage && !peers.has(engineMessage.authorId)) {
+            addMissingPeer(engineMessage.authorId)
           }
         }
         break

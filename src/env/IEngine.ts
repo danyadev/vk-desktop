@@ -47,11 +47,12 @@ export type MessageUpdate =
   | Update10018
 
 // Изменение флагов сообщения
-type Update10002 = [
+export type Update10002 = [
   type: 10002,
   cmid: number,
   flags: number,
-  peerId: number
+  peerId: number,
+  messageId: number
 ]
 
 // Сброс флагов сообщения
@@ -88,7 +89,7 @@ type Update10004 = [
   timestamp: number,
   text: string,
   additional: {
-    from?: number
+    from?: string
     marked_users?: Array<
       // Список упомянутых пиров, включая ответ на сообщение
       | [1, number[]]
@@ -112,7 +113,7 @@ type Update10004 = [
      */
     pinned_at?: string
     expire_ttl?: string
-    ttl?: string
+    ttl?: number
     is_expired?: '1'
     is_silent?: '1'
     is_translated?: '1'
