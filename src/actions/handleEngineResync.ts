@@ -79,6 +79,7 @@ export async function handleEngineResync(
         'groups',
         'messages'
       ].join(','),
+      conversations_source: conversationsSource,
       conversations_limit: 50
     }, { retries: Infinity })
 
