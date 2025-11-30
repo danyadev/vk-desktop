@@ -84,7 +84,7 @@ export const Messenger = defineComponent(() => {
       <Modal
         opened={engineFailModal.opened}
         onClose={engineFailModal.close}
-        title="Ошибка движка"
+        title={lang.use('engineFailModal_title')}
         buttons={[
           <Button onClick={() => location.reload()}>{lang.use('engineFailModal_reload')}</Button>,
           <Button onClick={engineFailModal.close}>{lang.use('modal_close_label')}</Button>

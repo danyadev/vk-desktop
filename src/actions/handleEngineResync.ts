@@ -46,7 +46,7 @@ export async function handleEngineResync(
   }, { retries: Infinity })
 
   if (!credentials || !newPts) {
-    throw new Error('[handleEngineResync] messages.getDiff haven\'t returned credentials')
+    throw new Error('[handleEngineResync] messages.getDiff hasn\'t returned credentials')
   }
 
   if (invalidateAll) {
@@ -120,13 +120,13 @@ export async function handleEngineResync(
 
     const cmidsToUpdate = new Set<Message.Cmid>()
     const cmidsToDelete = new Set<Message.Cmid>()
-    let deletedPointer = 0
-    let updatedPointer = 0
-    let flagsPointer = 0
+    let deletedCmidsPointer = 0
+    let updatedCmidsPointer = 0
+    let cmidsFlagsPointer = 0
 
     historyLoop:
     for (const node of convo.history) {
-      for (let i = deletedPointer; i < deletedCmidsRanges.length; i++) {
+      for (let i = deletedCmidsPointer; i < deletedCmidsRanges.length; i++) {
         const { min, max } = deletedCmidsRanges[i]!
         const nodeStart = node.kind === 'Item' ? node.id : node.fromId
         const nodeEnd = node.kind === 'Item' ? node.id : node.toId
@@ -147,7 +147,7 @@ export async function handleEngineResync(
         // Например, мы находимся на nodeStart = 3 и max = 2.
         // Мы вышли за пределы указанного рейнджа, идем к следующему
         if (nodeStart > max) {
-          deletedPointer++
+          deletedCmidsPointer++
           continue
         }
 
@@ -170,7 +170,7 @@ export async function handleEngineResync(
         continue
       }
 
-      for (let i = updatedPointer; i < updatedCmidsRanges.length; i++) {
+      for (let i = updatedCmidsPointer; i < updatedCmidsRanges.length; i++) {
         const { min, max } = updatedCmidsRanges[i]!
 
         // См. объяснение в цикле выше
@@ -178,21 +178,22 @@ export async function handleEngineResync(
           break
         }
         if (node.id > max) {
-          updatedPointer++
+          updatedCmidsPointer++
           continue
         }
 
         cmidsToUpdate.add(node.item.cmid)
+        break
       }
 
-      for (let i = flagsPointer; i < cmidsFlags.length; i++) {
+      for (let i = cmidsFlagsPointer; i < cmidsFlags.length; i++) {
         const { cmid, updated_flags: flags } = cmidsFlags[i]!
 
         // См. объяснение в цикле выше
         if (node.id < cmid) {
           break
         }
-        flagsPointer++
+        cmidsFlagsPointer++
         if (node.id > cmid) {
           continue
         }
@@ -202,6 +203,7 @@ export async function handleEngineResync(
         } else {
           cmidsToUpdate.add(node.item.cmid)
         }
+        break
       }
     }
 
@@ -209,29 +211,35 @@ export async function handleEngineResync(
       History.removeNode(convo.history, cmid, true)
     }
 
-    // messages.getDiff возвращает только последнее сообщение в чате и список измененных сообщений.
-    // О новых сообщениях в период ресинка он никак не сообщает, что означает мы можем только
-    // предполагать об их наличии и количестве. Поэтому мы будем считать что в каждом упомянутом
-    // чате могут быть сообщения между актуальным последним сообщением и последним известным
-    // сообщением до ресинка
-    const nodeBeforeLast = convo.history.at(-2)
-
-    if (nodeBeforeLast?.kind === 'Gap') {
-      // Продлеваем гэп перед последним сообщением
-      nodeBeforeLast.toId = lastMessage.cmid - 1
-    } else if (nodeBeforeLast?.kind === 'Item') {
-      // Вставляем гэп между последним и предпоследним сообщением
-      if (nodeBeforeLast.id + 1 !== lastMessage.cmid) {
-        const gap = History.toGap(nodeBeforeLast.id + 1, lastMessage.cmid - 1)
-        convo.history.splice(-1, 0, gap)
-      }
-    } else if (lastMessage.cmid !== 1) {
-      // В истории есть только последнее сообщение, вставляем гэп перед ним
-      convo.history.unshift(History.toGap(1, lastMessage.cmid - 1))
-    }
-
     if (cmidsToUpdate.size > 0) {
       cmidsToUpdateByConvo.set(convo.id, cmidsToUpdate)
+    }
+
+    // messages.getDiff не говорит нам, сколько новых сообщений было добавлено в беседу, только
+    // отдает актуальное последнее сообщение. Мы будем считать, что в беседе есть сообщения между
+    // известным нам последним сообщением и актуальным последним сообщением.
+    // В беседу уже добавлено актуальное последнее сообщение, поэтому предыдущее известное нам
+    // это второе сообщение с конца
+    const nodeBeforeLast = convo.history.at(-2)
+
+    if (!nodeBeforeLast) {
+      // В истории есть только последнее сообщение, вставляем гэп перед ним
+      if (lastMessage.cmid !== 1) {
+        convo.history.unshift(History.toGap(1, lastMessage.cmid - 1))
+      }
+      continue
+    }
+
+    if (nodeBeforeLast.kind === 'Gap') {
+      // Продлеваем гэп перед последним сообщением
+      nodeBeforeLast.toId = lastMessage.cmid - 1
+      continue
+    }
+
+    // Вставляем гэп между предпоследним и последним сообщением
+    if (nodeBeforeLast.id + 1 !== lastMessage.cmid) {
+      const gap = History.toGap(nodeBeforeLast.id + 1, lastMessage.cmid - 1)
+      convo.history.splice(-1, 0, gap)
     }
   }
 
