@@ -1,7 +1,7 @@
 import * as IEngine from 'env/IEngine'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import { useConvosStore } from 'store/convos'
-import { handleEngineUpdates } from 'actions'
+import { handleEngineResync, handleEngineUpdates } from 'actions'
 import { useEnv } from 'hooks'
 import { sleep, toUrlParams } from 'misc/utils'
 
@@ -17,7 +17,6 @@ const ENGINE_MODE =
 
 export class Engine {
   active = false
-  version = IEngine.VERSION
   credentials: MessagesLongpollCredentials | null = null
 
   async start(credentials: MessagesLongpollCredentials) {
@@ -32,7 +31,7 @@ export class Engine {
     this.credentials = credentials
 
     while (this.active) {
-      const { server, key, ts } = this.credentials
+      const { server, key, ts, pts } = this.credentials
       const timeoutSignal = AbortSignal.timeout(ENGINE_FETCH_TIMEOUT)
 
       const result = await fetch(`https://${server}?act=a_check`, {
@@ -40,7 +39,7 @@ export class Engine {
         body: toUrlParams({
           key,
           ts,
-          version: this.version,
+          version: IEngine.VERSION,
           mode: ENGINE_MODE,
           wait: ENGINE_MAX_CONNECTION_DURATION_SEC
         }),
@@ -63,18 +62,24 @@ export class Engine {
           case 2: {
             try {
               const { key } = await api.fetch('messages.getLongPollServer', {
-                lp_version: this.version,
+                lp_version: IEngine.VERSION,
                 need_pts: 0
               }, { retries: Infinity })
 
               this.credentials.key = key
+              connection.status = 'connected'
               continue
             } catch {
+              // TODO: модалка
               throw new Error('[engine] Couldn\'t obtain a new key')
             }
           }
 
           case 1:
+            this.credentials = await handleEngineResync(IEngine.VERSION, pts)
+            connection.status = 'connected'
+            continue
+
           case 4:
           default:
             throw new Error('[engine] Фейл ' + JSON.stringify(result))

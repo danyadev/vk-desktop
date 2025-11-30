@@ -196,7 +196,6 @@ export default defineConfig([
         ignoreArrowShorthand: true
       }],
       '@typescript-eslint/no-invalid-void-type': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/prefer-nullish-coalescing': ['error', {
         ignorePrimitives: {
           string: true

@@ -31,6 +31,8 @@ import {
   MessagesGetConversationsResponse,
   MessagesGetDiffContentParams,
   MessagesGetDiffContentResponse,
+  MessagesGetDiffParams,
+  MessagesGetDiffResponse,
   MessagesGetHistoryParams,
   MessagesGetHistoryResponse,
   MessagesGetLongPollHistoryParams,
@@ -154,6 +156,10 @@ export type Methods = {
   'messages.getDiffContent': {
     params: MessagesGetDiffContentParams
     response: MessagesGetDiffContentResponse
+  }
+  'messages.getDiff': {
+    params: MessagesGetDiffParams
+    response: MessagesGetDiffResponse
   }
 
   'users.get': {
