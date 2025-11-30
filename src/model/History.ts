@@ -195,51 +195,40 @@ export function insert<T>(
     return
   }
 
-  // Индексы первого и последнего нод, находящихся в зоне вставляемой истории
-  let startIndex = -1
-  let endIndex = -1
+  // Индексы первой и последней нод, находящихся в зоне вставляемой истории
+  let startIndex = binarySearch(history, plainToBinarySearchAdapter((node) => {
+    /**
+     * Если нода пересекается с первым вставляемым элементом или находится дальше него,
+     * то первая такая найденная нода является первой пересекаемой со вставляемыми элементами.
+     *
+     * Однако найденная нода может находиться позже последнего вставляемого элемента,
+     * но это возможно только в случае, когда элемент был удален и теперь восстановился
+     */
+    const nodeEndBoundary = node.kind === 'Gap' ? node.toId : node.id
+    return nodeEndBoundary >= firstItem.id
+  }))
 
-  for (let index = 0; index < history.length; index++) {
-    const node = history[index]
-    if (!node) {
-      continue
+  let endIndex = binarySearch(history, plainToBinarySearchAdapter((node, index) => {
+    if (startIndex === null || index < startIndex) {
+      return false
     }
 
-    if (startIndex === -1) {
-      /**
-       * Если нода пересекается с первым вставляемым элементом или находится дальше него,
-       * то первая такая найденная нода является первой пересекаемой со вставляемыми элементами.
-       *
-       * Однако найденная нода может находиться позже последнего вставляемого элемента,
-       * но это возможно только в случае, когда элемент был удален и теперь восстановился
-       */
-      const nodeEndBoundary = node.kind === 'Gap' ? node.toId : node.id
-      if (nodeEndBoundary >= firstItem.id) {
-        startIndex = index
-      }
-    }
-
-    if (startIndex !== -1) {
-      const nextNode = history[index + 1]
-      const nextNodeStartBoundary =
-        nextNode ? (nextNode.kind === 'Gap' ? nextNode.fromId : nextNode.id) : 0
-      // Если следующей ноды нет или она начинается после последнего элемента,
-      // то текущая нода - последняя пересекаемая вставляемыми элементами
-      if (!nextNode || nextNodeStartBoundary > lastItem.id) {
-        endIndex = index
-        break
-      }
-    }
-  }
-
-  const startNode = history[startIndex]
-  const endNode = history[endIndex]
+    const nextNode = history[index + 1]
+    const nextNodeStartBoundary =
+      nextNode ? (nextNode.kind === 'Gap' ? nextNode.fromId : nextNode.id) : 0
+    // Если следующей ноды нет или она начинается после последнего элемента,
+    // то текущая нода - последняя пересекаемая вставляемыми элементами
+    return !nextNode || nextNodeStartBoundary > lastItem.id
+  }))
 
   // Если не нашлась стартовая нода, значит вставляемые элементы находятся после всей истории
-  if (!startNode || !endNode) {
+  if (startIndex === null || endIndex === null) {
     history.push(...items)
     return
   }
+
+  const startNode = history[startIndex]!
+  const endNode = history[endIndex]!
 
   // Если стартовая нода оказалась дальше последнего элемента, значит вставляемые элементы
   // находятся перед стартовой нодой, просто вставляем их перед нодой
@@ -299,7 +288,7 @@ enum CompareState {
 
 function binarySearch<T>(
   history: History<T>,
-  comparator: (node: Node<T>, index: number) => CompareState
+  comparator: (node: Node<T>, index: number, array: History<T>) => CompareState
 ): number | null {
   let left = 0
   let right = history.length - 1
@@ -311,7 +300,7 @@ function binarySearch<T>(
       return null
     }
 
-    const compared = comparator(node, mid)
+    const compared = comparator(node, mid, history)
 
     if (compared === CompareState.FOUND) {
       return mid
@@ -323,6 +312,41 @@ function binarySearch<T>(
   }
 
   return null
+}
+
+/**
+ * Адаптер для использования алгоритма обычного поиска через for за O(n)
+ * в бинарном поиске за O(log2(N)).
+ * Может быть использован только если мы ищем точку в истории,
+ * начиная с которой и до конца массива predicate будет возвращать true.
+ *
+ * Например, для массива [1, 2, 3, 4, 5, 6] predicate = (el) => el > 3
+ * будет возвращать всегда true начиная с элемента со значением 4,
+ * которое мы и хотим найти
+ */
+function plainToBinarySearchAdapter<T>(
+  predicate: (element: T, index: number, array: T[]) => boolean
+) {
+  return (element: T, index: number, array: T[]): CompareState => {
+    if (!predicate(element, index, array)) {
+      // Элемент еще не найден, идем дальше
+      return CompareState.TO_THE_RIGHT
+    }
+
+    if (index === 0) {
+      // Элемент найден и он первый в массиве
+      return CompareState.FOUND
+    }
+
+    const prevElement = array[index - 1]!
+    if (predicate(prevElement, index - 1, array)) {
+      // Предыдущий элемент тоже подошел, значит мы запрыгнули дальше нужного
+      return CompareState.TO_THE_LEFT
+    }
+
+    // Предыдущий элемент не подошел, а текущий подошел, значит нашли что искали
+    return CompareState.FOUND
+  }
 }
 
 /**
@@ -391,28 +415,10 @@ export function removeNode<T>(history: History<T>, id: number, removeWholeGap = 
  * Удаляет историю вплоть до элемента upToId включительно
  */
 export function clearHistory<T>(history: History<T>, upToId: number) {
-  const firstKeptNodeIndex = binarySearch(history, (node, index) => {
+  const firstKeptNodeIndex = binarySearch(history, plainToBinarySearchAdapter((node) => {
     const nodeEnd = node.kind === 'Item' ? node.id : node.toId
-    if (nodeEnd <= upToId) {
-      // Эта нода будет удалена, ищем дальше
-      return CompareState.TO_THE_RIGHT
-    }
-
-    const prevNode = history[index - 1]
-    if (!prevNode) {
-      // Значит текущая нода это первая нода в истории
-      return CompareState.FOUND
-    }
-
-    const prevNodeEnd = prevNode.kind === 'Item' ? prevNode.id : prevNode.toId
-    if (prevNodeEnd <= upToId) {
-      // Предыдущая нода будет удалена, а текущая нода не будет удалена
-      return CompareState.FOUND
-    }
-
-    // Предыдущая нода не будет удалена, то есть мы ушли слишком далеко, идем назад
-    return CompareState.TO_THE_LEFT
-  })
+    return nodeEnd > upToId
+  }))
 
   const firstKeptNode = firstKeptNodeIndex !== null && history[firstKeptNodeIndex]
   if (!firstKeptNode) {
