@@ -313,6 +313,14 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           const typingPeerId = Peer.resolveId(rawTypingPeerId)
           const typingPeer = typingPeers.find(({ peerId }) => typingPeerId === peerId)
 
+          const type = ({
+            63: 'text',
+            64: 'voice',
+            65: 'photo',
+            66: 'video',
+            67: 'file',
+            68: 'videomessage'
+          } as const)[eventId]
           const cancelTypingTimeoutId = window.setTimeout(
             () => convosStore.stopTyping(peerId, typingPeerId),
             durationLeft
@@ -320,18 +328,12 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
 
           if (typingPeer) {
             window.clearTimeout(typingPeer.cancelTypingTimeoutId)
+            typingPeer.type = type
             typingPeer.cancelTypingTimeoutId = cancelTypingTimeoutId
           } else {
             typingPeers.push({
               peerId: typingPeerId,
-              type: ({
-                63: 'text',
-                64: 'voice',
-                65: 'photo',
-                66: 'video',
-                67: 'file',
-                68: 'videomessage'
-              } as const)[eventId],
+              type,
               cancelTypingTimeoutId
             })
           }
