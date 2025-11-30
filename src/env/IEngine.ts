@@ -4,6 +4,15 @@ import { MessagesMessageAttachmentType } from 'model/api-types/objects/MessagesM
 
 export const VERSION = 21
 
+export enum FailReason {
+  RETRIEVE_KEY_ERROR,
+  RESYNC_ERROR,
+  INVALIDATE_CACHE,
+  OTHER
+}
+
+export class ResyncInvalidateCacheError {}
+
 export type Response =
   | { ts: number, pts: number, updates: Update[] }
   // ts слишком маленький (отстал на 256+ событий) или слишком большой

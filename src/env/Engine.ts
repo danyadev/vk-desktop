@@ -19,12 +19,15 @@ export class Engine {
   active = false
   credentials: MessagesLongpollCredentials | null = null
 
-  async start(credentials: MessagesLongpollCredentials) {
+  async start(
+    credentials: MessagesLongpollCredentials,
+    onFail: (reason: IEngine.FailReason) => void
+  ) {
     const { api } = useEnv()
     const { connection } = useConvosStore()
 
     if (this.active) {
-      throw new Error('[engine] Движок уже запущен')
+      throw new Error('[engine] The engine is already active')
     }
 
     this.active = true
@@ -59,6 +62,22 @@ export class Engine {
         connection.status = 'syncing'
 
         switch (result.failed) {
+          case 1:
+            try {
+              this.credentials = await handleEngineResync(IEngine.VERSION, pts)
+              connection.status = 'connected'
+              continue
+            } catch (error) {
+              if (error instanceof IEngine.ResyncInvalidateCacheError) {
+                onFail(IEngine.FailReason.INVALIDATE_CACHE)
+              } else {
+                onFail(IEngine.FailReason.RESYNC_ERROR)
+              }
+
+              console.error(error)
+              throw new Error('[engine] Resync failed')
+            }
+
           case 2: {
             try {
               const { key } = await api.fetch('messages.getLongPollServer', {
@@ -69,20 +88,17 @@ export class Engine {
               this.credentials.key = key
               connection.status = 'connected'
               continue
-            } catch {
-              // TODO: модалка
+            } catch (error) {
+              onFail(IEngine.FailReason.RETRIEVE_KEY_ERROR)
+              console.error(error)
               throw new Error('[engine] Couldn\'t obtain a new key')
             }
           }
 
-          case 1:
-            this.credentials = await handleEngineResync(IEngine.VERSION, pts)
-            connection.status = 'connected'
-            continue
-
           case 4:
           default:
-            throw new Error('[engine] Фейл ' + JSON.stringify(result))
+            onFail(IEngine.FailReason.OTHER)
+            throw new Error('[engine] Failed: ' + JSON.stringify(result))
         }
       }
 

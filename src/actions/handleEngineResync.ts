@@ -1,3 +1,4 @@
+import * as IEngine from 'env/IEngine'
 import { MessagesGetDiffConversationInfo } from 'model/api-types/objects/MessagesGetDiffConversationInfo'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import * as Convo from 'model/Convo'
@@ -21,7 +22,6 @@ export async function handleEngineResync(
   let conversationsSource: string | undefined
   const conversationsInfo: MessagesGetDiffConversationInfo[] = []
 
-  // TODO: модалка с потенциальной ошибкой ресинка
   const {
     conversations_info: conversationsInfoBatch,
     profiles,
@@ -38,13 +38,10 @@ export async function handleEngineResync(
       'profiles',
       'groups',
       'counters',
-      // 'folders',
-      // 'folders_with_peers',
       'messages',
       'server_version',
       'credentials'
     ].join(','),
-    // counter_filters: 'all',
     conversations_limit: 50
   }, { retries: Infinity })
 
@@ -53,9 +50,7 @@ export async function handleEngineResync(
   }
 
   if (invalidateAll) {
-    // TODO: модалка
-    location.reload()
-    throw new Error('[handleEngineResync] invalidating cache...')
+    throw new IEngine.ResyncInvalidateCacheError()
   }
 
   conversationsSource = nextConversationsSource
@@ -74,19 +69,13 @@ export async function handleEngineResync(
       from_version: pts,
       to_version: newPts,
       fields: PEER_FIELDS,
-      extended_filters: [
-        'profiles',
-        'groups',
-        'messages'
-      ].join(','),
+      extended_filters: ['profiles', 'groups', 'messages'].join(','),
       conversations_source: conversationsSource,
       conversations_limit: 50
     }, { retries: Infinity })
 
     if (invalidateAll) {
-      // TODO: модалка
-      location.reload()
-      throw new Error('[handleEngineResync] invalidating cache...')
+      throw new IEngine.ResyncInvalidateCacheError()
     }
 
     conversationsSource = nextConversationsSource

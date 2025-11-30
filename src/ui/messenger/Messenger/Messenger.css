@@ -16,6 +16,10 @@
   overflow: hidden;
 }
 
+.EngineFailModal {
+  max-width: 400px;
+}
+
 @media (width < 500px) {
   .Messenger__convoList {
     width: 100%;
