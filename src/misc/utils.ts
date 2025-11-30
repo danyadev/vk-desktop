@@ -151,7 +151,6 @@ export function createSharedComposable<
     if (!state) {
       scope = effectScope(true)
       // run() возвращает undefined только если скоуп отключен, что в текущем коде невозможно
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       state = scope.run(() => composable(...args))!
     }
 

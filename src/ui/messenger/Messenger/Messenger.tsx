@@ -1,5 +1,6 @@
 import { computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
+import * as IEngine from 'env/IEngine'
 import { loadInitialData } from 'actions'
 import { useEnv, useModal } from 'hooks'
 import { ConvoList } from 'ui/messenger/ConvoList/ConvoList'
@@ -12,13 +13,15 @@ export const Messenger = defineComponent(() => {
   const router = useRouter()
   const columnsLayout = useColumnsLayout()
   const initErrorModal = useModal()
+  const engineFailModal = useModal()
+  const engineFailReason = shallowRef('')
   const { lang } = useEnv()
 
   onMounted(() => {
-    loadInitialData(initErrorModal.open)
+    loadInitialData(initErrorModal.open, onEngineFail)
   })
 
-  function onKeydown(event: KeyboardEvent) {
+  const onKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Escape' && route.name === 'Convo') {
       if (route.query.canGoBack) {
         router.back()
@@ -28,9 +31,28 @@ export const Messenger = defineComponent(() => {
     }
   }
 
-  function closeInitErrorModal() {
+  const onEngineFail = (reason: IEngine.FailReason) => {
+    engineFailModal.open()
+
+    switch (reason) {
+      case IEngine.FailReason.RETRIEVE_KEY_ERROR:
+        engineFailReason.value = lang.use('engineFailModal_description_retrieve_key')
+        break
+      case IEngine.FailReason.RESYNC_ERROR:
+        engineFailReason.value = lang.use('engineFailModal_description_resync')
+        break
+      case IEngine.FailReason.INVALIDATE_CACHE:
+        engineFailReason.value = lang.use('engineFailModal_description_invalidate_cache')
+        break
+      case IEngine.FailReason.OTHER:
+        engineFailReason.value = lang.use('engineFailModal_description_other')
+        break
+    }
+  }
+
+  const closeInitErrorModal = () => {
     initErrorModal.close()
-    loadInitialData(initErrorModal.open)
+    loadInitialData(initErrorModal.open, onEngineFail)
   }
 
   return () => (
@@ -56,6 +78,25 @@ export const Messenger = defineComponent(() => {
         }
       >
         {lang.use('initErrorModal_text')}
+      </Modal>
+
+      <Modal
+        opened={engineFailModal.opened}
+        onClose={engineFailModal.close}
+        title={lang.use('engineFailModal_title')}
+        buttons={[
+          <Button onClick={() => location.reload()}>
+            {lang.use('engineFailModal_reload')}
+          </Button>,
+          <Button onClick={engineFailModal.close}>
+            {lang.use('modal_close_label')}
+          </Button>
+        ]}
+        class="EngineFailModal"
+      >
+        {engineFailReason.value}
+        <br /><br />
+        {lang.use('engineFailModal_reload_note')}
       </Modal>
     </div>
   )

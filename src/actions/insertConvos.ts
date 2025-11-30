@@ -7,7 +7,7 @@ import { fromApiConvo } from 'converters/ConvoConverter'
 
 export function insertConvos(
   conversations: MessagesConversationWithMessage[],
-  { list }: { list?: Lists.List } = {}
+  { list, invalidateHistory }: { list?: Lists.List, invalidateHistory?: boolean } = {}
 ) {
   const { convos } = useConvosStore()
   const { peers } = usePeersStore()
@@ -19,15 +19,18 @@ export function insertConvos(
       const localConvo = convos.get(convo.id)
 
       if (localConvo) {
-        const messages = convo.history.filter((node) => node.kind === 'Item')
-        History.insert(localConvo.history, messages, {
-          up: true,
-          // Здесь может добавиться только одно сообщение - переданный last_message
-          down: false,
-          aroundId: 0
-        })
+        if (!invalidateHistory) {
+          const messages = convo.history.filter((node) => node.kind === 'Item')
+          History.insert(localConvo.history, messages, {
+            up: true,
+            // Здесь может добавиться только одно сообщение - переданный last_message
+            down: false,
+            aroundId: 0
+          })
 
-        convo.history = localConvo.history
+          convo.history = localConvo.history
+        }
+
         convo.pendingMessages = localConvo.pendingMessages
         convo.historySliceAnchorCmid = localConvo.historySliceAnchorCmid
 

@@ -348,6 +348,14 @@ export const ru = {
   initErrorModal_text: 'Не удалось загрузить начальные данные для старта приложения',
   initErrorModal_retry: 'Повторить попытку',
 
+  engineFailModal_title: 'Ошибка движка',
+  engineFailModal_reload: 'Перезагрузить',
+  engineFailModal_description_retrieve_key: 'Произошла ошибка при обновлении ключа.',
+  engineFailModal_description_resync: 'Произошла ошибка во время синхронизации.',
+  engineFailModal_description_invalidate_cache: 'При синхронизации пришел запрос на сброс кеша.',
+  engineFailModal_description_other: 'Произошла ошибка в работе движка.',
+  engineFailModal_reload_note: 'Чтобы получать новые сообщения в реальном времени нужно перезагрузить приложение',
+
   confirmAccountDelete_title: 'Удаление аккаунта',
   confirmAccountDelete_confirm: 'Вы действительно хотите удалить аккаунт {userName}?',
 

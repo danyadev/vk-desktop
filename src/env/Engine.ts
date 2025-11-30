@@ -1,7 +1,7 @@
 import * as IEngine from 'env/IEngine'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import { useConvosStore } from 'store/convos'
-import { handleEngineUpdates } from 'actions'
+import { handleEngineResync, handleEngineUpdates } from 'actions'
 import { useEnv } from 'hooks'
 import { sleep, toUrlParams } from 'misc/utils'
 
@@ -17,22 +17,24 @@ const ENGINE_MODE =
 
 export class Engine {
   active = false
-  version = IEngine.VERSION
   credentials: MessagesLongpollCredentials | null = null
 
-  async start(credentials: MessagesLongpollCredentials) {
+  async start(
+    credentials: MessagesLongpollCredentials,
+    onFail: (reason: IEngine.FailReason) => void
+  ) {
     const { api } = useEnv()
     const { connection } = useConvosStore()
 
     if (this.active) {
-      throw new Error('[engine] Движок уже запущен')
+      throw new Error('[engine] The engine is already active')
     }
 
     this.active = true
     this.credentials = credentials
 
     while (this.active) {
-      const { server, key, ts } = this.credentials
+      const { server, key, ts, pts } = this.credentials
       const timeoutSignal = AbortSignal.timeout(ENGINE_FETCH_TIMEOUT)
 
       const result = await fetch(`https://${server}?act=a_check`, {
@@ -40,7 +42,7 @@ export class Engine {
         body: toUrlParams({
           key,
           ts,
-          version: this.version,
+          version: IEngine.VERSION,
           mode: ENGINE_MODE,
           wait: ENGINE_MAX_CONNECTION_DURATION_SEC
         }),
@@ -60,24 +62,43 @@ export class Engine {
         connection.status = 'syncing'
 
         switch (result.failed) {
+          case 1:
+            try {
+              this.credentials = await handleEngineResync(IEngine.VERSION, pts)
+              connection.status = 'connected'
+              continue
+            } catch (error) {
+              if (error instanceof IEngine.ResyncInvalidateCacheError) {
+                onFail(IEngine.FailReason.INVALIDATE_CACHE)
+              } else {
+                onFail(IEngine.FailReason.RESYNC_ERROR)
+              }
+
+              console.error(error)
+              throw new Error('[engine] Resync failed')
+            }
+
           case 2: {
             try {
               const { key } = await api.fetch('messages.getLongPollServer', {
-                lp_version: this.version,
+                lp_version: IEngine.VERSION,
                 need_pts: 0
               }, { retries: Infinity })
 
               this.credentials.key = key
+              connection.status = 'connected'
               continue
-            } catch {
+            } catch (error) {
+              onFail(IEngine.FailReason.RETRIEVE_KEY_ERROR)
+              console.error(error)
               throw new Error('[engine] Couldn\'t obtain a new key')
             }
           }
 
-          case 1:
           case 4:
           default:
-            throw new Error('[engine] Фейл ' + JSON.stringify(result))
+            onFail(IEngine.FailReason.OTHER)
+            throw new Error('[engine] Failed: ' + JSON.stringify(result))
         }
       }
 

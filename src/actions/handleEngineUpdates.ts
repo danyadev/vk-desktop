@@ -665,7 +665,7 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
   }
 }
 
-async function loadMissingData({
+export async function loadMissingData({
   missingCmidsByConvo,
   missingConvos,
   missingUsers,

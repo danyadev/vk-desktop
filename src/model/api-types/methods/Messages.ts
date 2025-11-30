@@ -1,6 +1,10 @@
 import { GroupsGroup } from 'model/api-types/objects/GroupsGroup'
 import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
 import { MessagesConversationWithMessage } from 'model/api-types/objects/MessagesConversationWithMessage'
+import { MessagesCounters } from 'model/api-types/objects/MessagesCounters'
+import { MessagesFolder } from 'model/api-types/objects/MessagesFolder'
+import { MessagesGetDiffContentItem } from 'model/api-types/objects/MessagesGetDiffContentItem'
+import { MessagesGetDiffConversationInfo } from 'model/api-types/objects/MessagesGetDiffConversationInfo'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
 import { UsersUser } from 'model/api-types/objects/UsersUser'
@@ -137,21 +141,52 @@ export type MessagesGetDiffContentParams = {
 }
 
 export type MessagesGetDiffContentResponse = {
-  items: Array<{
-    peer_id: number
-    messages?: MessagesMessage[]
-    requested_messages?: MessagesMessage[]
-    range_messages?: MessagesMessage[][]
-    reactions?: Array<{
-      cmid: number
-      counters: Array<{
-        reaction_id: number
-        count: number
-        user_ids: number[]
-      }>
-    }>
-  }>
+  items: MessagesGetDiffContentItem[]
   profiles?: UsersUser[]
   groups?: GroupsGroup[]
   // contacts?: MessagesContact[]
+}
+
+// messages.getDiff
+export type MessagesGetDiffParams = {
+  lp_version: number
+  // pts последнего известного события
+  from_version?: number
+  // Ограничение максимального значения pts
+  to_version?: number
+  fields: string
+  // profiles, contacts, groups, counters, folders, folders_with_peers, conversations_banner,
+  // messages, server_version, credentials
+  extended_filters: string
+  // 'all' or any field name it returns when calling with 'all'
+  counter_filters?: string
+  // Поддерживаемые типы папок: business, channels, unread, personal, managed_groups
+  supported_types?: string
+  // Значение conversations_source из ответа предыдущего вызова messages.getDiff,
+  // чтобы получить следующую пачку данных если предыдущего ответа не хватило
+  conversations_source?: string
+  // Максимальное количество бесед, загружаемое в рамках одного запроса
+  conversations_limit?: number
+  group_id?: number
+}
+
+export type MessagesGetDiffResponse = {
+  conversations_info?: MessagesGetDiffConversationInfo[]
+  folders?: {
+    count: number
+    items: MessagesFolder[]
+  }
+  counters?: MessagesCounters
+  credentials?: {
+    server_lp: string
+    key: string
+    ts: number
+  }
+  // conversations_banner?: MessagesConversationBar
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+  // contacts?: MessagesContact[]
+  server_version?: number
+  conversations_source?: string
+  invalidate_all?: boolean
 }
