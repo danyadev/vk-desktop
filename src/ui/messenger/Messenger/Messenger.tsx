@@ -1,7 +1,6 @@
 import { computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import * as IEngine from 'env/IEngine'
-import { FailReason } from 'env/IEngine'
 import { loadInitialData } from 'actions'
 import { useEnv, useModal } from 'hooks'
 import { ConvoList } from 'ui/messenger/ConvoList/ConvoList'
@@ -36,16 +35,16 @@ export const Messenger = defineComponent(() => {
     engineFailModal.open()
 
     switch (reason) {
-      case FailReason.RETRIEVE_KEY_ERROR:
+      case IEngine.FailReason.RETRIEVE_KEY_ERROR:
         engineFailReason.value = lang.use('engineFailModal_description_retrieve_key')
         break
-      case FailReason.RESYNC_ERROR:
+      case IEngine.FailReason.RESYNC_ERROR:
         engineFailReason.value = lang.use('engineFailModal_description_resync')
         break
-      case FailReason.INVALIDATE_CACHE:
+      case IEngine.FailReason.INVALIDATE_CACHE:
         engineFailReason.value = lang.use('engineFailModal_description_invalidate_cache')
         break
-      case FailReason.OTHER:
+      case IEngine.FailReason.OTHER:
         engineFailReason.value = lang.use('engineFailModal_description_other')
         break
     }
@@ -86,8 +85,12 @@ export const Messenger = defineComponent(() => {
         onClose={engineFailModal.close}
         title={lang.use('engineFailModal_title')}
         buttons={[
-          <Button onClick={() => location.reload()}>{lang.use('engineFailModal_reload')}</Button>,
-          <Button onClick={engineFailModal.close}>{lang.use('modal_close_label')}</Button>
+          <Button onClick={() => location.reload()}>
+            {lang.use('engineFailModal_reload')}
+          </Button>,
+          <Button onClick={engineFailModal.close}>
+            {lang.use('modal_close_label')}
+          </Button>
         ]}
         class="EngineFailModal"
       >
