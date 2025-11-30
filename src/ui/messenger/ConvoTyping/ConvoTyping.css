@@ -20,7 +20,7 @@
 .ConvoTyping__indicator::before,
 .ConvoTyping__indicator::after {
   background: currentcolor;
-  animation: none 1s linear infinite;
+  animation: 1s linear infinite;
 }
 
 .ConvoTyping__indicator--text .ConvoTyping__particle,
