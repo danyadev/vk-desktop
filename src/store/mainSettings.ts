@@ -16,6 +16,7 @@ export type MainSettings = {
     theme: AppearanceTheme
   }
   alwaysOnTop: boolean
+  attachDebugger: boolean
 }
 
 const mainSettingsStorage = new MainStorage<MainSettings>({
@@ -28,7 +29,8 @@ const mainSettingsStorage = new MainStorage<MainSettings>({
     scheme: 'vkcom',
     theme: 'system'
   },
-  alwaysOnTop: false
+  alwaysOnTop: false,
+  attachDebugger: false
 })
 
 export const useMainSettingsStore = defineStore('mainSettings', {

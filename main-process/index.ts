@@ -26,7 +26,8 @@ let mainSettings: MainSettings = {
     scheme: 'vkcom',
     theme: 'system'
   },
-  alwaysOnTop: false
+  alwaysOnTop: false,
+  attachDebugger: false
 }
 
 try {
@@ -43,6 +44,10 @@ try {
 }
 
 electronMain.initialize()
+
+if (mainSettings.attachDebugger) {
+  app.commandLine.appendSwitch('remote-debugging-port', '9229')
+}
 
 nativeTheme.themeSource = mainSettings.appearance.theme
 
