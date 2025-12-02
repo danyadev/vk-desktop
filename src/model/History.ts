@@ -47,9 +47,13 @@ export function lastItem<T>(history: History<T>): T | undefined {
  * Возвращает часть истории, непрерывно доступной вокруг aroundId,
  * то есть список элементов до первого гэпа с обеих сторон от aroundId
  */
-export function around<T>(history: History<T>, aroundId: number, strictlyIncludeId?: boolean): {
+export function around<T>(
+  history: History<T>,
+  aroundId: number,
+  preferNeighborSliceAtGapBoundary = true
+): {
   items: Array<Item<T>>
-  matchedAroundId: number
+  effectiveAroundId: number
   gapBefore?: Gap
   gapAround?: Gap
   gapAfter?: Gap
@@ -68,7 +72,7 @@ export function around<T>(history: History<T>, aroundId: number, strictlyInclude
     if (!lastNode) {
       return {
         items: [],
-        matchedAroundId: aroundId
+        effectiveAroundId: aroundId
       }
     }
 
@@ -79,44 +83,46 @@ export function around<T>(history: History<T>, aroundId: number, strictlyInclude
     }
 
     // Иначе, элемент находится где-то в пустой зоне истории, находим первый элемент рядом с ним
-    for (let i = 0; i < history.length; i++) {
-      const node = history[i]
-      const prevNode = history[i - 1]
-      if (!node) {
-        continue
-      }
-
+    const nextToAroundIndex = binarySearch(history, plainToBinarySearchAdapter((node) => {
       const nodeStartBoundary = node.kind === 'Gap' ? node.fromId : node.id
-      if (nodeStartBoundary > aroundId) {
-        // Предпочитаем отображать более актуальную историю
-        // aroundId: 5; [4-, 6+] -> around 6+
-        if (node.kind !== 'Gap') {
-          return around(history, nodeStartBoundary)
-        }
-        // Но если рядом оказалась только прошлая история, возвращаем ее
-        // aroundId: 5; [4-, [6+, n]] -> around 4-
-        if (prevNode && prevNode.kind !== 'Gap') {
-          return around(history, prevNode.id)
-        }
-        // Иначе отдаем гэп более актуальной истории
-        // aroundId: 5; [[n, 4-]?, [6+, n]] -> gap [6+, n]
-        return {
-          items: [],
-          gapAround: node,
-          matchedAroundId: nodeStartBoundary
-        }
+      return nodeStartBoundary > aroundId
+    }))
+
+    if (nextToAroundIndex === null) {
+      // По сути невозможный кейс, возвращаем пустоту
+      return {
+        items: [],
+        effectiveAroundId: aroundId
       }
     }
 
-    // По сути невозможный кейс, возвращаем пустоту
+    const nextToAroundNode = history[nextToAroundIndex]!
+    const prevToAroundNode = history[nextToAroundIndex - 1]
+
+    const nodeStartBoundary = nextToAroundNode.kind === 'Gap'
+      ? nextToAroundNode.fromId
+      : nextToAroundNode.id
+    // Предпочитаем отображать более актуальную историю
+    // aroundId: 5; [4-, 6+] -> around 6+
+    if (nextToAroundNode.kind !== 'Gap') {
+      return around(history, nodeStartBoundary)
+    }
+    // Но если рядом оказалась только прошлая история, возвращаем ее
+    // aroundId: 5; [4-, [6+, n]] -> around 4-
+    if (prevToAroundNode && prevToAroundNode.kind !== 'Gap') {
+      return around(history, prevToAroundNode.id)
+    }
+    // Иначе отдаем гэп более актуальной истории
+    // aroundId: 5; [[n, 4-]?, [6+, n]] -> gap [6+, n]
     return {
       items: [],
-      matchedAroundId: aroundId
+      gapAround: nextToAroundNode,
+      effectiveAroundId: nodeStartBoundary
     }
   }
 
   if (aroundNode.kind === 'Gap') {
-    if (!strictlyIncludeId) {
+    if (preferNeighborSliceAtGapBoundary) {
       /**
        * Если мы попались на граничный гэп рядом с историей, то отдадим эту историю
        */
@@ -134,35 +140,33 @@ export function around<T>(history: History<T>, aroundId: number, strictlyInclude
     return {
       items: [],
       gapAround: aroundNode,
-      matchedAroundId: aroundId
+      effectiveAroundId: aroundId
     }
   }
 
   let gapBefore: Gap | undefined
-  let gapBeforeIndex = aroundIndex - 1
-  while (gapBeforeIndex >= 0 && !gapBefore) {
-    const node = history[gapBeforeIndex]
-    if (node && node.kind === 'Gap') {
+  let gapBeforeIndex = aroundIndex
+  while (--gapBeforeIndex >= 0) {
+    const node = history[gapBeforeIndex]!
+    if (node.kind === 'Gap') {
       gapBefore = node
-    } else {
-      gapBeforeIndex--
+      break
     }
   }
 
   let gapAfter: Gap | undefined
-  let gapAfterIndex = aroundIndex + 1
-  while (gapAfterIndex < history.length && !gapAfter) {
-    const node = history[gapAfterIndex]
-    if (node && node.kind === 'Gap') {
+  let gapAfterIndex = aroundIndex
+  while (++gapAfterIndex < history.length) {
+    const node = history[gapAfterIndex]!
+    if (node.kind === 'Gap') {
       gapAfter = node
-    } else {
-      gapAfterIndex++
+      break
     }
   }
 
   return {
     items: history.slice(gapBeforeIndex + 1, gapAfterIndex) as Array<Item<T>>,
-    matchedAroundId: aroundId,
+    effectiveAroundId: aroundId,
     gapBefore,
     gapAfter
   }

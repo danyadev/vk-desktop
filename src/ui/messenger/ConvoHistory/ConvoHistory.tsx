@@ -43,7 +43,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const historySlice = computed(() => History.around(
     props.convo.history,
     props.convo.historySliceAnchorCmid,
-    scrollAnchor.value.kind !== 'None'
+    scrollAnchor.value.kind === 'None'
   ))
 
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
@@ -248,7 +248,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   }
 
   return () => {
-    const { items, matchedAroundId, gapBefore, gapAround, gapAfter } = historySlice.value
+    const { items, effectiveAroundId, gapBefore, gapAround, gapAfter } = historySlice.value
     const messages = [
       ...items.map(({ item }) => item),
       ...props.convo.pendingMessages
@@ -259,7 +259,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         <div class="ConvoHistory__placeholder">
           <HistoryLoader
             direction="around"
-            startId={matchedAroundId}
+            startId={effectiveAroundId}
             gap={gapAround}
             peerId={props.convo.id}
             loadHistory={loadHistory}

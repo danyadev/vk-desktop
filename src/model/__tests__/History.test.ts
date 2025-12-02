@@ -18,19 +18,20 @@ const restoreHistory = (simpleHistory: SimpleHistory): History.History<null> => 
 describe(History.around.name, () => {
   const around = (
     history: SimpleHistory,
-    aroundId: number
+    aroundId: number,
+    preferNeighborSliceAtGapBoundary?: boolean
   ) => {
     const {
       items,
-      matchedAroundId,
+      effectiveAroundId,
       gapBefore,
       gapAround,
       gapAfter
-    } = History.around(restoreHistory(history), aroundId)
+    } = History.around(restoreHistory(history), aroundId, preferNeighborSliceAtGapBoundary)
 
     return {
       items: items.map((node) => node.id),
-      around: matchedAroundId === aroundId ? undefined : matchedAroundId,
+      around: effectiveAroundId === aroundId ? undefined : effectiveAroundId,
       gapBefore: gapBefore && [gapBefore.fromId, gapBefore.toId] as const,
       gapAround: gapAround && [gapAround.fromId, gapAround.toId] as const,
       gapAfter: gapAfter && [gapAfter.fromId, gapAfter.toId] as const
@@ -104,6 +105,22 @@ describe(History.around.name, () => {
       .toEqual({ items: [3], gapBefore: [1, 2] })
   })
 
+  test('between gap and node (disallow neighbor slice at gap boundary)', () => {
+    expect(around([1, [2, 3]], 1, false))
+      .toEqual({ items: [1], gapAfter: [2, 3] })
+    expect(around([1, [2, 3]], 2, false))
+      .toEqual({ items: [], gapAround: [2, 3] })
+    expect(around([1, [2, 3]], 3, false))
+      .toEqual({ items: [], gapAround: [2, 3] })
+
+    expect(around([[1, 2], 3], 1, false))
+      .toEqual({ items: [], gapAround: [1, 2] })
+    expect(around([[1, 2], 3], 2, false))
+      .toEqual({ items: [], gapAround: [1, 2] })
+    expect(around([[1, 2], 3], 3, false))
+      .toEqual({ items: [3], gapBefore: [1, 2] })
+  })
+
   test('between gap and node with empty zone', () => {
     expect(around([1, [3, 4]], 1))
       .toEqual({ items: [1], gapAfter: [3, 4] })
@@ -115,6 +132,7 @@ describe(History.around.name, () => {
       .toEqual({ items: [], gapAround: [3, 4] })
     expect(around([1, [3, 4]], 5))
       .toEqual({ items: [], gapAround: [3, 4], around: 4 })
+
     expect(around([1, [5, 6]], 3))
       .toEqual({ items: [1], gapAfter: [5, 6], around: 1 })
 
@@ -128,7 +146,38 @@ describe(History.around.name, () => {
       .toEqual({ items: [4], gapBefore: [1, 2] })
     expect(around([[1, 2], 4], 5))
       .toEqual({ items: [4], gapBefore: [1, 2], around: 4 })
+
     expect(around([[1, 2], 6], 4))
+      .toEqual({ items: [6], gapBefore: [1, 2], around: 6 })
+  })
+
+  test('between gap and node with empty zone (disallow neighbor slice at gap boundary)', () => {
+    expect(around([1, [3, 4]], 1, false))
+      .toEqual({ items: [1], gapAfter: [3, 4] })
+    expect(around([1, [3, 4]], 2, false))
+      .toEqual({ items: [1], gapAfter: [3, 4], around: 1 })
+    expect(around([1, [3, 4]], 3, false))
+      .toEqual({ items: [], gapAround: [3, 4] })
+    expect(around([1, [3, 4]], 4, false))
+      .toEqual({ items: [], gapAround: [3, 4] })
+    expect(around([1, [3, 4]], 5, false))
+      .toEqual({ items: [], gapAround: [3, 4], around: 4 })
+
+    expect(around([1, [5, 6]], 3, false))
+      .toEqual({ items: [1], gapAfter: [5, 6], around: 1 })
+
+    expect(around([[1, 2], 4], 1, false))
+      .toEqual({ items: [], gapAround: [1, 2] })
+    expect(around([[1, 2], 4], 2, false))
+      .toEqual({ items: [], gapAround: [1, 2] })
+    expect(around([[1, 2], 4], 3, false))
+      .toEqual({ items: [4], gapBefore: [1, 2], around: 4 })
+    expect(around([[1, 2], 4], 4, false))
+      .toEqual({ items: [4], gapBefore: [1, 2] })
+    expect(around([[1, 2], 4], 5, false))
+      .toEqual({ items: [4], gapBefore: [1, 2], around: 4 })
+
+    expect(around([[1, 2], 6], 4, false))
       .toEqual({ items: [6], gapBefore: [1, 2], around: 6 })
   })
 })
