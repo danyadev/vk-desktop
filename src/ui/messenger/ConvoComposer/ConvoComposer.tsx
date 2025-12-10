@@ -7,18 +7,16 @@ import { fromApiAttachPhoto } from 'converters/AttachConverter'
 import { useEnv } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ConvoComposerMedia } from 'ui/messenger/ConvoComposer/ConvoComposerMedia'
+import { ConvoComposerMuteChannel } from 'ui/messenger/ConvoComposer/ConvoComposerMuteChannel'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
-import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20PictureOutline,
   Icon24AddCircleOutline,
   Icon24Info,
-  Icon24MuteOutline,
-  Icon24Send,
-  Icon24VolumeOutline
+  Icon24Send
 } from 'assets/icons'
 import './ConvoComposer.css'
 
@@ -35,19 +33,18 @@ export type UploadedMediaItem = {
 }
 
 export const ConvoComposer = defineComponent<Props>((props) => {
-  const { lang, api, uploader } = useEnv()
+  const { lang, uploader } = useEnv()
   const $input = shallowRef<HTMLSpanElement | null>(null)
-  const areNotificationsUpdating = shallowRef(false)
   const text = shallowRef('')
-  const uploadedMedia = ref<UploadedMediaItem[]>([])
+  const uploadedMedia = ref<UploadedMediaItem[]>([]).value
 
   const canSendMessage = computed(() => {
-    const hasAttaches = uploadedMedia.value.length > 0
+    const hasAttaches = uploadedMedia.length > 0
     if (!hasAttaches && text.value.trim() === '') {
       return false
     }
 
-    const allAttachesReady = uploadedMedia.value.every((media) => media.photo)
+    const allAttachesReady = uploadedMedia.every((media) => media.photo)
     if (!allAttachesReady) {
       return false
     }
@@ -56,7 +53,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   })
 
   const onMessageSend = () => {
-    const attaches = uploadedMedia.value.reduce<Attach.Attaches>((attaches, media) => {
+    const attaches = uploadedMedia.reduce<Attach.Attaches>((attaches, media) => {
       const photo = media.photo && fromApiAttachPhoto(media.photo)
       if (!photo) {
         return attaches
@@ -73,9 +70,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
     sendMessage(props.convo.id, text.value, attaches)
 
-    uploadedMedia.value = []
+    uploadedMedia.length = 0
     text.value = ''
-    $input.value && ($input.value.innerText = '')
+
+    if ($input.value) {
+      $input.value.innerText = ''
+    }
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -105,17 +105,14 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const uploadPhoto = (file: File) => {
-    const length = uploadedMedia.value.push({
+    const length = uploadedMedia.push({
       kind: 'Photo',
       progress: 0,
       failed: false,
       file
     })
-    // Достаем значение из массива, чтобы получить реактивную версию объекта
-    const media = uploadedMedia.value[length - 1]
-    if (!media) {
-      return
-    }
+    // Достаем этот же объект из массива, чтобы получить реактивную версию объекта
+    const media = uploadedMedia[length - 1]!
 
     uploader
       .uploadPhoto(file, props.convo.id, (progress: number) => {
@@ -129,19 +126,20 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       })
   }
 
-  const toggleNotifications = async () => {
-    try {
-      areNotificationsUpdating.value = true
+  const openPhotoPicker = async () => {
+    const fileHandles = await showOpenFilePicker({
+      excludeAcceptAllOption: true,
+      multiple: true,
+      types: [{
+        accept: {
+          'image/*': ['.png', '.jpg', '.jpeg', '.gif']
+        }
+      }]
+    }).catch(() => [])
 
-      await api.fetch('account.setSilenceMode', {
-        peer_id: props.convo.id,
-        sound: props.convo.notifications.enabled ? 0 : 1,
-        time: props.convo.notifications.enabled ? -1 : 0
-      })
-
-      props.convo.notifications.enabled = !props.convo.notifications.enabled
-    } finally {
-      areNotificationsUpdating.value = false
+    for (const fileHandle of fileHandles) {
+      const file = await fileHandle.getFile()
+      uploadPhoto(file)
     }
   }
 
@@ -156,23 +154,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
 
     if (Convo.isChannel(props.convo)) {
-      return (
-        <Button
-          class="ConvoComposer__muteChannelButton"
-          mode="tertiary"
-          loading={areNotificationsUpdating.value}
-          onClick={toggleNotifications}
-          before={
-            props.convo.notifications.enabled
-              ? <Icon24MuteOutline />
-              : <Icon24VolumeOutline />
-          }
-        >
-          {props.convo.notifications.enabled
-            ? lang.use('me_convo_disable_notifications')
-            : lang.use('me_convo_enable_notifications')}
-        </Button>
-      )
+      return <ConvoComposerMuteChannel convo={props.convo} />
     }
 
     return (
@@ -191,22 +173,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               <ActionMenuItem
                 icon={<Icon20PictureOutline />}
                 text="Фото"
-                onClick={async () => {
-                  const handles = await showOpenFilePicker({
-                    excludeAcceptAllOption: true,
-                    multiple: true,
-                    types: [{
-                      accept: {
-                        'image/*': ['.png', '.jpg', '.jpeg', '.gif']
-                      }
-                    }]
-                  }).catch(() => [])
-
-                  for (const handle of handles) {
-                    const file = await handle.getFile()
-                    uploadPhoto(file)
-                  }
-                }}
+                onClick={openPhotoPicker}
               />
             </ActionMenu>
           }
@@ -240,12 +207,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   return () => (
     <div class="ConvoComposer">
       <div class="ConvoComposer__inner">
-        {uploadedMedia.value.length > 0 && (
+        {uploadedMedia.length > 0 && (
           <div class="ConvoComposer__attaches">
-            {uploadedMedia.value.map((media, index) => (
+            {uploadedMedia.map((media, index) => (
               <ConvoComposerMedia
                 media={media}
-                onRemove={() => uploadedMedia.value.splice(index, 1)}
+                onRemove={() => uploadedMedia.splice(index, 1)}
               />
             ))}
           </div>
