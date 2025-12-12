@@ -1,5 +1,4 @@
 import Electron from 'electron'
-import { toRaw } from 'vue'
 import { defineStore } from 'pinia'
 import { MainStorage } from 'store/Storage'
 import { currentWindow } from 'misc/utils'
@@ -39,6 +38,6 @@ export const useMainSettingsStore = defineStore('mainSettings', {
 
 export function init() {
   useMainSettingsStore().$subscribe((mutation, state) => {
-    mainSettingsStorage.update(toRaw(state))
+    mainSettingsStorage.update(state)
   })
 }

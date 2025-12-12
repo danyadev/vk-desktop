@@ -1,4 +1,4 @@
-import { defineComponent, onMounted, onUpdated, shallowRef, Transition } from 'vue'
+import { defineComponent, onUpdated, shallowRef, Transition } from 'vue'
 import { useResizeObserver } from 'hooks'
 import { ClassName, throttle } from 'misc/utils'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -15,7 +15,6 @@ export const HorizontalScroll = defineComponent<Props>((props, { slots }) => {
   const canScrollLeft = shallowRef(false)
   const canScrollRight = shallowRef(false)
 
-  onMounted(() => calculateArrowsVisibility())
   // Хук вызывается при рендере как этого компонента, так и всех его детей
   onUpdated(() => calculateArrowsVisibility())
   useResizeObserver($innerElement, () => calculateArrowsVisibility())

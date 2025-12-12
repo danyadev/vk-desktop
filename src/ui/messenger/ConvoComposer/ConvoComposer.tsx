@@ -1,7 +1,7 @@
-import { ChangeEvent, computed, defineComponent, KeyboardEvent, ref, shallowRef } from 'vue'
-import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
+import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
+import * as ConvoDraft from 'model/ConvoDraft'
 import { sendMessage } from 'actions'
 import { fromApiAttachPhoto } from 'converters/AttachConverter'
 import { useEnv } from 'hooks'
@@ -24,54 +24,53 @@ type Props = {
   convo: Convo.Convo
 }
 
-export type UploadedMediaItem = {
-  kind: 'Photo'
-  progress: number
-  failed: boolean
-  file: File
-  photo?: PhotosPhoto
-}
-
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang, uploader } = useEnv()
+  const draft = ConvoDraft.get(props.convo.id)
   const $input = shallowRef<HTMLSpanElement | null>(null)
-  const text = shallowRef('')
-  const uploadedMedia = ref<UploadedMediaItem[]>([]).value
 
-  const canSendMessage = computed(() => {
-    const hasAttaches = uploadedMedia.length > 0
-    if (!hasAttaches && text.value.trim() === '') {
-      return false
+  const attachesForPreview = computed(() => {
+    const attaches: Array<Attach.SingleAttach | ConvoDraft.UploadingAttach> = []
+    const draftAttachesValues = Object.values(draft.attaches)
+
+    for (const attach of draftAttachesValues) {
+      const attachesArray = Array.isArray(attach) ? attach : [attach]
+      const uploadingAttaches = draft.uploadingAttaches.filter((uploadingAttach) => (
+        uploadingAttach.kind === attachesArray[0].kind
+      ))
+
+      attaches.push(...attachesArray, ...uploadingAttaches)
     }
 
-    const allAttachesReady = uploadedMedia.every((media) => media.photo)
-    if (!allAttachesReady) {
-      return false
+    if (draftAttachesValues.length === 0) {
+      attaches.push(...draft.uploadingAttaches)
     }
 
-    return true
+    return attaches
   })
 
+  onMounted(() => {
+    if (!$input.value) {
+      return
+    }
+
+    $input.value.focus()
+
+    if (draft.text) {
+      $input.value.innerText = draft.text
+
+      const sel = window.getSelection()!
+      sel.selectAllChildren($input.value)
+      sel.collapseToEnd()
+    }
+  })
+
+  const canSendMessage = computed(() => !ConvoDraft.isEmpty(draft, false))
+
   const onMessageSend = () => {
-    const attaches = uploadedMedia.reduce<Attach.Attaches>((attaches, media) => {
-      const photo = media.photo && fromApiAttachPhoto(media.photo)
-      if (!photo) {
-        return attaches
-      }
+    sendMessage(props.convo.id, draft.text, draft.attaches)
 
-      if (attaches.photos) {
-        attaches.photos.push(photo)
-      } else {
-        attaches.photos = [photo]
-      }
-
-      return attaches
-    }, {})
-
-    sendMessage(props.convo.id, text.value, attaches)
-
-    uploadedMedia.length = 0
-    text.value = ''
+    ConvoDraft.reset(draft)
 
     if ($input.value) {
       $input.value.innerText = ''
@@ -92,7 +91,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const onInput = (event: ChangeEvent<HTMLElement>) => {
-    text.value = event.currentTarget.innerText ?? ''
+    draft.text = event.currentTarget.innerText ?? ''
   }
 
   const onPaste = (event: ClipboardEvent) => {
@@ -105,24 +104,36 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const uploadPhoto = (file: File) => {
-    const length = uploadedMedia.push({
+    const length = draft.uploadingAttaches.push({
       kind: 'Photo',
+      file,
       progress: 0,
-      failed: false,
-      file
+      failed: false
     })
     // Достаем этот же объект из массива, чтобы получить реактивную версию объекта
-    const media = uploadedMedia[length - 1]!
+    const uploadingAttach = draft.uploadingAttaches[length - 1]!
 
     uploader
       .uploadPhoto(file, props.convo.id, (progress: number) => {
-        media.progress = progress
+        uploadingAttach.progress = progress
       })
-      .then((photo) => {
-        media.photo = photo
+      .then((apiPhoto) => {
+        const photo = fromApiAttachPhoto(apiPhoto)
+        if (!photo) {
+          uploadingAttach.failed = true
+          return
+        }
+
+        if (!draft.attaches.photos) {
+          draft.attaches.photos = [photo]
+        } else {
+          draft.attaches.photos.push(photo)
+        }
+
+        draft.uploadingAttaches.splice(draft.uploadingAttaches.indexOf(uploadingAttach), 1)
       })
       .catch(() => {
-        media.failed = true
+        uploadingAttach.failed = true
       })
   }
 
@@ -140,6 +151,15 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     for (const fileHandle of fileHandles) {
       const file = await fileHandle.getFile()
       uploadPhoto(file)
+    }
+  }
+
+  const removeAttach = (attach: Attach.SingleAttach | ConvoDraft.UploadingAttach) => {
+    if ('file' in attach) {
+      // TODO: отменять запрос на загрузку
+      draft.uploadingAttaches.splice(draft.uploadingAttaches.indexOf(attach), 1)
+    } else {
+      Attach.remove(draft.attaches, attach)
     }
   }
 
@@ -207,12 +227,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   return () => (
     <div class="ConvoComposer">
       <div class="ConvoComposer__inner">
-        {uploadedMedia.length > 0 && (
+        {attachesForPreview.value.length > 0 && (
           <div class="ConvoComposer__attaches">
-            {uploadedMedia.map((media, index) => (
+            {attachesForPreview.value.map((media) => (
               <ConvoComposerMedia
-                media={media}
-                onRemove={() => uploadedMedia.splice(index, 1)}
+                {...('file' in media) ? { uploadingAttach: media } : { attach: media }}
+                onRemove={() => removeAttach(media)}
               />
             ))}
           </div>

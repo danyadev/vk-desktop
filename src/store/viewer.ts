@@ -1,4 +1,3 @@
-import { toRaw } from 'vue'
 import { defineStore } from 'pinia'
 import * as Peer from 'model/Peer'
 import { RendererStorage } from 'store/Storage'
@@ -47,7 +46,7 @@ export const useViewerStore = defineStore('viewer', {
 
 export function init() {
   useViewerStore().$subscribe((mutation, state) => {
-    viewerStorage.update(toRaw(state))
+    viewerStorage.update(state)
   })
 }
 
