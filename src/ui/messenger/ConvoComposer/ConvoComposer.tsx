@@ -29,25 +29,10 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const draft = ConvoDraft.get(props.convo.id)
   const $input = shallowRef<HTMLSpanElement | null>(null)
 
-  const attachesForPreview = computed(() => {
-    const attaches: Array<Attach.SingleAttach | ConvoDraft.UploadingAttach> = []
-    const draftAttachesValues = Object.values(draft.attaches)
-
-    for (const attach of draftAttachesValues) {
-      const attachesArray = Array.isArray(attach) ? attach : [attach]
-      const uploadingAttaches = draft.uploadingAttaches.filter((uploadingAttach) => (
-        uploadingAttach.kind === attachesArray[0].kind
-      ))
-
-      attaches.push(...attachesArray, ...uploadingAttaches)
-    }
-
-    if (draftAttachesValues.length === 0) {
-      attaches.push(...draft.uploadingAttaches)
-    }
-
-    return attaches
-  })
+  const attachesForPreview = computed(() => ConvoDraft.getAttachesList(draft))
+  const canSendMessage = computed(() => (
+    !ConvoDraft.isEmpty(draft, false) && draft.uploadingAttaches.length === 0
+  ))
 
   onMounted(() => {
     if (!$input.value) {
@@ -64,8 +49,6 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       sel.collapseToEnd()
     }
   })
-
-  const canSendMessage = computed(() => !ConvoDraft.isEmpty(draft, false))
 
   const onMessageSend = () => {
     sendMessage(props.convo.id, draft.text, draft.attaches)
@@ -104,14 +87,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const uploadPhoto = (file: File) => {
-    const length = draft.uploadingAttaches.push({
+    const uploadingAttach = ConvoDraft.addUploadingAttach(draft, {
       kind: 'Photo',
       file,
       progress: 0,
       failed: false
     })
-    // Достаем этот же объект из массива, чтобы получить реактивную версию объекта
-    const uploadingAttach = draft.uploadingAttaches[length - 1]!
 
     uploader
       .uploadPhoto(file, props.convo.id, (progress: number) => {
@@ -119,18 +100,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       })
       .then((apiPhoto) => {
         const photo = fromApiAttachPhoto(apiPhoto)
-        if (!photo) {
-          uploadingAttach.failed = true
-          return
-        }
-
-        if (!draft.attaches.photos) {
-          draft.attaches.photos = [photo]
+        if (photo) {
+          Attach.add(draft.attaches, photo)
+          ConvoDraft.removeUploadingAttach(draft, uploadingAttach)
         } else {
-          draft.attaches.photos.push(photo)
+          uploadingAttach.failed = true
         }
-
-        draft.uploadingAttaches.splice(draft.uploadingAttaches.indexOf(uploadingAttach), 1)
       })
       .catch(() => {
         uploadingAttach.failed = true
@@ -154,12 +129,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
   }
 
-  const removeAttach = (attach: Attach.SingleAttach | ConvoDraft.UploadingAttach) => {
-    if ('file' in attach) {
-      // TODO: отменять запрос на загрузку
-      draft.uploadingAttaches.splice(draft.uploadingAttaches.indexOf(attach), 1)
+  const removeAttach = (attachPreview: ConvoDraft.AttachPreview) => {
+    if (attachPreview.kind === 'UploadingAttach') {
+      ConvoDraft.removeUploadingAttach(draft, attachPreview.attach)
     } else {
-      Attach.remove(draft.attaches, attach)
+      Attach.remove(draft.attaches, attachPreview.attach)
     }
   }
 
@@ -229,10 +203,10 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       <div class="ConvoComposer__inner">
         {attachesForPreview.value.length > 0 && (
           <div class="ConvoComposer__attaches">
-            {attachesForPreview.value.map((media) => (
+            {attachesForPreview.value.map((attachPreview) => (
               <ConvoComposerMedia
-                {...('file' in media) ? { uploadingAttach: media } : { attach: media }}
-                onRemove={() => removeAttach(media)}
+                attachPreview={attachPreview}
+                onRemove={() => removeAttach(attachPreview)}
               />
             ))}
           </div>

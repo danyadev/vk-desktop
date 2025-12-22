@@ -18,6 +18,10 @@ type GenericUploadingAttach<Kind extends string> = {
   failed: boolean
 }
 
+export type AttachPreview =
+  | { kind: 'Attach', attach: Attach.SingleAttach }
+  | { kind: 'UploadingAttach', attach: UploadingAttach }
+
 const emptyDraft = (): ConvoDraft => ({
   text: '',
   attaches: {},
@@ -44,4 +48,45 @@ export function isEmpty(draft: ConvoDraft, countUploading = true) {
 
 export function reset(draft: ConvoDraft) {
   Object.assign(draft, emptyDraft())
+}
+
+/**
+ * Добавляет загружаемый аттач в драфт и возвращает его реактивную копию
+ */
+export function addUploadingAttach(draft: ConvoDraft, uploadingAttach: UploadingAttach) {
+  const index = draft.uploadingAttaches.push(uploadingAttach)
+  return draft.uploadingAttaches[index]!
+}
+
+export function removeUploadingAttach(draft: ConvoDraft, uploadingAttach: UploadingAttach) {
+  // TODO: отменять запрос на загрузку
+  const index = draft.uploadingAttaches.indexOf(uploadingAttach)
+  if (index !== -1) {
+    draft.uploadingAttaches.splice(index, 1)
+  }
+}
+
+export function getAttachesList(draft: ConvoDraft): AttachPreview[] {
+  const attaches: AttachPreview[] = []
+  const draftAttachesValues = Object.values(draft.attaches)
+
+  for (const attach of draftAttachesValues) {
+    const attachesArray = Array.isArray(attach) ? attach : [attach]
+    const uploadingAttaches = draft.uploadingAttaches.filter((uploadingAttach) => (
+      uploadingAttach.kind === attachesArray[0].kind
+    ))
+
+    attaches.push(
+      ...attachesArray.map((attach) => ({ kind: 'Attach' as const, attach })),
+      ...uploadingAttaches.map((attach) => ({ kind: 'UploadingAttach' as const, attach }))
+    )
+  }
+
+  const restUploadingAttaches = draft.uploadingAttaches
+    .filter((uploadingAttach) => !attaches.some(({ attach }) => attach === uploadingAttach))
+    .map((attach) => ({ kind: 'UploadingAttach' as const, attach }))
+
+  attaches.push(...restUploadingAttaches)
+
+  return attaches
 }

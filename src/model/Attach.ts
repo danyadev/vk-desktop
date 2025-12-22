@@ -232,6 +232,46 @@ function previewUnknown(unknown: NonNullable<Attaches['unknown']>, lang: ILang.L
   }
 }
 
+export function add(attaches: Attaches, attach: SingleAttach) {
+  switch (attach.kind) {
+    case 'Photo':
+      if (attaches.photos) {
+        attaches.photos.push(attach)
+      } else {
+        attaches.photos = [attach]
+      }
+      break
+
+    case 'Link':
+      if (attaches.links) {
+        attaches.links.push(attach)
+      } else {
+        attaches.links = [attach]
+      }
+      break
+
+    case 'Unknown':
+      if (attaches.unknown) {
+        attaches.unknown.push(attach)
+      } else {
+        attaches.unknown = [attach]
+      }
+      break
+
+    case 'Sticker':
+      attaches.sticker = attach
+      break
+
+    case 'Voice':
+      attaches.voice = attach
+      break
+
+    case 'Wall':
+      attaches.wall = attach
+      break
+  }
+}
+
 export function remove(attaches: Attaches, attach: SingleAttach) {
   switch (attach.kind) {
     case 'Photo': {
@@ -270,6 +310,24 @@ export function remove(attaches: Attaches, attach: SingleAttach) {
       break
     }
 
+    case 'Unknown': {
+      if (!attaches.unknown) {
+        break
+      }
+
+      const index = attaches.unknown.indexOf(attach)
+      if (index === -1) {
+        break
+      }
+
+      if (attaches.unknown.length === 1) {
+        delete attaches.unknown
+      } else {
+        attaches.unknown.splice(index, 1)
+      }
+      break
+    }
+
     case 'Sticker':
     case 'Voice':
     case 'Wall': {
@@ -279,8 +337,5 @@ export function remove(attaches: Attaches, attach: SingleAttach) {
       }
       break
     }
-
-    case 'Unknown':
-      break
   }
 }
