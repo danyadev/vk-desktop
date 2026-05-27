@@ -210,6 +210,7 @@ export default defineConfig([
       '@typescript-eslint/use-unknown-in-catch-callback-variable': 'error',
       '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
       '@typescript-eslint/no-unnecessary-type-arguments': 'error',
+      '@typescript-eslint/no-useless-default-assignment': 'error',
 
       /**
        * Далее идут правила, которые расширяют eslint-правила.
