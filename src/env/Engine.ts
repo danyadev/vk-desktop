@@ -75,7 +75,7 @@ export class Engine {
               }
 
               console.error(error)
-              throw new Error('[engine] Resync failed')
+              throw new Error('[engine] Resync failed', { cause: error })
             }
 
           case 2: {
@@ -91,7 +91,7 @@ export class Engine {
             } catch (error) {
               onFail(IEngine.FailReason.RETRIEVE_KEY_ERROR)
               console.error(error)
-              throw new Error('[engine] Couldn\'t obtain a new key')
+              throw new Error('[engine] Couldn\'t obtain a new key', { cause: error })
             }
           }
 

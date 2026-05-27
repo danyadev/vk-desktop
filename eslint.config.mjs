@@ -120,7 +120,7 @@ export default defineConfig([
       'prefer-regex-literals': 'error',
       'prefer-rest-params': 'error',
       'prefer-spread': 'error',
-      'radix': ['error', 'as-needed'],
+      'radix': 'error',
       'yoda': 'error',
       //#endregion eslint
 
