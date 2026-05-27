@@ -38,7 +38,7 @@
     "@floating-ui/dom": "1.7.4",
     "@vkontakte/vk-qr": "2.1.1",
     "pinia": "3.0.3",
-    "vue": "https://pkg.pr.new/danyadev/vuejs-core/vue@37fda96",
+    "vue": "3.5.35",
     "vue-router": "4.5.1"
   },
   "devDependencies": {
@@ -49,7 +49,7 @@
     "@types/wicg-file-system-access": "2023.10.7",
     "@vitejs/plugin-vue-jsx": "5.1.1",
     "@vkontakte/vkui-tokens": "4.70.0",
-    "@vue/compiler-sfc": "https://pkg.pr.new/danyadev/vuejs-core/@vue/compiler-sfc@37fda96",
+    "@vue/compiler-sfc": "3.5.35",
     "electron": "22.3.27",
     "electron-builder": "26.0.15",
     "eslint": "9.37.0",
