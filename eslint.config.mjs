@@ -239,27 +239,7 @@ export default defineConfig([
           object: false
         }
       }],
-      '@typescript-eslint/no-restricted-imports': ['error', {
-        patterns: [
-          {
-            group: ['actions/*'],
-            message: 'Use \'actions\' instead'
-          },
-          {
-            group: ['assets/icons/*'],
-            message: 'Use \'assets/icons\' instead'
-          },
-          {
-            group: ['hooks/*'],
-            message: 'Use \'hooks\' instead'
-          },
-          {
-            group: ['ui/modals/parts/*'],
-            message: 'Use \'ui/modals/parts\' instead'
-          }
-        ]
-      }],
-      // '@typescript-eslint/no-unnecessary-type-conversion': 'error',
+      '@typescript-eslint/no-unnecessary-type-conversion': 'error',
       //#endregion
 
       //#region stylistic
