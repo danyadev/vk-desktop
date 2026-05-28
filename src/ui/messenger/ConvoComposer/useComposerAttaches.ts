@@ -5,7 +5,7 @@ import * as ConvoDraft from 'model/ConvoDraft'
 import { fromApiAttachPhoto } from 'converters/AttachConverter'
 import { useEnv } from 'hooks'
 
-type AttachPreview =
+export type AttachPreview =
   | { kind: 'Attach', attach: Attach.SingleAttach }
   | { kind: 'UploadingAttach', attach: ConvoDraft.UploadingAttach }
 

@@ -1,13 +1,13 @@
 import { defineComponent, onUnmounted } from 'vue'
-import * as ConvoDraft from 'model/ConvoDraft'
 import { useGlobalModal } from 'hooks'
+import { AttachPreview } from 'ui/messenger/ConvoComposer/useComposerAttaches'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { CircleProgressBar } from 'ui/ui/CircleProgressBar/CircleProgressBar'
 import { Icon24Cancel } from 'assets/icons'
 import './ConvoComposerMedia.css'
 
 type Props = {
-  attachPreview: ConvoDraft.AttachPreview
+  attachPreview: AttachPreview
   onRemove: () => void
 }
 

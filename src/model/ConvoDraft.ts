@@ -46,7 +46,7 @@ export function reset(draft: ConvoDraft) {
  * Добавляет загружаемый аттач в драфт и возвращает его реактивную копию
  */
 export function addUploadingAttach(draft: ConvoDraft, uploadingAttach: UploadingAttach) {
-  const index = draft.uploadingAttaches.push(uploadingAttach)
+  const index = draft.uploadingAttaches.push(uploadingAttach) - 1
   return draft.uploadingAttaches[index]!
 }
 
