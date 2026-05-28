@@ -280,7 +280,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
             if (extra > 0) {
               const cmid = Message.resolveCmid(extra)
               const message = Convo.findMessage(convo, cmid)
-              if (message && message.kind === 'Normal') {
+              if (message?.kind === 'Normal') {
                 convo.pinnedMessage = Message.toPinned(message)
               }
             } else {

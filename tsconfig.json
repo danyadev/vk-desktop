@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
     // Указывает на формат транспиляции импортов
-    "module": "es2022",
+    "module": "preserve",
     // Указывает, какие фичи будут отражены в типах
     "target": "es2023",
     "moduleResolution": "bundler",
@@ -10,29 +9,28 @@
     "jsxImportSource": "vue",
     "types": ["vite/client", "user-agent-data-types", "@types/wicg-file-system-access"],
 
-    "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
-    "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "sourceMap": true,
-    "strict": true,
     // Чтобы projectService: true работал и не ругался что он не видит .js файлы
     "allowJs": true,
+    "noEmit": true,
     "paths": {
-      "main-process/*": ["../main-process/*"],
-      "actions/*": ["./actions/*"],
-      "assets/*": ["./assets/*"],
-      "converters/*": ["./converters/*"],
-      "env/*": ["./env/*"],
-      "hooks/*": ["./hooks/*"],
-      "lang/*": ["./lang/*"],
-      "misc/*": ["./misc/*"],
-      "model/*": ["./model/*"],
-      "store/*": ["./store/*"],
-      "ui/*": ["./ui/*"]
+      "main-process/*": ["./main-process/*"],
+      "actions": ["./src/actions"],
+      "assets/*": ["./src/assets/*"],
+      "assets/icons/*": ["./none"],
+      "converters/*": ["./src/converters/*"],
+      "env/*": ["./src/env/*"],
+      "hooks": ["./src/hooks"],
+      "lang/*": ["./src/lang/*"],
+      "misc/*": ["./src/misc/*"],
+      "model/*": ["./src/model/*"],
+      "store/*": ["./src/store/*"],
+      "ui/*": ["./src/ui/*"],
+      "ui/modals/parts/*": ["./none"]
     }
   },
 

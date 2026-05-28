@@ -4,17 +4,21 @@
 
   "rules": {
     "font-family-no-missing-generic-family-keyword": null,
-    "shorthand-property-no-redundant-values": null,
     "custom-property-empty-line-before": null,
     "declaration-empty-line-before": null,
     "no-descending-specificity": null,
     "comment-empty-line-before": null,
     "selector-class-pattern": null,
     "length-zero-no-unit": null,
+    "shorthand-property-no-redundant-values": [true, {
+      "ignore": "four-into-three-edge-values"
+    }],
     "custom-property-pattern": "[a-z][a-zA-Z0-9_-]?",
     "font-family-name-quotes": "always-where-required",
     "alpha-value-notation": "number",
     "media-feature-name-value-no-unknown": true,
+    "selector-no-invalid": true,
+    "selector-no-deprecated": true,
     "value-keyword-case": ["lower", {
       "ignoreKeywords": ["optimizeSpeed"]
     }],

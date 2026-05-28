@@ -9,7 +9,8 @@ export default defineConfig([{
   },
   rules: {
     'import-x/no-unused-modules': ['error', {
-      unusedExports: true
+      unusedExports: true,
+      suppressMissingFileEnumeratorAPIWarning: true
     }],
 
     '@typescript-eslint/no-unused-vars': ['error', {

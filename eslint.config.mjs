@@ -120,7 +120,7 @@ export default defineConfig([
       'prefer-regex-literals': 'error',
       'prefer-rest-params': 'error',
       'prefer-spread': 'error',
-      'radix': ['error', 'as-needed'],
+      'radix': 'error',
       'yoda': 'error',
       //#endregion eslint
 
@@ -210,6 +210,7 @@ export default defineConfig([
       '@typescript-eslint/use-unknown-in-catch-callback-variable': 'error',
       '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
       '@typescript-eslint/no-unnecessary-type-arguments': 'error',
+      '@typescript-eslint/no-useless-default-assignment': 'error',
 
       /**
        * Далее идут правила, которые расширяют eslint-правила.
@@ -238,41 +239,17 @@ export default defineConfig([
           object: false
         }
       }],
-      '@typescript-eslint/no-restricted-imports': ['error', {
-        patterns: [
-          {
-            group: ['actions/*'],
-            message: 'Use \'actions\' instead'
-          },
-          {
-            group: ['assets/icons/*'],
-            message: 'Use \'assets/icons\' instead'
-          },
-          {
-            group: ['hooks/*'],
-            message: 'Use \'hooks\' instead'
-          },
-          {
-            group: ['ui/modals/parts/*'],
-            message: 'Use \'ui/modals/parts\' instead'
-          }
-        ]
-      }],
-      // '@typescript-eslint/no-unnecessary-type-conversion': 'error',
+      '@typescript-eslint/no-unnecessary-type-conversion': 'error',
       //#endregion
 
       //#region stylistic
-      '@stylistic/array-bracket-newline': ['error', 'consistent'],
-      '@stylistic/array-element-newline': ['error', 'consistent'],
       '@stylistic/arrow-parens': ['off', 'always'],
       '@stylistic/brace-style': ['error', '1tbs'],
       '@stylistic/comma-dangle': ['error', 'never'],
       // Не считает комментарии за элементы
       // https://github.com/eslint-stylistic/eslint-stylistic/issues/675
       // '@stylistic/curly-newline': ['error', { minElements: 1 }],
-      '@stylistic/function-call-argument-newline': ['error', 'consistent'],
       '@stylistic/function-call-spacing': 'error',
-      '@stylistic/function-paren-newline': ['error', 'multiline-arguments'],
       '@stylistic/generator-star-spacing': ['error', {
         // function* generator() {}
         after: true,
@@ -322,8 +299,6 @@ export default defineConfig([
       '@stylistic/no-multiple-empty-lines': 'off',
       // Включено в full файле
       '@stylistic/no-trailing-spaces': 'off',
-      '@stylistic/object-curly-newline': ['error', { consistent: true }],
-      '@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
       '@stylistic/operator-linebreak': ['error', 'after', {
         overrides: {
           '?': 'before',
@@ -344,7 +319,17 @@ export default defineConfig([
       '@stylistic/spaced-comment': ['error', 'always', {
         markers: ['#region', '#endregion']
       }],
-      '@stylistic/switch-colon-spacing': 'error'
+      '@stylistic/switch-colon-spacing': 'error',
+
+      '@stylistic/array-bracket-newline': 'off',
+      '@stylistic/array-element-newline': 'off',
+      '@stylistic/array-bracket-spacing': 'off',
+      '@stylistic/function-call-argument-newline': 'off',
+      '@stylistic/function-paren-newline': 'off',
+      '@stylistic/object-curly-newline': 'off',
+      '@stylistic/object-property-newline': 'off',
+      '@stylistic/object-curly-spacing': 'off',
+      '@stylistic/exp-list-style': 'error'
       //#endregion
     }
   },
