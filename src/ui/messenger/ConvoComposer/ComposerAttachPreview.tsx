@@ -4,15 +4,15 @@ import { AttachPreview } from 'ui/messenger/ConvoComposer/useComposerAttaches'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { CircleProgressBar } from 'ui/ui/CircleProgressBar/CircleProgressBar'
 import { Icon24Cancel } from 'assets/icons'
-import './ConvoComposerMedia.css'
+import './ComposerAttachPreview.css'
 
 type Props = {
   attachPreview: AttachPreview
   onRemove: () => void
 }
 
-// TODO: обработать media.failed
-export const ConvoComposerMedia = defineComponent<Props>((props) => {
+// TODO: обработать AttachPreview.failed
+export const ComposerAttachPreview = defineComponent<Props>((props) => {
   const { photoViewerModal } = useGlobalModal()
   const objectUrl = props.attachPreview.kind === 'UploadingAttach'
     ? URL.createObjectURL(props.attachPreview.attach.file)
@@ -30,20 +30,20 @@ export const ConvoComposerMedia = defineComponent<Props>((props) => {
     const src = photo ? photo.sizes.get('x')?.url : objectUrl
 
     return (
-      <div class={['ConvoComposerMedia', photo && 'ConvoComposerMedia--clickable']}>
+      <div class={['ComposerAttachPreview', photo && 'ComposerAttachPreview--clickable']}>
         <ButtonIcon
-          class="ConvoComposerMedia__remove"
+          class="ComposerAttachPreview__remove"
           icon={<Icon24Cancel width={16} height={16} />}
           onClick={props.onRemove}
         />
         <img
           src={src}
-          class="ConvoComposerMedia__img"
+          class="ComposerAttachPreview__img"
           onClick={() => photo && photoViewerModal.open({ photo })}
         />
         {kind === 'UploadingAttach' && (
           <CircleProgressBar
-            class="ConvoComposerMedia__progress"
+            class="ComposerAttachPreview__progress"
             progress={attach.progress}
           />
         )}

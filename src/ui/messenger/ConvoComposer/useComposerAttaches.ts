@@ -37,6 +37,14 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
     return attaches
   })
 
+  const removeAttachPreview = (attachPreview: AttachPreview) => {
+    if (attachPreview.kind === 'UploadingAttach') {
+      ConvoDraft.removeUploadingAttach(draft, attachPreview.attach)
+    } else {
+      Attach.remove(draft.attaches, attachPreview.attach)
+    }
+  }
+
   const uploadPhoto = (file: File) => {
     const uploadingAttach = ConvoDraft.addUploadingAttach(draft, {
       kind: 'Photo',
@@ -61,14 +69,6 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
       .catch(() => {
         uploadingAttach.failed = true
       })
-  }
-
-  const removeAttachPreview = (attachPreview: AttachPreview) => {
-    if (attachPreview.kind === 'UploadingAttach') {
-      ConvoDraft.removeUploadingAttach(draft, attachPreview.attach)
-    } else {
-      Attach.remove(draft.attaches, attachPreview.attach)
-    }
   }
 
   return {

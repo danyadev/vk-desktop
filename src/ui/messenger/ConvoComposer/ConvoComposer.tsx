@@ -5,8 +5,8 @@ import * as ConvoDraft from 'model/ConvoDraft'
 import { sendMessage } from 'actions'
 import { useEnv } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
-import { ConvoComposerMedia } from 'ui/messenger/ConvoComposer/ConvoComposerMedia'
-import { ConvoComposerMuteChannel } from 'ui/messenger/ConvoComposer/ConvoComposerMuteChannel'
+import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
+import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
@@ -119,7 +119,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
 
     if (Convo.isChannel(props.convo)) {
-      return <ConvoComposerMuteChannel convo={props.convo} />
+      return <ComposerMuteChannelButton convo={props.convo} />
     }
 
     return (
@@ -175,7 +175,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         {attachPreviews.value.length > 0 && (
           <div class="ConvoComposer__attaches">
             {attachPreviews.value.map((attachPreview) => (
-              <ConvoComposerMedia
+              <ComposerAttachPreview
                 attachPreview={attachPreview}
                 onRemove={() => removeAttachPreview(attachPreview)}
               />
