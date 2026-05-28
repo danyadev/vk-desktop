@@ -342,8 +342,7 @@ function plainToBinarySearchAdapter<T>(
       return CompareState.FOUND
     }
 
-    const prevElement = array[index - 1]!
-    if (predicate(prevElement, index - 1, array)) {
+    if (predicate(array[index - 1]!, index - 1, array)) {
       // Предыдущий элемент тоже подошел, значит мы запрыгнули дальше нужного
       return CompareState.TO_THE_LEFT
     }

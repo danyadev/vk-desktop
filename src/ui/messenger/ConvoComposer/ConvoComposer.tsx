@@ -1,13 +1,13 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
-import * as Attach from 'model/Attach'
+import { Uploader } from 'env/Uploader'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { sendMessage } from 'actions'
-import { fromApiAttachPhoto } from 'converters/AttachConverter'
 import { useEnv } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ConvoComposerMedia } from 'ui/messenger/ConvoComposer/ConvoComposerMedia'
 import { ConvoComposerMuteChannel } from 'ui/messenger/ConvoComposer/ConvoComposerMuteChannel'
+import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -25,13 +25,18 @@ type Props = {
 }
 
 export const ConvoComposer = defineComponent<Props>((props) => {
-  const { lang, uploader } = useEnv()
-  const draft = ConvoDraft.get(props.convo.id)
+  const { lang } = useEnv()
   const $input = shallowRef<HTMLSpanElement | null>(null)
 
-  const attachesForPreview = computed(() => ConvoDraft.getAttachesList(draft))
+  const draft = ConvoDraft.get(props.convo.id)
+  const {
+    attachPreviews,
+    removeAttachPreview,
+    uploadPhoto
+  } = useComposerAttaches(props.convo, draft)
+
   const canSendMessage = computed(() => (
-    !ConvoDraft.isEmpty(draft, false) && draft.uploadingAttaches.length === 0
+    !ConvoDraft.isEmpty(draft) && draft.uploadingAttaches.length === 0
   ))
 
   onMounted(() => {
@@ -79,37 +84,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
   const onPaste = (event: ClipboardEvent) => {
     for (const file of event.clipboardData?.files ?? []) {
-      if (uploader.isPhotoFile(file)) {
+      if (Uploader.isPhotoFile(file)) {
         event.preventDefault()
         uploadPhoto(file)
       }
     }
-  }
-
-  const uploadPhoto = (file: File) => {
-    const uploadingAttach = ConvoDraft.addUploadingAttach(draft, {
-      kind: 'Photo',
-      file,
-      progress: 0,
-      failed: false
-    })
-
-    uploader
-      .uploadPhoto(file, props.convo.id, (progress: number) => {
-        uploadingAttach.progress = progress
-      })
-      .then((apiPhoto) => {
-        const photo = fromApiAttachPhoto(apiPhoto)
-        if (photo) {
-          Attach.add(draft.attaches, photo)
-          ConvoDraft.removeUploadingAttach(draft, uploadingAttach)
-        } else {
-          uploadingAttach.failed = true
-        }
-      })
-      .catch(() => {
-        uploadingAttach.failed = true
-      })
   }
 
   const openPhotoPicker = async () => {
@@ -126,14 +105,6 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     for (const fileHandle of fileHandles) {
       const file = await fileHandle.getFile()
       uploadPhoto(file)
-    }
-  }
-
-  const removeAttach = (attachPreview: ConvoDraft.AttachPreview) => {
-    if (attachPreview.kind === 'UploadingAttach') {
-      ConvoDraft.removeUploadingAttach(draft, attachPreview.attach)
-    } else {
-      Attach.remove(draft.attaches, attachPreview.attach)
     }
   }
 
@@ -201,12 +172,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   return () => (
     <div class="ConvoComposer">
       <div class="ConvoComposer__inner">
-        {attachesForPreview.value.length > 0 && (
+        {attachPreviews.value.length > 0 && (
           <div class="ConvoComposer__attaches">
-            {attachesForPreview.value.map((attachPreview) => (
+            {attachPreviews.value.map((attachPreview) => (
               <ConvoComposerMedia
                 attachPreview={attachPreview}
-                onRemove={() => removeAttach(attachPreview)}
+                onRemove={() => removeAttachPreview(attachPreview)}
               />
             ))}
           </div>

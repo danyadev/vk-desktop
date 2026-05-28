@@ -20,7 +20,7 @@ export function init() {
     const draftsToSave = new Map<Peer.Id, ConvoDraft.ConvoDraft>()
 
     for (const [peerId, convoDraft] of state.drafts) {
-      if (!ConvoDraft.isEmpty(convoDraft, false)) {
+      if (!ConvoDraft.isEmpty(convoDraft)) {
         draftsToSave.set(peerId, {
           ...convoDraft,
           // Мы не можем сохранять вложения в процессе загрузки в localStorage
@@ -31,4 +31,12 @@ export function init() {
 
     convoDraftsStorage.update({ drafts: draftsToSave })
   })
+}
+
+// defineStore оборачивает стейт в UnwrapRef, заставляя IDE показывать полный бред.
+// Добавляем стейт в исключение, считая, что его значение не является рефом
+declare module '@vue/reactivity' {
+  interface RefUnwrapBailTypes {
+    ConvoDrafts: ConvoDrafts
+  }
 }
