@@ -26,21 +26,21 @@ function stringifyReplacer(key: string, value: unknown) {
     return {
       _type: 'map',
       value: Array.from(value.entries())
-    } as TypedValue
+    } satisfies TypedValue
   }
 
   if (value instanceof Set) {
     return {
       _type: 'set',
       value: Array.from(value.values())
-    } as TypedValue
+    } satisfies TypedValue
   }
 
   if (isObject(value) && '_type' in value) {
     return {
       _type: 'escaped-value',
       value
-    } as TypedValue
+    } satisfies TypedValue
   }
 
   return value

@@ -1,24 +1,22 @@
-import { ChangeEvent, computed, defineComponent, KeyboardEvent, ref, shallowRef } from 'vue'
-import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
-import * as Attach from 'model/Attach'
+import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
+import { Uploader } from 'env/Uploader'
 import * as Convo from 'model/Convo'
+import * as ConvoDraft from 'model/ConvoDraft'
 import { sendMessage } from 'actions'
-import { fromApiAttachPhoto } from 'converters/AttachConverter'
 import { useEnv } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
-import { ConvoComposerMedia } from 'ui/messenger/ConvoComposer/ConvoComposerMedia'
+import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
+import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
+import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
-import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20PictureOutline,
   Icon24AddCircleOutline,
   Icon24Info,
-  Icon24MuteOutline,
-  Icon24Send,
-  Icon24VolumeOutline
+  Icon24Send
 } from 'assets/icons'
 import './ConvoComposer.css'
 
@@ -26,56 +24,45 @@ type Props = {
   convo: Convo.Convo
 }
 
-export type UploadedMediaItem = {
-  kind: 'Photo'
-  progress: number
-  failed: boolean
-  file: File
-  photo?: PhotosPhoto
-}
-
 export const ConvoComposer = defineComponent<Props>((props) => {
-  const { lang, api, uploader } = useEnv()
+  const { lang } = useEnv()
   const $input = shallowRef<HTMLSpanElement | null>(null)
-  const areNotificationsUpdating = shallowRef(false)
-  const text = shallowRef('')
-  const uploadedMedia = ref<UploadedMediaItem[]>([])
 
-  const canSendMessage = computed(() => {
-    const hasAttaches = uploadedMedia.value.length > 0
-    if (!hasAttaches && text.value.trim() === '') {
-      return false
+  const draft = ConvoDraft.get(props.convo.id)
+  const {
+    attachPreviews,
+    removeAttachPreview,
+    uploadPhoto
+  } = useComposerAttaches(props.convo, draft)
+
+  const canSendMessage = computed(() => (
+    !ConvoDraft.isEmpty(draft) && draft.uploadingAttaches.length === 0
+  ))
+
+  onMounted(() => {
+    if (!$input.value) {
+      return
     }
 
-    const allAttachesReady = uploadedMedia.value.every((media) => media.photo)
-    if (!allAttachesReady) {
-      return false
-    }
+    $input.value.focus()
 
-    return true
+    if (draft.text) {
+      $input.value.innerText = draft.text
+
+      const sel = window.getSelection()!
+      sel.selectAllChildren($input.value)
+      sel.collapseToEnd()
+    }
   })
 
   const onMessageSend = () => {
-    const attaches = uploadedMedia.value.reduce<Attach.Attaches>((attaches, media) => {
-      const photo = media.photo && fromApiAttachPhoto(media.photo)
-      if (!photo) {
-        return attaches
-      }
+    sendMessage(props.convo.id, draft.text, draft.attaches)
 
-      if (attaches.photos) {
-        attaches.photos.push(photo)
-      } else {
-        attaches.photos = [photo]
-      }
+    ConvoDraft.reset(draft)
 
-      return attaches
-    }, {})
-
-    sendMessage(props.convo.id, text.value, attaches)
-
-    uploadedMedia.value = []
-    text.value = ''
-    $input.value && ($input.value.innerText = '')
+    if ($input.value) {
+      $input.value.innerText = ''
+    }
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -92,56 +79,32 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const onInput = (event: ChangeEvent<HTMLElement>) => {
-    text.value = event.currentTarget.innerText ?? ''
+    draft.text = event.currentTarget.innerText ?? ''
   }
 
   const onPaste = (event: ClipboardEvent) => {
     for (const file of event.clipboardData?.files ?? []) {
-      if (uploader.isPhotoFile(file)) {
+      if (Uploader.isPhotoFile(file)) {
         event.preventDefault()
         uploadPhoto(file)
       }
     }
   }
 
-  const uploadPhoto = (file: File) => {
-    const length = uploadedMedia.value.push({
-      kind: 'Photo',
-      progress: 0,
-      failed: false,
-      file
-    })
-    // Достаем значение из массива, чтобы получить реактивную версию объекта
-    const media = uploadedMedia.value[length - 1]
-    if (!media) {
-      return
-    }
+  const openPhotoPicker = async () => {
+    const fileHandles = await showOpenFilePicker({
+      excludeAcceptAllOption: true,
+      multiple: true,
+      types: [{
+        accept: {
+          'image/*': ['.png', '.jpg', '.jpeg', '.gif']
+        }
+      }]
+    }).catch(() => [])
 
-    uploader
-      .uploadPhoto(file, props.convo.id, (progress: number) => {
-        media.progress = progress
-      })
-      .then((photo) => {
-        media.photo = photo
-      })
-      .catch(() => {
-        media.failed = true
-      })
-  }
-
-  const toggleNotifications = async () => {
-    try {
-      areNotificationsUpdating.value = true
-
-      await api.fetch('account.setSilenceMode', {
-        peer_id: props.convo.id,
-        sound: props.convo.notifications.enabled ? 0 : 1,
-        time: props.convo.notifications.enabled ? -1 : 0
-      })
-
-      props.convo.notifications.enabled = !props.convo.notifications.enabled
-    } finally {
-      areNotificationsUpdating.value = false
+    for (const fileHandle of fileHandles) {
+      const file = await fileHandle.getFile()
+      uploadPhoto(file)
     }
   }
 
@@ -156,23 +119,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
 
     if (Convo.isChannel(props.convo)) {
-      return (
-        <Button
-          class="ConvoComposer__muteChannelButton"
-          mode="tertiary"
-          loading={areNotificationsUpdating.value}
-          onClick={toggleNotifications}
-          before={
-            props.convo.notifications.enabled
-              ? <Icon24MuteOutline />
-              : <Icon24VolumeOutline />
-          }
-        >
-          {props.convo.notifications.enabled
-            ? lang.use('me_convo_disable_notifications')
-            : lang.use('me_convo_enable_notifications')}
-        </Button>
-      )
+      return <ComposerMuteChannelButton convo={props.convo} />
     }
 
     return (
@@ -191,22 +138,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               <ActionMenuItem
                 icon={<Icon20PictureOutline />}
                 text="Фото"
-                onClick={async () => {
-                  const handles = await showOpenFilePicker({
-                    excludeAcceptAllOption: true,
-                    multiple: true,
-                    types: [{
-                      accept: {
-                        'image/*': ['.png', '.jpg', '.jpeg', '.gif']
-                      }
-                    }]
-                  }).catch(() => [])
-
-                  for (const handle of handles) {
-                    const file = await handle.getFile()
-                    uploadPhoto(file)
-                  }
-                }}
+                onClick={openPhotoPicker}
               />
             </ActionMenu>
           }
@@ -240,12 +172,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   return () => (
     <div class="ConvoComposer">
       <div class="ConvoComposer__inner">
-        {uploadedMedia.value.length > 0 && (
+        {attachPreviews.value.length > 0 && (
           <div class="ConvoComposer__attaches">
-            {uploadedMedia.value.map((media, index) => (
-              <ConvoComposerMedia
-                media={media}
-                onRemove={() => uploadedMedia.value.splice(index, 1)}
+            {attachPreviews.value.map((attachPreview) => (
+              <ComposerAttachPreview
+                attachPreview={attachPreview}
+                onRemove={() => removeAttachPreview(attachPreview)}
               />
             ))}
           </div>

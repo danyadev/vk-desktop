@@ -28,7 +28,7 @@ export class Uploader {
     return photo
   }
 
-  isPhotoFile(file: File) {
+  static isPhotoFile(file: File) {
     return ['image/png', 'image/jpeg', 'image/gif'].includes(file.type)
   }
 

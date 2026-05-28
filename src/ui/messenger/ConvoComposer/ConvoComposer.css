@@ -70,9 +70,3 @@
   gap: 8px;
   color: var(--vkui--color_text_subhead);
 }
-
-.ConvoComposer__muteChannelButton {
-  color: var(--vkui--color_text_accent);
-  font-weight: 500;
-  margin: 0 auto;
-}

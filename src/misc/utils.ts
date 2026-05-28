@@ -35,7 +35,7 @@ export type Truthy<T> = T extends false | '' | 0 | null | undefined | 0n ? never
 
 export type NonEmptyArray<T> = [T, ...T[]]
 
-// export type Flatten<T> = T extends (Array<infer U> | NonEmptyArray<infer U>) ? U : T
+export type Flatten<T> = T extends (Array<infer U> | NonEmptyArray<infer U>) ? U : T
 
 export const currentWindow = electron.getCurrentWindow()
 
@@ -241,12 +241,13 @@ export function getMapValueWithDefaults<K, V>(
   key: NoInfer<K>,
   defaults: NoInfer<V>
 ): V {
-  if (map.has(key)) {
-    return map.get(key) as V
+  if (!map.has(key)) {
+    map.set(key, defaults)
   }
 
-  map.set(key, defaults)
-  return defaults
+  // Важно достать значение из мапы даже если мы собираемся вернуть defaults,
+  // потому что в случае с реактивной мапой важно достать реактивное значение
+  return map.get(key) as V
 }
 
 // export function isElementInViewport(viewport: HTMLElement, element: HTMLElement): boolean {

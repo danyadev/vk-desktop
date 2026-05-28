@@ -1,4 +1,3 @@
-import { toRaw } from 'vue'
 import { defineStore } from 'pinia'
 import { RendererStorage } from 'store/Storage'
 
@@ -16,6 +15,6 @@ export const useSettingsStore = defineStore('settings', {
 
 export function init() {
   useSettingsStore().$subscribe((mutation, state) => {
-    settingsStorage.update(toRaw(state))
+    settingsStorage.update(state)
   })
 }

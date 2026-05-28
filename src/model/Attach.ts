@@ -1,7 +1,7 @@
 import * as ILang from 'env/ILang'
 import { MessagesMessageAttachmentType } from 'model/api-types/objects/MessagesMessageAttachment'
 import * as Peer from 'model/Peer'
-import { NonEmptyArray, typeguard } from 'misc/utils'
+import { Flatten, NonEmptyArray, typeguard } from 'misc/utils'
 
 export type Attaches = {
   sticker?: Sticker
@@ -13,7 +13,7 @@ export type Attaches = {
 }
 
 type Attach = NonNullable<Attaches[keyof Attaches]>
-// type SingleAttach = Flatten<Attach>
+export type SingleAttach = Flatten<Attach>
 
 export type Sticker = {
   kind: 'Sticker'
@@ -229,5 +229,113 @@ function previewUnknown(unknown: NonNullable<Attaches['unknown']>, lang: ILang.L
     default:
       typeguard(firstType)
       return lang.use('me_unknown_attach')
+  }
+}
+
+export function add(attaches: Attaches, attach: SingleAttach) {
+  switch (attach.kind) {
+    case 'Photo':
+      if (attaches.photos) {
+        attaches.photos.push(attach)
+      } else {
+        attaches.photos = [attach]
+      }
+      break
+
+    case 'Link':
+      if (attaches.links) {
+        attaches.links.push(attach)
+      } else {
+        attaches.links = [attach]
+      }
+      break
+
+    case 'Unknown':
+      if (attaches.unknown) {
+        attaches.unknown.push(attach)
+      } else {
+        attaches.unknown = [attach]
+      }
+      break
+
+    case 'Sticker':
+      attaches.sticker = attach
+      break
+
+    case 'Voice':
+      attaches.voice = attach
+      break
+
+    case 'Wall':
+      attaches.wall = attach
+      break
+  }
+}
+
+export function remove(attaches: Attaches, attach: SingleAttach) {
+  switch (attach.kind) {
+    case 'Photo': {
+      if (!attaches.photos) {
+        break
+      }
+
+      const index = attaches.photos.indexOf(attach)
+      if (index === -1) {
+        break
+      }
+
+      if (attaches.photos.length === 1) {
+        delete attaches.photos
+      } else {
+        attaches.photos.splice(index, 1)
+      }
+      break
+    }
+
+    case 'Link': {
+      if (!attaches.links) {
+        break
+      }
+
+      const index = attaches.links.indexOf(attach)
+      if (index === -1) {
+        break
+      }
+
+      if (attaches.links.length === 1) {
+        delete attaches.links
+      } else {
+        attaches.links.splice(index, 1)
+      }
+      break
+    }
+
+    case 'Unknown': {
+      if (!attaches.unknown) {
+        break
+      }
+
+      const index = attaches.unknown.indexOf(attach)
+      if (index === -1) {
+        break
+      }
+
+      if (attaches.unknown.length === 1) {
+        delete attaches.unknown
+      } else {
+        attaches.unknown.splice(index, 1)
+      }
+      break
+    }
+
+    case 'Sticker':
+    case 'Voice':
+    case 'Wall': {
+      const name = attach.kind.toLowerCase() as Lowercase<typeof attach.kind>
+      if (attaches[name] === attach) {
+        delete attaches[name]
+      }
+      break
+    }
   }
 }
