@@ -337,8 +337,8 @@
   --vkui--animation_duration_s: 0.1s;
   --vkui--animation_easing_default: cubic-bezier(0.3, 0.3, 0.5, 1);
   --vkui--animation_easing_platform: cubic-bezier(0.4, 0, 0.2, 1);
-  --vkui--opacity_disable: 0.4;
-  --vkui--opacity_disable_accessibility: 0.64;
+  --vkui--opacity_disable: 0.52;
+  --vkui--opacity_disable_accessibility: 0.52;
   --vkui--opacity_active: 0.72;
   --vkui--z_index_modal: 99;
   --vkui--z_index_popout: 100;

@@ -22,7 +22,7 @@
   "author": "danyadev <danyadev@mail.ru>",
   "license": "Apache-2.0",
   "engines": {
-    "node": "^20.19.0 || ^22.13.0 || >=24",
+    "node": "^22.22.1 || >=24",
     "yarn": "^1.22.22"
   },
   "lint-staged": {
@@ -34,11 +34,11 @@
   },
   "dependencies": {
     "@electron/remote": "2.1.3",
-    "@floating-ui/dom": "1.7.4",
-    "@vkontakte/vk-qr": "2.1.1",
-    "pinia": "3.0.3",
+    "@floating-ui/dom": "1.7.6",
+    "@vkontakte/vk-qr": "3.0.0",
+    "pinia": "3.0.4",
     "vue": "3.5.35",
-    "vue-router": "4.5.1"
+    "vue-router": "5.0.7"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -47,18 +47,18 @@
     "@stylistic/stylelint-plugin": "5.2.0",
     "@types/wicg-file-system-access": "2023.10.7",
     "@vitejs/plugin-vue-jsx": "5.1.5",
-    "@vkontakte/vkui-tokens": "4.70.0",
+    "@vkontakte/vkui-tokens": "4.78.1",
     "@vue/compiler-sfc": "3.5.35",
     "electron": "22.3.27",
-    "electron-builder": "26.0.15",
+    "electron-builder": "26.11.1",
     "eslint": "10.4.0",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import-x": "4.16.2",
-    "eslint-plugin-simple-import-sort": "12.1.1",
-    "globals": "16.4.0",
+    "eslint-plugin-simple-import-sort": "13.0.0",
+    "globals": "17.6.0",
     "husky": "9.1.7",
     "innosetup-compiler": "6.3.1",
-    "lint-staged": "16.2.3",
+    "lint-staged": "17.0.5",
     "stylelint": "17.12.0",
     "stylelint-config-standard": "40.0.0",
     "typescript": "6.0.3",
