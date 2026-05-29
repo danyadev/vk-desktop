@@ -15,7 +15,9 @@ const API_MIN_RETRY_DELAY = 500
 const API_RATE_LIMIT_WINDOW = 1000
 
 const METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN: Array<keyof Methods> = [
-  'messages.getConversations'
+  'messages.getConversations',
+  'messages.getDiffContent',
+  'messages.getDiff'
 ]
 
 export class Api implements IApi.Api {
