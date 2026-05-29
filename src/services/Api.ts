@@ -1,6 +1,5 @@
 import { Methods } from 'services/contracts/api'
 import * as IApi from 'services/contracts/IApi'
-import * as Auth from 'model/Auth'
 import { useSettingsStore } from 'store/settings'
 import { logout, useViewerStore } from 'store/viewer'
 import { useGlobalModal } from 'hooks'
@@ -22,6 +21,8 @@ export class Api implements IApi.Api {
   // TODO: сделать Map<AccessToken, Semaphore>
   private semaphore = new Semaphore(3, API_RATE_LIMIT_WINDOW)
   private globalErrorHandler?: Promise<unknown>
+
+  constructor(private refreshMessengerToken: (exchangeToken: string) => Promise<string>) {}
 
   public async fetch<Method extends keyof Methods>(
     method: Method,
@@ -211,7 +212,7 @@ export class Api implements IApi.Api {
           throw apiError
         }
 
-        const refreshTokenPromise = Auth.refreshByExchangeToken(this, viewer.messengerExchangeToken)
+        const refreshTokenPromise = this.refreshMessengerToken(viewer.messengerExchangeToken)
         this.globalErrorHandler = refreshTokenPromise
 
         try {

@@ -1,7 +1,6 @@
 import { useRouter } from 'vue-router'
 import * as IApi from 'services/contracts/IApi'
 import * as ILang from 'services/contracts/ILang'
-import * as Auth from 'model/Auth'
 import { useConvosStore } from 'store/convos'
 import { useMainSettingsStore } from 'store/mainSettings'
 import { usePeersStore } from 'store/peers'
@@ -29,13 +28,13 @@ type ExposedFeatures = {
   lang: ILang.Lang
   qrCodeAuth: ReturnType<typeof useServices>['qrCodeAuth']
   router: ReturnType<typeof useRouter>
-  auth: typeof Auth
+  auth: ReturnType<typeof useServices>['auth']
   utils: typeof utils
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 
 export function exposeFeatures() {
-  const { api, engine, lang, qrCodeAuth } = useServices()
+  const { api, auth, engine, lang, qrCodeAuth } = useServices()
   const router = useRouter()
 
   exposedWindow.mainSettings = useMainSettingsStore()
@@ -48,6 +47,6 @@ export function exposeFeatures() {
   exposedWindow.lang = lang
   exposedWindow.qrCodeAuth = qrCodeAuth
   exposedWindow.router = router
-  exposedWindow.auth = { ...Auth }
+  exposedWindow.auth = auth
   exposedWindow.utils = { ...utils }
 }
