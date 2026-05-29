@@ -50,13 +50,14 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
       kind: 'Photo',
       file,
       progress: 0,
-      failed: false
+      failed: false,
+      abortController: new AbortController()
     })
 
     uploader
       .uploadPhoto(file, convo.id, (progress: number) => {
         uploadingAttach.progress = progress
-      })
+      }, uploadingAttach.abortController.signal)
       .then((apiPhoto) => {
         const photo = fromApiAttachPhoto(apiPhoto)
         if (photo) {

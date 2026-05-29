@@ -7,7 +7,7 @@ import { isNonEmptyArray, random, sleep, toUrlParams } from 'misc/utils'
 import { appUserAgent } from 'misc/constants'
 import { Semaphore } from 'misc/Semaphore'
 
-const API_DEFAULT_FETCH_TIMEOUT = 10000
+const API_DEFAULT_FETCH_TIMEOUT = 20000
 const API_MIN_RETRY_DELAY = 500
 const API_RATE_LIMIT_WINDOW = 1000
 
@@ -290,12 +290,17 @@ export class Api implements IApi.Api {
     const { lang } = useSettingsStore()
     const { viewer } = useViewerStore()
 
+    const abortController = new AbortController()
+    const abortTimeoutId = window.setTimeout(
+      () => abortController.abort('timeout'),
+      fetchOptions.timeout ?? API_DEFAULT_FETCH_TIMEOUT
+    )
+
+    const abortBySignal = () => abortController.abort(fetchOptions.signal?.reason)
+    fetchOptions.signal?.addEventListener('abort', abortBySignal, { once: true })
+
     try {
-      const abortController = new AbortController()
-      const abortTimeoutId = window.setTimeout(
-        () => abortController.abort(),
-        fetchOptions.timeout ?? API_DEFAULT_FETCH_TIMEOUT
-      )
+      fetchOptions.signal?.throwIfAborted()
 
       const fullParams: IApi.MethodParams<Method> = {
         access_token: fetchOptions.messengerToken ? viewer?.messengerToken : viewer?.accessToken,
@@ -314,8 +319,6 @@ export class Api implements IApi.Api {
         },
         signal: abortController.signal
       })
-
-      window.clearTimeout(abortTimeoutId)
 
       if (!response.ok) {
         const errorReason = `api responded with status ${response.status}`
@@ -340,8 +343,15 @@ export class Api implements IApi.Api {
       return result.response
     } catch (error) {
       console.warn('[Api]', error)
-      return Promise.reject(new IApi.FetchError('NetworkError', String(error)))
+
+      if (fetchOptions.signal?.aborted) {
+        throw new IApi.AbortError(fetchOptions.signal.reason)
+      }
+
+      throw new IApi.FetchError('NetworkError', String(error))
     } finally {
+      fetchOptions.signal?.removeEventListener('abort', abortBySignal)
+      window.clearTimeout(abortTimeoutId)
       this.semaphore.release()
     }
   }

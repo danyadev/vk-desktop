@@ -39,11 +39,16 @@ export type FetchOptions = {
   messengerToken?: boolean
   retries?: number
   timeout?: number
+  signal?: AbortSignal
   headers?: Record<string, string>
 }
 
 export class FetchError {
   constructor(public kind: 'ServerError' | 'NetworkError', public reason: string) {}
+}
+
+export class AbortError {
+  constructor(public reason: unknown) {}
 }
 
 export class MethodError {
