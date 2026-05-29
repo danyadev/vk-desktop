@@ -2,7 +2,7 @@ import { defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useEnv, useFormatDate } from 'hooks'
+import { useFormatDate, useServices } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
@@ -16,7 +16,7 @@ type Props = {
 }
 
 export const AttachWall = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { peers } = usePeersStore()
   const formatDate = useFormatDate({ relativeTime: false })
 

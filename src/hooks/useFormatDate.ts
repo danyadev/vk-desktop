@@ -1,4 +1,4 @@
-import { useEnv, useNow } from 'hooks'
+import { useNow, useServices } from 'hooks'
 import { isPreviousDay, isSameDay, ONE_DAY, ONE_HOUR, ONE_MINUTE } from 'misc/dateTime'
 
 type Options = {
@@ -6,7 +6,7 @@ type Options = {
 }
 
 export const useFormatDate = (options: Options = {}) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const now = useNow(10000)
   const { relativeTime = true } = options
 

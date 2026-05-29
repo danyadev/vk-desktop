@@ -1,4 +1,4 @@
-import * as IApi from 'env/IApi'
+import * as IApi from 'services/IApi'
 import { Methods } from 'model/api-types'
 import * as Auth from 'model/Auth'
 import { useSettingsStore } from 'store/settings'

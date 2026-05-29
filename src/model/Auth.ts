@@ -1,5 +1,5 @@
-import { API_VERSION } from 'env/Api'
-import * as IApi from 'env/IApi'
+import { API_VERSION } from 'services/Api'
+import * as IApi from 'services/IApi'
 import { getPlatform, toUrlParams } from 'misc/utils'
 import { appVersion } from 'misc/constants'
 

@@ -5,7 +5,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useEnv, useNow } from 'hooks'
+import { useNow, useServices } from 'hooks'
 import { isNonEmptyArray } from 'misc/utils'
 import { ONE_DAY, ONE_HOUR, ONE_MINUTE, ONE_MONTH, ONE_WEEK } from 'misc/dateTime'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
@@ -24,7 +24,7 @@ type Props = {
 export const ConvoListItem = defineComponent<Props>((props) => {
   const router = useRouter()
   const route = useRoute()
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { typings } = useConvosStore()
   const { peers } = usePeersStore()
   const peer = computed(() => Peer.safeGet(peers, props.convo.id))
@@ -135,7 +135,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
 })
 
 const MessageDate = defineComponent<{ sentAt: number }>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const now = useNow(10000)
 
   const getDate = () => {
@@ -187,7 +187,7 @@ const MessageDate = defineComponent<{ sentAt: number }>((props) => {
 })
 
 function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Ref<Convo.Convo>) {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { peers } = usePeersStore()
 
   return computed(() => {

@@ -1,5 +1,5 @@
 import { defineComponent, KeyboardEvent, shallowRef } from 'vue'
-import { useEnv, useGlobalModal } from 'hooks'
+import { useGlobalModal, useServices } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { Input } from 'ui/ui/Input/Input'
@@ -11,7 +11,7 @@ export type CaptchaModalParams = {
 }
 
 export const CaptchaModal = defineComponent<CaptchaModalParams>((params) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { captchaModal } = useGlobalModal()
   const captchaKey = shallowRef('')
   const captchaImg = shallowRef(params.captchaImg)

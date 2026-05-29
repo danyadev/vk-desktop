@@ -4,7 +4,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { ForwardedMessages } from 'ui/messenger/ForwardedMessages/ForwardedMessages'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
@@ -17,7 +17,7 @@ type Props = {
 }
 
 export const ConvoMessage = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { scrollAnchors } = useConvosStore()
   const { peers } = usePeersStore()
 

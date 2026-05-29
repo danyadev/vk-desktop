@@ -1,6 +1,6 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { defineComponent, shallowRef } from 'vue'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { currentWindow, subscribeToElectronEvent } from 'misc/utils'
 import { isMacOS } from 'misc/constants'
 import {
@@ -19,7 +19,7 @@ const buttons = [
 ] as const
 
 export const Titlebar = defineComponent(() => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const isMaximized = shallowRef(currentWindow.isMaximized())
 
   subscribeToElectronEvent(() => {

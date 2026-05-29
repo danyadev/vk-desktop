@@ -2,7 +2,7 @@ import { defineComponent } from 'vue'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useEnv, useGlobalModal } from 'hooks'
+import { useGlobalModal, useServices } from 'hooks'
 import './ServiceMessage.css'
 
 type Props = {
@@ -44,7 +44,7 @@ export const ServiceMessage = defineComponent<Props>((props) => {
 })
 
 export const PlainServiceMessage = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { peers } = usePeersStore()
 
   return () => {

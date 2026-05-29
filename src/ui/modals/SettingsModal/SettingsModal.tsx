@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
 import { AppearanceTheme, useMainSettingsStore } from 'store/mainSettings'
-import { useEnv, useGlobalModal, useModal } from 'hooks'
+import { useGlobalModal, useModal, useServices } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { Checkbox } from 'ui/ui/Checkbox/Checkbox'
@@ -8,7 +8,7 @@ import { Select } from 'ui/ui/Select/Select'
 import './SettingsModal.css'
 
 export const SettingsModal = defineComponent(() => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const mainSettings = useMainSettingsStore()
   const { settingsModal } = useGlobalModal()
   const changeWindowSettingModal = useModal()

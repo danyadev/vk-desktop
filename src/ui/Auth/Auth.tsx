@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router'
 import * as AuthModel from 'model/Auth'
 import { useViewerStore } from 'store/viewer'
 import { fromApiUser } from 'converters/PeerConverter'
-import { useEnv, useGlobalModal } from 'hooks'
+import { useGlobalModal, useServices } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { AuthConfirmationPage, ConfirmationState } from 'ui/Auth/AuthConfirmationPage'
 import { AuthMainPage } from 'ui/Auth/AuthMainPage'
@@ -20,7 +20,7 @@ type AuthState = {
 }
 
 export const Auth = defineComponent(() => {
-  const { api, lang } = useEnv()
+  const { api, lang } = useServices()
   const router = useRouter()
   const viewer = useViewerStore()
 

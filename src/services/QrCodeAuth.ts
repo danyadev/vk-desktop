@@ -1,5 +1,5 @@
-import * as IApi from 'env/IApi'
-import * as ILang from 'env/ILang'
+import * as IApi from 'services/IApi'
+import * as ILang from 'services/ILang'
 import * as Auth from 'model/Auth'
 
 const CANCELLED_TIMEOUT_ID = 0

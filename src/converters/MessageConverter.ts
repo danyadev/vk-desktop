@@ -1,4 +1,4 @@
-import * as IEngine from 'env/IEngine'
+import * as IEngine from 'services/IEngine'
 import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
 import { MessagesMessage, MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
 import { MessagesMessageAttachment } from 'model/api-types/objects/MessagesMessageAttachment'

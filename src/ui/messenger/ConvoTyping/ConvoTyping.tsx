@@ -2,7 +2,7 @@ import { computed, defineComponent } from 'vue'
 import * as Peer from 'model/Peer'
 import { TypingUser } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import './ConvoTyping.css'
 
@@ -13,7 +13,7 @@ type Props = {
 }
 
 export const ConvoTyping = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { peers } = usePeersStore()
 
   const text = computed(() => {

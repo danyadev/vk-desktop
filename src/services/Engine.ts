@@ -1,8 +1,8 @@
-import * as IEngine from 'env/IEngine'
+import * as IEngine from 'services/IEngine'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import { useConvosStore } from 'store/convos'
 import { handleEngineResync, handleEngineUpdates } from 'actions'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { sleep, toUrlParams } from 'misc/utils'
 
 const ENGINE_MAX_CONNECTION_DURATION_SEC = 20
@@ -23,7 +23,7 @@ export class Engine {
     credentials: MessagesLongpollCredentials,
     onFail: (reason: IEngine.FailReason) => void
   ) {
-    const { api } = useEnv()
+    const { api } = useServices()
     const { connection } = useConvosStore()
 
     if (this.active) {

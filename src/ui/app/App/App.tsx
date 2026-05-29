@@ -2,7 +2,7 @@ import { ipcRenderer, IpcRendererEvent, Rectangle } from 'electron'
 import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
 import { useMainSettingsStore } from 'store/mainSettings'
-import { useEnv, useGlobalModal } from 'hooks'
+import { useGlobalModal, useServices } from 'hooks'
 import { subscribeToElectronEvent } from 'misc/utils'
 import { isMacOS } from 'misc/constants'
 import { exposeFeatures } from './exposeFeatures'
@@ -15,7 +15,7 @@ import { SettingsModal } from 'ui/modals/SettingsModal/SettingsModal'
 import './App.css'
 
 export const App = defineComponent(() => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const scheme = useThemeScheme()
   const mainSettings = useMainSettingsStore()
 

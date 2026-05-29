@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useEnv, useFormatDate } from 'hooks'
+import { useFormatDate, useServices } from 'hooks'
 import { shortenCount } from 'misc/dateTime'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -15,7 +15,7 @@ type Props = {
 }
 
 export const ConvoHeader = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const router = useRouter()
   const { peers } = usePeersStore()
   const peer = Peer.safeGet(peers, props.convo.id)

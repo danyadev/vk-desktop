@@ -1,8 +1,8 @@
 import { computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
-import * as IEngine from 'env/IEngine'
+import * as IEngine from 'services/IEngine'
 import { loadInitialData } from 'actions'
-import { useEnv, useModal } from 'hooks'
+import { useModal, useServices } from 'hooks'
 import { ConvoList } from 'ui/messenger/ConvoList/ConvoList'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
@@ -15,7 +15,7 @@ export const Messenger = defineComponent(() => {
   const initErrorModal = useModal()
   const engineFailModal = useModal()
   const engineFailReason = shallowRef('')
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   onMounted(() => {
     loadInitialData(initErrorModal.open, onEngineFail)

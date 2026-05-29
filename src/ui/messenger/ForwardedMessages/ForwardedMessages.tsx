@@ -5,7 +5,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useEnv, useFormatDate } from 'hooks'
+import { useFormatDate, useServices } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
@@ -19,7 +19,7 @@ type Props = {
 
 export const ForwardedMessages = defineComponent<Props>((props) => {
   const router = useRouter()
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { scrollAnchors } = useConvosStore()
   const { peers } = usePeersStore()
   const formatDate = useFormatDate({ relativeTime: false })

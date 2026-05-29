@@ -3,7 +3,7 @@ import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
-import { useEnv, useViewer } from 'hooks'
+import { useServices, useViewer } from 'hooks'
 import { random } from 'misc/utils'
 import { INTEGER_BOUNDARY } from 'misc/constants'
 
@@ -17,7 +17,7 @@ export function sendMessage(peerId: Peer.Id, text: string, attaches: Attach.Atta
 }
 
 async function sendNextPendingMessage(convo: Convo.Convo) {
-  const { api } = useEnv()
+  const { api } = useServices()
   const { sendMessageLock } = useConvosStore()
 
   if (sendMessageLock.has(convo.id)) {

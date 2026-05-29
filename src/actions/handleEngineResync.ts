@@ -1,4 +1,4 @@
-import * as IEngine from 'env/IEngine'
+import * as IEngine from 'services/IEngine'
 import { MessagesGetDiffConversationInfo } from 'model/api-types/objects/MessagesGetDiffConversationInfo'
 import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
 import * as Convo from 'model/Convo'
@@ -9,14 +9,14 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers, loadMissingData } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 
 export async function handleEngineResync(
   lpVersion: number,
   pts: number
 ): Promise<MessagesLongpollCredentials> {
-  const { api } = useEnv()
+  const { api } = useServices()
   const { convos, lists } = useConvosStore()
 
   let conversationsSource: string | undefined

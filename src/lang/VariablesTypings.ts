@@ -1,4 +1,4 @@
-import { Dictionary } from 'env/Lang'
+import { Dictionary } from 'services/Lang'
 
 /**
  * Средствами тайпскрипта достаем из всех переводов использование {таких} переменных,

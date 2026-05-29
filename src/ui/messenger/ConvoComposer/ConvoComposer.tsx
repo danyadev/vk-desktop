@@ -1,10 +1,10 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
-import { Uploader } from 'env/Uploader'
+import { Uploader } from 'services/Uploader'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvoDraftsStore } from 'store/convoDrafts'
 import { sendMessage } from 'actions'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
@@ -26,7 +26,7 @@ type Props = {
 }
 
 export const ConvoComposer = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { drafts } = useConvoDraftsStore()
   const $input = shallowRef<HTMLSpanElement | null>(null)
 

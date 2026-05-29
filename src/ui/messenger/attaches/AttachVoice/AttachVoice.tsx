@@ -1,7 +1,7 @@
 import { computed, defineComponent, InputEvent, onUnmounted, shallowRef } from 'vue'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Icon16Text, Icon20ChevronUp, Icon32PauseCircle, Icon32PlayCircle } from 'assets/icons'
 import './AttachVoice.css'
@@ -12,7 +12,7 @@ type Props = {
 }
 
 export const AttachVoice = defineComponent<Props>((props) => {
-  const { lang, api } = useEnv()
+  const { lang, api } = useServices()
 
   const audio = new Audio(props.voice.linkMp3)
   const isPlaying = shallowRef(false)

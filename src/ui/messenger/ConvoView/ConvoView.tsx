@@ -4,7 +4,7 @@ import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
@@ -50,7 +50,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
 export const ConvoWrapper = defineComponent(() => {
   const route = useRoute('Convo')
   const { connection, convos } = useConvosStore()
-  const { api } = useEnv()
+  const { api } = useServices()
 
   const peerId = computed(() => Peer.resolveId(Number(route.params.peerId)))
   const convo = computed(() => convos.get(peerId.value))

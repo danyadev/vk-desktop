@@ -1,4 +1,4 @@
-import * as IApi from 'env/IApi'
+import * as IApi from 'services/IApi'
 import * as Peer from 'model/Peer'
 
 type UploadPhotoToServerResponse = {

@@ -1,6 +1,6 @@
 import { defineComponent, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { Button } from 'ui/ui/Button/Button'
 import { Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
 import './ComposerMuteChannelButton.css'
@@ -10,7 +10,7 @@ type Props = {
 }
 
 export const ComposerMuteChannelButton = defineComponent<Props>((props) => {
-  const { lang, api } = useEnv()
+  const { lang, api } = useServices()
   const isLoading = shallowRef(false)
 
   const toggleNotifications = async () => {

@@ -1,5 +1,5 @@
 import { computed, defineComponent, KeyboardEvent, shallowRef } from 'vue'
-import { useEnv, useOnClickOutside } from 'hooks'
+import { useOnClickOutside, useServices } from 'hooks'
 import { Icon16CheckOutline, Icon24ChevronDown, Icon24ChevronUp } from 'assets/icons'
 import './Select.css'
 
@@ -13,7 +13,7 @@ type Props<Value> = {
 }
 
 export const Select = defineComponent(<Value extends string>(props: Props<Value>) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const isExpanded = shallowRef(false)
   const $select = shallowRef<HTMLElement | null>(null)
   const $selectField = shallowRef<HTMLElement | null>(null)

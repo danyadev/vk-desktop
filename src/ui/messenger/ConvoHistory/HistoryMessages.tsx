@@ -1,7 +1,7 @@
 import { computed, defineComponent } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { NonEmptyArray, RawRefElement } from 'misc/utils'
 import { isPreviousDay, isSameDay } from 'misc/dateTime'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
@@ -18,7 +18,7 @@ type HistoryBlock =
   | { kind: 'Unread', inReadBy: Message.Cmid }
 
 export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   const setMessageRef = (cmid: Message.Cmid | 'unread', element: RawRefElement) => {
     if (element instanceof HTMLElement) {

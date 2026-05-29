@@ -167,7 +167,7 @@ export default defineConfig([
         groups: [[
           ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
           ...['^@?electron', '^@?vite', '^vue', '^pinia', '^@vkontakte/vk-qr', '^@floating-ui/dom'],
-          ...['^env', '^model', '^store', '^actions', '^converters', '^lang'],
+          ...['^services', '^model', '^store', '^actions', '^converters', '^lang'],
           ...['^hooks', '^misc/utils', '^misc'],
           ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
         ]]

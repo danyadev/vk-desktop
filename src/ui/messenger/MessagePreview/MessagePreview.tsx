@@ -1,8 +1,8 @@
 import { defineComponent } from 'vue'
-import * as ILang from 'env/ILang'
+import * as ILang from 'services/ILang'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
-import { useEnv } from 'hooks'
+import { useServices } from 'hooks'
 import { PlainServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import './MessagePreview.css'
 
@@ -12,7 +12,7 @@ type Props = {
 }
 
 export const MessagePreview = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   return () => {
     const { message, accent } = props
