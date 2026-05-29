@@ -1,8 +1,9 @@
 import { ipcRenderer, IpcRendererEvent, Rectangle } from 'electron'
 import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
+import { initServices, useServices } from 'services'
 import { useMainSettingsStore } from 'store/mainSettings'
-import { useGlobalModal, useServices } from 'hooks'
+import { useGlobalModal } from 'hooks'
 import { subscribeToElectronEvent } from 'misc/utils'
 import { isMacOS } from 'misc/constants'
 import { exposeFeatures } from './exposeFeatures'
@@ -15,11 +16,12 @@ import { SettingsModal } from 'ui/modals/SettingsModal/SettingsModal'
 import './App.css'
 
 export const App = defineComponent(() => {
+  initServices()
+  exposeFeatures()
+
   const { lang } = useServices()
   const scheme = useThemeScheme()
   const mainSettings = useMainSettingsStore()
-
-  exposeFeatures()
 
   if (isMacOS) {
     ipcRenderer.send('menu:build', lang.useRaw('app_menu_labels'))

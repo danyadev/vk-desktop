@@ -6,9 +6,23 @@ import { Lang } from 'services/Lang'
 import { QrCodeAuth } from 'services/QrCodeAuth'
 import { Uploader } from 'services/Uploader'
 import { useSettingsStore } from 'store/settings'
-import { createSingletonHook } from 'misc/utils'
 
-export const useServices = createSingletonHook(() => {
+type Services = {
+  lang: Lang
+  api: Api
+  auth: Auth
+  qrCodeAuth: QrCodeAuth
+  engine: Engine
+  uploader: Uploader
+}
+
+let services: Services | undefined
+
+export function initServices() {
+  if (services) {
+    throw new Error('Services are already initialized')
+  }
+
   const settings = useSettingsStore()
 
   const lang = new Lang(settings.lang)
@@ -16,18 +30,26 @@ export const useServices = createSingletonHook(() => {
     auth.refreshByExchangeToken(exchangeToken)
   ))
   const auth = new Auth(api)
-  const engine = new Engine()
-  const uploader = new Uploader(api)
   const qrCodeAuth = new QrCodeAuth(auth, lang)
+  const engine = new Engine(api)
+  const uploader = new Uploader(api)
 
-  watch(() => settings.lang, () => lang.onLocaleUpdate(settings.lang))
+  watch(() => settings.lang, (locale) => lang.onLocaleUpdate(locale))
 
-  return {
+  services = {
     lang,
     api,
     auth,
+    qrCodeAuth,
     engine,
-    uploader,
-    qrCodeAuth
+    uploader
   }
-})
+}
+
+export function useServices(): Services {
+  if (!services) {
+    throw new Error('Services are not initialized')
+  }
+
+  return services
+}

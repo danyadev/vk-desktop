@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { useServices } from 'hooks'
+import { useServices } from 'services'
 import './NoConvo.css'
 
 export const NoConvo = defineComponent(() => {

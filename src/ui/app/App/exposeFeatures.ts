@@ -1,4 +1,5 @@
 import { useRouter } from 'vue-router'
+import { useServices } from 'services'
 import * as IApi from 'services/contracts/IApi'
 import * as ILang from 'services/contracts/ILang'
 import { useConvosStore } from 'store/convos'
@@ -6,7 +7,6 @@ import { useMainSettingsStore } from 'store/mainSettings'
 import { usePeersStore } from 'store/peers'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
-import { useServices } from 'hooks'
 import * as utils from 'misc/utils'
 
 /**

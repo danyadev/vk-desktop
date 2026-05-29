@@ -1,7 +1,7 @@
+import { useServices } from 'services'
 import * as IEngine from 'services/contracts/IEngine'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
-import { useServices } from 'hooks'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
 export async function loadInitialData(

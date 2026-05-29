@@ -1,5 +1,6 @@
 import { defineComponent, KeyboardEvent, shallowRef } from 'vue'
-import { useGlobalModal, useServices } from 'hooks'
+import { useServices } from 'services'
+import { useGlobalModal } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { Input } from 'ui/ui/Input/Input'

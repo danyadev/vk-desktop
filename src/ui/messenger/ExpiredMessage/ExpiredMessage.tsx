@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { useServices } from 'hooks'
+import { useServices } from 'services'
 import { Icon20BombOutline } from 'assets/icons'
 import './ExpiredMessage.css'
 

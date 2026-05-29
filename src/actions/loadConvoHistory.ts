@@ -1,3 +1,4 @@
+import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
@@ -5,7 +6,6 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertPeers } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
-import { useServices } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 
 type Props = {

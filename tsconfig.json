@@ -23,6 +23,7 @@
       "assets/*": ["./src/assets/*"],
       "assets/icons/*": ["./none"],
       "converters/*": ["./src/converters/*"],
+      "services": ["./src/services"],
       "services/*": ["./src/services/*"],
       "hooks": ["./src/hooks"],
       "lang/*": ["./src/lang/*"],

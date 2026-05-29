@@ -1,6 +1,6 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { defineComponent, shallowRef } from 'vue'
-import { useServices } from 'hooks'
+import { useServices } from 'services'
 import { currentWindow, subscribeToElectronEvent } from 'misc/utils'
 import { isMacOS } from 'misc/constants'
 import {

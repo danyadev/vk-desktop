@@ -1,3 +1,4 @@
+import { useServices } from 'services'
 import { MessagesGetDiffConversationInfo } from 'services/contracts/api/objects/MessagesGetDiffConversationInfo'
 import { MessagesLongpollCredentials } from 'services/contracts/api/objects/MessagesLongpollCredentials'
 import * as IEngine from 'services/contracts/IEngine'
@@ -9,7 +10,6 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers, loadMissingData } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
-import { useServices } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 
 export async function handleEngineResync(

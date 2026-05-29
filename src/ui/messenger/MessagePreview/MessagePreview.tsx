@@ -1,8 +1,8 @@
 import { defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as ILang from 'services/contracts/ILang'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
-import { useServices } from 'hooks'
 import { PlainServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import './MessagePreview.css'
 

@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { useServices } from 'hooks'
+import { useServices } from 'services'
 import { ClassName } from 'misc/utils'
 import { Button } from 'ui/ui/Button/Button'
 import './LoadError.css'

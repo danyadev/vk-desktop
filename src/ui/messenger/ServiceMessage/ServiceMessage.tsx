@@ -1,8 +1,9 @@
 import { defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useGlobalModal, useServices } from 'hooks'
+import { useGlobalModal } from 'hooks'
 import './ServiceMessage.css'
 
 type Props = {

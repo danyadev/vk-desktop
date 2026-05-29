@@ -1,9 +1,10 @@
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
-import { useServices, useViewer } from 'hooks'
+import { useViewer } from 'hooks'
 import { random } from 'misc/utils'
 import { INTEGER_BOUNDARY } from 'misc/constants'
 

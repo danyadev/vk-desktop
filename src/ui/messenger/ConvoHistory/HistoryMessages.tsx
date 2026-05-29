@@ -1,7 +1,7 @@
 import { computed, defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
-import { useServices } from 'hooks'
 import { NonEmptyArray, RawRefElement } from 'misc/utils'
 import { isPreviousDay, isSameDay } from 'misc/dateTime'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'

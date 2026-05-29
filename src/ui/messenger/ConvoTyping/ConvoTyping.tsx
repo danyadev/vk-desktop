@@ -1,8 +1,8 @@
 import { computed, defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as Peer from 'model/Peer'
 import { TypingUser } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useServices } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import './ConvoTyping.css'
 

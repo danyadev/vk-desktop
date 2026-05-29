@@ -1,6 +1,6 @@
 import { defineComponent, shallowRef } from 'vue'
+import { useServices } from 'services'
 import * as Convo from 'model/Convo'
-import { useServices } from 'hooks'
 import { Button } from 'ui/ui/Button/Button'
 import { Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
 import './ComposerMuteChannelButton.css'

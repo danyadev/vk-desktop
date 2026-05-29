@@ -1,6 +1,7 @@
 import { defineComponent } from 'vue'
+import { useServices } from 'services'
 import { AppearanceTheme, useMainSettingsStore } from 'store/mainSettings'
-import { useGlobalModal, useModal, useServices } from 'hooks'
+import { useGlobalModal, useModal } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { Checkbox } from 'ui/ui/Checkbox/Checkbox'

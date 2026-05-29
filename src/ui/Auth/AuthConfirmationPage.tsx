@@ -1,5 +1,5 @@
 import { defineComponent, InputEvent, KeyboardEvent, onMounted, Ref, shallowRef } from 'vue'
-import { useServices } from 'hooks'
+import { useServices } from 'services'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonText } from 'ui/ui/ButtonText/ButtonText'

@@ -1,7 +1,7 @@
 import { computed, defineComponent, InputEvent, onUnmounted, shallowRef } from 'vue'
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
-import { useServices } from 'hooks'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Icon16Text, Icon20ChevronUp, Icon32PauseCircle, Icon32PlayCircle } from 'assets/icons'
 import './AttachVoice.css'

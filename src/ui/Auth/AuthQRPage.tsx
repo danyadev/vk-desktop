@@ -1,7 +1,7 @@
 import { defineComponent, KeyboardEvent, onMounted, onUnmounted, shallowReactive } from 'vue'
 import * as vkqr from '@vkontakte/vk-qr'
+import { useServices } from 'services'
 import * as IQrCodeAuth from 'services/contracts/IQrCodeAuth'
-import { useServices } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonText } from 'ui/ui/ButtonText/ButtonText'

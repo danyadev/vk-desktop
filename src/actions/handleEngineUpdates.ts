@@ -1,3 +1,4 @@
+import { useServices } from 'services'
 import { MessagesConversation } from 'services/contracts/api/objects/MessagesConversation'
 import { MessagesGetDiffContentInput } from 'services/contracts/api/objects/MessagesGetDiffContentInput'
 import { MessagesMessage } from 'services/contracts/api/objects/MessagesMessage'
@@ -11,7 +12,6 @@ import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { insertConvos, insertPeers } from 'actions'
 import { fromApiMessage, fromEngineMessage } from 'converters/MessageConverter'
-import { useServices } from 'hooks'
 import { getMapValueWithDefaults } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
 

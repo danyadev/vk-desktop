@@ -9,13 +9,13 @@ import {
   Transition,
   watch
 } from 'vue'
+import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { ScrollAnchor, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
-import { useServices } from 'hooks'
 import { isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'

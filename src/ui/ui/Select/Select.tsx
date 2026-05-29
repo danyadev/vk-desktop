@@ -1,5 +1,6 @@
 import { computed, defineComponent, KeyboardEvent, shallowRef } from 'vue'
-import { useOnClickOutside, useServices } from 'hooks'
+import { useServices } from 'services'
+import { useOnClickOutside } from 'hooks'
 import { Icon16CheckOutline, Icon24ChevronDown, Icon24ChevronUp } from 'assets/icons'
 import './Select.css'
 

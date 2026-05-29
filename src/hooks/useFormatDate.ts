@@ -1,4 +1,5 @@
-import { useNow, useServices } from 'hooks'
+import { useServices } from 'services'
+import { useNow } from 'hooks'
 import { isPreviousDay, isSameDay, ONE_DAY, ONE_HOUR, ONE_MINUTE } from 'misc/dateTime'
 
 type Options = {

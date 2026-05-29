@@ -155,8 +155,9 @@ export default defineConfig([
           target: ['converters'],
           from: ['hooks', 'ui']
         }, {
-          target: ['../main-process', 'converters', 'lang', 'misc', 'model', 'store', 'ui'],
-          from: ['services/*', '!services/contracts/*']
+          target: ['../main-process', 'actions', 'converters', 'hooks', 'lang', 'misc', 'model', 'store', 'ui'],
+          from: 'services',
+          except: ['./index.ts', './contracts']
         }]
       }],
       'import-x/no-named-as-default-member': 'off',

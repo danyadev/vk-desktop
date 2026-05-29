@@ -1,4 +1,3 @@
-export { useServices } from './useServices'
 export { useFocusVisible } from './useFocusVisible'
 export { useFormatDate } from './useFormatDate'
 export { useGlobalModal } from './useGlobalModal'

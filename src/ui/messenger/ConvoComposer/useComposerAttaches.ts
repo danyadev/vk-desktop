@@ -1,9 +1,9 @@
 import { computed } from 'vue'
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { fromApiAttachPhoto } from 'converters/AttachConverter'
-import { useServices } from 'hooks'
 
 export type AttachPreview =
   | { kind: 'Attach', attach: Attach.SingleAttach }

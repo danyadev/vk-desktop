@@ -1,6 +1,6 @@
+import { useServices } from 'services'
 import * as Lists from 'model/Lists'
 import { insertConvos, insertPeers } from 'actions'
-import { useServices } from 'hooks'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
 export async function loadMoreConvos(list: Lists.List) {
