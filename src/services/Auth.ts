@@ -118,11 +118,11 @@ export class Auth {
     }
   }
 
-  async getMessengerAnonymToken() {
+  async getMessengerAnonymToken(abortSignal?: AbortSignal) {
     const { token } = await this.api.fetch('auth.getAnonymToken', {
       client_id: Auth.MESSENGER_APP_ID,
       client_secret: Auth.MESSENGER_APP_SECRET
-    })
+    }, { signal: abortSignal })
 
     return token
   }
@@ -297,7 +297,8 @@ export class Auth {
   async getAuthCode(
     anonymToken: string,
     appId: number,
-    scope: number | string
+    scope: number | string,
+    abortSignal?: AbortSignal
   ): Promise<IAuth.GetAuthCodeResult> {
     const platform = await getPlatform()
 
@@ -311,6 +312,7 @@ export class Auth {
       anonymous_token: anonymToken,
       device_name: `VK Desktop ${appVersion} at ${platform}`
     }, {
+      signal: abortSignal,
       headers: {
         'X-Origin': 'https://vk.com'
       }
@@ -319,10 +321,10 @@ export class Auth {
     return { authUrl, authCode, authHash }
   }
 
-  checkAuthCode(anonymToken: string, authHash: string) {
+  checkAuthCode(anonymToken: string, authHash: string, abortSignal?: AbortSignal) {
     return this.api.fetch('auth.checkAuthCode', {
       anonymous_token: anonymToken,
       auth_hash: authHash
-    })
+    }, { signal: abortSignal })
   }
 }

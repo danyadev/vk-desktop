@@ -3,22 +3,25 @@ import * as IApi from 'services/contracts/IApi'
 import * as ILang from 'services/contracts/ILang'
 import * as IQrCodeAuth from 'services/contracts/IQrCodeAuth'
 
-const CANCELLED_TIMEOUT_ID = 0
+const STOP_ABORT_REASON = 'QrCodeAuth stopped'
 
 export class QrCodeAuth {
   private timeoutId: number | undefined
+  private abortController: AbortController | undefined
 
   constructor(private auth: Auth, private lang: ILang.Lang) {}
 
   async start(onEvent: (event: IQrCodeAuth.Event) => void) {
     this.timeoutId = undefined
+    this.abortController = new AbortController()
 
     try {
-      const anonymToken = await this.auth.getMessengerAnonymToken()
+      const anonymToken = await this.auth.getMessengerAnonymToken(this.abortController.signal)
       const { authUrl, authHash } = await this.auth.getAuthCode(
         anonymToken,
         Auth.MESSENGER_APP_ID,
-        Auth.MESSENGER_APP_SCOPE
+        Auth.MESSENGER_APP_SCOPE,
+        this.abortController.signal
       )
 
       onEvent({
@@ -27,6 +30,10 @@ export class QrCodeAuth {
       })
       this.checkStatusLoop(anonymToken, authHash, onEvent)
     } catch (err) {
+      if (err instanceof IApi.AbortError && err.reason === STOP_ABORT_REASON) {
+        return
+      }
+
       console.warn('[QRCodeAuth] start failed', err)
       onEvent({
         kind: 'Error',
@@ -37,7 +44,7 @@ export class QrCodeAuth {
 
   stop() {
     clearTimeout(this.timeoutId)
-    this.timeoutId = CANCELLED_TIMEOUT_ID
+    this.abortController?.abort(STOP_ABORT_REASON)
   }
 
   private async checkStatusLoop(
@@ -46,7 +53,11 @@ export class QrCodeAuth {
     onEvent: (event: IQrCodeAuth.Event) => void
   ) {
     try {
-      const response = await this.auth.checkAuthCode(anonymToken, authHash)
+      const response = await this.auth.checkAuthCode(
+        anonymToken,
+        authHash,
+        this.abortController?.signal
+      )
 
       switch (response.status) {
         case 0: // Created
@@ -95,14 +106,14 @@ export class QrCodeAuth {
           return
       }
 
-      if (this.timeoutId === CANCELLED_TIMEOUT_ID) {
-        return
-      }
-
       this.timeoutId = window.setTimeout(() => {
         this.checkStatusLoop(anonymToken, authHash, onEvent)
       }, 5000)
     } catch (err) {
+      if (err instanceof IApi.AbortError && err.reason === STOP_ABORT_REASON) {
+        return
+      }
+
       console.warn('[QRCodeAuth] loop error', err)
       onEvent({
         kind: 'Error',
