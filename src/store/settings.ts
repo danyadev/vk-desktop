@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { RendererStorage } from 'store/Storage'
+import { Locale } from 'lang/dictionaries'
 
 export type Settings = {
-  lang: 'ru'
+  lang: Locale
 }
 
 const settingsStorage = new RendererStorage<Settings>('settings', {

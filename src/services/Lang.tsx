@@ -1,11 +1,10 @@
 import { shallowReactive } from 'vue'
 import { Dictionary, VariablesTypings } from 'services/contracts/ILang'
 import * as Peer from 'model/Peer'
-import type { Settings } from 'store/settings'
-import { dictionaries, PluralRules } from 'lang/dictionaries'
+import { dictionaries, Locale, PluralRules } from 'lang/dictionaries'
 import { JSXElement, splitter } from 'misc/utils'
 
-type PluralKeys = PluralRules[Settings['lang']]
+type PluralKeys = PluralRules[Locale]
 type PluralValues = Record<PluralKeys, string> & { single?: string }
 
 type GenderKeys = 'male' | 'female'
@@ -24,7 +23,7 @@ type DictionaryOfGenders = {
 }
 
 type State = {
-  locale: Settings['lang']
+  locale: Locale
   dictionary: Dictionary
   pluralRules: Intl.PluralRules
 }
@@ -33,7 +32,7 @@ export class Lang {
   private state: State
   private dateTimeFormatters = new Map<string, Intl.DateTimeFormat>()
 
-  constructor(locale: Settings['lang']) {
+  constructor(locale: Locale) {
     this.state = shallowReactive({
       locale,
       dictionary: dictionaries[locale],
@@ -41,7 +40,7 @@ export class Lang {
     })
   }
 
-  onLocaleUpdate(locale: Settings['lang']) {
+  onLocaleUpdate(locale: Locale) {
     this.state.locale = locale
     this.state.dictionary = dictionaries[locale]
     this.state.pluralRules = new Intl.PluralRules(locale, { type: 'cardinal' })

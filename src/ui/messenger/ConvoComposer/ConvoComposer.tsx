@@ -1,5 +1,4 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
-import * as IUploader from 'services/contracts/IUploader'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvoDraftsStore } from 'store/convoDrafts'
@@ -86,7 +85,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
   const onPaste = (event: ClipboardEvent) => {
     for (const file of event.clipboardData?.files ?? []) {
-      if (IUploader.isPhotoFile(file)) {
+      if (['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
         event.preventDefault()
         uploadPhoto(file)
       }

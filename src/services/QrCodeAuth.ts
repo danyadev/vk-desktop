@@ -11,6 +11,8 @@ export class QrCodeAuth {
   constructor(private api: IApi.Api, private lang: ILang.Lang) {}
 
   async start(onEvent: (event: IQrCodeAuth.Event) => void) {
+    this.timeoutId = undefined
+
     try {
       const anonymToken = await Auth.getMessengerAnonymToken(this.api)
       const { authUrl, authHash } = await Auth.getAuthCode(
