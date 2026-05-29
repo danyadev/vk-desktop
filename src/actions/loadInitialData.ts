@@ -1,4 +1,4 @@
-import * as IEngine from 'services/IEngine'
+import * as IEngine from 'services/contracts/IEngine'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
 import { useServices } from 'hooks'

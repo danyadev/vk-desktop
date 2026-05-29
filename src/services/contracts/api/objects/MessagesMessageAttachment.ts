@@ -1,7 +1,7 @@
-import { BaseImage } from 'model/api-types/objects/BaseImage'
-import { GroupsGroup } from 'model/api-types/objects/GroupsGroup'
-import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
-import { UsersUser } from 'model/api-types/objects/UsersUser'
+import { BaseImage } from 'services/contracts/api/objects/BaseImage'
+import { GroupsGroup } from 'services/contracts/api/objects/GroupsGroup'
+import { PhotosPhoto } from 'services/contracts/api/objects/PhotosPhoto'
+import { UsersUser } from 'services/contracts/api/objects/UsersUser'
 
 export type MessagesMessageAttachment = {
   type: MessagesMessageAttachmentType

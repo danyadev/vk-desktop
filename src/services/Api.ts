@@ -1,5 +1,5 @@
-import * as IApi from 'services/IApi'
-import { Methods } from 'model/api-types'
+import { Methods } from 'services/contracts/api'
+import * as IApi from 'services/contracts/IApi'
 import * as Auth from 'model/Auth'
 import { useSettingsStore } from 'store/settings'
 import { logout, useViewerStore } from 'store/viewer'
@@ -7,8 +7,6 @@ import { useGlobalModal } from 'hooks'
 import { isNonEmptyArray, random, sleep, toUrlParams } from 'misc/utils'
 import { appUserAgent } from 'misc/constants'
 import { Semaphore } from 'misc/Semaphore'
-
-export const API_VERSION = '5.238'
 
 const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500
@@ -300,7 +298,7 @@ export class Api implements IApi.Api {
 
       const fullParams: IApi.MethodParams<Method> = {
         access_token: fetchOptions.messengerToken ? viewer?.messengerToken : viewer?.accessToken,
-        v: API_VERSION,
+        v: IApi.VERSION,
         lang,
         ...params
       }

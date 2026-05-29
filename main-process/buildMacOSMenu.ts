@@ -1,5 +1,5 @@
 import Electron, { Menu, shell } from 'electron'
-import { Dictionary } from 'services/Lang'
+import { Dictionary } from 'services/contracts/ILang'
 
 export function buildMacOSMenu(
   mainWindow: Electron.BrowserWindow,

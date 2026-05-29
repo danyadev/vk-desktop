@@ -1,7 +1,6 @@
 import { useRouter } from 'vue-router'
-import * as IApi from 'services/IApi'
-import * as ILang from 'services/ILang'
-import { QrCodeAuth } from 'services/QrCodeAuth'
+import * as IApi from 'services/contracts/IApi'
+import * as ILang from 'services/contracts/ILang'
 import * as Auth from 'model/Auth'
 import { useConvosStore } from 'store/convos'
 import { useMainSettingsStore } from 'store/mainSettings'
@@ -28,15 +27,15 @@ type ExposedFeatures = {
   api: IApi.Api
   engine: ReturnType<typeof useServices>['engine']
   lang: ILang.Lang
-  auth: typeof Auth
-  QrCodeAuth: typeof QrCodeAuth
-  utils: typeof utils
+  qrCodeAuth: ReturnType<typeof useServices>['qrCodeAuth']
   router: ReturnType<typeof useRouter>
+  auth: typeof Auth
+  utils: typeof utils
 }
 const exposedWindow = window as typeof window & ExposedFeatures
 
 export function exposeFeatures() {
-  const { api, engine, lang } = useServices()
+  const { api, engine, lang, qrCodeAuth } = useServices()
   const router = useRouter()
 
   exposedWindow.mainSettings = useMainSettingsStore()
@@ -47,8 +46,8 @@ export function exposeFeatures() {
   exposedWindow.api = api
   exposedWindow.engine = engine
   exposedWindow.lang = lang
+  exposedWindow.qrCodeAuth = qrCodeAuth
   exposedWindow.router = router
   exposedWindow.auth = { ...Auth }
-  exposedWindow.QrCodeAuth = QrCodeAuth
   exposedWindow.utils = { ...utils }
 }

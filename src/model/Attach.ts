@@ -1,5 +1,5 @@
-import * as ILang from 'services/ILang'
-import { MessagesMessageAttachmentType } from 'model/api-types/objects/MessagesMessageAttachment'
+import { MessagesMessageAttachmentType } from 'services/contracts/api/objects/MessagesMessageAttachment'
+import * as ILang from 'services/contracts/ILang'
 import * as Peer from 'model/Peer'
 import { Flatten, NonEmptyArray, typeguard } from 'misc/utils'
 

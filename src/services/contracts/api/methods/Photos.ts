@@ -1,4 +1,4 @@
-import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
+import { PhotosPhoto } from 'services/contracts/api/objects/PhotosPhoto'
 
 // photos.getMessagesUploadServer
 export type PhotosGetMessagesUploadServerParams = {

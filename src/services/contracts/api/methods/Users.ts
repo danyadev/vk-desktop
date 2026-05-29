@@ -1,4 +1,4 @@
-import { UsersUser } from 'model/api-types/objects/UsersUser'
+import { UsersUser } from 'services/contracts/api/objects/UsersUser'
 
 // users.get
 export type UsersGetParams = {

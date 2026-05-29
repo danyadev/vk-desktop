@@ -1,5 +1,5 @@
-import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
-import { MessagesPinnedMessage } from 'model/api-types/objects/MessagesPinnedMessage'
+import { MessagesKeyboard } from 'services/contracts/api/objects/MessagesKeyboard'
+import { MessagesPinnedMessage } from 'services/contracts/api/objects/MessagesPinnedMessage'
 
 export type MessagesConversation = {
   peer: {

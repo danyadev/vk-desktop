@@ -1,20 +1,16 @@
-import * as IApi from 'services/IApi'
-import * as ILang from 'services/ILang'
+import * as IApi from 'services/contracts/IApi'
+import * as ILang from 'services/contracts/ILang'
+import * as IQrCodeAuth from 'services/contracts/IQrCodeAuth'
 import * as Auth from 'model/Auth'
 
 const CANCELLED_TIMEOUT_ID = 0
-
-export type QrCodeAuthEvent =
-  | { kind: 'UrlAcquired', url: string }
-  | { kind: 'Success', accessToken: string }
-  | { kind: 'Error', message: string }
 
 export class QrCodeAuth {
   private timeoutId: number | undefined
 
   constructor(private api: IApi.Api, private lang: ILang.Lang) {}
 
-  async start(onEvent: (event: QrCodeAuthEvent) => void) {
+  async start(onEvent: (event: IQrCodeAuth.Event) => void) {
     try {
       const anonymToken = await Auth.getMessengerAnonymToken(this.api)
       const { authUrl, authHash } = await Auth.getAuthCode(
@@ -46,7 +42,7 @@ export class QrCodeAuth {
   private async checkStatusLoop(
     anonymToken: string,
     authHash: string,
-    onEvent: (event: QrCodeAuthEvent) => void
+    onEvent: (event: IQrCodeAuth.Event) => void
   ) {
     try {
       const response = await this.api.fetch('auth.checkAuthCode', {

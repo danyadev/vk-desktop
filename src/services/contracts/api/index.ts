@@ -1,7 +1,7 @@
 import {
   AccountSetSilenceModeParams,
   AccountSetSilenceModeResponse
-} from 'model/api-types/methods/Account'
+} from 'services/contracts/api/methods/Account'
 import {
   AuthCheckAuthCodeParams,
   AuthCheckAuthCodeResponse,
@@ -21,9 +21,9 @@ import {
   AuthValidateAccountResponse,
   AuthValidatePhoneParams,
   AuthValidatePhoneResponse
-} from 'model/api-types/methods/Auth'
-import { CaptchaForceParams, CaptchaForceResponse } from 'model/api-types/methods/Captcha'
-import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'model/api-types/methods/Groups'
+} from 'services/contracts/api/methods/Auth'
+import { CaptchaForceParams, CaptchaForceResponse } from 'services/contracts/api/methods/Captcha'
+import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'services/contracts/api/methods/Groups'
 import {
   MessagesGetConversationsByIdParams,
   MessagesGetConversationsByIdResponse,
@@ -43,15 +43,15 @@ import {
   MessagesMarkAsPlayedResponse,
   MessagesSendParams,
   MessagesSendResponse
-} from 'model/api-types/methods/Messages'
+} from 'services/contracts/api/methods/Messages'
 import {
   PhotosGetMessagesUploadServerParams,
   PhotosGetMessagesUploadServerResponse,
   PhotosSaveMessagesPhotoParams,
   PhotosSaveMessagesPhotoResponse
-} from 'model/api-types/methods/Photos'
-import { StatsTrackVisitorParams, StatsTrackVisitorResponse } from 'model/api-types/methods/Stats'
-import { UsersGetParams, UsersGetResponse } from 'model/api-types/methods/Users'
+} from 'services/contracts/api/methods/Photos'
+import { StatsTrackVisitorParams, StatsTrackVisitorResponse } from 'services/contracts/api/methods/Stats'
+import { UsersGetParams, UsersGetResponse } from 'services/contracts/api/methods/Users'
 
 /**
  * Disclaimer:

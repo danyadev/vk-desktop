@@ -1,9 +1,9 @@
-import { MessagesForeignMessage } from 'model/api-types/objects/MessagesForeignMessage'
-import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
+import { MessagesForeignMessage } from 'services/contracts/api/objects/MessagesForeignMessage'
+import { MessagesKeyboard } from 'services/contracts/api/objects/MessagesKeyboard'
 import {
   MessagesMessageAttachment,
   MessagesMessageAttachmentGeo
-} from 'model/api-types/objects/MessagesMessageAttachment'
+} from 'services/contracts/api/objects/MessagesMessageAttachment'
 
 export type MessagesMessage = {
   action?: MessagesMessageAction

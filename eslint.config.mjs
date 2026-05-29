@@ -155,8 +155,8 @@ export default defineConfig([
           target: ['converters'],
           from: ['hooks', 'ui']
         }, {
-          target: ['model/api-types'],
-          from: ['model/!(api-types)']
+          target: ['../main-process', 'converters', 'lang', 'misc', 'model', 'store', 'ui'],
+          from: ['services/*', '!services/contracts/*']
         }]
       }],
       'import-x/no-named-as-default-member': 'off',

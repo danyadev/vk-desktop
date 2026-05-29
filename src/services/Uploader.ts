@@ -1,4 +1,4 @@
-import * as IApi from 'services/IApi'
+import * as IApi from 'services/contracts/IApi'
 import * as Peer from 'model/Peer'
 
 type UploadPhotoToServerResponse = {
@@ -28,11 +28,7 @@ export class Uploader {
     return photo
   }
 
-  static isPhotoFile(file: File) {
-    return ['image/png', 'image/jpeg', 'image/gif'].includes(file.type)
-  }
-
-  uploadWithProgress<T>(url: string, file: File, onProgress: (progress: number) => void) {
+  private uploadWithProgress<T>(url: string, file: File, onProgress: (progress: number) => void) {
     const BOUNDARY = 'chikibamboni'
     let bytesUploaded = 0
     let bodySize = file.size

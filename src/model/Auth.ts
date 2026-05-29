@@ -1,5 +1,4 @@
-import { API_VERSION } from 'services/Api'
-import * as IApi from 'services/IApi'
+import * as IApi from 'services/contracts/IApi'
 import { getPlatform, toUrlParams } from 'misc/utils'
 import { appVersion } from 'misc/constants'
 
@@ -117,7 +116,7 @@ export async function getMessengerSilentToken(
     '2fa_supported': 1,
     grant_type: 'password',
     lang,
-    v: API_VERSION,
+    v: IApi.VERSION,
     trusted_hash: trustedHash,
     ...payload
   })
@@ -250,7 +249,7 @@ export async function getExchangeToken(api: IApi.Api, accessToken: string, userI
 
 export async function refreshByExchangeToken(api: IApi.Api, exchangeToken: string) {
   const result = await fetch('https://oauth.vk.com/auth_by_exchange_token?' + toUrlParams({
-    v: API_VERSION,
+    v: IApi.VERSION,
     client_id: MESSENGER_APP_ID,
     exchange_token: exchangeToken
   })).then<OauthSuccessResponse>((res) => res.json())
@@ -287,7 +286,7 @@ export async function getAppToken(messengerToken: string, api: IApi.Api): Promis
     scope: APP_SCOPE,
     response_type: 'token',
     revoke: 1,
-    v: API_VERSION
+    v: IApi.VERSION
   }))
 
   const oauthHash = new URL(fetchedOauth.url).searchParams.get('return_auth_hash')

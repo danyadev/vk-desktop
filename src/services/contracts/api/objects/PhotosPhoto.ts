@@ -1,4 +1,4 @@
-import { PhotosPhotoSize } from 'model/api-types/objects/PhotosPhotoSize'
+import { PhotosPhotoSize } from 'services/contracts/api/objects/PhotosPhotoSize'
 
 export type PhotosPhoto = {
   id: number

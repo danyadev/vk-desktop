@@ -1,10 +1,10 @@
+import { Dictionary, VariablesTypings } from 'services/contracts/ILang'
 import * as Peer from 'model/Peer'
 import type { Settings } from 'store/settings'
 import { ru, RuPluralRules } from 'lang/ru'
-import { VariablesTypings } from 'lang/VariablesTypings'
 import { JSXElement, splitter } from 'misc/utils'
 
-const langMap = {
+export const langMap = {
   ru
 }
 type PluralKeysMap = {
@@ -16,8 +16,6 @@ type PluralValues = Record<PluralKeys, string> & { single?: string }
 
 type GenderKeys = 'male' | 'female'
 type GenderValues = Record<GenderKeys, string>
-
-export type Dictionary = typeof langMap[Settings['lang']]
 
 type DictionaryOfStrings = {
   [Key in keyof Dictionary as Dictionary[Key] extends string ? Key : never]: Dictionary[Key]
@@ -32,10 +30,15 @@ type DictionaryOfGenders = {
 }
 
 export class Lang {
-  dictionary: Dictionary
-  pluralRules: Intl.PluralRules
+  private dictionary: Dictionary
+  private pluralRules: Intl.PluralRules
 
   constructor(public locale: Settings['lang']) {
+    this.dictionary = langMap[locale]
+    this.pluralRules = new Intl.PluralRules(locale, { type: 'cardinal' })
+  }
+
+  onLocaleUpdate(locale: Settings['lang']) {
     this.dictionary = langMap[locale]
     this.pluralRules = new Intl.PluralRules(locale, { type: 'cardinal' })
   }

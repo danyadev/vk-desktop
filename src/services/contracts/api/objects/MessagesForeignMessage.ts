@@ -1,7 +1,7 @@
 import {
   MessagesMessageAttachment,
   MessagesMessageAttachmentGeo
-} from 'model/api-types/objects/MessagesMessageAttachment'
+} from 'services/contracts/api/objects/MessagesMessageAttachment'
 
 export type MessagesForeignMessage = {
   attachments?: MessagesMessageAttachment[]

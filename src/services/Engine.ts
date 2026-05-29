@@ -1,5 +1,5 @@
-import * as IEngine from 'services/IEngine'
-import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
+import { MessagesLongpollCredentials } from 'services/contracts/api/objects/MessagesLongpollCredentials'
+import * as IEngine from 'services/contracts/IEngine'
 import { useConvosStore } from 'store/convos'
 import { handleEngineResync, handleEngineUpdates } from 'actions'
 import { useServices } from 'hooks'

@@ -1,5 +1,7 @@
-import { CommonParams, Methods } from 'model/api-types'
+import { CommonParams, Methods } from 'services/contracts/api'
 import { NonEmptyArray, Truthy } from 'misc/utils'
+
+export const VERSION = '5.238'
 
 export type Result<T> =
   | { response: T }

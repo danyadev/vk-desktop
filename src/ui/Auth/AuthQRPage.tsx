@@ -1,6 +1,6 @@
 import { defineComponent, KeyboardEvent, onMounted, onUnmounted, shallowReactive } from 'vue'
 import * as vkqr from '@vkontakte/vk-qr'
-import { QrCodeAuth, QrCodeAuthEvent } from 'services/QrCodeAuth'
+import * as IQrCodeAuth from 'services/contracts/IQrCodeAuth'
 import { useServices } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
@@ -22,8 +22,7 @@ type State = {
 }
 
 export const AuthQRPage = defineComponent<Props>((props) => {
-  const { api, lang } = useServices()
-  const qrCodeAuth = new QrCodeAuth(api, lang)
+  const { lang, qrCodeAuth } = useServices()
   const state = shallowReactive<State>({
     qrCodeUrl: null,
     qrCodeHtml: null,
@@ -32,7 +31,7 @@ export const AuthQRPage = defineComponent<Props>((props) => {
     copyTimerId: 0
   })
 
-  function onEvent(event: QrCodeAuthEvent) {
+  function onEvent(event: IQrCodeAuth.Event) {
     switch (event.kind) {
       case 'UrlAcquired':
         state.qrCodeUrl = event.url

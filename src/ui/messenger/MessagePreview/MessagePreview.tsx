@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import * as ILang from 'services/ILang'
+import * as ILang from 'services/contracts/ILang'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import { useServices } from 'hooks'

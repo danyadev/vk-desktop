@@ -1,6 +1,6 @@
 import { computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
-import * as IEngine from 'services/IEngine'
+import * as IEngine from 'services/contracts/IEngine'
 import { loadInitialData } from 'actions'
 import { useModal, useServices } from 'hooks'
 import { ConvoList } from 'ui/messenger/ConvoList/ConvoList'
