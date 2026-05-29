@@ -9,13 +9,13 @@ import {
   Transition,
   watch
 } from 'vue'
+import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { ScrollAnchor, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
-import { useEnv } from 'hooks'
 import { isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
@@ -35,7 +35,7 @@ const SHOW_HOP_NAVIGATION_THRESHOLD = 200
 const PINNED_TO_BOTTOM_THRESHOLD = 32
 
 export const ConvoHistory = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { savedScrollPositions, scrollAnchors, typings } = useConvosStore()
   const scrollAnchor = computed<ScrollAnchor>(
     () => scrollAnchors.get(props.convo.id) ?? { kind: 'None' }

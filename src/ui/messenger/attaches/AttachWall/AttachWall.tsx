@@ -1,7 +1,9 @@
 import { defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
-import { useEnv, useFormatDate } from 'hooks'
+import { usePeersStore } from 'store/peers'
+import { useFormatDate } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
@@ -15,11 +17,12 @@ type Props = {
 }
 
 export const AttachWall = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
+  const { peers } = usePeersStore()
   const formatDate = useFormatDate({ relativeTime: false })
 
   return () => {
-    const author = Peer.safeGet(props.wall.authorId)
+    const author = Peer.safeGet(peers, props.wall.authorId)
     const hasAttaches = Attach.kindsCount(props.wall.attaches) > 0
     const isEmpty =
       !props.wall.text &&

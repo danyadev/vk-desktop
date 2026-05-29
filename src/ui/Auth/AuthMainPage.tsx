@@ -1,5 +1,5 @@
 import { computed, defineComponent, KeyboardEvent, shallowReactive, shallowRef } from 'vue'
-import { useEnv } from 'hooks'
+import { useServices } from 'services'
 import { AuthMultiaccount } from 'ui/Auth/AuthMultiaccount'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
@@ -18,7 +18,7 @@ type AuthMainPageProps = {
 }
 
 export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const showPassword = shallowRef(false)
 
   const state = shallowReactive({

@@ -1,9 +1,10 @@
 import { defineComponent, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import * as AuthModel from 'model/Auth'
+import { useServices } from 'services'
+import * as IAuth from 'services/contracts/IAuth'
 import { useViewerStore } from 'store/viewer'
 import { fromApiUser } from 'converters/PeerConverter'
-import { useEnv, useGlobalModal } from 'hooks'
+import { useGlobalModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { AuthConfirmationPage, ConfirmationState } from 'ui/Auth/AuthConfirmationPage'
 import { AuthMainPage } from 'ui/Auth/AuthMainPage'
@@ -20,7 +21,7 @@ type AuthState = {
 }
 
 export const Auth = defineComponent(() => {
-  const { api, lang } = useEnv()
+  const { api, auth, lang } = useServices()
   const router = useRouter()
   const viewer = useViewerStore()
 
@@ -59,20 +60,26 @@ export const Auth = defineComponent(() => {
     state.error = null
   }
 
-  async function performAuth(payload: AuthModel.GetMessengerTokenPayload = {}): Promise<void> {
+  async function performAuth(payload: IAuth.GetMessengerTokenPayload = {}): Promise<void> {
     state.loading = true
 
-    const result = await AuthModel.getMessengerSilentToken(state.login, state.password, payload)
+    const result = await auth.getMessengerSilentToken(
+      state.login,
+      state.password,
+      lang.getLocale(),
+      viewer.trustedHashes[state.login],
+      payload
+    )
 
     switch (result.kind) {
       case 'Success': {
-        const anonymToken = await AuthModel.getMessengerAnonymToken(api)
+        const anonymToken = await auth.getMessengerAnonymToken()
         const {
           accessToken,
           isPartial,
           isService,
           isSignupRequired
-        } = await AuthModel.exchangeSilentToken(api, anonymToken, result.silentToken, result.uuid)
+        } = await auth.exchangeSilentToken(anonymToken, result.silentToken, result.uuid)
 
         if (isSignupRequired) {
           state.error = lang.use('auth_profile_with_hanging_signup')
@@ -155,7 +162,7 @@ export const Auth = defineComponent(() => {
   }
 
   async function completeAuthWithMessengerToken(messengerToken: string) {
-    const appToken = await AuthModel.getAppToken(messengerToken, api)
+    const appToken = await auth.getAppToken(messengerToken)
       .then((token) => ({ kind: 'Token', token }) as const)
       .catch((error: unknown) => ({ kind: 'Error', error }) as const)
 
@@ -176,7 +183,7 @@ export const Auth = defineComponent(() => {
         throw new Error('API не вернул пользователя')
       }
 
-      const exchangeToken = await AuthModel.getExchangeToken(api, messengerToken, apiUser.id)
+      const exchangeToken = await auth.getExchangeToken(messengerToken, apiUser.id)
       if (!exchangeToken) {
         throw new Error('API не вернул exchangeToken')
       }

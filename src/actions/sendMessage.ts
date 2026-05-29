@@ -1,14 +1,16 @@
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
-import { useEnv, useViewer } from 'hooks'
+import { useViewer } from 'hooks'
 import { random } from 'misc/utils'
 import { INTEGER_BOUNDARY } from 'misc/constants'
 
 export function sendMessage(peerId: Peer.Id, text: string, attaches: Attach.Attaches) {
-  const convo = Convo.safeGet(peerId)
+  const { convos } = useConvosStore()
+  const convo = Convo.safeGet(convos, peerId)
   const pendingMessage = toPendingMessage(peerId, text, attaches)
 
   convo.pendingMessages.push(pendingMessage)
@@ -16,7 +18,7 @@ export function sendMessage(peerId: Peer.Id, text: string, attaches: Attach.Atta
 }
 
 async function sendNextPendingMessage(convo: Convo.Convo) {
-  const { api } = useEnv()
+  const { api } = useServices()
   const { sendMessageLock } = useConvosStore()
 
   if (sendMessageLock.has(convo.id)) {

@@ -1,16 +1,16 @@
 import { computed } from 'vue'
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { fromApiAttachPhoto } from 'converters/AttachConverter'
-import { useEnv } from 'hooks'
 
 export type AttachPreview =
   | { kind: 'Attach', attach: Attach.SingleAttach }
   | { kind: 'UploadingAttach', attach: ConvoDraft.UploadingAttach }
 
 export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoDraft) {
-  const { uploader } = useEnv()
+  const { uploader } = useServices()
 
   const attachPreviews = computed(() => {
     const attaches: AttachPreview[] = []

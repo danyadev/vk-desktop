@@ -1,9 +1,10 @@
 import { defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
-import { useEnv } from 'hooks'
+import { usePeersStore } from 'store/peers'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { ForwardedMessages } from 'ui/messenger/ForwardedMessages/ForwardedMessages'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
@@ -16,12 +17,13 @@ type Props = {
 }
 
 export const ConvoMessage = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { scrollAnchors } = useConvosStore()
+  const { peers } = usePeersStore()
 
   return () => {
     const { message, showName } = props
-    const author = Peer.safeGet(message.authorId)
+    const author = Peer.safeGet(peers, message.authorId)
     const hasAttaches = Attach.kindsCount(message.attaches) > 0
     const isEmpty =
       !message.text &&

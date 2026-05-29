@@ -145,15 +145,19 @@ export default defineConfig([
         basePath: './src',
         zones: [{
           // Где применяются ограничения
-          target: ['lang', 'misc', 'model', 'store'],
+          target: ['lang', 'misc', 'model'],
           // Откуда нельзя импортировать
+          from: ['actions', 'hooks', 'store', 'ui']
+        }, {
+          target: ['store'],
           from: ['actions', 'hooks', 'ui']
         }, {
           target: ['converters'],
           from: ['hooks', 'ui']
         }, {
-          target: ['model/api-types'],
-          from: ['model/!(api-types)']
+          target: ['../main-process', 'actions', 'converters', 'hooks', 'lang', 'misc', 'model', 'store', 'ui'],
+          from: 'services',
+          except: ['./index.ts', './contracts']
         }]
       }],
       'import-x/no-named-as-default-member': 'off',
@@ -164,7 +168,7 @@ export default defineConfig([
         groups: [[
           ...['^fs($|/)', '^os$', '^path$', '^child_process$'],
           ...['^@?electron', '^@?vite', '^vue', '^pinia', '^@vkontakte/vk-qr', '^@floating-ui/dom'],
-          ...['^env', '^model', '^store', '^actions', '^converters', '^lang'],
+          ...['^services', '^model', '^store', '^actions', '^converters', '^lang'],
           ...['^hooks', '^misc/utils', '^misc'],
           ...['^main-process', '^\\./', '^ui', '^assets', '.css$']
         ]]

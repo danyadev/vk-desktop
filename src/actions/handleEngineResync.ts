@@ -1,6 +1,7 @@
-import * as IEngine from 'env/IEngine'
-import { MessagesGetDiffConversationInfo } from 'model/api-types/objects/MessagesGetDiffConversationInfo'
-import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
+import { useServices } from 'services'
+import { MessagesGetDiffConversationInfo } from 'services/contracts/api/objects/MessagesGetDiffConversationInfo'
+import { MessagesLongpollCredentials } from 'services/contracts/api/objects/MessagesLongpollCredentials'
+import * as IEngine from 'services/contracts/IEngine'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Lists from 'model/Lists'
@@ -9,15 +10,14 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers, loadMissingData } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
-import { useEnv } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 
 export async function handleEngineResync(
   lpVersion: number,
   pts: number
 ): Promise<MessagesLongpollCredentials> {
-  const { api } = useEnv()
-  const { lists } = useConvosStore()
+  const { api } = useServices()
+  const { convos, lists } = useConvosStore()
 
   let conversationsSource: string | undefined
   const conversationsInfo: MessagesGetDiffConversationInfo[] = []
@@ -100,14 +100,14 @@ export async function handleEngineResync(
     }
 
     const peerId = Peer.resolveId(apiConversation.peer.id)
-    const isNewConvo = !Convo.get(peerId)
+    const isNewConvo = !convos.get(peerId)
 
     insertConvos(
       [{ conversation: apiConversation, last_message: apiLastMessage }],
       { invalidateHistory: !!invalidateHistory || !apiLastMessage }
     )
 
-    const convo = Convo.safeGet(peerId)
+    const convo = Convo.safeGet(convos, peerId)
     const lastMessage = Convo.lastMessage(convo)
 
     Lists.refresh(lists, convo)
@@ -259,7 +259,7 @@ export async function handleEngineResync(
   for (const apiMessages of apiMessagesMap.values()) {
     for (const apiMessage of apiMessages.values()) {
       const message = fromApiMessage(apiMessage)
-      const convo = Convo.safeGet(message.peerId)
+      const convo = Convo.safeGet(convos, message.peerId)
 
       Convo.insertMessages(convo, [message], {
         up: true,

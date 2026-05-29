@@ -1,4 +1,9 @@
-import { Dictionary } from 'env/Lang'
+import type { Lang as LangImpl } from 'services/Lang'
+import type { dictionaries, Locale } from 'lang/dictionaries'
+
+export type Lang = LangImpl
+
+export type Dictionary = typeof dictionaries[Locale]
 
 /**
  * Средствами тайпскрипта достаем из всех переводов использование {таких} переменных,
@@ -27,5 +32,5 @@ type ExtractFromEntry<T extends string | Record<string, string>, Vars extends st
 
 export type VariablesTypings<Variables = string | number> = {
   [Key in keyof Dictionary as ExtractFromEntry<Dictionary[Key]> extends [] ? never : Key]:
-    Record<ExtractFromEntry<Dictionary[Key]>[number], Variables>
+  Record<ExtractFromEntry<Dictionary[Key]>[number], Variables>
 }

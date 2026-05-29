@@ -1,7 +1,8 @@
-import * as IEngine from 'env/IEngine'
-import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
-import { MessagesGetDiffContentInput } from 'model/api-types/objects/MessagesGetDiffContentInput'
-import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
+import { useServices } from 'services'
+import { MessagesConversation } from 'services/contracts/api/objects/MessagesConversation'
+import { MessagesGetDiffContentInput } from 'services/contracts/api/objects/MessagesGetDiffContentInput'
+import { MessagesMessage } from 'services/contracts/api/objects/MessagesMessage'
+import * as IEngine from 'services/contracts/IEngine'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Lists from 'model/Lists'
@@ -11,7 +12,6 @@ import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { insertConvos, insertPeers } from 'actions'
 import { fromApiMessage, fromEngineMessage } from 'converters/MessageConverter'
-import { useEnv } from 'hooks'
 import { getMapValueWithDefaults } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
 
@@ -673,7 +673,7 @@ export async function loadMissingData({
   missingUsers,
   missingGroups
 }: MissingDataMeta) {
-  const { api } = useEnv()
+  const { api } = useServices()
 
   const [
     getDiffContentResponse,

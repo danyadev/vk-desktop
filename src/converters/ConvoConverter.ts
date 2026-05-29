@@ -1,5 +1,5 @@
-import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
-import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
+import { MessagesConversation } from 'services/contracts/api/objects/MessagesConversation'
+import { MessagesMessage } from 'services/contracts/api/objects/MessagesMessage'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'

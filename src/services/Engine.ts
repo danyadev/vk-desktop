@@ -1,8 +1,8 @@
-import * as IEngine from 'env/IEngine'
-import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
+import { MessagesLongpollCredentials } from 'services/contracts/api/objects/MessagesLongpollCredentials'
+import * as IApi from 'services/contracts/IApi'
+import * as IEngine from 'services/contracts/IEngine'
 import { useConvosStore } from 'store/convos'
 import { handleEngineResync, handleEngineUpdates } from 'actions'
-import { useEnv } from 'hooks'
 import { sleep, toUrlParams } from 'misc/utils'
 
 const ENGINE_MAX_CONNECTION_DURATION_SEC = 20
@@ -19,11 +19,12 @@ export class Engine {
   active = false
   credentials: MessagesLongpollCredentials | null = null
 
+  constructor(private api: IApi.Api) {}
+
   async start(
     credentials: MessagesLongpollCredentials,
     onFail: (reason: IEngine.FailReason) => void
   ) {
-    const { api } = useEnv()
     const { connection } = useConvosStore()
 
     if (this.active) {
@@ -80,7 +81,7 @@ export class Engine {
 
           case 2: {
             try {
-              const { key } = await api.fetch('messages.getLongPollServer', {
+              const { key } = await this.api.fetch('messages.getLongPollServer', {
                 lp_version: IEngine.VERSION,
                 need_pts: 0
               }, { retries: Infinity })

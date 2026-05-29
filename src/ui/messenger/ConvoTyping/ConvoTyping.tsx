@@ -1,7 +1,8 @@
 import { computed, defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as Peer from 'model/Peer'
 import { TypingUser } from 'store/convos'
-import { useEnv } from 'hooks'
+import { usePeersStore } from 'store/peers'
 import { NonEmptyArray } from 'misc/utils'
 import './ConvoTyping.css'
 
@@ -12,12 +13,13 @@ type Props = {
 }
 
 export const ConvoTyping = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
+  const { peers } = usePeersStore()
 
   const text = computed(() => {
     const { type } = props.typingUsers[0]
     const userNames = props.typingUsers
-      .map(({ peerId }) => Peer.safeGet(peerId))
+      .map(({ peerId }) => Peer.safeGet(peers, peerId))
       .map((peer) => Peer.name(peer))
       .slice(0, props.namesLimit)
 

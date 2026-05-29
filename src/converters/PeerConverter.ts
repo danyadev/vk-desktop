@@ -1,5 +1,5 @@
-import { GroupsGroup } from 'model/api-types/objects/GroupsGroup'
-import { UsersUser } from 'model/api-types/objects/UsersUser'
+import { GroupsGroup } from 'services/contracts/api/objects/GroupsGroup'
+import { UsersUser } from 'services/contracts/api/objects/UsersUser'
 import * as Peer from 'model/Peer'
 
 export function fromApiUser(apiUser: UsersUser): Peer.User {

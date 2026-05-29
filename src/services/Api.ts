@@ -1,14 +1,11 @@
-import * as IApi from 'env/IApi'
-import { Methods } from 'model/api-types'
-import * as Auth from 'model/Auth'
+import { Methods } from 'services/contracts/api'
+import * as IApi from 'services/contracts/IApi'
 import { useSettingsStore } from 'store/settings'
 import { logout, useViewerStore } from 'store/viewer'
 import { useGlobalModal } from 'hooks'
 import { isNonEmptyArray, random, sleep, toUrlParams } from 'misc/utils'
 import { appUserAgent } from 'misc/constants'
 import { Semaphore } from 'misc/Semaphore'
-
-export const API_VERSION = '5.238'
 
 const API_DEFAULT_FETCH_TIMEOUT = 10000
 const API_MIN_RETRY_DELAY = 500
@@ -24,6 +21,8 @@ export class Api implements IApi.Api {
   // TODO: сделать Map<AccessToken, Semaphore>
   private semaphore = new Semaphore(3, API_RATE_LIMIT_WINDOW)
   private globalErrorHandler?: Promise<unknown>
+
+  constructor(private refreshMessengerToken: (exchangeToken: string) => Promise<string>) {}
 
   public async fetch<Method extends keyof Methods>(
     method: Method,
@@ -213,7 +212,7 @@ export class Api implements IApi.Api {
           throw apiError
         }
 
-        const refreshTokenPromise = Auth.refreshByExchangeToken(this, viewer.messengerExchangeToken)
+        const refreshTokenPromise = this.refreshMessengerToken(viewer.messengerExchangeToken)
         this.globalErrorHandler = refreshTokenPromise
 
         try {
@@ -300,7 +299,7 @@ export class Api implements IApi.Api {
 
       const fullParams: IApi.MethodParams<Method> = {
         access_token: fetchOptions.messengerToken ? viewer?.messengerToken : viewer?.accessToken,
-        v: API_VERSION,
+        v: IApi.VERSION,
         lang,
         ...params
       }

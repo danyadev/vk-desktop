@@ -1,9 +1,9 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
-import { Uploader } from 'env/Uploader'
+import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
+import { useConvoDraftsStore } from 'store/convoDrafts'
 import { sendMessage } from 'actions'
-import { useEnv } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
@@ -25,10 +25,11 @@ type Props = {
 }
 
 export const ConvoComposer = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
+  const { drafts } = useConvoDraftsStore()
   const $input = shallowRef<HTMLSpanElement | null>(null)
 
-  const draft = ConvoDraft.get(props.convo.id)
+  const draft = ConvoDraft.safeGet(drafts, props.convo.id)
   const {
     attachPreviews,
     removeAttachPreview,
@@ -84,7 +85,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
   const onPaste = (event: ClipboardEvent) => {
     for (const file of event.clipboardData?.files ?? []) {
-      if (Uploader.isPhotoFile(file)) {
+      if (['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
         event.preventDefault()
         uploadPhoto(file)
       }

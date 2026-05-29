@@ -1,10 +1,10 @@
+import { useServices } from 'services'
 import * as Lists from 'model/Lists'
 import { insertConvos, insertPeers } from 'actions'
-import { useEnv } from 'hooks'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
 export async function loadMoreConvos(list: Lists.List) {
-  const { api } = useEnv()
+  const { api } = useServices()
 
   if (list.status === 'loading') {
     return

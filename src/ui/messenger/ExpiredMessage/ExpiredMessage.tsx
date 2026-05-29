@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { useEnv } from 'hooks'
+import { useServices } from 'services'
 import { Icon20BombOutline } from 'assets/icons'
 import './ExpiredMessage.css'
 
@@ -8,7 +8,7 @@ type Props = {
 }
 
 export const ExpiredMessage = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   return () => (
     <div class="ExpiredMessage">

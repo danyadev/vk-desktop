@@ -1,5 +1,5 @@
 import { defineComponent, InputEvent, KeyboardEvent, onMounted, Ref, shallowRef } from 'vue'
-import { useEnv } from 'hooks'
+import { useServices } from 'services'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
@@ -22,7 +22,7 @@ type AuthConfirmationPageProps = {
 }
 
 export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((props) => {
-  const { lang, api } = useEnv()
+  const { lang, api } = useServices()
   const code = shallowRef('')
   const resendSmsTimer = shallowRef(0)
   const isSendingSms = shallowRef(false)
@@ -168,7 +168,7 @@ type SmsStatusProps = {
 }
 
 const SmsStatus = defineComponent<SmsStatusProps>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   return () => {
     const { validationType, sendSms, isSendingSms, resendSmsTimer } = props

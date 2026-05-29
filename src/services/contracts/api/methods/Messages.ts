@@ -1,13 +1,13 @@
-import { GroupsGroup } from 'model/api-types/objects/GroupsGroup'
-import { MessagesConversation } from 'model/api-types/objects/MessagesConversation'
-import { MessagesConversationWithMessage } from 'model/api-types/objects/MessagesConversationWithMessage'
-import { MessagesCounters } from 'model/api-types/objects/MessagesCounters'
-import { MessagesFolder } from 'model/api-types/objects/MessagesFolder'
-import { MessagesGetDiffContentItem } from 'model/api-types/objects/MessagesGetDiffContentItem'
-import { MessagesGetDiffConversationInfo } from 'model/api-types/objects/MessagesGetDiffConversationInfo'
-import { MessagesLongpollCredentials } from 'model/api-types/objects/MessagesLongpollCredentials'
-import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
-import { UsersUser } from 'model/api-types/objects/UsersUser'
+import { GroupsGroup } from 'services/contracts/api/objects/GroupsGroup'
+import { MessagesConversation } from 'services/contracts/api/objects/MessagesConversation'
+import { MessagesConversationWithMessage } from 'services/contracts/api/objects/MessagesConversationWithMessage'
+import { MessagesCounters } from 'services/contracts/api/objects/MessagesCounters'
+import { MessagesFolder } from 'services/contracts/api/objects/MessagesFolder'
+import { MessagesGetDiffContentItem } from 'services/contracts/api/objects/MessagesGetDiffContentItem'
+import { MessagesGetDiffConversationInfo } from 'services/contracts/api/objects/MessagesGetDiffConversationInfo'
+import { MessagesLongpollCredentials } from 'services/contracts/api/objects/MessagesLongpollCredentials'
+import { MessagesMessage } from 'services/contracts/api/objects/MessagesMessage'
+import { UsersUser } from 'services/contracts/api/objects/UsersUser'
 
 // messages.getConversations
 export type MessagesGetConversationsParams = {

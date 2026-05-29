@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { useEnv } from 'hooks'
+import { useServices } from 'services'
 import { ClassName } from 'misc/utils'
 import { Button } from 'ui/ui/Button/Button'
 import './LoadError.css'
@@ -10,7 +10,7 @@ type Props = {
 }
 
 export const LoadError = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   return () => (
     <div class="LoadError">

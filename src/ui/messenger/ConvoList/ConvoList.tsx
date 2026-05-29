@@ -1,9 +1,10 @@
 import { defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { logout } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
-import { useEnv, useGlobalModal, useViewer } from 'hooks'
+import { useGlobalModal, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
@@ -26,7 +27,7 @@ type Props = {
 }
 
 export const ConvoList = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const viewer = useViewer()
   const { connection, lists } = useConvosStore()
   const { settingsModal } = useGlobalModal()

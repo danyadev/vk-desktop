@@ -1,8 +1,9 @@
 import { defineComponent, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
+import { useServices } from 'services'
 import * as Peer from 'model/Peer'
 import { useViewerStore, ViewerUser } from 'store/viewer'
-import { useEnv, useModal } from 'hooks'
+import { useModal } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
@@ -13,7 +14,7 @@ import { Icon20TrashOutline } from 'assets/icons'
 export const AuthMultiaccount = defineComponent(() => {
   const viewer = useViewerStore()
   const router = useRouter()
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   const isDeleteModeActive = shallowRef(false)
   const confirmDeleteModal = useModal()

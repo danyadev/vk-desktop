@@ -1,10 +1,12 @@
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
-import { useEnv, useFormatDate } from 'hooks'
+import { usePeersStore } from 'store/peers'
+import { useFormatDate } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
@@ -18,8 +20,9 @@ type Props = {
 
 export const ForwardedMessages = defineComponent<Props>((props) => {
   const router = useRouter()
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { scrollAnchors } = useConvosStore()
+  const { peers } = usePeersStore()
   const formatDate = useFormatDate({ relativeTime: false })
 
   const goToMessage = (message: Message.Foreign) => {
@@ -47,7 +50,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
 
   return () => (
     props.messages.map((message) => {
-      const author = Peer.safeGet(message.authorId)
+      const author = Peer.safeGet(peers, message.authorId)
       const hasAttaches = Attach.kindsCount(message.attaches) > 0
       const isEmpty =
         !message.text &&

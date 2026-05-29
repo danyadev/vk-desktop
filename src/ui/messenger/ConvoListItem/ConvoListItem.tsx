@@ -1,10 +1,12 @@
 import { computed, defineComponent, Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
-import { useEnv, useNow } from 'hooks'
+import { usePeersStore } from 'store/peers'
+import { useNow } from 'hooks'
 import { isNonEmptyArray } from 'misc/utils'
 import { ONE_DAY, ONE_HOUR, ONE_MINUTE, ONE_MONTH, ONE_WEEK } from 'misc/dateTime'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
@@ -23,9 +25,10 @@ type Props = {
 export const ConvoListItem = defineComponent<Props>((props) => {
   const router = useRouter()
   const route = useRoute()
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const { typings } = useConvosStore()
-  const peer = computed(() => Peer.safeGet(props.convo.id))
+  const { peers } = usePeersStore()
+  const peer = computed(() => Peer.safeGet(peers, props.convo.id))
   const lastMessage = computed(() => Convo.lastMessage(props.convo, true))
   const active = computed(() => route.name === 'Convo' && +route.params.peerId === props.convo.id)
   const authorName = useAuthorName(lastMessage, computed(() => props.convo))
@@ -133,7 +136,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
 })
 
 const MessageDate = defineComponent<{ sentAt: number }>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
   const now = useNow(10000)
 
   const getDate = () => {
@@ -185,7 +188,8 @@ const MessageDate = defineComponent<{ sentAt: number }>((props) => {
 })
 
 function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Ref<Convo.Convo>) {
-  const { lang } = useEnv()
+  const { lang } = useServices()
+  const { peers } = usePeersStore()
 
   return computed(() => {
     const message = messageRef.value
@@ -201,7 +205,7 @@ function useAuthorName(messageRef: Ref<Message.Message | undefined>, convo: Ref<
     }
 
     if (convo.value.kind === 'ChatConvo' && !convo.value.isChannel) {
-      const author = Peer.safeGet(message.authorId)
+      const author = Peer.safeGet(peers, message.authorId)
       return lang.use('me_convo_list_author', {
         author: Peer.firstName(author)
       }) + ' '

@@ -1,6 +1,6 @@
-import { MessagesKeyboard } from 'model/api-types/objects/MessagesKeyboard'
-import { MessagesMessageAction } from 'model/api-types/objects/MessagesMessage'
-import { MessagesMessageAttachmentType } from 'model/api-types/objects/MessagesMessageAttachment'
+import { MessagesKeyboard } from 'services/contracts/api/objects/MessagesKeyboard'
+import { MessagesMessageAction } from 'services/contracts/api/objects/MessagesMessage'
+import { MessagesMessageAttachmentType } from 'services/contracts/api/objects/MessagesMessageAttachment'
 
 export const VERSION = 21
 

@@ -1,9 +1,9 @@
 import { defineComponent } from 'vue'
-import { useEnv } from 'hooks'
+import { useServices } from 'services'
 import './NoConvo.css'
 
 export const NoConvo = defineComponent(() => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   return () => (
     <div class="NoConvo">

@@ -1,4 +1,3 @@
-import { usePeersStore } from 'store/peers'
 import { exhaustivenessCheck, getFirstLetter, Opaque } from 'misc/utils'
 
 /**
@@ -135,12 +134,11 @@ export function isChatPeerId(peerId: Id): peerId is ChatId {
   return peerId > 2e9
 }
 
-export function safeGet(id: UserId): User
-export function safeGet(id: GroupId): Group
-export function safeGet(id: ChatId): Chat
-export function safeGet(id: Id): Peer
-export function safeGet(id: Id): Peer {
-  const { peers } = usePeersStore()
+export function safeGet(peers: Map<Id, Peer>, id: UserId): User
+export function safeGet(peers: Map<Id, Peer>, id: GroupId): Group
+export function safeGet(peers: Map<Id, Peer>, id: ChatId): Chat
+export function safeGet(peers: Map<Id, Peer>, id: Id): Peer
+export function safeGet(peers: Map<Id, Peer>, id: Id): Peer {
   const peer = peers.get(id)
 
   if (peer) {

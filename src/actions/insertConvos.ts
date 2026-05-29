@@ -1,4 +1,4 @@
-import { MessagesConversationWithMessage } from 'model/api-types/objects/MessagesConversationWithMessage'
+import { MessagesConversationWithMessage } from 'services/contracts/api/objects/MessagesConversationWithMessage'
 import * as History from 'model/History'
 import * as Lists from 'model/Lists'
 import { useConvosStore } from 'store/convos'

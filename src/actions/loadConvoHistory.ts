@@ -1,3 +1,4 @@
+import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
@@ -5,7 +6,6 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertPeers } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
-import { useEnv } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 
 type Props = {
@@ -23,8 +23,8 @@ export async function loadConvoHistory({
   direction,
   onHistoryInserted
 }: Props) {
-  const { api } = useEnv()
-  const { loadConvoHistoryLock } = useConvosStore()
+  const { api } = useServices()
+  const { convos, loadConvoHistoryLock } = useConvosStore()
 
   const loadingKey = `${peerId}-${direction}` as const
 
@@ -102,7 +102,7 @@ export async function loadConvoHistory({
   }
 
   try {
-    const convo = Convo.safeGet(peerId)
+    const convo = Convo.safeGet(convos, peerId)
 
     const {
       items,

@@ -1,10 +1,10 @@
-import { BaseImage } from 'model/api-types/objects/BaseImage'
+import { BaseImage } from 'services/contracts/api/objects/BaseImage'
 import {
   MessagesMessageAttachment,
   MessagesMessageAttachmentWall
-} from 'model/api-types/objects/MessagesMessageAttachment'
-import { PhotosPhoto } from 'model/api-types/objects/PhotosPhoto'
-import { PhotosPhotoSize } from 'model/api-types/objects/PhotosPhotoSize'
+} from 'services/contracts/api/objects/MessagesMessageAttachment'
+import { PhotosPhoto } from 'services/contracts/api/objects/PhotosPhoto'
+import { PhotosPhotoSize } from 'services/contracts/api/objects/PhotosPhotoSize'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
 import { insertPeers } from 'actions'

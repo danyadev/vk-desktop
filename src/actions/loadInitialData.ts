@@ -1,14 +1,14 @@
-import * as IEngine from 'env/IEngine'
+import { useServices } from 'services'
+import * as IEngine from 'services/contracts/IEngine'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
-import { useEnv } from 'hooks'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
 export async function loadInitialData(
   onLoadError: () => void,
   onEngineFail: (reason: IEngine.FailReason) => void
 ) {
-  const { api, engine } = useEnv()
+  const { api, engine } = useServices()
   const { lists, connection } = useConvosStore()
 
   // Не инициализируем повторно приложение во время разработки

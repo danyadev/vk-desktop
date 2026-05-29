@@ -9,6 +9,7 @@ import 'vue/jsx'
 import './vue-jsx-events.d.ts'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { initServices } from 'services'
 import { initStores } from 'store/init'
 import { router } from './router'
 import { App } from 'ui/app/App/App'
@@ -18,6 +19,7 @@ const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
 initStores()
+initServices()
 
 app.use(router)
 

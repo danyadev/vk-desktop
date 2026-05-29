@@ -1,23 +1,14 @@
+import { shallowReactive } from 'vue'
+import { Dictionary, VariablesTypings } from 'services/contracts/ILang'
 import * as Peer from 'model/Peer'
-import type { Settings } from 'store/settings'
-import { ru, RuPluralRules } from 'lang/ru'
-import { VariablesTypings } from 'lang/VariablesTypings'
+import { dictionaries, Locale, PluralRules } from 'lang/dictionaries'
 import { JSXElement, splitter } from 'misc/utils'
 
-const langMap = {
-  ru
-}
-type PluralKeysMap = {
-  ru: RuPluralRules
-}
-
-type PluralKeys = PluralKeysMap[Settings['lang']]
+type PluralKeys = PluralRules[Locale]
 type PluralValues = Record<PluralKeys, string> & { single?: string }
 
 type GenderKeys = 'male' | 'female'
 type GenderValues = Record<GenderKeys, string>
-
-export type Dictionary = typeof langMap[Settings['lang']]
 
 type DictionaryOfStrings = {
   [Key in keyof Dictionary as Dictionary[Key] extends string ? Key : never]: Dictionary[Key]
@@ -31,13 +22,33 @@ type DictionaryOfGenders = {
   [Key in keyof Dictionary as Dictionary[Key] extends GenderValues ? Key : never]: Dictionary[Key]
 }
 
-export class Lang {
+type State = {
+  locale: Locale
   dictionary: Dictionary
   pluralRules: Intl.PluralRules
+}
 
-  constructor(public locale: Settings['lang']) {
-    this.dictionary = langMap[locale]
-    this.pluralRules = new Intl.PluralRules(locale, { type: 'cardinal' })
+export class Lang {
+  private state: State
+  private dateTimeFormatters = new Map<string, Intl.DateTimeFormat>()
+
+  constructor(locale: Locale) {
+    this.state = shallowReactive({
+      locale,
+      dictionary: dictionaries[locale],
+      pluralRules: new Intl.PluralRules(locale, { type: 'cardinal' })
+    })
+  }
+
+  onLocaleUpdate(locale: Locale) {
+    this.state.locale = locale
+    this.state.dictionary = dictionaries[locale]
+    this.state.pluralRules = new Intl.PluralRules(locale, { type: 'cardinal' })
+    this.dateTimeFormatters.clear()
+  }
+
+  getLocale() {
+    return this.state.locale
   }
 
   use<Key extends keyof VariablesTypings>(
@@ -54,7 +65,7 @@ export class Lang {
       : never
   ): string {
     return this.transform(
-      this.dictionary[key],
+      this.state.dictionary[key],
       variables,
       (chunks) => chunks.join('')
     )
@@ -74,7 +85,7 @@ export class Lang {
       : never
   ): JSXElement {
     return this.transform(
-      this.dictionary[key],
+      this.state.dictionary[key],
       variables,
       (chunks) => <>{chunks}</>
     )
@@ -96,10 +107,10 @@ export class Lang {
       ? VariablesTypings[Key]
       : never
   ): string {
-    const values = this.dictionary[key] as PluralValues
+    const values = this.state.dictionary[key] as PluralValues
     const value = number === 1 && values.single
       ? values.single
-      : values[this.pluralRules.select(number) as PluralKeys]
+      : values[this.state.pluralRules.select(number) as PluralKeys]
 
     return this.transform(
       value,
@@ -124,10 +135,10 @@ export class Lang {
       ? VariablesTypings<JSXElement>[Key]
       : never
   ): JSXElement {
-    const values = this.dictionary[key] as PluralValues
+    const values = this.state.dictionary[key] as PluralValues
     const value = number === 1 && values.single
       ? values.single
-      : values[this.pluralRules.select(number) as PluralKeys]
+      : values[this.state.pluralRules.select(number) as PluralKeys]
 
     return this.transform(
       value,
@@ -152,7 +163,7 @@ export class Lang {
       ? VariablesTypings[Key]
       : never
   ): string {
-    const values = this.dictionary[key] as GenderValues
+    const values = this.state.dictionary[key] as GenderValues
 
     return this.transform(
       gender === 'female' ? values.female : values.male,
@@ -177,7 +188,7 @@ export class Lang {
       ? VariablesTypings<JSXElement>[Key]
       : never
   ): JSXElement {
-    const values = this.dictionary[key] as GenderValues
+    const values = this.state.dictionary[key] as GenderValues
 
     return this.transform(
       gender === 'female' ? values.female : values.male,
@@ -187,7 +198,7 @@ export class Lang {
   }
 
   useRaw<Key extends keyof Dictionary>(key: Key): Dictionary[Key] {
-    return this.dictionary[key]
+    return this.state.dictionary[key]
   }
 
   private transform<V, R>(
@@ -219,8 +230,6 @@ export class Lang {
     return joiner(chunks)
   }
 
-  private dateTimeFormatters = new Map<string, Intl.DateTimeFormat>()
-
   dateTimeFormatter(options: Intl.DateTimeFormatOptions) {
     const cacheKey = JSON.stringify(options)
     const cachedFormatter = this.dateTimeFormatters.get(cacheKey)
@@ -229,7 +238,7 @@ export class Lang {
       return cachedFormatter
     }
 
-    const formatter = new Intl.DateTimeFormat(this.locale, options)
+    const formatter = new Intl.DateTimeFormat(this.state.locale, options)
     this.dateTimeFormatters.set(cacheKey, formatter)
     return formatter
   }

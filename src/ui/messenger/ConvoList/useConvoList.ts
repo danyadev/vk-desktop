@@ -8,7 +8,7 @@ type ListConfig =
   | { name: 'folder' | 'unreadFolder', folderId: number }
 
 export const useConvoList = () => {
-  const { lists } = useConvosStore()
+  const { convos, lists } = useConvosStore()
   const list = shallowRef<Lists.List>(lists.main)
 
   const selectList = (config: ListConfig) => {
@@ -23,7 +23,9 @@ export const useConvoList = () => {
     }
   }
 
-  const convoList = computed(() => [...list.value.peerIds].map(Convo.safeGet).sort(Convo.sorter))
+  const convoList = computed(() => [...list.value.peerIds]
+    .map((peerId) => Convo.safeGet(convos, peerId))
+    .sort(Convo.sorter))
 
   return computed(() => ({
     convoList: convoList.value,

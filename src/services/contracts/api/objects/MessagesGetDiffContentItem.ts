@@ -1,4 +1,4 @@
-import { MessagesMessage } from 'model/api-types/objects/MessagesMessage'
+import { MessagesMessage } from 'services/contracts/api/objects/MessagesMessage'
 
 export type MessagesGetDiffContentItem = {
   peer_id: number

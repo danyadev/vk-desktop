@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
+import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
-import { useEnv } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { AttachVoice } from './AttachVoice/AttachVoice'
 import { AttachLink } from 'ui/messenger/attaches/AttachLink/AttachLink'
@@ -17,7 +17,7 @@ type Props = {
 }
 
 export const Attaches = defineComponent<Props>((props) => {
-  const { lang } = useEnv()
+  const { lang } = useServices()
 
   return () => (
     <div class={['Attaches', props.class]}>
