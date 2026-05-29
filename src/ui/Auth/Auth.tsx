@@ -65,7 +65,7 @@ export const Auth = defineComponent(() => {
     const result = await AuthModel.getMessengerSilentToken(
       state.login,
       state.password,
-      lang.locale,
+      lang.getLocale(),
       viewer.trustedHashes[state.login],
       payload
     )

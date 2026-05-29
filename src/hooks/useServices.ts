@@ -1,4 +1,4 @@
-import { shallowReactive, watch } from 'vue'
+import { watch } from 'vue'
 import { Api } from 'services/Api'
 import { Engine } from 'services/Engine'
 import { Lang } from 'services/Lang'
@@ -18,11 +18,11 @@ export const useServices = createSingletonHook(() => {
 
   watch(() => settings.lang, () => lang.onLocaleUpdate(settings.lang))
 
-  return shallowReactive({
+  return {
     lang,
     api,
     engine,
     uploader,
     qrCodeAuth
-  })
+  }
 })

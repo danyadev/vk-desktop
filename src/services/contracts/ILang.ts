@@ -1,9 +1,10 @@
-import type { Lang as LangImpl, langMap } from 'services/Lang'
+import type { Lang as LangImpl } from 'services/Lang'
 import type { Settings } from 'store/settings'
+import type { dictionaries } from 'lang/dictionaries'
 
 export type Lang = LangImpl
 
-export type Dictionary = typeof langMap[Settings['lang']]
+export type Dictionary = typeof dictionaries[Settings['lang']]
 
 /**
  * Средствами тайпскрипта достаем из всех переводов использование {таких} переменных,
