@@ -15,6 +15,7 @@ type GenericUploadingAttach<Kind extends Attach.SingleAttach['kind']> = {
   file: File
   progress: number
   failed: boolean
+  abortController: AbortController
 }
 
 const emptyDraft = (): ConvoDraft => ({
@@ -49,9 +50,9 @@ export function addUploadingAttach(draft: ConvoDraft, uploadingAttach: Uploading
 }
 
 export function removeUploadingAttach(draft: ConvoDraft, uploadingAttach: UploadingAttach) {
-  // TODO: отменять запрос на загрузку
   const index = draft.uploadingAttaches.indexOf(uploadingAttach)
   if (index !== -1) {
     draft.uploadingAttaches.splice(index, 1)
+    uploadingAttach.abortController.abort()
   }
 }
