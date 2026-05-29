@@ -1,6 +1,7 @@
 import { defineComponent } from 'vue'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { usePeersStore } from 'store/peers'
 import { useEnv, useGlobalModal } from 'hooks'
 import './ServiceMessage.css'
 
@@ -44,10 +45,11 @@ export const ServiceMessage = defineComponent<Props>((props) => {
 
 export const PlainServiceMessage = defineComponent<Props>((props) => {
   const { lang } = useEnv()
+  const { peers } = usePeersStore()
 
   return () => {
     const { message } = props
-    const author = Peer.safeGet(message.authorId)
+    const author = Peer.safeGet(peers, message.authorId)
     const gender = author.kind === 'User' ? author.gender : 'unknown'
 
     switch (message.action.type) {
@@ -88,7 +90,7 @@ export const PlainServiceMessage = defineComponent<Props>((props) => {
           })
         }
 
-        const target = Peer.safeGet(message.action.peerId)
+        const target = Peer.safeGet(peers, message.action.peerId)
 
         return lang.useGender(`me_service_${message.action.type}`, gender, {
           author: Peer.name(author),
@@ -98,7 +100,7 @@ export const PlainServiceMessage = defineComponent<Props>((props) => {
 
       case 'chat_invite_user_by_message_request':
       case 'chat_invite_user_by_call': {
-        const target = Peer.safeGet(message.action.peerId)
+        const target = Peer.safeGet(peers, message.action.peerId)
 
         return lang.useGender(`me_service_${message.action.type}`, gender, {
           author: Peer.name(author),
@@ -107,14 +109,14 @@ export const PlainServiceMessage = defineComponent<Props>((props) => {
       }
 
       case 'accepted_message_request': {
-        const target = Peer.safeGet(message.action.peerId)
+        const target = Peer.safeGet(peers, message.action.peerId)
         return lang.use('me_service_accepted_message_request', {
           target: Peer.name(target)
         })
       }
 
       case 'chat_kick_user_call_block': {
-        const target = Peer.safeGet(message.action.peerId)
+        const target = Peer.safeGet(peers, message.action.peerId)
         return lang.useGender('me_service_chat_kick_user_call_block', gender, {
           target: Peer.name(target)
         })

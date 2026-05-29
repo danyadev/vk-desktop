@@ -1,7 +1,6 @@
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { useConvosStore } from 'store/convos'
 import { exhaustivenessCheck } from 'misc/utils'
 
 export type Convo = UserConvo | GroupConvo | ChatConvo
@@ -102,21 +101,12 @@ export const flags = {
   archived: 1 << 23
 }
 
-export function get(id: Peer.UserId): UserConvo | undefined
-export function get(id: Peer.GroupId): GroupConvo | undefined
-export function get(id: Peer.ChatId): ChatConvo | undefined
-export function get(id: Peer.Id): Convo | undefined
-export function get(id: Peer.Id): Convo | undefined {
-  const { convos } = useConvosStore()
-  return convos.get(id)
-}
-
-export function safeGet(id: Peer.UserId): UserConvo
-export function safeGet(id: Peer.GroupId): GroupConvo
-export function safeGet(id: Peer.ChatId): ChatConvo
-export function safeGet(id: Peer.Id): Convo
-export function safeGet(id: Peer.Id): Convo {
-  const convo = get(id)
+export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.UserId): UserConvo
+export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.GroupId): GroupConvo
+export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.ChatId): ChatConvo
+export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.Id): Convo
+export function safeGet(convos: Map<Peer.Id, Convo>, id: Peer.Id): Convo {
+  const convo = convos.get(id)
 
   if (convo) {
     return convo

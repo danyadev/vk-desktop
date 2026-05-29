@@ -24,7 +24,7 @@ export async function loadConvoHistory({
   onHistoryInserted
 }: Props) {
   const { api } = useEnv()
-  const { loadConvoHistoryLock } = useConvosStore()
+  const { convos, loadConvoHistoryLock } = useConvosStore()
 
   const loadingKey = `${peerId}-${direction}` as const
 
@@ -102,7 +102,7 @@ export async function loadConvoHistory({
   }
 
   try {
-    const convo = Convo.safeGet(peerId)
+    const convo = Convo.safeGet(convos, peerId)
 
     const {
       items,

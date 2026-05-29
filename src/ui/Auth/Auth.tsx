@@ -62,7 +62,13 @@ export const Auth = defineComponent(() => {
   async function performAuth(payload: AuthModel.GetMessengerTokenPayload = {}): Promise<void> {
     state.loading = true
 
-    const result = await AuthModel.getMessengerSilentToken(state.login, state.password, payload)
+    const result = await AuthModel.getMessengerSilentToken(
+      state.login,
+      state.password,
+      lang.locale,
+      viewer.trustedHashes[state.login],
+      payload
+    )
 
     switch (result.kind) {
       case 'Success': {

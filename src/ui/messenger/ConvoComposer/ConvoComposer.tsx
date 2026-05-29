@@ -2,6 +2,7 @@ import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shall
 import { Uploader } from 'env/Uploader'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
+import { useConvoDraftsStore } from 'store/convoDrafts'
 import { sendMessage } from 'actions'
 import { useEnv } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
@@ -26,9 +27,10 @@ type Props = {
 
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang } = useEnv()
+  const { drafts } = useConvoDraftsStore()
   const $input = shallowRef<HTMLSpanElement | null>(null)
 
-  const draft = ConvoDraft.get(props.convo.id)
+  const draft = ConvoDraft.safeGet(drafts, props.convo.id)
   const {
     attachPreviews,
     removeAttachPreview,

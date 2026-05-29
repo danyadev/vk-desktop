@@ -49,11 +49,11 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
 
 export const ConvoWrapper = defineComponent(() => {
   const route = useRoute('Convo')
-  const { connection } = useConvosStore()
+  const { connection, convos } = useConvosStore()
   const { api } = useEnv()
 
   const peerId = computed(() => Peer.resolveId(Number(route.params.peerId)))
-  const convo = computed(() => Convo.get(peerId.value))
+  const convo = computed(() => convos.get(peerId.value))
   const isLoadingFailed = shallowRef(false)
 
   const loadConvo = async () => {

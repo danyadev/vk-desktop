@@ -1,7 +1,5 @@
 import { API_VERSION } from 'env/Api'
 import * as IApi from 'env/IApi'
-import { useSettingsStore } from 'store/settings'
-import { useViewerStore } from 'store/viewer'
 import { getPlatform, toUrlParams } from 'misc/utils'
 import { appVersion } from 'misc/constants'
 
@@ -106,11 +104,10 @@ export const MESSENGER_APP_SCOPE = 1454174
 export async function getMessengerSilentToken(
   login: string,
   password: string,
-  payload: GetMessengerTokenPayload = {}
+  lang: string,
+  trustedHash: string | undefined,
+  payload: GetMessengerTokenPayload
 ): Promise<GetMessengerTokenResult> {
-  const { lang } = useSettingsStore()
-  const viewer = useViewerStore()
-
   const query = toUrlParams({
     client_id: MESSENGER_APP_ID,
     client_secret: MESSENGER_APP_SECRET,
@@ -121,7 +118,7 @@ export async function getMessengerSilentToken(
     grant_type: 'password',
     lang,
     v: API_VERSION,
-    trusted_hash: viewer.trustedHashes[login],
+    trusted_hash: trustedHash,
     ...payload
   })
 

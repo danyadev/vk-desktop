@@ -8,7 +8,8 @@ import { random } from 'misc/utils'
 import { INTEGER_BOUNDARY } from 'misc/constants'
 
 export function sendMessage(peerId: Peer.Id, text: string, attaches: Attach.Attaches) {
-  const convo = Convo.safeGet(peerId)
+  const { convos } = useConvosStore()
+  const convo = Convo.safeGet(convos, peerId)
   const pendingMessage = toPendingMessage(peerId, text, attaches)
 
   convo.pendingMessages.push(pendingMessage)

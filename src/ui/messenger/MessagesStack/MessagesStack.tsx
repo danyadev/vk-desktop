@@ -3,6 +3,7 @@ import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
+import { usePeersStore } from 'store/peers'
 import { NonEmptyArray, RawRefElement } from 'misc/utils'
 import { ConvoMessage } from 'ui/messenger/ConvoMessage/ConvoMessage'
 import { ExpiredMessage } from 'ui/messenger/ExpiredMessage/ExpiredMessage'
@@ -16,10 +17,13 @@ type Props = {
 }
 
 export const MessagesStack = defineComponent<Props>((props) => {
+  const { convos } = useConvosStore()
+  const { peers } = usePeersStore()
+
   return () => {
     const [message] = props.messages
-    const author = Peer.safeGet(message.authorId)
-    const convo = Convo.safeGet(message.peerId)
+    const author = Peer.safeGet(peers, message.authorId)
+    const convo = Convo.safeGet(convos, message.peerId)
     const isChat = Peer.isChatPeerId(convo.id)
     const isChannel = Convo.isChannel(convo)
 

@@ -2,6 +2,7 @@ import { computed, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
+import { usePeersStore } from 'store/peers'
 import { useEnv, useFormatDate } from 'hooks'
 import { shortenCount } from 'misc/dateTime'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
@@ -16,7 +17,8 @@ type Props = {
 export const ConvoHeader = defineComponent<Props>((props) => {
   const { lang } = useEnv()
   const router = useRouter()
-  const peer = Peer.safeGet(props.convo.id)
+  const { peers } = usePeersStore()
+  const peer = Peer.safeGet(peers, props.convo.id)
 
   const formatDate = useFormatDate()
 

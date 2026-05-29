@@ -17,7 +17,7 @@ export async function handleEngineResync(
   pts: number
 ): Promise<MessagesLongpollCredentials> {
   const { api } = useEnv()
-  const { lists } = useConvosStore()
+  const { convos, lists } = useConvosStore()
 
   let conversationsSource: string | undefined
   const conversationsInfo: MessagesGetDiffConversationInfo[] = []
@@ -100,14 +100,14 @@ export async function handleEngineResync(
     }
 
     const peerId = Peer.resolveId(apiConversation.peer.id)
-    const isNewConvo = !Convo.get(peerId)
+    const isNewConvo = !convos.get(peerId)
 
     insertConvos(
       [{ conversation: apiConversation, last_message: apiLastMessage }],
       { invalidateHistory: !!invalidateHistory || !apiLastMessage }
     )
 
-    const convo = Convo.safeGet(peerId)
+    const convo = Convo.safeGet(convos, peerId)
     const lastMessage = Convo.lastMessage(convo)
 
     Lists.refresh(lists, convo)
@@ -259,7 +259,7 @@ export async function handleEngineResync(
   for (const apiMessages of apiMessagesMap.values()) {
     for (const apiMessage of apiMessages.values()) {
       const message = fromApiMessage(apiMessage)
-      const convo = Convo.safeGet(message.peerId)
+      const convo = Convo.safeGet(convos, message.peerId)
 
       Convo.insertMessages(convo, [message], {
         up: true,

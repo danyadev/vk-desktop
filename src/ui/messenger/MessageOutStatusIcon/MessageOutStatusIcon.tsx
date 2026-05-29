@@ -1,6 +1,7 @@
 import { defineComponent } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
+import { useConvosStore } from 'store/convos'
 import { Icon12ClockOutline, Icon12ErrorCircleFill, Icon16CheckDoubleOutline, Icon16CheckOutline } from 'assets/icons'
 import './MessageOutStatusIcon.css'
 
@@ -9,6 +10,8 @@ type Props = {
 }
 
 export const MessageOutStatusIcon = defineComponent<Props>((props) => {
+  const { convos } = useConvosStore()
+
   return () => {
     if (!props.message.isOut) {
       return
@@ -20,7 +23,7 @@ export const MessageOutStatusIcon = defineComponent<Props>((props) => {
         : <Icon12ClockOutline class="MessageOutStatusIcon MessageOutStatusIcon--pending" />
     }
 
-    const convo = Convo.safeGet(props.message.peerId)
+    const convo = Convo.safeGet(convos, props.message.peerId)
     const isMessageUnread = Message.isUnread(props.message, convo)
 
     return isMessageUnread

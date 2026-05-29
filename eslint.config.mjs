@@ -145,8 +145,11 @@ export default defineConfig([
         basePath: './src',
         zones: [{
           // Где применяются ограничения
-          target: ['lang', 'misc', 'model', 'store'],
+          target: ['lang', 'misc', 'model'],
           // Откуда нельзя импортировать
+          from: ['actions', 'hooks', 'store', 'ui']
+        }, {
+          target: ['store'],
           from: ['actions', 'hooks', 'ui']
         }, {
           target: ['converters'],
