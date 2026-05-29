@@ -38,6 +38,9 @@ export function isEmpty(draft: ConvoDraft) {
 }
 
 export function reset(draft: ConvoDraft) {
+  for (const attach of draft.uploadingAttaches) {
+    attach.abortController.abort()
+  }
   Object.assign(draft, emptyDraft())
 }
 
