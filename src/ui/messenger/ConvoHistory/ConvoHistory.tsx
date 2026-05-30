@@ -237,14 +237,32 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       return
     }
 
-    const historyElement = $historyElement.value
-    if (!historyElement || direction !== 'up') {
-      return
-    }
+    if (direction === 'up') {
+      // We're looking for the topmost visible message before new messages insertion.
+      // It's going to be the first message with id larger than startCmid
+      const topMessageCmid = historySlice.value.items
+        .find((node) => node.id > startCmid)
+        ?.item.cmid
+      if (!topMessageCmid) {
+        return
+      }
 
-    const { scrollTop, scrollHeight } = historyElement
-    await nextTick()
-    historyElement.scrollTop = scrollTop + historyElement.scrollHeight - scrollHeight
+      const beforeRect = messageElements.get(topMessageCmid)?.getBoundingClientRect()
+      if (beforeRect === undefined) {
+        return
+      }
+
+      await nextTick()
+
+      const historyElement = $historyElement.value
+      const afterRect = messageElements.get(topMessageCmid)?.getBoundingClientRect()
+      if (!historyElement || afterRect === undefined) {
+        return
+      }
+
+      historyElement.scrollTop += (afterRect.top - beforeRect.top) +
+        (afterRect.height - beforeRect.height)
+    }
   }
 
   return () => {
