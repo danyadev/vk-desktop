@@ -13,6 +13,7 @@ export type UploadingPhoto = GenericUploadingAttach<'Photo'>
 
 type GenericUploadingAttach<Kind extends Attach.SingleAttach['kind']> = {
   kind: Kind
+  id: number
   file: File
   progress: number
   failed: boolean
@@ -43,6 +44,12 @@ export function reset(draft: ConvoDraft) {
     attach.abortController.abort()
   }
   Object.assign(draft, emptyDraft())
+}
+
+let uploadingAttachId = 0
+
+export function getNewUploadingAttachId() {
+  return uploadingAttachId++
 }
 
 /**
