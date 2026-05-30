@@ -9,9 +9,10 @@ import './ComposerAttachPreview.css'
 type Props = {
   attachPreview: AttachPreview
   onRemove: () => void
+  onRetry: () => void
+  onCancel: () => void
 }
 
-// TODO: обработать AttachPreview.failed
 export const ComposerAttachPreview = defineComponent<Props>((props) => {
   const { photoViewerModal } = useGlobalModal()
   const objectUrl = props.attachPreview.kind === 'UploadingAttach'
@@ -45,11 +46,14 @@ export const ComposerAttachPreview = defineComponent<Props>((props) => {
           <CircleProgressBar
             class="ComposerAttachPreview__progress"
             progress={attach.progress}
+            showRetry={attach.failed}
+            onRetry={props.onRetry}
+            onCancel={props.onCancel}
           />
         )}
       </div>
     )
   }
 }, {
-  props: ['attachPreview', 'onRemove']
+  props: ['attachPreview', 'onRemove', 'onRetry', 'onCancel']
 })

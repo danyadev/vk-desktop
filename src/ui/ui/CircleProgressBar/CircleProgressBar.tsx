@@ -22,10 +22,17 @@ export const CircleProgressBar = defineComponent<Props>((props) => {
     const dash = props.progress * circumference
 
     return (
-      <div class="CircleProgressBar" onClick={props.showRetry ? props.onRetry : props.onCancel}>
-        {!props.showRetry && props.onCancel && <Icon24Cancel />}
+      <div
+        class={['CircleProgressBar', {
+          'CircleProgressBar--clickable': !!props.showRetry || !!props.onCancel
+        }]}
+        onClick={props.showRetry ? props.onRetry : props.onCancel}
+      >
+        {!props.showRetry && props.onCancel && (
+          <Icon24Cancel class="CircleProgressBar__cancelIcon" />
+        )}
         {props.showRetry ? (
-          <Icon24RefreshOutline />
+          <Icon24RefreshOutline class="CircleProgressBar__retryIcon" />
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -37,7 +44,7 @@ export const CircleProgressBar = defineComponent<Props>((props) => {
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke="rgba(255, 255, 255, 0.4)"
+              stroke="rgb(255 255 255 / 0.4)"
               stroke-width={strokeWidth}
               stroke-linecap="round"
               fill="none"
@@ -63,5 +70,5 @@ export const CircleProgressBar = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['progress']
+  props: ['progress', 'showRetry', 'onRetry', 'onCancel']
 })

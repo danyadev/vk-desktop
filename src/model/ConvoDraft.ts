@@ -8,7 +8,8 @@ export type ConvoDraft = {
   uploadingAttaches: UploadingAttach[]
 }
 
-export type UploadingAttach = GenericUploadingAttach<'Photo'>
+export type UploadingAttach = UploadingPhoto
+export type UploadingPhoto = GenericUploadingAttach<'Photo'>
 
 type GenericUploadingAttach<Kind extends Attach.SingleAttach['kind']> = {
   kind: Kind
