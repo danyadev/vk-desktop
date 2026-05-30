@@ -251,7 +251,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     const { items, effectiveAroundId, gapBefore, gapAround, gapAfter } = historySlice.value
     const messages = [
       ...items.map(({ item }) => item),
-      ...props.convo.pendingMessages
+      ...(!gapAfter ? props.convo.pendingMessages : [])
     ]
 
     if (gapAround) {
