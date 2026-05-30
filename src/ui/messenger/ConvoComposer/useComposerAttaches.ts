@@ -45,36 +45,57 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
     }
   }
 
-  const uploadPhoto = (file: File) => {
+  const uploadPhoto = (uploadingPhoto: ConvoDraft.UploadingPhoto) => {
+    uploader
+      .uploadPhoto(uploadingPhoto.file, convo.id, (progress: number) => {
+        uploadingPhoto.progress = progress
+      }, uploadingPhoto.abortController.signal)
+      .then((apiPhoto) => {
+        const photo = fromApiAttachPhoto(apiPhoto)
+        if (photo) {
+          Attach.add(draft.attaches, photo)
+          ConvoDraft.removeUploadingAttach(draft, uploadingPhoto)
+        } else {
+          uploadingPhoto.failed = true
+        }
+      })
+      .catch(() => {
+        uploadingPhoto.failed = true
+      })
+  }
+
+  const uploadAttach = (kind: ConvoDraft.UploadingAttach['kind'], file: File) => {
     const uploadingAttach = ConvoDraft.addUploadingAttach(draft, {
-      kind: 'Photo',
+      kind,
       file,
       progress: 0,
       failed: false,
       abortController: new AbortController()
     })
 
-    uploader
-      .uploadPhoto(file, convo.id, (progress: number) => {
-        uploadingAttach.progress = progress
-      }, uploadingAttach.abortController.signal)
-      .then((apiPhoto) => {
-        const photo = fromApiAttachPhoto(apiPhoto)
-        if (photo) {
-          Attach.add(draft.attaches, photo)
-          ConvoDraft.removeUploadingAttach(draft, uploadingAttach)
-        } else {
-          uploadingAttach.failed = true
-        }
-      })
-      .catch(() => {
-        uploadingAttach.failed = true
-      })
+    switch (kind) {
+      case 'Photo':
+        uploadPhoto(uploadingAttach)
+        break
+    }
+  }
+
+  const retryAttach = (uploadingAttach: ConvoDraft.UploadingAttach) => {
+    uploadingAttach.progress = 0
+    uploadingAttach.failed = false
+    uploadingAttach.abortController = new AbortController()
+
+    switch (uploadingAttach.kind) {
+      case 'Photo':
+        uploadPhoto(uploadingAttach)
+        break
+    }
   }
 
   return {
     attachPreviews,
     removeAttachPreview,
-    uploadPhoto
+    uploadAttach,
+    retryAttach
   }
 }

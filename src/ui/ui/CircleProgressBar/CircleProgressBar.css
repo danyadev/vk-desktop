@@ -3,3 +3,19 @@
   align-items: center;
   justify-content: center;
 }
+
+.CircleProgressBar__clickable {
+  cursor: pointer;
+}
+
+.CircleProgressBar__cancelIcon {
+  position: absolute;
+}
+
+.CircleProgressBar__retryIcon {
+  background: rgb(255 255 255 / 0.4);
+  width: calc(24px + 6px * 2);
+  height: calc(24px + 6px * 2);
+  padding: 6px;
+  border-radius: 50%;
+}

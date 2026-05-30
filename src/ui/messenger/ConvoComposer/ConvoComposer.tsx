@@ -33,7 +33,8 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const {
     attachPreviews,
     removeAttachPreview,
-    uploadPhoto
+    uploadAttach,
+    retryAttach
   } = useComposerAttaches(props.convo, draft)
 
   const canSendMessage = computed(() => (
@@ -87,7 +88,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     for (const file of event.clipboardData?.files ?? []) {
       if (['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
         event.preventDefault()
-        uploadPhoto(file)
+        uploadAttach('Photo', file)
       }
     }
   }
@@ -105,7 +106,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
     for (const fileHandle of fileHandles) {
       const file = await fileHandle.getFile()
-      uploadPhoto(file)
+      uploadAttach('Photo', file)
     }
   }
 
@@ -179,6 +180,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               <ComposerAttachPreview
                 attachPreview={attachPreview}
                 onRemove={() => removeAttachPreview(attachPreview)}
+                onRetry={() => {
+                  if (attachPreview.kind === 'UploadingAttach') {
+                    retryAttach(attachPreview.attach)
+                  }
+                }}
               />
             ))}
           </div>
