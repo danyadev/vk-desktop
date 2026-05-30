@@ -1,5 +1,6 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
 import { useServices } from 'services'
+import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvoDraftsStore } from 'store/convoDrafts'
@@ -179,6 +180,9 @@ export const ConvoComposer = defineComponent<Props>((props) => {
           <div class="ConvoComposer__attaches">
             {attachPreviews.value.map((attachPreview) => (
               <ComposerAttachPreview
+                key={attachPreview.kind === 'Attach'
+                  ? Attach.id(attachPreview.attach)
+                  : attachPreview.attach.id}
                 attachPreview={attachPreview}
                 onRemove={() => removeAttachPreview(attachPreview)}
                 onRetry={() => {

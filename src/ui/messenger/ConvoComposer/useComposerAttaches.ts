@@ -67,6 +67,7 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
   const uploadAttach = (kind: ConvoDraft.UploadingAttach['kind'], file: File) => {
     const uploadingAttach = ConvoDraft.addUploadingAttach(draft, {
       kind,
+      id: ConvoDraft.getNewUploadingAttachId(),
       file,
       progress: 0,
       failed: false,

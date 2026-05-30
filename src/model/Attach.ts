@@ -110,40 +110,28 @@ export function count(attaches: Attaches): number {
   }, 0)
 }
 
-export function ids(attaches: Attaches) {
-  const ids = []
+export function ids(attaches: Attaches): string {
+  return Object.values(attaches).flat().map(id).filter(Boolean).join(',')
+}
 
-  for (const attach of Object.values(attaches).flat()) {
-    switch (attach.kind) {
-      case 'Photo':
-        ids.push(
-          `photo${attach.ownerId}_${attach.id}` +
-          (attach.accessKey ? `_${attach.accessKey}` : '')
-        )
-        break
+export function id(attach: SingleAttach): string {
+  const optionalAccessKey = (key?: string) => (key ? `_${key}` : '')
 
-      case 'Wall':
-        ids.push(
-          `wall${attach.ownerId}_${attach.id}` +
-          (attach.accessKey ? `_${attach.accessKey}` : '')
-        )
-        break
-
-      case 'Voice':
-        ids.push(`doc${attach.ownerId}_${attach.id}_${attach.accessKey}`)
-        break
-
-      case 'Link':
-        ids.push(attach.url)
-        break
-
-      case 'Sticker': // Отправляется отдельным полем sticker_id
-      case 'Unknown':
-        break
-    }
+  switch (attach.kind) {
+    case 'Photo':
+      return `photo${attach.ownerId}_${attach.id}` + optionalAccessKey(attach.accessKey)
+    case 'Wall':
+      return `wall${attach.ownerId}_${attach.id}` + optionalAccessKey(attach.accessKey)
+    case 'Voice':
+      return `doc${attach.ownerId}_${attach.id}_${attach.accessKey}`
+    case 'Link':
+      return attach.url
+    case 'Sticker': // Отправляется отдельным полем sticker_id
+    case 'Unknown':
+      break
   }
 
-  return ids.join(',')
+  return ''
 }
 
 export function preview(attach: Attach, lang: ILang.Lang): string {
