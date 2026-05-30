@@ -57,7 +57,7 @@ type StackMessageProps = {
 
 const StackMessage = defineComponent<StackMessageProps>((props) => {
   const { scrollAnchors } = useConvosStore()
-  const highlighted = shallowRef(false)
+  const highlightTimeoutId = shallowRef<number>()
 
   watch(() => scrollAnchors.get(props.message.peerId), (anchor) => {
     if (
@@ -65,8 +65,10 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
       anchor.cmid === props.message.cmid &&
       anchor.highlight !== false
     ) {
-      highlighted.value = true
-      setTimeout(() => (highlighted.value = false), 1000)
+      window.clearTimeout(highlightTimeoutId.value)
+      highlightTimeoutId.value = window.setTimeout(() => {
+        highlightTimeoutId.value = undefined
+      }, 1000)
     }
   }, { immediate: true })
 
@@ -79,7 +81,7 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
           <div
             class={[
               'MessagesStack__message',
-              highlighted.value && 'MessagesStack__message--highlighted'
+              highlightTimeoutId.value && 'MessagesStack__message--highlighted'
             ]}
             ref={(el) => setMessageRef(message.cmid, el)}
           >
@@ -105,7 +107,7 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
           <div
             class={[
               'MessagesStack__message MessagesStack__message--centered',
-              highlighted.value && 'MessagesStack__message--highlighted'
+              highlightTimeoutId.value && 'MessagesStack__message--highlighted'
             ]}
             ref={(el) => setMessageRef(message.cmid, el)}
           >
@@ -118,7 +120,7 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
           <div
             class={[
               'MessagesStack__message MessagesStack__message--centered',
-              highlighted.value && 'MessagesStack__message--highlighted'
+              highlightTimeoutId.value && 'MessagesStack__message--highlighted'
             ]}
             ref={(el) => setMessageRef(message.cmid, el)}
           >
