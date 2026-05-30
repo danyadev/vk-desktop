@@ -80,7 +80,11 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
     }
   }
 
-  const retryAttach = (uploadingAttach: ConvoDraft.UploadingAttach) => {
+  const retryUploadingAttach = (uploadingAttach: ConvoDraft.UploadingAttach) => {
+    if (!uploadingAttach.failed) {
+      throw new Error('Tried to retry not failed attach')
+    }
+
     uploadingAttach.progress = 0
     uploadingAttach.failed = false
     uploadingAttach.abortController = new AbortController()
@@ -92,10 +96,15 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
     }
   }
 
+  const abortUploadingAttach = (uploadingAttach: ConvoDraft.UploadingAttach) => {
+    uploadingAttach.abortController.abort()
+  }
+
   return {
     attachPreviews,
     removeAttachPreview,
     uploadAttach,
-    retryAttach
+    retryUploadingAttach,
+    abortUploadingAttach
   }
 }

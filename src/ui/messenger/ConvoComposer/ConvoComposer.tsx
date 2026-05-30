@@ -34,7 +34,8 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     attachPreviews,
     removeAttachPreview,
     uploadAttach,
-    retryAttach
+    retryUploadingAttach,
+    abortUploadingAttach
   } = useComposerAttaches(props.convo, draft)
 
   const canSendMessage = computed(() => (
@@ -182,7 +183,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
                 onRemove={() => removeAttachPreview(attachPreview)}
                 onRetry={() => {
                   if (attachPreview.kind === 'UploadingAttach') {
-                    retryAttach(attachPreview.attach)
+                    retryUploadingAttach(attachPreview.attach)
+                  }
+                }}
+                onCancel={() => {
+                  if (attachPreview.kind === 'UploadingAttach') {
+                    abortUploadingAttach(attachPreview.attach)
                   }
                 }}
               />

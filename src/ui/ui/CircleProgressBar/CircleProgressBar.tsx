@@ -24,7 +24,7 @@ export const CircleProgressBar = defineComponent<Props>((props) => {
     return (
       <div
         class={['CircleProgressBar', {
-          CircleProgressBar__clickable: !!props.showRetry || !!props.onCancel
+          'CircleProgressBar--clickable': !!props.showRetry || !!props.onCancel
         }]}
         onClick={props.showRetry ? props.onRetry : props.onCancel}
       >

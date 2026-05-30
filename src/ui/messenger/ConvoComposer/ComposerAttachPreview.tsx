@@ -10,6 +10,7 @@ type Props = {
   attachPreview: AttachPreview
   onRemove: () => void
   onRetry: () => void
+  onCancel: () => void
 }
 
 export const ComposerAttachPreview = defineComponent<Props>((props) => {
@@ -47,12 +48,12 @@ export const ComposerAttachPreview = defineComponent<Props>((props) => {
             progress={attach.progress}
             showRetry={attach.failed}
             onRetry={props.onRetry}
-            onCancel={() => attach.abortController.abort()}
+            onCancel={props.onCancel}
           />
         )}
       </div>
     )
   }
 }, {
-  props: ['attachPreview', 'onRemove', 'onRetry']
+  props: ['attachPreview', 'onRemove', 'onRetry', 'onCancel']
 })
