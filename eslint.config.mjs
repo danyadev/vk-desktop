@@ -297,7 +297,9 @@ export default defineConfig([
         ignoreRegExpLiterals: true,
         ignoreUrls: true
       }],
-      '@stylistic/multiline-ternary': ['error', 'always-multiline', { ignoreJSX: true }],
+      // Wait for https://github.com/eslint-stylistic/eslint-stylistic/pull/1242
+      // '@stylistic/multiline-ternary': ['error', 'always-multiline', { ignoreJSX: true }],
+      '@stylistic/multiline-ternary': 'off',
       '@stylistic/no-confusing-arrow': 'error',
       '@stylistic/no-extra-semi': 'error',
       // Включено в full файле

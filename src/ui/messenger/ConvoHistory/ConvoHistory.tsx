@@ -33,10 +33,12 @@ type Props = {
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
 // Равен высоте футера чата, так как только при ее видимости браузер будет сохранять ее во вьюпорте
 const PINNED_TO_BOTTOM_THRESHOLD = 32
+const MESSAGES_WINDOW_SIZE = 20
 
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { savedScrollPositions, scrollAnchors, typings } = useConvosStore()
+
   const scrollAnchor = computed<ScrollAnchor>(
     () => scrollAnchors.get(props.convo.id) ?? { kind: 'None' }
   )
@@ -45,6 +47,23 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     props.convo.historySliceAnchorCmid,
     scrollAnchor.value.kind === 'None'
   ))
+
+  const windowSliceAroundId = shallowRef(historySlice.value.effectiveAroundId)
+  const windowSlice = computed(() => {
+    const { items } = historySlice.value
+    const anchorIndex = items.findIndex(({ id }) => (id >= windowSliceAroundId.value))
+
+    const from = Math.max(0, anchorIndex - MESSAGES_WINDOW_SIZE)
+    const to = Math.min(items.length, anchorIndex + MESSAGES_WINDOW_SIZE + 1)
+
+    return {
+      items: items.slice(from, to),
+      windowStart: items[from],
+      windowEnd: items[to - 1],
+      hasStartWindowOffset: from > 0,
+      hasEndWindowOffset: to < items.length
+    }
+  })
 
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
   const messageElements = ref(new Map<Message.Cmid | 'unread', HTMLElement>()).value
@@ -57,6 +76,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     historySlice,
     messageElements
   )
+
+  const moveWindowSlice = (anchorCmid: Message.Cmid) => {
+    props.convo.historySliceAnchorCmid = anchorCmid
+    windowSliceAroundId.value = anchorCmid
+  }
 
   onMounted(() => {
     if (scrollToAnchorIfNeeded(true)) {
@@ -90,6 +114,19 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     { flush: 'post' }
   )
 
+  watch(
+    historySlice,
+    (slice, prevSlice) => {
+      if (
+        slice.gapBefore !== prevSlice.gapBefore ||
+        slice.gapAround !== prevSlice.gapAround ||
+        slice.gapAfter !== prevSlice.gapAfter
+      ) {
+        windowSliceAroundId.value = historySlice.value.effectiveAroundId
+      }
+    }
+  )
+
   const onScroll = throttle(() => {
     const historyElement = $historyElement.value
     if (!historyElement) {
@@ -101,7 +138,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
     showHopNavigation.value = distanceFromBottom > SHOW_HOP_NAVIGATION_THRESHOLD
     pinnedToBottom.value =
-      !historySlice.value.gapAfter && distanceFromBottom < PINNED_TO_BOTTOM_THRESHOLD
+      !historySlice.value.gapAfter &&
+      !windowSlice.value.hasEndWindowOffset &&
+      distanceFromBottom < PINNED_TO_BOTTOM_THRESHOLD
   }, 50)
 
   const handleHopNavigation = () => {
@@ -145,7 +184,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   }
 
   return () => {
-    const { items, effectiveAroundId, gapBefore, gapAround, gapAfter } = historySlice.value
+    const { effectiveAroundId, gapBefore, gapAround, gapAfter } = historySlice.value
+    const { items, windowStart, windowEnd, hasStartWindowOffset, hasEndWindowOffset } =
+      windowSlice.value
     const messages = [
       ...items.map(({ item }) => item),
       ...(!gapAfter ? props.convo.pendingMessages : [])
@@ -186,7 +227,12 @@ export const ConvoHistory = defineComponent<Props>((props) => {
           >
             <div class="ConvoHistory__topFiller" />
 
-            {gapBefore && (
+            {windowStart && hasStartWindowOffset ? (
+              <WindowBoundary
+                key={windowStart.id}
+                onReach={() => moveWindowSlice(windowStart.item.cmid)}
+              />
+            ) : gapBefore ? (
               <HistoryLoader
                 direction="up"
                 startId={gapBefore.toId}
@@ -194,7 +240,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
                 peerId={props.convo.id}
                 loadHistory={loadHistory}
               />
-            )}
+            ) : null}
 
             <HistoryMessages
               messages={messages}
@@ -202,7 +248,12 @@ export const ConvoHistory = defineComponent<Props>((props) => {
               convo={props.convo}
             />
 
-            {gapAfter && (
+            {windowEnd && hasEndWindowOffset ? (
+              <WindowBoundary
+                key={windowEnd.id}
+                onReach={() => moveWindowSlice(windowEnd.item.cmid)}
+              />
+            ) : gapAfter ? (
               <HistoryLoader
                 direction="down"
                 startId={gapAfter.fromId}
@@ -210,10 +261,10 @@ export const ConvoHistory = defineComponent<Props>((props) => {
                 peerId={props.convo.id}
                 loadHistory={loadHistory}
               />
-            )}
+            ) : null}
 
             <div class="ConvoHistory__footer">
-              {!gapAfter && typingUsers && isNonEmptyArray(typingUsers) && (
+              {!gapAfter && !hasEndWindowOffset && typingUsers && isNonEmptyArray(typingUsers) && (
                 <ConvoTyping
                   typingUsers={typingUsers}
                   namesLimit={props.convo.kind === 'ChatConvo' ? undefined : 0}
@@ -224,7 +275,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         </div>
 
         <Transition name="ConvoHistory__hopNavigation-">
-          {(showHopNavigation.value || gapAfter) && (
+          {(showHopNavigation.value || !!gapAfter || hasEndWindowOffset) && (
             <div class="ConvoHistory__hopNavigation">
               <ButtonIcon
                 class="ConvoHistory__hopNavigationButton"
@@ -278,4 +329,18 @@ const HistoryLoader = defineComponent<HistoryLoaderProps>((props) => {
   }
 }, {
   props: ['peerId', 'direction', 'startId', 'gap', 'loadHistory']
+})
+
+type WindowBoundaryProps = {
+  onReach: () => void
+}
+
+const WindowBoundary = defineComponent<WindowBoundaryProps>((props) => {
+  return () => (
+    <IntersectionWrapper onIntersect={props.onReach}>
+      <div style={{ height: '1px' }} />
+    </IntersectionWrapper>
+  )
+}, {
+  props: ['onReach']
 })
