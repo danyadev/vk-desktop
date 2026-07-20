@@ -1,7 +1,6 @@
 import {
   computed,
   defineComponent,
-  nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
@@ -18,6 +17,7 @@ import { ScrollAnchor, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
+import { useConvoHistoryViewport } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
@@ -51,6 +51,13 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const pinnedToBottom = shallowRef(false)
   const showHopNavigation = shallowRef(false)
 
+  const { scrollToAnchorIfNeeded, preserveViewportPosition } = useConvoHistoryViewport(
+    props.convo,
+    $historyElement,
+    historySlice,
+    messageElements
+  )
+
   onMounted(() => {
     if (scrollToAnchorIfNeeded(true)) {
       return
@@ -67,68 +74,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       savedScrollPositions.set(props.convo.id, $historyElement.value.scrollTop)
     }
   })
-
-  const scrollToAnchorIfNeeded = (instant: boolean) => {
-    const anchor = scrollAnchor.value
-    if (anchor.kind === 'None') {
-      return
-    }
-
-    const element = scrollAnchor.value.kind === 'Unread'
-      ? messageElements.get('unread') ?? messageElements.get(anchor.cmid)
-      : messageElements.get(anchor.cmid)
-    const behavior = instant ? 'instant' : 'smooth'
-
-    if (element) {
-      // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
-      nextTick(() => {
-        scrollAnchors.set(props.convo.id, { kind: 'None' })
-
-        element.scrollIntoView({
-          block: 'center',
-          behavior
-        })
-      })
-
-      return true
-    }
-
-    if (props.convo.historySliceAnchorCmid !== anchor.cmid) {
-      props.convo.historySliceAnchorCmid = anchor.cmid
-      return
-    }
-
-    if (historySlice.value.gapAround) {
-      return
-    }
-
-    // Сообщения не оказалось в истории даже после загрузки истории вокруг кмида
-    // TODO: показать модалку с превью сообщения
-    // TODO: возвращаться обратно к сообщению откуда мы пытались перейти к другому сообщению
-    // (либо предварительно смотреть в апи наличие сообщения и не грузить историю вообще)
-
-    // Пока не реализована обработка ненайденного сообщения, скроллим к ближайшему следующему
-    const messageCmids = [...messageElements.keys()]
-      .filter((key) => key !== 'unread')
-      .sort((a, b) => a - b)
-    const messageCmid =
-      messageCmids.find((cmid) => (cmid >= anchor.cmid)) ??
-      messageCmids.at(-1)
-    const messageElement = messageCmid && messageElements.get(messageCmid)
-
-    if (messageElement) {
-      nextTick(() => {
-        scrollAnchors.set(props.convo.id, { kind: 'None' })
-
-        messageElement.scrollIntoView({
-          block: 'center',
-          behavior
-        })
-      })
-
-      return true
-    }
-  }
 
   watch(
     [scrollAnchor, historySlice],
@@ -191,78 +136,12 @@ export const ConvoHistory = defineComponent<Props>((props) => {
        * Дело в том, что возврат ответа из асинхронной операции происходит в отдельной микротаске,
        * а перед выполнением этой микротаски могут успеть исполниться другие макро- и микротаски.
        * Так и происходит: после окончания асинхронного loadConvoHistory у нас уже перерендерен
-       * компонент и обновлен дом, из-за чего мы не можем достать предыдущий scrollHeight
+       * компонент и обновлен дом, из-за чего нам неизвестно предыдущее положение вьюпорта
        */
       onHistoryInserted(insertedMessages) {
-        correctScrollPosition(insertedMessages, direction, startCmid)
+        preserveViewportPosition(insertedMessages, direction, startCmid)
       }
     })
-  }
-
-  const correctScrollPosition = async (
-    insertedMessages: Message.Confirmed[],
-    direction: 'around' | 'up' | 'down',
-    startCmid: Message.Cmid
-  ) => {
-    if (direction === 'around') {
-      await nextTick()
-
-      // В случае around элемент нужно доставать только после nextTick,
-      // так как до этого момента он еще не успел замениться с лоадера чата
-      const historyElement = $historyElement.value
-      if (!historyElement) {
-        return
-      }
-
-      if (startCmid === props.convo.inReadBy) {
-        const unreadElement = messageElements.get('unread')
-        if (unreadElement) {
-          // Скроллим к блоку непрочитанных так, чтобы он начинался на верхней 1/4 части вьюпорта
-          historyElement.scrollTop =
-            unreadElement.offsetTop - historyElement.offsetTop - historyElement.offsetHeight / 4
-          return
-        }
-      }
-
-      // При загрузке вокруг кмида этого сообщения может не оказаться, тогда мы возьмем следующее
-      const aroundMessage =
-        insertedMessages.find(({ cmid }) => (cmid >= startCmid)) ??
-        insertedMessages.at(-1)
-
-      const messageElement = aroundMessage && messageElements.get(aroundMessage.cmid)
-      messageElement?.scrollIntoView({
-        block: 'center',
-        behavior: 'instant'
-      })
-      return
-    }
-
-    if (direction === 'up') {
-      // We're looking for the topmost visible message before new messages insertion.
-      // It's going to be the first message with id larger than startCmid
-      const topMessageCmid = historySlice.value.items
-        .find((node) => node.id > startCmid)
-        ?.item.cmid
-      if (!topMessageCmid) {
-        return
-      }
-
-      const beforeRect = messageElements.get(topMessageCmid)?.getBoundingClientRect()
-      if (beforeRect === undefined) {
-        return
-      }
-
-      await nextTick()
-
-      const historyElement = $historyElement.value
-      const afterRect = messageElements.get(topMessageCmid)?.getBoundingClientRect()
-      if (!historyElement || afterRect === undefined) {
-        return
-      }
-
-      historyElement.scrollTop += (afterRect.top - beforeRect.top) +
-        (afterRect.height - beforeRect.height)
-    }
   }
 
   return () => {
@@ -378,13 +257,14 @@ type HistoryLoaderProps = {
 const HistoryLoader = defineComponent<HistoryLoaderProps>((props) => {
   const { loadConvoHistoryLock } = useConvosStore()
 
+  const onLoad = () => props.loadHistory(
+    props.direction,
+    Message.resolveCmid(props.startId),
+    props.gap
+  )
+
   return () => {
     const lockStatus = loadConvoHistoryLock.get(`${props.peerId}-${props.direction}`)
-    const onLoad = () => props.loadHistory(
-      props.direction,
-      Message.resolveCmid(props.startId),
-      props.gap
-    )
 
     if (lockStatus === 'error') {
       return <LoadError onRetry={onLoad} key={props.startId} />
