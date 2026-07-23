@@ -260,7 +260,7 @@ export class Api implements IApi.Api {
             if (isResponded) {
               resolve()
             } else {
-              reject()
+              reject(apiError)
             }
           })
         })

@@ -96,7 +96,7 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
 })
 
 const View = defineComponent<Props>((props, { slots }) => {
-  const $modalContainer = shallowRef<HTMLDivElement | null>(null)
+  const $modalContainer = shallowRef<HTMLElement | null>(null)
   const { onFocusIn, onFocusOut } = useFocusTrap($modalContainer)
 
   /**

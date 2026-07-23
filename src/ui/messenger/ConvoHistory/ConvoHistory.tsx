@@ -32,7 +32,7 @@ type Props = {
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
 // Равен высоте футера чата, так как только при ее видимости браузер будет сохранять ее во вьюпорте
 const PINNED_TO_BOTTOM_THRESHOLD = 32
-const MESSAGES_WINDOW_SIZE = 20
+const MESSAGES_WINDOW_WING_SIZE = 20
 
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
@@ -51,8 +51,8 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     const { items, effectiveAroundId } = historySlice.value
     const anchorIndex = items.findIndex(({ id }) => (id >= effectiveAroundId))
 
-    const from = Math.max(0, anchorIndex - MESSAGES_WINDOW_SIZE)
-    const to = Math.min(items.length, anchorIndex + MESSAGES_WINDOW_SIZE + 1)
+    const from = Math.max(0, anchorIndex - MESSAGES_WINDOW_WING_SIZE)
+    const to = Math.min(items.length, anchorIndex + MESSAGES_WINDOW_WING_SIZE + 1)
 
     return {
       items: items.slice(from, to),
@@ -63,7 +63,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     }
   })
 
-  const $historyElement = shallowRef<HTMLDivElement | null>(null)
+  const $historyElement = shallowRef<HTMLElement | null>(null)
   const pinnedToBottom = shallowRef(false)
   const showHopNavigation = shallowRef(false)
 
@@ -71,7 +71,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     scrollToAnchorIfNeeded,
     preserveMessagePosition,
     preserveViewportPosition
-  } = useConvoHistoryViewport(props.convo, $historyElement, historySlice)
+  } = useConvoHistoryViewport(props.convo, $historyElement)
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
     props.convo.historySliceAnchorCmid = anchorCmid
@@ -143,11 +143,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     }
   }
 
-  const loadHistory = (
-    direction: 'around' | 'up' | 'down',
-    startCmid: Message.Cmid,
-    gap: History.Gap
-  ) => {
+  const loadHistory = (direction: 'around' | 'up' | 'down', startId: number, gap: History.Gap) => {
+    const startCmid = Message.resolveCmid(startId)
+
     loadConvoHistory({
       peerId: props.convo.id,
       startCmid,
@@ -178,12 +176,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     if (gapAround) {
       return (
         <div class="ConvoHistory__placeholder">
-          <HistoryLoader
+          <HistoryBoundary
+            key={effectiveAroundId}
             direction="around"
-            startId={effectiveAroundId}
-            gap={gapAround}
             peerId={props.convo.id}
-            loadHistory={loadHistory}
+            onReach={() => loadHistory('around', effectiveAroundId, gapAround)}
           />
         </div>
       )
@@ -216,12 +213,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
                 onReach={() => moveWindowSlice(windowStart.item.cmid)}
               />
             ) : gapBefore ? (
-              <HistoryLoader
+              <HistoryBoundary
+                key={gapBefore.toId}
                 direction="up"
-                startId={gapBefore.toId}
-                gap={gapBefore}
                 peerId={props.convo.id}
-                loadHistory={loadHistory}
+                onReach={() => loadHistory('up', gapBefore.toId, gapBefore)}
               />
             ) : null}
 
@@ -233,12 +229,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
                 onReach={() => moveWindowSlice(windowEnd.item.cmid)}
               />
             ) : gapAfter ? (
-              <HistoryLoader
+              <HistoryBoundary
+                key={gapAfter.fromId}
                 direction="down"
-                startId={gapAfter.fromId}
-                gap={gapAfter}
                 peerId={props.convo.id}
-                loadHistory={loadHistory}
+                onReach={() => loadHistory('down', gapAfter.fromId, gapAfter)}
               />
             ) : null}
 
@@ -272,42 +267,30 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   props: ['convo']
 })
 
-type HistoryLoaderProps = {
-  peerId: Peer.Id
+type HistoryBoundaryProps = {
   direction: 'around' | 'up' | 'down'
-  startId: number
-  gap: History.Gap
-  loadHistory: (
-    direction: 'around' | 'up' | 'down',
-    startCmid: Message.Cmid,
-    gap: History.Gap
-  ) => void
+  peerId: Peer.Id
+  onReach: () => void
 }
 
-const HistoryLoader = defineComponent<HistoryLoaderProps>((props) => {
+const HistoryBoundary = defineComponent<HistoryBoundaryProps>((props) => {
   const { loadConvoHistoryLock } = useConvosStore()
-
-  const onLoad = () => props.loadHistory(
-    props.direction,
-    Message.resolveCmid(props.startId),
-    props.gap
-  )
 
   return () => {
     const lockStatus = loadConvoHistoryLock.get(`${props.peerId}-${props.direction}`)
 
     if (lockStatus === 'error') {
-      return <LoadError onRetry={onLoad} key={props.startId} />
+      return <LoadError onRetry={props.onReach} />
     }
 
     return (
-      <IntersectionWrapper onIntersect={onLoad} key={props.startId}>
+      <IntersectionWrapper onIntersect={props.onReach}>
         <Spinner size="regular" class="ConvoHistory__spinner" />
       </IntersectionWrapper>
     )
   }
 }, {
-  props: ['peerId', 'direction', 'startId', 'gap', 'loadHistory']
+  props: ['direction', 'peerId', 'onReach']
 })
 
 type WindowBoundaryProps = {
@@ -317,7 +300,7 @@ type WindowBoundaryProps = {
 const WindowBoundary = defineComponent<WindowBoundaryProps>((props) => {
   return () => (
     <IntersectionWrapper onIntersect={props.onReach}>
-      <div style={{ height: '1px' }} />
+      <div />
     </IntersectionWrapper>
   )
 }, {
