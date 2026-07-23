@@ -7,10 +7,21 @@ import { useConvosStore } from 'store/convos'
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   $historyElement: Ref<HTMLDivElement | null>,
-  historySlice: Ref<ReturnType<typeof History.around<Message.Confirmed>>>,
-  messageElements: Map<Message.Cmid | 'unread', HTMLElement>
+  historySlice: Ref<ReturnType<typeof History.around<Message.Confirmed>>>
 ) => {
   const { scrollAnchors } = useConvosStore()
+
+  const getUnreadElement = () => {
+    return $historyElement.value?.querySelector<HTMLElement>('.ConvoHistory__unreadBlock')
+  }
+
+  const getMessageElement = (cmid: Message.Cmid) => {
+    return $historyElement.value?.querySelector<HTMLElement>(`[data-cmid="${cmid}"]`)
+  }
+
+  const getMessageElements = () => {
+    return [...$historyElement.value?.querySelectorAll<HTMLElement>('[data-cmid]') ?? []]
+  }
 
   const scrollToAnchorIfNeeded = (instant: boolean) => {
     const scrollAnchor = scrollAnchors.get(convo.id)
@@ -19,8 +30,8 @@ export const useConvoHistoryViewport = (
     }
 
     const element = scrollAnchor.kind === 'Unread'
-      ? messageElements.get('unread') ?? messageElements.get(scrollAnchor.cmid)
-      : messageElements.get(scrollAnchor.cmid)
+      ? getUnreadElement() ?? getMessageElement(scrollAnchor.cmid)
+      : getMessageElement(scrollAnchor.cmid)
     const behavior = instant ? 'instant' : 'smooth'
 
     if (element) {
@@ -52,13 +63,10 @@ export const useConvoHistoryViewport = (
     // (либо предварительно смотреть в апи наличие сообщения и не грузить историю вообще)
 
     // Пока не реализована обработка ненайденного сообщения, скроллим к ближайшему следующему
-    const messageCmids = [...messageElements.keys()]
-      .filter((key) => key !== 'unread')
-      .sort((a, b) => a - b)
-    const messageCmid =
-      messageCmids.find((cmid) => (cmid >= scrollAnchor.cmid)) ??
-      messageCmids.at(-1)
-    const messageElement = messageCmid && messageElements.get(messageCmid)
+    const messageElements = getMessageElements()
+    const messageElement =
+      messageElements.find((el) => (Number(el.dataset.cmid) >= scrollAnchor.cmid)) ??
+      messageElements.at(-1)
 
     if (messageElement) {
       nextTick(() => {
@@ -83,11 +91,8 @@ export const useConvoHistoryViewport = (
     const viewportRect = historyElement.getBoundingClientRect()
     let closest
 
-    for (const [cmid, element] of messageElements) {
-      if (cmid === 'unread') {
-        continue
-      }
-
+    for (const element of getMessageElements()) {
+      const cmid = Message.resolveCmid(Number(element.dataset.cmid))
       const rect = element.getBoundingClientRect()
       const isVisible = rect.bottom > viewportRect.top && rect.top < viewportRect.bottom
 
@@ -99,108 +104,28 @@ export const useConvoHistoryViewport = (
     return closest?.cmid
   }
 
-  // const preserveMessagePosition = async (cmid: Message.Cmid) => {
-  //   const historyElement = $historyElement.value
-  //   const messageElement = messageElements.get(cmid)
-  //   if (!historyElement || !messageElement) {
-  //     return
-  //   }
-  //
-  //   const messageRect = messageElement.getBoundingClientRect()
-  //   const oldOffset = messageRect.top - historyElement.getBoundingClientRect().top
-  //
-  //   await nextTick()
-  //
-  //   const newMessageElement = messageElements.get(cmid)
-  //   if (!newMessageElement) {
-  //     return
-  //   }
-  //
-  //   const newMessageRect = newMessageElement.getBoundingClientRect()
-  //   const newOffset = newMessageRect.top - historyElement.getBoundingClientRect().top
-  //   const messageHeightDiff = messageRect.height - newMessageRect.height
-  //
-  //   historyElement.scrollTop += newOffset - oldOffset + messageHeightDiff
-  // }
-
-  let preserveSeq = 0
-
   const preserveMessagePosition = async (cmid: Message.Cmid) => {
-    const seq = ++preserveSeq
-
     const historyElement = $historyElement.value
-    const messageElement = messageElements.get(cmid)
+    const messageElement = getMessageElement(cmid)
     if (!historyElement || !messageElement) {
-      console.log(`[preserve ${seq}] missing before`, { cmid })
       return
     }
 
-    const snapshot = (stage: string) => {
-      const historyRect = historyElement.getBoundingClientRect()
-      const element = messageElements.get(cmid)
-      const messageRect = element?.getBoundingClientRect()
-
-      console.log(`[preserve ${seq}] ${stage}`, {
-        cmid,
-
-        scrollTop: historyElement.scrollTop,
-        scrollHeight: historyElement.scrollHeight,
-        clientHeight: historyElement.clientHeight,
-
-        historyTop: historyRect.top,
-
-        messageTop: messageRect?.top,
-        messageBottom: messageRect?.bottom,
-        messageHeight: messageRect?.height,
-
-        offsetTop: messageRect
-          ? messageRect.top - historyRect.top
-          : undefined,
-
-        offsetBottom: messageRect
-          ? messageRect.bottom - historyRect.top
-          : undefined
-      })
-    }
-
     const messageRect = messageElement.getBoundingClientRect()
-    const oldOffset =
-      messageRect.top -
-      historyElement.getBoundingClientRect().top
-
-    snapshot('BEFORE')
+    const oldOffset = messageRect.top - historyElement.getBoundingClientRect().top
 
     await nextTick()
 
-    snapshot('AFTER NEXT TICK')
-
-    const newMessageElement = messageElements.get(cmid)
+    const newMessageElement = getMessageElement(cmid)
     if (!newMessageElement) {
-      console.log(`[preserve ${seq}] message disappeared`, { cmid })
       return
     }
 
     const newMessageRect = newMessageElement.getBoundingClientRect()
-    const newOffset =
-      newMessageRect.top -
-      historyElement.getBoundingClientRect().top
+    const newOffset = newMessageRect.top - historyElement.getBoundingClientRect().top
+    const messageHeightDiff = messageRect.height - newMessageRect.height
 
-    const correction = newOffset - oldOffset
-
-    console.log(`[preserve ${seq}] CORRECTION`, {
-      cmid,
-      oldOffset,
-      newOffset,
-      correction
-    })
-
-    historyElement.scrollTop += correction
-
-    snapshot('AFTER CORRECTION')
-
-    requestAnimationFrame(() => {
-      snapshot('NEXT FRAME')
-    })
+    historyElement.scrollTop += newOffset - oldOffset - messageHeightDiff
   }
 
   const preserveViewportPosition = async (
@@ -219,7 +144,7 @@ export const useConvoHistoryViewport = (
       }
 
       if (startCmid === convo.inReadBy) {
-        const unreadElement = messageElements.get('unread')
+        const unreadElement = getUnreadElement()
         if (unreadElement) {
           // Скроллим к блоку непрочитанных так, чтобы он начинался на верхней 1/4 части вьюпорта
           historyElement.scrollTop =
@@ -233,7 +158,7 @@ export const useConvoHistoryViewport = (
         insertedMessages.find(({ cmid }) => (cmid >= startCmid)) ??
         insertedMessages.at(-1)
 
-      const messageElement = aroundMessage && messageElements.get(aroundMessage.cmid)
+      const messageElement = aroundMessage && getMessageElement(aroundMessage.cmid)
       messageElement?.scrollIntoView({
         block: 'center',
         behavior: 'instant'

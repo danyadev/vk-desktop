@@ -3,7 +3,6 @@ import {
   defineComponent,
   onBeforeUnmount,
   onMounted,
-  ref,
   shallowRef,
   Transition,
   watch
@@ -54,7 +53,8 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
     const from = Math.max(0, anchorIndex - MESSAGES_WINDOW_SIZE)
     const to = Math.min(items.length, anchorIndex + MESSAGES_WINDOW_SIZE + 1)
-    console.log('[windowSlice] from ' + items[from]!.id + ' to ' + items[to - 1]!.id)
+    // eslint-disable-next-line no-unsafe-optional-chaining
+    console.log('[windowSlice] from ' + items[from]?.id + ' to ' + items[to - 1]?.id)
 
     return {
       items: items.slice(from, to),
@@ -66,7 +66,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   })
 
   const $historyElement = shallowRef<HTMLDivElement | null>(null)
-  const messageElements = ref(new Map<Message.Cmid | 'unread', HTMLElement>()).value
   const pinnedToBottom = shallowRef(false)
   const showHopNavigation = shallowRef(false)
 
@@ -75,12 +74,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     findTopVisibleCmid,
     preserveMessagePosition,
     preserveViewportPosition
-  } = useConvoHistoryViewport(props.convo, $historyElement, historySlice, messageElements)
+  } = useConvoHistoryViewport(props.convo, $historyElement, historySlice)
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
     console.log('[moveWindowSlice] to ' + anchorCmid)
     props.convo.historySliceAnchorCmid = anchorCmid
-    // windowSliceAroundId.value = anchorCmid
     preserveMessagePosition(anchorCmid)
   }
 
@@ -237,11 +235,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
               />
             ) : null}
 
-            <HistoryMessages
-              messages={messages}
-              messageElements={messageElements}
-              convo={props.convo}
-            />
+            <HistoryMessages messages={messages} convo={props.convo} />
 
             {windowEnd && hasEndWindowOffset ? (
               <WindowBoundary

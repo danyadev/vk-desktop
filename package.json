@@ -37,7 +37,7 @@
     "@floating-ui/dom": "1.7.6",
     "@vkontakte/vk-qr": "3.0.0",
     "pinia": "3.0.4",
-    "vue": "3.5.35",
+    "vue": "3.5.40",
     "vue-router": "5.0.7"
   },
   "devDependencies": {
@@ -48,7 +48,7 @@
     "@types/wicg-file-system-access": "2023.10.7",
     "@vitejs/plugin-vue-jsx": "5.1.5",
     "@vkontakte/vkui-tokens": "4.78.1",
-    "@vue/compiler-sfc": "3.5.35",
+    "@vue/compiler-sfc": "3.5.40",
     "electron": "22.3.27",
     "electron-builder": "26.11.1",
     "eslint": "10.4.0",

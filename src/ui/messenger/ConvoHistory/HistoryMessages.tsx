@@ -2,13 +2,12 @@ import { computed, defineComponent } from 'vue'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
-import { NonEmptyArray, RawRefElement } from 'misc/utils'
+import { NonEmptyArray } from 'misc/utils'
 import { isPreviousDay, isSameDay } from 'misc/dateTime'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 
 type HistoryMessagesProps = {
   messages: Message.Message[]
-  messageElements: Map<Message.Cmid | 'unread', HTMLElement>
   convo: Convo.Convo
 }
 
@@ -19,14 +18,6 @@ type HistoryBlock =
 
 export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
   const { lang } = useServices()
-
-  const setMessageRef = (cmid: Message.Cmid | 'unread', element: RawRefElement) => {
-    if (element instanceof HTMLElement) {
-      props.messageElements.set(cmid, element)
-    } else {
-      props.messageElements.delete(cmid)
-    }
-  }
 
   const blocks = computed(() => {
     return props.messages.reduce((blocks, message, index) => {
@@ -72,7 +63,7 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
       case 'Stack':
         // Не указываем key, чтобы vue сам определял, какие стеки нужно создать, а какие обновить.
         // Нет способа выразить key так, чтобы он не менялся при изменении того же стека(
-        return <MessagesStack messages={block.stack} setMessageRef={setMessageRef} />
+        return <MessagesStack messages={block.stack} />
 
       case 'Date': {
         const blockDate = new Date(block.date)
@@ -100,7 +91,6 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
           <div
             class="ConvoHistory__unreadBlock"
             key={`unread-${block.inReadBy}`}
-            ref={(el) => setMessageRef('unread', el)}
           >
             {lang.use('me_convo_unread_messages')}
           </div>
@@ -108,5 +98,5 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
     }
   })
 }, {
-  props: ['messages', 'messageElements', 'convo']
+  props: ['messages', 'convo']
 })
