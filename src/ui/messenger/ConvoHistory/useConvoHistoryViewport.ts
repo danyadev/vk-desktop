@@ -1,13 +1,11 @@
 import { nextTick, Ref } from 'vue'
 import * as Convo from 'model/Convo'
-import * as History from 'model/History'
 import * as Message from 'model/Message'
 import { useConvosStore } from 'store/convos'
 
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
-  $historyElement: Ref<HTMLDivElement | null>,
-  historySlice: Ref<ReturnType<typeof History.around<Message.Confirmed>>>
+  $historyElement: Ref<HTMLElement | null>
 ) => {
   const { scrollAnchors } = useConvosStore()
 
@@ -50,10 +48,6 @@ export const useConvoHistoryViewport = (
 
     if (convo.historySliceAnchorCmid !== scrollAnchor.cmid) {
       convo.historySliceAnchorCmid = scrollAnchor.cmid
-      return
-    }
-
-    if (historySlice.value.gapAround) {
       return
     }
 
