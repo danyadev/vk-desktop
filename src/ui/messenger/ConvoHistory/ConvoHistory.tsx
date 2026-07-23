@@ -48,13 +48,13 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     scrollAnchor.value.kind === 'None'
   ))
 
-  const windowSliceAroundId = shallowRef(historySlice.value.effectiveAroundId)
   const windowSlice = computed(() => {
-    const { items } = historySlice.value
-    const anchorIndex = items.findIndex(({ id }) => (id >= windowSliceAroundId.value))
+    const { items, effectiveAroundId } = historySlice.value
+    const anchorIndex = items.findIndex(({ id }) => (id >= effectiveAroundId))
 
     const from = Math.max(0, anchorIndex - MESSAGES_WINDOW_SIZE)
     const to = Math.min(items.length, anchorIndex + MESSAGES_WINDOW_SIZE + 1)
+    console.log('[windowSlice] from ' + items[from]!.id + ' to ' + items[to - 1]!.id)
 
     return {
       items: items.slice(from, to),
@@ -70,16 +70,18 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const pinnedToBottom = shallowRef(false)
   const showHopNavigation = shallowRef(false)
 
-  const { scrollToAnchorIfNeeded, preserveViewportPosition } = useConvoHistoryViewport(
-    props.convo,
-    $historyElement,
-    historySlice,
-    messageElements
-  )
+  const {
+    scrollToAnchorIfNeeded,
+    findTopVisibleCmid,
+    preserveMessagePosition,
+    preserveViewportPosition
+  } = useConvoHistoryViewport(props.convo, $historyElement, historySlice, messageElements)
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
+    console.log('[moveWindowSlice] to ' + anchorCmid)
     props.convo.historySliceAnchorCmid = anchorCmid
-    windowSliceAroundId.value = anchorCmid
+    // windowSliceAroundId.value = anchorCmid
+    preserveMessagePosition(anchorCmid)
   }
 
   onMounted(() => {
@@ -112,19 +114,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       )
     },
     { flush: 'post' }
-  )
-
-  watch(
-    historySlice,
-    (slice, prevSlice) => {
-      if (
-        slice.gapBefore !== prevSlice.gapBefore ||
-        slice.gapAround !== prevSlice.gapAround ||
-        slice.gapAfter !== prevSlice.gapAfter
-      ) {
-        windowSliceAroundId.value = historySlice.value.effectiveAroundId
-      }
-    }
   )
 
   const onScroll = throttle(() => {
@@ -165,6 +154,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     startCmid: Message.Cmid,
     gap: History.Gap
   ) => {
+    console.log('[loadHistory] from ' + startCmid)
     loadConvoHistory({
       peerId: props.convo.id,
       startCmid,
@@ -178,6 +168,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
        * компонент и обновлен дом, из-за чего нам неизвестно предыдущее положение вьюпорта
        */
       onHistoryInserted(insertedMessages) {
+        const topVisibleCmid = findTopVisibleCmid()
+        if (topVisibleCmid) {
+          console.log('[onHistoryInserted] shift historySliceAnchorCmid to ' + topVisibleCmid)
+          props.convo.historySliceAnchorCmid = topVisibleCmid
+        }
         preserveViewportPosition(insertedMessages, direction, startCmid)
       }
     })

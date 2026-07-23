@@ -74,6 +74,135 @@ export const useConvoHistoryViewport = (
     }
   }
 
+  const findTopVisibleCmid = () => {
+    const historyElement = $historyElement.value
+    if (!historyElement) {
+      return
+    }
+
+    const viewportRect = historyElement.getBoundingClientRect()
+    let closest
+
+    for (const [cmid, element] of messageElements) {
+      if (cmid === 'unread') {
+        continue
+      }
+
+      const rect = element.getBoundingClientRect()
+      const isVisible = rect.bottom > viewportRect.top && rect.top < viewportRect.bottom
+
+      if (isVisible && (!closest || rect.top < closest.rect.top)) {
+        closest = { cmid, rect }
+      }
+    }
+
+    return closest?.cmid
+  }
+
+  // const preserveMessagePosition = async (cmid: Message.Cmid) => {
+  //   const historyElement = $historyElement.value
+  //   const messageElement = messageElements.get(cmid)
+  //   if (!historyElement || !messageElement) {
+  //     return
+  //   }
+  //
+  //   const messageRect = messageElement.getBoundingClientRect()
+  //   const oldOffset = messageRect.top - historyElement.getBoundingClientRect().top
+  //
+  //   await nextTick()
+  //
+  //   const newMessageElement = messageElements.get(cmid)
+  //   if (!newMessageElement) {
+  //     return
+  //   }
+  //
+  //   const newMessageRect = newMessageElement.getBoundingClientRect()
+  //   const newOffset = newMessageRect.top - historyElement.getBoundingClientRect().top
+  //   const messageHeightDiff = messageRect.height - newMessageRect.height
+  //
+  //   historyElement.scrollTop += newOffset - oldOffset + messageHeightDiff
+  // }
+
+  let preserveSeq = 0
+
+  const preserveMessagePosition = async (cmid: Message.Cmid) => {
+    const seq = ++preserveSeq
+
+    const historyElement = $historyElement.value
+    const messageElement = messageElements.get(cmid)
+    if (!historyElement || !messageElement) {
+      console.log(`[preserve ${seq}] missing before`, { cmid })
+      return
+    }
+
+    const snapshot = (stage: string) => {
+      const historyRect = historyElement.getBoundingClientRect()
+      const element = messageElements.get(cmid)
+      const messageRect = element?.getBoundingClientRect()
+
+      console.log(`[preserve ${seq}] ${stage}`, {
+        cmid,
+
+        scrollTop: historyElement.scrollTop,
+        scrollHeight: historyElement.scrollHeight,
+        clientHeight: historyElement.clientHeight,
+
+        historyTop: historyRect.top,
+
+        messageTop: messageRect?.top,
+        messageBottom: messageRect?.bottom,
+        messageHeight: messageRect?.height,
+
+        offsetTop: messageRect
+          ? messageRect.top - historyRect.top
+          : undefined,
+
+        offsetBottom: messageRect
+          ? messageRect.bottom - historyRect.top
+          : undefined
+      })
+    }
+
+    const messageRect = messageElement.getBoundingClientRect()
+    const oldOffset =
+      messageRect.top -
+      historyElement.getBoundingClientRect().top
+
+    snapshot('BEFORE')
+
+    await nextTick()
+
+    snapshot('AFTER NEXT TICK')
+
+    const newMessageElement = messageElements.get(cmid)
+    if (!newMessageElement) {
+      console.log(`[preserve ${seq}] message disappeared`, { cmid })
+      return
+    }
+
+    const newMessageRect = newMessageElement.getBoundingClientRect()
+    const newOffset =
+      newMessageRect.top -
+      historyElement.getBoundingClientRect().top
+
+    const correction = newOffset - oldOffset
+
+    console.log(`[preserve ${seq}] CORRECTION`, {
+      cmid,
+      oldOffset,
+      newOffset,
+      correction
+    })
+
+    historyElement.scrollTop += correction
+
+    snapshot('AFTER CORRECTION')
+
+    requestAnimationFrame(() => {
+      snapshot('NEXT FRAME')
+    })
+  }
+
   const preserveViewportPosition = async (
     insertedMessages: Message.Confirmed[],
     direction: 'around' | 'up' | 'down',
@@ -113,35 +242,17 @@ export const useConvoHistoryViewport = (
     }
 
     if (direction === 'up') {
-      // We're looking for the topmost visible message before new messages insertion.
-      // It's going to be the first message with id larger than startCmid
-      const topMessageCmid = historySlice.value.items
-        .find((node) => node.id > startCmid)
-        ?.item.cmid
-      if (!topMessageCmid) {
-        return
+      const topMessageCmid = findTopVisibleCmid()
+      if (topMessageCmid) {
+        preserveMessagePosition(topMessageCmid)
       }
-
-      const beforeRect = messageElements.get(topMessageCmid)?.getBoundingClientRect()
-      if (beforeRect === undefined) {
-        return
-      }
-
-      await nextTick()
-
-      const historyElement = $historyElement.value
-      const afterRect = messageElements.get(topMessageCmid)?.getBoundingClientRect()
-      if (!historyElement || afterRect === undefined) {
-        return
-      }
-
-      historyElement.scrollTop += (afterRect.top - beforeRect.top) +
-        (afterRect.height - beforeRect.height)
     }
   }
 
   return {
     scrollToAnchorIfNeeded,
+    findTopVisibleCmid,
+    preserveMessagePosition,
     preserveViewportPosition
   }
 }
