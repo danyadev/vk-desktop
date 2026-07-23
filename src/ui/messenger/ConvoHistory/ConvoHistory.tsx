@@ -53,8 +53,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
     const from = Math.max(0, anchorIndex - MESSAGES_WINDOW_SIZE)
     const to = Math.min(items.length, anchorIndex + MESSAGES_WINDOW_SIZE + 1)
-    // eslint-disable-next-line no-unsafe-optional-chaining
-    console.log('[windowSlice] from ' + items[from]?.id + ' to ' + items[to - 1]?.id)
 
     return {
       items: items.slice(from, to),
@@ -71,13 +69,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   const {
     scrollToAnchorIfNeeded,
-    findTopVisibleCmid,
     preserveMessagePosition,
     preserveViewportPosition
   } = useConvoHistoryViewport(props.convo, $historyElement, historySlice)
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
-    console.log('[moveWindowSlice] to ' + anchorCmid)
     props.convo.historySliceAnchorCmid = anchorCmid
     preserveMessagePosition(anchorCmid)
   }
@@ -152,7 +148,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     startCmid: Message.Cmid,
     gap: History.Gap
   ) => {
-    console.log('[loadHistory] from ' + startCmid)
     loadConvoHistory({
       peerId: props.convo.id,
       startCmid,
@@ -166,11 +161,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
        * компонент и обновлен дом, из-за чего нам неизвестно предыдущее положение вьюпорта
        */
       onHistoryInserted(insertedMessages) {
-        const topVisibleCmid = findTopVisibleCmid()
-        if (topVisibleCmid) {
-          console.log('[onHistoryInserted] shift historySliceAnchorCmid to ' + topVisibleCmid)
-          props.convo.historySliceAnchorCmid = topVisibleCmid
-        }
         preserveViewportPosition(insertedMessages, direction, startCmid)
       }
     })

@@ -163,12 +163,13 @@ export const useConvoHistoryViewport = (
         block: 'center',
         behavior: 'instant'
       })
-      return
-    }
-
-    if (direction === 'up') {
+    } else {
       const topMessageCmid = findTopVisibleCmid()
       if (topMessageCmid) {
+        // Так как мы можем находиться в любой позиции в истории в момент добавления сообщений,
+        // нужно убедиться, что текущие сообщения во вьюпорте не будут обрезаны в windowSlice,
+        // поэтому перемещаем anchorCmid на видимую позицию
+        convo.historySliceAnchorCmid = topMessageCmid
         preserveMessagePosition(topMessageCmid)
       }
     }
@@ -176,7 +177,6 @@ export const useConvoHistoryViewport = (
 
   return {
     scrollToAnchorIfNeeded,
-    findTopVisibleCmid,
     preserveMessagePosition,
     preserveViewportPosition
   }
