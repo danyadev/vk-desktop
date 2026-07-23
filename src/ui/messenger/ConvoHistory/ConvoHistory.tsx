@@ -172,7 +172,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       windowSlice.value
     const messages = [
       ...items.map(({ item }) => item),
-      ...(!gapAfter ? props.convo.pendingMessages : [])
+      ...(!gapAfter && !hasEndWindowOffset ? props.convo.pendingMessages : [])
     ]
 
     if (gapAround) {
