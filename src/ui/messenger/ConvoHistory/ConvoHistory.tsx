@@ -110,6 +110,14 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     { flush: 'post' }
   )
 
+  // Move the anchor before pinnedToBottom becomes false and window adjustment screws everything up
+  watch(() => windowSlice.value.hasEndWindowOffset, () => {
+    const { hasEndWindowOffset, windowEnd } = windowSlice.value
+    if (hasEndWindowOffset && windowEnd && pinnedToBottom.value) {
+      props.convo.historySliceAnchorCmid = windowEnd.item.cmid
+    }
+  }, { flush: 'pre' })
+
   const onScroll = throttle(() => {
     const historyElement = $historyElement.value
     if (!historyElement) {
