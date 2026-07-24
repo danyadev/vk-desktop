@@ -52,9 +52,11 @@ export const useConvoHistoryViewport = (
       return false
     }
 
-    // Сообщения не оказалось в истории даже после загрузки истории вокруг кмида
-    // TODO: возвращаться обратно к сообщению откуда мы пытались перейти к другому сообщению
-    scrollAnchors.delete(convo.id)
+    if (scrollAnchor.kind === 'Message' && scrollAnchor.origin) {
+      scrollAnchors.set(convo.id, { kind: 'Message', cmid: scrollAnchor.origin, highlight: false })
+    } else {
+      scrollAnchors.delete(convo.id)
+    }
     onMessageUnavailable(scrollAnchor.cmid)
     return true
   }
@@ -154,6 +156,7 @@ export const useConvoHistoryViewport = (
 
   return {
     scrollToAnchorIfNeeded,
+    findTopVisibleCmid,
     preserveMessagePosition,
     preserveViewportPosition
   }

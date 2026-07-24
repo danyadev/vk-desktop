@@ -11,7 +11,8 @@ export type TypingUser = {
 }
 
 export type ScrollAnchor =
-  | { kind: 'Message', cmid: Message.Cmid, highlight?: boolean }
+  /** Origin is used to revert back when there's no message */
+  | { kind: 'Message', cmid: Message.Cmid, origin?: Message.Cmid, highlight?: boolean }
   | { kind: 'Unread', cmid: Message.Cmid }
 
 type Convos = {

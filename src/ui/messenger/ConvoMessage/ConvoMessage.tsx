@@ -50,7 +50,8 @@ export const ConvoMessage = defineComponent<Props>((props) => {
                 if (message.replyMessage?.cmid) {
                   scrollAnchors.set(message.peerId, {
                     kind: 'Message',
-                    cmid: message.replyMessage.cmid
+                    cmid: message.replyMessage.cmid,
+                    origin: message.cmid
                   })
                 }
               }}
