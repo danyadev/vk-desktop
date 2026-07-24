@@ -21,13 +21,18 @@ describe(History.around.name, () => {
     aroundId: number,
     preferNeighborSliceAtGapBoundary?: boolean
   ) => {
+    const restoredHistory = restoreHistory(history)
     const {
-      items,
+      fromIndex,
+      toIndex,
       effectiveAroundId,
       gapBefore,
       gapAround,
       gapAfter
-    } = History.around(restoreHistory(history), aroundId, preferNeighborSliceAtGapBoundary)
+    } = History.around(restoredHistory, aroundId, preferNeighborSliceAtGapBoundary)
+    const items = fromIndex === -1 || toIndex === -1
+      ? []
+      : restoredHistory.slice(fromIndex, toIndex) as Array<History.Item<null>>
 
     return {
       items: items.map((node) => node.id),
@@ -37,6 +42,20 @@ describe(History.around.name, () => {
       gapAfter: gapAfter && [gapAfter.fromId, gapAfter.toId] as const
     }
   }
+
+  test('returns the effective around item index', () => {
+    expect(History.around(restoreHistory([2, 4]), 2).aroundIndex)
+      .toBe(0)
+
+    expect(History.around(restoreHistory([2, 4]), 3).aroundIndex)
+      .toBe(1)
+
+    expect(History.around(restoreHistory([2, 4]), 5).aroundIndex)
+      .toBe(1)
+
+    expect(History.around(restoreHistory([[2, 4]]), 3).aroundIndex)
+      .toBe(-1)
+  })
 
   test('around node', () => {
     expect(around([], 1))
