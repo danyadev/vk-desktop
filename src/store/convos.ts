@@ -13,7 +13,6 @@ export type TypingUser = {
 export type ScrollAnchor =
   | { kind: 'Message', cmid: Message.Cmid, highlight?: boolean }
   | { kind: 'Unread', cmid: Message.Cmid }
-  | { kind: 'None' }
 
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>

@@ -69,6 +69,22 @@ export type MessagesGetHistoryResponse = {
   // apps?: AppsApp[]
 }
 
+// messages.getByConversationMessageId
+export type MessagesGetByConversationMessageIdParams = {
+  peer_id: number
+  conversation_message_ids: number | string
+  extended: 1
+  fields: string
+  group_id?: number
+}
+
+export type MessagesGetByConversationMessageIdResponse = {
+  count: number
+  items: MessagesMessage[]
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+}
+
 // messages.getLongPollServer
 export type MessagesGetLongPollServerParams = {
   lp_version: number

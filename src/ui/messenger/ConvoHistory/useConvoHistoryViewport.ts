@@ -5,7 +5,8 @@ import { useConvosStore } from 'store/convos'
 
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
-  $historyElement: Ref<HTMLElement | null>
+  $historyElement: Ref<HTMLElement | null>,
+  onMessageUnavailable: (cmid: Message.Cmid) => void
 ) => {
   const { scrollAnchors } = useConvosStore()
 
@@ -21,10 +22,10 @@ export const useConvoHistoryViewport = (
     return [...$historyElement.value?.querySelectorAll<HTMLElement>('[data-cmid]') ?? []]
   }
 
-  const scrollToAnchorIfNeeded = (instant: boolean) => {
+  const scrollToAnchorIfNeeded = (instant: boolean): boolean => {
     const scrollAnchor = scrollAnchors.get(convo.id)
-    if (!scrollAnchor || scrollAnchor.kind === 'None') {
-      return
+    if (!scrollAnchor) {
+      return false
     }
 
     const element = scrollAnchor.kind === 'Unread'
@@ -35,7 +36,7 @@ export const useConvoHistoryViewport = (
     if (element) {
       // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
       nextTick(() => {
-        scrollAnchors.set(convo.id, { kind: 'None' })
+        scrollAnchors.delete(convo.id)
 
         element.scrollIntoView({
           block: 'center',
@@ -48,32 +49,14 @@ export const useConvoHistoryViewport = (
 
     if (convo.historySliceAnchorCmid !== scrollAnchor.cmid) {
       convo.historySliceAnchorCmid = scrollAnchor.cmid
-      return
+      return false
     }
 
     // Сообщения не оказалось в истории даже после загрузки истории вокруг кмида
-    // TODO: показать модалку с превью сообщения
     // TODO: возвращаться обратно к сообщению откуда мы пытались перейти к другому сообщению
-    // (либо предварительно смотреть в апи наличие сообщения и не грузить историю вообще)
-
-    // Пока не реализована обработка ненайденного сообщения, скроллим к ближайшему следующему
-    const messageElements = getMessageElements()
-    const messageElement =
-      messageElements.find((el) => (Number(el.dataset.cmid) >= scrollAnchor.cmid)) ??
-      messageElements.at(-1)
-
-    if (messageElement) {
-      nextTick(() => {
-        scrollAnchors.set(convo.id, { kind: 'None' })
-
-        messageElement.scrollIntoView({
-          block: 'center',
-          behavior
-        })
-      })
-
-      return true
-    }
+    scrollAnchors.delete(convo.id)
+    onMessageUnavailable(scrollAnchor.cmid)
+    return true
   }
 
   const findTopVisibleCmid = () => {

@@ -12,7 +12,7 @@ import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { ScrollAnchor, useConvosStore } from 'store/convos'
+import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
@@ -27,6 +27,7 @@ import './ConvoHistory.css'
 
 type Props = {
   convo: Convo.Convo
+  onMessageUnavailable: (cmid: Message.Cmid) => void
 }
 
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
@@ -38,13 +39,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { savedScrollPositions, scrollAnchors, typings } = useConvosStore()
 
-  const scrollAnchor = computed<ScrollAnchor>(
-    () => scrollAnchors.get(props.convo.id) ?? { kind: 'None' }
-  )
+  const scrollAnchor = computed(() => scrollAnchors.get(props.convo.id))
   const historySlice = computed(() => History.around(
     props.convo.history,
     props.convo.historySliceAnchorCmid,
-    scrollAnchor.value.kind === 'None'
+    !scrollAnchor.value
   ))
 
   const windowSlice = computed(() => {
@@ -74,7 +73,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     scrollToAnchorIfNeeded,
     preserveMessagePosition,
     preserveViewportPosition
-  } = useConvoHistoryViewport(props.convo, $historyElement)
+  } = useConvoHistoryViewport(
+    props.convo,
+    $historyElement,
+    props.onMessageUnavailable
+  )
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
     props.convo.historySliceAnchorCmid = anchorCmid
@@ -105,9 +108,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
       // и больше нет изначальной позиции, откуда можно применить анимацию
       scrollToAnchorIfNeeded(
-        anchor.kind !== 'None' &&
-        anchor.kind === prevAnchor.kind &&
-        anchor.cmid === prevAnchor.cmid
+        !!anchor &&
+        anchor.kind === prevAnchor?.kind &&
+        anchor.cmid === prevAnchor?.cmid
       )
     },
     { flush: 'post' }
@@ -275,7 +278,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['convo']
+  props: ['convo', 'onMessageUnavailable']
 })
 
 type HistoryBoundaryProps = {

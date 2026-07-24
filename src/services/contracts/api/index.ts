@@ -25,6 +25,8 @@ import {
 import { CaptchaForceParams, CaptchaForceResponse } from 'services/contracts/api/methods/Captcha'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'services/contracts/api/methods/Groups'
 import {
+  MessagesGetByConversationMessageIdParams,
+  MessagesGetByConversationMessageIdResponse,
   MessagesGetConversationsByIdParams,
   MessagesGetConversationsByIdResponse,
   MessagesGetConversationsParams,
@@ -136,6 +138,10 @@ export type Methods = {
   'messages.getHistory': {
     params: MessagesGetHistoryParams
     response: MessagesGetHistoryResponse
+  }
+  'messages.getByConversationMessageId': {
+    params: MessagesGetByConversationMessageIdParams
+    response: MessagesGetByConversationMessageIdResponse
   }
   'messages.getLongPollServer': {
     params: MessagesGetLongPollServerParams
