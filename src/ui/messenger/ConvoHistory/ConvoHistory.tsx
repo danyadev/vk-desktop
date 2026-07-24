@@ -30,12 +30,16 @@ type Props = {
   onMessageUnavailable: (cmid: Message.Cmid) => void
 }
 
+export type ConvoHistoryHandle = {
+  findTopVisibleCmid: () => Message.Cmid | undefined
+}
+
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
 // Равен высоте футера чата, так как только при ее видимости браузер будет сохранять ее во вьюпорте
 const PINNED_TO_BOTTOM_THRESHOLD = 32
 const MESSAGES_WINDOW_WING_SIZE = 20
 
-export const ConvoHistory = defineComponent<Props>((props) => {
+export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   const { lang } = useServices()
   const { savedScrollPositions, scrollAnchors, typings } = useConvosStore()
 
@@ -71,6 +75,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   const {
     scrollToAnchorIfNeeded,
+    findTopVisibleCmid,
     preserveMessagePosition,
     preserveViewportPosition
   } = useConvoHistoryViewport(
@@ -78,6 +83,8 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     $historyElement,
     props.onMessageUnavailable
   )
+
+  expose<ConvoHistoryHandle>({ findTopVisibleCmid })
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
     props.convo.historySliceAnchorCmid = anchorCmid
