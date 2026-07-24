@@ -44,15 +44,19 @@ export function lastItem<T>(history: History<T>): T | undefined {
 }
 
 /**
- * Возвращает часть истории, непрерывно доступной вокруг aroundId,
- * то есть список элементов до первого гэпа с обеих сторон от aroundId
+ * Находит непрерывный участок истории вокруг aroundId.
+ *
+ * Возвращает границы участка в виде полуинтервала [fromIndex, toIndex),
+ * индекс выбранного элемента в исходной истории и соседние гэпы.
  */
 export function around<T>(
   history: History<T>,
   aroundId: number,
   preferNeighborSliceAtGapBoundary = true
 ): {
-  items: Array<Item<T>>
+  fromIndex: number
+  toIndex: number
+  aroundIndex: number
   effectiveAroundId: number
   gapBefore?: Gap
   gapAround?: Gap
@@ -71,7 +75,9 @@ export function around<T>(
     // Пустая история - пустой ответ
     if (!lastNode) {
       return {
-        items: [],
+        fromIndex: -1,
+        toIndex: -1,
+        aroundIndex: -1,
         effectiveAroundId: aroundId
       }
     }
@@ -91,7 +97,9 @@ export function around<T>(
     if (nextToAroundIndex === null) {
       // По сути невозможный кейс, возвращаем пустоту
       return {
-        items: [],
+        fromIndex: -1,
+        toIndex: -1,
+        aroundIndex: -1,
         effectiveAroundId: aroundId
       }
     }
@@ -115,7 +123,9 @@ export function around<T>(
     // Иначе отдаем гэп более актуальной истории
     // aroundId: 5; [[n, 4-]?, [6+, n]] -> gap [6+, n]
     return {
-      items: [],
+      fromIndex: -1,
+      toIndex: -1,
+      aroundIndex: -1,
       gapAround: nextToAroundNode,
       effectiveAroundId: nodeStartBoundary
     }
@@ -138,7 +148,9 @@ export function around<T>(
     }
 
     return {
-      items: [],
+      fromIndex: -1,
+      toIndex: -1,
+      aroundIndex: -1,
       gapAround: aroundNode,
       effectiveAroundId: aroundId
     }
@@ -165,7 +177,9 @@ export function around<T>(
   }
 
   return {
-    items: history.slice(gapBeforeIndex + 1, gapAfterIndex) as Array<Item<T>>,
+    fromIndex: gapBeforeIndex + 1,
+    toIndex: gapAfterIndex,
+    aroundIndex,
     effectiveAroundId: aroundId,
     gapBefore,
     gapAfter

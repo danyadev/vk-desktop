@@ -48,18 +48,21 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   ))
 
   const windowSlice = computed(() => {
-    const { items, effectiveAroundId } = historySlice.value
-    const anchorIndex = items.findIndex(({ id }) => (id >= effectiveAroundId))
-
-    const from = Math.max(0, anchorIndex - MESSAGES_WINDOW_WING_SIZE)
-    const to = Math.min(items.length, anchorIndex + MESSAGES_WINDOW_WING_SIZE + 1)
+    const { fromIndex, toIndex, aroundIndex } = historySlice.value
+    const from = aroundIndex === -1
+      ? 0
+      : Math.max(fromIndex, aroundIndex - MESSAGES_WINDOW_WING_SIZE)
+    const to = aroundIndex === -1
+      ? 0
+      : Math.min(toIndex, aroundIndex + MESSAGES_WINDOW_WING_SIZE + 1)
+    const items = props.convo.history.slice(from, to) as Array<History.Item<Message.Confirmed>>
 
     return {
-      items: items.slice(from, to),
-      windowStart: items[from],
-      windowEnd: items[to - 1],
-      hasStartWindowOffset: from > 0,
-      hasEndWindowOffset: to < items.length
+      items,
+      windowStart: items[0],
+      windowEnd: items[items.length - 1],
+      hasStartWindowOffset: aroundIndex !== -1 && from > fromIndex,
+      hasEndWindowOffset: aroundIndex !== -1 && to < toIndex
     }
   })
 
