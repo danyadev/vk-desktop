@@ -341,6 +341,9 @@ export const ru = {
   modal_send_label: 'Отправить',
   modal_delete_label: 'Удалить',
 
+  messagePreviewModal_title: 'Просмотр сообщения',
+  messagePreviewModal_unavailable: 'Сообщение недоступно',
+
   captchaModal_title: 'Введите капчу',
   captchaModal_enter_code: 'Введите код',
 

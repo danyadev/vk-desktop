@@ -1,0 +1,25 @@
+.MessagePreviewModal {
+  width: min(440px, calc(100vw - 80px));
+  min-height: 64px;
+  overflow: hidden;
+  background: var(--vkd--color_background_convo_history);
+}
+
+.MessagePreviewModal__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 64px;
+}
+
+.MessagePreviewModal__content--centered {
+  align-items: center;
+}
+
+.MessagePreviewModal__unavailable {
+  color: var(--vkui--color_text_subhead);
+}
+
+.MessagePreviewModal .ConvoHistory__unreadBlock {
+  margin-inline: 0;
+}

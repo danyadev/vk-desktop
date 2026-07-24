@@ -2,13 +2,16 @@ import { computed, defineComponent, shallowRef, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
+import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
+import { useModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
 import { ConvoHistory } from 'ui/messenger/ConvoHistory/ConvoHistory'
+import { MessagePreviewModal } from 'ui/messenger/ConvoView/MessagePreviewModal'
 import { PinnedMessage } from 'ui/messenger/PinnedMessage/PinnedMessage'
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
@@ -20,6 +23,13 @@ type ConvoViewProps = {
 
 const ConvoView = defineComponent<ConvoViewProps>((props) => {
   const { scrollAnchors } = useConvosStore()
+  const messagePreviewModal = useModal()
+  const messagePreviewCmid = shallowRef<Message.Cmid>()
+
+  const openMessagePreview = (cmid: Message.Cmid) => {
+    messagePreviewCmid.value = cmid
+    messagePreviewModal.open()
+  }
 
   return () => {
     const pinnedMessage = props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage
@@ -38,8 +48,17 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
             }}
           />
         )}
-        <ConvoHistory convo={props.convo} />
+        <ConvoHistory convo={props.convo} onMessageUnavailable={openMessagePreview} />
         <ConvoComposer convo={props.convo} />
+
+        {messagePreviewCmid.value && (
+          <MessagePreviewModal
+            opened={messagePreviewModal.opened}
+            onClose={messagePreviewModal.close}
+            convo={props.convo}
+            cmid={messagePreviewCmid.value}
+          />
+        )}
       </div>
     )
   }
