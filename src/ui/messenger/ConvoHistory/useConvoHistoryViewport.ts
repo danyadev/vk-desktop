@@ -22,10 +22,10 @@ export const useConvoHistoryViewport = (
     return [...$historyElement.value?.querySelectorAll<HTMLElement>('[data-cmid]') ?? []]
   }
 
-  const scrollToAnchorIfNeeded = (instant: boolean): boolean => {
+  const scrollToAnchorIfNeeded = (instant: boolean) => {
     const scrollAnchor = scrollAnchors.get(convo.id)
     if (!scrollAnchor) {
-      return false
+      return
     }
 
     const element = scrollAnchor.kind === 'Unread'
@@ -44,12 +44,12 @@ export const useConvoHistoryViewport = (
         })
       })
 
-      return true
+      return
     }
 
     if (convo.historySliceAnchorCmid !== scrollAnchor.cmid) {
       convo.historySliceAnchorCmid = scrollAnchor.cmid
-      return false
+      return
     }
 
     if (scrollAnchor.kind === 'Message' && scrollAnchor.origin) {
@@ -58,7 +58,38 @@ export const useConvoHistoryViewport = (
       scrollAnchors.delete(convo.id)
     }
     openMessagePreview(scrollAnchor.cmid)
-    return true
+  }
+
+  const scrollToInitialPosition = (startCmid: Message.Cmid) => {
+    const historyElement = $historyElement.value
+    if (!historyElement) {
+      return
+    }
+
+    if (startCmid === convo.inReadBy) {
+      const unreadElement = getUnreadElement()
+      if (unreadElement) {
+        // Скроллим к блоку непрочитанных так, чтобы он начинался в верхней четверти вьюпорта
+        historyElement.scrollTop =
+          unreadElement.offsetTop - historyElement.offsetTop - historyElement.offsetHeight / 4
+        return
+      }
+    }
+
+    let messageElement = getMessageElement(startCmid)
+
+    if (!messageElement) {
+      const messageElements = getMessageElements()
+
+      messageElement =
+        messageElements.find((element) => Number(element.dataset.cmid) > startCmid) ??
+        messageElements.at(-1)
+    }
+
+    messageElement?.scrollIntoView({
+      block: 'center',
+      behavior: 'instant'
+    })
   }
 
   const findTopVisibleCmid = (): [topCmid?: Message.Cmid, topRect?: DOMRect] => {
@@ -108,40 +139,14 @@ export const useConvoHistoryViewport = (
   }
 
   const preserveViewportPosition = async (
-    insertedMessages: Message.Confirmed[],
     direction: 'around' | 'up' | 'down',
     startCmid: Message.Cmid
   ) => {
     if (direction === 'around') {
+      // В случае around позиционируемся только после обновления DOM,
+      // так как до этого вместо истории еще может отображаться лоадер
       await nextTick()
-
-      // В случае around элемент нужно доставать только после nextTick,
-      // так как до этого момента он еще не успел замениться с лоадера чата
-      const historyElement = $historyElement.value
-      if (!historyElement) {
-        return
-      }
-
-      if (startCmid === convo.inReadBy) {
-        const unreadElement = getUnreadElement()
-        if (unreadElement) {
-          // Скроллим к блоку непрочитанных так, чтобы он начинался на верхней 1/4 части вьюпорта
-          historyElement.scrollTop =
-            unreadElement.offsetTop - historyElement.offsetTop - historyElement.offsetHeight / 4
-          return
-        }
-      }
-
-      // При загрузке вокруг кмида этого сообщения может не оказаться, тогда мы возьмем следующее
-      const aroundMessage =
-        insertedMessages.find(({ cmid }) => (cmid >= startCmid)) ??
-        insertedMessages.at(-1)
-
-      const messageElement = aroundMessage && getMessageElement(aroundMessage.cmid)
-      messageElement?.scrollIntoView({
-        block: 'center',
-        behavior: 'instant'
-      })
+      scrollToInitialPosition(startCmid)
     } else {
       const [topMessageCmid] = findTopVisibleCmid()
       if (topMessageCmid) {
@@ -186,6 +191,7 @@ export const useConvoHistoryViewport = (
 
   return {
     scrollToAnchorIfNeeded,
+    scrollToInitialPosition,
     findTopVisibleCmid,
     preserveMessagePosition,
     preserveViewportPosition,
