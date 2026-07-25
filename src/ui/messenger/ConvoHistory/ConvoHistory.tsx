@@ -48,6 +48,8 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   const historySlice = computed(() => History.around(
     props.convo.history,
     props.convo.historySliceAnchorCmid,
+    // При явной навигации не предпочитаем соседний слайс на границе гэпа:
+    // ux будет лучше если мы покажем лоадер на весь экран вместо отображения соседних сообщений
     !scrollAnchor.value
   ))
 
@@ -84,6 +86,7 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   } = useConvoHistoryViewport(
     props.convo,
     $historyElement,
+    computed(() => historySlice.value.gapAround),
     props.openMessagePreview
   )
 
