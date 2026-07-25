@@ -72,7 +72,9 @@ export const useConvoHistoryViewport = (
     } else {
       scrollAnchors.delete(convo.id)
     }
-    openMessagePreview(scrollAnchor.cmid)
+    if (scrollAnchor.kind === 'Message') {
+      openMessagePreview(scrollAnchor.cmid)
+    }
   }
 
   const scrollToInitialPosition = (startCmid: Message.Cmid) => {
