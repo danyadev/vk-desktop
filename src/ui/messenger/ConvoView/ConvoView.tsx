@@ -49,7 +49,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
               scrollAnchors.set(props.convo.id, {
                 kind: 'Message',
                 cmid: pinnedMessage.cmid,
-                origin: $convoHistoryHandle.value?.findTopVisibleCmid()
+                origin: $convoHistoryHandle.value?.findTopVisibleCmid()[0]
               })
             }}
           />

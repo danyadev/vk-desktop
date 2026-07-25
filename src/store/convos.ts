@@ -21,6 +21,13 @@ export type ScrollAnchor =
     }
   | { kind: 'Unread', cmid: Message.Cmid }
 
+export type ViewportPosition = {
+  /** Cmid of the topmost visible message in the viewport */
+  cmid: Message.Cmid
+  /** Offset from the viewport beginning, can be negative (i.e. the message was partly invisible) */
+  offset: number
+}
+
 type Convos = {
   convos: Map<Peer.Id, Convo.Convo>
   lists: Lists.Lists
@@ -29,7 +36,7 @@ type Convos = {
   }
   loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, 'loading' | 'error'>
   sendMessageLock: Set<Peer.Id>
-  savedScrollPositions: Map<Peer.Id, number>
+  viewportPositions: Map<Peer.Id, ViewportPosition>
   scrollAnchors: Map<Peer.Id, ScrollAnchor>
   typings: Map<Peer.Id, TypingUser[]>
 }
@@ -43,7 +50,7 @@ export const useConvosStore = defineStore('convos', {
     },
     loadConvoHistoryLock: new Map(),
     sendMessageLock: new Set(),
-    savedScrollPositions: new Map(),
+    viewportPositions: new Map(),
     scrollAnchors: new Map(),
     typings: new Map()
   }),
