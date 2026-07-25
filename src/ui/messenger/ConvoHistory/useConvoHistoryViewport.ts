@@ -1,11 +1,13 @@
 import { nextTick, Ref } from 'vue'
 import * as Convo from 'model/Convo'
+import * as History from 'model/History'
 import * as Message from 'model/Message'
 import { useConvosStore, ViewportPosition } from 'store/convos'
 
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   $historyElement: Ref<HTMLElement | null>,
+  gapAround: Ref<History.Gap | undefined>,
   openMessagePreview: (cmid: Message.Cmid) => void
 ) => {
   const { scrollAnchors } = useConvosStore()
@@ -25,6 +27,15 @@ export const useConvoHistoryViewport = (
   const scrollToAnchorIfNeeded = (instant: boolean) => {
     const scrollAnchor = scrollAnchors.get(convo.id)
     if (!scrollAnchor) {
+      return
+    }
+
+    /**
+     * При наличии scrollAnchor around() не переключается на соседний слайс на границе гэпа,
+     * поэтому gapAround означает, что запрошенная позиция все еще не загружена.
+     * Эта проверка нужна, чтобы предотвратить преждевременный фоллбэк на превью сообщения
+     */
+    if (gapAround.value) {
       return
     }
 
