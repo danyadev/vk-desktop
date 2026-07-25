@@ -24,9 +24,11 @@ export const MessagePreviewModal = defineComponent<Props>((props) => {
   const { api, lang } = useServices()
   const message = shallowRef<Message.Confirmed>()
   const status = shallowRef<'loading' | 'loaded' | 'loadError' | 'unavailable'>('loading')
+  const activeCmid = shallowRef<Message.Cmid>(props.cmid)
   let abortController: AbortController | undefined
 
-  const loadMessage = async () => {
+  const loadMessage = async (cmid: Message.Cmid) => {
+    activeCmid.value = cmid
     abortController?.abort('Message preview request superseded')
 
     const controller = new AbortController()
@@ -38,7 +40,7 @@ export const MessagePreviewModal = defineComponent<Props>((props) => {
     try {
       const { items, profiles, groups } = await api.fetch('messages.getByConversationMessageId', {
         peer_id: props.convo.id,
-        conversation_message_ids: props.cmid,
+        conversation_message_ids: cmid,
         extended: 1,
         fields: PEER_FIELDS
       }, { signal: controller.signal })
@@ -74,7 +76,7 @@ export const MessagePreviewModal = defineComponent<Props>((props) => {
 
   watch([() => props.opened, () => props.cmid], ([opened]) => {
     if (opened) {
-      loadMessage()
+      loadMessage(props.cmid)
     } else {
       abortController?.abort('Message preview closed')
     }
@@ -106,13 +108,17 @@ export const MessagePreviewModal = defineComponent<Props>((props) => {
         {status.value === 'loading' ? (
           <Spinner size="regular" />
         ) : status.value === 'loadError' ? (
-          <LoadError onRetry={loadMessage} />
+          <LoadError onRetry={() => loadMessage(activeCmid.value)} />
         ) : status.value === 'unavailable' ? (
           <div class="MessagePreviewModal__unavailable">
             {lang.use('messagePreviewModal_unavailable')}
           </div>
         ) : message.value ? (
-          <HistoryMessages messages={[message.value]} convo={props.convo} />
+          <HistoryMessages
+            messages={[message.value]}
+            convo={props.convo}
+            openMessagePreview={loadMessage}
+          />
         ) : null}
       </div>
     </Modal>

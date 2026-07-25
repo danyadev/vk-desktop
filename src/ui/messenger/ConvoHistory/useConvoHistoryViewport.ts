@@ -6,7 +6,7 @@ import { useConvosStore } from 'store/convos'
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   $historyElement: Ref<HTMLElement | null>,
-  onMessageUnavailable: (cmid: Message.Cmid) => void
+  openMessagePreview: (cmid: Message.Cmid) => void
 ) => {
   const { scrollAnchors } = useConvosStore()
 
@@ -57,7 +57,7 @@ export const useConvoHistoryViewport = (
     } else {
       scrollAnchors.delete(convo.id)
     }
-    onMessageUnavailable(scrollAnchor.cmid)
+    openMessagePreview(scrollAnchor.cmid)
     return true
   }
 

@@ -27,7 +27,7 @@ import './ConvoHistory.css'
 
 type Props = {
   convo: Convo.Convo
-  onMessageUnavailable: (cmid: Message.Cmid) => void
+  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 export type ConvoHistoryHandle = {
@@ -81,7 +81,7 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   } = useConvoHistoryViewport(
     props.convo,
     $historyElement,
-    props.onMessageUnavailable
+    props.openMessagePreview
   )
 
   expose<ConvoHistoryHandle>({ findTopVisibleCmid })
@@ -242,7 +242,11 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
               />
             ) : null}
 
-            <HistoryMessages messages={messages} convo={props.convo} />
+            <HistoryMessages
+              messages={messages}
+              convo={props.convo}
+              openMessagePreview={props.openMessagePreview}
+            />
 
             {windowEnd && hasEndWindowOffset ? (
               <WindowBoundary
@@ -285,7 +289,7 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
     )
   }
 }, {
-  props: ['convo', 'onMessageUnavailable']
+  props: ['convo', 'openMessagePreview']
 })
 
 type HistoryBoundaryProps = {

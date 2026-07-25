@@ -9,6 +9,7 @@ import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 type HistoryMessagesProps = {
   messages: Message.Message[]
   convo: Convo.Convo
+  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 type HistoryBlock =
@@ -63,7 +64,12 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
       case 'Stack':
         // Не указываем key, чтобы vue сам определял, какие стеки нужно создать, а какие обновить.
         // Нет способа выразить key так, чтобы он не менялся при изменении того же стека(
-        return <MessagesStack messages={block.stack} />
+        return (
+          <MessagesStack
+            messages={block.stack}
+            openMessagePreview={props.openMessagePreview}
+          />
+        )
 
       case 'Date': {
         const blockDate = new Date(block.date)
@@ -98,5 +104,5 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
     }
   })
 }, {
-  props: ['messages', 'convo']
+  props: ['messages', 'convo', 'openMessagePreview']
 })

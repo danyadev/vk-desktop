@@ -14,6 +14,7 @@ import './ConvoMessage.css'
 type Props = {
   message: Message.Normal | Message.Pending
   showName: boolean
+  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 export const ConvoMessage = defineComponent<Props>((props) => {
@@ -48,6 +49,10 @@ export const ConvoMessage = defineComponent<Props>((props) => {
               reply={message.replyMessage}
               onClick={() => {
                 if (message.replyMessage?.cmid) {
+                  if (message.replyMessage.isUnavailable) {
+                    props.openMessagePreview(message.replyMessage.cmid)
+                    return
+                  }
                   scrollAnchors.set(message.peerId, {
                     kind: 'Message',
                     cmid: message.replyMessage.cmid,
@@ -85,5 +90,5 @@ export const ConvoMessage = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['message', 'showName']
+  props: ['message', 'showName', 'openMessagePreview']
 })
