@@ -76,6 +76,7 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
 
   const {
     scrollToAnchorIfNeeded,
+    scrollToInitialPosition,
     findTopVisibleCmid,
     preserveMessagePosition,
     preserveViewportPosition,
@@ -94,20 +95,26 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   }
 
   onBeforeMount(() => {
-    const viewportPosition = viewportPositions.get(props.convo.id)
-    if (viewportPosition) {
-      props.convo.historySliceAnchorCmid = viewportPosition.cmid
+    if (!scrollAnchor.value && !viewportPositions.has(props.convo.id)) {
+      // Set last read message on first convo open
+      props.convo.historySliceAnchorCmid = props.convo.inReadBy
     }
   })
 
   onMounted(() => {
-    if (scrollToAnchorIfNeeded(true)) {
+    if (scrollAnchor.value) {
+      scrollToAnchorIfNeeded(true)
       return
     }
 
     const viewportPosition = viewportPositions.get(props.convo.id)
     if (viewportPosition) {
       restoreViewportPosition(viewportPosition)
+      return
+    }
+
+    if (props.convo.historySliceAnchorCmid) {
+      scrollToInitialPosition(props.convo.historySliceAnchorCmid)
     }
   })
 
@@ -193,8 +200,8 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
        * Так и происходит: после окончания асинхронного loadConvoHistory у нас уже перерендерен
        * компонент и обновлен дом, из-за чего нам неизвестно предыдущее положение вьюпорта
        */
-      onHistoryInserted(insertedMessages) {
-        preserveViewportPosition(insertedMessages, direction, startCmid)
+      onHistoryInserted() {
+        preserveViewportPosition(direction, startCmid)
       }
     })
   }
