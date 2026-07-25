@@ -4,6 +4,10 @@ import * as History from 'model/History'
 import * as Message from 'model/Message'
 import { useConvosStore, ViewportPosition } from 'store/convos'
 
+export type VisibleMessageRange =
+  | [firstCmid: undefined, lastCmid: undefined, firstRect: undefined, lastRect: undefined]
+  | [firstCmid: Message.Cmid, lastCmid: Message.Cmid, firstRect: DOMRect, lastRect: DOMRect]
+
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   $historyElement: Ref<HTMLElement | null>,
@@ -103,26 +107,38 @@ export const useConvoHistoryViewport = (
     })
   }
 
-  const findTopVisibleCmid = (): [topCmid?: Message.Cmid, topRect?: DOMRect] => {
+  const findVisibleMessageRange = (): VisibleMessageRange => {
     const historyElement = $historyElement.value
     if (!historyElement) {
-      return [undefined, undefined]
+      return [undefined, undefined, undefined, undefined]
     }
 
     const viewportRect = historyElement.getBoundingClientRect()
-    let closest
+    let first: { cmid: Message.Cmid, rect: DOMRect } | undefined
+    let last: { cmid: Message.Cmid, rect: DOMRect } | undefined
 
     for (const element of getMessageElements()) {
-      const cmid = Message.resolveCmid(Number(element.dataset.cmid))
       const rect = element.getBoundingClientRect()
-      const isVisible = rect.bottom > viewportRect.top && rect.top < viewportRect.bottom
 
-      if (isVisible && (!closest || rect.top < closest.rect.top)) {
-        closest = { cmid, rect }
+      if (rect.bottom <= viewportRect.top) {
+        continue
       }
+      if (rect.top >= viewportRect.bottom) {
+        break
+      }
+
+      const visibleMessage = {
+        cmid: Message.resolveCmid(Number(element.dataset.cmid)),
+        rect
+      }
+
+      first ??= visibleMessage
+      last = visibleMessage
     }
 
-    return [closest?.cmid, closest?.rect]
+    return first && last
+      ? [first.cmid, last.cmid, first.rect, last.rect]
+      : [undefined, undefined, undefined, undefined]
   }
 
   const preserveMessagePosition = async (cmid: Message.Cmid) => {
@@ -159,7 +175,7 @@ export const useConvoHistoryViewport = (
       await nextTick()
       scrollToInitialPosition(startCmid)
     } else {
-      const [topMessageCmid] = findTopVisibleCmid()
+      const [topMessageCmid] = findVisibleMessageRange()
       if (topMessageCmid) {
         // Так как мы можем находиться в любой позиции в истории в момент добавления сообщений,
         // нужно убедиться, что текущие сообщения во вьюпорте не будут обрезаны в windowSlice,
@@ -203,7 +219,7 @@ export const useConvoHistoryViewport = (
   return {
     scrollToAnchorIfNeeded,
     scrollToInitialPosition,
-    findTopVisibleCmid,
+    findVisibleMessageRange,
     preserveMessagePosition,
     preserveViewportPosition,
     restoreViewportPosition
