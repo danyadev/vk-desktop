@@ -17,7 +17,7 @@ import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
-import { useConvoHistoryViewport } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
+import { useConvoHistoryViewport, VisibleMessageRange } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
@@ -32,7 +32,7 @@ type Props = {
 }
 
 export type ConvoHistoryHandle = {
-  findTopVisibleCmid: () => [Message.Cmid?, DOMRect?]
+  findVisibleMessageRange: () => VisibleMessageRange
 }
 
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
@@ -79,7 +79,7 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   const {
     scrollToAnchorIfNeeded,
     scrollToInitialPosition,
-    findTopVisibleCmid,
+    findVisibleMessageRange,
     preserveMessagePosition,
     preserveViewportPosition,
     restoreViewportPosition
@@ -90,7 +90,7 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
     props.openMessagePreview
   )
 
-  expose<ConvoHistoryHandle>({ findTopVisibleCmid })
+  expose<ConvoHistoryHandle>({ findVisibleMessageRange })
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
     props.convo.historySliceAnchorCmid = anchorCmid
@@ -123,8 +123,8 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
 
   onBeforeUnmount(() => {
     const historyElement = $historyElement.value
-    const [topCmid, topRect] = findTopVisibleCmid()
-    if (historyElement && topCmid && topRect) {
+    const [topCmid,, topRect] = findVisibleMessageRange()
+    if (historyElement && topCmid) {
       const offset = topRect.top - historyElement.getBoundingClientRect().top
       viewportPositions.set(props.convo.id, { cmid: topCmid, offset })
     } else {
@@ -177,7 +177,9 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
       return
     }
 
-    if (props.convo.inReadBy && props.convo.inReadBy > props.convo.historySliceAnchorCmid) {
+    const [, lastVisibleCmid] = findVisibleMessageRange()
+
+    if (props.convo.inReadBy && lastVisibleCmid && props.convo.inReadBy > lastVisibleCmid) {
       scrollAnchors.set(props.convo.id, { kind: 'Unread', cmid: props.convo.inReadBy })
     } else {
       scrollAnchors.set(props.convo.id, {
