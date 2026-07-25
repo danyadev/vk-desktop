@@ -1,7 +1,7 @@
 import { nextTick, Ref } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
-import { useConvosStore } from 'store/convos'
+import { useConvosStore, ViewportPosition } from 'store/convos'
 
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
@@ -61,10 +61,10 @@ export const useConvoHistoryViewport = (
     return true
   }
 
-  const findTopVisibleCmid = () => {
+  const findTopVisibleCmid = (): [topCmid?: Message.Cmid, topRect?: DOMRect] => {
     const historyElement = $historyElement.value
     if (!historyElement) {
-      return
+      return [undefined, undefined]
     }
 
     const viewportRect = historyElement.getBoundingClientRect()
@@ -80,7 +80,7 @@ export const useConvoHistoryViewport = (
       }
     }
 
-    return closest?.cmid
+    return [closest?.cmid, closest?.rect]
   }
 
   const preserveMessagePosition = async (cmid: Message.Cmid) => {
@@ -143,7 +143,7 @@ export const useConvoHistoryViewport = (
         behavior: 'instant'
       })
     } else {
-      const topMessageCmid = findTopVisibleCmid()
+      const [topMessageCmid] = findTopVisibleCmid()
       if (topMessageCmid) {
         // Так как мы можем находиться в любой позиции в истории в момент добавления сообщений,
         // нужно убедиться, что текущие сообщения во вьюпорте не будут обрезаны в windowSlice,
@@ -154,10 +154,41 @@ export const useConvoHistoryViewport = (
     }
   }
 
+  const restoreViewportPosition = ({ cmid, offset }: ViewportPosition) => {
+    const historyElement = $historyElement.value
+    if (!historyElement) {
+      return
+    }
+
+    const exactElement = getMessageElement(cmid)
+    let messageElement = exactElement
+
+    if (!messageElement) {
+      const messageElements = getMessageElements()
+
+      messageElement =
+        messageElements.find((element) => Number(element.dataset.cmid) > cmid) ??
+        messageElements.at(-1)
+    }
+
+    if (!messageElement) {
+      return
+    }
+
+    // If we can't find the message, we pick another one, but we won't crop it
+    const targetOffset = exactElement ? offset : Math.max(0, offset)
+    const currentOffset =
+      messageElement.getBoundingClientRect().top -
+      historyElement.getBoundingClientRect().top
+
+    historyElement.scrollTop += currentOffset - targetOffset
+  }
+
   return {
     scrollToAnchorIfNeeded,
     findTopVisibleCmid,
     preserveMessagePosition,
-    preserveViewportPosition
+    preserveViewportPosition,
+    restoreViewportPosition
   }
 }

@@ -1,6 +1,7 @@
 import {
   computed,
   defineComponent,
+  onBeforeMount,
   onBeforeUnmount,
   onMounted,
   shallowRef,
@@ -31,7 +32,7 @@ type Props = {
 }
 
 export type ConvoHistoryHandle = {
-  findTopVisibleCmid: () => Message.Cmid | undefined
+  findTopVisibleCmid: () => [Message.Cmid?, DOMRect?]
 }
 
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
@@ -41,7 +42,7 @@ const MESSAGES_WINDOW_WING_SIZE = 20
 
 export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   const { lang } = useServices()
-  const { savedScrollPositions, scrollAnchors, typings } = useConvosStore()
+  const { viewportPositions, scrollAnchors, typings } = useConvosStore()
 
   const scrollAnchor = computed(() => scrollAnchors.get(props.convo.id))
   const historySlice = computed(() => History.around(
@@ -77,7 +78,8 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
     scrollToAnchorIfNeeded,
     findTopVisibleCmid,
     preserveMessagePosition,
-    preserveViewportPosition
+    preserveViewportPosition,
+    restoreViewportPosition
   } = useConvoHistoryViewport(
     props.convo,
     $historyElement,
@@ -91,20 +93,32 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
     preserveMessagePosition(anchorCmid)
   }
 
+  onBeforeMount(() => {
+    const viewportPosition = viewportPositions.get(props.convo.id)
+    if (viewportPosition) {
+      props.convo.historySliceAnchorCmid = viewportPosition.cmid
+    }
+  })
+
   onMounted(() => {
     if (scrollToAnchorIfNeeded(true)) {
       return
     }
 
-    const scrollTop = savedScrollPositions.get(props.convo.id)
-    if ($historyElement.value && scrollTop !== undefined) {
-      $historyElement.value.scrollTop = scrollTop
+    const viewportPosition = viewportPositions.get(props.convo.id)
+    if (viewportPosition) {
+      restoreViewportPosition(viewportPosition)
     }
   })
 
   onBeforeUnmount(() => {
-    if ($historyElement.value) {
-      savedScrollPositions.set(props.convo.id, $historyElement.value.scrollTop)
+    const historyElement = $historyElement.value
+    const [topCmid, topRect] = findTopVisibleCmid()
+    if (historyElement && topCmid && topRect) {
+      const offset = topRect.top - historyElement.getBoundingClientRect().top
+      viewportPositions.set(props.convo.id, { cmid: topCmid, offset })
+    } else {
+      viewportPositions.delete(props.convo.id)
     }
   })
 
