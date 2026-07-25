@@ -13,6 +13,7 @@ import './MessagesStack.css'
 
 type Props = {
   messages: NonEmptyArray<Message.Message>
+  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 export const MessagesStack = defineComponent<Props>((props) => {
@@ -37,6 +38,7 @@ export const MessagesStack = defineComponent<Props>((props) => {
               key={message.kind === 'Pending' ? message.randomId : message.cmid}
               message={message}
               isHead={index === 0}
+              openMessagePreview={props.openMessagePreview}
             />
           ))}
         </div>
@@ -44,12 +46,13 @@ export const MessagesStack = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['messages']
+  props: ['messages', 'openMessagePreview']
 })
 
 type StackMessageProps = {
   message: Message.Message
   isHead: boolean
+  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 const StackMessage = defineComponent<StackMessageProps>((props) => {
@@ -86,6 +89,7 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
             <ConvoMessage
               message={message}
               showName={isHead && Peer.isChatPeerId(message.peerId)}
+              openMessagePreview={props.openMessagePreview}
             />
           </div>
         )
@@ -118,5 +122,5 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
     }
   }
 }, {
-  props: ['message', 'isHead']
+  props: ['message', 'isHead', 'openMessagePreview']
 })

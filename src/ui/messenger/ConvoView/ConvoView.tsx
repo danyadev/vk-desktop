@@ -42,6 +42,10 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
           <PinnedMessage
             pinnedMessage={pinnedMessage}
             onClick={() => {
+              if (pinnedMessage.isUnavailable) {
+                openMessagePreview(pinnedMessage.cmid)
+                return
+              }
               scrollAnchors.set(props.convo.id, {
                 kind: 'Message',
                 cmid: pinnedMessage.cmid,
@@ -53,7 +57,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
         <ConvoHistory
           ref={$convoHistoryHandle}
           convo={props.convo}
-          onMessageUnavailable={openMessagePreview}
+          openMessagePreview={openMessagePreview}
         />
         <ConvoComposer convo={props.convo} />
 
