@@ -14,8 +14,13 @@ export type ScrollAnchor =
   | {
       kind: 'Message'
       cmid: Message.Cmid
-      /** Origin is used in rare unexpected cases to revert back to it when there's no message */
-      origin?: Message.Cmid
+      /**
+       * Whether to revert back to the initial history & viewport position if the message
+       * is not available in the history.
+       * Automatically captures the viewport position and puts it in origin
+       */
+      reversible?: boolean
+      origin?: ViewportPosition
       /** Set false to disable highlight, true by default */
       highlight?: boolean
     }

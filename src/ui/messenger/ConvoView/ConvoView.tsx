@@ -10,7 +10,7 @@ import { useModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
-import { ConvoHistory, ConvoHistoryHandle } from 'ui/messenger/ConvoHistory/ConvoHistory'
+import { ConvoHistory } from 'ui/messenger/ConvoHistory/ConvoHistory'
 import { MessagePreviewModal } from 'ui/messenger/ConvoView/MessagePreviewModal'
 import { PinnedMessage } from 'ui/messenger/PinnedMessage/PinnedMessage'
 import { LoadError } from 'ui/ui/LoadError/LoadError'
@@ -23,7 +23,6 @@ type ConvoViewProps = {
 
 const ConvoView = defineComponent<ConvoViewProps>((props) => {
   const { scrollAnchors } = useConvosStore()
-  const $convoHistoryHandle = shallowRef<ConvoHistoryHandle>()
   const messagePreviewModal = useModal()
   const messagePreviewCmid = shallowRef<Message.Cmid>()
 
@@ -49,16 +48,12 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
               scrollAnchors.set(props.convo.id, {
                 kind: 'Message',
                 cmid: pinnedMessage.cmid,
-                origin: $convoHistoryHandle.value?.findVisibleMessageRange()[0]
+                reversible: true
               })
             }}
           />
         )}
-        <ConvoHistory
-          ref={$convoHistoryHandle}
-          convo={props.convo}
-          openMessagePreview={openMessagePreview}
-        />
+        <ConvoHistory convo={props.convo} openMessagePreview={openMessagePreview} />
         <ConvoComposer convo={props.convo} />
 
         {messagePreviewCmid.value && (

@@ -1,17 +1,16 @@
 import { nextTick, Ref } from 'vue'
 import * as Convo from 'model/Convo'
-import * as History from 'model/History'
 import * as Message from 'model/Message'
 import { useConvosStore, ViewportPosition } from 'store/convos'
 
-export type VisibleMessageRange =
+type VisibleMessageRange =
   | [firstCmid: undefined, lastCmid: undefined, firstRect: undefined, lastRect: undefined]
   | [firstCmid: Message.Cmid, lastCmid: Message.Cmid, firstRect: DOMRect, lastRect: DOMRect]
 
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   $historyElement: Ref<HTMLElement | null>,
-  gapAround: Ref<History.Gap | undefined>,
+  loadingAround: Ref<boolean>,
   openMessagePreview: (cmid: Message.Cmid) => void
 ) => {
   const { scrollAnchors } = useConvosStore()
@@ -34,12 +33,21 @@ export const useConvoHistoryViewport = (
       return
     }
 
+    if (scrollAnchor.kind === 'Message' && scrollAnchor.reversible && !scrollAnchor.origin) {
+      const viewportPosition = captureViewportPosition()
+      if (viewportPosition) {
+        scrollAnchor.origin = viewportPosition
+      } else {
+        scrollAnchor.reversible = false
+      }
+    }
+
     /**
      * При наличии scrollAnchor around() не переключается на соседний слайс на границе гэпа,
-     * поэтому gapAround означает, что запрошенная позиция все еще не загружена.
+     * поэтому loadingAround означает, что запрошенная позиция все еще не загружена.
      * Эта проверка нужна, чтобы предотвратить преждевременный фоллбэк на превью сообщения
      */
-    if (gapAround.value) {
+    if (loadingAround.value) {
       return
     }
 
@@ -49,16 +57,20 @@ export const useConvoHistoryViewport = (
     const behavior = instant ? 'instant' : 'smooth'
 
     if (element) {
+      if (scrollAnchor.kind === 'Message' && scrollAnchor.cmid === scrollAnchor.origin?.cmid) {
+        restoreViewportPosition(scrollAnchor.origin)
+        scrollAnchors.delete(convo.id)
+        return
+      }
+
       // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
       nextTick(() => {
         scrollAnchors.delete(convo.id)
-
         element.scrollIntoView({
           block: 'center',
           behavior
         })
       })
-
       return
     }
 
@@ -67,13 +79,22 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    if (scrollAnchor.kind === 'Message' && scrollAnchor.origin) {
-      scrollAnchors.set(convo.id, { kind: 'Message', cmid: scrollAnchor.origin, highlight: false })
-    } else {
-      scrollAnchors.delete(convo.id)
-    }
+    scrollAnchors.delete(convo.id)
+
     if (scrollAnchor.kind === 'Message') {
+      if (scrollAnchor.origin && scrollAnchor.origin.cmid !== scrollAnchor.cmid) {
+        scrollAnchors.set(convo.id, {
+          kind: 'Message',
+          cmid: scrollAnchor.origin.cmid,
+          origin: scrollAnchor.origin,
+          highlight: false
+        })
+      }
       openMessagePreview(scrollAnchor.cmid)
+    }
+
+    if (!scrollAnchors.has(convo.id)) {
+      scrollToInitialPosition(scrollAnchor.cmid)
     }
   }
 
@@ -188,6 +209,21 @@ export const useConvoHistoryViewport = (
     }
   }
 
+  const captureViewportPosition = (): ViewportPosition | undefined => {
+    const historyElement = $historyElement.value
+    if (!historyElement) {
+      return
+    }
+
+    const [topCmid,, topRect] = findVisibleMessageRange()
+    if (!topCmid) {
+      return
+    }
+
+    const offset = topRect.top - historyElement.getBoundingClientRect().top
+    return { cmid: topCmid, offset }
+  }
+
   const restoreViewportPosition = ({ cmid, offset }: ViewportPosition) => {
     const historyElement = $historyElement.value
     if (!historyElement) {
@@ -224,6 +260,7 @@ export const useConvoHistoryViewport = (
     findVisibleMessageRange,
     preserveMessagePosition,
     preserveViewportPosition,
+    captureViewportPosition,
     restoreViewportPosition
   }
 }

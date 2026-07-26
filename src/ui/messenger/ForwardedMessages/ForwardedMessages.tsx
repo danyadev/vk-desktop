@@ -45,7 +45,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
     scrollAnchors.set(message.peerId, {
       kind: 'Message',
       cmid: message.cmid,
-      origin: message.peerId === message.rootPeerId ? message.rootCmid : undefined
+      reversible: message.peerId === message.rootPeerId
     })
   }
 
