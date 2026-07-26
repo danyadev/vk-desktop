@@ -65,12 +65,12 @@ export const useConvoHistoryViewport = (
 
       // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
       nextTick(() => {
-        scrollAnchors.delete(convo.id)
         element.scrollIntoView({
           block: 'center',
           behavior
         })
       })
+      scrollAnchors.delete(convo.id)
       return
     }
 
