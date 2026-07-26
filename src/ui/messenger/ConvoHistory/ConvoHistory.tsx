@@ -179,7 +179,7 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
 
     const [, lastVisibleCmid] = findVisibleMessageRange()
 
-    if (props.convo.inReadBy && lastVisibleCmid && props.convo.inReadBy > lastVisibleCmid) {
+    if (props.convo.inReadBy && lastVisibleCmid && props.convo.inReadBy >= lastVisibleCmid) {
       scrollAnchors.set(props.convo.id, { kind: 'Unread', cmid: props.convo.inReadBy })
     } else {
       scrollAnchors.set(props.convo.id, {
