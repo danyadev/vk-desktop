@@ -269,8 +269,9 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
             ) : null}
 
             <HistoryMessages
-              messages={messages}
               convo={props.convo}
+              messages={messages}
+              hasMessagesAbove={!!gapBefore || hasStartWindowOffset}
               openMessagePreview={props.openMessagePreview}
             />
 

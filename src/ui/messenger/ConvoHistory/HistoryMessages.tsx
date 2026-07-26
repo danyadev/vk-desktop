@@ -7,8 +7,9 @@ import { isPreviousDay, isSameDay } from 'misc/dateTime'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
 
 type HistoryMessagesProps = {
-  messages: Message.Message[]
   convo: Convo.Convo
+  messages: Message.Message[]
+  hasMessagesAbove: boolean
   openMessagePreview: (cmid: Message.Cmid) => void
 }
 
@@ -24,11 +25,13 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
     return props.messages.reduce((blocks, message, index) => {
       const prevMessage = props.messages[index - 1]
 
+      // It's important to not render the Unread block when we're not sure if it's the unread start.
+      // Otherwise, we'll have a risk of scrolling to a wrong unread block via an anchor
       if (
         !message.isOut &&
         props.convo.inReadBy &&
         Message.isUnread(message, props.convo) &&
-        (!prevMessage || !Message.isUnread(prevMessage, props.convo))
+        (prevMessage ? !Message.isUnread(prevMessage, props.convo) : !props.hasMessagesAbove)
       ) {
         blocks.push({ kind: 'Unread', inReadBy: props.convo.inReadBy })
       }
@@ -104,5 +107,5 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
     }
   })
 }, {
-  props: ['messages', 'convo', 'openMessagePreview']
+  props: ['convo', 'messages', 'hasMessagesAbove', 'openMessagePreview']
 })

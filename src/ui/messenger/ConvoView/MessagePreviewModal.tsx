@@ -115,8 +115,9 @@ export const MessagePreviewModal = defineComponent<Props>((props) => {
           </div>
         ) : message.value ? (
           <HistoryMessages
-            messages={[message.value]}
             convo={props.convo}
+            messages={[message.value]}
+            hasMessagesAbove={false}
             openMessagePreview={loadMessage}
           />
         ) : null}
