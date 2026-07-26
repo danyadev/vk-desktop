@@ -1,6 +1,7 @@
 import {
   computed,
   defineComponent,
+  nextTick,
   onBeforeMount,
   onBeforeUnmount,
   onMounted,
@@ -77,7 +78,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     scrollToInitialPosition,
     findVisibleMessageRange,
     preserveMessagePosition,
-    preserveViewportPosition,
     captureViewportPosition,
     restoreViewportPosition
   } = useConvoHistoryViewport(
@@ -202,7 +202,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
        * Так и происходит: после окончания асинхронного loadConvoHistory у нас уже перерендерен
        * компонент и обновлен дом, из-за чего нам неизвестно предыдущее положение вьюпорта
        */
-      onHistoryInserted() {
+      async onHistoryInserted() {
         /**
          * Пока есть scrollAnchor, он сам управляет позиционированием.
          *
@@ -213,8 +213,20 @@ export const ConvoHistory = defineComponent<Props>((props) => {
          * Если scrollAnchor вовсе не было, то никто другой не управлял скроллом,
          * и мы можем спокойно определять изначальную позицию на основе startCmid
          */
-        if (!scrollAnchor.value) {
-          preserveViewportPosition(startCmid, direction === 'around' && !startedWithScrollAnchor)
+        if (scrollAnchor.value) {
+          return
+        }
+
+        const [topMessageCmid] = findVisibleMessageRange()
+        if (topMessageCmid) {
+          preserveMessagePosition(topMessageCmid)
+          return
+        }
+
+        if (!startedWithScrollAnchor) {
+          // Нужно дождаться окончания рендеринга лоадера
+          await nextTick()
+          scrollToInitialPosition(startCmid)
         }
       }
     })
