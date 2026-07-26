@@ -73,7 +73,7 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   })
 
   const $historyElement = shallowRef<HTMLElement | null>(null)
-  const pinnedToBottom = shallowRef(false)
+  const pinnedToBottom = shallowRef(true)
   const showHopNavigation = shallowRef(false)
 
   const {
