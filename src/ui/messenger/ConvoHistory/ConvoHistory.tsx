@@ -249,6 +249,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
             key={effectiveAroundId}
             direction="around"
             peerId={props.convo.id}
+            startId={effectiveAroundId}
             onReach={() => loadHistory('around', effectiveAroundId, gapAround)}
           />
         </div>
@@ -286,6 +287,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
                 key={gapBefore.toId}
                 direction="up"
                 peerId={props.convo.id}
+                startId={gapBefore.toId}
                 onReach={() => loadHistory('up', gapBefore.toId, gapBefore)}
               />
             ) : null}
@@ -307,6 +309,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
                 key={gapAfter.fromId}
                 direction="down"
                 peerId={props.convo.id}
+                startId={gapAfter.fromId}
                 onReach={() => loadHistory('down', gapAfter.fromId, gapAfter)}
               />
             ) : null}
@@ -344,6 +347,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 type HistoryBoundaryProps = {
   direction: 'around' | 'up' | 'down'
   peerId: Peer.Id
+  startId: number
   onReach: () => void
 }
 
@@ -351,9 +355,9 @@ const HistoryBoundary = defineComponent<HistoryBoundaryProps>((props) => {
   const { loadConvoHistoryLock } = useConvosStore()
 
   return () => {
-    const lockStatus = loadConvoHistoryLock.get(`${props.peerId}-${props.direction}`)
+    const lock = loadConvoHistoryLock.get(`${props.peerId}-${props.direction}`)
 
-    if (lockStatus === 'error') {
+    if (lock?.status === 'error' && lock.startCmid === props.startId) {
       return <LoadError onRetry={props.onReach} />
     }
 
@@ -364,7 +368,7 @@ const HistoryBoundary = defineComponent<HistoryBoundaryProps>((props) => {
     )
   }
 }, {
-  props: ['direction', 'peerId', 'onReach']
+  props: ['direction', 'peerId', 'startId', 'onReach']
 })
 
 type WindowBoundaryProps = {

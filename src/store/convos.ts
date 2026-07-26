@@ -4,10 +4,17 @@ import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 
-export type TypingUser = {
-  peerId: Peer.Id
-  type: 'text' | 'voice' | 'photo' | 'video' | 'file' | 'videomessage'
-  cancelTypingTimeoutId: number
+type LoadConvoHistoryLock = {
+  status: 'loading' | 'error'
+  startCmid: Message.Cmid
+  controller: AbortController
+}
+
+export type ViewportPosition = {
+  /** Cmid of the topmost visible message in the viewport */
+  cmid: Message.Cmid
+  /** Offset from the viewport beginning, can be negative (i.e. the message was partly invisible) */
+  offset: number
 }
 
 export type ScrollAnchor =
@@ -26,11 +33,10 @@ export type ScrollAnchor =
     }
   | { kind: 'Unread', cmid: Message.Cmid }
 
-export type ViewportPosition = {
-  /** Cmid of the topmost visible message in the viewport */
-  cmid: Message.Cmid
-  /** Offset from the viewport beginning, can be negative (i.e. the message was partly invisible) */
-  offset: number
+export type TypingUser = {
+  peerId: Peer.Id
+  type: 'text' | 'voice' | 'photo' | 'video' | 'file' | 'videomessage'
+  cancelTypingTimeoutId: number
 }
 
 type Convos = {
@@ -39,7 +45,7 @@ type Convos = {
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
-  loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, 'loading' | 'error'>
+  loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, LoadConvoHistoryLock>
   sendMessageLock: Set<Peer.Id>
   /** Also indicates whether the convo was open at least once in the past */
   viewportPositions: Map<Peer.Id, ViewportPosition | undefined>
