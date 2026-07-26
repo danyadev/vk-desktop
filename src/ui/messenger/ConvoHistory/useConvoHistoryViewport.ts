@@ -188,23 +188,6 @@ export const useConvoHistoryViewport = (
     historyElement.scrollTop += newOffset - oldOffset - messageHeightDiff
   }
 
-  const preserveViewportPosition = async (
-    startCmid: Message.Cmid,
-    mayFindInitialPosition: boolean
-  ) => {
-    const [topMessageCmid] = findVisibleMessageRange()
-    if (topMessageCmid) {
-      preserveMessagePosition(topMessageCmid)
-      return
-    }
-
-    if (mayFindInitialPosition) {
-      // Нужно дождаться окончания рендеринга лоадера
-      await nextTick()
-      scrollToInitialPosition(startCmid)
-    }
-  }
-
   const captureViewportPosition = (): ViewportPosition | undefined => {
     const historyElement = $historyElement.value
     if (!historyElement) {
@@ -255,7 +238,6 @@ export const useConvoHistoryViewport = (
     scrollToInitialPosition,
     findVisibleMessageRange,
     preserveMessagePosition,
-    preserveViewportPosition,
     captureViewportPosition,
     restoreViewportPosition
   }
