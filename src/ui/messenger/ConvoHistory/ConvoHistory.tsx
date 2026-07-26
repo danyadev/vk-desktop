@@ -17,7 +17,7 @@ import { useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
 import { isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
-import { useConvoHistoryViewport, VisibleMessageRange } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
+import { useConvoHistoryViewport } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
@@ -31,16 +31,12 @@ type Props = {
   openMessagePreview: (cmid: Message.Cmid) => void
 }
 
-export type ConvoHistoryHandle = {
-  findVisibleMessageRange: () => VisibleMessageRange
-}
-
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
 // Равен высоте футера чата, так как только при ее видимости браузер будет сохранять ее во вьюпорте
 const PINNED_TO_BOTTOM_THRESHOLD = 32
 const MESSAGES_WINDOW_WING_SIZE = 20
 
-export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
+export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { viewportPositions, scrollAnchors, typings } = useConvosStore()
 
@@ -82,15 +78,14 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
     findVisibleMessageRange,
     preserveMessagePosition,
     preserveViewportPosition,
+    captureViewportPosition,
     restoreViewportPosition
   } = useConvoHistoryViewport(
     props.convo,
     $historyElement,
-    computed(() => historySlice.value.gapAround),
+    computed(() => !!historySlice.value.gapAround),
     props.openMessagePreview
   )
-
-  expose<ConvoHistoryHandle>({ findVisibleMessageRange })
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
     props.convo.historySliceAnchorCmid = anchorCmid
@@ -122,11 +117,9 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
   })
 
   onBeforeUnmount(() => {
-    const historyElement = $historyElement.value
-    const [topCmid,, topRect] = findVisibleMessageRange()
-    if (historyElement && topCmid) {
-      const offset = topRect.top - historyElement.getBoundingClientRect().top
-      viewportPositions.set(props.convo.id, { cmid: topCmid, offset })
+    const viewportPosition = captureViewportPosition()
+    if (viewportPosition) {
+      viewportPositions.set(props.convo.id, viewportPosition)
     } else {
       viewportPositions.delete(props.convo.id)
     }
@@ -149,6 +142,9 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
 
   // Move the anchor before pinnedToBottom becomes false and window adjustment screws everything up
   watch(() => windowSlice.value.hasEndWindowOffset, () => {
+    if (scrollAnchor.value) {
+      return
+    }
     const { hasEndWindowOffset, windowEnd } = windowSlice.value
     if (hasEndWindowOffset && windowEnd && pinnedToBottom.value) {
       props.convo.historySliceAnchorCmid = windowEnd.item.cmid
@@ -206,7 +202,9 @@ export const ConvoHistory = defineComponent<Props>((props, { expose }) => {
        * компонент и обновлен дом, из-за чего нам неизвестно предыдущее положение вьюпорта
        */
       onHistoryInserted() {
-        preserveViewportPosition(direction, startCmid)
+        if (!scrollAnchor.value) {
+          preserveViewportPosition(direction, startCmid)
+        }
       }
     })
   }
