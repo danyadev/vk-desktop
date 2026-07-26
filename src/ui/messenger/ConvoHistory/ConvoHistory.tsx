@@ -35,7 +35,6 @@ type Props = {
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
 // Равен высоте футера чата, так как только при ее видимости браузер будет сохранять ее во вьюпорте
 const PINNED_TO_BOTTOM_THRESHOLD = 32
-const MESSAGES_WINDOW_WING_SIZE = 20
 
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
@@ -54,12 +53,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     const { fromIndex, toIndex, aroundIndex } = historySlice.value
     const from = aroundIndex === -1
       ? 0
-      : Math.max(fromIndex, aroundIndex - MESSAGES_WINDOW_WING_SIZE)
+      : Math.max(fromIndex, aroundIndex - messagesWindowWingSize.value)
     const to = aroundIndex === -1
       ? 0
-      : Math.min(toIndex, aroundIndex + MESSAGES_WINDOW_WING_SIZE + 1)
+      : Math.min(toIndex, aroundIndex + messagesWindowWingSize.value + 1)
     const items = props.convo.history.slice(from, to) as Array<History.Item<Message.Confirmed>>
-
     return {
       items,
       windowStart: items[0],
@@ -74,6 +72,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const showHopNavigation = shallowRef(false)
 
   const {
+    messagesWindowWingSize,
     scrollToAnchorIfNeeded,
     scrollToInitialPosition,
     findVisibleMessageRange,

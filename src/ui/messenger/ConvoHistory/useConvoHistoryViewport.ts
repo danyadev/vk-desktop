@@ -1,4 +1,4 @@
-import { nextTick, Ref } from 'vue'
+import { nextTick, onBeforeUnmount, Ref, shallowRef, watch } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import { useConvosStore, ViewportPosition } from 'store/convos'
@@ -7,6 +7,11 @@ type VisibleMessageRange =
   | [firstCmid: undefined, lastCmid: undefined, firstRect: undefined, lastRect: undefined]
   | [firstCmid: Message.Cmid, lastCmid: Message.Cmid, firstRect: DOMRect, lastRect: DOMRect]
 
+const MIN_MESSAGE_HEIGHT = 35
+const MESSAGE_GAP = 8
+const WINDOW_WING_MIN_MESSAGES = 20
+const WINDOW_WING_BUFFER_MESSAGES = 5
+
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   $historyElement: Ref<HTMLElement | null>,
@@ -14,6 +19,48 @@ export const useConvoHistoryViewport = (
   openMessagePreview: (cmid: Message.Cmid) => void
 ) => {
   const { scrollAnchors } = useConvosStore()
+  const messagesWindowWingSize = shallowRef(WINDOW_WING_MIN_MESSAGES)
+
+  const resizeObserver = new ResizeObserver(([entry]) => {
+    const viewportHeight = entry?.contentRect.height
+    if (!viewportHeight) {
+      return
+    }
+
+    const calculatedSize = Math.ceil(
+      (viewportHeight + MESSAGE_GAP) / (MIN_MESSAGE_HEIGHT + MESSAGE_GAP)
+    ) + WINDOW_WING_BUFFER_MESSAGES
+    const newSize = Math.max(WINDOW_WING_MIN_MESSAGES, calculatedSize)
+    if (newSize === messagesWindowWingSize.value) {
+      return
+    }
+
+    messagesWindowWingSize.value = newSize
+
+    if (scrollAnchors.has(convo.id)) {
+      return
+    }
+
+    const [topMessageCmid] = findVisibleMessageRange()
+    if (topMessageCmid) {
+      convo.historySliceAnchorCmid = topMessageCmid
+      preserveMessagePosition(topMessageCmid)
+    }
+  })
+
+  watch($historyElement, (element, previousElement) => {
+    if (previousElement) {
+      resizeObserver.unobserve(previousElement)
+    }
+
+    if (element) {
+      resizeObserver.observe(element)
+    }
+  }, { flush: 'post' })
+
+  onBeforeUnmount(() => {
+    resizeObserver.disconnect()
+  })
 
   const getUnreadElement = () => {
     return $historyElement.value?.querySelector<HTMLElement>('.ConvoHistory__unreadBlock')
@@ -234,6 +281,7 @@ export const useConvoHistoryViewport = (
   }
 
   return {
+    messagesWindowWingSize,
     scrollToAnchorIfNeeded,
     scrollToInitialPosition,
     findVisibleMessageRange,
