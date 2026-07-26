@@ -27,12 +27,21 @@ export async function loadConvoHistory({
   const { convos, loadConvoHistoryLock } = useConvosStore()
 
   const loadingKey = `${peerId}-${direction}` as const
+  const oldLock = loadConvoHistoryLock.get(loadingKey)
 
-  if (loadConvoHistoryLock.get(loadingKey) === 'loading') {
+  if (oldLock?.status === 'loading' && oldLock.startCmid === startCmid) {
     return
   }
 
-  loadConvoHistoryLock.set(loadingKey, 'loading')
+  const controller = new AbortController()
+  const lock = {
+    status: 'loading' as const,
+    startCmid,
+    controller
+  }
+
+  oldLock?.controller.abort()
+  loadConvoHistoryLock.set(loadingKey, lock)
 
   let count = 20
   let offset = 0
@@ -116,7 +125,11 @@ export async function loadConvoHistory({
       extended: 1,
       fwd_extended: 1,
       fields: PEER_FIELDS
-    })
+    }, { signal: controller.signal })
+
+    if (controller.signal.aborted) {
+      return
+    }
 
     insertPeers({
       profiles,
@@ -163,10 +176,20 @@ export async function loadConvoHistory({
       aroundId: startCmid
     })
     onHistoryInserted()
-
-    loadConvoHistoryLock.delete(loadingKey)
   } catch (err) {
+    if (controller.signal.aborted) {
+      return
+    }
+
     console.warn('[loadConvoHistory] loading error', err)
-    loadConvoHistoryLock.set(loadingKey, 'error')
+    loadConvoHistoryLock.set(loadingKey, {
+      ...lock,
+      status: 'error'
+    })
+  } finally {
+    const curLock = loadConvoHistoryLock.get(loadingKey)
+    if (curLock === lock && curLock.status === 'loading') {
+      loadConvoHistoryLock.delete(loadingKey)
+    }
   }
 }
