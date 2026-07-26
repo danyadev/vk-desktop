@@ -118,11 +118,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   onBeforeUnmount(() => {
     const viewportPosition = captureViewportPosition()
-    if (viewportPosition) {
-      viewportPositions.set(props.convo.id, viewportPosition)
-    } else {
-      viewportPositions.delete(props.convo.id)
-    }
+    viewportPositions.set(props.convo.id, viewportPosition)
   })
 
   watch(

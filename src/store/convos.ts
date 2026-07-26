@@ -41,7 +41,8 @@ type Convos = {
   }
   loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, 'loading' | 'error'>
   sendMessageLock: Set<Peer.Id>
-  viewportPositions: Map<Peer.Id, ViewportPosition>
+  /** Also indicates whether the convo was open at least once in the past */
+  viewportPositions: Map<Peer.Id, ViewportPosition | undefined>
   scrollAnchors: Map<Peer.Id, ScrollAnchor>
   typings: Map<Peer.Id, TypingUser[]>
 }
