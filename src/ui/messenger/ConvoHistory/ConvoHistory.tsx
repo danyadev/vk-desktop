@@ -215,12 +215,17 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
         const [topMessageCmid] = findVisibleMessageRange()
         if (topMessageCmid) {
+          // History loading doesn't change it itself, so we would be around the window boundary...
+          props.convo.historySliceAnchorCmid = topMessageCmid
           preserveMessagePosition(topMessageCmid)
           return
         }
 
         if (!startedWithScrollAnchor) {
-          // Нужно дождаться окончания рендеринга лоадера
+          // In case we already closed the convo it'd be useful to have a precise message to target
+          // on next convo open
+          props.convo.historySliceAnchorCmid = startCmid
+          // No messages in viewport almost always means we are still at around gap loading
           await nextTick()
           scrollToInitialPosition(startCmid)
         }
