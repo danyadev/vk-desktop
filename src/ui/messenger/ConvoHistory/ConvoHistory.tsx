@@ -188,6 +188,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   const loadHistory = (direction: 'around' | 'up' | 'down', startId: number, gap: History.Gap) => {
     const startCmid = Message.resolveCmid(startId)
+    const startedWithScrollAnchor = !!scrollAnchor.value
 
     loadConvoHistory({
       peerId: props.convo.id,
@@ -202,8 +203,18 @@ export const ConvoHistory = defineComponent<Props>((props) => {
        * компонент и обновлен дом, из-за чего нам неизвестно предыдущее положение вьюпорта
        */
       onHistoryInserted() {
+        /**
+         * Пока есть scrollAnchor, он сам управляет позиционированием.
+         *
+         * Если scrollAnchor был только на момент начала загрузки, то это означает что он
+         * уже произвел позиционирование, и пользователь мог далее изменить позицию скролла.
+         * В данном случае мы просто сохраним текущую позицию вьюпорта.
+         *
+         * Если scrollAnchor вовсе не было, то никто другой не управлял скроллом,
+         * и мы можем спокойно определять изначальную позицию на основе startCmid
+         */
         if (!scrollAnchor.value) {
-          preserveViewportPosition(direction, startCmid)
+          preserveViewportPosition(startCmid, direction === 'around' && !startedWithScrollAnchor)
         }
       }
     })
