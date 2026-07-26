@@ -189,23 +189,19 @@ export const useConvoHistoryViewport = (
   }
 
   const preserveViewportPosition = async (
-    direction: 'around' | 'up' | 'down',
-    startCmid: Message.Cmid
+    startCmid: Message.Cmid,
+    mayFindInitialPosition: boolean
   ) => {
-    if (direction === 'around') {
-      // В случае around позиционируемся только после обновления DOM,
-      // так как до этого вместо истории еще может отображаться лоадер
+    const [topMessageCmid] = findVisibleMessageRange()
+    if (topMessageCmid) {
+      preserveMessagePosition(topMessageCmid)
+      return
+    }
+
+    if (mayFindInitialPosition) {
+      // Нужно дождаться окончания рендеринга лоадера
       await nextTick()
       scrollToInitialPosition(startCmid)
-    } else {
-      const [topMessageCmid] = findVisibleMessageRange()
-      if (topMessageCmid) {
-        // Так как мы можем находиться в любой позиции в истории в момент добавления сообщений,
-        // нужно убедиться, что текущие сообщения во вьюпорте не будут обрезаны в windowSlice,
-        // поэтому перемещаем anchorCmid на видимую позицию
-        convo.historySliceAnchorCmid = topMessageCmid
-        preserveMessagePosition(topMessageCmid)
-      }
     }
   }
 
