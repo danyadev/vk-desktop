@@ -1,7 +1,7 @@
 import { nextTick, onBeforeUnmount, Ref, shallowRef, watch } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
-import { useConvosStore, ViewportPosition } from 'store/convos'
+import { ConvoSession, ViewportPosition } from 'store/convos'
 
 type VisibleMessageRange =
   | [firstCmid: undefined, lastCmid: undefined, firstRect: undefined, lastRect: undefined]
@@ -14,11 +14,11 @@ const WINDOW_WING_BUFFER_MESSAGES = 5
 
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
+  convoSession: ConvoSession,
   $historyElement: Ref<HTMLElement | null>,
-  loadingAround: Ref<boolean>,
+  hasAroundGap: Ref<boolean>,
   openMessagePreview: (cmid: Message.Cmid) => void
 ) => {
-  const { scrollAnchors } = useConvosStore()
   const messagesWindowWingSize = shallowRef(WINDOW_WING_MIN_MESSAGES)
 
   const resizeObserver = new ResizeObserver(([entry]) => {
@@ -37,13 +37,13 @@ export const useConvoHistoryViewport = (
 
     messagesWindowWingSize.value = newSize
 
-    if (scrollAnchors.has(convo.id)) {
+    if (convoSession.navigationRequest) {
       return
     }
 
     const [topMessageCmid] = findVisibleMessageRange()
     if (topMessageCmid) {
-      convo.historySliceAnchorCmid = topMessageCmid
+      convoSession.anchorCmid = topMessageCmid
       preserveMessagePosition(topMessageCmid)
     }
   })
@@ -74,39 +74,54 @@ export const useConvoHistoryViewport = (
     return [...$historyElement.value?.querySelectorAll<HTMLElement>('[data-cmid]') ?? []]
   }
 
-  const scrollToAnchorIfNeeded = (instant: boolean) => {
-    const scrollAnchor = scrollAnchors.get(convo.id)
-    if (!scrollAnchor) {
+  const getNearbyMessageElement = (cmid: Message.Cmid) => {
+    const exact = getMessageElement(cmid)
+    if (exact) {
+      return exact
+    }
+
+    const messageElements = getMessageElements()
+    const next = messageElements.find((element) => getCmid(element) > cmid)
+    return next ?? messageElements.at(-1)
+  }
+
+  const getCmid = (messageElement: HTMLElement) => {
+    return Message.resolveCmid(Number(messageElement.dataset.cmid))
+  }
+
+  const handleNavigationRequest = (instant: boolean) => {
+    const request = convoSession.navigationRequest
+    if (!request) {
       return
     }
 
-    if (scrollAnchor.kind === 'Message' && scrollAnchor.reversible && !scrollAnchor.origin) {
+    if (request.kind === 'Message' && request.reversible && !request.origin) {
       const viewportPosition = captureViewportPosition()
       if (viewportPosition) {
-        scrollAnchor.origin = viewportPosition
+        request.origin = viewportPosition
       } else {
-        scrollAnchor.reversible = false
+        request.reversible = false
       }
     }
 
     /**
-     * При наличии scrollAnchor around() не переключается на соседний слайс на границе гэпа,
-     * поэтому loadingAround означает, что запрошенная позиция все еще не загружена.
+     * При навигации History.around() не переключается на соседний слайс на границе гэпа,
+     * поэтому hasAroundGap означает, что запрошенная позиция все еще не загружена.
      * Эта проверка нужна, чтобы предотвратить преждевременный фоллбэк на превью сообщения
      */
-    if (loadingAround.value) {
+    if (hasAroundGap.value) {
       return
     }
 
-    const element = scrollAnchor.kind === 'Unread'
-      ? getUnreadElement() ?? getMessageElement(scrollAnchor.cmid)
-      : getMessageElement(scrollAnchor.cmid)
+    const element = request.kind === 'Unread'
+      ? getUnreadElement() ?? getMessageElement(request.cmid)
+      : getMessageElement(request.cmid)
     const behavior = instant ? 'instant' : 'smooth'
 
     if (element) {
-      if (scrollAnchor.kind === 'Message' && scrollAnchor.cmid === scrollAnchor.origin?.cmid) {
-        restoreViewportPosition(scrollAnchor.origin)
-        scrollAnchors.delete(convo.id)
+      if (request.kind === 'Message' && request.cmid === request.origin?.cmid) {
+        restoreViewportPosition(request.origin)
+        convoSession.navigationRequest = undefined
         return
       }
 
@@ -117,31 +132,31 @@ export const useConvoHistoryViewport = (
           behavior
         })
       })
-      scrollAnchors.delete(convo.id)
+      convoSession.navigationRequest = undefined
       return
     }
 
-    if (convo.historySliceAnchorCmid !== scrollAnchor.cmid) {
-      convo.historySliceAnchorCmid = scrollAnchor.cmid
+    if (convoSession.anchorCmid !== request.cmid) {
+      convoSession.anchorCmid = request.cmid
       return
     }
 
-    scrollAnchors.delete(convo.id)
+    convoSession.navigationRequest = undefined
 
-    if (scrollAnchor.kind === 'Message') {
-      if (scrollAnchor.origin && scrollAnchor.origin.cmid !== scrollAnchor.cmid) {
-        scrollAnchors.set(convo.id, {
+    if (request.kind === 'Message') {
+      if (request.origin && request.origin.cmid !== request.cmid) {
+        convoSession.navigationRequest = {
           kind: 'Message',
-          cmid: scrollAnchor.origin.cmid,
-          origin: scrollAnchor.origin,
+          cmid: request.origin.cmid,
+          origin: request.origin,
           highlight: false
-        })
+        }
       }
-      openMessagePreview(scrollAnchor.cmid)
+      openMessagePreview(request.cmid)
     }
 
-    if (!scrollAnchors.has(convo.id)) {
-      scrollToInitialPosition(scrollAnchor.cmid)
+    if (!convoSession.navigationRequest) {
+      scrollToInitialPosition(request.cmid)
     }
   }
 
@@ -161,16 +176,7 @@ export const useConvoHistoryViewport = (
       }
     }
 
-    let messageElement = getMessageElement(startCmid)
-
-    if (!messageElement) {
-      const messageElements = getMessageElements()
-
-      messageElement =
-        messageElements.find((element) => Number(element.dataset.cmid) > startCmid) ??
-        messageElements.at(-1)
-    }
-
+    const messageElement = getNearbyMessageElement(startCmid)
     messageElement?.scrollIntoView({
       block: 'center',
       behavior: 'instant'
@@ -197,11 +203,7 @@ export const useConvoHistoryViewport = (
         break
       }
 
-      const visibleMessage = {
-        cmid: Message.resolveCmid(Number(element.dataset.cmid)),
-        rect
-      }
-
+      const visibleMessage = { cmid: getCmid(element), rect }
       first ??= visibleMessage
       last = visibleMessage
     }
@@ -256,23 +258,15 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    const exactElement = getMessageElement(cmid)
-    let messageElement = exactElement
-
-    if (!messageElement) {
-      const messageElements = getMessageElements()
-
-      messageElement =
-        messageElements.find((element) => Number(element.dataset.cmid) > cmid) ??
-        messageElements.at(-1)
-    }
-
+    const messageElement = getNearbyMessageElement(cmid)
     if (!messageElement) {
       return
     }
 
-    // If we can't find the message, we pick another one, but we won't crop it
-    const targetOffset = exactElement ? offset : Math.max(0, offset)
+    // If we couldn't find the message, we picked another one, but we won't crop it
+    const targetOffset = getCmid(messageElement) === cmid
+      ? offset
+      : Math.max(0, offset)
     const currentOffset =
       messageElement.getBoundingClientRect().top -
       historyElement.getBoundingClientRect().top
@@ -282,7 +276,7 @@ export const useConvoHistoryViewport = (
 
   return {
     messagesWindowWingSize,
-    scrollToAnchorIfNeeded,
+    handleNavigationRequest,
     scrollToInitialPosition,
     findVisibleMessageRange,
     preserveMessagePosition,

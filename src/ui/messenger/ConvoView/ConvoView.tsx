@@ -22,7 +22,7 @@ type ConvoViewProps = {
 }
 
 const ConvoView = defineComponent<ConvoViewProps>((props) => {
-  const { scrollAnchors } = useConvosStore()
+  const convosStore = useConvosStore()
   const messagePreviewModal = useModal()
   const messagePreviewCmid = shallowRef<Message.Cmid>()
 
@@ -45,7 +45,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
                 openMessagePreview(pinnedMessage.cmid)
                 return
               }
-              scrollAnchors.set(props.convo.id, {
+              convosStore.requestNavigation(props.convo.id, {
                 kind: 'Message',
                 cmid: pinnedMessage.cmid,
                 reversible: true

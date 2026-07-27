@@ -1,14 +1,9 @@
+import { watch } from 'vue'
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-
-type LoadConvoHistoryLock = {
-  status: 'loading' | 'error'
-  startCmid: Message.Cmid
-  controller: AbortController
-}
 
 export type ViewportPosition = {
   /** Cmid of the topmost visible message in the viewport */
@@ -17,7 +12,7 @@ export type ViewportPosition = {
   offset: number
 }
 
-export type ScrollAnchor =
+export type NavigationRequest =
   | {
       kind: 'Message'
       cmid: Message.Cmid
@@ -33,6 +28,24 @@ export type ScrollAnchor =
     }
   | { kind: 'Unread', cmid: Message.Cmid }
 
+export type LoadConvoHistoryLock = {
+  status: 'loading' | 'error'
+  startCmid: Message.Cmid
+  controller: AbortController
+}
+
+export type ConvoSession = {
+  anchorCmid: Message.Cmid | 0
+  viewportPosition?: ViewportPosition
+  navigationRequest?: NavigationRequest
+  loadLocks: Map<'around' | 'up' | 'down', LoadConvoHistoryLock>
+  /**
+   * A handler from the last convo. If loading completes after the convo has been reopened,
+   * it can still access the latest historyElement and correct the viewport position
+   */
+  onHistoryLoadComplete?: (startCmid: Message.Cmid) => void
+}
+
 export type TypingUser = {
   peerId: Peer.Id
   type: 'text' | 'voice' | 'photo' | 'video' | 'file' | 'videomessage'
@@ -45,11 +58,8 @@ type Convos = {
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
-  loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, LoadConvoHistoryLock>
+  convoSessions: Map<Peer.Id, ConvoSession>
   sendMessageLock: Set<Peer.Id>
-  /** Also indicates whether the convo was open at least once in the past */
-  viewportPositions: Map<Peer.Id, ViewportPosition | undefined>
-  scrollAnchors: Map<Peer.Id, ScrollAnchor>
   typings: Map<Peer.Id, TypingUser[]>
 }
 
@@ -60,14 +70,27 @@ export const useConvosStore = defineStore('convos', {
     connection: {
       status: 'init'
     },
-    loadConvoHistoryLock: new Map(),
+    convoSessions: new Map(),
     sendMessageLock: new Set(),
-    viewportPositions: new Map(),
-    scrollAnchors: new Map(),
     typings: new Map()
   }),
 
   actions: {
+    requestNavigation(peerId: Peer.Id, request: NavigationRequest) {
+      const session = this.convoSessions.get(peerId)
+      if (session) {
+        session.navigationRequest = request
+        return
+      }
+
+      const stop = watch(() => this.convoSessions.get(peerId), (session) => {
+        if (session) {
+          stop()
+          session.navigationRequest = request
+        }
+      }, { flush: 'sync' })
+    },
+
     stopTyping(convoId: Peer.Id, typingPeerId: Peer.Id) {
       const typingPeers = this.typings.get(convoId)
       if (!typingPeers) {

@@ -37,7 +37,6 @@ export function fromApiConvo(
   const baseConvo: Convo.BaseConvo = {
     history,
     pendingMessages: [],
-    historySliceAnchorCmid: inReadBy,
     unreadCount: apiConvo.unread_count ?? 0,
     majorSortId: apiConvo.sort_id?.major_id ?? 0,
     minorSortId: apiConvo.sort_id?.minor_id ?? 0,

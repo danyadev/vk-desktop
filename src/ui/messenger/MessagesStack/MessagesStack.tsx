@@ -56,14 +56,14 @@ type StackMessageProps = {
 }
 
 const StackMessage = defineComponent<StackMessageProps>((props) => {
-  const { scrollAnchors } = useConvosStore()
+  const { convoSessions } = useConvosStore()
   const highlightTimeoutId = shallowRef<number>()
 
-  watch(() => scrollAnchors.get(props.message.peerId), (anchor) => {
+  watch(() => convoSessions.get(props.message.peerId)?.navigationRequest, (request) => {
     if (
-      anchor?.kind === 'Message' &&
-      anchor.cmid === props.message.cmid &&
-      anchor.highlight !== false
+      request?.kind === 'Message' &&
+      request.cmid === props.message.cmid &&
+      request.highlight !== false
     ) {
       window.clearTimeout(highlightTimeoutId.value)
       highlightTimeoutId.value = window.setTimeout(() => {
