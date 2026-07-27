@@ -1,6 +1,6 @@
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
-import { getMapValueWithDefaults } from 'misc/utils'
+import { getMapValueOrCompute } from 'misc/utils'
 
 export type ConvoDraft = {
   text: string
@@ -32,7 +32,7 @@ const emptyDraft = (): ConvoDraft => ({
  * будут происходить через его мутацию. Это позволяет избегать создание рефов в компонентах
  */
 export function safeGet(drafts: Map<Peer.Id, ConvoDraft>, peerId: Peer.Id): ConvoDraft {
-  return getMapValueWithDefaults(drafts, peerId, emptyDraft())
+  return getMapValueOrCompute(drafts, peerId, emptyDraft)
 }
 
 export function isEmpty(draft: ConvoDraft) {

@@ -32,7 +32,6 @@ export function insertConvos(
         }
 
         convo.pendingMessages = localConvo.pendingMessages
-        convo.historySliceAnchorCmid = localConvo.historySliceAnchorCmid
 
         // Само присваивание нового объекта является триггером для перерисовки всех компонентов,
         // где был запрошен указанный пир, поэтому для дальнейшей оптимизации можно не создавать

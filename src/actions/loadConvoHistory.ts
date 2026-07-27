@@ -13,22 +13,23 @@ type Props = {
   startCmid: Message.Cmid
   gap: History.Gap
   direction: 'around' | 'up' | 'down'
-  onHistoryInserted: () => void
 }
 
 export async function loadConvoHistory({
   peerId,
   startCmid,
   gap,
-  direction,
-  onHistoryInserted
+  direction
 }: Props) {
   const { api } = useServices()
-  const { convos, loadConvoHistoryLock } = useConvosStore()
+  const { convos, convoSessions } = useConvosStore()
 
-  const loadingKey = `${peerId}-${direction}` as const
-  const oldLock = loadConvoHistoryLock.get(loadingKey)
+  const convoSession = convoSessions.get(peerId)
+  if (!convoSession) {
+    return
+  }
 
+  const oldLock = convoSession.loadLocks.get(direction)
   if (oldLock?.status === 'loading' && oldLock.startCmid === startCmid) {
     return
   }
@@ -41,7 +42,7 @@ export async function loadConvoHistory({
   }
 
   oldLock?.controller.abort()
-  loadConvoHistoryLock.set(loadingKey, lock)
+  convoSession.loadLocks.set(direction, lock)
 
   let count = 20
   let offset = 0
@@ -175,21 +176,18 @@ export async function loadConvoHistory({
       down: hasMoreDown,
       aroundId: startCmid
     })
-    onHistoryInserted()
+    convoSession.onHistoryLoadComplete?.(startCmid)
   } catch (err) {
     if (controller.signal.aborted) {
       return
     }
 
     console.warn('[loadConvoHistory] loading error', err)
-    loadConvoHistoryLock.set(loadingKey, {
-      ...lock,
-      status: 'error'
-    })
+    convoSession.loadLocks.get(direction)!.status = 'error'
   } finally {
-    const curLock = loadConvoHistoryLock.get(loadingKey)
+    const curLock = convoSession.loadLocks.get(direction)
     if (curLock === lock && curLock.status === 'loading') {
-      loadConvoHistoryLock.delete(loadingKey)
+      convoSession.loadLocks.delete(direction)
     }
   }
 }

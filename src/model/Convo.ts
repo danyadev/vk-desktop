@@ -8,13 +8,6 @@ export type Convo = UserConvo | GroupConvo | ChatConvo
 export interface BaseConvo {
   history: History.History<Message.Confirmed>
   pendingMessages: Message.Pending[]
-  /**
-   * Cmid сообщения, указывающий на текущий слайс истории, т.е. в текущем слайсе будет этот cmid
-   * либо он ближе всего к указанному cmid (если сообщения с таким cmid нет)
-   *
-   * Изначально равен inReadBy
-   */
-  historySliceAnchorCmid: Message.Cmid | 0
   unreadCount: number
   /**
    * Id для сортировки с высоким приоритетом.
@@ -127,7 +120,6 @@ function mock(id: Peer.Id): Convo {
   const base: BaseConvo = {
     history: [],
     pendingMessages: [],
-    historySliceAnchorCmid: 0,
     unreadCount: 0,
     majorSortId: 0,
     minorSortId: 0,

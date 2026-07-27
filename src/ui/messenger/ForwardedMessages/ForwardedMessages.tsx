@@ -21,7 +21,7 @@ type Props = {
 export const ForwardedMessages = defineComponent<Props>((props) => {
   const router = useRouter()
   const { lang } = useServices()
-  const { scrollAnchors } = useConvosStore()
+  const convosStore = useConvosStore()
   const { peers } = usePeersStore()
   const formatDate = useFormatDate({ relativeTime: false })
 
@@ -42,7 +42,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
       })
     }
 
-    scrollAnchors.set(message.peerId, {
+    convosStore.requestNavigation(message.peerId, {
       kind: 'Message',
       cmid: message.cmid,
       reversible: message.peerId === message.rootPeerId

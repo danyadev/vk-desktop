@@ -19,8 +19,25 @@ type Props = {
 
 export const ConvoMessage = defineComponent<Props>((props) => {
   const { lang } = useServices()
-  const { scrollAnchors } = useConvosStore()
+  const convosStore = useConvosStore()
   const { peers } = usePeersStore()
+
+  const navigateToReplyMessage = (reply: Message.Foreign) => {
+    if (!reply.cmid) {
+      return
+    }
+
+    if (reply.isUnavailable) {
+      props.openMessagePreview(reply.cmid)
+      return
+    }
+
+    convosStore.requestNavigation(props.message.peerId, {
+      kind: 'Message',
+      cmid: reply.cmid,
+      reversible: true
+    })
+  }
 
   return () => {
     const { message, showName } = props
@@ -47,19 +64,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             <ReplyMessage
               class="ConvoMessage__reply"
               reply={message.replyMessage}
-              onClick={() => {
-                if (message.replyMessage?.cmid) {
-                  if (message.replyMessage.isUnavailable) {
-                    props.openMessagePreview(message.replyMessage.cmid)
-                    return
-                  }
-                  scrollAnchors.set(message.peerId, {
-                    kind: 'Message',
-                    cmid: message.replyMessage.cmid,
-                    reversible: true
-                  })
-                }
-              }}
+              onClick={() => navigateToReplyMessage(message.replyMessage!)}
             />
           )}
 
