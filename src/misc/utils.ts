@@ -96,10 +96,10 @@ export function throttle<Args extends unknown[]>(fn: ((...args: Args) => void), 
   }
 }
 
-const getSegmenter = createSingletonHook(() => new Intl.Segmenter())
+const segmenter = new Intl.Segmenter()
 
 export function getFirstLetter(string: string): string {
-  return getSegmenter().segment(string).containing(0)?.segment ?? ''
+  return segmenter.segment(string).containing(0)?.segment ?? ''
 }
 
 export function toUrlParams(object: Record<string, string | number | null | undefined>) {

@@ -45,7 +45,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
     convosStore.requestNavigation(message.peerId, {
       kind: 'Message',
       cmid: message.cmid,
-      reversible: message.peerId === message.rootPeerId
+      returnBack: message.peerId === message.rootPeerId
     })
   }
 

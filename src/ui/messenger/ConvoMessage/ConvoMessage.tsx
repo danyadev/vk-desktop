@@ -35,7 +35,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
     convosStore.requestNavigation(props.message.peerId, {
       kind: 'Message',
       cmid: reply.cmid,
-      reversible: true
+      returnBack: true
     })
   }
 

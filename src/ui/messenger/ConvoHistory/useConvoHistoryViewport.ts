@@ -2,6 +2,7 @@ import { nextTick, onBeforeUnmount, Ref, shallowRef, watch } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import { ConvoSession, ViewportPosition } from 'store/convos'
+import { isObject } from 'misc/utils'
 
 type VisibleMessageRange =
   | [firstCmid: undefined, lastCmid: undefined, firstRect: undefined, lastRect: undefined]
@@ -89,18 +90,19 @@ export const useConvoHistoryViewport = (
     return Message.resolveCmid(Number(messageElement.dataset.cmid))
   }
 
-  const handleNavigationRequest = (instant: boolean) => {
+  const advanceNavigationRequest = (instantScroll: boolean) => {
     const request = convoSession.navigationRequest
     if (!request) {
       return
     }
 
-    if (request.kind === 'Message' && request.reversible && !request.origin) {
+    const returnBack = request.kind === 'Message' && request.returnBack
+    if (returnBack === true) {
       const viewportPosition = captureViewportPosition()
       if (viewportPosition) {
-        request.origin = viewportPosition
+        request.returnBack = viewportPosition
       } else {
-        request.reversible = false
+        request.returnBack = false
       }
     }
 
@@ -116,22 +118,23 @@ export const useConvoHistoryViewport = (
     const element = request.kind === 'Unread'
       ? getUnreadElement() ?? getMessageElement(request.cmid)
       : getMessageElement(request.cmid)
-    const behavior = instant ? 'instant' : 'smooth'
 
     if (element) {
-      if (request.kind === 'Message' && request.cmid === request.origin?.cmid) {
-        restoreViewportPosition(request.origin)
-        convoSession.navigationRequest = undefined
-        return
-      }
-
-      // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
-      nextTick(() => {
-        element.scrollIntoView({
-          block: 'center',
-          behavior
+      if (
+        request.kind === 'Message' &&
+        isObject(request.returnBack) &&
+        request.cmid === request.returnBack.cmid
+      ) {
+        restoreViewportPosition(request.returnBack)
+      } else {
+        // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
+        nextTick(() => {
+          element.scrollIntoView({
+            block: 'center',
+            behavior: instantScroll ? 'instant' : 'smooth'
+          })
         })
-      })
+      }
       convoSession.navigationRequest = undefined
       return
     }
@@ -144,11 +147,11 @@ export const useConvoHistoryViewport = (
     convoSession.navigationRequest = undefined
 
     if (request.kind === 'Message') {
-      if (request.origin && request.origin.cmid !== request.cmid) {
+      if (isObject(request.returnBack) && request.returnBack.cmid !== request.cmid) {
         convoSession.navigationRequest = {
           kind: 'Message',
-          cmid: request.origin.cmid,
-          origin: request.origin,
+          cmid: request.returnBack.cmid,
+          returnBack: request.returnBack,
           highlight: false
         }
       }
@@ -276,7 +279,7 @@ export const useConvoHistoryViewport = (
 
   return {
     messagesWindowWingSize,
-    handleNavigationRequest,
+    advanceNavigationRequest,
     scrollToInitialPosition,
     findVisibleMessageRange,
     preserveMessagePosition,

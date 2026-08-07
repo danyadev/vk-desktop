@@ -75,7 +75,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   const {
     messagesWindowWingSize,
-    handleNavigationRequest,
+    advanceNavigationRequest,
     scrollToInitialPosition,
     findVisibleMessageRange,
     preserveMessagePosition,
@@ -98,7 +98,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     convoSession.onHistoryLoadComplete = onHistoryLoadComplete
 
     if (convoSession.navigationRequest) {
-      handleNavigationRequest(true)
+      advanceNavigationRequest(true)
       return
     }
 
@@ -119,14 +119,10 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   watch(
     [() => convoSession.navigationRequest, historySlice],
     ([request], [prevRequest]) => {
-      // Выставляем instant если это не первый запрос на скролл к якорю,
+      // Выставляем instantScroll если это не шаг навигации,
       // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
       // и больше нет изначальной позиции, откуда можно применить анимацию
-      handleNavigationRequest(
-        !!request &&
-        request.kind === prevRequest?.kind &&
-        request.cmid === prevRequest?.cmid
-      )
+      advanceNavigationRequest(request === prevRequest)
     },
     { flush: 'post' }
   )

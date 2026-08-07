@@ -48,7 +48,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
               convosStore.requestNavigation(props.convo.id, {
                 kind: 'Message',
                 cmid: pinnedMessage.cmid,
-                reversible: true
+                returnBack: true
               })
             }}
           />
