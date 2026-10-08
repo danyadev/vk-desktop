@@ -69,6 +69,10 @@ export const ru = {
   auth_unknown_error: 'Неизвестная ошибка',
   auth_qr_code_declined: 'Запрос на авторизацию отклонен',
   auth_qr_code_expired: 'Время действия QR-кода истекло',
+  auth_qr_code_verification_title: 'Введите код с устройства',
+  auth_qr_code_verification_description: 'Код отображается на устройстве, с которого вы открыли QR-код',
+  auth_qr_code_invalid_code: 'Неверный код. Попробуйте ещё раз',
+  auth_qr_code_validation_error: 'Не удалось проверить код',
 
   me_convo_list_author: '{author}:',
   me_convo_list_author_you: 'Вы',

@@ -19,6 +19,8 @@ import {
   AuthProcessAuthCodeResponse,
   AuthValidateAccountParams,
   AuthValidateAccountResponse,
+  AuthValidateAuthCodeParams,
+  AuthValidateAuthCodeResponse,
   AuthValidatePhoneParams,
   AuthValidatePhoneResponse
 } from 'services/contracts/api/methods/Auth'
@@ -98,6 +100,10 @@ export type Methods = {
   'auth.validateAccount': {
     params: AuthValidateAccountParams
     response: AuthValidateAccountResponse
+  }
+  'auth.validateAuthCode': {
+    params: AuthValidateAuthCodeParams
+    response: AuthValidateAuthCodeResponse
   }
   'auth.processAuthCode': {
     params: AuthProcessAuthCodeParams

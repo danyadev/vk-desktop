@@ -112,6 +112,8 @@ export const AuthConfirmationPage = defineComponent<AuthConfirmationPageProps>((
           placeholder={lang.use('auth_enter_code')}
           disabled={props.loading}
           onInput={onInput}
+          inputmode="numeric"
+          autocomplete="one-time-code"
           autofocus
         />
 
