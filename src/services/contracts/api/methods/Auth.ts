@@ -76,6 +76,19 @@ export type AuthCheckAuthCodeResponse =
   | { status: 3 }
   /** Expired */
   | { status: 4 }
+  /** Verification requested */
+  | { status: 5 }
+
+// auth.validateAuthCode
+export type AuthValidateAuthCodeParams = {
+  auth_hash: string
+  validation_code: string
+}
+
+export type AuthValidateAuthCodeResponse = {
+  /** 0 = accepted, 1 = invalid code, 2 = expired session */
+  status: 0 | 1 | 2
+}
 
 // auth.validateAccount
 export type AuthValidateAccountParams = {

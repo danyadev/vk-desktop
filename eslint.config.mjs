@@ -68,7 +68,7 @@ export default defineConfig([
         // Отключает проверку ключей в объектах
         properties: 'never'
       }],
-      'curly': ['error', 'all'],
+      'curly': ['error', 'multi-line'],
       'eqeqeq': ['error', 'always'],
       'func-style': ['error', 'declaration', {
         // Разрешает стрелочные функции

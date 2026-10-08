@@ -1,4 +1,5 @@
 import { Auth } from 'services/Auth'
+import { AuthValidateAuthCodeResponse } from 'services/contracts/api/methods/Auth'
 import * as IApi from 'services/contracts/IApi'
 import * as ILang from 'services/contracts/ILang'
 import * as IQrCodeAuth from 'services/contracts/IQrCodeAuth'
@@ -7,6 +8,10 @@ const ABORT_REASON_STOP = 'QrCodeAuth stopped'
 const ABORT_REASON_HUNG = 'QrCodeAuth hung'
 
 export class QrCodeAuth {
+  private anonymToken: string | undefined
+  private authHash: string | undefined
+  private verificationRequested = false
+
   private timeoutId: number | undefined
   private abortController: AbortController | undefined
 
@@ -26,6 +31,10 @@ export class QrCodeAuth {
         Auth.MESSENGER_APP_SCOPE,
         signal
       )
+      signal.throwIfAborted()
+
+      this.anonymToken = anonymToken
+      this.authHash = authHash
 
       onEvent({
         kind: 'UrlAcquired',
@@ -48,6 +57,21 @@ export class QrCodeAuth {
   stop(unexpected = false) {
     clearTimeout(this.timeoutId)
     this.abortController?.abort(unexpected ? ABORT_REASON_HUNG : ABORT_REASON_STOP)
+    this.anonymToken = undefined
+    this.authHash = undefined
+    this.verificationRequested = false
+  }
+
+  async validateCode(code: string): Promise<AuthValidateAuthCodeResponse['status']> {
+    const signal = this.abortController?.signal
+    signal?.throwIfAborted()
+
+    if (!this.anonymToken || !this.authHash) {
+      throw new Error('QR authorization is not active')
+    }
+
+    const result = await this.auth.validateAuthCode(this.anonymToken, this.authHash, code, signal)
+    return result.status
   }
 
   private async checkStatusLoop(
@@ -62,6 +86,7 @@ export class QrCodeAuth {
         authHash,
         signal
       )
+      signal.throwIfAborted()
 
       switch (response.status) {
         case 0: // Created
@@ -108,6 +133,13 @@ export class QrCodeAuth {
             message: this.lang.use('auth_qr_code_expired')
           })
           return
+
+        case 5: // Verification requested
+          if (!this.verificationRequested) {
+            this.verificationRequested = true
+            onEvent({ kind: 'VerificationRequested' })
+          }
+          break
       }
 
       this.timeoutId = window.setTimeout(() => {

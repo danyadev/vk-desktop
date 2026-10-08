@@ -327,4 +327,12 @@ export class Auth {
       auth_hash: authHash
     }, { signal: abortSignal })
   }
+
+  validateAuthCode(anonymToken: string, authHash: string, code: string, abortSignal?: AbortSignal) {
+    return this.api.fetch('auth.validateAuthCode', {
+      access_token: anonymToken,
+      auth_hash: authHash,
+      validation_code: code
+    }, { signal: abortSignal })
+  }
 }
