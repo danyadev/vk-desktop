@@ -123,15 +123,15 @@ export function toRealId(peerId: Id): number {
 }
 
 export function isUserPeerId(peerId: Id): peerId is UserId {
-  return peerId > 0 && peerId < 1.9e9
+  return (peerId >= 1 && peerId < 1.9e9) || (peerId >= 200e9 && peerId < 1e12)
 }
 
 export function isGroupPeerId(peerId: Id): peerId is GroupId {
-  return peerId < 0 && peerId > -1.9e9 + 1e7
+  return peerId < 0 && peerId > -1e9
 }
 
 export function isChatPeerId(peerId: Id): peerId is ChatId {
-  return peerId > 2e9
+  return peerId > 2e9 && peerId <= 2.1e9
 }
 
 export function safeGet(peers: Map<Id, Peer>, id: UserId): User
