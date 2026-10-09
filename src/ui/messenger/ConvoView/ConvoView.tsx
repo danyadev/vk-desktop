@@ -6,8 +6,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
-import { useModal } from 'hooks'
-import { getMapValueOrCompute } from 'misc/utils'
+import { provideConvoSession, useModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
@@ -27,10 +26,8 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
   const messagePreviewModal = useModal()
   const messagePreviewCmid = shallowRef<Message.Cmid>()
 
-  const session = getMapValueOrCompute(convosStore.convoSessions, props.convo.id, () => ({
-    anchorCmid: props.convo.inReadBy,
-    loadLocks: {}
-  }))
+  const session = convosStore.getDefaultSession(props.convo.id, props.convo.inReadBy)
+  provideConvoSession(session)
 
   const openMessagePreview = (cmid: Message.Cmid) => {
     messagePreviewCmid.value = cmid
@@ -51,19 +48,15 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
                 openMessagePreview(pinnedMessage.cmid)
                 return
               }
-              convosStore.requestNavigation(props.convo.id, {
+              session.navigationRequest = {
                 kind: 'Message',
                 cmid: pinnedMessage.cmid,
                 returnBack: true
-              })
+              }
             }}
           />
         )}
-        <ConvoHistory
-          convo={props.convo}
-          session={session}
-          openMessagePreview={openMessagePreview}
-        />
+        <ConvoHistory convo={props.convo} openMessagePreview={openMessagePreview} />
         <ConvoComposer convo={props.convo} />
 
         {messagePreviewCmid.value && (

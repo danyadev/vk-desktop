@@ -3,8 +3,8 @@ import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
+import { useConvoSession } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { ForwardedMessages } from 'ui/messenger/ForwardedMessages/ForwardedMessages'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
@@ -19,7 +19,7 @@ type Props = {
 
 export const ConvoMessage = defineComponent<Props>((props) => {
   const { lang } = useServices()
-  const convosStore = useConvosStore()
+  const session = useConvoSession()
   const { peers } = usePeersStore()
 
   const navigateToReplyMessage = (reply: Message.Foreign) => {
@@ -32,11 +32,11 @@ export const ConvoMessage = defineComponent<Props>((props) => {
       return
     }
 
-    convosStore.requestNavigation(props.message.peerId, {
+    session.navigationRequest = {
       kind: 'Message',
       cmid: reply.cmid,
       returnBack: true
-    })
+    }
   }
 
   return () => {

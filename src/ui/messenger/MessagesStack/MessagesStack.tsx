@@ -4,6 +4,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
+import { useConvoSession } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { ConvoMessage } from 'ui/messenger/ConvoMessage/ConvoMessage'
 import { ExpiredMessage } from 'ui/messenger/ExpiredMessage/ExpiredMessage'
@@ -56,10 +57,10 @@ type StackMessageProps = {
 }
 
 const StackMessage = defineComponent<StackMessageProps>((props) => {
-  const { convoSessions } = useConvosStore()
+  const session = useConvoSession()
   const highlightTimeoutId = shallowRef<number>()
 
-  watch(() => convoSessions.get(props.message.peerId)?.navigationRequest, (request) => {
+  watch(() => session.navigationRequest, (request) => {
     if (
       request?.kind === 'Message' &&
       request.cmid === props.message.cmid &&

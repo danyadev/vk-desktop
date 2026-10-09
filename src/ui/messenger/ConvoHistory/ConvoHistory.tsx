@@ -11,8 +11,9 @@ import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
-import { ConvoSession, LoadConvoHistoryLock, useConvosStore } from 'store/convos'
+import { LoadConvoHistoryLock, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
+import { useConvoSession } from 'hooks'
 import { getMapValueOrCompute, isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { useConvoHistoryViewport } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
@@ -26,7 +27,6 @@ import './ConvoHistory.css'
 
 type Props = {
   convo: Convo.Convo
-  session: ConvoSession
   openMessagePreview: (cmid: Message.Cmid) => void
 }
 
@@ -37,7 +37,8 @@ const PINNED_TO_BOTTOM_THRESHOLD = 32
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { typings, historyLoadCompleteListeners } = useConvosStore()
-  const { convo, session, openMessagePreview } = props
+  const session = useConvoSession()
+  const { convo, openMessagePreview } = props
 
   const historySlice = computed(() => History.around(
     convo.history,
@@ -307,7 +308,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['convo', 'session', 'openMessagePreview']
+  props: ['convo', 'openMessagePreview']
 })
 
 type HistoryBoundaryProps = {

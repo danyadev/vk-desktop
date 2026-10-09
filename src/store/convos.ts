@@ -1,9 +1,9 @@
-import { watch } from 'vue'
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { getMapValueOrCompute } from 'misc/utils'
 
 export type ViewportPosition = {
   /** Cmid of the topmost visible message in the viewport */
@@ -69,19 +69,15 @@ export const useConvosStore = defineStore('convos', {
   }),
 
   actions: {
-    requestNavigation(peerId: Peer.Id, request: NavigationRequest) {
-      const session = this.convoSessions.get(peerId)
-      if (session) {
-        session.navigationRequest = request
-        return
-      }
+    getDefaultSession(peerId: Peer.Id, initialAnchor: Message.Cmid | 0): ConvoSession {
+      return getMapValueOrCompute(this.convoSessions, peerId, () => ({
+        anchorCmid: initialAnchor,
+        loadLocks: {}
+      }))
+    },
 
-      const stop = watch(() => this.convoSessions.get(peerId), (session) => {
-        if (session) {
-          stop()
-          session.navigationRequest = request
-        }
-      }, { flush: 'sync' })
+    requestNavigation(peerId: Peer.Id, request: NavigationRequest) {
+      this.getDefaultSession(peerId, request.cmid).navigationRequest = request
     },
 
     stopTyping(convoId: Peer.Id, typingPeerId: Peer.Id) {

@@ -6,7 +6,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useFormatDate } from 'hooks'
+import { useConvoSession, useFormatDate } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
@@ -21,6 +21,7 @@ type Props = {
 export const ForwardedMessages = defineComponent<Props>((props) => {
   const router = useRouter()
   const { lang } = useServices()
+  const session = useConvoSession()
   const convosStore = useConvosStore()
   const { peers } = usePeersStore()
   const formatDate = useFormatDate({ relativeTime: false })
@@ -30,7 +31,16 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
       return
     }
 
-    if (message.peerId !== message.rootPeerId) {
+    const isCurrentConvo = message.peerId === message.rootPeerId
+    const request = {
+      kind: 'Message' as const,
+      cmid: message.cmid,
+      returnBack: isCurrentConvo
+    }
+
+    if (isCurrentConvo) {
+      session.navigationRequest = request
+    } else {
       router.push({
         name: 'Convo',
         params: {
@@ -40,13 +50,9 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
           canGoBack: 1
         }
       })
-    }
 
-    convosStore.requestNavigation(message.peerId, {
-      kind: 'Message',
-      cmid: message.cmid,
-      returnBack: message.peerId === message.rootPeerId
-    })
+      convosStore.requestNavigation(message.peerId, request)
+    }
   }
 
   return () => (
