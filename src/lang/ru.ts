@@ -247,6 +247,7 @@ export const ru = {
     male: '{author} сбросил оформление чата',
     female: '{author} сбросила оформление чата'
   },
+  me_service_chat_owner_changed: '{author} сменил владельца чата на {target}',
   // endregion
 
   // region message attaches

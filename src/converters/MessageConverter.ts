@@ -304,6 +304,16 @@ function fromApiMessageAction(
         style: action.style ? fromApiConvoStyle(action.style) : undefined
       }
 
+    case 'chat_owner_changed':
+      if (!action.member_id) {
+        return { type: 'unknown' }
+      }
+
+      return {
+        type: action.type,
+        peerId: Peer.resolveOwnerId(action.member_id)
+      }
+
     case 'custom':
       return {
         type: action.type,

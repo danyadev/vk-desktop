@@ -107,6 +107,10 @@ export type ServiceAction =
       style: Convo.Style | undefined
     }
   | {
+      type: 'chat_owner_changed'
+      peerId: Peer.OwnerId
+    }
+  | {
       type: 'custom'
       message: string
     }

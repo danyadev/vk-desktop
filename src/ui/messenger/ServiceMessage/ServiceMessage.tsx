@@ -145,6 +145,14 @@ export const PlainServiceMessage = defineComponent<Props>((props) => {
           })
         }
 
+      case 'chat_owner_changed': {
+        const target = Peer.safeGet(peers, message.action.peerId)
+        return lang.use('me_service_chat_owner_changed', {
+          author: Peer.name(author),
+          target: Peer.name(target, 'acc')
+        })
+      }
+
       case 'custom':
         return message.action.message
 
