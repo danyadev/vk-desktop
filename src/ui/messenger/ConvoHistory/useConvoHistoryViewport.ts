@@ -96,8 +96,7 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    const returnBack = request.kind === 'Message' && request.returnBack
-    if (returnBack === true) {
+    if (request.kind === 'Message' && request.returnBack === true) {
       const viewportPosition = captureViewportPosition()
       if (viewportPosition) {
         request.returnBack = viewportPosition
@@ -115,12 +114,14 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    const element = request.kind === 'Unread'
-      ? getUnreadElement() ?? getMessageElement(request.cmid)
-      : getMessageElement(request.cmid) ??
-        (request.allowNearby && session.anchorCmid === request.cmid
-          ? getNearbyMessageElement(request.cmid)
-          : undefined)
+    let element: HTMLElement | undefined
+    if (request.kind === 'Unread') {
+      element = getUnreadElement() ?? getMessageElement(request.cmid)
+    } else if (request.allowNearby && session.anchorCmid === request.cmid) {
+      element = getNearbyMessageElement(request.cmid)
+    } else {
+      element = getMessageElement(request.cmid)
+    }
 
     if (element) {
       if (
