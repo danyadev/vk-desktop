@@ -49,10 +49,8 @@ type Convos = {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
   convoSessions: Map<Peer.Id, ConvoSession>
-  historyLoadCompleteListeners: Map<
-    Peer.Id,
-    Set<(originSession: ConvoSession, startCmid: Message.Cmid) => void>
-  >
+  /** These listeners are called synchronously after updating the state, before rendering begins */
+  historyLoadCompleteListeners: Map<Peer.Id, Set<() => void>>
   sendMessageLock: Set<Peer.Id>
   typings: Map<Peer.Id, TypingUser[]>
 }

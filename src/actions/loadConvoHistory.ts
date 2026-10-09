@@ -172,7 +172,7 @@ export async function loadConvoHistory({
     })
 
     for (const listener of historyLoadCompleteListeners.get(convo.id) ?? []) {
-      listener(session, startCmid)
+      listener()
     }
   } catch (err) {
     if (controller.signal.aborted) {

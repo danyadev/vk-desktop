@@ -1,7 +1,6 @@
 import {
   computed,
   defineComponent,
-  nextTick,
   onBeforeUnmount,
   onMounted,
   shallowRef,
@@ -117,11 +116,18 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   watch(
     [() => session.navigationRequest, historySlice],
-    ([request], [prevRequest]) => {
-      // Выставляем instantScroll если это не шаг навигации,
-      // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
-      // и больше нет изначальной позиции, откуда можно применить анимацию
-      advanceNavigationRequest(request === prevRequest)
+    ([request, slice], [prevRequest, prevSlice]) => {
+      if (request) {
+        // Выставляем instantScroll если это не шаг навигации,
+        // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
+        // и больше нет изначальной позиции, откуда можно применить анимацию
+        advanceNavigationRequest(request === prevRequest)
+        return
+      }
+
+      if (prevSlice.gapAround && !slice.gapAround) {
+        scrollToInitialPosition(Message.resolveCmid(slice.effectiveAroundId))
+      }
     },
     { flush: 'post' }
   )
@@ -182,7 +188,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     })
   }
 
-  const onHistoryLoadComplete = async (originSession: ConvoSession, startCmid: Message.Cmid) => {
+  const onHistoryLoadComplete = () => {
     if (session.navigationRequest) {
       return
     }
@@ -193,15 +199,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       // move the window boundary
       session.anchorCmid = topMessageCmid
       preserveMessagePosition(topMessageCmid)
-      return
-    }
-
-    // No messages in the viewport were found, which means either:
-    // - we are at the around gap loader, for example when opening a convo for the first time
-    // - the convo is closed already, in which case scrollToInitialPosition would be noop
-    if (originSession === session) {
-      await nextTick()
-      scrollToInitialPosition(startCmid)
     }
   }
 
