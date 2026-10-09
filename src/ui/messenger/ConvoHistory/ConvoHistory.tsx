@@ -14,7 +14,7 @@ import * as History from 'model/History'
 import * as Message from 'model/Message'
 import { ConvoSession, LoadConvoHistoryLock, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
-import { isNonEmptyArray, throttle } from 'misc/utils'
+import { getMapValueOrCompute, isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { useConvoHistoryViewport } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
@@ -37,7 +37,7 @@ const PINNED_TO_BOTTOM_THRESHOLD = 32
 
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
-  const { typings } = useConvosStore()
+  const { typings, historyLoadCompleteListeners } = useConvosStore()
   const { convo, session, openMessagePreview } = props
 
   const historySlice = computed(() => History.around(
@@ -92,7 +92,8 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   }
 
   onMounted(() => {
-    session.onHistoryLoadComplete = onHistoryLoadComplete
+    getMapValueOrCompute(historyLoadCompleteListeners, convo.id, () => new Set())
+      .add(onHistoryLoadComplete)
 
     if (session.navigationRequest) {
       advanceNavigationRequest(true)
@@ -110,6 +111,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   })
 
   onBeforeUnmount(() => {
+    historyLoadCompleteListeners.get(convo.id)?.delete(onHistoryLoadComplete)
     session.viewportPosition = captureViewportPosition()
   })
 
@@ -180,22 +182,27 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     })
   }
 
-  const onHistoryLoadComplete = async (startCmid: Message.Cmid) => {
+  const onHistoryLoadComplete = async (originSession: ConvoSession, startCmid: Message.Cmid) => {
     if (session.navigationRequest) {
       return
     }
 
     const [topMessageCmid] = findVisibleMessageRange()
     if (topMessageCmid) {
-      // History loading doesn't change it itself, so we would be around the window boundary...
+      // History loading doesn't change anchor itself, but we still need to update it in order to
+      // move the window boundary
       session.anchorCmid = topMessageCmid
       preserveMessagePosition(topMessageCmid)
       return
     }
 
-    // No messages in viewport means we either closed the convo or on the around gap loader
-    await nextTick()
-    scrollToInitialPosition(startCmid)
+    // No messages in the viewport were found, which means either:
+    // - we are at the around gap loader, for example when opening a convo for the first time
+    // - the convo is closed already, in which case scrollToInitialPosition would be noop
+    if (originSession === session) {
+      await nextTick()
+      scrollToInitialPosition(startCmid)
+    }
   }
 
   return () => {

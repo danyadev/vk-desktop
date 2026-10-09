@@ -2,7 +2,7 @@ import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
-import { ConvoSession } from 'store/convos'
+import { ConvoSession, useConvosStore } from 'store/convos'
 import { insertPeers } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
 import { PEER_FIELDS } from 'misc/constants'
@@ -23,6 +23,7 @@ export async function loadConvoHistory({
   direction
 }: Props) {
   const { api } = useServices()
+  const { historyLoadCompleteListeners } = useConvosStore()
 
   const oldLock = session.loadLocks[direction]
   if (oldLock?.status === 'loading' && oldLock.startCmid === startCmid) {
@@ -169,7 +170,10 @@ export async function loadConvoHistory({
       down: hasMoreDown,
       aroundId: startCmid
     })
-    session.onHistoryLoadComplete?.(startCmid)
+
+    for (const listener of historyLoadCompleteListeners.get(convo.id) ?? []) {
+      listener(session, startCmid)
+    }
   } catch (err) {
     if (controller.signal.aborted) {
       return

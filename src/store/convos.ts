@@ -34,11 +34,6 @@ export type ConvoSession = {
   viewportPosition?: ViewportPosition
   navigationRequest?: NavigationRequest
   loadLocks: Partial<Record<'around' | 'up' | 'down', LoadConvoHistoryLock>>
-  /**
-   * A handler from the last convo. If loading completes after the convo has been reopened,
-   * it can still access the latest historyElement and correct the viewport position
-   */
-  onHistoryLoadComplete?: (startCmid: Message.Cmid) => void
 }
 
 export type TypingUser = {
@@ -54,6 +49,10 @@ type Convos = {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
   convoSessions: Map<Peer.Id, ConvoSession>
+  historyLoadCompleteListeners: Map<
+    Peer.Id,
+    Set<(originSession: ConvoSession, startCmid: Message.Cmid) => void>
+  >
   sendMessageLock: Set<Peer.Id>
   typings: Map<Peer.Id, TypingUser[]>
 }
@@ -66,6 +65,7 @@ export const useConvosStore = defineStore('convos', {
       status: 'init'
     },
     convoSessions: new Map(),
+    historyLoadCompleteListeners: new Map(),
     sendMessageLock: new Set(),
     typings: new Map()
   }),
