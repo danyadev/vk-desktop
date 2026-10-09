@@ -96,21 +96,6 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    const firstNode = request.kind === 'FirstMessage' ? convo.history[0] : undefined
-    if (request.kind === 'FirstMessage' && !firstNode) {
-      session.navigationRequest = undefined
-      return
-    }
-
-    const cmid = firstNode
-      ? Message.resolveCmid(firstNode.kind === 'Gap' ? firstNode.fromId : firstNode.id)
-      : request.kind === 'FirstMessage' ? undefined : request.cmid
-
-    if (request.kind === 'FirstMessage' && cmid && session.anchorCmid !== cmid) {
-      session.anchorCmid = cmid
-      return
-    }
-
     const returnBack = request.kind === 'Message' && request.returnBack
     if (returnBack === true) {
       const viewportPosition = captureViewportPosition()
@@ -126,13 +111,16 @@ export const useConvoHistoryViewport = (
      * поэтому hasAroundGap означает, что запрошенная позиция все еще не загружена.
      * Эта проверка нужна, чтобы предотвратить преждевременный фоллбэк на превью сообщения
      */
-    if (hasAroundGap.value || firstNode?.kind === 'Gap') {
+    if (hasAroundGap.value) {
       return
     }
 
     const element = request.kind === 'Unread'
       ? getUnreadElement() ?? getMessageElement(request.cmid)
-      : cmid && getMessageElement(cmid)
+      : getMessageElement(request.cmid) ??
+        (request.allowNearby && session.anchorCmid === request.cmid
+          ? getNearbyMessageElement(request.cmid)
+          : undefined)
 
     if (element) {
       if (
@@ -154,14 +142,14 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    if (cmid && session.anchorCmid !== cmid) {
-      session.anchorCmid = cmid
+    if (session.anchorCmid !== request.cmid) {
+      session.anchorCmid = request.cmid
       return
     }
 
     session.navigationRequest = undefined
 
-    if (request.kind === 'Message') {
+    if (request.kind === 'Message' && !request.allowNearby) {
       if (isObject(request.returnBack) && request.returnBack.cmid !== request.cmid) {
         session.navigationRequest = {
           kind: 'Message',
@@ -174,7 +162,7 @@ export const useConvoHistoryViewport = (
     }
 
     if (!session.navigationRequest) {
-      cmid && scrollToInitialPosition(cmid)
+      scrollToInitialPosition(request.cmid)
     }
   }
 

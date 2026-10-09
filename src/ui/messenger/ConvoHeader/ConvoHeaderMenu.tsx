@@ -2,12 +2,11 @@ import { defineComponent, shallowRef } from 'vue'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
+import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
-import { insertConvos } from 'actions'
 import { useConvoSession } from 'hooks'
-import { PEER_FIELDS } from 'misc/constants'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
@@ -36,9 +35,6 @@ import './ConvoHeaderMenu.css'
 type Props = { convo: Convo.Convo }
 type Confirmation = 'clear' | 'leave'
 
-// VK marks pinned conversations using the three pin bits of majorSortId.
-const PIN_FLAGS = (1 << 4) | (1 << 5) | (1 << 6)
-
 export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   const { api, lang } = useServices()
   const { lists } = useConvosStore()
@@ -62,7 +58,12 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   }
 
   const goToFirstMessage = () => {
-    session.navigationRequest = { kind: 'FirstMessage' }
+    session.navigationRequest = {
+      kind: 'Message',
+      cmid: Message.resolveCmid(1),
+      allowNearby: true,
+      highlight: false
+    }
   }
 
   const togglePinnedMessage = () => {
@@ -90,24 +91,12 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   })
 
   const togglePin = () => run(async () => {
-    const pinned = (props.convo.majorSortId & PIN_FLAGS) !== 0
     await api.fetch(
-      pinned ? 'messages.unpinConversation' : 'messages.pinConversation',
+      props.convo.majorSortId
+        ? 'messages.unpinConversation'
+        : 'messages.pinConversation',
       { peer_id: props.convo.id }
     )
-
-    // Major sort-id changes aren't handled by our engine updates yet.
-    // Fetch the actual position; don't try to compute it locally.
-    const { items, last_messages: lastMessages = [] } = await api.fetch('messages.getConversationsById', {
-      peer_ids: props.convo.id,
-      with_last_messages: 1,
-      extended: 1,
-      fields: PEER_FIELDS
-    })
-    if (items[0]) {
-      insertConvos([{ conversation: items[0], last_message: lastMessages[0] }])
-      Lists.refresh(lists, props.convo)
-    }
   })
 
   const toggleNotifications = () => run(async () => {
@@ -125,13 +114,6 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   const clearHistory = () => run(async () => {
     await api.fetch('messages.deleteConversation', { peer_id: props.convo.id })
     confirmation.value = undefined
-    props.convo.history.length = 0
-    props.convo.unreadCount = 0
-    props.convo.isMarkedUnread = false
-    session.anchorCmid = 0
-    session.navigationRequest = undefined
-    session.viewportPosition = undefined
-    Lists.refresh(lists, props.convo)
   })
 
   const changeChatMembership = (leave: boolean) => run(async () => {
@@ -153,22 +135,10 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     const { convo } = props
     const pinnedMessage = convo.kind === 'ChatConvo' && convo.pinnedMessage
     const pinnedMessageHidden = !!pinnedMessage && session.hiddenPinnedCmid === pinnedMessage.cmid
-    const { majorSortId } = convo
-    const pinned = (majorSortId & PIN_FLAGS) !== 0
+    const pinned = convo.majorSortId !== 0
     const canPin = !convo.isArchived && !Convo.isHidden(convo) && !Convo.isCasper(convo)
     const isChatMember = convo.kind === 'ChatConvo' && convo.status === 'in'
-    const isFormerChatMember = convo.kind === 'ChatConvo' && convo.status === 'left'
     const muted = !convo.notifications.enabled
-    const confirmTitle = confirmation.value === 'clear'
-      ? lang.use('me_convo_header_menu_clear_confirm_title')
-      : lang.use('me_convo_header_menu_leave_confirm_title')
-    const confirmText = confirmation.value === 'clear'
-      ? lang.use('me_convo_header_menu_clear_confirm_text')
-      : lang.use('me_convo_header_menu_leave_confirm_text')
-    const confirmButton = confirmation.value === 'clear'
-      ? lang.use('me_convo_header_menu_clear')
-      : lang.use('me_convo_header_menu_leave')
-
     return (
       <>
         <Popper
@@ -228,7 +198,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 disabled={loading.value}
                 onClick={toggleNotifications}
               />
-              {isFormerChatMember && (
+              {convo.kind === 'ChatConvo' && convo.status === 'left' && (
                 <ActionMenuItem
                   icon={<Icon20ArrowUturnLeftOutline />}
                   text={lang.use('me_convo_header_menu_return')}
@@ -278,7 +248,9 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
         <Modal
           opened={!!confirmation.value}
           onClose={() => (confirmation.value = undefined)}
-          title={confirmTitle}
+          title={lang.use(confirmation.value === 'clear'
+            ? 'me_convo_header_menu_clear_confirm_title'
+            : 'me_convo_header_menu_leave_confirm_title')}
           buttons={[
             <Button mode="secondary" onClick={() => (confirmation.value = undefined)}>
               {lang.use('modal_cancel_label')}
@@ -291,11 +263,15 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 ? clearHistory
                 : () => changeChatMembership(true)}
             >
-              {confirmButton}
+              {lang.use(confirmation.value === 'clear'
+                ? 'me_convo_header_menu_clear'
+                : 'me_convo_header_menu_leave')}
             </Button>
           ]}
         >
-          {confirmText}
+          {lang.use(confirmation.value === 'clear'
+            ? 'me_convo_header_menu_clear_confirm_text'
+            : 'me_convo_header_menu_leave_confirm_text')}
         </Modal>
 
         <Modal

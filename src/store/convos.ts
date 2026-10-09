@@ -16,13 +16,14 @@ export type NavigationRequest =
   | {
       kind: 'Message'
       cmid: Message.Cmid
+      /** Fall back to a nearby message if this CMID is unavailable */
+      allowNearby?: boolean
       /** True by default */
       highlight?: boolean
       /** A position to return back in case the message is unavailable */
       returnBack?: boolean | ViewportPosition
     }
   | { kind: 'Unread', cmid: Message.Cmid }
-  | { kind: 'FirstMessage' }
 
 export type LoadConvoHistoryLock = {
   status: 'loading' | 'error'
@@ -79,8 +80,7 @@ export const useConvosStore = defineStore('convos', {
     },
 
     requestNavigation(peerId: Peer.Id, request: NavigationRequest) {
-      this.getDefaultSession(peerId, request.kind === 'FirstMessage' ? 0 : request.cmid)
-        .navigationRequest = request
+      this.getDefaultSession(peerId, request.cmid).navigationRequest = request
     },
 
     stopTyping(convoId: Peer.Id, typingPeerId: Peer.Id) {
