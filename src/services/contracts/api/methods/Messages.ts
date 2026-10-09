@@ -50,6 +50,7 @@ export type MessagesGetConversationsByIdResponse = {
 export type MessagesGetHistoryParams = {
   peer_id: number
   start_cmid?: number
+  start_message_id?: number
   count?: number
   offset?: number
   filter?: 'all' | 'audio' | 'file' | 'link' | 'media_viewer' | 'photo' | 'pinned_messages' | 'video'
