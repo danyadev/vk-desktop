@@ -24,18 +24,16 @@ import {
   AuthValidatePhoneParams,
   AuthValidatePhoneResponse
 } from 'services/contracts/api/methods/Auth'
-import { CaptchaForceParams,
-  CaptchaForceResponse } from 'services/contracts/api/methods/Captcha'
-import { GroupsGetByIdParams,
-  GroupsGetByIdResponse } from 'services/contracts/api/methods/Groups'
+import { CaptchaForceParams, CaptchaForceResponse } from 'services/contracts/api/methods/Captcha'
+import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'services/contracts/api/methods/Groups'
 import {
-  MessagesGetByConversationMessageIdParams,
   MessagesAddChatUserParams,
   MessagesAddChatUserResponse,
   MessagesArchiveConversationParams,
   MessagesArchiveConversationResponse,
   MessagesDeleteConversationParams,
   MessagesDeleteConversationResponse,
+  MessagesGetByConversationMessageIdParams,
   MessagesGetByConversationMessageIdResponse,
   MessagesGetConversationsByIdParams,
   MessagesGetConversationsByIdResponse,
