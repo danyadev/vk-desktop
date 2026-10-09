@@ -43,6 +43,9 @@ import {
   MessagesGetLongPollHistoryResponse,
   MessagesGetLongPollServerParams,
   MessagesGetLongPollServerResponse,
+  MessagesConversationActionParams,
+  MessagesChatUserParams,
+  MessagesDeleteConversationResponse,
   MessagesMarkAsPlayedParams,
   MessagesMarkAsPlayedResponse,
   MessagesSendParams,
@@ -161,6 +164,15 @@ export type Methods = {
     params: MessagesSendParams
     response: MessagesSendResponse
   }
+  'messages.markAsUnreadConversation': { params: MessagesConversationActionParams, response: 1 }
+  'messages.archiveConversation': { params: MessagesConversationActionParams, response: 1 }
+  'messages.unarchiveConversation': { params: MessagesConversationActionParams, response: 1 }
+  'messages.pinConversation': { params: MessagesConversationActionParams, response: 1 }
+  'messages.unpinConversation': { params: MessagesConversationActionParams, response: 1 }
+  'messages.deleteConversation': { params: MessagesConversationActionParams, response: MessagesDeleteConversationResponse }
+  'messages.removeChatUser': { params: MessagesChatUserParams, response: 1 }
+  'messages.addChatUser': { params: MessagesChatUserParams, response: 1 }
+
   'messages.markAsPlayed': {
     params: MessagesMarkAsPlayedParams
     response: MessagesMarkAsPlayedResponse

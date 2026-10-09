@@ -206,3 +206,8 @@ export type MessagesGetDiffResponse = {
   conversations_source?: string
   invalidate_all?: boolean
 }
+
+// Conversation actions
+export type MessagesConversationActionParams = { peer_id: number }
+export type MessagesChatUserParams = { chat_id: number, user_id: number }
+export type MessagesDeleteConversationResponse = { last_deleted_id: number }
