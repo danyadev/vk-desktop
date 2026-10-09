@@ -63,11 +63,11 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   }
 
   const goToFirstMessage = () => run(async () => {
-    // CMID 1 may be deleted: fetch the oldest existing message instead.
-    // VK getHistory uses start_cmid=0 with a negative offset for the oldest page.
+    // As in the old VK Desktop client: start_message_id=0 with a negative
+    // offset loads the beginning of history (CMID 1 may be deleted).
     const { items } = await api.fetch('messages.getHistory', {
       peer_id: props.convo.id,
-      start_cmid: 0,
+      start_message_id: 0,
       offset: -20,
       count: 20,
       extended: 1,
