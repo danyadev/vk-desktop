@@ -8,6 +8,7 @@ import { useFormatDate } from 'hooks'
 import { shortenCount } from 'misc/dateTime'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { ConvoHeaderMenu } from 'ui/messenger/ConvoHeader/ConvoHeaderMenu'
 import { Icon16Muted, Icon24ChevronCompactLeft } from 'assets/icons'
 import './ConvoHeader.css'
 
@@ -93,6 +94,7 @@ export const ConvoHeader = defineComponent<Props>((props) => {
         </span>
       </div>
       <span class="ConvoHeader__info">{peerInfo.value}</span>
+      <ConvoHeaderMenu convo={props.convo} />
     </div>
   )
 }, {

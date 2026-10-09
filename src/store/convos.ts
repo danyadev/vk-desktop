@@ -33,6 +33,7 @@ export type ConvoSession = {
   anchorCmid: Message.Cmid | 0
   viewportPosition?: ViewportPosition
   navigationRequest?: NavigationRequest
+  hiddenPinnedCmid?: Message.Cmid
   loadLocks: Partial<Record<'around' | 'up' | 'down', LoadConvoHistoryLock>>
 }
 

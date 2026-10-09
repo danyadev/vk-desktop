@@ -40,7 +40,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
     return (
       <div class="ConvoView">
         <ConvoHeader convo={props.convo} />
-        {pinnedMessage && (
+        {pinnedMessage && session.hiddenPinnedCmid !== pinnedMessage.cmid && (
           <PinnedMessage
             pinnedMessage={pinnedMessage}
             onClick={() => {
