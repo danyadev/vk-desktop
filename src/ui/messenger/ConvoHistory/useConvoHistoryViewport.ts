@@ -114,7 +114,7 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    let element: HTMLElement | undefined
+    let element: HTMLElement | null | undefined
     if (request.kind === 'Unread') {
       element = getUnreadElement() ?? getMessageElement(request.cmid)
     } else if (request.allowNearby && session.anchorCmid === request.cmid) {
