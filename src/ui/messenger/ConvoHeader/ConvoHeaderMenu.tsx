@@ -1,8 +1,8 @@
 import { defineComponent, shallowRef } from 'vue'
-import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
 import * as Peer from 'model/Peer'
+import { useServices } from 'services'
 import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
 import { insertConvos } from 'actions'
@@ -175,94 +175,94 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
           closeOnContentClick
           content={
             <ActionMenu>
-            {!Convo.isHidden(convo) && (
+              {!Convo.isHidden(convo) && (
+                <ActionMenuItem
+                  icon={<Icon20ArrowUpOutline />}
+                  text={lang.use('me_convo_header_menu_first')}
+                  disabled={loading.value}
+                  onClick={goToFirstMessage}
+                />
+              )}
+              {pinnedMessage && (
+                <ActionMenuItem
+                  icon={pinnedMessageHidden ? <Icon20ViewOutline /> : <Icon20HideOutline />}
+                  text={lang.use(pinnedMessageHidden
+                    ? 'me_convo_header_menu_show_pinned'
+                    : 'me_convo_header_menu_hide_pinned')}
+                  onClick={togglePinnedMessage}
+                />
+              )}
+              {!Convo.isUnread(convo) && (
+                <ActionMenuItem
+                  icon={<Icon20MessageUnreadTopOutline />}
+                  text={lang.use('me_convo_header_menu_mark_unread')}
+                  disabled={loading.value}
+                  onClick={markUnread}
+                />
+              )}
+              {!Convo.isHidden(convo) && (
+                <ActionMenuItem
+                  icon={convo.isArchived ? <Icon20UnarchiveOutline /> : <Icon20ArchiveOutline />}
+                  text={lang.use(convo.isArchived
+                    ? 'me_convo_header_menu_unarchive'
+                    : 'me_convo_header_menu_archive')}
+                  disabled={loading.value}
+                  onClick={toggleArchive}
+                />
+              )}
+              {canPin && (
+                <ActionMenuItem
+                  icon={pinned ? <Icon20PinSlashOutline /> : <Icon20PinOutline />}
+                  text={lang.use(pinned
+                    ? 'me_convo_header_menu_unpin'
+                    : 'me_convo_header_menu_pin')}
+                  disabled={loading.value}
+                  onClick={togglePin}
+                />
+              )}
               <ActionMenuItem
-                icon={<Icon20ArrowUpOutline />}
-                text={lang.use('me_convo_header_menu_first')}
+                icon={muted ? <Icon20NotificationOutline /> : <Icon20NotificationSlashOutline />}
+                text={lang.use(muted
+                  ? 'me_convo_header_menu_unmute'
+                  : 'me_convo_header_menu_mute')}
                 disabled={loading.value}
-                onClick={goToFirstMessage}
+                onClick={toggleNotifications}
               />
-            )}
-            {pinnedMessage && (
+              {isFormerChatMember && (
+                <ActionMenuItem
+                  icon={<Icon20ArrowUturnLeftOutline />}
+                  text={lang.use('me_convo_header_menu_return')}
+                  disabled={loading.value}
+                  onClick={() => changeChatMembership(false)}
+                />
+              )}
               <ActionMenuItem
-                icon={pinnedMessageHidden ? <Icon20ViewOutline /> : <Icon20HideOutline />}
-                text={lang.use(pinnedMessageHidden
-                  ? 'me_convo_header_menu_show_pinned'
-                  : 'me_convo_header_menu_hide_pinned')}
-                onClick={togglePinnedMessage}
-              />
-            )}
-            {!Convo.isUnread(convo) && (
-              <ActionMenuItem
-                icon={<Icon20MessageUnreadTopOutline />}
-                text={lang.use('me_convo_header_menu_mark_unread')}
+                icon={<Icon20CopyOutline />}
+                text={lang.use('me_convo_header_menu_copy_id')}
                 disabled={loading.value}
-                onClick={markUnread}
+                onClick={copyId}
               />
-            )}
-            {!Convo.isHidden(convo) && (
-              <ActionMenuItem
-                icon={convo.isArchived ? <Icon20UnarchiveOutline /> : <Icon20ArchiveOutline />}
-                text={lang.use(convo.isArchived
-                  ? 'me_convo_header_menu_unarchive'
-                  : 'me_convo_header_menu_archive')}
-                disabled={loading.value}
-                onClick={toggleArchive}
-              />
-            )}
-            {canPin && (
-              <ActionMenuItem
-                icon={pinned ? <Icon20PinSlashOutline /> : <Icon20PinOutline />}
-                text={lang.use(pinned
-                  ? 'me_convo_header_menu_unpin'
-                  : 'me_convo_header_menu_pin')}
-                disabled={loading.value}
-                onClick={togglePin}
-              />
-            )}
-            <ActionMenuItem
-              icon={muted ? <Icon20NotificationOutline /> : <Icon20NotificationSlashOutline />}
-              text={lang.use(muted
-                ? 'me_convo_header_menu_unmute'
-                : 'me_convo_header_menu_mute')}
-              disabled={loading.value}
-              onClick={toggleNotifications}
-            />
-            {isFormerChatMember && (
-              <ActionMenuItem
-                icon={<Icon20ArrowUturnLeftOutline />}
-                text={lang.use('me_convo_header_menu_return')}
-                disabled={loading.value}
-                onClick={() => changeChatMembership(false)}
-              />
-            )}
-            <ActionMenuItem
-              icon={<Icon20CopyOutline />}
-              text={lang.use('me_convo_header_menu_copy_id')}
-              disabled={loading.value}
-              onClick={copyId}
-            />
-            {(!Convo.isHidden(convo) || isChatMember) && (
-              <div class="ConvoHeaderMenu__separator" />
-            )}
-            {!Convo.isHidden(convo) && (
-              <ActionMenuItem
-                mode="destructive"
-                icon={<Icon20ClearDataOutline />}
-                text={lang.use('me_convo_header_menu_clear')}
-                disabled={loading.value}
-                onClick={() => (confirmation.value = 'clear')}
-              />
-            )}
-            {isChatMember && (
-              <ActionMenuItem
-                mode="destructive"
-                icon={<Icon20DoorArrowRightOutline />}
-                text={lang.use('me_convo_header_menu_leave')}
-                disabled={loading.value}
-                onClick={() => (confirmation.value = 'leave')}
-              />
-            )}
+              {(!Convo.isHidden(convo) || isChatMember) && (
+                <div class="ConvoHeaderMenu__separator" />
+              )}
+              {!Convo.isHidden(convo) && (
+                <ActionMenuItem
+                  mode="destructive"
+                  icon={<Icon20ClearDataOutline />}
+                  text={lang.use('me_convo_header_menu_clear')}
+                  disabled={loading.value}
+                  onClick={() => (confirmation.value = 'clear')}
+                />
+              )}
+              {isChatMember && (
+                <ActionMenuItem
+                  mode="destructive"
+                  icon={<Icon20DoorArrowRightOutline />}
+                  text={lang.use('me_convo_header_menu_leave')}
+                  disabled={loading.value}
+                  onClick={() => (confirmation.value = 'leave')}
+                />
+              )}
             </ActionMenu>
           }
         >
