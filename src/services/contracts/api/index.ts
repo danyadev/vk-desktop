@@ -24,10 +24,18 @@ import {
   AuthValidatePhoneParams,
   AuthValidatePhoneResponse
 } from 'services/contracts/api/methods/Auth'
-import { CaptchaForceParams, CaptchaForceResponse } from 'services/contracts/api/methods/Captcha'
-import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'services/contracts/api/methods/Groups'
+import { CaptchaForceParams,
+  CaptchaForceResponse } from 'services/contracts/api/methods/Captcha'
+import { GroupsGetByIdParams,
+  GroupsGetByIdResponse } from 'services/contracts/api/methods/Groups'
 import {
   MessagesGetByConversationMessageIdParams,
+  MessagesAddChatUserParams,
+  MessagesAddChatUserResponse,
+  MessagesArchiveConversationParams,
+  MessagesArchiveConversationResponse,
+  MessagesDeleteConversationParams,
+  MessagesDeleteConversationResponse,
   MessagesGetByConversationMessageIdResponse,
   MessagesGetConversationsByIdParams,
   MessagesGetConversationsByIdResponse,
@@ -43,26 +51,20 @@ import {
   MessagesGetLongPollHistoryResponse,
   MessagesGetLongPollServerParams,
   MessagesGetLongPollServerResponse,
-  MessagesAddChatUserParams,
-  MessagesAddChatUserResponse,
-  MessagesArchiveConversationParams,
-  MessagesArchiveConversationResponse,
-  MessagesDeleteConversationParams,
-  MessagesDeleteConversationResponse,
+  MessagesMarkAsPlayedParams,
+  MessagesMarkAsPlayedResponse,
   MessagesMarkAsUnreadConversationParams,
   MessagesMarkAsUnreadConversationResponse,
   MessagesPinConversationParams,
   MessagesPinConversationResponse,
   MessagesRemoveChatUserParams,
   MessagesRemoveChatUserResponse,
+  MessagesSendParams,
+  MessagesSendResponse,
   MessagesUnarchiveConversationParams,
   MessagesUnarchiveConversationResponse,
   MessagesUnpinConversationParams,
-  MessagesUnpinConversationResponse,
-  MessagesMarkAsPlayedParams,
-  MessagesMarkAsPlayedResponse,
-  MessagesSendParams,
-  MessagesSendResponse
+  MessagesUnpinConversationResponse
 } from 'services/contracts/api/methods/Messages'
 import {
   PhotosGetMessagesUploadServerParams,
