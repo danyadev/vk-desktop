@@ -1,8 +1,6 @@
 import {
   computed,
   defineComponent,
-  nextTick,
-  onBeforeMount,
   onBeforeUnmount,
   onMounted,
   shallowRef,
@@ -13,10 +11,10 @@ import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
-import * as Peer from 'model/Peer'
-import { useConvosStore } from 'store/convos'
+import { LoadConvoHistoryLock, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
-import { isNonEmptyArray, throttle } from 'misc/utils'
+import { useConvoSession } from 'hooks'
+import { getMapValueOrCompute, isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { useConvoHistoryViewport } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
@@ -38,15 +36,16 @@ const PINNED_TO_BOTTOM_THRESHOLD = 32
 
 export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
-  const { viewportPositions, scrollAnchors, typings } = useConvosStore()
+  const { typings, historyLoadCompleteListeners } = useConvosStore()
+  const session = useConvoSession()
+  const { convo, openMessagePreview } = props
 
-  const scrollAnchor = computed(() => scrollAnchors.get(props.convo.id))
   const historySlice = computed(() => History.around(
-    props.convo.history,
-    props.convo.historySliceAnchorCmid,
+    convo.history,
+    session.anchorCmid,
     // При явной навигации не предпочитаем соседний слайс на границе гэпа:
     // ux будет лучше если мы покажем лоадер на весь экран вместо отображения соседних сообщений
-    !scrollAnchor.value
+    !session.navigationRequest
   ))
 
   const windowSlice = computed(() => {
@@ -57,7 +56,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     const to = aroundIndex === -1
       ? 0
       : Math.min(toIndex, aroundIndex + messagesWindowWingSize.value + 1)
-    const items = props.convo.history.slice(from, to) as Array<History.Item<Message.Confirmed>>
+    const items = convo.history.slice(from, to) as Array<History.Item<Message.Confirmed>>
     return {
       items,
       windowStart: items[0],
@@ -73,76 +72,75 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
   const {
     messagesWindowWingSize,
-    scrollToAnchorIfNeeded,
+    advanceNavigationRequest,
     scrollToInitialPosition,
     findVisibleMessageRange,
     preserveMessagePosition,
     captureViewportPosition,
     restoreViewportPosition
   } = useConvoHistoryViewport(
-    props.convo,
+    convo,
+    session,
     $historyElement,
     computed(() => !!historySlice.value.gapAround),
-    props.openMessagePreview
+    openMessagePreview
   )
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
-    props.convo.historySliceAnchorCmid = anchorCmid
+    session.anchorCmid = anchorCmid
     preserveMessagePosition(anchorCmid)
   }
 
-  onBeforeMount(() => {
-    if (!scrollAnchor.value && !viewportPositions.has(props.convo.id)) {
-      // Set last read message on first convo open
-      props.convo.historySliceAnchorCmid = props.convo.inReadBy
-    }
-  })
-
   onMounted(() => {
-    if (scrollAnchor.value) {
-      scrollToAnchorIfNeeded(true)
+    getMapValueOrCompute(historyLoadCompleteListeners, convo.id, () => new Set())
+      .add(onHistoryLoadComplete)
+
+    if (session.navigationRequest) {
+      advanceNavigationRequest(true)
       return
     }
 
-    const viewportPosition = viewportPositions.get(props.convo.id)
-    if (viewportPosition) {
-      restoreViewportPosition(viewportPosition)
+    if (session.viewportPosition) {
+      restoreViewportPosition(session.viewportPosition)
       return
     }
 
-    if (props.convo.historySliceAnchorCmid) {
-      scrollToInitialPosition(props.convo.historySliceAnchorCmid)
+    if (session.anchorCmid) {
+      scrollToInitialPosition(session.anchorCmid)
     }
   })
 
   onBeforeUnmount(() => {
-    const viewportPosition = captureViewportPosition()
-    viewportPositions.set(props.convo.id, viewportPosition)
+    historyLoadCompleteListeners.get(convo.id)?.delete(onHistoryLoadComplete)
+    session.viewportPosition = captureViewportPosition()
   })
 
   watch(
-    [scrollAnchor, historySlice],
-    ([anchor], [prevAnchor]) => {
-      // Выставляем instant если это не первый запрос на скролл к якорю,
-      // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
-      // и больше нет изначальной позиции, откуда можно применить анимацию
-      scrollToAnchorIfNeeded(
-        !!anchor &&
-        anchor.kind === prevAnchor?.kind &&
-        anchor.cmid === prevAnchor?.cmid
-      )
+    [() => session.navigationRequest, historySlice],
+    ([request, slice], [prevRequest, prevSlice]) => {
+      if (request) {
+        // Выставляем instantScroll если это не шаг навигации,
+        // то есть нам пришлось загрузить историю или перепрыгнуть на другой ее слайс,
+        // и больше нет изначальной позиции, откуда можно применить анимацию
+        advanceNavigationRequest(request === prevRequest)
+        return
+      }
+
+      if (prevSlice.gapAround && !slice.gapAround) {
+        scrollToInitialPosition(Message.resolveCmid(slice.effectiveAroundId))
+      }
     },
     { flush: 'post' }
   )
 
   // Move the anchor before pinnedToBottom becomes false and window adjustment screws everything up
   watch(() => windowSlice.value.hasEndWindowOffset, () => {
-    if (scrollAnchor.value) {
+    if (session.navigationRequest) {
       return
     }
     const { hasEndWindowOffset, windowEnd } = windowSlice.value
     if (hasEndWindowOffset && windowEnd && pinnedToBottom.value) {
-      props.convo.historySliceAnchorCmid = windowEnd.item.cmid
+      session.anchorCmid = windowEnd.item.cmid
     }
   }, { flush: 'pre' })
 
@@ -163,73 +161,46 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   }, 50)
 
   const handleHopNavigation = () => {
-    const lastMessage = Convo.lastMessage(props.convo)
+    const lastMessage = Convo.lastMessage(convo)
     if (!lastMessage) {
       return
     }
 
     const [, lastVisibleCmid] = findVisibleMessageRange()
 
-    if (props.convo.inReadBy && lastVisibleCmid && props.convo.inReadBy >= lastVisibleCmid) {
-      scrollAnchors.set(props.convo.id, { kind: 'Unread', cmid: props.convo.inReadBy })
+    if (convo.inReadBy && lastVisibleCmid && convo.inReadBy >= lastVisibleCmid) {
+      session.navigationRequest = { kind: 'Unread', cmid: convo.inReadBy }
     } else {
-      scrollAnchors.set(props.convo.id, {
+      session.navigationRequest = {
         kind: 'Message',
         cmid: lastMessage.cmid,
         highlight: false
-      })
+      }
     }
   }
 
   const loadHistory = (direction: 'around' | 'up' | 'down', startId: number, gap: History.Gap) => {
-    const startCmid = Message.resolveCmid(startId)
-    const startedWithScrollAnchor = !!scrollAnchor.value
-
     loadConvoHistory({
-      peerId: props.convo.id,
-      startCmid,
+      convo,
+      session,
+      startCmid: Message.resolveCmid(startId),
       gap,
-      direction,
-      /**
-       * Пользуемся колбэком вместо ожидания окончания асинхронного loadConvoHistory.
-       * Дело в том, что возврат ответа из асинхронной операции происходит в отдельной микротаске,
-       * а перед выполнением этой микротаски могут успеть исполниться другие макро- и микротаски.
-       * Так и происходит: после окончания асинхронного loadConvoHistory у нас уже перерендерен
-       * компонент и обновлен дом, из-за чего нам неизвестно предыдущее положение вьюпорта
-       */
-      async onHistoryInserted() {
-        /**
-         * Пока есть scrollAnchor, он сам управляет позиционированием.
-         *
-         * Если scrollAnchor был только на момент начала загрузки, то это означает что он
-         * уже произвел позиционирование, и пользователь мог далее изменить позицию скролла.
-         * В данном случае мы просто сохраним текущую позицию вьюпорта.
-         *
-         * Если scrollAnchor вовсе не было, то никто другой не управлял скроллом,
-         * и мы можем спокойно определять изначальную позицию на основе startCmid
-         */
-        if (scrollAnchor.value) {
-          return
-        }
-
-        const [topMessageCmid] = findVisibleMessageRange()
-        if (topMessageCmid) {
-          // History loading doesn't change it itself, so we would be around the window boundary...
-          props.convo.historySliceAnchorCmid = topMessageCmid
-          preserveMessagePosition(topMessageCmid)
-          return
-        }
-
-        if (!startedWithScrollAnchor) {
-          // In case we already closed the convo it'd be useful to have a precise message to target
-          // on next convo open
-          props.convo.historySliceAnchorCmid = startCmid
-          // No messages in viewport almost always means we are still at around gap loading
-          await nextTick()
-          scrollToInitialPosition(startCmid)
-        }
-      }
+      direction
     })
+  }
+
+  const onHistoryLoadComplete = () => {
+    if (session.navigationRequest) {
+      return
+    }
+
+    const [topMessageCmid] = findVisibleMessageRange()
+    if (topMessageCmid) {
+      // History loading doesn't change anchor itself, but we still need to update it in order to
+      // move the window boundary
+      session.anchorCmid = topMessageCmid
+      preserveMessagePosition(topMessageCmid)
+    }
   }
 
   return () => {
@@ -238,7 +209,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       windowSlice.value
     const messages = [
       ...items.map(({ item }) => item),
-      ...(!gapAfter && !hasEndWindowOffset ? props.convo.pendingMessages : [])
+      ...(!gapAfter && !hasEndWindowOffset ? convo.pendingMessages : [])
     ]
 
     if (gapAround) {
@@ -246,8 +217,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         <div class="ConvoHistory__placeholder">
           <HistoryBoundary
             key={effectiveAroundId}
-            direction="around"
-            peerId={props.convo.id}
+            lock={session.loadLocks.around}
             startId={effectiveAroundId}
             onReach={() => loadHistory('around', effectiveAroundId, gapAround)}
           />
@@ -263,7 +233,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       )
     }
 
-    const typingUsers = typings.get(props.convo.id)
+    const typingUsers = typings.get(convo.id)
 
     return (
       <div class="ConvoHistory">
@@ -284,18 +254,17 @@ export const ConvoHistory = defineComponent<Props>((props) => {
             ) : gapBefore ? (
               <HistoryBoundary
                 key={gapBefore.toId}
-                direction="up"
-                peerId={props.convo.id}
+                lock={session.loadLocks.up}
                 startId={gapBefore.toId}
                 onReach={() => loadHistory('up', gapBefore.toId, gapBefore)}
               />
             ) : null}
 
             <HistoryMessages
-              convo={props.convo}
+              convo={convo}
               messages={messages}
               hasMessagesAbove={!!gapBefore || hasStartWindowOffset}
-              openMessagePreview={props.openMessagePreview}
+              openMessagePreview={openMessagePreview}
             />
 
             {windowEnd && hasEndWindowOffset ? (
@@ -306,8 +275,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
             ) : gapAfter ? (
               <HistoryBoundary
                 key={gapAfter.fromId}
-                direction="down"
-                peerId={props.convo.id}
+                lock={session.loadLocks.down}
                 startId={gapAfter.fromId}
                 onReach={() => loadHistory('down', gapAfter.fromId, gapAfter)}
               />
@@ -317,7 +285,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
               {!gapAfter && !hasEndWindowOffset && typingUsers && isNonEmptyArray(typingUsers) && (
                 <ConvoTyping
                   typingUsers={typingUsers}
-                  namesLimit={props.convo.kind === 'ChatConvo' ? undefined : 0}
+                  namesLimit={convo.kind === 'ChatConvo' ? undefined : 0}
                 />
               )}
             </div>
@@ -344,19 +312,14 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 })
 
 type HistoryBoundaryProps = {
-  direction: 'around' | 'up' | 'down'
-  peerId: Peer.Id
+  lock: LoadConvoHistoryLock | undefined
   startId: number
   onReach: () => void
 }
 
 const HistoryBoundary = defineComponent<HistoryBoundaryProps>((props) => {
-  const { loadConvoHistoryLock } = useConvosStore()
-
   return () => {
-    const lock = loadConvoHistoryLock.get(`${props.peerId}-${props.direction}`)
-
-    if (lock?.status === 'error' && lock.startCmid === props.startId) {
+    if (props.lock?.status === 'error' && props.lock.startCmid === props.startId) {
       return <LoadError onRetry={props.onReach} />
     }
 
@@ -367,7 +330,7 @@ const HistoryBoundary = defineComponent<HistoryBoundaryProps>((props) => {
     )
   }
 }, {
-  props: ['direction', 'peerId', 'startId', 'onReach']
+  props: ['lock', 'startId', 'onReach']
 })
 
 type WindowBoundaryProps = {

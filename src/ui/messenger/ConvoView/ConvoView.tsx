@@ -6,7 +6,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
-import { useModal } from 'hooks'
+import { provideConvoSession, useModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
@@ -22,9 +22,12 @@ type ConvoViewProps = {
 }
 
 const ConvoView = defineComponent<ConvoViewProps>((props) => {
-  const { scrollAnchors } = useConvosStore()
+  const convosStore = useConvosStore()
   const messagePreviewModal = useModal()
   const messagePreviewCmid = shallowRef<Message.Cmid>()
+
+  const session = convosStore.getDefaultSession(props.convo.id, props.convo.inReadBy)
+  provideConvoSession(session)
 
   const openMessagePreview = (cmid: Message.Cmid) => {
     messagePreviewCmid.value = cmid
@@ -45,11 +48,11 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
                 openMessagePreview(pinnedMessage.cmid)
                 return
               }
-              scrollAnchors.set(props.convo.id, {
+              session.navigationRequest = {
                 kind: 'Message',
                 cmid: pinnedMessage.cmid,
-                reversible: true
-              })
+                returnBack: true
+              }
             }}
           />
         )}

@@ -3,12 +3,7 @@ import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-
-type LoadConvoHistoryLock = {
-  status: 'loading' | 'error'
-  startCmid: Message.Cmid
-  controller: AbortController
-}
+import { getMapValueOrCompute } from 'misc/utils'
 
 export type ViewportPosition = {
   /** Cmid of the topmost visible message in the viewport */
@@ -17,21 +12,29 @@ export type ViewportPosition = {
   offset: number
 }
 
-export type ScrollAnchor =
+export type NavigationRequest =
   | {
       kind: 'Message'
       cmid: Message.Cmid
-      /**
-       * Whether to revert back to the initial history & viewport position if the message
-       * is not available in the history.
-       * Automatically captures the viewport position and puts it in origin
-       */
-      reversible?: boolean
-      origin?: ViewportPosition
-      /** Set false to disable highlight, true by default */
+      /** True by default */
       highlight?: boolean
+      /** A position to return back in case the message is unavailable */
+      returnBack?: boolean | ViewportPosition
     }
   | { kind: 'Unread', cmid: Message.Cmid }
+
+export type LoadConvoHistoryLock = {
+  status: 'loading' | 'error'
+  startCmid: Message.Cmid
+  controller: AbortController
+}
+
+export type ConvoSession = {
+  anchorCmid: Message.Cmid | 0
+  viewportPosition?: ViewportPosition
+  navigationRequest?: NavigationRequest
+  loadLocks: Partial<Record<'around' | 'up' | 'down', LoadConvoHistoryLock>>
+}
 
 export type TypingUser = {
   peerId: Peer.Id
@@ -45,11 +48,10 @@ type Convos = {
   connection: {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
-  loadConvoHistoryLock: Map<`${Peer.Id}-${'around' | 'up' | 'down'}`, LoadConvoHistoryLock>
+  convoSessions: Map<Peer.Id, ConvoSession>
+  /** These listeners are called synchronously after updating the state, before rendering begins */
+  historyLoadCompleteListeners: Map<Peer.Id, Set<() => void>>
   sendMessageLock: Set<Peer.Id>
-  /** Also indicates whether the convo was open at least once in the past */
-  viewportPositions: Map<Peer.Id, ViewportPosition | undefined>
-  scrollAnchors: Map<Peer.Id, ScrollAnchor>
   typings: Map<Peer.Id, TypingUser[]>
 }
 
@@ -60,14 +62,24 @@ export const useConvosStore = defineStore('convos', {
     connection: {
       status: 'init'
     },
-    loadConvoHistoryLock: new Map(),
+    convoSessions: new Map(),
+    historyLoadCompleteListeners: new Map(),
     sendMessageLock: new Set(),
-    viewportPositions: new Map(),
-    scrollAnchors: new Map(),
     typings: new Map()
   }),
 
   actions: {
+    getDefaultSession(peerId: Peer.Id, initialAnchor: Message.Cmid | 0): ConvoSession {
+      return getMapValueOrCompute(this.convoSessions, peerId, () => ({
+        anchorCmid: initialAnchor,
+        loadLocks: {}
+      }))
+    },
+
+    requestNavigation(peerId: Peer.Id, request: NavigationRequest) {
+      this.getDefaultSession(peerId, request.cmid).navigationRequest = request
+    },
+
     stopTyping(convoId: Peer.Id, typingPeerId: Peer.Id) {
       const typingPeers = this.typings.get(convoId)
       if (!typingPeers) {

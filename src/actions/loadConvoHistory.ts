@@ -2,33 +2,30 @@ import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
-import * as Peer from 'model/Peer'
-import { useConvosStore } from 'store/convos'
+import { ConvoSession, useConvosStore } from 'store/convos'
 import { insertPeers } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
 import { PEER_FIELDS } from 'misc/constants'
 
 type Props = {
-  peerId: Peer.Id
+  convo: Convo.Convo
+  session: ConvoSession
   startCmid: Message.Cmid
   gap: History.Gap
   direction: 'around' | 'up' | 'down'
-  onHistoryInserted: () => void
 }
 
 export async function loadConvoHistory({
-  peerId,
+  convo,
+  session,
   startCmid,
   gap,
-  direction,
-  onHistoryInserted
+  direction
 }: Props) {
   const { api } = useServices()
-  const { convos, loadConvoHistoryLock } = useConvosStore()
+  const { historyLoadCompleteListeners } = useConvosStore()
 
-  const loadingKey = `${peerId}-${direction}` as const
-  const oldLock = loadConvoHistoryLock.get(loadingKey)
-
+  const oldLock = session.loadLocks[direction]
   if (oldLock?.status === 'loading' && oldLock.startCmid === startCmid) {
     return
   }
@@ -41,7 +38,7 @@ export async function loadConvoHistory({
   }
 
   oldLock?.controller.abort()
-  loadConvoHistoryLock.set(loadingKey, lock)
+  session.loadLocks[direction] = lock
 
   let count = 20
   let offset = 0
@@ -111,14 +108,12 @@ export async function loadConvoHistory({
   }
 
   try {
-    const convo = Convo.safeGet(convos, peerId)
-
     const {
       items,
       profiles,
       groups
     } = await api.fetch('messages.getHistory', {
-      peer_id: peerId,
+      peer_id: convo.id,
       start_cmid: startCmid,
       count,
       offset,
@@ -175,21 +170,21 @@ export async function loadConvoHistory({
       down: hasMoreDown,
       aroundId: startCmid
     })
-    onHistoryInserted()
+
+    for (const listener of historyLoadCompleteListeners.get(convo.id) ?? []) {
+      listener()
+    }
   } catch (err) {
     if (controller.signal.aborted) {
       return
     }
 
     console.warn('[loadConvoHistory] loading error', err)
-    loadConvoHistoryLock.set(loadingKey, {
-      ...lock,
-      status: 'error'
-    })
+    session.loadLocks[direction].status = 'error'
   } finally {
-    const curLock = loadConvoHistoryLock.get(loadingKey)
-    if (curLock === lock && curLock.status === 'loading') {
-      loadConvoHistoryLock.delete(loadingKey)
+    const curLock = session.loadLocks[direction]
+    if (curLock?.controller === controller && curLock.status === 'loading') {
+      delete session.loadLocks[direction]
     }
   }
 }

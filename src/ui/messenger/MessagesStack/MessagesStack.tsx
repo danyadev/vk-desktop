@@ -4,6 +4,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
+import { useConvoSession } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { ConvoMessage } from 'ui/messenger/ConvoMessage/ConvoMessage'
 import { ExpiredMessage } from 'ui/messenger/ExpiredMessage/ExpiredMessage'
@@ -56,14 +57,14 @@ type StackMessageProps = {
 }
 
 const StackMessage = defineComponent<StackMessageProps>((props) => {
-  const { scrollAnchors } = useConvosStore()
+  const session = useConvoSession()
   const highlightTimeoutId = shallowRef<number>()
 
-  watch(() => scrollAnchors.get(props.message.peerId), (anchor) => {
+  watch(() => session.navigationRequest, (request) => {
     if (
-      anchor?.kind === 'Message' &&
-      anchor.cmid === props.message.cmid &&
-      anchor.highlight !== false
+      request?.kind === 'Message' &&
+      request.cmid === props.message.cmid &&
+      request.highlight !== false
     ) {
       window.clearTimeout(highlightTimeoutId.value)
       highlightTimeoutId.value = window.setTimeout(() => {

@@ -12,7 +12,7 @@ import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { insertConvos, insertPeers } from 'actions'
 import { fromApiMessage, fromEngineMessage } from 'converters/MessageConverter'
-import { getMapValueWithDefaults } from 'misc/utils'
+import { getMapValueOrCompute } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
 
 const TYPING_DURATION = 5000
@@ -307,7 +307,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           break
         }
 
-        const typingPeers = getMapValueWithDefaults(typings, peerId, [])
+        const typingPeers = getMapValueOrCompute(typings, peerId, () => [])
 
         for (const rawTypingPeerId of rawTypingPeerIds) {
           const typingPeerId = Peer.resolveId(rawTypingPeerId)
@@ -717,7 +717,7 @@ export async function loadMissingData({
     }
 
     const peerId = Peer.resolveId(rawPeerId)
-    const mapWithMessages = getMapValueWithDefaults(apiMessagesMap, peerId, new Map())
+    const mapWithMessages = getMapValueOrCompute(apiMessagesMap, peerId, () => new Map())
 
     for (const apiMessage of apiMessages) {
       const cmid = Message.resolveCmid(apiMessage.conversation_message_id)
@@ -733,7 +733,7 @@ export async function loadMissingData({
   for (const apiMessage of convosResponse?.last_messages ?? []) {
     const peerId = Peer.resolveId(apiMessage.peer_id)
     const cmid = Message.resolveCmid(apiMessage.conversation_message_id)
-    const mapWithMessages = getMapValueWithDefaults(apiMessagesMap, peerId, new Map())
+    const mapWithMessages = getMapValueOrCompute(apiMessagesMap, peerId, () => new Map())
     mapWithMessages.set(cmid, apiMessage)
   }
 

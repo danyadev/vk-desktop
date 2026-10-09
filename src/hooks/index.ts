@@ -1,3 +1,4 @@
+export { provideConvoSession, useConvoSession } from './providers'
 export { useFocusVisible } from './useFocusVisible'
 export { useFormatDate } from './useFormatDate'
 export { useGlobalModal } from './useGlobalModal'

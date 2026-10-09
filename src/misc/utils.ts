@@ -96,10 +96,10 @@ export function throttle<Args extends unknown[]>(fn: ((...args: Args) => void), 
   }
 }
 
-const getSegmenter = createSingletonHook(() => new Intl.Segmenter())
+const segmenter = new Intl.Segmenter()
 
 export function getFirstLetter(string: string): string {
-  return getSegmenter().segment(string).containing(0)?.segment ?? ''
+  return segmenter.segment(string).containing(0)?.segment ?? ''
 }
 
 export function toUrlParams(object: Record<string, string | number | null | undefined>) {
@@ -236,23 +236,16 @@ export function isEventWithModifier(event: MouseEvent | KeyboardEvent): boolean 
   )
 }
 
-export function getMapValueWithDefaults<K, V>(
+export function getMapValueOrCompute<K, V>(
   map: Map<K, V>,
   key: NoInfer<K>,
-  defaults: NoInfer<V>
+  defaults: () => NoInfer<V>
 ): V {
   if (!map.has(key)) {
-    map.set(key, defaults)
+    map.set(key, defaults())
   }
 
   // Важно достать значение из мапы даже если мы собираемся вернуть defaults,
   // потому что в случае с реактивной мапой важно достать реактивное значение
-  return map.get(key) as V
+  return map.get(key)!
 }
-
-// export function isElementInViewport(viewport: HTMLElement, element: HTMLElement): boolean {
-//   const viewportRect = viewport.getBoundingClientRect()
-//   const elementRect = element.getBoundingClientRect()
-//
-//   return elementRect.top >= viewportRect.top && elementRect.bottom <= viewportRect.bottom
-// }

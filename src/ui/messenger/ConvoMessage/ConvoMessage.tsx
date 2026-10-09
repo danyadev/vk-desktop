@@ -3,8 +3,8 @@ import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
+import { useConvoSession } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { ForwardedMessages } from 'ui/messenger/ForwardedMessages/ForwardedMessages'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
@@ -19,8 +19,25 @@ type Props = {
 
 export const ConvoMessage = defineComponent<Props>((props) => {
   const { lang } = useServices()
-  const { scrollAnchors } = useConvosStore()
+  const session = useConvoSession()
   const { peers } = usePeersStore()
+
+  const navigateToReplyMessage = (reply: Message.Foreign) => {
+    if (!reply.cmid) {
+      return
+    }
+
+    if (reply.isUnavailable) {
+      props.openMessagePreview(reply.cmid)
+      return
+    }
+
+    session.navigationRequest = {
+      kind: 'Message',
+      cmid: reply.cmid,
+      returnBack: true
+    }
+  }
 
   return () => {
     const { message, showName } = props
@@ -47,19 +64,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             <ReplyMessage
               class="ConvoMessage__reply"
               reply={message.replyMessage}
-              onClick={() => {
-                if (message.replyMessage?.cmid) {
-                  if (message.replyMessage.isUnavailable) {
-                    props.openMessagePreview(message.replyMessage.cmid)
-                    return
-                  }
-                  scrollAnchors.set(message.peerId, {
-                    kind: 'Message',
-                    cmid: message.replyMessage.cmid,
-                    reversible: true
-                  })
-                }
-              }}
+              onClick={() => navigateToReplyMessage(message.replyMessage!)}
             />
           )}
 
