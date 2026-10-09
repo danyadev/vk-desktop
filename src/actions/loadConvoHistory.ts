@@ -2,34 +2,29 @@ import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
-import * as Peer from 'model/Peer'
-import { useConvosStore } from 'store/convos'
+import { ConvoSession } from 'store/convos'
 import { insertPeers } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
 import { PEER_FIELDS } from 'misc/constants'
 
 type Props = {
-  peerId: Peer.Id
+  convo: Convo.Convo
+  session: ConvoSession
   startCmid: Message.Cmid
   gap: History.Gap
   direction: 'around' | 'up' | 'down'
 }
 
 export async function loadConvoHistory({
-  peerId,
+  convo,
+  session,
   startCmid,
   gap,
   direction
 }: Props) {
   const { api } = useServices()
-  const { convos, convoSessions } = useConvosStore()
 
-  const convoSession = convoSessions.get(peerId)
-  if (!convoSession) {
-    return
-  }
-
-  const oldLock = convoSession.loadLocks.get(direction)
+  const oldLock = session.loadLocks.get(direction)
   if (oldLock?.status === 'loading' && oldLock.startCmid === startCmid) {
     return
   }
@@ -42,7 +37,7 @@ export async function loadConvoHistory({
   }
 
   oldLock?.controller.abort()
-  convoSession.loadLocks.set(direction, lock)
+  session.loadLocks.set(direction, lock)
 
   let count = 20
   let offset = 0
@@ -112,14 +107,12 @@ export async function loadConvoHistory({
   }
 
   try {
-    const convo = Convo.safeGet(convos, peerId)
-
     const {
       items,
       profiles,
       groups
     } = await api.fetch('messages.getHistory', {
-      peer_id: peerId,
+      peer_id: convo.id,
       start_cmid: startCmid,
       count,
       offset,
@@ -176,18 +169,18 @@ export async function loadConvoHistory({
       down: hasMoreDown,
       aroundId: startCmid
     })
-    convoSession.onHistoryLoadComplete?.(startCmid)
+    session.onHistoryLoadComplete?.(startCmid)
   } catch (err) {
     if (controller.signal.aborted) {
       return
     }
 
     console.warn('[loadConvoHistory] loading error', err)
-    convoSession.loadLocks.get(direction)!.status = 'error'
+    session.loadLocks.get(direction)!.status = 'error'
   } finally {
-    const curLock = convoSession.loadLocks.get(direction)
+    const curLock = session.loadLocks.get(direction)
     if (curLock === lock && curLock.status === 'loading') {
-      convoSession.loadLocks.delete(direction)
+      session.loadLocks.delete(direction)
     }
   }
 }

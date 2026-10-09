@@ -7,6 +7,7 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
 import { useModal } from 'hooks'
+import { getMapValueOrCompute } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
 import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
@@ -25,6 +26,11 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
   const convosStore = useConvosStore()
   const messagePreviewModal = useModal()
   const messagePreviewCmid = shallowRef<Message.Cmid>()
+
+  const session = getMapValueOrCompute(convosStore.convoSessions, props.convo.id, () => ({
+    anchorCmid: props.convo.inReadBy,
+    loadLocks: new Map()
+  }))
 
   const openMessagePreview = (cmid: Message.Cmid) => {
     messagePreviewCmid.value = cmid
@@ -53,7 +59,11 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
             }}
           />
         )}
-        <ConvoHistory convo={props.convo} openMessagePreview={openMessagePreview} />
+        <ConvoHistory
+          convo={props.convo}
+          session={session}
+          openMessagePreview={openMessagePreview}
+        />
         <ConvoComposer convo={props.convo} />
 
         {messagePreviewCmid.value && (

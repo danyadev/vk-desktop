@@ -15,7 +15,7 @@ const WINDOW_WING_BUFFER_MESSAGES = 5
 
 export const useConvoHistoryViewport = (
   convo: Convo.Convo,
-  convoSession: ConvoSession,
+  session: ConvoSession,
   $historyElement: Ref<HTMLElement | null>,
   hasAroundGap: Ref<boolean>,
   openMessagePreview: (cmid: Message.Cmid) => void
@@ -38,13 +38,13 @@ export const useConvoHistoryViewport = (
 
     messagesWindowWingSize.value = newSize
 
-    if (convoSession.navigationRequest) {
+    if (session.navigationRequest) {
       return
     }
 
     const [topMessageCmid] = findVisibleMessageRange()
     if (topMessageCmid) {
-      convoSession.anchorCmid = topMessageCmid
+      session.anchorCmid = topMessageCmid
       preserveMessagePosition(topMessageCmid)
     }
   })
@@ -91,7 +91,7 @@ export const useConvoHistoryViewport = (
   }
 
   const advanceNavigationRequest = (instantScroll: boolean) => {
-    const request = convoSession.navigationRequest
+    const request = session.navigationRequest
     if (!request) {
       return
     }
@@ -135,20 +135,20 @@ export const useConvoHistoryViewport = (
           })
         })
       }
-      convoSession.navigationRequest = undefined
+      session.navigationRequest = undefined
       return
     }
 
-    if (convoSession.anchorCmid !== request.cmid) {
-      convoSession.anchorCmid = request.cmid
+    if (session.anchorCmid !== request.cmid) {
+      session.anchorCmid = request.cmid
       return
     }
 
-    convoSession.navigationRequest = undefined
+    session.navigationRequest = undefined
 
     if (request.kind === 'Message') {
       if (isObject(request.returnBack) && request.returnBack.cmid !== request.cmid) {
-        convoSession.navigationRequest = {
+        session.navigationRequest = {
           kind: 'Message',
           cmid: request.returnBack.cmid,
           returnBack: request.returnBack,
@@ -158,7 +158,7 @@ export const useConvoHistoryViewport = (
       openMessagePreview(request.cmid)
     }
 
-    if (!convoSession.navigationRequest) {
+    if (!session.navigationRequest) {
       scrollToInitialPosition(request.cmid)
     }
   }
