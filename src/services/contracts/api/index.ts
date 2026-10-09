@@ -43,9 +43,22 @@ import {
   MessagesGetLongPollHistoryResponse,
   MessagesGetLongPollServerParams,
   MessagesGetLongPollServerResponse,
-  MessagesConversationActionParams,
-  MessagesChatUserParams,
+  MessagesAddChatUserParams,
+  MessagesAddChatUserResponse,
+  MessagesArchiveConversationParams,
+  MessagesArchiveConversationResponse,
+  MessagesDeleteConversationParams,
   MessagesDeleteConversationResponse,
+  MessagesMarkAsUnreadConversationParams,
+  MessagesMarkAsUnreadConversationResponse,
+  MessagesPinConversationParams,
+  MessagesPinConversationResponse,
+  MessagesRemoveChatUserParams,
+  MessagesRemoveChatUserResponse,
+  MessagesUnarchiveConversationParams,
+  MessagesUnarchiveConversationResponse,
+  MessagesUnpinConversationParams,
+  MessagesUnpinConversationResponse,
   MessagesMarkAsPlayedParams,
   MessagesMarkAsPlayedResponse,
   MessagesSendParams,
@@ -164,14 +177,38 @@ export type Methods = {
     params: MessagesSendParams
     response: MessagesSendResponse
   }
-  'messages.markAsUnreadConversation': { params: MessagesConversationActionParams, response: 1 }
-  'messages.archiveConversation': { params: MessagesConversationActionParams, response: 1 }
-  'messages.unarchiveConversation': { params: MessagesConversationActionParams, response: 1 }
-  'messages.pinConversation': { params: MessagesConversationActionParams, response: 1 }
-  'messages.unpinConversation': { params: MessagesConversationActionParams, response: 1 }
-  'messages.deleteConversation': { params: MessagesConversationActionParams, response: MessagesDeleteConversationResponse }
-  'messages.removeChatUser': { params: MessagesChatUserParams, response: 1 }
-  'messages.addChatUser': { params: MessagesChatUserParams, response: 1 }
+  'messages.markAsUnreadConversation': {
+    params: MessagesMarkAsUnreadConversationParams
+    response: MessagesMarkAsUnreadConversationResponse
+  }
+  'messages.archiveConversation': {
+    params: MessagesArchiveConversationParams
+    response: MessagesArchiveConversationResponse
+  }
+  'messages.unarchiveConversation': {
+    params: MessagesUnarchiveConversationParams
+    response: MessagesUnarchiveConversationResponse
+  }
+  'messages.pinConversation': {
+    params: MessagesPinConversationParams
+    response: MessagesPinConversationResponse
+  }
+  'messages.unpinConversation': {
+    params: MessagesUnpinConversationParams
+    response: MessagesUnpinConversationResponse
+  }
+  'messages.deleteConversation': {
+    params: MessagesDeleteConversationParams
+    response: MessagesDeleteConversationResponse
+  }
+  'messages.removeChatUser': {
+    params: MessagesRemoveChatUserParams
+    response: MessagesRemoveChatUserResponse
+  }
+  'messages.addChatUser': {
+    params: MessagesAddChatUserParams
+    response: MessagesAddChatUserResponse
+  }
 
   'messages.markAsPlayed': {
     params: MessagesMarkAsPlayedParams
