@@ -22,6 +22,7 @@ export type NavigationRequest =
       returnBack?: boolean | ViewportPosition
     }
   | { kind: 'Unread', cmid: Message.Cmid }
+  | { kind: 'FirstMessage' }
 
 export type LoadConvoHistoryLock = {
   status: 'loading' | 'error'
@@ -78,7 +79,8 @@ export const useConvosStore = defineStore('convos', {
     },
 
     requestNavigation(peerId: Peer.Id, request: NavigationRequest) {
-      this.getDefaultSession(peerId, request.cmid).navigationRequest = request
+      this.getDefaultSession(peerId, request.kind === 'FirstMessage' ? 0 : request.cmid)
+        .navigationRequest = request
     },
 
     stopTyping(convoId: Peer.Id, typingPeerId: Peer.Id) {

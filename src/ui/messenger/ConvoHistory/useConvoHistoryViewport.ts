@@ -96,6 +96,21 @@ export const useConvoHistoryViewport = (
       return
     }
 
+    const firstNode = request.kind === 'FirstMessage' ? convo.history[0] : undefined
+    if (request.kind === 'FirstMessage' && !firstNode) {
+      session.navigationRequest = undefined
+      return
+    }
+
+    const cmid = firstNode
+      ? Message.resolveCmid(firstNode.kind === 'Gap' ? firstNode.fromId : firstNode.id)
+      : request.kind === 'FirstMessage' ? undefined : request.cmid
+
+    if (request.kind === 'FirstMessage' && cmid && session.anchorCmid !== cmid) {
+      session.anchorCmid = cmid
+      return
+    }
+
     const returnBack = request.kind === 'Message' && request.returnBack
     if (returnBack === true) {
       const viewportPosition = captureViewportPosition()
@@ -111,13 +126,13 @@ export const useConvoHistoryViewport = (
      * поэтому hasAroundGap означает, что запрошенная позиция все еще не загружена.
      * Эта проверка нужна, чтобы предотвратить преждевременный фоллбэк на превью сообщения
      */
-    if (hasAroundGap.value) {
+    if (hasAroundGap.value || firstNode?.kind === 'Gap') {
       return
     }
 
     const element = request.kind === 'Unread'
       ? getUnreadElement() ?? getMessageElement(request.cmid)
-      : getMessageElement(request.cmid)
+      : cmid && getMessageElement(cmid)
 
     if (element) {
       if (
@@ -139,8 +154,8 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    if (session.anchorCmid !== request.cmid) {
-      session.anchorCmid = request.cmid
+    if (cmid && session.anchorCmid !== cmid) {
+      session.anchorCmid = cmid
       return
     }
 
@@ -159,7 +174,7 @@ export const useConvoHistoryViewport = (
     }
 
     if (!session.navigationRequest) {
-      scrollToInitialPosition(request.cmid)
+      cmid && scrollToInitialPosition(cmid)
     }
   }
 

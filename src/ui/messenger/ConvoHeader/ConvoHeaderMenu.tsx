@@ -2,7 +2,6 @@ import { defineComponent, shallowRef } from 'vue'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
-import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
@@ -62,27 +61,9 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     }
   }
 
-  const goToFirstMessage = () => run(async () => {
-    // As in the old VK Desktop client: start_message_id=0 with a negative
-    // offset loads the beginning of history (CMID 1 may be deleted).
-    const { items } = await api.fetch('messages.getHistory', {
-      peer_id: props.convo.id,
-      start_message_id: 0,
-      offset: -20,
-      count: 20,
-      extended: 1,
-      fwd_extended: 1,
-      fields: PEER_FIELDS
-    })
-    const firstCmid = Math.min(...items.map((item) => item.conversation_message_id))
-    if (Number.isFinite(firstCmid) && firstCmid > 0) {
-      session.navigationRequest = {
-        kind: 'Message',
-        cmid: Message.resolveCmid(firstCmid),
-        highlight: false
-      }
-    }
-  })
+  const goToFirstMessage = () => {
+    session.navigationRequest = { kind: 'FirstMessage' }
+  }
 
   const togglePinnedMessage = () => {
     const pinned = props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage
@@ -117,20 +98,20 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
 
     // Major sort-id changes aren't handled by our engine updates yet.
     // Fetch the actual position; don't try to compute it locally.
-    const { items, last_messages = [] } = await api.fetch('messages.getConversationsById', {
+    const { items, last_messages: lastMessages = [] } = await api.fetch('messages.getConversationsById', {
       peer_ids: props.convo.id,
       with_last_messages: 1,
       extended: 1,
       fields: PEER_FIELDS
     })
     if (items[0]) {
-      insertConvos([{ conversation: items[0], last_message: last_messages[0] }])
+      insertConvos([{ conversation: items[0], last_message: lastMessages[0] }])
       Lists.refresh(lists, props.convo)
     }
   })
 
   const toggleNotifications = () => run(async () => {
-    const enabled = props.convo.notifications.enabled
+    const { enabled } = props.convo.notifications
     await api.fetch('account.setSilenceMode', {
       peer_id: props.convo.id,
       sound: enabled ? 0 : 1,
@@ -147,7 +128,6 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     props.convo.history.length = 0
     props.convo.unreadCount = 0
     props.convo.isMarkedUnread = false
-    props.convo.minorSortId = 0
     session.anchorCmid = 0
     session.navigationRequest = undefined
     session.viewportPosition = undefined
@@ -170,10 +150,11 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   })
 
   return () => {
-    const convo = props.convo
+    const { convo } = props
     const pinnedMessage = convo.kind === 'ChatConvo' && convo.pinnedMessage
     const pinnedMessageHidden = !!pinnedMessage && session.hiddenPinnedCmid === pinnedMessage.cmid
-    const pinned = (convo.majorSortId & PIN_FLAGS) !== 0
+    const { majorSortId } = convo
+    const pinned = (majorSortId & PIN_FLAGS) !== 0
     const canPin = !convo.isArchived && !Convo.isHidden(convo) && !Convo.isCasper(convo)
     const isChatMember = convo.kind === 'ChatConvo' && convo.status === 'in'
     const isFormerChatMember = convo.kind === 'ChatConvo' && convo.status === 'left'
@@ -190,8 +171,10 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
 
     return (
       <>
-        <Popper closeOnContentClick content={
-          <ActionMenu>
+        <Popper
+          closeOnContentClick
+          content={
+            <ActionMenu>
             {!Convo.isHidden(convo) && (
               <ActionMenuItem
                 icon={<Icon20ArrowUpOutline />}
@@ -280,8 +263,9 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 onClick={() => (confirmation.value = 'leave')}
               />
             )}
-          </ActionMenu>
-        }>
+            </ActionMenu>
+          }
+        >
           <ButtonIcon
             class="ConvoHeader__actions"
             icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
