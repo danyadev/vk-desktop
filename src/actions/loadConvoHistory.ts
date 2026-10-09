@@ -24,7 +24,7 @@ export async function loadConvoHistory({
 }: Props) {
   const { api } = useServices()
 
-  const oldLock = session.loadLocks.get(direction)
+  const oldLock = session.loadLocks[direction]
   if (oldLock?.status === 'loading' && oldLock.startCmid === startCmid) {
     return
   }
@@ -37,7 +37,7 @@ export async function loadConvoHistory({
   }
 
   oldLock?.controller.abort()
-  session.loadLocks.set(direction, lock)
+  session.loadLocks[direction] = lock
 
   let count = 20
   let offset = 0
@@ -176,11 +176,11 @@ export async function loadConvoHistory({
     }
 
     console.warn('[loadConvoHistory] loading error', err)
-    session.loadLocks.get(direction)!.status = 'error'
+    session.loadLocks[direction].status = 'error'
   } finally {
-    const curLock = session.loadLocks.get(direction)
-    if (curLock === lock && curLock.status === 'loading') {
-      session.loadLocks.delete(direction)
+    const curLock = session.loadLocks[direction]
+    if (curLock?.controller === controller && curLock.status === 'loading') {
+      delete session.loadLocks[direction]
     }
   }
 }

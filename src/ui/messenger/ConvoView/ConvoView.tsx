@@ -29,7 +29,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
 
   const session = getMapValueOrCompute(convosStore.convoSessions, props.convo.id, () => ({
     anchorCmid: props.convo.inReadBy,
-    loadLocks: new Map()
+    loadLocks: {}
   }))
 
   const openMessagePreview = (cmid: Message.Cmid) => {

@@ -212,7 +212,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         <div class="ConvoHistory__placeholder">
           <HistoryBoundary
             key={effectiveAroundId}
-            lock={session.loadLocks.get('around')}
+            lock={session.loadLocks.around}
             startId={effectiveAroundId}
             onReach={() => loadHistory('around', effectiveAroundId, gapAround)}
           />
@@ -249,7 +249,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
             ) : gapBefore ? (
               <HistoryBoundary
                 key={gapBefore.toId}
-                lock={session.loadLocks.get('up')}
+                lock={session.loadLocks.up}
                 startId={gapBefore.toId}
                 onReach={() => loadHistory('up', gapBefore.toId, gapBefore)}
               />
@@ -270,7 +270,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
             ) : gapAfter ? (
               <HistoryBoundary
                 key={gapAfter.fromId}
-                lock={session.loadLocks.get('down')}
+                lock={session.loadLocks.down}
                 startId={gapAfter.fromId}
                 onReach={() => loadHistory('down', gapAfter.fromId, gapAfter)}
               />

@@ -33,7 +33,7 @@ export type ConvoSession = {
   anchorCmid: Message.Cmid | 0
   viewportPosition?: ViewportPosition
   navigationRequest?: NavigationRequest
-  loadLocks: Map<'around' | 'up' | 'down', LoadConvoHistoryLock>
+  loadLocks: Partial<Record<'around' | 'up' | 'down', LoadConvoHistoryLock>>
   /**
    * A handler from the last convo. If loading completes after the convo has been reopened,
    * it can still access the latest historyElement and correct the viewport position
