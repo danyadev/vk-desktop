@@ -107,7 +107,6 @@ export const ru = {
   me_convo_menu_error_title: 'Не удалось выполнить действие',
   me_convo_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',
 
-
   me_messages_disappeared: {
     single: 'Сообщение исчезло',
     one: '{0} сообщение исчезло',
