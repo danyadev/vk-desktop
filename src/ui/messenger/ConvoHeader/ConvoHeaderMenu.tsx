@@ -10,6 +10,7 @@ import { useConvoSession } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
+import { ActionMenuSeparator } from 'ui/ui/ActionMenuSeparator/ActionMenuSeparator'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Popper } from 'ui/ui/Popper/Popper'
@@ -30,30 +31,42 @@ import {
   Icon20ViewOutline,
   Icon24MoreHorizontal
 } from 'assets/icons'
-import './ConvoHeaderMenu.css'
 
-type Props = { convo: Convo.Convo }
+type Props = {
+  convo: Convo.Convo
+}
 type Confirmation = 'clear' | 'leave'
+type LoadingAction =
+  | 'markUnread'
+  | 'archive'
+  | 'pin'
+  | 'mute'
+  | 'copyId'
+  | 'clear'
+  | 'membership'
 
 export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   const { api, lang } = useServices()
   const { lists } = useConvosStore()
   const session = useConvoSession()
   const viewer = useViewerStore()
-  const loading = shallowRef(false)
+  const loadingAction = shallowRef<LoadingAction>()
   const confirmation = shallowRef<Confirmation>()
   const hasError = shallowRef(false)
 
-  const run = async (action: () => Promise<unknown>) => {
-    if (loading.value) return
-    loading.value = true
+  const run = async (key: LoadingAction, action: () => Promise<unknown>) => {
+    if (loadingAction.value) {
+      return
+    }
+
+    loadingAction.value = key
     try {
       await action()
     } catch (error) {
       console.error('[ConvoHeaderMenu] Action failed', error)
       hasError.value = true
     } finally {
-      loading.value = false
+      loadingAction.value = undefined
     }
   }
 
@@ -74,13 +87,13 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     }
   }
 
-  const markUnread = () => run(async () => {
+  const markUnread = () => run('markUnread', async () => {
     await api.fetch('messages.markAsUnreadConversation', { peer_id: props.convo.id })
     props.convo.isMarkedUnread = true
     Lists.refresh(lists, props.convo)
   })
 
-  const toggleArchive = () => run(async () => {
+  const toggleArchive = () => run('archive', async () => {
     const archive = !props.convo.isArchived
     await api.fetch(
       archive ? 'messages.archiveConversation' : 'messages.unarchiveConversation',
@@ -90,7 +103,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     Lists.refresh(lists, props.convo)
   })
 
-  const togglePin = () => run(async () => {
+  const togglePin = () => run('pin', async () => {
     await api.fetch(
       props.convo.majorSortId
         ? 'messages.unpinConversation'
@@ -99,7 +112,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     )
   })
 
-  const toggleNotifications = () => run(async () => {
+  const toggleNotifications = () => run('mute', async () => {
     const { enabled } = props.convo.notifications
     await api.fetch('account.setSilenceMode', {
       peer_id: props.convo.id,
@@ -109,14 +122,14 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     props.convo.notifications.enabled = !enabled
   })
 
-  const copyId = () => run(() => navigator.clipboard.writeText(String(props.convo.id)))
+  const copyId = () => run('copyId', () => navigator.clipboard.writeText(String(props.convo.id)))
 
-  const clearHistory = () => run(async () => {
+  const clearHistory = () => run('clear', async () => {
     await api.fetch('messages.deleteConversation', { peer_id: props.convo.id })
     confirmation.value = undefined
   })
 
-  const changeChatMembership = (leave: boolean) => run(async () => {
+  const changeChatMembership = (leave: boolean) => run('membership', async () => {
     if (props.convo.kind !== 'ChatConvo') return
     const params = {
       chat_id: Peer.toRealId(props.convo.id),
@@ -139,6 +152,8 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     const canPin = !convo.isArchived && !Convo.isHidden(convo) && !Convo.isCasper(convo)
     const isChatMember = convo.kind === 'ChatConvo' && convo.status === 'in'
     const muted = !convo.notifications.enabled
+    const disabled = loadingAction.value !== undefined
+
     return (
       <>
         <Popper
@@ -149,16 +164,15 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 <ActionMenuItem
                   icon={<Icon20ArrowUpOutline />}
                   text={lang.use('me_convo_menu_first')}
-                  disabled={loading.value}
+                  disabled={disabled}
                   onClick={goToFirstMessage}
                 />
               )}
               {pinnedMessage && (
                 <ActionMenuItem
                   icon={pinnedMessageHidden ? <Icon20ViewOutline /> : <Icon20HideOutline />}
-                  text={lang.use(pinnedMessageHidden
-                    ? 'me_convo_menu_show_pinned'
-                    : 'me_convo_menu_hide_pinned')}
+                  text={lang.use(pinnedMessageHidden ? 'me_convo_menu_show_pinned' : 'me_convo_menu_hide_pinned')}
+                  disabled={disabled}
                   onClick={togglePinnedMessage}
                 />
               )}
@@ -166,61 +180,61 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 <ActionMenuItem
                   icon={<Icon20MessageUnreadTopOutline />}
                   text={lang.use('me_convo_menu_mark_unread')}
-                  disabled={loading.value}
+                  disabled={disabled}
+                  loading={loadingAction.value === 'markUnread'}
                   onClick={markUnread}
                 />
               )}
               {!Convo.isHidden(convo) && (
                 <ActionMenuItem
                   icon={convo.isArchived ? <Icon20UnarchiveOutline /> : <Icon20ArchiveOutline />}
-                  text={lang.use(convo.isArchived
-                    ? 'me_convo_menu_unarchive'
-                    : 'me_convo_menu_archive')}
-                  disabled={loading.value}
+                  text={lang.use(convo.isArchived ? 'me_convo_menu_unarchive' : 'me_convo_menu_archive')}
+                  disabled={disabled}
+                  loading={loadingAction.value === 'archive'}
                   onClick={toggleArchive}
                 />
               )}
               {canPin && (
                 <ActionMenuItem
                   icon={pinned ? <Icon20PinSlashOutline /> : <Icon20PinOutline />}
-                  text={lang.use(pinned
-                    ? 'me_convo_menu_unpin'
-                    : 'me_convo_menu_pin')}
-                  disabled={loading.value}
+                  text={lang.use(pinned ? 'me_convo_menu_unpin' : 'me_convo_menu_pin')}
+                  disabled={disabled}
+                  loading={loadingAction.value === 'pin'}
                   onClick={togglePin}
                 />
               )}
               <ActionMenuItem
                 icon={muted ? <Icon20NotificationOutline /> : <Icon20NotificationSlashOutline />}
-                text={lang.use(muted
-                  ? 'me_convo_menu_unmute'
-                  : 'me_convo_menu_mute')}
-                disabled={loading.value}
+                text={lang.use(muted ? 'me_convo_menu_unmute' : 'me_convo_menu_mute')}
+                disabled={disabled}
+                loading={loadingAction.value === 'mute'}
                 onClick={toggleNotifications}
               />
               {convo.kind === 'ChatConvo' && convo.status === 'left' && (
                 <ActionMenuItem
                   icon={<Icon20ArrowUturnLeftOutline />}
                   text={lang.use('me_convo_menu_return')}
-                  disabled={loading.value}
+                  disabled={disabled}
+                  loading={loadingAction.value === 'membership'}
                   onClick={() => changeChatMembership(false)}
                 />
               )}
               <ActionMenuItem
                 icon={<Icon20CopyOutline />}
                 text={lang.use('me_convo_menu_copy_id')}
-                disabled={loading.value}
+                disabled={disabled}
+                loading={loadingAction.value === 'copyId'}
                 onClick={copyId}
               />
               {(!Convo.isHidden(convo) || isChatMember) && (
-                <div class="ConvoHeaderMenu__separator" />
+                <ActionMenuSeparator />
               )}
               {!Convo.isHidden(convo) && (
                 <ActionMenuItem
                   mode="destructive"
                   icon={<Icon20ClearDataOutline />}
                   text={lang.use('me_convo_menu_clear')}
-                  disabled={loading.value}
+                  disabled={disabled}
                   onClick={() => (confirmation.value = 'clear')}
                 />
               )}
@@ -229,7 +243,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                   mode="destructive"
                   icon={<Icon20DoorArrowRightOutline />}
                   text={lang.use('me_convo_menu_leave')}
-                  disabled={loading.value}
+                  disabled={disabled}
                   onClick={() => (confirmation.value = 'leave')}
                 />
               )}
@@ -257,8 +271,8 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
             </Button>,
             <Button
               mode="destructive"
-              loading={loading.value}
-              disabled={loading.value}
+              loading={loadingAction.value === (confirmation.value === 'clear' ? 'clear' : 'membership')}
+              disabled={disabled}
               onClick={confirmation.value === 'clear'
                 ? clearHistory
                 : () => changeChatMembership(true)}

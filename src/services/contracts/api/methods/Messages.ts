@@ -208,23 +208,35 @@ export type MessagesGetDiffResponse = {
 }
 
 // messages.markAsUnreadConversation
-export type MessagesMarkAsUnreadConversationParams = { peer_id: number, group_id?: number }
+export type MessagesMarkAsUnreadConversationParams = {
+  peer_id: number
+  group_id?: number
+}
 export type MessagesMarkAsUnreadConversationResponse = boolean
 
 // messages.archiveConversation
-export type MessagesArchiveConversationParams = { peer_id: number }
+export type MessagesArchiveConversationParams = {
+  peer_id: number
+}
 export type MessagesArchiveConversationResponse = 1
 
 // messages.unarchiveConversation
-export type MessagesUnarchiveConversationParams = { peer_id: number }
+export type MessagesUnarchiveConversationParams = {
+  peer_id: number
+}
 export type MessagesUnarchiveConversationResponse = 1
 
 // messages.pinConversation
-export type MessagesPinConversationParams = { peer_id: number, position?: number }
+export type MessagesPinConversationParams = {
+  peer_id: number
+  position?: number
+}
 export type MessagesPinConversationResponse = 0 | 1
 
 // messages.unpinConversation
-export type MessagesUnpinConversationParams = { peer_id: number }
+export type MessagesUnpinConversationParams = {
+  peer_id: number
+}
 export type MessagesUnpinConversationResponse = 0 | 1
 
 // messages.deleteConversation
