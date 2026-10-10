@@ -33,6 +33,7 @@ export type Update =
   | Update12
   | Update10013
   | Update10018
+  | Update20
   | Update21
   | Update52
   | Update63
@@ -242,6 +243,14 @@ type IncompleteUpdate10018 = [
   cmid: Update10018[1],
   flags: Update10018[2],
   peerId: Update10018[3]
+]
+
+// Изменился majorId
+type Update20 = [
+  type: 20,
+  peerId: number,
+  majorId: number,
+  reserved: 0
 ]
 
 // Изменился minorId

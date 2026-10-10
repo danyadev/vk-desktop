@@ -206,3 +206,71 @@ export type MessagesGetDiffResponse = {
   conversations_source?: string
   invalidate_all?: boolean
 }
+
+// messages.markAsUnreadConversation
+export type MessagesMarkAsUnreadConversationParams = {
+  peer_id: number
+  group_id?: number
+}
+export type MessagesMarkAsUnreadConversationResponse = boolean
+
+// messages.archiveConversation
+export type MessagesArchiveConversationParams = {
+  peer_id: number
+}
+export type MessagesArchiveConversationResponse = 1
+
+// messages.unarchiveConversation
+export type MessagesUnarchiveConversationParams = {
+  peer_id: number
+}
+export type MessagesUnarchiveConversationResponse = 1
+
+// messages.pinConversation
+export type MessagesPinConversationParams = {
+  peer_id: number
+  position?: number
+}
+export type MessagesPinConversationResponse = 0 | 1
+
+// messages.unpinConversation
+export type MessagesUnpinConversationParams = {
+  peer_id: number
+}
+export type MessagesUnpinConversationResponse = 0 | 1
+
+// messages.deleteConversation
+export type MessagesDeleteConversationParams = {
+  peer_id?: number
+  user_id?: number
+  group_id?: number
+  is_spam?: 0 | 1
+  leave_chat?: 0 | 1
+  source?: 'antispam_modal' | 'im_chats' | 'old_spam_modal'
+}
+export type MessagesDeleteConversationResponse = {
+  last_deleted_id: number
+  last_deleted_cmid: number
+}
+
+// messages.addChatUser
+export type MessagesAddChatUserParams = {
+  chat_id: number
+  user_id?: number
+  peer_id?: number
+  visible_messages_count?: number
+}
+export type MessagesAddChatUserResponse = {
+  result: 0 | 1
+  failed_phone_numbers?: string[]
+}
+
+// messages.removeChatUser
+export type MessagesRemoveChatUserParams = {
+  chat_id: number
+  user_id?: number
+  group_id?: number
+  member_id?: number
+  incognito_id?: number
+}
+export type MessagesRemoveChatUserResponse = 1

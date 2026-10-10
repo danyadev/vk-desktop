@@ -96,8 +96,7 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    const returnBack = request.kind === 'Message' && request.returnBack
-    if (returnBack === true) {
+    if (request.kind === 'Message' && request.returnBack === true) {
       const viewportPosition = captureViewportPosition()
       if (viewportPosition) {
         request.returnBack = viewportPosition
@@ -115,9 +114,14 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    const element = request.kind === 'Unread'
-      ? getUnreadElement() ?? getMessageElement(request.cmid)
-      : getMessageElement(request.cmid)
+    let element: HTMLElement | null | undefined
+    if (request.kind === 'Unread') {
+      element = getUnreadElement() ?? getMessageElement(request.cmid)
+    } else if (request.allowNearby && session.anchorCmid === request.cmid) {
+      element = getNearbyMessageElement(request.cmid)
+    } else {
+      element = getMessageElement(request.cmid)
+    }
 
     if (element) {
       if (
@@ -146,7 +150,7 @@ export const useConvoHistoryViewport = (
 
     session.navigationRequest = undefined
 
-    if (request.kind === 'Message') {
+    if (request.kind === 'Message' && !request.allowNearby) {
       if (isObject(request.returnBack) && request.returnBack.cmid !== request.cmid) {
         session.navigationRequest = {
           kind: 'Message',

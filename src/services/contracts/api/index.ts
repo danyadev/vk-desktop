@@ -27,6 +27,12 @@ import {
 import { CaptchaForceParams, CaptchaForceResponse } from 'services/contracts/api/methods/Captcha'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'services/contracts/api/methods/Groups'
 import {
+  MessagesAddChatUserParams,
+  MessagesAddChatUserResponse,
+  MessagesArchiveConversationParams,
+  MessagesArchiveConversationResponse,
+  MessagesDeleteConversationParams,
+  MessagesDeleteConversationResponse,
   MessagesGetByConversationMessageIdParams,
   MessagesGetByConversationMessageIdResponse,
   MessagesGetConversationsByIdParams,
@@ -45,8 +51,18 @@ import {
   MessagesGetLongPollServerResponse,
   MessagesMarkAsPlayedParams,
   MessagesMarkAsPlayedResponse,
+  MessagesMarkAsUnreadConversationParams,
+  MessagesMarkAsUnreadConversationResponse,
+  MessagesPinConversationParams,
+  MessagesPinConversationResponse,
+  MessagesRemoveChatUserParams,
+  MessagesRemoveChatUserResponse,
   MessagesSendParams,
-  MessagesSendResponse
+  MessagesSendResponse,
+  MessagesUnarchiveConversationParams,
+  MessagesUnarchiveConversationResponse,
+  MessagesUnpinConversationParams,
+  MessagesUnpinConversationResponse
 } from 'services/contracts/api/methods/Messages'
 import {
   PhotosGetMessagesUploadServerParams,
@@ -161,6 +177,39 @@ export type Methods = {
     params: MessagesSendParams
     response: MessagesSendResponse
   }
+  'messages.markAsUnreadConversation': {
+    params: MessagesMarkAsUnreadConversationParams
+    response: MessagesMarkAsUnreadConversationResponse
+  }
+  'messages.archiveConversation': {
+    params: MessagesArchiveConversationParams
+    response: MessagesArchiveConversationResponse
+  }
+  'messages.unarchiveConversation': {
+    params: MessagesUnarchiveConversationParams
+    response: MessagesUnarchiveConversationResponse
+  }
+  'messages.pinConversation': {
+    params: MessagesPinConversationParams
+    response: MessagesPinConversationResponse
+  }
+  'messages.unpinConversation': {
+    params: MessagesUnpinConversationParams
+    response: MessagesUnpinConversationResponse
+  }
+  'messages.deleteConversation': {
+    params: MessagesDeleteConversationParams
+    response: MessagesDeleteConversationResponse
+  }
+  'messages.removeChatUser': {
+    params: MessagesRemoveChatUserParams
+    response: MessagesRemoveChatUserResponse
+  }
+  'messages.addChatUser': {
+    params: MessagesAddChatUserParams
+    response: MessagesAddChatUserResponse
+  }
+
   'messages.markAsPlayed': {
     params: MessagesMarkAsPlayedParams
     response: MessagesMarkAsPlayedResponse

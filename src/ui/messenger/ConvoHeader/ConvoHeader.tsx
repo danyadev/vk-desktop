@@ -6,6 +6,7 @@ import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
 import { useFormatDate } from 'hooks'
 import { shortenCount } from 'misc/dateTime'
+import { ConvoHeaderMenu } from 'ui/messenger/ConvoHeader/ConvoHeaderMenu'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Icon16Muted, Icon24ChevronCompactLeft } from 'assets/icons'
@@ -93,6 +94,7 @@ export const ConvoHeader = defineComponent<Props>((props) => {
         </span>
       </div>
       <span class="ConvoHeader__info">{peerInfo.value}</span>
+      <ConvoHeaderMenu convo={props.convo} />
     </div>
   )
 }, {

@@ -2,13 +2,50 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   padding: 4px 8px;
   border-radius: 6px;
+  color: var(--vkui--color_text_primary);
+  text-align: left;
   transition: background-color var(--fastTransition);
 }
 
-.ActionMenuItem:hover,
-.ActionMenuItem:focus {
+.ActionMenuItem__icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--vkui--color_icon_secondary);
+}
+
+.ActionMenuItem__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ActionMenuItem--accent .ActionMenuItem__icon {
+  color: var(--vkui--color_icon_accent);
+}
+
+.ActionMenuItem--destructive {
+  color: var(--vkui--color_text_negative);
+}
+
+.ActionMenuItem--destructive .ActionMenuItem__icon {
+  color: var(--vkui--color_icon_negative);
+}
+
+.ActionMenuItem:not(:disabled):hover,
+.ActionMenuItem:not(:disabled):focus-visible {
   background-color: var(--vkui--color_transparent--hover);
+}
+
+.ActionMenuItem:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
