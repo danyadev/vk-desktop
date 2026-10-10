@@ -148,7 +148,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
               {!Convo.isHidden(convo) && (
                 <ActionMenuItem
                   icon={<Icon20ArrowUpOutline />}
-                  text={lang.use('me_convo_header_menu_first')}
+                  text={lang.use('me_convo_menu_first')}
                   disabled={loading.value}
                   onClick={goToFirstMessage}
                 />
@@ -157,15 +157,15 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 <ActionMenuItem
                   icon={pinnedMessageHidden ? <Icon20ViewOutline /> : <Icon20HideOutline />}
                   text={lang.use(pinnedMessageHidden
-                    ? 'me_convo_header_menu_show_pinned'
-                    : 'me_convo_header_menu_hide_pinned')}
+                    ? 'me_convo_menu_show_pinned'
+                    : 'me_convo_menu_hide_pinned')}
                   onClick={togglePinnedMessage}
                 />
               )}
               {!Convo.isUnread(convo) && (
                 <ActionMenuItem
                   icon={<Icon20MessageUnreadTopOutline />}
-                  text={lang.use('me_convo_header_menu_mark_unread')}
+                  text={lang.use('me_convo_menu_mark_unread')}
                   disabled={loading.value}
                   onClick={markUnread}
                 />
@@ -174,8 +174,8 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 <ActionMenuItem
                   icon={convo.isArchived ? <Icon20UnarchiveOutline /> : <Icon20ArchiveOutline />}
                   text={lang.use(convo.isArchived
-                    ? 'me_convo_header_menu_unarchive'
-                    : 'me_convo_header_menu_archive')}
+                    ? 'me_convo_menu_unarchive'
+                    : 'me_convo_menu_archive')}
                   disabled={loading.value}
                   onClick={toggleArchive}
                 />
@@ -184,8 +184,8 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 <ActionMenuItem
                   icon={pinned ? <Icon20PinSlashOutline /> : <Icon20PinOutline />}
                   text={lang.use(pinned
-                    ? 'me_convo_header_menu_unpin'
-                    : 'me_convo_header_menu_pin')}
+                    ? 'me_convo_menu_unpin'
+                    : 'me_convo_menu_pin')}
                   disabled={loading.value}
                   onClick={togglePin}
                 />
@@ -193,22 +193,22 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
               <ActionMenuItem
                 icon={muted ? <Icon20NotificationOutline /> : <Icon20NotificationSlashOutline />}
                 text={lang.use(muted
-                  ? 'me_convo_header_menu_unmute'
-                  : 'me_convo_header_menu_mute')}
+                  ? 'me_convo_menu_unmute'
+                  : 'me_convo_menu_mute')}
                 disabled={loading.value}
                 onClick={toggleNotifications}
               />
               {convo.kind === 'ChatConvo' && convo.status === 'left' && (
                 <ActionMenuItem
                   icon={<Icon20ArrowUturnLeftOutline />}
-                  text={lang.use('me_convo_header_menu_return')}
+                  text={lang.use('me_convo_menu_return')}
                   disabled={loading.value}
                   onClick={() => changeChatMembership(false)}
                 />
               )}
               <ActionMenuItem
                 icon={<Icon20CopyOutline />}
-                text={lang.use('me_convo_header_menu_copy_id')}
+                text={lang.use('me_convo_menu_copy_id')}
                 disabled={loading.value}
                 onClick={copyId}
               />
@@ -219,7 +219,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 <ActionMenuItem
                   mode="destructive"
                   icon={<Icon20ClearDataOutline />}
-                  text={lang.use('me_convo_header_menu_clear')}
+                  text={lang.use('me_convo_menu_clear')}
                   disabled={loading.value}
                   onClick={() => (confirmation.value = 'clear')}
                 />
@@ -228,7 +228,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 <ActionMenuItem
                   mode="destructive"
                   icon={<Icon20DoorArrowRightOutline />}
-                  text={lang.use('me_convo_header_menu_leave')}
+                  text={lang.use('me_convo_menu_leave')}
                   disabled={loading.value}
                   onClick={() => (confirmation.value = 'leave')}
                 />
@@ -241,7 +241,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
             icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
             withHoverBackground
             shiftOnClick
-            aria-label={lang.use('me_convo_header_menu_actions')}
+            aria-label={lang.use('me_convo_menu_actions')}
           />
         </Popper>
 
@@ -249,8 +249,8 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
           opened={!!confirmation.value}
           onClose={() => (confirmation.value = undefined)}
           title={lang.use(confirmation.value === 'clear'
-            ? 'me_convo_header_menu_clear_confirm_title'
-            : 'me_convo_header_menu_leave_confirm_title')}
+            ? 'me_convo_menu_clear_confirm_title'
+            : 'me_convo_menu_leave_confirm_title')}
           buttons={[
             <Button mode="secondary" onClick={() => (confirmation.value = undefined)}>
               {lang.use('modal_cancel_label')}
@@ -264,27 +264,27 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 : () => changeChatMembership(true)}
             >
               {lang.use(confirmation.value === 'clear'
-                ? 'me_convo_header_menu_clear'
-                : 'me_convo_header_menu_leave')}
+                ? 'me_convo_menu_clear'
+                : 'me_convo_menu_leave')}
             </Button>
           ]}
         >
           {lang.use(confirmation.value === 'clear'
-            ? 'me_convo_header_menu_clear_confirm_text'
-            : 'me_convo_header_menu_leave_confirm_text')}
+            ? 'me_convo_menu_clear_confirm_text'
+            : 'me_convo_menu_leave_confirm_text')}
         </Modal>
 
         <Modal
           opened={hasError.value}
           onClose={() => (hasError.value = false)}
-          title={lang.use('me_convo_header_menu_error_title')}
+          title={lang.use('me_convo_menu_error_title')}
           buttons={
             <Button onClick={() => (hasError.value = false)}>
               {lang.use('modal_close_label')}
             </Button>
           }
         >
-          {lang.use('me_convo_header_menu_error_text')}
+          {lang.use('me_convo_menu_error_text')}
         </Modal>
       </>
     )
