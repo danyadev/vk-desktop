@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import { watch } from 'vue'
+import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'

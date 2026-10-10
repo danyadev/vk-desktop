@@ -150,7 +150,8 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   return () => {
     const { convo } = props
     const pinnedMessage = convo.kind === 'ChatConvo' && convo.pinnedMessage
-    const pinnedMessageHidden = !!pinnedMessage && hiddenPinnedMessages.get(convo.id) === pinnedMessage.cmid
+    const pinnedMessageHidden = !!pinnedMessage &&
+      hiddenPinnedMessages.get(convo.id) === pinnedMessage.cmid
     const pinned = convo.majorSortId !== 0
     const canPin = !convo.isArchived && !Convo.isHidden(convo) && !Convo.isCasper(convo)
     const isChatMember = convo.kind === 'ChatConvo' && convo.status === 'in'
