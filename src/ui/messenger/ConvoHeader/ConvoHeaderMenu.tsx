@@ -47,7 +47,7 @@ type LoadingAction =
 
 export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   const { api, lang } = useServices()
-  const { lists } = useConvosStore()
+  const { lists, hiddenPinnedMessages } = useConvosStore()
   const session = useConvoSession()
   const viewer = useViewerStore()
   const loadingAction = shallowRef<LoadingAction>()
@@ -82,8 +82,11 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   const togglePinnedMessage = () => {
     const pinned = props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage
     if (pinned) {
-      session.hiddenPinnedCmid =
-        session.hiddenPinnedCmid === pinned.cmid ? undefined : pinned.cmid
+      if (hiddenPinnedMessages.get(props.convo.id) === pinned.cmid) {
+        hiddenPinnedMessages.delete(props.convo.id)
+      } else {
+        hiddenPinnedMessages.set(props.convo.id, pinned.cmid)
+      }
     }
   }
 
@@ -147,7 +150,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   return () => {
     const { convo } = props
     const pinnedMessage = convo.kind === 'ChatConvo' && convo.pinnedMessage
-    const pinnedMessageHidden = !!pinnedMessage && session.hiddenPinnedCmid === pinnedMessage.cmid
+    const pinnedMessageHidden = !!pinnedMessage && hiddenPinnedMessages.get(convo.id) === pinnedMessage.cmid
     const pinned = convo.majorSortId !== 0
     const canPin = !convo.isArchived && !Convo.isHidden(convo) && !Convo.isCasper(convo)
     const isChatMember = convo.kind === 'ChatConvo' && convo.status === 'in'
