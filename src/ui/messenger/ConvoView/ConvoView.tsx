@@ -36,11 +36,12 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
 
   return () => {
     const pinnedMessage = props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage
+    const hiddenPinnedMessageCmid = convosStore.hiddenPinnedMessages.get(props.convo.id)
 
     return (
       <div class="ConvoView">
         <ConvoHeader convo={props.convo} />
-        {pinnedMessage && (
+        {pinnedMessage && pinnedMessage.cmid !== hiddenPinnedMessageCmid && (
           <PinnedMessage
             pinnedMessage={pinnedMessage}
             onClick={() => {
@@ -50,8 +51,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
               }
               session.navigationRequest = {
                 kind: 'Message',
-                cmid: pinnedMessage.cmid,
-                returnBack: true
+                cmid: pinnedMessage.cmid
               }
             }}
           />

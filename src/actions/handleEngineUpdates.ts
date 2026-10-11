@@ -10,6 +10,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
+import { useViewerStore } from 'store/viewer'
 import { insertConvos, insertPeers } from 'actions'
 import { fromApiMessage, fromEngineMessage } from 'converters/MessageConverter'
 import { getMapValueOrCompute } from 'misc/utils'
@@ -18,6 +19,7 @@ import { PEER_FIELDS } from 'misc/constants'
 const TYPING_DURATION = 5000
 
 export async function handleEngineUpdates(updates: IEngine.Update[]) {
+  const viewer = useViewerStore()
   const convosStore = useConvosStore()
   const { convos, lists, typings } = convosStore
   const {
@@ -243,6 +245,19 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         break
       }
 
+      case 20: {
+        const [, rawPeerId, majorId] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const convo = convos.get(peerId)
+        if (!convo) {
+          break
+        }
+
+        convo.majorSortId = majorId
+        Lists.refresh(lists, convo)
+        break
+      }
+
       case 21: {
         const [, rawPeerId, minorId] = update
         const peerId = Peer.resolveId(rawPeerId)
@@ -286,6 +301,19 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
             } else {
               convo.pinnedMessage = undefined
             }
+            break
+          }
+
+          case 6:
+          case 7:
+          case 8: {
+            if (convo.kind !== 'ChatConvo') break
+            if (apiConvosMap.has(peerId)) break
+            if (extra !== viewer.id) break
+
+            if (updateType === 6) convo.status = 'in'
+            if (updateType === 7) convo.status = 'left'
+            if (updateType === 8) convo.status = 'kicked'
             break
           }
         }
@@ -404,6 +432,7 @@ type MissingDataMeta = {
 }
 
 function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
+  const viewer = useViewerStore()
   const { peers } = usePeersStore()
   const { convos, lists } = useConvosStore()
   const missingCmidsByConvo = new Map<Peer.Id, Set<Message.Cmid>>()
@@ -601,6 +630,15 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
         break
       }
 
+      case 20: {
+        const [, rawPeerId, majorId] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        if (majorId && !convos.has(peerId)) {
+          missingConvos.add(peerId)
+        }
+        break
+      }
+
       case 52: {
         const [, updateType, rawPeerId, extra] = update
         const peerId = Peer.resolveId(rawPeerId)
@@ -622,6 +660,16 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
             }
             break
           }
+
+          case 6: // Вступление в беседу
+            if (extra === viewer.id) {
+              missingConvos.add(peerId)
+            }
+            break
+
+          case 7:
+          case 8:
+            break
         }
 
         break

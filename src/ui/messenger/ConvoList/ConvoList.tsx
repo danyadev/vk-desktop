@@ -51,24 +51,15 @@ export const ConvoList = defineComponent<Props>((props) => {
                 content={
                   <ActionMenu>
                     <ActionMenuItem
+                      icon={<Icon24GearOutline />}
+                      text={lang.use('me_convo_list_menu_settings')}
                       onClick={() => settingsModal.open({})}
-                      text="Настройки"
-                      icon={
-                        <Icon24GearOutline
-                          width="20"
-                          color="var(--vkui--color_icon_secondary)"
-                        />
-                      }
                     />
                     <ActionMenuItem
+                      mode="destructive"
+                      icon={<Icon24DoorArrowRightOutline />}
+                      text={lang.use('me_convo_list_menu_logout')}
                       onClick={logout}
-                      text="Выход"
-                      icon={
-                        <Icon24DoorArrowRightOutline
-                          width="20"
-                          color="var(--vkui--color_icon_negative)"
-                        />
-                      }
                     />
                   </ActionMenu>
                 }

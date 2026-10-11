@@ -33,6 +33,7 @@ export type Update =
   | Update12
   | Update10013
   | Update10018
+  | Update20
   | Update21
   | Update52
   | Update63
@@ -244,6 +245,14 @@ type IncompleteUpdate10018 = [
   peerId: Update10018[3]
 ]
 
+// Изменился majorId
+type Update20 = [
+  type: 20,
+  peerId: number,
+  majorId: number,
+  reserved: 0
+]
+
 // Изменился minorId
 type Update21 = [
   type: 21,
@@ -254,7 +263,7 @@ type Update21 = [
 // Изменение состояния беседы
 type Update52 = [
   type: 52,
-  updateType: 5,
+  updateType: 5 | 6 | 7 | 8,
   peerId: number,
   extra: number
 ]

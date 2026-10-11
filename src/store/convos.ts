@@ -1,8 +1,10 @@
+import { watch } from 'vue'
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { RendererStorage } from 'store/Storage'
 import { getMapValueOrCompute } from 'misc/utils'
 
 export type ViewportPosition = {
@@ -18,8 +20,10 @@ export type NavigationRequest =
       cmid: Message.Cmid
       /** True by default */
       highlight?: boolean
-      /** A position to return back in case the message is unavailable */
-      returnBack?: boolean | ViewportPosition
+      /** Whether to fall back to a nearby message if this cmid is unavailable */
+      landNearbyIfMissing?: boolean
+      /** A position to return back in case the message is unavailable. Filled automatically */
+      origin?: ViewportPosition
     }
   | { kind: 'Unread', cmid: Message.Cmid }
 
@@ -53,7 +57,12 @@ type Convos = {
   historyLoadCompleteListeners: Map<Peer.Id, Set<() => void>>
   sendMessageLock: Set<Peer.Id>
   typings: Map<Peer.Id, TypingUser[]>
+  hiddenPinnedMessages: Map<Peer.Id, Message.Cmid>
 }
+
+const convosStorage = new RendererStorage('convos', {
+  hiddenPinnedMessages: new Map<Peer.Id, Message.Cmid>()
+})
 
 export const useConvosStore = defineStore('convos', {
   state: (): Convos => ({
@@ -65,7 +74,8 @@ export const useConvosStore = defineStore('convos', {
     convoSessions: new Map(),
     historyLoadCompleteListeners: new Map(),
     sendMessageLock: new Set(),
-    typings: new Map()
+    typings: new Map(),
+    hiddenPinnedMessages: convosStorage.data.hiddenPinnedMessages
   }),
 
   actions: {
@@ -96,6 +106,14 @@ export const useConvosStore = defineStore('convos', {
     }
   }
 })
+
+export function init() {
+  const store = useConvosStore()
+
+  watch(() => store.hiddenPinnedMessages, (hiddenPinnedMessages) => {
+    convosStorage.set('hiddenPinnedMessages', hiddenPinnedMessages)
+  }, { deep: true })
+}
 
 // defineStore оборачивает стейт в UnwrapRef, заставляя IDE показывать полный бред.
 // Добавляем стейт в исключение, считая, что его значение не является рефом

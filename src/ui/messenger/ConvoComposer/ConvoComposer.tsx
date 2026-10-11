@@ -141,7 +141,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
             <ActionMenu>
               <ActionMenuItem
                 icon={<Icon20PictureOutline />}
-                text="Фото"
+                text={lang.use('me_convo_composer_menu_photo')}
                 onClick={openPhotoPicker}
               />
             </ActionMenu>

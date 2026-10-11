@@ -74,6 +74,7 @@ export type MessagesMessageAction = {
     | 'chat_invite_user_by_call_join_link'
     | 'chat_kick_user_call_block'
     | 'chat_owner_changed'
+    | 'chat_without_owner_all'
   conversation_message_id?: number
   member_id?: number
   /** Message body of related message */
