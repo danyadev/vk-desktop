@@ -245,49 +245,49 @@ export class Auth {
       throw 'partial token'
     }
 
-    // Этот запрос нужен для получения кук
-    await fetch('https://login.vk.com?' + toUrlParams({
-      act: 'connect_code_auth',
-      token: checkResult.super_app_token,
-      app_id: APP_ID,
-      oauth_scope: APP_SCOPE,
-      oauth_force_hash: 1,
-      is_registration: 0,
-      oauth_response_type: 'token',
-      is_oauth_migrated_flow: 1,
-      version: 1,
-      to: btoa('https://oauth.vk.com/blank.html')
-    }), {
-      headers: {
-        'X-Origin': 'https://id.vk.com'
-      }
-    })
-
-    type AuthResponse = {
-      data: {
-        access_token: string
-        auth_user_hash: string
+    type ConnectCodeAuthResponse = {
+      type: string
+      data?: {
+        access_token?: string
+        auth_user_hash?: string
+        user?: {
+          id: number
+        }
       }
     }
 
-    const connectResponse = await fetch('https://login.vk.com?' + toUrlParams({
-      act: 'connect_internal',
-      app_id: APP_ID,
-      oauth_version: 1,
-      version: 1
-    }), {
+    const connectResponse = await fetch('https://login.vk.com?act=connect_code_auth', {
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
         'X-Origin': 'https://id.vk.com'
-      }
-    }).then<AuthResponse>((res) => res.json())
+      },
+      body: toUrlParams({
+        token: checkResult.super_app_token,
+        app_id: APP_ID,
+        oauth_scope: APP_SCOPE,
+        oauth_force_hash: 1,
+        is_registration: 0,
+        oauth_response_type: 'token',
+        is_oauth_migrated_flow: 1,
+        version: 1,
+        to: btoa('https://oauth.vk.com/blank.html')
+      })
+    }).then<ConnectCodeAuthResponse>((response) => response.json())
+
+    const { access_token: accessToken, auth_user_hash: authUserHash } = connectResponse.data ?? {}
+    if (connectResponse.type !== 'okay' || !accessToken || !authUserHash) {
+      console.warn('[Auth.getAppToken] connect_code_auth failed', checkResult)
+      throw 'connect_code_auth failed'
+    }
 
     const { access_token: appToken } = await this.api.fetch('auth.getOauthToken', {
-      access_token: connectResponse.data.access_token,
+      access_token: accessToken,
       app_id: APP_ID,
       client_id: APP_ID,
       scope: APP_SCOPE,
       hash: oauthHash,
-      auth_user_hash: connectResponse.data.auth_user_hash,
+      auth_user_hash: authUserHash,
       is_seamless_auth: 0
     })
 
