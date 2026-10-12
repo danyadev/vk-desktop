@@ -1,6 +1,7 @@
 import { watch } from 'vue'
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
+import * as ConvoDraft from 'model/ConvoDraft'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
@@ -53,6 +54,7 @@ type Convos = {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
   convoSessions: Map<Peer.Id, ConvoSession>
+  convoDrafts: Map<Peer.Id, ConvoDraft.ConvoDraft>
   /** These listeners are called synchronously after updating the state, before rendering begins */
   historyLoadCompleteListeners: Map<Peer.Id, Set<() => void>>
   sendMessageLock: Set<Peer.Id>
@@ -61,6 +63,7 @@ type Convos = {
 }
 
 const convosStorage = new RendererStorage('convos', {
+  convoDrafts: new Map<Peer.Id, ConvoDraft.ConvoDraft>(),
   hiddenPinnedMessages: new Map<Peer.Id, Message.Cmid>()
 })
 
@@ -72,6 +75,7 @@ export const useConvosStore = defineStore('convos', {
       status: 'init'
     },
     convoSessions: new Map(),
+    convoDrafts: convosStorage.data.convoDrafts,
     historyLoadCompleteListeners: new Map(),
     sendMessageLock: new Set(),
     typings: new Map(),
@@ -109,6 +113,22 @@ export const useConvosStore = defineStore('convos', {
 
 export function init() {
   const store = useConvosStore()
+
+  watch(() => store.convoDrafts, (convoDrafts) => {
+    const draftsToSave = new Map<Peer.Id, ConvoDraft.ConvoDraft>()
+
+    for (const [peerId, convoDraft] of convoDrafts) {
+      if (!ConvoDraft.isEmpty(convoDraft)) {
+        draftsToSave.set(peerId, {
+          ...convoDraft,
+          // Мы не можем сохранять вложения в процессе загрузки в localStorage
+          uploadingAttaches: []
+        })
+      }
+    }
+
+    convosStorage.set('convoDrafts', draftsToSave)
+  }, { deep: true })
 
   watch(() => store.hiddenPinnedMessages, (hiddenPinnedMessages) => {
     convosStorage.set('hiddenPinnedMessages', hiddenPinnedMessages)
