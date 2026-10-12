@@ -14,7 +14,13 @@ const API_RATE_LIMIT_WINDOW = 1000
 const METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN: Array<keyof Methods> = [
   'messages.getConversations',
   'messages.getDiffContent',
-  'messages.getDiff'
+  'messages.getDiff',
+  'account.setSilenceMode',
+  'messages.archiveConversation',
+  'messages.unarchiveConversation',
+  'messages.markAsUnreadConversation',
+  'messages.pinConversation',
+  'messages.unpinConversation'
 ]
 
 export class Api implements IApi.Api {

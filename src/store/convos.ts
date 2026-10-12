@@ -1,8 +1,11 @@
+import { watch } from 'vue'
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
+import * as ConvoDraft from 'model/ConvoDraft'
 import * as Lists from 'model/Lists'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { RendererStorage } from 'store/Storage'
 import { getMapValueOrCompute } from 'misc/utils'
 
 export type ViewportPosition = {
@@ -18,8 +21,10 @@ export type NavigationRequest =
       cmid: Message.Cmid
       /** True by default */
       highlight?: boolean
-      /** A position to return back in case the message is unavailable */
-      returnBack?: boolean | ViewportPosition
+      /** Whether to fall back to a nearby message if this cmid is unavailable */
+      landNearbyIfMissing?: boolean
+      /** A position to return back in case the message is unavailable. Filled automatically */
+      origin?: ViewportPosition
     }
   | { kind: 'Unread', cmid: Message.Cmid }
 
@@ -49,11 +54,18 @@ type Convos = {
     status: 'init' | 'initFailed' | 'connected' | 'syncing'
   }
   convoSessions: Map<Peer.Id, ConvoSession>
+  convoDrafts: Map<Peer.Id, ConvoDraft.ConvoDraft>
   /** These listeners are called synchronously after updating the state, before rendering begins */
   historyLoadCompleteListeners: Map<Peer.Id, Set<() => void>>
   sendMessageLock: Set<Peer.Id>
   typings: Map<Peer.Id, TypingUser[]>
+  hiddenPinnedMessages: Map<Peer.Id, Message.Cmid>
 }
+
+const convosStorage = new RendererStorage('convos', {
+  convoDrafts: new Map<Peer.Id, ConvoDraft.ConvoDraft>(),
+  hiddenPinnedMessages: new Map<Peer.Id, Message.Cmid>()
+})
 
 export const useConvosStore = defineStore('convos', {
   state: (): Convos => ({
@@ -63,9 +75,11 @@ export const useConvosStore = defineStore('convos', {
       status: 'init'
     },
     convoSessions: new Map(),
+    convoDrafts: convosStorage.data.convoDrafts,
     historyLoadCompleteListeners: new Map(),
     sendMessageLock: new Set(),
-    typings: new Map()
+    typings: new Map(),
+    hiddenPinnedMessages: convosStorage.data.hiddenPinnedMessages
   }),
 
   actions: {
@@ -96,6 +110,30 @@ export const useConvosStore = defineStore('convos', {
     }
   }
 })
+
+export function init() {
+  const store = useConvosStore()
+
+  watch(() => store.convoDrafts, (convoDrafts) => {
+    const draftsToSave = new Map<Peer.Id, ConvoDraft.ConvoDraft>()
+
+    for (const [peerId, convoDraft] of convoDrafts) {
+      if (!ConvoDraft.isEmpty(convoDraft)) {
+        draftsToSave.set(peerId, {
+          ...convoDraft,
+          // Мы не можем сохранять вложения в процессе загрузки в localStorage
+          uploadingAttaches: []
+        })
+      }
+    }
+
+    convosStorage.set('convoDrafts', draftsToSave)
+  }, { deep: true })
+
+  watch(() => store.hiddenPinnedMessages, (hiddenPinnedMessages) => {
+    convosStorage.set('hiddenPinnedMessages', hiddenPinnedMessages)
+  }, { deep: true })
+}
 
 // defineStore оборачивает стейт в UnwrapRef, заставляя IDE показывать полный бред.
 // Добавляем стейт в исключение, считая, что его значение не является рефом

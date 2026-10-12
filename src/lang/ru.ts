@@ -82,8 +82,32 @@ export const ru = {
   me_convo_list_date_weeks: '{weeks}н',
   me_convo_list_empty_convo: 'Пустой диалог',
   me_convo_list_empty: 'Список сообщений пуст',
-  me_convo_disable_notifications: 'Отключить уведомления',
-  me_convo_enable_notifications: 'Включить уведомления',
+
+  me_convo_list_menu_settings: 'Настройки',
+  me_convo_list_menu_logout: 'Выйти',
+
+  me_convo_menu_first: 'К первому сообщению',
+  me_convo_menu_hide_pinned: 'Скрыть закреплённое сообщение',
+  me_convo_menu_show_pinned: 'Показать закреплённое сообщение',
+  me_convo_menu_mark_unread: 'Отметить непрочитанным',
+  me_convo_menu_archive: 'Архивировать',
+  me_convo_menu_unarchive: 'Вернуть из архива',
+  me_convo_menu_pin: 'Закрепить диалог',
+  me_convo_menu_unpin: 'Открепить диалог',
+  me_convo_menu_mute: 'Отключить уведомления',
+  me_convo_menu_unmute: 'Включить уведомления',
+  me_convo_menu_copy_id: 'Скопировать ID',
+  me_convo_menu_clear: 'Очистить историю',
+  me_convo_menu_leave: 'Выйти из чата',
+  me_convo_menu_return: 'Вернуться в чат',
+  me_convo_menu_clear_confirm_title: 'Очистить историю?',
+  me_convo_menu_clear_confirm_text: 'Очистить историю переписки в этом диалоге?',
+  me_convo_menu_leave_confirm_title: 'Выйти из чата?',
+  me_convo_menu_leave_confirm_text: 'Вы действительно хотите выйти из этого чата?',
+  me_convo_menu_error_title: 'Не удалось выполнить действие',
+  me_convo_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',
+
+  me_convo_composer_menu_photo: 'Фото',
 
   me_messages_disappeared: {
     single: 'Сообщение исчезло',
@@ -248,6 +272,10 @@ export const ru = {
     female: '{author} сбросила оформление чата'
   },
   me_service_chat_owner_changed: '{author} сменил владельца чата на {target}',
+  me_service_chat_without_owner_all: {
+    male: '{author} больше не владелец чата',
+    female: '{author} больше не владелец чата'
+  },
   // endregion
 
   // region message attaches

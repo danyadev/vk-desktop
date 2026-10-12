@@ -153,6 +153,11 @@ export const PlainServiceMessage = defineComponent<Props>((props) => {
         })
       }
 
+      case 'chat_without_owner_all':
+        return lang.useGender('me_service_chat_without_owner_all', gender, {
+          author: Peer.name(author)
+        })
+
       case 'custom':
         return message.action.message
 

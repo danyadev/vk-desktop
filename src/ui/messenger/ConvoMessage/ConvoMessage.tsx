@@ -34,8 +34,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
 
     session.navigationRequest = {
       kind: 'Message',
-      cmid: reply.cmid,
-      returnBack: true
+      cmid: reply.cmid
     }
   }
 

@@ -2,7 +2,6 @@ import { nextTick, onBeforeUnmount, Ref, shallowRef, watch } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import { ConvoSession, ViewportPosition } from 'store/convos'
-import { isObject } from 'misc/utils'
 
 type VisibleMessageRange =
   | [firstCmid: undefined, lastCmid: undefined, firstRect: undefined, lastRect: undefined]
@@ -96,16 +95,6 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    const returnBack = request.kind === 'Message' && request.returnBack
-    if (returnBack === true) {
-      const viewportPosition = captureViewportPosition()
-      if (viewportPosition) {
-        request.returnBack = viewportPosition
-      } else {
-        request.returnBack = false
-      }
-    }
-
     /**
      * При навигации History.around() не переключается на соседний слайс на границе гэпа,
      * поэтому hasAroundGap означает, что запрошенная позиция все еще не загружена.
@@ -115,17 +104,18 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    const element = request.kind === 'Unread'
-      ? getUnreadElement() ?? getMessageElement(request.cmid)
-      : getMessageElement(request.cmid)
+    let element: HTMLElement | null | undefined
+    if (request.kind === 'Unread') {
+      element = getUnreadElement() ?? getMessageElement(request.cmid)
+    } else if (request.landNearbyIfMissing && session.anchorCmid === request.cmid) {
+      element = getNearbyMessageElement(request.cmid)
+    } else {
+      element = getMessageElement(request.cmid)
+    }
 
     if (element) {
-      if (
-        request.kind === 'Message' &&
-        isObject(request.returnBack) &&
-        request.cmid === request.returnBack.cmid
-      ) {
-        restoreViewportPosition(request.returnBack)
+      if (request.kind === 'Message' && request.cmid === request.origin?.cmid) {
+        restoreViewportPosition(request.origin)
       } else {
         // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
         nextTick(() => {
@@ -140,19 +130,23 @@ export const useConvoHistoryViewport = (
     }
 
     if (session.anchorCmid !== request.cmid) {
+      if (request.kind === 'Message' && !request.landNearbyIfMissing) {
+        request.origin = captureViewportPosition()
+      }
       session.anchorCmid = request.cmid
       return
     }
 
     session.navigationRequest = undefined
 
-    if (request.kind === 'Message') {
-      if (isObject(request.returnBack) && request.returnBack.cmid !== request.cmid) {
+    if (request.kind === 'Message' && !request.landNearbyIfMissing) {
+      if (request.origin && request.cmid !== request.origin.cmid) {
         session.navigationRequest = {
           kind: 'Message',
-          cmid: request.returnBack.cmid,
-          returnBack: request.returnBack,
-          highlight: false
+          cmid: request.origin.cmid,
+          highlight: false,
+          landNearbyIfMissing: true,
+          origin: request.origin
         }
       }
       openMessagePreview(request.cmid)

@@ -255,11 +255,13 @@ function fromApiMessageAction(
     case 'chat_screenshot':
     case 'chat_group_call_started':
     case 'chat_invite_user_by_call_join_link':
+    case 'chat_without_owner_all':
       return { type: action.type }
 
     case 'chat_invite_user':
     case 'chat_kick_user':
-    case 'accepted_message_request': {
+    case 'accepted_message_request':
+    case 'chat_owner_changed': {
       if (!action.member_id) {
         return { type: 'unknown' }
       }
@@ -302,16 +304,6 @@ function fromApiMessageAction(
       return {
         type: action.type,
         style: action.style ? fromApiConvoStyle(action.style) : undefined
-      }
-
-    case 'chat_owner_changed':
-      if (!action.member_id) {
-        return { type: 'unknown' }
-      }
-
-      return {
-        type: action.type,
-        peerId: Peer.resolveOwnerId(action.member_id)
       }
 
     case 'custom':

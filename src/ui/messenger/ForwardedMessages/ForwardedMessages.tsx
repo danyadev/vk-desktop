@@ -31,14 +31,12 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
       return
     }
 
-    const isCurrentConvo = message.peerId === message.rootPeerId
     const request = {
       kind: 'Message' as const,
-      cmid: message.cmid,
-      returnBack: isCurrentConvo
+      cmid: message.cmid
     }
 
-    if (isCurrentConvo) {
+    if (message.peerId === message.rootPeerId) {
       session.navigationRequest = request
     } else {
       router.push({

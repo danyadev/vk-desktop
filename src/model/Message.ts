@@ -85,9 +85,14 @@ export type ServiceAction =
         | 'chat_screenshot'
         | 'chat_group_call_started'
         | 'chat_invite_user_by_call_join_link'
+        | 'chat_without_owner_all'
     }
   | {
-      type: 'chat_invite_user' | 'chat_kick_user' | 'accepted_message_request'
+      type:
+        | 'chat_invite_user'
+        | 'chat_kick_user'
+        | 'accepted_message_request'
+        | 'chat_owner_changed'
       peerId: Peer.OwnerId
     }
   | {
@@ -105,10 +110,6 @@ export type ServiceAction =
   | {
       type: 'conversation_style_update' | 'conversation_style_update_action'
       style: Convo.Style | undefined
-    }
-  | {
-      type: 'chat_owner_changed'
-      peerId: Peer.OwnerId
     }
   | {
       type: 'custom'

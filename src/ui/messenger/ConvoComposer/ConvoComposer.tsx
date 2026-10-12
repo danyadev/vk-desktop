@@ -3,7 +3,7 @@ import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
-import { useConvoDraftsStore } from 'store/convoDrafts'
+import { useConvosStore } from 'store/convos'
 import { sendMessage } from 'actions'
 import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
@@ -27,10 +27,10 @@ type Props = {
 
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang } = useServices()
-  const { drafts } = useConvoDraftsStore()
+  const { convoDrafts } = useConvosStore()
   const $input = shallowRef<HTMLSpanElement | null>(null)
 
-  const draft = ConvoDraft.safeGet(drafts, props.convo.id)
+  const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
   const {
     attachPreviews,
     removeAttachPreview,
@@ -141,7 +141,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
             <ActionMenu>
               <ActionMenuItem
                 icon={<Icon20PictureOutline />}
-                text="Фото"
+                text={lang.use('me_convo_composer_menu_photo')}
                 onClick={openPhotoPicker}
               />
             </ActionMenu>
