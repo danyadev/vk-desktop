@@ -6,14 +6,12 @@ import type { Dictionary } from 'services/contracts/ILang'
 import type { MainSettings as PostMainSettings } from 'store/mainSettings'
 import { buildMacOSMenu } from './buildMacOSMenu'
 import { initIpcEvents } from './ipcEvents'
-import { getColorBackgroundContent, shouldUseCustomTitlebar } from './shared'
+import { getColorBackgroundContent, getStorageFilePath, shouldUseCustomTitlebar } from './shared'
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
 const isMacOS = process.platform === 'darwin'
-
-const appDataPath = path.join(app.getPath('appData'), 'vk-desktop')
-const storePath = path.join(appDataPath, 'storage-v1.json')
+const storageFilePath = getStorageFilePath(app.getPath('appData'))
 
 type MainSettings = Omit<PostMainSettings, 'bounds'> & {
   bounds: PostMainSettings['bounds'] | null
@@ -31,16 +29,14 @@ let mainSettings: MainSettings = {
 }
 
 try {
-  const localMainSettings = JSON.parse(fs.readFileSync(storePath, 'utf-8')) as MainSettings
+  const localMainSettings = JSON.parse(fs.readFileSync(storageFilePath, 'utf-8')) as MainSettings
   mainSettings = {
     ...mainSettings,
     ...localMainSettings
   }
 } catch {
-  if (!fs.existsSync(appDataPath)) {
-    fs.mkdirSync(appDataPath)
-  }
-  fs.writeFileSync(storePath, JSON.stringify(mainSettings))
+  fs.mkdirSync(path.dirname(storageFilePath), { recursive: true })
+  fs.writeFileSync(storageFilePath, JSON.stringify(mainSettings))
 }
 
 electronMain.initialize()

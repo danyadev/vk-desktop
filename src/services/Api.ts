@@ -1,7 +1,7 @@
 import { Methods } from 'services/contracts/api'
 import * as IApi from 'services/contracts/IApi'
 import { useSettingsStore } from 'store/settings'
-import { logout, useViewerStore } from 'store/viewer'
+import { useViewerStore } from 'store/viewer'
 import { useGlobalModal } from 'hooks'
 import { isNonEmptyArray, random, sleep, toUrlParams } from 'misc/utils'
 import { appUserAgent } from 'misc/constants'
@@ -208,7 +208,7 @@ export class Api implements IApi.Api {
 
       // Сессия завершена или токен истек
       case 5: {
-        const { viewer } = useViewerStore()
+        const { viewer, logout } = useViewerStore()
         if (!viewer || params.access_token) {
           throw apiError
         }

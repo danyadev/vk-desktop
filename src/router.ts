@@ -34,7 +34,13 @@ export const router = createRouter({
     {
       name: 'Auth',
       path: '/auth',
-      component: Auth
+      component: Auth,
+      beforeEnter() {
+        const viewer = useViewerStore()
+        if (viewer.id !== 0) {
+          return { path: '/' }
+        }
+      }
     }
   ]
 })

@@ -2,7 +2,7 @@ import { defineComponent } from 'vue'
 import { useServices } from 'services'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
-import { logout } from 'store/viewer'
+import { useViewerStore } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
 import { useGlobalModal, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
@@ -29,6 +29,7 @@ type Props = {
 export const ConvoList = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const viewer = useViewer()
+  const { logout } = useViewerStore()
   const { connection, lists } = useConvosStore()
   const { settingsModal } = useGlobalModal()
   const computedConvoList = useConvoList()

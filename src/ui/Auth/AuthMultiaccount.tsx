@@ -1,5 +1,4 @@
 import { defineComponent, shallowRef } from 'vue'
-import { useRouter } from 'vue-router'
 import { useServices } from 'services'
 import * as Peer from 'model/Peer'
 import { useViewerStore, ViewerUser } from 'store/viewer'
@@ -13,17 +12,11 @@ import { Icon20TrashOutline } from 'assets/icons'
 
 export const AuthMultiaccount = defineComponent(() => {
   const viewer = useViewerStore()
-  const router = useRouter()
   const { lang } = useServices()
 
   const isDeleteModeActive = shallowRef(false)
   const confirmDeleteModal = useModal()
   const userToDelete = shallowRef<ViewerUser>()
-
-  function openAccount(userId: Peer.UserId) {
-    viewer.setCurrentAccount(userId)
-    router.replace('/')
-  }
 
   function confirmDeleteAccount(userId: Peer.UserId) {
     userToDelete.value = viewer.accounts.get(userId)
@@ -48,7 +41,7 @@ export const AuthMultiaccount = defineComponent(() => {
       <div class={['Auth__accounts', isDeleteModeActive.value && 'Auth__accounts--deleteMode']}>
         {[...viewer.accounts.values()].map((account) => (
           <div class="Auth__account">
-            <div class="Auth__accountContent" onClick={() => openAccount(account.id)}>
+            <div class="Auth__accountContent" onClick={() => viewer.setCurrentAccount(account.id)}>
               <Avatar peer={account} size={56} />
               <div class="Auth__accountName">
                 {account.firstName}

@@ -216,6 +216,7 @@ export default defineConfig([
       '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
       '@typescript-eslint/no-unnecessary-type-arguments': 'error',
       '@typescript-eslint/no-useless-default-assignment': 'error',
+      '@typescript-eslint/no-unnecessary-type-conversion': 'error',
 
       /**
        * Далее идут правила, которые расширяют eslint-правила.
@@ -244,7 +245,6 @@ export default defineConfig([
           object: false
         }
       }],
-      '@typescript-eslint/no-unnecessary-type-conversion': 'error',
       //#endregion
 
       //#region stylistic
@@ -358,7 +358,9 @@ export default defineConfig([
       '@typescript-eslint/prefer-regexp-exec': 'off',
       // Включено в full файле
       '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-misused-spread': 'error'
+      '@typescript-eslint/no-misused-spread': 'error',
+      // Wait for https://github.com/vuejs/pinia/pull/3195 to be released
+      '@typescript-eslint/unbound-method': 'off'
     }
   },
 

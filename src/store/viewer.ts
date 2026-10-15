@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import * as Peer from 'model/Peer'
-import { RendererStorage } from 'store/Storage'
+import { JsonStorage, LocalStorageBackend } from 'store/Storage'
 
 export type ViewerUser = Peer.User & {
   accessToken: string
@@ -15,14 +15,17 @@ type Viewer = {
   trustedHashes: Record<string, string>
 }
 
-const viewerStorage = new RendererStorage<Viewer>('viewer', {
-  id: Peer.resolveZeroUserId(),
-  accounts: new Map(),
-  trustedHashes: {}
-})
+const viewerStorage = new JsonStorage<Viewer>(
+  new LocalStorageBackend('viewer'),
+  () => ({
+    id: Peer.resolveZeroUserId(),
+    accounts: new Map(),
+    trustedHashes: {}
+  })
+)
 
 export const useViewerStore = defineStore('viewer', {
-  state: () => viewerStorage.data,
+  state: () => viewerStorage.getState(),
   getters: {
     viewer(state) {
       return state.accounts.get(state.id)
@@ -36,7 +39,12 @@ export const useViewerStore = defineStore('viewer', {
       this.accounts.delete(userId)
     },
     setCurrentAccount(userId: Peer.UserId) {
+      if (this.id === userId) return
       this.id = userId
+      location.reload()
+    },
+    logout() {
+      this.setCurrentAccount(Peer.resolveZeroUserId())
     },
     addTrustedHash(login: string, hash: string) {
       this.trustedHashes[login] = hash
@@ -46,13 +54,8 @@ export const useViewerStore = defineStore('viewer', {
 
 export function init() {
   useViewerStore().$subscribe((mutation, state) => {
-    viewerStorage.update(state)
-  })
-}
-
-export function logout() {
-  viewerStorage.set('id', Peer.resolveZeroUserId())
-  location.reload()
+    viewerStorage.setState(state)
+  }, { flush: 'sync' })
 }
 
 // defineStore оборачивает стейт в UnwrapRef, заставляя IDE показывать полный бред.

@@ -1,5 +1,4 @@
 import { defineComponent, reactive } from 'vue'
-import { useRouter } from 'vue-router'
 import { useServices } from 'services'
 import * as IAuth from 'services/contracts/IAuth'
 import { useViewerStore } from 'store/viewer'
@@ -22,7 +21,6 @@ type AuthState = {
 
 export const Auth = defineComponent(() => {
   const { api, auth, lang } = useServices()
-  const router = useRouter()
   const viewer = useViewerStore()
 
   const state = reactive<AuthState>({
@@ -197,8 +195,6 @@ export const Auth = defineComponent(() => {
         messengerExchangeToken: exchangeToken
       })
       viewer.setCurrentAccount(user.id)
-
-      router.replace('/')
     } catch (err) {
       console.warn('Ошибка получения юзера', err)
       state.isQrCodePage = false
