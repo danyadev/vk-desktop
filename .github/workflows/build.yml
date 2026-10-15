@@ -3,6 +3,7 @@ name: Build VK Desktop
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,21 +20,38 @@ jobs:
             files: '"app/VK Desktop mac x64.dmg" "app/VK Desktop mac arm64.dmg"'
 
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
-      with:
-        node-version: 24.15
-        cache: yarn
-    - name: Install dependencies
-      run: yarn
-    - name: Build Electron app
-      run: yarn build
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-    - name: Create installer
-      if: startsWith(matrix.os, 'windows')
-      run: yarn win-setup
-    - name: Upload binaries to release
-      run: gh release upload ${{ github.event.release.tag_name }} ${{ matrix.files }}
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.15
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build Electron app
+        run: yarn build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Create installer
+        if: startsWith(matrix.os, 'windows')
+        run: yarn win-setup
+
+      - name: Upload workflow artifacts
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v7
+        with:
+          name: VK-Desktop-${{ runner.os }}
+          path: |
+            app/*.exe
+            app/*.dmg
+            app/*.zip
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload binaries to release
+        if: github.event_name == 'release'
+        run: gh release upload ${{ github.event.release.tag_name }} ${{ matrix.files }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
