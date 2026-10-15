@@ -19,6 +19,7 @@ import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { useConvoHistoryViewport } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { Counter } from 'ui/ui/Counter/Counter'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
@@ -295,12 +296,19 @@ export const ConvoHistory = defineComponent<Props>((props) => {
         <Transition name="ConvoHistory__hopNavigation-">
           {(showHopNavigation.value || !!gapAfter || hasEndWindowOffset) && (
             <div class="ConvoHistory__hopNavigation">
-              <ButtonIcon
-                class="ConvoHistory__hopNavigationButton"
-                shiftOnClick
-                icon={<Icon24ChevronDown />}
-                onClick={handleHopNavigation}
-              />
+              <div class="ConvoHistory__hopNavigationControl">
+                <ButtonIcon
+                  class="ConvoHistory__hopNavigationButton"
+                  shiftOnClick
+                  icon={<Icon24ChevronDown />}
+                  onClick={handleHopNavigation}
+                />
+                <Counter
+                  class="ConvoHistory__hopNavigationCounter"
+                  count={convo.unreadCount}
+                  mode={convo.notifications.enabled ? 'primary' : 'secondary'}
+                />
+              </div>
             </div>
           )}
         </Transition>

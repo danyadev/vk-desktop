@@ -3,7 +3,7 @@
   position: relative;
   grid-template-areas:
     'avatar name name name'
-    'avatar message indicators status';
+    'avatar message status indicators';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto auto;
   row-gap: 2px;
@@ -108,6 +108,7 @@
   right: 2px;
   border: 2px solid var(--vkui--color_background_content);
   min-width: 24px;
+  min-height: 24px;
 }
 
 .ConvoListItem__status {

@@ -12,3 +12,9 @@
   color: var(--vkui--color_background_content);
   background: var(--vkui--color_icon_secondary);
 }
+
+.Counter--empty {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+}

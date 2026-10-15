@@ -57,6 +57,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             class="ConvoListItem__compactCounter"
             count={props.convo.unreadCount}
             mode={props.convo.notifications.enabled ? 'primary' : 'secondary'}
+            allowEmpty={props.convo.isMarkedUnread}
           />
           {props.convo.kind === 'ChatConvo' && props.convo.mentionedCmids.size > 0 && (
             <Icon12Mention class="ConvoListItem__mentioned ConvoListItem__compactMentioned" />
@@ -113,6 +114,12 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             </>
           )}
         </div>
+        {lastMessage.value && (
+          <MessageOutStatusIcon
+            class="ConvoListItem__status"
+            message={lastMessage.value}
+          />
+        )}
         <div class="ConvoListItem__indicators">
           {props.convo.kind === 'ChatConvo' && props.convo.mentionedCmids.size > 0 && (
             <Icon12Mention class="ConvoListItem__mentioned" />
@@ -120,14 +127,9 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           <Counter
             count={props.convo.unreadCount}
             mode={props.convo.notifications.enabled ? 'primary' : 'secondary'}
+            allowEmpty={props.convo.isMarkedUnread}
           />
         </div>
-        {lastMessage.value && (
-          <MessageOutStatusIcon
-            class="ConvoListItem__status"
-            message={lastMessage.value}
-          />
-        )}
       </div>
     )
   }
