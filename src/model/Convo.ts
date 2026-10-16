@@ -8,6 +8,7 @@ export type Convo = UserConvo | GroupConvo | ChatConvo
 export interface BaseConvo {
   history: History.History<Message.Confirmed>
   pendingMessages: Message.Pending[]
+  canWrite: { allowed: boolean, reason: number | undefined }
   unreadCount: number
   /**
    * Id для сортировки с высоким приоритетом.
@@ -57,6 +58,13 @@ export interface ChatConvo extends BaseConvo {
   status: 'in' | 'kicked' | 'left' | 'out'
   isChannel: boolean
   isCasper: boolean
+  ownerId: Peer.OwnerId | undefined
+  adminIds: Set<Peer.OwnerId>
+  permissions: {
+    canChangePin: boolean
+    canModerate: boolean
+    canForwardMessages: boolean
+  }
   pinnedMessage: Message.Pinned | undefined
   mentionedCmids: Set<Message.Cmid>
 }
@@ -120,6 +128,7 @@ function mock(id: Peer.Id): Convo {
   const base: BaseConvo = {
     history: [],
     pendingMessages: [],
+    canWrite: { allowed: false, reason: undefined },
     unreadCount: 0,
     majorSortId: 0,
     minorSortId: 0,
@@ -157,6 +166,9 @@ function mock(id: Peer.Id): Convo {
       status: 'in',
       isCasper: false,
       isChannel: false,
+      ownerId: undefined,
+      adminIds: new Set(),
+      permissions: { canChangePin: false, canModerate: false, canForwardMessages: false },
       pinnedMessage: undefined,
       mentionedCmids: new Set(),
       ...base
@@ -257,6 +269,36 @@ export function findMessage(convo: Convo, cmid: Message.Cmid): Message.Confirmed
 
 export function isUnread(convo: Convo): boolean {
   return convo.unreadCount > 0 || convo.isMarkedUnread
+}
+
+export function canPinMessage(convo: Convo): boolean {
+  return (
+    convo.kind === 'ChatConvo' &&
+    convo.status === 'in' &&
+    !convo.isCasper &&
+    convo.permissions.canChangePin
+  )
+}
+
+export function canDeleteMessageForAll(
+  convo: Convo,
+  message: Message.Confirmed,
+  viewerId: Peer.OwnerId
+): boolean {
+  if (convo.id === viewerId) return false
+  if (!convo.canWrite.allowed) return false
+  if (convo.kind === 'ChatConvo' && convo.status !== 'in') return false
+  if (message.kind === 'Service') return false
+  if (message.authorId === viewerId) return true
+
+  if (convo.kind === 'ChatConvo') {
+    const isViewerAdmin = convo.ownerId === viewerId || convo.adminIds.has(viewerId)
+    const isAuthorAdmin =
+      convo.ownerId === message.authorId || convo.adminIds.has(message.authorId)
+    if (isViewerAdmin && !isAuthorAdmin) return true
+  }
+
+  return false
 }
 
 export function isCasper(convo: Convo): boolean {

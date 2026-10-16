@@ -37,6 +37,10 @@ export function fromApiConvo(
   const baseConvo: Convo.BaseConvo = {
     history,
     pendingMessages: [],
+    canWrite: {
+      allowed: apiConvo.can_write?.allowed ?? false,
+      reason: apiConvo.can_write?.reason
+    },
     unreadCount: apiConvo.unread_count ?? 0,
     majorSortId: apiConvo.sort_id?.major_id ?? 0,
     minorSortId: apiConvo.sort_id?.minor_id ?? 0,
@@ -101,6 +105,15 @@ export function fromApiConvo(
           status: apiConvo.chat_settings.state,
           isChannel: !!apiConvo.chat_settings.is_group_channel,
           isCasper: !!apiConvo.chat_settings.is_disappearing,
+          ownerId: apiConvo.chat_settings.owner_id
+            ? Peer.resolveOwnerId(apiConvo.chat_settings.owner_id)
+            : undefined,
+          adminIds: new Set((apiConvo.chat_settings.admin_ids ?? []).map(Peer.resolveOwnerId)),
+          permissions: {
+            canChangePin: apiConvo.chat_settings.acl.can_change_pin,
+            canModerate: apiConvo.chat_settings.acl.can_moderate,
+            canForwardMessages: !!apiConvo.chat_settings.acl.can_forward_messages
+          },
           pinnedMessage: apiConvo.chat_settings.pinned_message
             ? fromApiPinnedMessage(apiConvo.chat_settings.pinned_message)
             : undefined,

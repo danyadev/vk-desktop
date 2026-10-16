@@ -97,7 +97,7 @@ export const ru = {
   me_convo_menu_unpin: 'Открепить диалог',
   me_convo_menu_mute: 'Отключить уведомления',
   me_convo_menu_unmute: 'Включить уведомления',
-  me_convo_menu_copy_id: 'Скопировать ID',
+  me_convo_menu_copy_id: 'Скопировать id',
   me_convo_menu_clear: 'Очистить историю',
   me_convo_menu_leave: 'Выйти из чата',
   me_convo_menu_return: 'Вернуться в чат',
@@ -109,6 +109,19 @@ export const ru = {
   me_convo_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',
 
   me_convo_composer_menu_photo: 'Фото',
+
+  me_message_menu_copy: 'Копировать текст',
+  me_message_menu_pin: 'Закрепить',
+  me_message_menu_unpin: 'Открепить',
+  me_message_menu_delete: 'Удалить',
+  me_message_menu_copy_cmid: 'Скопировать cmid',
+  me_message_menu_retry: 'Повторить отправку',
+  me_message_menu_retry_all: 'Повторить все ({count})',
+  me_message_menu_delete_confirm_title: 'Удалить сообщение?',
+  me_message_menu_delete_confirm_text: 'Сообщение будет удалено из переписки.',
+  me_message_menu_delete_for_all: 'Удалить для всех',
+  me_message_menu_pin_confirm_title: 'Закрепить сообщение?',
+  me_message_menu_pin_confirm_text: 'Сообщение будет закреплено для всех участников чата.',
 
   me_messages_disappeared: {
     single: 'Сообщение исчезло',

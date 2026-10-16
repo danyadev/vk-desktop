@@ -316,6 +316,13 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
             if (updateType === 8) convo.status = 'kicked'
             break
           }
+
+          case 3:
+          case 4:
+          case 9:
+          case 33:
+          case 35:
+            break
         }
 
         break
@@ -661,14 +668,22 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
             break
           }
 
-          case 6: // Вступление в беседу
-            if (extra === viewer.id) {
+          case 3: // Назначен администратор
+          case 4: // Изменены права беседы
+          case 9: // Администратор разжалован
+          case 33: // Сменился владелец беседы
+          case 35: // Изменились участники (тип изменения неизвестен)
+            if (convo.kind === 'ChatConvo') {
               missingConvos.add(peerId)
             }
             break
 
-          case 7:
-          case 8:
+          case 6: // Вступление в беседу
+          case 7: // Выход из беседы
+          case 8: // Исключение из беседы
+            if (extra === viewer.id) {
+              missingConvos.add(peerId)
+            }
             break
         }
 

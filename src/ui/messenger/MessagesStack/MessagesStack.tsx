@@ -5,9 +5,10 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { useConvoSession } from 'hooks'
-import { NonEmptyArray } from 'misc/utils'
+import { JSXElement, NonEmptyArray } from 'misc/utils'
 import { ConvoMessage } from 'ui/messenger/ConvoMessage/ConvoMessage'
 import { ExpiredMessage } from 'ui/messenger/ExpiredMessage/ExpiredMessage'
+import { MessageActionMenu } from 'ui/messenger/MessageActionMenu/MessageActionMenu'
 import { ServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import './MessagesStack.css'
@@ -37,6 +38,7 @@ export const MessagesStack = defineComponent<Props>((props) => {
           {props.messages.map((message, index) => (
             <StackMessage
               key={message.kind === 'Pending' ? message.randomId : message.cmid}
+              convo={convo}
               message={message}
               isHead={index === 0}
               openMessagePreview={props.openMessagePreview}
@@ -51,6 +53,7 @@ export const MessagesStack = defineComponent<Props>((props) => {
 })
 
 type StackMessageProps = {
+  convo: Convo.Convo
   message: Message.Message
   isHead: boolean
   openMessagePreview: (cmid: Message.Cmid) => void
@@ -75,53 +78,45 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
 
   return () => {
     const { message, isHead } = props
+    const isCentered = message.kind === 'Service' || message.kind === 'Expired'
+    let content: JSXElement
 
     switch (message.kind) {
       case 'Normal':
       case 'Pending':
-        return (
-          <div
-            class={[
-              'MessagesStack__message',
-              highlightTimeoutId.value && 'MessagesStack__message--highlighted'
-            ]}
-            data-cmid={message.cmid}
-          >
-            <ConvoMessage
-              message={message}
-              showName={isHead && Peer.isChatPeerId(message.peerId)}
-              openMessagePreview={props.openMessagePreview}
-            />
-          </div>
+        content = (
+          <ConvoMessage
+            message={message}
+            showName={isHead && Peer.isChatPeerId(message.peerId)}
+            openMessagePreview={props.openMessagePreview}
+          />
         )
+        break
 
       case 'Service':
-        return (
-          <div
-            class={[
-              'MessagesStack__message MessagesStack__message--centered',
-              highlightTimeoutId.value && 'MessagesStack__message--highlighted'
-            ]}
-            data-cmid={message.cmid}
-          >
-            <ServiceMessage message={message} />
-          </div>
-        )
+        content = <ServiceMessage message={message} />
+        break
 
       case 'Expired':
-        return (
-          <div
-            class={[
-              'MessagesStack__message MessagesStack__message--centered',
-              highlightTimeoutId.value && 'MessagesStack__message--highlighted'
-            ]}
-            data-cmid={message.cmid}
-          >
-            <ExpiredMessage count={1} />
-          </div>
-        )
+        content = <ExpiredMessage count={1} />
+        break
     }
+
+    return (
+      <MessageActionMenu message={message} convo={props.convo}>
+        <div
+          class={[
+            'MessagesStack__message',
+            isCentered && 'MessagesStack__message--centered',
+            highlightTimeoutId.value && 'MessagesStack__message--highlighted'
+          ]}
+          data-cmid={message.cmid}
+        >
+          {content}
+        </div>
+      </MessageActionMenu>
+    )
   }
 }, {
-  props: ['message', 'isHead', 'openMessagePreview']
+  props: ['convo', 'message', 'isHead', 'openMessagePreview']
 })

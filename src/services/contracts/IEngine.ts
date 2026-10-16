@@ -263,7 +263,7 @@ type Update21 = [
 // Изменение состояния беседы
 type Update52 = [
   type: 52,
-  updateType: 5 | 6 | 7 | 8,
+  updateType: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 33 | 35,
   peerId: number,
   extra: number
 ]
