@@ -267,7 +267,14 @@ export default defineConfig([
       '@stylistic/indent': ['error', 2, {
         // По умолчанию внутри switch была отключена табуляция
         SwitchCase: 1,
-        ignoredNodes: ['TSMappedType > TSTypeReference', 'TSUnionType > TSTypeLiteral']
+        offsetTernaryExpressions: true,
+        ignoredNodes: [
+          'TSMappedType > TSTypeReference',
+          'TSUnionType > TSTypeLiteral',
+          // Until satisfies is supported in
+          // https://github.com/eslint-stylistic/eslint-stylistic/pull/1310
+          'TSSatisfiesExpression > ObjectExpression'
+        ]
       }],
       // Считает юнион типы за бинарные операции
       // https://github.com/eslint-stylistic/eslint-stylistic/issues/676

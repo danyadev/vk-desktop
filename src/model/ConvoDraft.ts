@@ -1,10 +1,12 @@
 import * as Attach from 'model/Attach'
+import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { getMapValueOrCompute } from 'misc/utils'
 
 export type ConvoDraft = {
   text: string
   attaches: Attach.Attaches
+  replyMessage: Message.Foreign | undefined
   uploadingAttaches: UploadingAttach[]
 }
 
@@ -23,6 +25,7 @@ type GenericUploadingAttach<Kind extends Attach.SingleAttach['kind']> = {
 const emptyDraft = (): ConvoDraft => ({
   text: '',
   attaches: {},
+  replyMessage: undefined,
   uploadingAttaches: []
 })
 
@@ -35,8 +38,12 @@ export function safeGet(drafts: Map<Peer.Id, ConvoDraft>, peerId: Peer.Id): Conv
   return getMapValueOrCompute(drafts, peerId, emptyDraft)
 }
 
+export function hasContent(draft: ConvoDraft) {
+  return draft.text.trim() !== '' || Attach.kindsCount(draft.attaches) > 0
+}
+
 export function isEmpty(draft: ConvoDraft) {
-  return draft.text.trim() === '' && Attach.kindsCount(draft.attaches) === 0
+  return !hasContent(draft) && !draft.replyMessage
 }
 
 export function reset(draft: ConvoDraft) {

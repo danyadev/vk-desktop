@@ -1,4 +1,5 @@
 import { useServices } from 'services'
+import { MessagesForward } from 'services/contracts/api/objects/MessagesForward'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
@@ -8,10 +9,15 @@ import { useViewer } from 'hooks'
 import { random } from 'misc/utils'
 import { INTEGER_BOUNDARY } from 'misc/constants'
 
-export function sendMessage(peerId: Peer.Id, text: string, attaches: Attach.Attaches) {
+export function sendMessage(
+  peerId: Peer.Id,
+  text: string,
+  attaches: Attach.Attaches,
+  replyMessage?: Message.Foreign
+) {
   const { convos } = useConvosStore()
   const convo = Convo.safeGet(convos, peerId)
-  const pendingMessage = toPendingMessage(peerId, text, attaches)
+  const pendingMessage = toPendingMessage(peerId, text, attaches, replyMessage)
 
   convo.pendingMessages.push(pendingMessage)
   sendNextPendingMessage(convo)
@@ -51,7 +57,14 @@ async function sendNextPendingMessage(convo: Convo.Convo) {
       peer_id: pending.peerId,
       random_id: pending.randomId,
       message: pending.text,
-      attachment: Attach.ids(pending.attaches)
+      attachment: Attach.ids(pending.attaches),
+      forward: pending.replyMessage?.cmid
+        ? JSON.stringify({
+            peer_id: pending.peerId,
+            cmids: [pending.replyMessage.cmid],
+            is_reply: true
+          } satisfies MessagesForward)
+        : undefined
     })
     pending.cmid = Message.resolveCmid(cmid)
   } catch (err) {
@@ -66,7 +79,8 @@ async function sendNextPendingMessage(convo: Convo.Convo) {
 function toPendingMessage(
   peerId: Peer.Id,
   text: string,
-  attaches: Attach.Attaches
+  attaches: Attach.Attaches,
+  replyMessage: Message.Foreign | undefined
 ): Message.Pending {
   const viewer = useViewer()
   const randomId = random(-INTEGER_BOUNDARY, INTEGER_BOUNDARY)
@@ -82,7 +96,7 @@ function toPendingMessage(
     updatedAt: undefined,
     text,
     attaches,
-    replyMessage: undefined,
+    replyMessage,
     forwardedMessages: undefined,
     isFailed: false
   }
