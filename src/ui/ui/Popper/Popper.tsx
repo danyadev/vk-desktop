@@ -1,4 +1,13 @@
-import { defineComponent, KeyboardEvent, shallowRef, Teleport, Transition, watch } from 'vue'
+import {
+  defineComponent,
+  KeyboardEvent,
+  MouseEvent,
+  PointerEvent,
+  shallowRef,
+  Teleport,
+  Transition,
+  watch
+} from 'vue'
 import { flip, offset, OffsetOptions, Placement, shift } from '@floating-ui/dom'
 import { JSXElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
@@ -6,6 +15,7 @@ import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithPro
 import './Popper.css'
 
 type Props = {
+  trigger?: 'click' | 'contextmenu'
   content: JSXElement
   placement?: Placement
   offset?: OffsetOptions
@@ -19,7 +29,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
   const isPointingAtContent = shallowRef(false)
   let hideContentTimeout = 0
 
-  watch([isPointingAtTrigger, isPointingAtContent], () => {
+  watch([isPointingAtTrigger, isPointingAtContent, () => props.showOnHover], () => {
     if (!props.showOnHover) {
       return
     }
@@ -35,29 +45,67 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     }
   })
 
-  const placement = props.placement ?? 'bottom-end'
-  const { setTriggerRef, setContentRef } = useFloatingUI({
+  watch(showContent, () => {
+    if (isContextMenu && !showContent.value) {
+      setVirtualTrigger(null)
+    }
+  })
+
+  const isContextMenu = props.trigger === 'contextmenu'
+  const placement = props.placement ?? (isContextMenu ? 'bottom-start' : 'bottom-end')
+
+  const { setTriggerRef, setVirtualTrigger, setContentRef } = useFloatingUI({
     placement,
     middleware: [
-      offset(props.offset ?? 4),
-      shift(),
+      offset(props.offset ?? (isContextMenu ? 0 : 4)),
+      shift({ padding: 8 }),
       flip()
     ]
   })
 
+  const onTriggerClick = (event: MouseEvent) => {
+    if (isContextMenu) {
+      if (showContent.value) {
+        event.stopImmediatePropagation()
+        showContent.value = false
+      }
+      return
+    }
+
+    showContent.value = !showContent.value
+  }
+
   const handleEscape = (event: KeyboardEvent) => {
-    if (!props.showOnHover && event.key === 'Escape') {
+    if (!props.showOnHover && event.key === 'Escape' && showContent.value) {
       event.stopPropagation()
       showContent.value = false
     }
   }
 
+  const toggleContextMenu = (event: PointerEvent) => {
+    event.preventDefault()
+
+    if (showContent.value) {
+      showContent.value = false
+      return
+    }
+
+    const { clientX, clientY } = event
+    setVirtualTrigger({
+      getBoundingClientRect: () => new DOMRect(clientX, clientY, 0, 0),
+      contextElement: event.currentTarget
+    })
+
+    showContent.value = true
+  }
+
   return () => (
     <>
       <RenderSlotWithProps
-        ref={setTriggerRef}
+        ref={isContextMenu ? undefined : setTriggerRef}
         class={showContent.value && 'Popper__trigger--active'}
-        onClick={() => (showContent.value = !showContent.value)}
+        onClickCapture={onTriggerClick}
+        onContextmenu={isContextMenu ? toggleContextMenu : undefined}
         onMouseenter={() => (isPointingAtTrigger.value = true)}
         onMouseleave={() => (isPointingAtTrigger.value = false)}
         onKeydown={handleEscape}
@@ -70,6 +118,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
           <div
             class="Popper__backdrop"
             onClick={() => (showContent.value = false)}
+            onContextmenu={() => (showContent.value = false)}
           />
         )}
         <Transition name="Popper-">
@@ -90,5 +139,5 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     </>
   )
 }, {
-  props: ['content', 'placement', 'offset', 'showOnHover', 'closeOnContentClick']
+  props: ['trigger', 'content', 'placement', 'offset', 'showOnHover', 'closeOnContentClick']
 })

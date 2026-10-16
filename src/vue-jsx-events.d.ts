@@ -33,8 +33,10 @@ declare module 'vue' {
     onMouseenter?: (event: MouseEvent<HTMLElement>) => void
     onMouseleave?: (event: MouseEvent<HTMLElement>) => void
     onClick?: (event: MouseEvent<HTMLElement>) => void
+    onClickCapture?: (event: MouseEvent<HTMLElement>) => void
     onScrollPassive?: (event: Event) => void
     onWheelPassive?: (event: WheelEvent) => void
+    onContextmenu?: (event: PointerEvent<HTMLElement>) => void
   }
 
   interface InputHTMLAttributes {
@@ -85,24 +87,24 @@ declare module 'vue' {
   //   dataTransfer: DataTransfer
   // }
   //
-  // interface PointerEvent<T = Element> extends MouseEvent<T> {
-  //   pointerId: number
-  //   pressure: number
-  //   tangentialPressure: number
-  //   tiltX: number
-  //   tiltY: number
-  //   twist: number
-  //   width: number
-  //   height: number
-  //   pointerType: 'mouse' | 'pen' | 'touch'
-  //   isPrimary: boolean
-  // }
-  //
   // interface FormEvent<T = Element> extends SyntheticEvent<T> {}
   //
   // interface InvalidEvent<T = Element> extends SyntheticEvent<T> {
   //   target: EventTarget & T
   // }
+
+  interface PointerEvent<T = Element> extends MouseEvent<T> {
+    pointerId: number
+    pressure: number
+    tangentialPressure: number
+    tiltX: number
+    tiltY: number
+    twist: number
+    width: number
+    height: number
+    pointerType: 'mouse' | 'pen' | 'touch'
+    isPrimary: boolean
+  }
 
   interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
     target: T & EventTarget

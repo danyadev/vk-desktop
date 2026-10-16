@@ -12,7 +12,6 @@ import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ActionMenuSeparator } from 'ui/ui/ActionMenuSeparator/ActionMenuSeparator'
 import { Button } from 'ui/ui/Button/Button'
-import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20ArchiveOutline,
@@ -22,18 +21,18 @@ import {
   Icon20CopyOutline,
   Icon20DoorArrowRightOutline,
   Icon20HideOutline,
+  Icon20MessageCheckOutline,
   Icon20MessageUnreadTopOutline,
   Icon20NotificationOutline,
   Icon20NotificationSlashOutline,
   Icon20PinOutline,
   Icon20PinSlashOutline,
   Icon20UnarchiveOutline,
-  Icon20ViewOutline,
-  Icon24MoreHorizontal
+  Icon20ViewOutline
 } from 'assets/icons'
 
 type LoadingAction =
-  | 'markUnread'
+  | 'read'
   | 'archive'
   | 'pin'
   | 'mute'
@@ -42,12 +41,13 @@ type LoadingAction =
 
 type Props = {
   convo: Convo.Convo
+  fromConvoList?: boolean
 }
 
-export const ConvoHeaderMenu = defineComponent<Props>((props) => {
+export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
   const { api, lang } = useServices()
   const { hiddenPinnedMessages } = useConvosStore()
-  const session = useConvoSession()
+  const session = props.fromConvoList ? undefined : useConvoSession()
   const viewer = useViewerStore()
 
   const loadingAction = shallowRef<LoadingAction>()
@@ -73,6 +73,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
   }
 
   const goToFirstMessage = () => {
+    if (!session) return
     session.navigationRequest = {
       kind: 'Message',
       cmid: Message.resolveCmid(1),
@@ -92,8 +93,17 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     }
   }
 
-  const markUnread = makeAction('markUnread', async () => {
-    await api.fetch('messages.markAsUnreadConversation', { peer_id: props.convo.id })
+  const markRead = makeAction('read', async () => {
+    await api.fetch('messages.markAsRead', {
+      peer_id: props.convo.id,
+      mark_conversation_as_read: 1
+    })
+  })
+
+  const markUnread = makeAction('read', async () => {
+    await api.fetch('messages.markAsUnreadConversation', {
+      peer_id: props.convo.id
+    })
   })
 
   const toggleArchive = makeAction('archive', async () => {
@@ -153,6 +163,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     return (
       <>
         <Popper
+          trigger={props.fromConvoList ? 'contextmenu' : 'click'}
           closeOnContentClick
           content={
             <ActionMenu>
@@ -172,12 +183,20 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                 loading={loadingAction.value === 'mute'}
                 onClick={toggleNotifications}
               />
-              {!Convo.isUnread(convo) && (
+              {Convo.isUnread(convo) ? (
+                <ActionMenuItem
+                  icon={<Icon20MessageCheckOutline />}
+                  text={lang.use('me_convo_menu_mark_read')}
+                  disabled={disabled}
+                  loading={loadingAction.value === 'read'}
+                  onClick={markRead}
+                />
+              ) : (
                 <ActionMenuItem
                   icon={<Icon20MessageUnreadTopOutline />}
                   text={lang.use('me_convo_menu_mark_unread')}
                   disabled={disabled}
-                  loading={loadingAction.value === 'markUnread'}
+                  loading={loadingAction.value === 'read'}
                   onClick={markUnread}
                 />
               )}
@@ -199,7 +218,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                   onClick={togglePin}
                 />
               )}
-              {pinnedMessage && (
+              {pinnedMessage && !props.fromConvoList && (
                 <ActionMenuItem
                   icon={pinnedMessageHidden ? <Icon20ViewOutline /> : <Icon20HideOutline />}
                   text={lang.use(pinnedMessageHidden
@@ -208,11 +227,13 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
                   onClick={togglePinnedMessage}
                 />
               )}
-              <ActionMenuItem
-                icon={<Icon20ArrowUpOutline />}
-                text={lang.use('me_convo_menu_first')}
-                onClick={goToFirstMessage}
-              />
+              {!props.fromConvoList && (
+                <ActionMenuItem
+                  icon={<Icon20ArrowUpOutline />}
+                  text={lang.use('me_convo_menu_first')}
+                  onClick={goToFirstMessage}
+                />
+              )}
               <ActionMenuItem
                 icon={<Icon20CopyOutline />}
                 text={lang.use('me_convo_menu_copy_id')}
@@ -240,12 +261,7 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
             </ActionMenu>
           }
         >
-          <ButtonIcon
-            class="ConvoHeader__actions"
-            icon={<Icon24MoreHorizontal color="var(--vkui--color_icon_secondary)" />}
-            withHoverBackground
-            shiftOnClick
-          />
+          {slots.default?.()}
         </Popper>
 
         <Modal
@@ -306,5 +322,5 @@ export const ConvoHeaderMenu = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['convo']
+  props: ['convo', 'fromConvoList']
 })

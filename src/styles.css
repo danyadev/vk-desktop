@@ -67,8 +67,9 @@ img, svg {
   --slowTransition: 0.3s;
 
   --zIndexModal: 1;
-  --zIndexPopper: 2;
+  --zIndexPopperBackdrop: 2;
   --zIndexPopperBackdropBypass: 3;
+  --zIndexPopper: 4;
 }
 
 [data-scheme] {

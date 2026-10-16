@@ -271,3 +271,12 @@ export type MessagesRemoveChatUserParams = {
   incognito_id?: number
 }
 export type MessagesRemoveChatUserResponse = 1
+
+// messages.markAsRead
+export type MessagesMarkAsReadParams = {
+  peer_id: number
+  up_to_cmid?: number
+  mark_conversation_as_read?: 0 | 1
+  group_id?: number
+}
+export type MessagesMarkAsReadResponse = 1

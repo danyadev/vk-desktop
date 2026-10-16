@@ -51,6 +51,8 @@ import {
   MessagesGetLongPollServerResponse,
   MessagesMarkAsPlayedParams,
   MessagesMarkAsPlayedResponse,
+  MessagesMarkAsReadParams,
+  MessagesMarkAsReadResponse,
   MessagesMarkAsUnreadConversationParams,
   MessagesMarkAsUnreadConversationResponse,
   MessagesPinConversationParams,
@@ -220,6 +222,10 @@ export type Methods = {
   'messages.addChatUser': {
     params: MessagesAddChatUserParams
     response: MessagesAddChatUserResponse
+  }
+  'messages.markAsRead': {
+    params: MessagesMarkAsReadParams
+    response: MessagesMarkAsReadResponse
   }
 
   'users.get': {
