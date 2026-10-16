@@ -1,17 +1,20 @@
 import { shallowRef, watchEffect } from 'vue'
-import { autoUpdate, computePosition, ComputePositionConfig } from '@floating-ui/dom'
+import { autoUpdate, computePosition, ComputePositionConfig, VirtualElement } from '@floating-ui/dom'
 import { RawRefElement, unrefElement } from 'misc/utils'
 
 export function useFloatingUI(options: ComputePositionConfig) {
   const $content = shallowRef<HTMLElement | null>(null)
-  const $trigger = shallowRef<HTMLElement | null>(null)
-  let cleanup: (() => void) | null = null
+  const $trigger = shallowRef<HTMLElement | VirtualElement | null>(null)
 
   const setTriggerRef = (refElement: RawRefElement) => {
     const element = unrefElement(refElement)
     if (!element || element instanceof HTMLElement) {
       $trigger.value = element
     }
+  }
+
+  const setVirtualTrigger = (trigger: VirtualElement | null) => {
+    $trigger.value = trigger
   }
 
   const setContentRef = (refElement: RawRefElement) => {
@@ -30,22 +33,14 @@ export function useFloatingUI(options: ComputePositionConfig) {
     }
   }
 
-  watchEffect(() => {
-    cleanup?.()
-
-    if ($trigger.value && $content.value) {
-      cleanup = autoUpdate(
-        $trigger.value,
-        $content.value,
-        update
-      )
-    } else {
-      cleanup = null
-    }
+  watchEffect((onCleanup) => {
+    if (!$trigger.value || !$content.value) return
+    onCleanup(autoUpdate($trigger.value, $content.value, update))
   })
 
   return {
     setTriggerRef,
+    setVirtualTrigger,
     setContentRef
   }
 }

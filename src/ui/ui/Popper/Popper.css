@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: var(--zIndexPopper);
+  z-index: var(--zIndexPopperBackdrop);
 }
 
 .Popper__trigger--active {

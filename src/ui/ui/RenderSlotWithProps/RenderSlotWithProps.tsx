@@ -1,33 +1,30 @@
-import { defineComponent, HTMLAttributes } from 'vue'
+import { defineComponent, Fragment, HTMLAttributes, isVNode, VNode, VNodeArrayChildren } from 'vue'
+
+function unwrapSingleChild(children: VNodeArrayChildren): VNode {
+  if (children.length !== 1) {
+    throw new Error(`RenderSlotWithProps expected 1 child, got ${children.length}`)
+  }
+
+  const child = children[0]
+  if (Array.isArray(child)) {
+    return unwrapSingleChild(child)
+  }
+
+  if (!isVNode(child)) {
+    throw new Error('RenderSlotWithProps expected a VNode')
+  }
+
+  if (child.type === Fragment) {
+    if (!Array.isArray(child.children)) {
+      throw new Error('RenderSlotWithProps expected Fragment children to be an array')
+    }
+
+    return unwrapSingleChild(child.children)
+  }
+
+  return child
+}
 
 export const RenderSlotWithProps = defineComponent<HTMLAttributes>((props, { slots }) => {
-  return () => {
-    /**
-     * Слот это всегда массив или undefined. Не знаю почему массив, там всегда один элемент.
-     *
-     * Этот один элемент это всегда фрагмент, поэтому мы сначала достаем его.
-     *
-     * А вот дети у фрагмента это как раз массив элементов, которые и были переданы в качестве
-     * детей компоненту.
-     * Важно: дети могут быть так же фрагментами или компонентами, которые начинаются с
-     * фрагмента, и в таком случае реф будет на фрагменте, а не на нужном элементе,
-     * а такого не следует допускать.
-     *
-     * Проблема в том, что если поставить реф на фрагмент, он будет указывать на пустую text ноду,
-     * находящуюся перед содержимым фрагмента, а оно может быть как пустое, так и с несколькими
-     * элементами, количество которых мы не знаем, что делает невозможным какое-либо взаимодействие
-     * с этой пустой text нодой
-     */
-    const [fragment] = slots.default?.() ?? []
-
-    if (!fragment || !Array.isArray(fragment.children)) {
-      return fragment
-    }
-
-    if (fragment.children.length > 1) {
-      throw new Error('RenderSlotWithProps expected 1 child, got: ' + fragment.children.length)
-    }
-
-    return fragment.children[0]
-  }
+  return () => unwrapSingleChild(slots.default?.() ?? [])
 })

@@ -89,6 +89,7 @@ export const ru = {
   me_convo_menu_first: 'К первому сообщению',
   me_convo_menu_hide_pinned: 'Скрыть закреплённое сообщение',
   me_convo_menu_show_pinned: 'Показать закреплённое сообщение',
+  me_convo_menu_mark_read: 'Отметить прочитанным',
   me_convo_menu_mark_unread: 'Отметить непрочитанным',
   me_convo_menu_archive: 'Архивировать',
   me_convo_menu_unarchive: 'Вернуть из архива',

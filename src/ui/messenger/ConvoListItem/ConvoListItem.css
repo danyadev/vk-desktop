@@ -14,7 +14,8 @@
   transition: background var(--fastTransition);
 }
 
-.ConvoListItem:not(.ConvoListItem--active):hover {
+.ConvoListItem:not(.ConvoListItem--active):hover,
+.ConvoListItem:not(.ConvoListItem--active).Popper__trigger--active {
   background: var(--vkui--color_transparent--hover);
 }
 

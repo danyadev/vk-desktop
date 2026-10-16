@@ -6,6 +6,7 @@ import { useViewerStore } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
 import { useGlobalModal, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
+import { ConvoActionMenu } from 'ui/messenger/ConvoActionMenu/ConvoActionMenu'
 import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
 import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
@@ -91,7 +92,9 @@ export const ConvoList = defineComponent<Props>((props) => {
 
         <div class="ConvoList__list">
           {convoList.map((convo) => (
-            <ConvoListItem key={convo.id} convo={convo} compact={props.compact} />
+            <ConvoActionMenu key={convo.id} convo={convo} fromConvoList>
+              <ConvoListItem convo={convo} compact={props.compact} />
+            </ConvoActionMenu>
           ))}
 
           {convoList.length === 0 && list.status === 'complete' && (
