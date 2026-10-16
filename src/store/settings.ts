@@ -4,12 +4,14 @@ import { Locale } from 'lang/dictionaries'
 
 export type Settings = {
   lang: Locale
+  deleteMessageForAllPreference: boolean
 }
 
 const settingsStorage = new JsonStorage<Settings>(
   new LocalStorageBackend('settings'),
   () => ({
-    lang: 'ru'
+    lang: 'ru',
+    deleteMessageForAllPreference: false
   })
 )
 

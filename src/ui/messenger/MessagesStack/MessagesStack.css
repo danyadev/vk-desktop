@@ -18,17 +18,23 @@
   min-width: 0;
 }
 
-.MessagesStack--out .MessagesStack__messages {
-  align-items: flex-end;
-}
-
 .MessagesStack__message {
   position: relative;
-  max-width: 85%;
+  display: grid;
+  grid-template-columns: minmax(0, 85%);
+  justify-items: start;
+  width: 100%;
 }
 
-.MessagesStack__message--centered {
-  margin: 0 auto;
+.MessagesStack--out .MessagesStack__message {
+  justify-content: end;
+  justify-items: end;
+}
+
+.MessagesStack__message--centered,
+.MessagesStack--out .MessagesStack__message--centered {
+  justify-content: center;
+  justify-items: center;
 }
 
 .MessagesStack__message::after {
@@ -45,7 +51,8 @@
   transition: opacity var(--slowTransition), visibility var(--slowTransition);
 }
 
-.MessagesStack__message--highlighted::after {
+.MessagesStack__message--highlighted::after,
+.MessagesStack__message.Popper__trigger--active::after {
   opacity: 0.1;
   visibility: visible;
 }

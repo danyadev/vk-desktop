@@ -9,6 +9,7 @@ import {
   watch
 } from 'vue'
 import { flip, offset, OffsetOptions, Placement, shift } from '@floating-ui/dom'
+import { useIsMounted } from 'hooks'
 import { JSXElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
 import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithProps'
@@ -24,7 +25,9 @@ type Props = {
 }
 
 export const Popper = defineComponent<Props>((props, { slots }) => {
+  const isMounted = useIsMounted()
   const showContent = shallowRef(false)
+  const isVisible = shallowRef(false)
   const isPointingAtTrigger = shallowRef(false)
   const isPointingAtContent = shallowRef(false)
   let hideContentTimeout = 0
@@ -99,6 +102,16 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     showContent.value = true
   }
 
+  const onBeforeAppear = () => {
+    isVisible.value = true
+  }
+
+  const onAfterLeave = () => {
+    if (!showContent.value) {
+      isVisible.value = false
+    }
+  }
+
   return () => (
     <>
       <RenderSlotWithProps
@@ -113,29 +126,37 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
         {slots.default?.()}
       </RenderSlotWithProps>
 
-      <Teleport to=".App">
-        {showContent.value && !props.showOnHover && (
-          <div
-            class="Popper__backdrop"
-            onClick={() => (showContent.value = false)}
-            onContextmenu={() => (showContent.value = false)}
-          />
-        )}
-        <Transition name="Popper-">
-          {showContent.value && (
+      {isMounted.value && (showContent.value || isVisible.value) && (
+        <Teleport to=".App">
+          {showContent.value && !props.showOnHover && (
             <div
-              ref={setContentRef}
-              class={['Popper', `Popper--placement-${placement}`]}
-              onClick={() => props.closeOnContentClick && (showContent.value = false)}
-              onMouseenter={() => (isPointingAtContent.value = true)}
-              onMouseleave={() => (isPointingAtContent.value = false)}
-              onKeydown={handleEscape}
-            >
-              {props.content}
-            </div>
+              class="Popper__backdrop"
+              onClick={() => (showContent.value = false)}
+              onContextmenu={() => (showContent.value = false)}
+            />
           )}
-        </Transition>
-      </Teleport>
+
+          <Transition
+            name="Popper-"
+            appear
+            onBeforeAppear={onBeforeAppear}
+            onAfterLeave={onAfterLeave}
+          >
+            {showContent.value && (
+              <div
+                ref={setContentRef}
+                class={['Popper', `Popper--placement-${placement}`]}
+                onClick={() => props.closeOnContentClick && (showContent.value = false)}
+                onMouseenter={() => (isPointingAtContent.value = true)}
+                onMouseleave={() => (isPointingAtContent.value = false)}
+                onKeydown={handleEscape}
+              >
+                {props.content}
+              </div>
+            )}
+          </Transition>
+        </Teleport>
+      )}
     </>
   )
 }, {

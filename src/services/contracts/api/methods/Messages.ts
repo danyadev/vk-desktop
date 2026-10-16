@@ -239,6 +239,36 @@ export type MessagesUnpinConversationParams = {
 }
 export type MessagesUnpinConversationResponse = 0 | 1
 
+// messages.pin
+export type MessagesPinParams = {
+  peer_id: number
+  conversation_message_id: number
+}
+export type MessagesPinResponse = MessagesMessage
+
+// messages.unpin
+export type MessagesUnpinParams = {
+  peer_id: number
+}
+export type MessagesUnpinResponse = 1
+
+// messages.delete
+export type MessagesDeleteParams = {
+  peer_id: number
+  cmids: string | number
+  delete_for_all?: 0 | 1
+  spam?: 0 | 1
+}
+export type MessagesDeleteResponse = Array<{
+  peer_id: number
+  conversation_message_id: number
+  response?: 0 | 1
+  error?: {
+    code?: number
+    description?: string
+  }
+}>
+
 // messages.deleteConversation
 export type MessagesDeleteConversationParams = {
   peer_id?: number

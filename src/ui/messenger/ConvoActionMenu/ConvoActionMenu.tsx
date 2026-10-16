@@ -1,4 +1,4 @@
-import { defineComponent, shallowRef } from 'vue'
+import { computed, defineComponent, shallowRef } from 'vue'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
@@ -46,7 +46,7 @@ type Props = {
 
 export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
   const { api, lang } = useServices()
-  const { hiddenPinnedMessages } = useConvosStore()
+  const { convos, lists, hiddenPinnedMessages } = useConvosStore()
   const session = props.fromConvoList ? undefined : useConvoSession()
   const viewer = useViewerStore()
 
@@ -54,6 +54,12 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
   const clearHistoryModal = useModal()
   const leaveChatModal = useModal()
   const errorModal = useModal()
+
+  const pinnedMessages = computed(() => {
+    return [...lists.main.peerIds]
+      .map((peerId) => Convo.safeGet(convos, peerId))
+      .filter((convo) => convo.majorSortId > 0)
+  })
 
   const makeAction = (key: LoadingAction, action: () => Promise<void>) => {
     return async () => {
@@ -65,7 +71,7 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
       try {
         await action()
       } catch (error) {
-        console.error('[ConvoHeaderMenu] Action failed', error)
+        console.error('[ConvoActionMenu] Action failed', error)
         errorModal.open()
       }
       loadingAction.value = undefined
@@ -209,7 +215,7 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
                 loading={loadingAction.value === 'archive'}
                 onClick={toggleArchive}
               />
-              {!convo.isArchived && (
+              {!convo.isArchived && (pinned || pinnedMessages.value.length < 5) && (
                 <ActionMenuItem
                   icon={pinned ? <Icon20PinSlashOutline /> : <Icon20PinOutline />}
                   text={lang.use(pinned ? 'me_convo_menu_unpin' : 'me_convo_menu_pin')}
@@ -247,6 +253,7 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
                 icon={<Icon20ClearDataOutline />}
                 text={lang.use('me_convo_menu_clear')}
                 disabled={disabled}
+                loading={loadingAction.value === 'clear'}
                 onClick={clearHistoryModal.open}
               />
               {convo.kind === 'ChatConvo' && convo.status === 'in' && (
@@ -255,6 +262,7 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
                   icon={<Icon20DoorArrowRightOutline />}
                   text={lang.use('me_convo_menu_leave')}
                   disabled={disabled}
+                  loading={loadingAction.value === 'membership'}
                   onClick={leaveChatModal.open}
                 />
               )}
@@ -274,8 +282,8 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
             </Button>,
             <Button
               mode="destructive"
-              loading={loadingAction.value === 'clear'}
               disabled={disabled}
+              loading={loadingAction.value === 'clear'}
               onClick={clearHistory}
             >
               {lang.use('me_convo_menu_clear')}
@@ -295,8 +303,8 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
             </Button>,
             <Button
               mode="destructive"
-              loading={loadingAction.value === 'membership'}
               disabled={disabled}
+              loading={loadingAction.value === 'membership'}
               onClick={leaveChat}
             >
               {lang.use('me_convo_menu_leave')}

@@ -17,6 +17,18 @@ export function sendMessage(peerId: Peer.Id, text: string, attaches: Attach.Atta
   sendNextPendingMessage(convo)
 }
 
+export function retryPendingMessage(convo: Convo.Convo, message: Message.Pending) {
+  message.isFailed = false
+  sendNextPendingMessage(convo)
+}
+
+export function retryAllPendingMessages(convo: Convo.Convo) {
+  for (const message of convo.pendingMessages) {
+    message.isFailed = false
+  }
+  sendNextPendingMessage(convo)
+}
+
 async function sendNextPendingMessage(convo: Convo.Convo) {
   const { api } = useServices()
   const { sendMessageLock } = useConvosStore()

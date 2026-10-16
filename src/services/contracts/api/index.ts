@@ -33,6 +33,8 @@ import {
   MessagesArchiveConversationResponse,
   MessagesDeleteConversationParams,
   MessagesDeleteConversationResponse,
+  MessagesDeleteParams,
+  MessagesDeleteResponse,
   MessagesGetByConversationMessageIdParams,
   MessagesGetByConversationMessageIdResponse,
   MessagesGetConversationsByIdParams,
@@ -57,6 +59,8 @@ import {
   MessagesMarkAsUnreadConversationResponse,
   MessagesPinConversationParams,
   MessagesPinConversationResponse,
+  MessagesPinParams,
+  MessagesPinResponse,
   MessagesRemoveChatUserParams,
   MessagesRemoveChatUserResponse,
   MessagesSendParams,
@@ -64,7 +68,9 @@ import {
   MessagesUnarchiveConversationParams,
   MessagesUnarchiveConversationResponse,
   MessagesUnpinConversationParams,
-  MessagesUnpinConversationResponse
+  MessagesUnpinConversationResponse,
+  MessagesUnpinParams,
+  MessagesUnpinResponse
 } from 'services/contracts/api/methods/Messages'
 import {
   PhotosGetMessagesUploadServerParams,
@@ -210,6 +216,18 @@ export type Methods = {
   'messages.unpinConversation': {
     params: MessagesUnpinConversationParams
     response: MessagesUnpinConversationResponse
+  }
+  'messages.pin': {
+    params: MessagesPinParams
+    response: MessagesPinResponse
+  }
+  'messages.unpin': {
+    params: MessagesUnpinParams
+    response: MessagesUnpinResponse
+  }
+  'messages.delete': {
+    params: MessagesDeleteParams
+    response: MessagesDeleteResponse
   }
   'messages.deleteConversation': {
     params: MessagesDeleteConversationParams

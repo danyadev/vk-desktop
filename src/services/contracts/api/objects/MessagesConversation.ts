@@ -96,6 +96,7 @@ export type MessagesConversation = {
       can_see_invite_link: boolean
       /** Can you moderate (delete) other users' messages */
       can_moderate: boolean
+      can_forward_messages?: boolean
       can_copy_chat: boolean
       can_call: boolean
       can_use_mass_mentions: boolean
