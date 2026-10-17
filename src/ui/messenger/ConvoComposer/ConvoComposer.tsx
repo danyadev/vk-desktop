@@ -1,14 +1,16 @@
-import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
+import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
 import { sendMessage } from 'actions'
+import { useConvoSession } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
+import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -16,6 +18,7 @@ import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20PictureOutline,
   Icon24AddCircleOutline,
+  Icon24Cancel,
   Icon24Info,
   Icon24Send
 } from 'assets/icons'
@@ -28,6 +31,7 @@ type Props = {
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { convoDrafts } = useConvosStore()
+  const session = useConvoSession()
   const $input = shallowRef<HTMLSpanElement | null>(null)
 
   const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
@@ -40,7 +44,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   } = useComposerAttaches(props.convo, draft)
 
   const canSendMessage = computed(() => (
-    !ConvoDraft.isEmpty(draft) && draft.uploadingAttaches.length === 0
+    ConvoDraft.hasContent(draft) && draft.uploadingAttaches.length === 0
   ))
 
   onMounted(() => {
@@ -59,8 +63,14 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
   })
 
+  watch(() => draft.replyMessage?.cmid, (cmid) => {
+    if (cmid) {
+      $input.value?.focus()
+    }
+  }, { flush: 'post' })
+
   const onMessageSend = () => {
-    sendMessage(props.convo.id, draft.text, draft.attaches)
+    sendMessage(props.convo.id, draft.text, draft.attaches, draft.replyMessage)
 
     ConvoDraft.reset(draft)
 
@@ -176,6 +186,31 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   return () => (
     <div class="ConvoComposer">
       <div class="ConvoComposer__inner">
+        {draft.replyMessage && (
+          <div class="ConvoComposer__reply">
+            <ReplyMessage
+              class="ConvoComposer__replyMessage"
+              reply={draft.replyMessage}
+              onClick={() => {
+                if (draft.replyMessage?.cmid) {
+                  session.navigationRequest = {
+                    kind: 'Message',
+                    cmid: draft.replyMessage.cmid
+                  }
+                }
+              }}
+            />
+            <ButtonIcon
+              class="ConvoComposer__replyCancel"
+              icon={<Icon24Cancel />}
+              withHoverBackground
+              onClick={() => {
+                draft.replyMessage = undefined
+                $input.value?.focus()
+              }}
+            />
+          </div>
+        )}
         {attachPreviews.value.length > 0 && (
           <div class="ConvoComposer__attaches">
             {attachPreviews.value.map((attachPreview) => (

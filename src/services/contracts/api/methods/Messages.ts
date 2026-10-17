@@ -131,6 +131,7 @@ export type MessagesSendParams = {
   random_id: number
   message: string
   attachment?: string
+  forward?: string
 }
 
 export type MessagesSendResponse = {

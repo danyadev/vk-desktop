@@ -1,7 +1,9 @@
 import { defineComponent, shallowRef } from 'vue'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
+import * as ConvoDraft from 'model/ConvoDraft'
 import * as Message from 'model/Message'
+import { useConvosStore } from 'store/convos'
 import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import { retryAllPendingMessages, retryPendingMessage } from 'actions'
@@ -18,6 +20,7 @@ import {
   Icon20CopyOutline,
   Icon20PinOutline,
   Icon20PinSlashOutline,
+  Icon20ReplyOutline,
   Icon20TrashOutline
 } from 'assets/icons'
 import './MessageActionMenu.css'
@@ -33,6 +36,7 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
   const { api, lang } = useServices()
   const viewer = useViewerStore()
   const settings = useSettingsStore()
+  const { convoDrafts } = useConvosStore()
   const deleteModal = useModal()
   const pinModal = useModal()
   const errorModal = useModal()
@@ -112,6 +116,16 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
 
       return (
         <ActionMenu>
+          {convo.canWrite.allowed && !Convo.isChannel(convo) && (
+            <ActionMenuItem
+              icon={<Icon20ReplyOutline />}
+              text={lang.use('me_message_menu_reply')}
+              onClick={() => {
+                const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
+                draft.replyMessage = Message.toForeign(message)
+              }}
+            />
+          )}
           {!!message.text && (
             <ActionMenuItem
               icon={<Icon20CopyOutline />}

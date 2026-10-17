@@ -110,7 +110,8 @@ export const ru = {
 
   me_convo_composer_menu_photo: 'Фото',
 
-  me_message_menu_copy: 'Копировать текст',
+  me_message_menu_reply: 'Ответить',
+  me_message_menu_copy: 'Скопировать текст',
   me_message_menu_pin: 'Закрепить',
   me_message_menu_unpin: 'Открепить',
   me_message_menu_delete: 'Удалить',

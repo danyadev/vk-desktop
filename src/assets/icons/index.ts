@@ -33,6 +33,7 @@ export { default as Icon20NotificationSlashOutline } from './Icon20NotificationS
 export { default as Icon20PictureOutline } from './Icon20PictureOutline.svg'
 export { default as Icon20PinOutline } from './Icon20PinOutline.svg'
 export { default as Icon20PinSlashOutline } from './Icon20PinSlashOutline.svg'
+export { default as Icon20ReplyOutline } from './Icon20ReplyOutline.svg'
 export { default as Icon20TrashOutline } from './Icon20TrashOutline.svg'
 export { default as Icon20UnarchiveOutline } from './Icon20UnarchiveOutline.svg'
 export { default as Icon20ViewOutline } from './Icon20ViewOutline.svg'
