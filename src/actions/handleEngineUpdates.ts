@@ -11,7 +11,7 @@ import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { useViewerStore } from 'store/viewer'
-import { insertConvos, insertPeers } from 'actions'
+import { insertConvos, insertPeers, syncDraftMessage, syncDraftsOnHistoryClear } from 'actions'
 import { fromApiMessage, fromEngineMessage } from 'converters/MessageConverter'
 import { getMapValueOrCompute } from 'misc/utils'
 import { PEER_FIELDS } from 'misc/constants'
@@ -52,6 +52,10 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         const isDeleteMessageUpdate = (flags & (Message.flags.deleted | Message.flags.spam)) > 0
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
+
+        if (isDeleteMessageUpdate) {
+          syncDraftMessage(peerId, cmid, undefined)
+        }
 
         const convo = convos.get(peerId)
         if (!convo) {
@@ -131,11 +135,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         const rawPeerId = eventId === 10004 ? update[4] : update[3]
         const peerId = Peer.resolveId(rawPeerId)
         const cmid = Message.resolveCmid(rawCmid)
-
         const convo = convos.get(peerId)
-        if (!convo) {
-          break
-        }
 
         const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
         const message = apiMessage
@@ -144,7 +144,11 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
             ? undefined
             : fromEngineMessage(update, convo)
 
-        if (!message) {
+        if (eventId !== 10004 && message) {
+          syncDraftMessage(peerId, cmid, message)
+        }
+
+        if (!convo || !message) {
           break
         }
 
@@ -234,8 +238,12 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
       }
 
       case 10013: {
-        const [, rawPeerId, lastCmid] = update
+        const [, rawPeerId, lastCmidRaw] = update
         const peerId = Peer.resolveId(rawPeerId)
+        const lastCmid = Message.resolveCmid(lastCmidRaw)
+
+        syncDraftsOnHistoryClear(peerId, lastCmid)
+
         const convo = convos.get(peerId)
         if (!convo) {
           break

@@ -63,8 +63,8 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
   })
 
-  watch(() => draft.replyMessage, (reply) => {
-    if (reply) {
+  watch(() => draft.replyMessage?.cmid, (cmid) => {
+    if (cmid) {
       $input.value?.focus()
     }
   }, { flush: 'post' })

@@ -121,7 +121,8 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
               icon={<Icon20ReplyOutline />}
               text={lang.use('me_message_menu_reply')}
               onClick={() => {
-                ConvoDraft.safeGet(convoDrafts, convo.id).replyMessage = Message.toForeign(message)
+                const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
+                draft.replyMessage = Message.toForeign(message)
               }}
             />
           )}
