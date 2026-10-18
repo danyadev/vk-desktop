@@ -9,16 +9,16 @@ export type AttachPreview =
   | { kind: 'Attach', attach: Attach.SingleAttach }
   | { kind: 'UploadingAttach', attach: ConvoDraft.UploadingAttach }
 
-export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoDraft) {
+export function useComposerAttaches(convo: Convo.Convo, convoDraft: ConvoDraft.ConvoDraft) {
   const { uploader } = useServices()
 
   const attachPreviews = computed(() => {
     const attaches: AttachPreview[] = []
-    const draftAttachesValues = Object.values(draft.attaches)
+    const draftAttachesValues = Object.values(convoDraft.attaches)
 
     for (const attach of draftAttachesValues) {
       const attachesArray = Array.isArray(attach) ? attach : [attach]
-      const uploadingAttaches = draft.uploadingAttaches.filter((uploadingAttach) => (
+      const uploadingAttaches = convoDraft.uploadingAttaches.filter((uploadingAttach) => (
         uploadingAttach.kind === attachesArray[0].kind
       ))
 
@@ -28,7 +28,7 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
       )
     }
 
-    const restUploadingAttaches = draft.uploadingAttaches
+    const restUploadingAttaches = convoDraft.uploadingAttaches
       .filter((uploadingAttach) => !attaches.some(({ attach }) => attach === uploadingAttach))
       .map((attach) => ({ kind: 'UploadingAttach' as const, attach }))
 
@@ -39,18 +39,20 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
 
   const removeAttachPreview = (attachPreview: AttachPreview) => {
     if (attachPreview.kind === 'UploadingAttach') {
-      ConvoDraft.removeUploadingAttach(draft, attachPreview.attach)
+      ConvoDraft.removeUploadingAttach(convoDraft, attachPreview.attach)
     } else {
-      Attach.remove(draft.attaches, attachPreview.attach)
+      Attach.remove(convoDraft.attaches, attachPreview.attach)
     }
   }
 
-  const uploadPhoto = (uploadingPhoto: ConvoDraft.UploadingPhoto) => {
+  const uploadPhoto = (draft: ConvoDraft.Draft, uploadingPhoto: ConvoDraft.UploadingPhoto) => {
     uploader
-      .uploadPhoto(uploadingPhoto.file, convo.id, (progress: number) => {
+      .uploadPhoto(uploadingPhoto.file, convo.id, (progress) => {
         uploadingPhoto.progress = progress
       }, uploadingPhoto.abortController.signal)
       .then((apiPhoto) => {
+        if (!draft.uploadingAttaches.includes(uploadingPhoto)) return
+
         const photo = fromApiAttachPhoto(apiPhoto)
         if (photo) {
           Attach.add(draft.attaches, photo)
@@ -64,7 +66,11 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
       })
   }
 
-  const uploadAttach = (kind: ConvoDraft.UploadingAttach['kind'], file: File) => {
+  const uploadAttach = (
+    kind: ConvoDraft.UploadingAttach['kind'],
+    file: File,
+    draft = ConvoDraft.captureDraft(convoDraft)
+  ) => {
     const uploadingAttach = ConvoDraft.addUploadingAttach(draft, {
       kind,
       id: ConvoDraft.getNewUploadingAttachId(),
@@ -76,7 +82,7 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
 
     switch (kind) {
       case 'Photo':
-        uploadPhoto(uploadingAttach)
+        uploadPhoto(draft, uploadingAttach)
         break
     }
   }
@@ -92,7 +98,7 @@ export function useComposerAttaches(convo: Convo.Convo, draft: ConvoDraft.ConvoD
 
     switch (uploadingAttach.kind) {
       case 'Photo':
-        uploadPhoto(uploadingAttach)
+        uploadPhoto(ConvoDraft.captureDraft(convoDraft), uploadingAttach)
         break
     }
   }

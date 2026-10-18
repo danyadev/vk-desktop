@@ -3,11 +3,18 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { getMapValueOrCompute } from 'misc/utils'
 
-export type ConvoDraft = {
+export type Draft = {
   text: string
   attaches: Attach.Attaches
   replyMessage: Message.Foreign | undefined
   uploadingAttaches: UploadingAttach[]
+}
+
+export type ConvoDraft = Draft & {
+  editing?: {
+    cmid: Message.Cmid
+    previousDraft: Draft
+  }
 }
 
 export type UploadingAttach = UploadingPhoto
@@ -22,12 +29,44 @@ type GenericUploadingAttach<Kind extends Attach.SingleAttach['kind']> = {
   abortController: AbortController
 }
 
-const emptyDraft = (): ConvoDraft => ({
+const emptyDraft = (): Draft => ({
   text: '',
   attaches: {},
   replyMessage: undefined,
   uploadingAttaches: []
 })
+
+const emptyConvoDraft = (): ConvoDraft => ({
+  ...emptyDraft(),
+  editing: undefined
+})
+
+/**
+ * Снимок текущего драфта. Полезен, когда нужно читать и записывать данные в реактивные поля
+ * даже после замены основного драфта на драфт редактирования. Текст не является реактивным полем
+ */
+export function captureDraft(draft: Draft): Draft {
+  return { ...draft }
+}
+
+export function startEditing(draft: ConvoDraft, message: Message.Normal) {
+  if (draft.editing) return
+
+  const previousDraft = captureDraft(draft)
+  Object.assign(draft, {
+    ...emptyDraft(),
+    text: message.text,
+    attaches: message.attaches,
+    editing: { cmid: message.cmid, previousDraft }
+  })
+}
+
+export function finishEditing(draft: ConvoDraft) {
+  if (!draft.editing) return
+
+  cancelUploads(draft)
+  Object.assign(draft, draft.editing.previousDraft, { editing: undefined })
+}
 
 /**
  * Возвращает драфт сообщения в беседе.
@@ -35,22 +74,26 @@ const emptyDraft = (): ConvoDraft => ({
  * будут происходить через его мутацию. Это позволяет избегать создание рефов в компонентах
  */
 export function safeGet(drafts: Map<Peer.Id, ConvoDraft>, peerId: Peer.Id): ConvoDraft {
-  return getMapValueOrCompute(drafts, peerId, emptyDraft)
+  return getMapValueOrCompute(drafts, peerId, emptyConvoDraft)
 }
 
-export function hasContent(draft: ConvoDraft) {
+export function hasContent(draft: Draft) {
   return draft.text.trim() !== '' || Attach.kindsCount(draft.attaches) > 0
 }
 
-export function isEmpty(draft: ConvoDraft) {
-  return !hasContent(draft) && !draft.replyMessage
+export function isEmpty(convoDraft: ConvoDraft) {
+  return !convoDraft.editing && !convoDraft.replyMessage && !hasContent(convoDraft)
 }
 
-export function reset(draft: ConvoDraft) {
-  for (const attach of draft.uploadingAttaches) {
+function cancelUploads(draft: Draft) {
+  for (const attach of draft.uploadingAttaches.splice(0)) {
     attach.abortController.abort()
   }
-  Object.assign(draft, emptyDraft())
+}
+
+export function reset(convoDraft: ConvoDraft) {
+  cancelUploads(convoDraft)
+  Object.assign(convoDraft, emptyConvoDraft())
 }
 
 let uploadingAttachId = 0
@@ -62,12 +105,12 @@ export function getNewUploadingAttachId() {
 /**
  * Добавляет загружаемый аттач в драфт и возвращает его реактивную копию
  */
-export function addUploadingAttach(draft: ConvoDraft, uploadingAttach: UploadingAttach) {
+export function addUploadingAttach(draft: Draft, uploadingAttach: UploadingAttach) {
   const index = draft.uploadingAttaches.push(uploadingAttach) - 1
   return draft.uploadingAttaches[index]!
 }
 
-export function removeUploadingAttach(draft: ConvoDraft, uploadingAttach: UploadingAttach) {
+export function removeUploadingAttach(draft: Draft, uploadingAttach: UploadingAttach) {
   const index = draft.uploadingAttaches.indexOf(uploadingAttach)
   if (index !== -1) {
     draft.uploadingAttaches.splice(index, 1)

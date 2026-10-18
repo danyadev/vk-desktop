@@ -18,6 +18,7 @@ import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20ArrowUturnLeftOutline,
   Icon20CopyOutline,
+  Icon20EditOutline,
   Icon20PinOutline,
   Icon20PinSlashOutline,
   Icon20ReplyOutline,
@@ -123,6 +124,18 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
               onClick={() => {
                 const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
                 draft.replyMessage = Message.toForeign(message)
+              }}
+            />
+          )}
+          {Convo.canEditMessage(convo, message) && (
+            <ActionMenuItem
+              icon={<Icon20EditOutline />}
+              text={lang.use('me_message_menu_edit')}
+              // TODO: confirmation modal instead
+              disabled={!!convoDrafts.get(convo.id)?.editing}
+              onClick={() => {
+                const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
+                ConvoDraft.startEditing(draft, message)
               }}
             />
           )}

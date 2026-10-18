@@ -1,3 +1,4 @@
+export { editMessage } from './editMessage'
 export { handleEngineResync } from './handleEngineResync'
 export { handleEngineUpdates, loadMissingData } from './handleEngineUpdates'
 export { insertConvos } from './insertConvos'

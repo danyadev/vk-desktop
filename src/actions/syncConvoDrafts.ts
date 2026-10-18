@@ -14,12 +14,15 @@ export function syncDraftMessage(
 ) {
   const { convoDrafts } = useConvosStore()
 
-  for (const draft of convoDrafts.values()) {
-    const reply = draft.replyMessage
-    if (reply?.peerId === peerId && reply.cmid === cmid) {
-      draft.replyMessage = message?.kind === 'Normal'
-        ? Message.toForeign(message)
-        : undefined
+  for (const convoDraft of convoDrafts.values()) {
+    for (const draft of [convoDraft, convoDraft.editing?.previousDraft]) {
+      if (!draft) continue
+      const reply = draft.replyMessage
+      if (reply?.peerId === peerId && reply.cmid === cmid) {
+        draft.replyMessage = message?.kind === 'Normal'
+          ? Message.toForeign(message)
+          : undefined
+      }
     }
   }
 }
@@ -30,10 +33,13 @@ export function syncDraftsOnHistoryClear(
 ) {
   const { convoDrafts } = useConvosStore()
 
-  for (const draft of convoDrafts.values()) {
-    const reply = draft.replyMessage
-    if (reply?.peerId === peerId && reply.cmid !== undefined && reply.cmid <= upToCmid) {
-      draft.replyMessage = undefined
+  for (const convoDraft of convoDrafts.values()) {
+    for (const draft of [convoDraft, convoDraft.editing?.previousDraft]) {
+      if (!draft) continue
+      const reply = draft.replyMessage
+      if (reply?.peerId === peerId && reply.cmid !== undefined && reply.cmid <= upToCmid) {
+        draft.replyMessage = undefined
+      }
     }
   }
 }
@@ -44,12 +50,15 @@ export async function syncDraftsOnLoad() {
 
   const messagesByPeer = new Map<Peer.Id, Set<Message.Cmid>>()
 
-  for (const draft of convoDrafts.values()) {
-    const message = draft.replyMessage
-    if (!message?.peerId || !message.cmid) continue
+  for (const convoDraft of convoDrafts.values()) {
+    for (const draft of [convoDraft, convoDraft.editing?.previousDraft]) {
+      if (!draft) continue
+      const message = draft.replyMessage
+      if (!message?.peerId || !message.cmid) continue
 
-    getMapValueOrCompute(messagesByPeer, message.peerId, () => new Set())
-      .add(message.cmid)
+      getMapValueOrCompute(messagesByPeer, message.peerId, () => new Set())
+        .add(message.cmid)
+    }
   }
 
   await Promise.all([...messagesByPeer].map(async ([peerId, cmids]) => {

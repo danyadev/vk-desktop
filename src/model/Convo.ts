@@ -38,7 +38,6 @@ export interface BaseConvo {
   }
   folderIds: number[]
   isArchived: boolean
-  // TODO: отразить в интерфейсе
   isMarkedUnread: boolean
 }
 
@@ -277,6 +276,21 @@ export function canPinMessage(convo: Convo): boolean {
     convo.status === 'in' &&
     !convo.isCasper &&
     convo.permissions.canChangePin
+  )
+}
+
+export function canEditMessage(convo: Convo, message: Message.Normal): boolean {
+  const isFavorites = convo.id === message.peerId
+  const isPinned = convo.kind === 'ChatConvo' && convo.pinnedMessage?.cmid === message.cmid
+  const canEditByTimeLimit = Date.now() - message.sentAt < 24 * 60 * 60 * 1000
+
+  return (
+    convo.canWrite.allowed &&
+    (convo.kind !== 'ChatConvo' || convo.status === 'in') &&
+    message.isOut &&
+    (canEditByTimeLimit || isFavorites || isPinned) &&
+    !message.attaches.sticker &&
+    !message.attaches.voice
   )
 }
 
