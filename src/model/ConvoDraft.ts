@@ -56,7 +56,7 @@ export function startEditing(draft: ConvoDraft, message: Message.Normal) {
   Object.assign(draft, {
     ...emptyDraft(),
     text: message.text,
-    attaches: message.attaches,
+    attaches: { ...message.attaches },
     editing: { cmid: message.cmid, previousDraft }
   })
 }

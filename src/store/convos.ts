@@ -137,9 +137,12 @@ export function init() {
           uploadingAttaches: []
         }
         if (strippedDraft.editing) {
-          strippedDraft.editing.previousDraft = {
-            ...strippedDraft.editing.previousDraft,
-            uploadingAttaches: []
+          strippedDraft.editing = {
+            ...strippedDraft.editing,
+            previousDraft: {
+              ...strippedDraft.editing.previousDraft,
+              uploadingAttaches: []
+            }
           }
         }
         draftsToSave.set(peerId, strippedDraft)

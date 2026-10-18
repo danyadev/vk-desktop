@@ -65,14 +65,13 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
     input.innerText = draft.text
     input.focus()
+
     const selection = window.getSelection()
     selection?.selectAllChildren(input)
     selection?.collapseToEnd()
   }
 
   onMounted(syncInput)
-  // contenteditable не управляется Vue: обновляем DOM только при смене режима,
-  // но не при каждом изменении текста, чтобы не сбивать выделение и курсор.
   watch(() => draft.editing?.cmid, syncInput, { flush: 'post' })
 
   watch(() => draft.replyMessage?.cmid, (cmid) => {
@@ -132,8 +131,6 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const openPhotoPicker = async () => {
-    // Выбор файлов может завершиться уже после смены режима.
-    const content = ConvoDraft.captureDraft(draft)
     const fileHandles = await showOpenFilePicker({
       excludeAcceptAllOption: true,
       multiple: true,
@@ -145,14 +142,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }).catch(() => [])
 
     for (const fileHandle of fileHandles) {
-      const file = await fileHandle.getFile()
-      // Выбранные файлы относятся к исходному содержимому, если оно ещё существует.
-      if (
-        draft.attaches !== content.attaches &&
-        draft.editing?.previousDraft.attaches !== content.attaches
-      ) return
-
-      uploadAttach('Photo', file, content)
+      uploadAttach('Photo', await fileHandle.getFile())
     }
   }
 

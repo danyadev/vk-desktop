@@ -114,29 +114,24 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
 
     if (message.kind === 'Normal') {
       const isPinned = convo.kind === 'ChatConvo' && convo.pinnedMessage?.cmid === message.cmid
+      const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
 
       return (
         <ActionMenu>
-          {convo.canWrite.allowed && !Convo.isChannel(convo) && (
+          {convo.canWrite.allowed && (
             <ActionMenuItem
               icon={<Icon20ReplyOutline />}
               text={lang.use('me_message_menu_reply')}
-              onClick={() => {
-                const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
-                draft.replyMessage = Message.toForeign(message)
-              }}
+              onClick={() => (draft.replyMessage = Message.toForeign(message))}
+              disabled={!!draft.editing}
             />
           )}
           {Convo.canEditMessage(convo, message) && (
             <ActionMenuItem
               icon={<Icon20EditOutline />}
               text={lang.use('me_message_menu_edit')}
-              // TODO: confirmation modal instead
-              disabled={!!convoDrafts.get(convo.id)?.editing}
-              onClick={() => {
-                const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
-                ConvoDraft.startEditing(draft, message)
-              }}
+              onClick={() => ConvoDraft.startEditing(draft, message)}
+              disabled={!!draft.editing}
             />
           )}
           {!!message.text && (
