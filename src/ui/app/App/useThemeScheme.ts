@@ -1,7 +1,7 @@
 import * as electron from '@electron/remote'
 import { computed, shallowRef, watch } from 'vue'
 import { AppearanceScheme, useMainSettingsStore } from 'store/mainSettings'
-import { createSingletonHook, currentWindow, subscribeToElectronEvent } from 'misc/utils'
+import { createSingletonHook, subscribeToElectronEvent } from 'misc/utils'
 import { getColorBackgroundContent } from 'main-process/shared'
 
 /**
@@ -14,6 +14,7 @@ import { getColorBackgroundContent } from 'main-process/shared'
 export const useThemeScheme = createSingletonHook(() => {
   const { appearance } = useMainSettingsStore()
   const actualAppTheme = shallowRef(getAppTheme())
+  const currentWindow = electron.getCurrentWindow()
 
   watch(() => appearance.theme, () => {
     electron.nativeTheme.themeSource = appearance.theme

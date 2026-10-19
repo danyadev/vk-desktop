@@ -1,8 +1,7 @@
-import { app } from '@electron/remote'
+import * as electron from '@electron/remote'
 import Electron from 'electron'
 import { defineStore } from 'pinia'
 import { FileSystemStorageBackend, JsonStorage } from 'store/Storage'
-import { currentWindow } from 'misc/utils'
 import { getStorageFilePath, shouldUseCustomTitlebar } from 'main-process/shared'
 
 export type AppearanceScheme = 'vkcom' | 'vkui'
@@ -20,9 +19,9 @@ export type MainSettings = {
 }
 
 const mainSettingsStorage = new JsonStorage(
-  new FileSystemStorageBackend(getStorageFilePath(app.getPath('appData'))),
+  new FileSystemStorageBackend(getStorageFilePath(electron.app.getPath('appData'))),
   (): MainSettings => ({
-    bounds: currentWindow.getBounds(),
+    bounds: electron.getCurrentWindow().getBounds(),
     useCustomTitlebar: shouldUseCustomTitlebar,
     appearance: {
       scheme: 'vkcom',

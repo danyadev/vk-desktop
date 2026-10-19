@@ -27,16 +27,17 @@
   color: var(--vkui--color_icon_secondary);
 }
 
-.ConvoComposer--saving .ConvoComposer__attaches {
-  pointer-events: none;
-}
-
 .ConvoComposer__attaches {
   display: flex;
   gap: 12px;
   padding: 12px;
   overflow: overlay;
   border-bottom: 1px solid var(--vkui--color_separator_primary);
+}
+
+.ConvoComposer--saving .ConvoComposer__attaches {
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 .ConvoComposer__panel {

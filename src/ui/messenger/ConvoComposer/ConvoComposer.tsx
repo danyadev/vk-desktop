@@ -53,6 +53,13 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     !isSaving.value && ConvoDraft.hasContent(draft) && draft.uploadingAttaches.length === 0
   ))
 
+  const isLoading = computed(() => (
+    isSaving.value ||
+    attachPreviews.value.some((preview) => (
+      preview.kind === 'UploadingAttach' && !preview.attach.failed
+    ))
+  ))
+
   const cancelEditing = () => {
     if (!draft.editing || isSaving.value) return
 
@@ -88,6 +95,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     if (!canSubmit.value) return
 
     if (draft.editing) {
+      if (!ConvoDraft.isEdited(draft, draft.editing.message)) {
+        ConvoDraft.finishEditing(draft)
+        return
+      }
+
       isSaving.value = true
       try {
         await editMessage(
@@ -212,7 +224,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         <ButtonIcon
           class="ConvoComposer__send"
           disabled={!canSubmit.value}
-          loading={isSaving.value}
+          loading={isLoading.value}
           icon={draft.editing ? <Icon24CheckOutline /> : <Icon24Send />}
           onClick={onSubmit}
           // Предотвращаем сброс фокуса с поля ввода
@@ -267,6 +279,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               class="ConvoComposer__messageBarCancel"
               icon={<Icon24Cancel />}
               withHoverBackground
+              disabled={isSaving.value}
               onClick={() => {
                 draft.replyMessage = undefined
                 $input.value?.focus()

@@ -15,7 +15,7 @@ type TypedValue =
   | { _type: 'map', value: Array<[unknown, unknown]> }
   | { _type: 'set', value: unknown[] }
   | { _type: 'undefined', value: null }
-  | { _type: 'escaped-value', value: unknown }
+  | { _type: 'escaped-value', value: Array<[string, unknown]> }
 
 function isTypedValue(value: unknown): value is TypedValue {
   return (
@@ -50,7 +50,7 @@ function stringifyReplacer(key: string, value: unknown) {
   if (isObject(value) && '_type' in value) {
     return {
       _type: 'escaped-value',
-      value
+      value: Object.entries(value)
     } satisfies TypedValue
   }
 
@@ -68,7 +68,7 @@ function parseReviver(key: string, value: unknown) {
         // JSON.parse ignores undefined, so we can't just return it as is here
         return undefinedMarker
       case 'escaped-value':
-        return value.value
+        return Object.fromEntries(value.value)
     }
   }
 
