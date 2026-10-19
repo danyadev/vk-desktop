@@ -1,13 +1,12 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
-import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
 import { editMessage, sendMessage } from 'actions'
 import { useConvoSession, useModal } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
-import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
+import { ComposerAttaches } from 'ui/messenger/ConvoComposer/ComposerAttaches/ComposerAttaches'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
 import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
@@ -289,27 +288,13 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         )}
 
         {attachPreviews.value.length > 0 && (
-          <div class="ConvoComposer__attaches">
-            {attachPreviews.value.map((attachPreview) => (
-              <ComposerAttachPreview
-                key={attachPreview.kind === 'Attach'
-                  ? Attach.id(attachPreview.attach)
-                  : attachPreview.attach.id}
-                attachPreview={attachPreview}
-                onRemove={() => removeAttachPreview(attachPreview)}
-                onRetry={() => {
-                  if (attachPreview.kind === 'UploadingAttach') {
-                    retryUploadingAttach(attachPreview.attach)
-                  }
-                }}
-                onCancel={() => {
-                  if (attachPreview.kind === 'UploadingAttach') {
-                    abortUploadingAttach(attachPreview.attach)
-                  }
-                }}
-              />
-            ))}
-          </div>
+          <ComposerAttaches
+            previews={attachPreviews.value}
+            disabled={isSaving.value}
+            onRemove={removeAttachPreview}
+            onRetry={retryUploadingAttach}
+            onCancel={abortUploadingAttach}
+          />
         )}
 
         <div class="ConvoComposer__panel">

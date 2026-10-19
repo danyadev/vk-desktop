@@ -126,7 +126,7 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
               disabled={!!draft.editing}
             />
           )}
-          {Convo.canEditMessage(convo, message) && (
+          {Convo.canEditMessage(convo, message, viewer.id) && (
             <ActionMenuItem
               icon={<Icon20EditOutline />}
               text={lang.use('me_message_menu_edit')}

@@ -279,8 +279,12 @@ export function canPinMessage(convo: Convo): boolean {
   )
 }
 
-export function canEditMessage(convo: Convo, message: Message.Normal): boolean {
-  const isFavorites = convo.id === message.peerId
+export function canEditMessage(
+  convo: Convo,
+  message: Message.Normal,
+  viewerId: Peer.OwnerId
+): boolean {
+  const isFavorites = convo.id === viewerId
   const isPinned = convo.kind === 'ChatConvo' && convo.pinnedMessage?.cmid === message.cmid
   const canEditByTimeLimit = Date.now() - message.sentAt < 24 * 60 * 60 * 1000
 

@@ -1,0 +1,12 @@
+.ComposerAttaches {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  overflow: overlay;
+  border-bottom: 1px solid var(--vkui--color_separator_primary);
+}
+
+.ComposerAttaches--disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
