@@ -7,7 +7,8 @@ import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import './ReplyMessage.css'
 
 type Props = {
-  reply: Message.Foreign
+  reply: Message.Normal | Message.Foreign
+  customName?: string
   onClick: () => void
   class?: ClassName
 }
@@ -21,7 +22,7 @@ export const ReplyMessage = defineComponent<Props>((props) => {
     return (
       <div class="ReplyMessage">
         <div class="ReplyMessage__name">
-          {Peer.name(author)}
+          {props.customName ?? Peer.name(author)}
         </div>
         <div class="ReplyMessage__text">
           <MessagePreview message={props.reply} accent />
@@ -30,5 +31,5 @@ export const ReplyMessage = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['reply']
+  props: ['reply', 'customName']
 })

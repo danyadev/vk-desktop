@@ -83,6 +83,9 @@ export const ru = {
   me_convo_list_empty_convo: 'Пустой диалог',
   me_convo_list_empty: 'Список сообщений пуст',
 
+  me_action_menu_error_title: 'Не удалось выполнить действие',
+  me_action_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',
+
   me_convo_list_menu_settings: 'Настройки',
   me_convo_list_menu_logout: 'Выйти',
 
@@ -105,8 +108,6 @@ export const ru = {
   me_convo_menu_clear_confirm_text: 'Очистить историю переписки в этом диалоге?',
   me_convo_menu_leave_confirm_title: 'Выйти из чата?',
   me_convo_menu_leave_confirm_text: 'Вы действительно хотите выйти из этого чата?',
-  me_convo_menu_error_title: 'Не удалось выполнить действие',
-  me_convo_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',
 
   me_convo_composer_menu_photo: 'Фото',
 
@@ -152,6 +153,8 @@ export const ru = {
   me_convo_composer_edit_cancel_text: 'Изменения сообщения не сохранятся.',
   me_convo_composer_edit_cancel_submit: 'Отменить',
   me_convo_composer_edit_cancel_dismiss: 'Не отменять',
+  me_convo_composer_edit_error_title: 'Не удалось отредактировать сообщение',
+  me_convo_composer_edit_error_text: 'Не удалось сохранить изменения. Попробуйте ещё раз.',
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
   me_convo_empty_placeholder: 'История переписки пуста',
   me_convo_unread_messages: 'Новые сообщения',

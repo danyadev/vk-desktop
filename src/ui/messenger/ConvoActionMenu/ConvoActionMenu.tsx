@@ -317,14 +317,14 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
         <Modal
           opened={errorModal.opened}
           onClose={errorModal.close}
-          title={lang.use('me_convo_menu_error_title')}
+          title={lang.use('me_action_menu_error_title')}
           buttons={
             <Button onClick={errorModal.close}>
               {lang.use('modal_close_label')}
             </Button>
           }
         >
-          {lang.use('me_convo_menu_error_text')}
+          {lang.use('me_action_menu_error_text')}
         </Modal>
       </>
     )

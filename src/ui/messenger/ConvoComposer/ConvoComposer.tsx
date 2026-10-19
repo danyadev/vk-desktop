@@ -10,7 +10,6 @@ import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
-import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
@@ -39,7 +38,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const $input = shallowRef<HTMLSpanElement | null>(null)
   const isSaving = shallowRef(false)
   const cancelEditModal = useModal()
-  const errorModal = useModal()
+  const editErrorModal = useModal()
 
   const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
   const {
@@ -50,11 +49,6 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     abortUploadingAttach
   } = useComposerAttaches(props.convo, draft)
 
-  // TODO: what happens when it's not available?
-  const editingMessage = computed(() => (
-    draft.editing && Convo.findMessage(props.convo, draft.editing.cmid)
-  ))
-
   const canSubmit = computed(() => (
     !isSaving.value && ConvoDraft.hasContent(draft) && draft.uploadingAttaches.length === 0
   ))
@@ -62,8 +56,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const cancelEditing = () => {
     if (!draft.editing || isSaving.value) return
 
-    const message = editingMessage.value
-    if (message?.kind === 'Normal' && !ConvoDraft.isEdited(draft, message)) {
+    if (!ConvoDraft.isEdited(draft, draft.editing.message)) {
       ConvoDraft.finishEditing(draft)
     } else {
       cancelEditModal.open()
@@ -83,7 +76,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   onMounted(syncInput)
-  watch(() => draft.editing?.cmid, syncInput, { flush: 'post' })
+  watch(() => draft.editing?.message.cmid, syncInput, { flush: 'post' })
 
   watch(() => draft.replyMessage?.cmid, (cmid) => {
     if (cmid) {
@@ -97,21 +90,17 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     if (draft.editing) {
       isSaving.value = true
       try {
-        const message = editingMessage.value
-        const keepForwarded = message
-          ? !!draft.replyMessage || !!(message.kind === 'Normal' && message.forwardedMessages)
-          : true
         await editMessage(
           props.convo.id,
-          draft.editing.cmid,
+          draft.editing.message.cmid,
           draft.text,
           draft.attaches,
-          keepForwarded
+          !!draft.replyMessage || !!draft.editing.message.forwardedMessages
         )
         ConvoDraft.finishEditing(draft)
       } catch (error) {
         console.warn('[ConvoComposer] Failed to edit message', error)
-        errorModal.open()
+        editErrorModal.open()
       } finally {
         isSaving.value = false
       }
@@ -240,17 +229,19 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     >
       <div class="ConvoComposer__inner">
         {draft.editing && (
-          <div class="ConvoComposer__reply">
-            <div class="ConvoComposer__editingMessage">
-              <div class="ConvoComposer__editingTitle">
-                {lang.use('me_convo_composer_editing')}
-              </div>
-              <div class="ConvoComposer__editingPreview">
-                {editingMessage.value && <MessagePreview message={editingMessage.value} accent />}
-              </div>
-            </div>
+          <div class="ConvoComposer__messageBar">
+            <ReplyMessage
+              reply={draft.editing.message}
+              customName={lang.use('me_convo_composer_editing')}
+              onClick={() => {
+                session.navigationRequest = {
+                  kind: 'Message',
+                  cmid: draft.editing!.message.cmid
+                }
+              }}
+            />
             <ButtonIcon
-              class="ConvoComposer__replyCancel"
+              class="ConvoComposer__messageBarCancel"
               icon={<Icon24Cancel />}
               withHoverBackground
               disabled={isSaving.value}
@@ -260,9 +251,8 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         )}
 
         {draft.replyMessage && (
-          <div class="ConvoComposer__reply">
+          <div class="ConvoComposer__messageBar">
             <ReplyMessage
-              class="ConvoComposer__replyMessage"
               reply={draft.replyMessage}
               onClick={() => {
                 if (draft.replyMessage?.cmid) {
@@ -274,7 +264,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               }}
             />
             <ButtonIcon
-              class="ConvoComposer__replyCancel"
+              class="ConvoComposer__messageBarCancel"
               icon={<Icon24Cancel />}
               withHoverBackground
               onClick={() => {
@@ -338,12 +328,12 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       </Modal>
 
       <Modal
-        opened={errorModal.opened}
-        onClose={errorModal.close}
-        title={lang.use('me_convo_menu_error_title')}
-        buttons={<Button onClick={errorModal.close}>{lang.use('modal_close_label')}</Button>}
+        opened={editErrorModal.opened}
+        onClose={editErrorModal.close}
+        title={lang.use('me_convo_composer_edit_error_title')}
+        buttons={<Button onClick={editErrorModal.close}>{lang.use('modal_close_label')}</Button>}
       >
-        {lang.use('me_convo_menu_error_text')}
+        {lang.use('me_convo_composer_edit_error_text')}
       </Modal>
     </div>
   )

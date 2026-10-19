@@ -12,7 +12,7 @@ export type Draft = {
 
 export type ConvoDraft = Draft & {
   editing?: {
-    cmid: Message.Cmid
+    message: Message.Normal
     previousDraft: Draft
   }
 }
@@ -53,19 +53,20 @@ export function startEditing(draft: ConvoDraft, message: Message.Normal) {
   if (draft.editing) return
 
   const previousDraft = captureDraft(draft)
-  Object.assign(draft, emptyDraft(), {
+  Object.assign(draft, {
     text: message.text,
     attaches: Attach.copy(message.attaches),
     replyMessage: message.replyMessage,
-    editing: { cmid: message.cmid, previousDraft }
-  })
+    uploadingAttaches: [],
+    editing: { message, previousDraft }
+  } satisfies ConvoDraft)
 }
 
 export function finishEditing(draft: ConvoDraft) {
   if (!draft.editing) return
 
   cancelUploads(draft)
-  Object.assign(draft, emptyDraft(), draft.editing.previousDraft, { editing: undefined })
+  Object.assign(draft, draft.editing.previousDraft, { editing: undefined })
 }
 
 export function isEdited(draft: Draft, message: Message.Normal) {

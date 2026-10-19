@@ -12,51 +12,16 @@
   box-shadow: var(--vkui--elevation3);
 }
 
-.ConvoComposer__reply {
-  display: flex;
+.ConvoComposer__messageBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
   padding: 8px 6px 8px 12px;
   border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
-.ConvoComposer__replyMessage {
-  flex: 1;
-  min-width: 0;
-}
-
-.ConvoComposer__editingMessage {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  padding: 4px 10px;
-}
-
-.ConvoComposer__editingMessage::before {
-  content: '';
-  position: absolute;
-  top: 6px;
-  bottom: 6px;
-  left: 0;
-  width: 2px;
-  border-radius: 2px;
-  background: var(--vkui--color_stroke_accent);
-}
-
-.ConvoComposer__editingTitle,
-.ConvoComposer__editingPreview {
-  font: var(--smallFont);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ConvoComposer__editingTitle {
-  color: var(--vkui--color_text_link);
-  font-weight: 500;
-}
-
-.ConvoComposer__replyCancel {
+.ConvoComposer__messageBarCancel {
   width: 32px;
   height: 32px;
   color: var(--vkui--color_icon_secondary);

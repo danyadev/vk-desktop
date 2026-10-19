@@ -1,4 +1,5 @@
 import { useServices } from 'services'
+import * as ConvoDraft from 'model/ConvoDraft'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
@@ -15,6 +16,15 @@ export function syncDraftMessage(
   const { convoDrafts } = useConvosStore()
 
   for (const convoDraft of convoDrafts.values()) {
+    const { editing } = convoDraft
+    if (editing?.message.peerId === peerId && editing.message.cmid === cmid) {
+      if (message?.kind === 'Normal') {
+        editing.message = message
+      } else {
+        ConvoDraft.finishEditing(convoDraft)
+      }
+    }
+
     for (const draft of [convoDraft, convoDraft.editing?.previousDraft]) {
       if (!draft) continue
       const reply = draft.replyMessage
@@ -34,6 +44,11 @@ export function syncDraftsOnHistoryClear(
   const { convoDrafts } = useConvosStore()
 
   for (const convoDraft of convoDrafts.values()) {
+    const editingMessage = convoDraft.editing?.message
+    if (editingMessage?.peerId === peerId && editingMessage.cmid <= upToCmid) {
+      ConvoDraft.finishEditing(convoDraft)
+    }
+
     for (const draft of [convoDraft, convoDraft.editing?.previousDraft]) {
       if (!draft) continue
       const reply = draft.replyMessage
@@ -51,9 +66,13 @@ export async function syncDraftsOnLoad() {
   const messagesByPeer = new Map<Peer.Id, Set<Message.Cmid>>()
 
   for (const convoDraft of convoDrafts.values()) {
-    for (const draft of [convoDraft, convoDraft.editing?.previousDraft]) {
-      if (!draft) continue
-      const message = draft.replyMessage
+    const messages = [
+      convoDraft.replyMessage,
+      convoDraft.editing?.message,
+      convoDraft.editing?.previousDraft.replyMessage
+    ]
+
+    for (const message of messages) {
       if (!message?.peerId || !message.cmid) continue
 
       getMapValueOrCompute(messagesByPeer, message.peerId, () => new Set())
