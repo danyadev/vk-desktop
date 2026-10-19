@@ -4,28 +4,27 @@ import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import * as Message from 'model/Message'
 import { useConvosStore } from 'store/convos'
-import { useSettingsStore } from 'store/settings'
 import { useViewerStore } from 'store/viewer'
 import { retryAllPendingMessages, retryPendingMessage } from 'actions'
 import { useModal } from 'hooks'
+import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ActionMenuSeparator } from 'ui/ui/ActionMenuSeparator/ActionMenuSeparator'
 import { Button } from 'ui/ui/Button/Button'
-import { Checkbox } from 'ui/ui/Checkbox/Checkbox'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20ArrowUturnLeftOutline,
   Icon20CopyOutline,
+  Icon20EditOutline,
   Icon20PinOutline,
   Icon20PinSlashOutline,
   Icon20ReplyOutline,
   Icon20TrashOutline
 } from 'assets/icons'
-import './MessageActionMenu.css'
 
-type LoadingAction = 'delete' | 'pin'
+type LoadingAction = 'pin'
 
 type Props = {
   convo: Convo.Convo
@@ -35,7 +34,6 @@ type Props = {
 export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
   const { api, lang } = useServices()
   const viewer = useViewerStore()
-  const settings = useSettingsStore()
   const { convoDrafts } = useConvosStore()
   const deleteModal = useModal()
   const pinModal = useModal()
@@ -80,50 +78,29 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
     await api.fetch('messages.unpin', { peer_id: message.peerId })
   })
 
-  const deleteMessage = makeAction('delete', async () => {
-    const { convo, message } = props
-    if (message.kind === 'Pending') return
-
-    try {
-      const canDeleteForAll = Convo.canDeleteMessageForAll(convo, message, viewer.id)
-      const results = await api.fetch('messages.delete', {
-        peer_id: message.peerId,
-        cmids: message.cmid,
-        delete_for_all: canDeleteForAll && settings.deleteMessageForAllPreference ? 1 : 0
-      })
-      const result = results.find((item) => (
-        item.conversation_message_id === message.cmid
-      ))
-
-      if (result?.response !== 1) {
-        const { code, description } = result?.error ?? {}
-        throw new Error(`[MessageActionMenu] Message deletion failed: ${description} (${code})`)
-      }
-    } finally {
-      deleteModal.close()
-    }
-  })
-
-  const openDelete = () => {
-    deleteModal.open()
-  }
-
   const getMenuContent = () => {
     const { message, convo } = props
 
     if (message.kind === 'Normal') {
       const isPinned = convo.kind === 'ChatConvo' && convo.pinnedMessage?.cmid === message.cmid
+      const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
 
       return (
         <ActionMenu>
-          {convo.canWrite.allowed && !Convo.isChannel(convo) && (
+          {convo.canWrite.allowed && (
             <ActionMenuItem
               icon={<Icon20ReplyOutline />}
               text={lang.use('me_message_menu_reply')}
-              onClick={() => {
-                const draft = ConvoDraft.safeGet(convoDrafts, convo.id)
-                draft.replyMessage = Message.toForeign(message)
-              }}
+              onClick={() => (draft.replyMessage = Message.toForeign(message))}
+              disabled={!!draft.editing}
+            />
+          )}
+          {Convo.canEditMessage(convo, message, viewer.id) && (
+            <ActionMenuItem
+              icon={<Icon20EditOutline />}
+              text={lang.use('me_message_menu_edit')}
+              onClick={() => ConvoDraft.startEditing(draft, message)}
+              disabled={!!draft.editing}
             />
           )}
           {!!message.text && (
@@ -153,8 +130,7 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
             text={lang.use('me_message_menu_delete')}
             mode="destructive"
             disabled={loadingAction.value !== undefined}
-            loading={loadingAction.value === 'delete'}
-            onClick={openDelete}
+            onClick={deleteModal.open}
           />
         </ActionMenu>
       )
@@ -168,8 +144,7 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
             text={lang.use('me_message_menu_delete')}
             mode="destructive"
             disabled={loadingAction.value !== undefined}
-            loading={loadingAction.value === 'delete'}
-            onClick={openDelete}
+            onClick={deleteModal.open}
           />
         </ActionMenu>
       )
@@ -215,8 +190,6 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
     }
 
     const { message, convo } = props
-    const canDeleteForAll =
-      message.kind !== 'Pending' && Convo.canDeleteMessageForAll(convo, message, viewer.id)
 
     return (
       <>
@@ -224,34 +197,14 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
           {slots.default?.()}
         </Popper>
 
-        <Modal
-          opened={deleteModal.opened}
-          onClose={deleteModal.close}
-          title={lang.use('me_message_menu_delete_confirm_title')}
-          buttons={[
-            <Button mode="secondary" onClick={deleteModal.close}>
-              {lang.use('modal_cancel_label')}
-            </Button>,
-            <Button
-              mode="destructive"
-              disabled={loadingAction.value !== undefined}
-              loading={loadingAction.value === 'delete'}
-              onClick={deleteMessage}
-            >
-              {lang.use('me_message_menu_delete')}
-            </Button>
-          ]}
-          class="MessageActionMenu__deleteModal"
-        >
-          {lang.use('me_message_menu_delete_confirm_text')}
-          {canDeleteForAll && (
-            <Checkbox
-              label={lang.use('me_message_menu_delete_for_all')}
-              checked={settings.deleteMessageForAllPreference}
-              onChange={(checked) => (settings.deleteMessageForAllPreference = checked)}
-            />
-          )}
-        </Modal>
+        {message.kind !== 'Pending' && (
+          <DeleteMessageModal
+            opened={deleteModal.opened}
+            onClose={deleteModal.close}
+            convo={convo}
+            message={message}
+          />
+        )}
 
         <Modal
           opened={pinModal.opened}
@@ -276,10 +229,10 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
         <Modal
           opened={errorModal.opened}
           onClose={errorModal.close}
-          title={lang.use('me_convo_menu_error_title')}
+          title={lang.use('me_action_menu_error_title')}
           buttons={<Button onClick={errorModal.close}>{lang.use('modal_close_label')}</Button>}
         >
-          {lang.use('me_convo_menu_error_text')}
+          {lang.use('me_action_menu_error_text')}
         </Modal>
       </>
     )

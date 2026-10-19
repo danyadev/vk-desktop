@@ -35,6 +35,8 @@ import {
   MessagesDeleteConversationResponse,
   MessagesDeleteParams,
   MessagesDeleteResponse,
+  MessagesEditParams,
+  MessagesEditResponse,
   MessagesGetByConversationMessageIdParams,
   MessagesGetByConversationMessageIdResponse,
   MessagesGetConversationsByIdParams,
@@ -184,6 +186,10 @@ export type Methods = {
   'messages.send': {
     params: MessagesSendParams
     response: MessagesSendResponse
+  }
+  'messages.edit': {
+    params: MessagesEditParams
+    response: MessagesEditResponse
   }
   'messages.markAsPlayed': {
     params: MessagesMarkAsPlayedParams

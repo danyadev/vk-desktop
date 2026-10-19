@@ -1,24 +1,28 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
-import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
-import { sendMessage } from 'actions'
-import { useConvoSession } from 'hooks'
+import { editMessage, sendMessage } from 'actions'
+import { useConvoSession, useModal, useViewer } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
-import { ComposerAttachPreview } from 'ui/messenger/ConvoComposer/ComposerAttachPreview'
+import { ComposerAttaches } from 'ui/messenger/ConvoComposer/ComposerAttaches/ComposerAttaches'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
+import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
 import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
+import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
+import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20PictureOutline,
+  Icon20TrashOutline,
   Icon24AddCircleOutline,
   Icon24Cancel,
+  Icon24CheckOutline,
   Icon24Info,
   Icon24Send
 } from 'assets/icons'
@@ -30,9 +34,14 @@ type Props = {
 
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang } = useServices()
+  const viewer = useViewer()
   const { convoDrafts } = useConvosStore()
   const session = useConvoSession()
   const $input = shallowRef<HTMLSpanElement | null>(null)
+  const isSaving = shallowRef(false)
+  const cancelEditModal = useModal()
+  const deleteEditModal = useModal()
+  const editErrorModal = useModal()
 
   const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
   const {
@@ -43,25 +52,51 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     abortUploadingAttach
   } = useComposerAttaches(props.convo, draft)
 
-  const canSendMessage = computed(() => (
-    ConvoDraft.hasContent(draft) && draft.uploadingAttaches.length === 0
+  const isEmptyEditedMessage = computed(() => (
+    !!draft.editing &&
+    !ConvoDraft.hasContent(draft) &&
+    !draft.replyMessage &&
+    !draft.editing.message.forwardedMessages &&
+    draft.uploadingAttaches.length === 0
   ))
 
-  onMounted(() => {
-    if (!$input.value) {
-      return
+  const canSubmit = computed(() => (
+    !isSaving.value &&
+    draft.uploadingAttaches.length === 0 &&
+    (!!draft.editing || ConvoDraft.hasContent(draft))
+  ))
+
+  const isLoading = computed(() => (
+    isSaving.value ||
+    attachPreviews.value.some((preview) => (
+      preview.kind === 'UploadingAttach' && !preview.attach.failed
+    ))
+  ))
+
+  const cancelEditing = () => {
+    if (!draft.editing || isSaving.value) return
+
+    if (!ConvoDraft.isEdited(draft, draft.editing.message)) {
+      ConvoDraft.finishEditing(draft)
+    } else {
+      cancelEditModal.open()
     }
+  }
 
-    $input.value.focus()
+  const syncInput = () => {
+    const input = $input.value
+    if (!input) return
 
-    if (draft.text) {
-      $input.value.innerText = draft.text
+    input.innerText = draft.text
+    input.focus()
 
-      const sel = window.getSelection()!
-      sel.selectAllChildren($input.value)
-      sel.collapseToEnd()
-    }
-  })
+    const selection = window.getSelection()
+    selection?.selectAllChildren(input)
+    selection?.collapseToEnd()
+  }
+
+  onMounted(syncInput)
+  watch(() => draft.editing?.message.cmid, syncInput, { flush: 'post' })
 
   watch(() => draft.replyMessage?.cmid, (cmid) => {
     if (cmid) {
@@ -69,26 +104,67 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
   }, { flush: 'post' })
 
-  const onMessageSend = () => {
+  const onSubmit = async () => {
+    if (!canSubmit.value) return
+
+    if (isEmptyEditedMessage.value) {
+      deleteEditModal.open()
+      return
+    }
+
+    if (draft.editing) {
+      if (!ConvoDraft.isEdited(draft, draft.editing.message)) {
+        ConvoDraft.finishEditing(draft)
+        return
+      }
+
+      isSaving.value = true
+      try {
+        await editMessage(
+          props.convo.id,
+          draft.editing.message.cmid,
+          draft.text,
+          draft.attaches,
+          !!draft.replyMessage || !!draft.editing.message.forwardedMessages
+        )
+        ConvoDraft.finishEditing(draft)
+      } catch (error) {
+        console.warn('[ConvoComposer] Failed to edit message', error)
+        editErrorModal.open()
+      } finally {
+        isSaving.value = false
+      }
+      return
+    }
+
     sendMessage(props.convo.id, draft.text, draft.attaches, draft.replyMessage)
-
     ConvoDraft.reset(draft)
+    if ($input.value) $input.value.innerText = ''
+  }
 
-    if ($input.value) {
-      $input.value.innerText = ''
+  const onEscape = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Escape' && draft.editing && !isEventWithModifier(event)) {
+      event.stopPropagation()
+      cancelEditing()
     }
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.code === 'Enter' && !isEventWithModifier(event)) {
+    if (isEventWithModifier(event)) return
+
+    if (event.code === 'Enter') {
       // Предотвращаем перенос строки
       event.preventDefault()
+      onSubmit()
+      return
+    }
 
-      if (!canSendMessage.value) {
-        return
+    if (event.code === 'ArrowUp' && ConvoDraft.isEmpty(draft)) {
+      const message = Convo.lastEditableMessage(props.convo, viewer.id)
+      if (message) {
+        event.preventDefault()
+        ConvoDraft.startEditing(draft, message)
       }
-
-      onMessageSend()
     }
   }
 
@@ -117,8 +193,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }).catch(() => [])
 
     for (const fileHandle of fileHandles) {
-      const file = await fileHandle.getFile()
-      uploadAttach('Photo', file)
+      uploadAttach('Photo', await fileHandle.getFile())
     }
   }
 
@@ -157,12 +232,16 @@ export const ConvoComposer = defineComponent<Props>((props) => {
             </ActionMenu>
           }
         >
-          <ButtonIcon class="ConvoComposer__addAttaches" icon={<Icon24AddCircleOutline />} />
+          <ButtonIcon
+            class="ConvoComposer__addAttaches"
+            icon={<Icon24AddCircleOutline />}
+            disabled={isSaving.value}
+          />
         </Popper>
 
         <span
           class="ConvoComposer__input"
-          contenteditable="plaintext-only"
+          contenteditable={isSaving.value ? 'false' : 'plaintext-only'}
           role="textbox"
           placeholder={lang.use('me_convo_composer_placeholder')}
           ref={$input}
@@ -172,10 +251,16 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         />
 
         <ButtonIcon
-          class="ConvoComposer__send"
-          disabled={!canSendMessage.value}
-          icon={<Icon24Send />}
-          onClick={onMessageSend}
+          class={[
+            'ConvoComposer__send',
+            isEmptyEditedMessage.value && 'ConvoComposer__send--delete'
+          ]}
+          disabled={!canSubmit.value}
+          loading={isLoading.value}
+          icon={isEmptyEditedMessage.value
+            ? <Icon20TrashOutline />
+            : draft.editing ? <Icon24CheckOutline /> : <Icon24Send />}
+          onClick={onSubmit}
           // Предотвращаем сброс фокуса с поля ввода
           onMousedown={(event) => event.preventDefault()}
         />
@@ -184,12 +269,36 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   return () => (
-    <div class="ConvoComposer">
+    <div
+      class={['ConvoComposer', isSaving.value && 'ConvoComposer--saving']}
+      onKeydown={onEscape}
+    >
       <div class="ConvoComposer__inner">
-        {draft.replyMessage && (
-          <div class="ConvoComposer__reply">
+        {draft.editing && (
+          <div class="ConvoComposer__messageBar">
             <ReplyMessage
-              class="ConvoComposer__replyMessage"
+              reply={draft.editing.message}
+              customName={lang.use('me_convo_composer_editing')}
+              onClick={() => {
+                session.navigationRequest = {
+                  kind: 'Message',
+                  cmid: draft.editing!.message.cmid
+                }
+              }}
+            />
+            <ButtonIcon
+              class="ConvoComposer__messageBarCancel"
+              icon={<Icon24Cancel />}
+              withHoverBackground
+              disabled={isSaving.value}
+              onClick={cancelEditing}
+            />
+          </div>
+        )}
+
+        {draft.replyMessage && (
+          <div class="ConvoComposer__messageBar">
+            <ReplyMessage
               reply={draft.replyMessage}
               onClick={() => {
                 if (draft.replyMessage?.cmid) {
@@ -201,9 +310,10 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               }}
             />
             <ButtonIcon
-              class="ConvoComposer__replyCancel"
+              class="ConvoComposer__messageBarCancel"
               icon={<Icon24Cancel />}
               withHoverBackground
+              disabled={isSaving.value}
               onClick={() => {
                 draft.replyMessage = undefined
                 $input.value?.focus()
@@ -211,34 +321,63 @@ export const ConvoComposer = defineComponent<Props>((props) => {
             />
           </div>
         )}
+
         {attachPreviews.value.length > 0 && (
-          <div class="ConvoComposer__attaches">
-            {attachPreviews.value.map((attachPreview) => (
-              <ComposerAttachPreview
-                key={attachPreview.kind === 'Attach'
-                  ? Attach.id(attachPreview.attach)
-                  : attachPreview.attach.id}
-                attachPreview={attachPreview}
-                onRemove={() => removeAttachPreview(attachPreview)}
-                onRetry={() => {
-                  if (attachPreview.kind === 'UploadingAttach') {
-                    retryUploadingAttach(attachPreview.attach)
-                  }
-                }}
-                onCancel={() => {
-                  if (attachPreview.kind === 'UploadingAttach') {
-                    abortUploadingAttach(attachPreview.attach)
-                  }
-                }}
-              />
-            ))}
-          </div>
+          <ComposerAttaches
+            previews={attachPreviews.value}
+            disabled={isSaving.value}
+            onRemove={removeAttachPreview}
+            onRetry={retryUploadingAttach}
+            onCancel={abortUploadingAttach}
+          />
         )}
 
         <div class="ConvoComposer__panel">
           {renderPanel()}
         </div>
       </div>
+
+      {draft.editing && (
+        <DeleteMessageModal
+          opened={deleteEditModal.opened}
+          onClose={deleteEditModal.close}
+          convo={props.convo}
+          message={draft.editing.message}
+          onDeleted={() => ConvoDraft.finishEditing(draft)}
+        />
+      )}
+
+      <Modal
+        opened={cancelEditModal.opened}
+        onClose={cancelEditModal.close}
+        title={lang.use('me_convo_composer_edit_cancel_title')}
+        buttons={[
+          <Button mode="secondary" onClick={cancelEditModal.close}>
+            {lang.use('me_convo_composer_edit_cancel_dismiss')}
+          </Button>,
+          <Button
+            mode="destructive"
+            disabled={isSaving.value}
+            onClick={() => {
+              ConvoDraft.finishEditing(draft)
+              cancelEditModal.close()
+            }}
+          >
+            {lang.use('me_convo_composer_edit_cancel_submit')}
+          </Button>
+        ]}
+      >
+        {lang.use('me_convo_composer_edit_cancel_text')}
+      </Modal>
+
+      <Modal
+        opened={editErrorModal.opened}
+        onClose={editErrorModal.close}
+        title={lang.use('me_convo_composer_edit_error_title')}
+        buttons={<Button onClick={editErrorModal.close}>{lang.use('modal_close_label')}</Button>}
+      >
+        {lang.use('me_convo_composer_edit_error_text')}
+      </Modal>
     </div>
   )
 }, {

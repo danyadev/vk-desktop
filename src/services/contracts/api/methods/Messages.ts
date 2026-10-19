@@ -139,6 +139,18 @@ export type MessagesSendResponse = {
   message_id: number
 }
 
+// messages.edit
+export type MessagesEditParams = {
+  peer_id: number
+  cmid: number
+  message: string
+  attachment?: string
+  keep_forward_messages?: 0 | 1
+  keep_snippets?: 0 | 1
+}
+
+export type MessagesEditResponse = 0 | 1
+
 // messages.markAsPlayed
 export type MessagesMarkAsPlayedParams = {
   peer_id: number

@@ -1,7 +1,8 @@
+import * as electron from '@electron/remote'
 import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { defineComponent, shallowRef } from 'vue'
 import { useServices } from 'services'
-import { currentWindow, subscribeToElectronEvent } from 'misc/utils'
+import { subscribeToElectronEvent } from 'misc/utils'
 import { isMacOS } from 'misc/constants'
 import {
   Icon10TitlebarClose,
@@ -20,6 +21,7 @@ const buttons = [
 
 export const Titlebar = defineComponent(() => {
   const { lang } = useServices()
+  const currentWindow = electron.getCurrentWindow()
   const isMaximized = shallowRef(currentWindow.isMaximized())
 
   subscribeToElectronEvent(() => {

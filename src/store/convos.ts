@@ -131,11 +131,21 @@ export function init() {
 
     for (const [peerId, convoDraft] of convoDrafts) {
       if (!ConvoDraft.isEmpty(convoDraft)) {
-        draftsToSave.set(peerId, {
+        // Мы не можем сохранять незагруженные вложения в localStorage
+        const strippedDraft = {
           ...convoDraft,
-          // Мы не можем сохранять вложения в процессе загрузки в localStorage
           uploadingAttaches: []
-        })
+        }
+        if (strippedDraft.editing) {
+          strippedDraft.editing = {
+            ...strippedDraft.editing,
+            previousDraft: {
+              ...strippedDraft.editing.previousDraft,
+              uploadingAttaches: []
+            }
+          }
+        }
+        draftsToSave.set(peerId, strippedDraft)
       }
     }
 

@@ -1,0 +1,50 @@
+.ComposerAttachCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  border-radius: inherit;
+  background: var(--vkui--color_background_tertiary_alpha);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.ComposerAttachCard__image,
+.ComposerAttachCard__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+}
+
+.ComposerAttachCard__image {
+  object-fit: cover;
+}
+
+.ComposerAttachCard__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vkui--color_accent_gray);
+  color: var(--vkui--color_text_contrast);
+}
+
+.ComposerAttachCard__text {
+  min-width: 0;
+}
+
+.ComposerAttachCard__title,
+.ComposerAttachCard__subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ComposerAttachCard__title {
+  font-weight: 500;
+}
+
+.ComposerAttachCard__subtitle {
+  color: var(--vkui--color_text_secondary);
+}

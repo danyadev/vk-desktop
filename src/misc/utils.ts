@@ -1,4 +1,3 @@
-import * as electron from '@electron/remote'
 import {
   ComponentPublicInstance,
   EffectScope,
@@ -36,8 +35,6 @@ export type Truthy<T> = T extends false | '' | 0 | null | undefined | 0n ? never
 export type NonEmptyArray<T> = [T, ...T[]]
 
 export type Flatten<T> = T extends (Array<infer U> | NonEmptyArray<infer U>) ? U : T
-
-export const currentWindow = electron.getCurrentWindow()
 
 export function isObject(obj: unknown): obj is object {
   return Object.prototype.toString.call(obj) === '[object Object]'

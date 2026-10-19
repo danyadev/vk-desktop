@@ -83,6 +83,9 @@ export const ru = {
   me_convo_list_empty_convo: 'Пустой диалог',
   me_convo_list_empty: 'Список сообщений пуст',
 
+  me_action_menu_error_title: 'Не удалось выполнить действие',
+  me_action_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',
+
   me_convo_list_menu_settings: 'Настройки',
   me_convo_list_menu_logout: 'Выйти',
 
@@ -105,12 +108,11 @@ export const ru = {
   me_convo_menu_clear_confirm_text: 'Очистить историю переписки в этом диалоге?',
   me_convo_menu_leave_confirm_title: 'Выйти из чата?',
   me_convo_menu_leave_confirm_text: 'Вы действительно хотите выйти из этого чата?',
-  me_convo_menu_error_title: 'Не удалось выполнить действие',
-  me_convo_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',
 
   me_convo_composer_menu_photo: 'Фото',
 
   me_message_menu_reply: 'Ответить',
+  me_message_menu_edit: 'Редактировать',
   me_message_menu_copy: 'Скопировать текст',
   me_message_menu_pin: 'Закрепить',
   me_message_menu_unpin: 'Открепить',
@@ -118,9 +120,6 @@ export const ru = {
   me_message_menu_copy_cmid: 'Скопировать cmid',
   me_message_menu_retry: 'Повторить отправку',
   me_message_menu_retry_all: 'Повторить все ({count})',
-  me_message_menu_delete_confirm_title: 'Удалить сообщение?',
-  me_message_menu_delete_confirm_text: 'Сообщение будет удалено из переписки.',
-  me_message_menu_delete_for_all: 'Удалить для всех',
   me_message_menu_pin_confirm_title: 'Закрепить сообщение?',
   me_message_menu_pin_confirm_text: 'Сообщение будет закреплено для всех участников чата.',
 
@@ -146,6 +145,13 @@ export const ru = {
   me_unknown_attach: 'Неизвестное вложение',
   me_unsupported_service_message: 'Сервисное сообщение не поддерживается',
   me_convo_composer_placeholder: 'Напишите сообщение...',
+  me_convo_composer_editing: 'Редактирование сообщения',
+  me_convo_composer_edit_cancel_title: 'Отменить редактирование?',
+  me_convo_composer_edit_cancel_text: 'Изменения сообщения не сохранятся.',
+  me_convo_composer_edit_cancel_submit: 'Отменить',
+  me_convo_composer_edit_cancel_dismiss: 'Не отменять',
+  me_convo_composer_edit_error_title: 'Не удалось отредактировать сообщение',
+  me_convo_composer_edit_error_text: 'Не удалось сохранить изменения. Попробуйте ещё раз.',
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
   me_convo_empty_placeholder: 'История переписки пуста',
   me_convo_unread_messages: 'Новые сообщения',
@@ -391,6 +397,12 @@ export const ru = {
 
   messagePreviewModal_title: 'Просмотр сообщения',
   messagePreviewModal_unavailable: 'Сообщение недоступно',
+
+  messageDeleteModal_confirm_title: 'Удалить сообщение?',
+  messageDeleteModal_confirm_text: 'Сообщение будет удалено из переписки.',
+  messageDeleteModal_delete_for_all: 'Удалить для всех',
+  messageDeleteModal_error_title: 'Не удалось удалить сообщение',
+  messageDeleteModal_error_text: 'Попробуйте ещё раз.',
 
   captchaModal_title: 'Введите капчу',
   captchaModal_enter_code: 'Введите код',

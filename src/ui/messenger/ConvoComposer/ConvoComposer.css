@@ -12,31 +12,19 @@
   box-shadow: var(--vkui--elevation3);
 }
 
-.ConvoComposer__reply {
-  display: flex;
+.ConvoComposer__messageBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
   padding: 8px 6px 8px 12px;
   border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
-.ConvoComposer__replyMessage {
-  flex: 1;
-  min-width: 0;
-}
-
-.ConvoComposer__replyCancel {
+.ConvoComposer__messageBarCancel {
   width: 32px;
   height: 32px;
   color: var(--vkui--color_icon_secondary);
-}
-
-.ConvoComposer__attaches {
-  display: flex;
-  gap: 12px;
-  padding: 12px;
-  overflow: overlay;
-  border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
 .ConvoComposer__panel {
@@ -80,6 +68,10 @@
 
 .ConvoComposer__send {
   color: var(--vkui--color_icon_accent);
+}
+
+.ConvoComposer__send--delete {
+  color: var(--vkui--color_icon_negative);
 }
 
 .ConvoComposer__restriction {
