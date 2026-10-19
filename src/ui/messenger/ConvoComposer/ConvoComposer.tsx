@@ -234,85 +234,86 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   return () => (
-    <>
-      <div
-        class={['ConvoComposer', isSaving.value && 'ConvoComposer--saving']}
-        onKeydown={onEscape}
-      >
-        <div class="ConvoComposer__inner">
-          {draft.editing && (
-            <div class="ConvoComposer__reply">
-              <div class="ConvoComposer__editingMessage">
-                <div class="ConvoComposer__editingTitle">
-                  {lang.use('me_convo_composer_editing')}
-                </div>
-                <div class="ConvoComposer__editingPreview">
-                  {editingMessage.value && <MessagePreview message={editingMessage.value} />}
-                </div>
+    <div
+      class={['ConvoComposer', isSaving.value && 'ConvoComposer--saving']}
+      onKeydown={onEscape}
+    >
+      <div class="ConvoComposer__inner">
+        {draft.editing && (
+          <div class="ConvoComposer__reply">
+            <div class="ConvoComposer__editingMessage">
+              <div class="ConvoComposer__editingTitle">
+                {lang.use('me_convo_composer_editing')}
               </div>
-              <ButtonIcon
-                class="ConvoComposer__replyCancel"
-                icon={<Icon24Cancel />}
-                withHoverBackground
-                disabled={isSaving.value}
-                onClick={cancelEditing}
-              />
+              <div class="ConvoComposer__editingPreview">
+                {editingMessage.value && <MessagePreview message={editingMessage.value} accent />}
+              </div>
             </div>
-          )}
-          {draft.replyMessage && (
-            <div class="ConvoComposer__reply">
-              <ReplyMessage
-                class="ConvoComposer__replyMessage"
-                reply={draft.replyMessage}
-                onClick={() => {
-                  if (draft.replyMessage?.cmid) {
-                    session.navigationRequest = {
-                      kind: 'Message',
-                      cmid: draft.replyMessage.cmid
-                    }
+            <ButtonIcon
+              class="ConvoComposer__replyCancel"
+              icon={<Icon24Cancel />}
+              withHoverBackground
+              disabled={isSaving.value}
+              onClick={cancelEditing}
+            />
+          </div>
+        )}
+
+        {draft.replyMessage && (
+          <div class="ConvoComposer__reply">
+            <ReplyMessage
+              class="ConvoComposer__replyMessage"
+              reply={draft.replyMessage}
+              onClick={() => {
+                if (draft.replyMessage?.cmid) {
+                  session.navigationRequest = {
+                    kind: 'Message',
+                    cmid: draft.replyMessage.cmid
+                  }
+                }
+              }}
+            />
+            <ButtonIcon
+              class="ConvoComposer__replyCancel"
+              icon={<Icon24Cancel />}
+              withHoverBackground
+              onClick={() => {
+                draft.replyMessage = undefined
+                $input.value?.focus()
+              }}
+            />
+          </div>
+        )}
+
+        {attachPreviews.value.length > 0 && (
+          <div class="ConvoComposer__attaches">
+            {attachPreviews.value.map((attachPreview) => (
+              <ComposerAttachPreview
+                key={attachPreview.kind === 'Attach'
+                  ? Attach.id(attachPreview.attach)
+                  : attachPreview.attach.id}
+                attachPreview={attachPreview}
+                onRemove={() => removeAttachPreview(attachPreview)}
+                onRetry={() => {
+                  if (attachPreview.kind === 'UploadingAttach') {
+                    retryUploadingAttach(attachPreview.attach)
+                  }
+                }}
+                onCancel={() => {
+                  if (attachPreview.kind === 'UploadingAttach') {
+                    abortUploadingAttach(attachPreview.attach)
                   }
                 }}
               />
-              <ButtonIcon
-                class="ConvoComposer__replyCancel"
-                icon={<Icon24Cancel />}
-                withHoverBackground
-                onClick={() => {
-                  draft.replyMessage = undefined
-                  $input.value?.focus()
-                }}
-              />
-            </div>
-          )}
-          {attachPreviews.value.length > 0 && (
-            <div class="ConvoComposer__attaches">
-              {attachPreviews.value.map((attachPreview) => (
-                <ComposerAttachPreview
-                  key={attachPreview.kind === 'Attach'
-                    ? Attach.id(attachPreview.attach)
-                    : attachPreview.attach.id}
-                  attachPreview={attachPreview}
-                  onRemove={() => removeAttachPreview(attachPreview)}
-                  onRetry={() => {
-                    if (attachPreview.kind === 'UploadingAttach') {
-                      retryUploadingAttach(attachPreview.attach)
-                    }
-                  }}
-                  onCancel={() => {
-                    if (attachPreview.kind === 'UploadingAttach') {
-                      abortUploadingAttach(attachPreview.attach)
-                    }
-                  }}
-                />
-              ))}
-            </div>
-          )}
-
-          <div class="ConvoComposer__panel">
-            {renderPanel()}
+            ))}
           </div>
+        )}
+
+        <div class="ConvoComposer__panel">
+          {renderPanel()}
         </div>
       </div>
+
       <Modal
         opened={cancelEditModal.opened}
         onClose={cancelEditModal.close}
@@ -335,6 +336,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       >
         {lang.use('me_convo_composer_edit_cancel_text')}
       </Modal>
+
       <Modal
         opened={errorModal.opened}
         onClose={errorModal.close}
@@ -343,7 +345,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       >
         {lang.use('me_convo_menu_error_text')}
       </Modal>
-    </>
+    </div>
   )
 }, {
   props: ['convo']
