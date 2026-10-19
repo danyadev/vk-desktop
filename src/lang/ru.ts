@@ -120,9 +120,6 @@ export const ru = {
   me_message_menu_copy_cmid: 'Скопировать cmid',
   me_message_menu_retry: 'Повторить отправку',
   me_message_menu_retry_all: 'Повторить все ({count})',
-  me_message_menu_delete_confirm_title: 'Удалить сообщение?',
-  me_message_menu_delete_confirm_text: 'Сообщение будет удалено из переписки.',
-  me_message_menu_delete_for_all: 'Удалить для всех',
   me_message_menu_pin_confirm_title: 'Закрепить сообщение?',
   me_message_menu_pin_confirm_text: 'Сообщение будет закреплено для всех участников чата.',
 
@@ -400,6 +397,12 @@ export const ru = {
 
   messagePreviewModal_title: 'Просмотр сообщения',
   messagePreviewModal_unavailable: 'Сообщение недоступно',
+
+  messageDeleteModal_confirm_title: 'Удалить сообщение?',
+  messageDeleteModal_confirm_text: 'Сообщение будет удалено из переписки.',
+  messageDeleteModal_delete_for_all: 'Удалить для всех',
+  messageDeleteModal_error_title: 'Не удалось удалить сообщение',
+  messageDeleteModal_error_text: 'Попробуйте ещё раз.',
 
   captchaModal_title: 'Введите капчу',
   captchaModal_enter_code: 'Введите код',

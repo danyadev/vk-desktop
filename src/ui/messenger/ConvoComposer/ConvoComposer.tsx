@@ -9,6 +9,7 @@ import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttaches } from 'ui/messenger/ConvoComposer/ComposerAttaches/ComposerAttaches'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
+import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
 import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
@@ -18,6 +19,7 @@ import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20PictureOutline,
+  Icon20TrashOutline,
   Icon24AddCircleOutline,
   Icon24Cancel,
   Icon24CheckOutline,
@@ -37,6 +39,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const $input = shallowRef<HTMLSpanElement | null>(null)
   const isSaving = shallowRef(false)
   const cancelEditModal = useModal()
+  const deleteEditModal = useModal()
   const editErrorModal = useModal()
 
   const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
@@ -48,8 +51,18 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     abortUploadingAttach
   } = useComposerAttaches(props.convo, draft)
 
+  const isEmptyEditedMessage = computed(() => (
+    !!draft.editing &&
+    !ConvoDraft.hasContent(draft) &&
+    !draft.replyMessage &&
+    !draft.editing.message.forwardedMessages &&
+    draft.uploadingAttaches.length === 0
+  ))
+
   const canSubmit = computed(() => (
-    !isSaving.value && ConvoDraft.hasContent(draft) && draft.uploadingAttaches.length === 0
+    !isSaving.value &&
+    draft.uploadingAttaches.length === 0 &&
+    (!!draft.editing || ConvoDraft.hasContent(draft))
   ))
 
   const isLoading = computed(() => (
@@ -92,6 +105,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
   const onSubmit = async () => {
     if (!canSubmit.value) return
+
+    if (isEmptyEditedMessage.value) {
+      deleteEditModal.open()
+      return
+    }
 
     if (draft.editing) {
       if (!ConvoDraft.isEdited(draft, draft.editing.message)) {
@@ -221,10 +239,15 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         />
 
         <ButtonIcon
-          class="ConvoComposer__send"
+          class={[
+            'ConvoComposer__send',
+            isEmptyEditedMessage.value && 'ConvoComposer__send--delete'
+          ]}
           disabled={!canSubmit.value}
           loading={isLoading.value}
-          icon={draft.editing ? <Icon24CheckOutline /> : <Icon24Send />}
+          icon={isEmptyEditedMessage.value
+            ? <Icon20TrashOutline />
+            : draft.editing ? <Icon24CheckOutline /> : <Icon24Send />}
           onClick={onSubmit}
           // Предотвращаем сброс фокуса с поля ввода
           onMousedown={(event) => event.preventDefault()}
@@ -301,6 +324,16 @@ export const ConvoComposer = defineComponent<Props>((props) => {
           {renderPanel()}
         </div>
       </div>
+
+      {draft.editing && (
+        <DeleteMessageModal
+          opened={deleteEditModal.opened}
+          onClose={deleteEditModal.close}
+          convo={props.convo}
+          message={draft.editing.message}
+          onDeleted={() => ConvoDraft.finishEditing(draft)}
+        />
+      )}
 
       <Modal
         opened={cancelEditModal.opened}

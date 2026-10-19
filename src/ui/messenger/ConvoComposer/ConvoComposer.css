@@ -70,6 +70,10 @@
   color: var(--vkui--color_icon_accent);
 }
 
+.ConvoComposer__send--delete {
+  color: var(--vkui--color_icon_negative);
+}
+
 .ConvoComposer__restriction {
   display: flex;
   align-items: center;
