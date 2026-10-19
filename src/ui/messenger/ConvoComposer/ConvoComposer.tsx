@@ -4,7 +4,7 @@ import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
 import { editMessage, sendMessage } from 'actions'
-import { useConvoSession, useModal } from 'hooks'
+import { useConvoSession, useModal, useViewer } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttaches } from 'ui/messenger/ConvoComposer/ComposerAttaches/ComposerAttaches'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
@@ -34,6 +34,7 @@ type Props = {
 
 export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang } = useServices()
+  const viewer = useViewer()
   const { convoDrafts } = useConvosStore()
   const session = useConvoSession()
   const $input = shallowRef<HTMLSpanElement | null>(null)
@@ -149,10 +150,21 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.code === 'Enter' && !isEventWithModifier(event)) {
+    if (isEventWithModifier(event)) return
+
+    if (event.code === 'Enter') {
       // Предотвращаем перенос строки
       event.preventDefault()
       onSubmit()
+      return
+    }
+
+    if (event.code === 'ArrowUp' && ConvoDraft.isEmpty(draft)) {
+      const message = Convo.lastEditableMessage(props.convo, viewer.id)
+      if (message) {
+        event.preventDefault()
+        ConvoDraft.startEditing(draft, message)
+      }
     }
   }
 

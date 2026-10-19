@@ -93,7 +93,12 @@ export function hasContent(draft: Draft) {
 }
 
 export function isEmpty(convoDraft: ConvoDraft) {
-  return !convoDraft.editing && !convoDraft.replyMessage && !hasContent(convoDraft)
+  return (
+    !convoDraft.editing &&
+    !convoDraft.replyMessage &&
+    !convoDraft.uploadingAttaches.length &&
+    !hasContent(convoDraft)
+  )
 }
 
 function cancelUploads(draft: Draft) {

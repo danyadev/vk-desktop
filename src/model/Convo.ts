@@ -196,6 +196,23 @@ export function lastMessage(convo: Convo, allowPending?: boolean): Message.Messa
   return History.lastItem(convo.history)
 }
 
+export function lastEditableMessage(
+  convo: Convo,
+  viewerId: Peer.OwnerId
+): Message.Normal | undefined {
+  for (let i = convo.history.length - 1; i >= 0; i--) {
+    const node = convo.history[i]
+
+    if (
+      node?.kind === 'Item' &&
+      node.item.kind === 'Normal' &&
+      canEditMessage(convo, node.item, viewerId)
+    ) {
+      return node.item
+    }
+  }
+}
+
 export function insertMessages(
   convo: Convo,
   messages: Message.Confirmed[],
