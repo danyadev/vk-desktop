@@ -56,9 +56,20 @@ export function startEditing(draft: ConvoDraft, message: Message.Normal) {
   Object.assign(draft, {
     ...emptyDraft(),
     text: message.text,
-    attaches: { ...message.attaches },
+    attaches: Attach.copy(message.attaches),
+    replyMessage: message.replyMessage,
     editing: { cmid: message.cmid, previousDraft }
   })
+}
+
+export function isEdited(draft: Draft, message: Message.Normal) {
+  return (
+    draft.text !== message.text ||
+    draft.replyMessage?.cmid !== message.replyMessage?.cmid ||
+    Attach.ids(draft.attaches) !== Attach.ids(message.attaches) ||
+    Attach.count(draft.attaches) !== Attach.count(message.attaches) ||
+    draft.uploadingAttaches.length > 0
+  )
 }
 
 export function finishEditing(draft: ConvoDraft) {

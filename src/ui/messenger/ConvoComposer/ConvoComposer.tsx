@@ -59,6 +59,17 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     !isSaving.value && ConvoDraft.hasContent(draft) && draft.uploadingAttaches.length === 0
   ))
 
+  const cancelEditing = () => {
+    if (!draft.editing || isSaving.value) return
+
+    const message = editingMessage.value
+    if (message?.kind === 'Normal' && !ConvoDraft.isEdited(draft, message)) {
+      ConvoDraft.finishEditing(draft)
+    } else {
+      cancelEditModal.open()
+    }
+  }
+
   const syncInput = () => {
     const input = $input.value
     if (!input) return
@@ -86,7 +97,17 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     if (draft.editing) {
       isSaving.value = true
       try {
-        await editMessage(props.convo.id, draft.editing.cmid, draft.text, draft.attaches)
+        const message = editingMessage.value
+        const keepForwarded = message
+          ? !!draft.replyMessage || !!(message.kind === 'Normal' && message.forwardedMessages)
+          : true
+        await editMessage(
+          props.convo.id,
+          draft.editing.cmid,
+          draft.text,
+          draft.attaches,
+          keepForwarded
+        )
         ConvoDraft.finishEditing(draft)
       } catch (error) {
         console.warn('[ConvoComposer] Failed to edit message', error)
@@ -102,17 +123,17 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     if ($input.value) $input.value.innerText = ''
   }
 
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.key === 'Escape' && draft.editing) {
-      event.preventDefault()
-      if (!isSaving.value) cancelEditModal.open()
-      return
+  const onEscape = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Escape' && draft.editing && !isEventWithModifier(event)) {
+      event.stopPropagation()
+      cancelEditing()
     }
+  }
 
+  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.code === 'Enter' && !isEventWithModifier(event)) {
       // Предотвращаем перенос строки
       event.preventDefault()
-
       onSubmit()
     }
   }
@@ -214,7 +235,10 @@ export const ConvoComposer = defineComponent<Props>((props) => {
 
   return () => (
     <>
-      <div class={['ConvoComposer', isSaving.value && 'ConvoComposer--saving']}>
+      <div
+        class={['ConvoComposer', isSaving.value && 'ConvoComposer--saving']}
+        onKeydown={onEscape}
+      >
         <div class="ConvoComposer__inner">
           {draft.editing && (
             <div class="ConvoComposer__reply">
@@ -231,11 +255,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
                 icon={<Icon24Cancel />}
                 withHoverBackground
                 disabled={isSaving.value}
-                onClick={cancelEditModal.open}
+                onClick={cancelEditing}
               />
             </div>
           )}
-          {!draft.editing && draft.replyMessage && (
+          {draft.replyMessage && (
             <div class="ConvoComposer__reply">
               <ReplyMessage
                 class="ConvoComposer__replyMessage"
@@ -295,7 +319,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         title={lang.use('me_convo_composer_edit_cancel_title')}
         buttons={[
           <Button mode="secondary" onClick={cancelEditModal.close}>
-            {lang.use('me_convo_composer_edit_continue')}
+            {lang.use('me_convo_composer_edit_cancel_dismiss')}
           </Button>,
           <Button
             mode="destructive"
@@ -305,7 +329,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               cancelEditModal.close()
             }}
           >
-            {lang.use('me_convo_composer_edit_cancel')}
+            {lang.use('me_convo_composer_edit_cancel_submit')}
           </Button>
         ]}
       >

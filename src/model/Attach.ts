@@ -220,6 +220,16 @@ function previewUnknown(unknown: NonNullable<Attaches['unknown']>, lang: ILang.L
   }
 }
 
+/** Поверхностное копирование объекта вложений */
+export function copy(attaches: Attaches): Attaches {
+  return Object.fromEntries(
+    Object.entries(attaches).map(([key, value]) => [
+      key,
+      Array.isArray(value) ? [...value] : value
+    ])
+  )
+}
+
 export function add(attaches: Attaches, attach: SingleAttach) {
   switch (attach.kind) {
     case 'Photo':

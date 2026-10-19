@@ -7,7 +7,8 @@ export async function editMessage(
   peerId: Peer.Id,
   cmid: Message.Cmid,
   text: string,
-  attaches: Attach.Attaches
+  attaches: Attach.Attaches,
+  keepForwarded: boolean
 ) {
   const { api } = useServices()
   const result = await api.fetch('messages.edit', {
@@ -15,7 +16,7 @@ export async function editMessage(
     cmid,
     message: text,
     attachment: Attach.ids(attaches),
-    keep_forward_messages: 1,
+    keep_forward_messages: keepForwarded ? 1 : 0,
     keep_snippets: 1
   })
 
