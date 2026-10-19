@@ -1,7 +1,7 @@
 import { MessagesMessageAttachmentType } from 'services/contracts/api/objects/MessagesMessageAttachment'
 import * as ILang from 'services/contracts/ILang'
 import * as Peer from 'model/Peer'
-import { Flatten, NonEmptyArray, typeguard } from 'misc/utils'
+import { Flatten, isObject, NonEmptyArray, typeguard } from 'misc/utils'
 
 export type Attaches = {
   sticker?: Sticker
@@ -126,12 +126,78 @@ export function id(attach: SingleAttach): string {
       return `doc${attach.ownerId}_${attach.id}_${attach.accessKey}`
     case 'Link':
       return attach.url
-    case 'Sticker': // Отправляется отдельным полем sticker_id
-    case 'Unknown':
+    case 'Sticker':
+      // Отправляется отдельным полем sticker_id
       break
+    case 'Unknown':
+      return idUnknown(attach)
   }
 
   return ''
+}
+
+function idUnknown({ type, raw }: Unknown): string {
+  if (!isObject(raw)) return ''
+
+  const data = (raw as Record<string, Record<string, unknown>>)[type]
+  if (!isObject(data)) return ''
+
+  const withOwner = (prefix: string) => {
+    if (typeof data.owner_id !== 'number' || typeof data.id !== 'number') return ''
+
+    const accessKey = typeof data.access_key === 'string' && data.access_key
+      ? `_${data.access_key}`
+      : ''
+
+    return `${prefix}${data.owner_id}_${data.id}${accessKey}`
+  }
+
+  switch (type) {
+    case 'audio':
+    case 'video':
+    case 'doc':
+    case 'podcast':
+    case 'market':
+    case 'market_album':
+    case 'wall_reply':
+    case 'poll':
+    case 'story':
+    case 'narrative':
+    case 'album':
+    case 'question':
+    case 'audio_playlist':
+    case 'ugc_sticker':
+    case 'article':
+      return withOwner(type)
+
+    case 'graffiti':
+      return withOwner('doc')
+
+    case 'artist':
+    case 'curator':
+      return (typeof data.id === 'number' || typeof data.id === 'string') && data.id !== ''
+        ? `${type}${data.id}`
+        : ''
+
+    case 'event':
+      return typeof data.id === 'number' ? `event${Math.abs(data.id)}` : ''
+
+    case 'donut_link':
+      return typeof data.owner_id === 'number' ? `donut_link${data.owner_id}` : ''
+
+    case 'mini_app': {
+      const { app } = data
+      return isObject(app) && 'id' in app && typeof app.id === 'number'
+        ? `mini_app${app.id}`
+        : ''
+    }
+
+    case 'widget':
+      return typeof data.id === 'number' ? `widget${data.id}` : ''
+
+    default:
+      return ''
+  }
 }
 
 export function preview(attach: Attach, lang: ILang.Lang): string {

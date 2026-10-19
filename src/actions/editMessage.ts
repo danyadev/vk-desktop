@@ -17,7 +17,7 @@ export async function editMessage(
     message: text,
     attachment: Attach.ids(attaches),
     keep_forward_messages: keepForwarded ? 1 : 0,
-    keep_snippets: attaches.links?.length ? 1 : 0
+    keep_snippets: attaches.links ? 1 : 0
   })
 
   if (result !== 1) throw new Error('messages.edit returned ' + result)
