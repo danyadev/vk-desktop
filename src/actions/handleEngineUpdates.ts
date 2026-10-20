@@ -395,6 +395,7 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
 
         convo.notifications.enabled = setting.disabled_until === 0
         convo.notifications.disabledUntil = setting.disabled_until * 1000
+        convo.notifications.soundEnabled = setting.sound === 1
         break
       }
     }

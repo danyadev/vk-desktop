@@ -28,6 +28,10 @@
   white-space: nowrap;
 }
 
+.ActionMenuItem__after {
+  flex: none;
+}
+
 .ActionMenuItem--accent .ActionMenuItem__icon {
   color: var(--vkui--color_icon_accent);
 }

@@ -1,8 +1,8 @@
 // account.setSilenceMode
 export type AccountSetSilenceModeParams = {
-  time: number
+  time?: number
   peer_id: number
-  sound: number
+  sound?: number
 }
 
 export type AccountSetSilenceModeResponse = 1

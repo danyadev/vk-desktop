@@ -8,4 +8,8 @@ export { loadInitialData } from './loadInitialData'
 export { loadMoreConvos } from './loadMoreConvos'
 export { sendMessage, retryPendingMessage, retryAllPendingMessages } from './sendMessage'
 export { syncDraftMessage, syncDraftsOnHistoryClear, syncDraftsOnLoad } from './syncConvoDrafts'
-export { toggleConvoNotifications } from './toggleConvoNotifications'
+export {
+  setConvoNotifications,
+  toggleConvoNotifications,
+  toggleConvoNotificationSound
+} from './toggleConvoNotifications'

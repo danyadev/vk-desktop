@@ -35,6 +35,7 @@ export interface BaseConvo {
   notifications: {
     enabled: boolean
     disabledUntil: number
+    soundEnabled: boolean
   }
   folderIds: number[]
   isArchived: boolean
@@ -135,7 +136,8 @@ function mock(id: Peer.Id): Convo {
     outReadBy: 0,
     notifications: {
       enabled: true,
-      disabledUntil: 0
+      disabledUntil: 0,
+      soundEnabled: true
     },
     folderIds: [],
     isArchived: false,

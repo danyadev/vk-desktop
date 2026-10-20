@@ -5,6 +5,7 @@ import './ActionMenuItem.css'
 
 type Props = {
   icon?: JSXElement
+  after?: JSXElement
   text: string
   mode?: 'default' | 'accent' | 'destructive'
   loading?: boolean
@@ -27,8 +28,9 @@ export const ActionMenuItem = defineComponent<Props>((props) => {
         </span>
       )}
       <span class="ActionMenuItem__text">{props.text}</span>
+      {props.after && <span class="ActionMenuItem__after">{props.after}</span>}
     </button>
   )
 }, {
-  props: ['icon', 'text', 'mode', 'loading', 'disabled']
+  props: ['icon', 'after', 'text', 'mode', 'loading', 'disabled']
 })
