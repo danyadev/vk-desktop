@@ -11,6 +11,7 @@ import {
   toggleConvoNotificationSound
 } from 'actions'
 import { useConvoSession, useModal } from 'hooks'
+import { MAX_PINNED_CONVOS } from 'misc/constants'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
@@ -20,6 +21,7 @@ import { Button } from 'ui/ui/Button/Button'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20ArchiveOutline,
+  Icon20ArrowDownOutline,
   Icon20ArrowUpOutline,
   Icon20ArrowUturnLeftOutline,
   Icon20ClearDataOutline,
@@ -61,10 +63,11 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
   const leaveChatModal = useModal()
   const errorModal = useModal()
 
-  const pinnedMessages = computed(() => {
+  const pinnedConvos = computed(() => {
     return [...lists.main.peerIds]
       .map((peerId) => Convo.safeGet(convos, peerId))
       .filter((convo) => convo.majorSortId > 0)
+      .sort(Convo.sorter)
   })
 
   const makeAction = (key: LoadingAction, action: () => Promise<void>) => {
@@ -83,6 +86,25 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
       loadingAction.value = undefined
     }
   }
+
+  const movePinnedConvo = (direction: -1 | 1) => makeAction('pin', async () => {
+    const currentIndex = pinnedConvos.value.findIndex((convo) => convo.id === props.convo.id)
+    const targetIndex = currentIndex + direction
+
+    if (currentIndex === -1 || targetIndex < 0 || targetIndex >= pinnedConvos.value.length) {
+      return
+    }
+
+    await api.fetchMany([
+      api.buildMethod('messages.unpinConversation', {
+        peer_id: props.convo.id
+      }),
+      api.buildMethod('messages.pinConversation', {
+        peer_id: props.convo.id,
+        position: targetIndex + 1
+      })
+    ])
+  })
 
   const goToFirstMessage = () => {
     if (!session) return
@@ -176,6 +198,7 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
     const pinnedMessage = convo.kind === 'ChatConvo' && convo.pinnedMessage
     const pinnedMessageHidden =
       !!pinnedMessage && hiddenPinnedMessages.get(convo.id) === pinnedMessage.cmid
+    const pinnedIndex = pinnedConvos.value.findIndex((item) => item.id === convo.id)
     const pinned = convo.majorSortId !== 0
     const muted = !convo.notifications.enabled
     const disabled = loadingAction.value !== undefined
@@ -263,21 +286,37 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
                 loading={loadingAction.value === 'archive'}
                 onClick={toggleArchive}
               />
-              {!convo.isArchived && (pinned || pinnedMessages.value.length < 5) && (
-                <ActionMenuItem
+              {(pinned || pinnedConvos.value.length < MAX_PINNED_CONVOS) && !convo.isArchived && (
+                <ActionMenuSubmenu
                   icon={pinned ? <Icon20PinSlashOutline /> : <Icon20PinOutline />}
                   text={lang.use(pinned ? 'me_convo_menu_unpin' : 'me_convo_menu_pin')}
                   disabled={disabled}
                   loading={loadingAction.value === 'pin'}
                   onClick={togglePin}
-                />
+                  disabledMenu={!pinned || pinnedConvos.value.length === 1}
+                >
+                  <ActionMenu>
+                    <ActionMenuItem
+                      icon={<Icon20ArrowUpOutline />}
+                      text={lang.use('me_convo_menu_move_up')}
+                      disabled={disabled || pinnedIndex === 0}
+                      onClick={movePinnedConvo(-1)}
+                    />
+                    <ActionMenuItem
+                      icon={<Icon20ArrowDownOutline />}
+                      text={lang.use('me_convo_menu_move_down')}
+                      disabled={disabled || pinnedIndex === pinnedConvos.value.length - 1}
+                      onClick={movePinnedConvo(1)}
+                    />
+                  </ActionMenu>
+                </ActionMenuSubmenu>
               )}
               {pinnedMessage && !props.fromConvoList && (
                 <ActionMenuItem
                   icon={pinnedMessageHidden ? <Icon20ViewOutline /> : <Icon20HideOutline />}
                   text={lang.use(pinnedMessageHidden
-                    ? 'me_convo_menu_show_pinned'
-                    : 'me_convo_menu_hide_pinned')}
+                    ? 'me_convo_menu_show_pinned_message'
+                    : 'me_convo_menu_hide_pinned_message')}
                   onClick={togglePinnedMessage}
                 />
               )}
