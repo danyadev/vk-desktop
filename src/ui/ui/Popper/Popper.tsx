@@ -6,6 +6,7 @@ import {
   shallowRef,
   Teleport,
   Transition,
+  VNodeChild,
   watch
 } from 'vue'
 import { flip, offset, OffsetOptions, Placement, shift } from '@floating-ui/dom'
@@ -17,7 +18,7 @@ import './Popper.css'
 
 type Props = {
   trigger?: 'click' | 'contextmenu'
-  content: JSXElement
+  content: JSXElement | VNodeChild
   placement?: Placement
   offset?: OffsetOptions
   showOnHover?: boolean
@@ -25,9 +26,9 @@ type Props = {
 }
 
 export const Popper = defineComponent<Props>((props, { slots }) => {
-  const isMounted = useIsMounted()
   const showContent = shallowRef(false)
   const isVisible = shallowRef(false)
+  const isMounted = useIsMounted()
   const isPointingAtTrigger = shallowRef(false)
   const isPointingAtContent = shallowRef(false)
   let hideContentTimeout = 0
@@ -57,12 +58,12 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
   const isContextMenu = props.trigger === 'contextmenu'
   const placement = props.placement ?? (isContextMenu ? 'bottom-start' : 'bottom-end')
 
-  const { setTriggerRef, setVirtualTrigger, setContentRef } = useFloatingUI({
+  const { setTriggerRef, setVirtualTrigger, setContentRef, effectivePlacement } = useFloatingUI({
     placement,
     middleware: [
       offset(props.offset ?? (isContextMenu ? 0 : 4)),
-      shift({ padding: 8 }),
-      flip()
+      flip({ padding: 8 }),
+      shift({ padding: 8 })
     ]
   })
 
@@ -145,7 +146,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
             {showContent.value && (
               <div
                 ref={setContentRef}
-                class={['Popper', `Popper--placement-${placement}`]}
+                class={['Popper', `Popper--placement-${effectivePlacement.value}`]}
                 onClick={() => props.closeOnContentClick && (showContent.value = false)}
                 onMouseenter={() => (isPointingAtContent.value = true)}
                 onMouseleave={() => (isPointingAtContent.value = false)}

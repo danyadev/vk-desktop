@@ -10,6 +10,14 @@
   transition: background-color var(--fastTransition);
 }
 
+.ActionMenuItem:has(> .ActionMenuItem__icon) {
+  padding-left: 4px;
+}
+
+.ActionMenuItem:has(> .ActionMenuItem__after) {
+  padding-right: 4px;
+}
+
 .ActionMenuItem__icon {
   display: flex;
   flex: none;
@@ -29,7 +37,11 @@
 }
 
 .ActionMenuItem__after {
+  display: flex;
   flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
 }
 
 .ActionMenuItem--accent .ActionMenuItem__icon {

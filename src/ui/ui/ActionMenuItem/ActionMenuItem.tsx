@@ -3,7 +3,7 @@ import { JSXElement } from 'misc/utils'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ActionMenuItem.css'
 
-type Props = {
+export type ActionMenuItemProps = {
   icon?: JSXElement
   after?: JSXElement
   text: string
@@ -12,7 +12,7 @@ type Props = {
   disabled?: boolean
 } & ButtonHTMLAttributes
 
-export const ActionMenuItem = defineComponent<Props>((props) => {
+export const ActionMenuItem = defineComponent<ActionMenuItemProps>((props) => {
   return () => (
     <button
       class={['ActionMenuItem', {

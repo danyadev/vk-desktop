@@ -35,3 +35,11 @@
 .Popper--placement-top-start {
   transform-origin: bottom left;
 }
+
+.Popper--placement-right-start {
+  transform-origin: top left;
+}
+
+.Popper--placement-left-start {
+  transform-origin: top right;
+}
