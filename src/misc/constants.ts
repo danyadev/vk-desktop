@@ -16,4 +16,5 @@ export const PEER_FIELDS = [
 ].join(',')
 
 export const CONVOS_PER_PAGE = 20
+export const MAX_PINNED_CONVOS = 5
 export const INTEGER_BOUNDARY = (2 ** 31) - 1
