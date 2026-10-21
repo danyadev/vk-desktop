@@ -7,10 +7,10 @@ import {
   Teleport,
   Transition,
   VNodeChild,
-  watch
+  watch,
+  watchEffect
 } from 'vue'
 import { flip, offset, OffsetOptions, Placement, shift } from '@floating-ui/dom'
-import { useIsMounted } from 'hooks'
 import { JSXElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
 import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithProps'
@@ -23,22 +23,29 @@ type Props = {
   offset?: OffsetOptions
   showOnHover?: boolean
   closeOnContentClick?: boolean
+  disabled?: boolean
+  nested?: boolean
 }
 
 export const Popper = defineComponent<Props>((props, { slots }) => {
   const showContent = shallowRef(false)
   const isVisible = shallowRef(false)
-  const isMounted = useIsMounted()
   const isPointingAtTrigger = shallowRef(false)
   const isPointingAtContent = shallowRef(false)
+  const isContextMenu = props.trigger === 'contextmenu'
   let hideContentTimeout = 0
 
-  watch([isPointingAtTrigger, isPointingAtContent, () => props.showOnHover], () => {
+  watchEffect(() => {
     if (!props.showOnHover) {
       return
     }
 
     clearTimeout(hideContentTimeout)
+
+    if (props.disabled) {
+      showContent.value = false
+      return
+    }
 
     if (isPointingAtTrigger.value || isPointingAtContent.value) {
       showContent.value = true
@@ -55,15 +62,12 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     }
   })
 
-  const isContextMenu = props.trigger === 'contextmenu'
-  const placement = props.placement ?? (isContextMenu ? 'bottom-start' : 'bottom-end')
-
   const { setTriggerRef, setVirtualTrigger, setContentRef, effectivePlacement } = useFloatingUI({
-    placement,
+    placement: props.placement ?? (isContextMenu ? 'bottom-start' : 'bottom-end'),
     middleware: [
       offset(props.offset ?? (isContextMenu ? 0 : 4)),
       flip({ padding: 8 }),
-      shift({ padding: 8 })
+      shift({ padding: 8, crossAxis: true })
     ]
   })
 
@@ -127,8 +131,8 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
         {slots.default?.()}
       </RenderSlotWithProps>
 
-      {isMounted.value && (showContent.value || isVisible.value) && (
-        <Teleport to=".App">
+      {(showContent.value || isVisible.value) && (
+        <Teleport to=".App" disabled={props.nested}>
           {showContent.value && !props.showOnHover && (
             <div
               class="Popper__backdrop"
@@ -161,5 +165,14 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     </>
   )
 }, {
-  props: ['trigger', 'content', 'placement', 'offset', 'showOnHover', 'closeOnContentClick']
+  props: [
+    'trigger',
+    'content',
+    'placement',
+    'offset',
+    'showOnHover',
+    'closeOnContentClick',
+    'disabled',
+    'nested'
+  ]
 })

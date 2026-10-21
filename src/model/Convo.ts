@@ -98,6 +98,8 @@ export type Style =
   | 'sberkot'
 
 export const flags = {
+  notificationsDisabled: 1 << 4,
+  soundDisabled: 1 << 5,
   markedUnread: 1 << 20,
   archived: 1 << 23
 }

@@ -28,6 +28,10 @@
   transform: scale(0.95);
 }
 
+.Popper--leave-active {
+  pointer-events: none;
+}
+
 .Popper--placement-bottom-end {
   transform-origin: top right;
 }

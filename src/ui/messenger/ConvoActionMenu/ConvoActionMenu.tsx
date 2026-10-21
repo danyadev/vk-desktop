@@ -202,6 +202,7 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
                 disabled={disabled}
                 loading={loadingAction.value === 'mute'}
                 onClick={toggleNotifications}
+                disabledMenu={muted}
               >
                 <ActionMenu>
                   <ActionMenuItem

@@ -328,7 +328,7 @@ type Update114 = [
   data: {
     peer_id: number
     sound: 0 | 1
-    disabled_until: number
+    disabled_until: number | null
   }
 ]
 
