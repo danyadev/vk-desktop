@@ -1,4 +1,5 @@
 import {
+  computed,
   defineComponent,
   KeyboardEvent,
   MouseEvent,
@@ -11,7 +12,8 @@ import {
   watchEffect
 } from 'vue'
 import { flip, offset, OffsetOptions, Placement, shift } from '@floating-ui/dom'
-import { JSXElement } from 'misc/utils'
+import { useFocusTrap } from 'hooks'
+import { JSXElement, RawRefElement, unrefElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
 import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithProps'
 import './Popper.css'
@@ -28,6 +30,7 @@ type Props = {
 }
 
 export const Popper = defineComponent<Props>((props, { slots }) => {
+  const $popper = shallowRef<HTMLElement | null>(null)
   const showContent = shallowRef(false)
   const isVisible = shallowRef(false)
   const isPointingAtTrigger = shallowRef(false)
@@ -71,7 +74,22 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     ]
   })
 
+  const { onFocusIn, onFocusOut } = useFocusTrap($popper, computed(() => (
+    isVisible.value && !props.nested && !props.showOnHover
+  )))
+
+  const setPopperRef = (element: RawRefElement) => {
+    const node = unrefElement(element)
+    if (!node || node instanceof HTMLElement) {
+      $popper.value = node
+      setContentRef(node)
+    }
+  }
+
   const onTriggerClick = (event: MouseEvent) => {
+    if (props.disabled) {
+      return
+    }
     if (isContextMenu) {
       if (showContent.value) {
         event.stopImmediatePropagation()
@@ -149,12 +167,15 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
           >
             {showContent.value && (
               <div
-                ref={setContentRef}
+                ref={setPopperRef}
                 class={['Popper', `Popper--placement-${effectivePlacement.value}`]}
+                tabindex={-1}
                 onClick={() => props.closeOnContentClick && (showContent.value = false)}
                 onMouseenter={() => (isPointingAtContent.value = true)}
                 onMouseleave={() => (isPointingAtContent.value = false)}
                 onKeydown={handleEscape}
+                onFocusin={onFocusIn}
+                onFocusout={onFocusOut}
               >
                 {props.content}
               </div>

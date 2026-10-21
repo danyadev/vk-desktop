@@ -226,19 +226,15 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
                     disabled={disabled}
                     onClick={muteFor(-1)}
                   />
-                  {convo.kind !== 'ChatConvo' && convo.notifications.enabled && (
-                    <>
-                      <ActionMenuSeparator />
-                      <ActionMenuItem
-                        text={lang.use(convo.notifications.soundEnabled
-                          ? 'me_convo_menu_sound_off'
-                          : 'me_convo_menu_sound_on')}
-                        disabled={disabled}
-                        loading={loadingAction.value === 'sound'}
-                        onClick={toggleSound}
-                      />
-                    </>
-                  )}
+                  <ActionMenuSeparator />
+                  <ActionMenuItem
+                    text={lang.use(convo.notifications.soundEnabled
+                      ? 'me_convo_menu_sound_off'
+                      : 'me_convo_menu_sound_on')}
+                    disabled={disabled}
+                    loading={loadingAction.value === 'sound'}
+                    onClick={toggleSound}
+                  />
                 </ActionMenu>
               </ActionMenuSubmenu>
               {Convo.isUnread(convo) ? (

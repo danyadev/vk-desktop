@@ -12,9 +12,8 @@ export async function toggleConvoNotifications(convo: Convo.Convo) {
 
 export async function toggleConvoNotificationSound(convo: Convo.Convo) {
   const { api } = useServices()
-  const soundEnabled = !convo.notifications.soundEnabled
   await api.fetch('account.setSilenceMode', {
     peer_id: convo.id,
-    sound: soundEnabled ? 1 : 0
+    sound: convo.notifications.soundEnabled ? 0 : 1
   })
 }
