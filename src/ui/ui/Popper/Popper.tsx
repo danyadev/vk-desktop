@@ -101,14 +101,11 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     showContent.value = !showContent.value
   }
 
-  const handleEscape = (event: KeyboardEvent) => {
-    if (!props.showOnHover && event.key === 'Escape' && showContent.value) {
-      event.stopPropagation()
-      showContent.value = false
+  const onContextMenu = (event: PointerEvent) => {
+    if (props.disabled) {
+      return
     }
-  }
 
-  const toggleContextMenu = (event: PointerEvent) => {
     event.preventDefault()
 
     if (showContent.value) {
@@ -123,6 +120,13 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     })
 
     showContent.value = true
+  }
+
+  const handleEscape = (event: KeyboardEvent) => {
+    if (!props.showOnHover && event.key === 'Escape' && showContent.value) {
+      event.stopPropagation()
+      showContent.value = false
+    }
   }
 
   const onBeforeAppear = () => {
@@ -141,7 +145,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
         ref={isContextMenu ? undefined : setTriggerRef}
         class={showContent.value && 'Popper__trigger--active'}
         onClickCapture={onTriggerClick}
-        onContextmenu={isContextMenu ? toggleContextMenu : undefined}
+        onContextmenu={isContextMenu ? onContextMenu : undefined}
         onMouseenter={() => (isPointingAtTrigger.value = true)}
         onMouseleave={() => (isPointingAtTrigger.value = false)}
         onKeydown={handleEscape}
