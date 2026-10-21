@@ -5,12 +5,17 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
-import { toggleConvoNotifications } from 'actions'
+import {
+  setConvoNotifications,
+  toggleConvoNotifications,
+  toggleConvoNotificationSound
+} from 'actions'
 import { useConvoSession, useModal } from 'hooks'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ActionMenuSeparator } from 'ui/ui/ActionMenuSeparator/ActionMenuSeparator'
+import { ActionMenuSubmenu } from 'ui/ui/ActionMenuSubmenu/ActionMenuSubmenu'
 import { Button } from 'ui/ui/Button/Button'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
@@ -36,6 +41,7 @@ type LoadingAction =
   | 'archive'
   | 'pin'
   | 'mute'
+  | 'sound'
   | 'clear'
   | 'membership'
 
@@ -131,6 +137,14 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
     await toggleConvoNotifications(props.convo)
   })
 
+  const muteFor = (time: number) => makeAction('mute', async () => {
+    await setConvoNotifications(props.convo, time)
+  })
+
+  const toggleSound = makeAction('sound', async () => {
+    await toggleConvoNotificationSound(props.convo)
+  })
+
   const copyId = () => {
     navigator.clipboard.writeText(String(props.convo.id))
   }
@@ -182,13 +196,47 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
                   onClick={returnToChat}
                 />
               )}
-              <ActionMenuItem
+              <ActionMenuSubmenu
                 icon={muted ? <Icon20NotificationOutline /> : <Icon20NotificationSlashOutline />}
                 text={lang.use(muted ? 'me_convo_menu_unmute' : 'me_convo_menu_mute')}
                 disabled={disabled}
                 loading={loadingAction.value === 'mute'}
                 onClick={toggleNotifications}
-              />
+                disabledMenu={muted}
+              >
+                <ActionMenu>
+                  <ActionMenuItem
+                    text={lang.use('me_convo_menu_mute_hour')}
+                    disabled={disabled}
+                    onClick={muteFor(60 * 60)}
+                  />
+                  <ActionMenuItem
+                    text={lang.use('me_convo_menu_mute_eight_hours')}
+                    disabled={disabled}
+                    onClick={muteFor(8 * 60 * 60)}
+                  />
+                  <ActionMenuItem
+                    text={lang.use('me_convo_menu_mute_day')}
+                    disabled={disabled}
+                    onClick={muteFor(24 * 60 * 60)}
+                  />
+                  <ActionMenuItem
+                    text={lang.use('me_convo_menu_mute_forever')}
+                    mode="destructive"
+                    disabled={disabled}
+                    onClick={muteFor(-1)}
+                  />
+                  <ActionMenuSeparator />
+                  <ActionMenuItem
+                    text={lang.use(convo.notifications.soundEnabled
+                      ? 'me_convo_menu_sound_off'
+                      : 'me_convo_menu_sound_on')}
+                    disabled={disabled}
+                    loading={loadingAction.value === 'sound'}
+                    onClick={toggleSound}
+                  />
+                </ActionMenu>
+              </ActionMenuSubmenu>
               {Convo.isUnread(convo) ? (
                 <ActionMenuItem
                   icon={<Icon20MessageCheckOutline />}

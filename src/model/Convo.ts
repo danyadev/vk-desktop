@@ -35,6 +35,7 @@ export interface BaseConvo {
   notifications: {
     enabled: boolean
     disabledUntil: number
+    soundEnabled: boolean
   }
   folderIds: number[]
   isArchived: boolean
@@ -97,6 +98,8 @@ export type Style =
   | 'sberkot'
 
 export const flags = {
+  notificationsDisabled: 1 << 4,
+  soundDisabled: 1 << 5,
   markedUnread: 1 << 20,
   archived: 1 << 23
 }
@@ -135,7 +138,8 @@ function mock(id: Peer.Id): Convo {
     outReadBy: 0,
     notifications: {
       enabled: true,
-      disabledUntil: 0
+      disabledUntil: 0,
+      soundEnabled: true
     },
     folderIds: [],
     isArchived: false,

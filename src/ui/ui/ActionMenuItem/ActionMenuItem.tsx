@@ -3,15 +3,16 @@ import { JSXElement } from 'misc/utils'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ActionMenuItem.css'
 
-type Props = {
+export type ActionMenuItemProps = {
   icon?: JSXElement
+  after?: JSXElement
   text: string
   mode?: 'default' | 'accent' | 'destructive'
   loading?: boolean
   disabled?: boolean
 } & ButtonHTMLAttributes
 
-export const ActionMenuItem = defineComponent<Props>((props) => {
+export const ActionMenuItem = defineComponent<ActionMenuItemProps>((props) => {
   return () => (
     <button
       class={['ActionMenuItem', {
@@ -27,8 +28,9 @@ export const ActionMenuItem = defineComponent<Props>((props) => {
         </span>
       )}
       <span class="ActionMenuItem__text">{props.text}</span>
+      {props.after && <span class="ActionMenuItem__after">{props.after}</span>}
     </button>
   )
 }, {
-  props: ['icon', 'text', 'mode', 'loading', 'disabled']
+  props: ['icon', 'after', 'text', 'mode', 'loading', 'disabled']
 })

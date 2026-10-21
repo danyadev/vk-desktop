@@ -1,4 +1,5 @@
 import {
+  computed,
   defineComponent,
   KeyboardEvent,
   MouseEvent,
@@ -6,38 +7,48 @@ import {
   shallowRef,
   Teleport,
   Transition,
-  watch
+  VNodeChild,
+  watch,
+  watchEffect
 } from 'vue'
 import { flip, offset, OffsetOptions, Placement, shift } from '@floating-ui/dom'
-import { useIsMounted } from 'hooks'
-import { JSXElement } from 'misc/utils'
+import { useFocusTrap } from 'hooks'
+import { JSXElement, RawRefElement, unrefElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
 import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithProps'
 import './Popper.css'
 
 type Props = {
   trigger?: 'click' | 'contextmenu'
-  content: JSXElement
+  content: JSXElement | VNodeChild
   placement?: Placement
   offset?: OffsetOptions
   showOnHover?: boolean
   closeOnContentClick?: boolean
+  disabled?: boolean
+  nested?: boolean
 }
 
 export const Popper = defineComponent<Props>((props, { slots }) => {
-  const isMounted = useIsMounted()
+  const $popper = shallowRef<HTMLElement | null>(null)
   const showContent = shallowRef(false)
   const isVisible = shallowRef(false)
   const isPointingAtTrigger = shallowRef(false)
   const isPointingAtContent = shallowRef(false)
+  const isContextMenu = props.trigger === 'contextmenu'
   let hideContentTimeout = 0
 
-  watch([isPointingAtTrigger, isPointingAtContent, () => props.showOnHover], () => {
+  watchEffect(() => {
     if (!props.showOnHover) {
       return
     }
 
     clearTimeout(hideContentTimeout)
+
+    if (props.disabled) {
+      showContent.value = false
+      return
+    }
 
     if (isPointingAtTrigger.value || isPointingAtContent.value) {
       showContent.value = true
@@ -54,19 +65,31 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     }
   })
 
-  const isContextMenu = props.trigger === 'contextmenu'
-  const placement = props.placement ?? (isContextMenu ? 'bottom-start' : 'bottom-end')
-
-  const { setTriggerRef, setVirtualTrigger, setContentRef } = useFloatingUI({
-    placement,
+  const { setTriggerRef, setVirtualTrigger, setContentRef, effectivePlacement } = useFloatingUI({
+    placement: props.placement ?? (isContextMenu ? 'bottom-start' : 'bottom-end'),
     middleware: [
       offset(props.offset ?? (isContextMenu ? 0 : 4)),
-      shift({ padding: 8 }),
-      flip()
+      flip({ padding: 8 }),
+      shift({ padding: 8, crossAxis: true })
     ]
   })
 
+  const { onFocusIn, onFocusOut } = useFocusTrap($popper, computed(() => (
+    isVisible.value && !props.nested && !props.showOnHover
+  )))
+
+  const setPopperRef = (element: RawRefElement) => {
+    const node = unrefElement(element)
+    if (!node || node instanceof HTMLElement) {
+      $popper.value = node
+      setContentRef(node)
+    }
+  }
+
   const onTriggerClick = (event: MouseEvent) => {
+    if (props.disabled) {
+      return
+    }
     if (isContextMenu) {
       if (showContent.value) {
         event.stopImmediatePropagation()
@@ -78,14 +101,11 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     showContent.value = !showContent.value
   }
 
-  const handleEscape = (event: KeyboardEvent) => {
-    if (!props.showOnHover && event.key === 'Escape' && showContent.value) {
-      event.stopPropagation()
-      showContent.value = false
+  const onContextMenu = (event: PointerEvent) => {
+    if (props.disabled) {
+      return
     }
-  }
 
-  const toggleContextMenu = (event: PointerEvent) => {
     event.preventDefault()
 
     if (showContent.value) {
@@ -100,6 +120,13 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     })
 
     showContent.value = true
+  }
+
+  const handleEscape = (event: KeyboardEvent) => {
+    if (!props.showOnHover && event.key === 'Escape' && showContent.value) {
+      event.stopPropagation()
+      showContent.value = false
+    }
   }
 
   const onBeforeAppear = () => {
@@ -118,7 +145,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
         ref={isContextMenu ? undefined : setTriggerRef}
         class={showContent.value && 'Popper__trigger--active'}
         onClickCapture={onTriggerClick}
-        onContextmenu={isContextMenu ? toggleContextMenu : undefined}
+        onContextmenu={isContextMenu ? onContextMenu : undefined}
         onMouseenter={() => (isPointingAtTrigger.value = true)}
         onMouseleave={() => (isPointingAtTrigger.value = false)}
         onKeydown={handleEscape}
@@ -126,8 +153,8 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
         {slots.default?.()}
       </RenderSlotWithProps>
 
-      {isMounted.value && (showContent.value || isVisible.value) && (
-        <Teleport to=".App">
+      {(showContent.value || isVisible.value) && (
+        <Teleport to=".App" disabled={props.nested}>
           {showContent.value && !props.showOnHover && (
             <div
               class="Popper__backdrop"
@@ -144,12 +171,15 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
           >
             {showContent.value && (
               <div
-                ref={setContentRef}
-                class={['Popper', `Popper--placement-${placement}`]}
+                ref={setPopperRef}
+                class={['Popper', `Popper--placement-${effectivePlacement.value}`]}
+                tabindex={-1}
                 onClick={() => props.closeOnContentClick && (showContent.value = false)}
                 onMouseenter={() => (isPointingAtContent.value = true)}
                 onMouseleave={() => (isPointingAtContent.value = false)}
                 onKeydown={handleEscape}
+                onFocusin={onFocusIn}
+                onFocusout={onFocusOut}
               >
                 {props.content}
               </div>
@@ -160,5 +190,14 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     </>
   )
 }, {
-  props: ['trigger', 'content', 'placement', 'offset', 'showOnHover', 'closeOnContentClick']
+  props: [
+    'trigger',
+    'content',
+    'placement',
+    'offset',
+    'showOnHover',
+    'closeOnContentClick',
+    'disabled',
+    'nested'
+  ]
 })

@@ -1,43 +1,64 @@
-import { FocusEvent, onBeforeMount, onUnmounted, Ref } from 'vue'
+import { FocusEvent, onUnmounted, Ref, shallowRef, watch } from 'vue'
 import { NonEmptyArray } from 'misc/utils'
 
-/**
- * Храним количество активных фокус трапов, чтобы задерживать фокус только
- * для последнего вызванного хука, так как сфокусированный элемент может быть только один
- */
-let lastTrapIndex = 0
+const activeTraps: symbol[] = []
 
-export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
+export function useFocusTrap(
+  $focusRoot: Ref<HTMLElement | null>,
+  active: Ref<boolean> = shallowRef(true)
+) {
+  const trapId = Symbol()
+  const isTopTrap = () => activeTraps.at(-1) === trapId
+
   let initialFocusedElement: Element | null = null
   let isPageBecomeActive = false
-  const currentTrapIndex = ++lastTrapIndex
 
-  onBeforeMount(() => {
-    initialFocusedElement = document.activeElement
-  })
+  const deactivate = () => {
+    const index = activeTraps.indexOf(trapId)
+    if (index === -1) return
 
-  onUnmounted(() => {
-    if (initialFocusedElement instanceof HTMLElement) {
+    const shouldRestoreFocus = isTopTrap()
+    activeTraps.splice(index, 1)
+    if (shouldRestoreFocus && initialFocusedElement instanceof HTMLElement) {
       initialFocusedElement.focus()
     }
-    lastTrapIndex--
-  })
+  }
+
+  watch(active, (enabled) => {
+    if (enabled) {
+      if (activeTraps.includes(trapId)) return
+
+      initialFocusedElement = document.activeElement
+      isPageBecomeActive = false
+      activeTraps.push(trapId)
+    } else {
+      deactivate()
+    }
+  }, { immediate: true, flush: 'sync' })
+
+  watch([active, $focusRoot], ([enabled, root]) => {
+    if (!enabled || !root || !isTopTrap()) {
+      return
+    }
+    if (!root.contains(document.activeElement)) {
+      root.focus()
+    }
+  }, { immediate: true })
+
+  onUnmounted(deactivate)
 
   /**
    * event.relatedTarget - предыдущий сфокусированный элемент
    * event.target - текущий сфокусированный элемент
    */
   function onFocusIn(event: FocusEvent<HTMLElement>) {
-    if (currentTrapIndex !== lastTrapIndex) {
-      return
-    }
-
     /**
      * Произошла активация окна страницы, фокус автоматически выставился на то место,
      * где он был в момент деактивации окна страницы.
      * Поэтому в данном случае мы игнорируем первоначально вызванный onFocusOut,
      * в котором нам покажется, что человек сделал Tab и вышел за пределы focusRoot
      */
+    if (!isTopTrap()) return
     if (event.relatedTarget === null && event.target !== null) {
       isPageBecomeActive = true
     }
@@ -48,18 +69,16 @@ export function useFocusTrap($focusRoot: Ref<HTMLElement | null>) {
    * event.relatedTarget - текущий сфокусированный элемент
    */
   async function onFocusOut(event: FocusEvent<HTMLElement>) {
-    if (currentTrapIndex !== lastTrapIndex) {
-      return
-    }
-
     /**
      * Сначала происходит событие onFocusOut, затем фокус переводится на новый элемент.
      * Если мы попытаемся вручную выставить фокус сразу при onFocusOut, не дожидаясь onFocusIn,
      * то наш фокус сразу перетрется
      */
+    if (!isTopTrap()) return
     await new Promise((resolve) => {
       window.addEventListener('focusin', resolve, { once: true })
     })
+    if (!isTopTrap()) return
 
     if (isPageBecomeActive) {
       isPageBecomeActive = false

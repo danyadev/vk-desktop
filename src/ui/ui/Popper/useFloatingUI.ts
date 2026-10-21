@@ -5,6 +5,7 @@ import { RawRefElement, unrefElement } from 'misc/utils'
 export function useFloatingUI(options: ComputePositionConfig) {
   const $content = shallowRef<HTMLElement | null>(null)
   const $trigger = shallowRef<HTMLElement | VirtualElement | null>(null)
+  const effectivePlacement = shallowRef(options.placement ?? 'bottom')
 
   const setTriggerRef = (refElement: RawRefElement) => {
     const element = unrefElement(refElement)
@@ -25,12 +26,16 @@ export function useFloatingUI(options: ComputePositionConfig) {
   }
 
   async function update() {
-    if ($trigger.value && $content.value) {
-      const { x, y } = await computePosition($trigger.value, $content.value, options)
+    const trigger = $trigger.value
+    const content = $content.value
+    if (!trigger || !content) return
 
-      $content.value.style.left = `${x}px`
-      $content.value.style.top = `${y}px`
-    }
+    const { x, y, placement } = await computePosition(trigger, content, options)
+    if ($trigger.value !== trigger || $content.value !== content) return
+
+    content.style.left = `${x}px`
+    content.style.top = `${y}px`
+    effectivePlacement.value = placement
   }
 
   watchEffect((onCleanup) => {
@@ -41,6 +46,7 @@ export function useFloatingUI(options: ComputePositionConfig) {
   return {
     setTriggerRef,
     setVirtualTrigger,
-    setContentRef
+    setContentRef,
+    effectivePlacement
   }
 }

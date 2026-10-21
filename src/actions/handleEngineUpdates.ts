@@ -229,9 +229,19 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           if (flags & Convo.flags.markedUnread) {
             convo.isMarkedUnread = isFlagSet
           }
-
           if (flags & (Convo.flags.archived | Convo.flags.markedUnread)) {
             Lists.refresh(lists, convo)
+          }
+
+          // Эти флаги приходят без 114 события когда временное отключение уведомлений заканчивается
+          if (flags & Convo.flags.notificationsDisabled) {
+            convo.notifications.enabled = !isFlagSet
+            if (!isFlagSet) {
+              convo.notifications.disabledUntil = 0
+            }
+          }
+          if (flags & Convo.flags.soundDisabled) {
+            convo.notifications.soundEnabled = !isFlagSet
           }
         }
         break
@@ -387,14 +397,16 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
       case 114: {
         const [, setting] = update
         const peerId = Peer.resolveId(setting.peer_id)
+        const disabledUntil = setting.disabled_until ?? 0
 
         const convo = convos.get(peerId)
         if (!convo) {
           break
         }
 
-        convo.notifications.enabled = setting.disabled_until === 0
-        convo.notifications.disabledUntil = setting.disabled_until * 1000
+        convo.notifications.enabled = disabledUntil === 0
+        convo.notifications.disabledUntil = disabledUntil * 1000
+        convo.notifications.soundEnabled = setting.sound === 1
         break
       }
     }

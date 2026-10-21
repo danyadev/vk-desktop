@@ -51,7 +51,8 @@ export function fromApiConvo(
         !apiConvo.push_settings?.disabled_until &&
         !apiConvo.push_settings?.disabled_forever
       ),
-      disabledUntil: (apiConvo.push_settings?.disabled_until ?? 0) * 1000
+      disabledUntil: (apiConvo.push_settings?.disabled_until ?? 0) * 1000,
+      soundEnabled: !apiConvo.push_settings?.no_sound
     },
     folderIds: apiConvo.folder_ids ?? [],
     isArchived: ((apiConvo.peer_flags ?? 0) & Convo.flags.archived) > 0,

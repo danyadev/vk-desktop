@@ -28,10 +28,22 @@
   transform: scale(0.95);
 }
 
+.Popper--leave-active {
+  pointer-events: none;
+}
+
 .Popper--placement-bottom-end {
   transform-origin: top right;
 }
 
 .Popper--placement-top-start {
   transform-origin: bottom left;
+}
+
+.Popper--placement-right-start {
+  transform-origin: top left;
+}
+
+.Popper--placement-left-start {
+  transform-origin: top right;
 }
