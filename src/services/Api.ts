@@ -20,7 +20,8 @@ const METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN: Array<keyof Methods> = [
   'messages.unarchiveConversation',
   'messages.markAsUnreadConversation',
   'messages.pinConversation',
-  'messages.unpinConversation'
+  'messages.unpinConversation',
+  'messages.getMessageReadPeers'
 ]
 
 export class Api implements IApi.Api {

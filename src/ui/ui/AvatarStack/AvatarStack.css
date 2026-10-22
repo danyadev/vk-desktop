@@ -1,0 +1,13 @@
+.AvatarStack {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.AvatarStack > .Avatar {
+  border: 2px solid var(--vkui--color_background_content);
+}
+
+.AvatarStack > .Avatar + .Avatar {
+  margin-left: -8px;
+}

@@ -8,6 +8,7 @@ import { useViewerStore } from 'store/viewer'
 import { retryAllPendingMessages, retryPendingMessage } from 'actions'
 import { useModal } from 'hooks'
 import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
+import { MessageReadersMenuItem } from 'ui/messenger/MessageActionMenu/MessageReadersMenuItem'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
@@ -87,6 +88,12 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
 
       return (
         <ActionMenu>
+          {message.isOut &&
+            !Message.isUnread(message, convo) &&
+            convo.kind === 'ChatConvo' &&
+            convo.status === 'in' && (
+            <MessageReadersMenuItem convo={convo} message={message} />
+          )}
           {convo.canWrite.allowed && (
             <ActionMenuItem
               icon={<Icon20ReplyOutline />}

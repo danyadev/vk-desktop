@@ -1,0 +1,30 @@
+.MessageReadersMenuItem_avatarStack {
+  max-height: 20px;
+}
+
+.MessageReadersMenuItem__list {
+  min-width: 200px;
+  max-width: 250px;
+  max-height: 250px;
+  overflow-y: overlay;
+}
+
+.MessageReadersMenuItem__reader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+}
+
+.MessageReadersMenuItem__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.MessageReadersMenuItem__loader {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}

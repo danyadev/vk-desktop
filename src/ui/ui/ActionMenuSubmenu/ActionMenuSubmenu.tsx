@@ -3,15 +3,15 @@ import { ActionMenuItem, ActionMenuItemProps } from 'ui/ui/ActionMenuItem/Action
 import { Popper } from 'ui/ui/Popper/Popper'
 import { Icon16ChevronRight } from 'assets/icons'
 
-type InheritedProps = Omit<ActionMenuItemProps, 'after'>
 type Props = {
   disabledMenu?: boolean
-} & InheritedProps
+} & ActionMenuItemProps
 
 export const ActionMenuSubmenu = defineComponent<Props>((props, { slots, attrs }) => {
   return () => (
     <Popper
       showOnHover
+      withDelayOnHoverOpen
       placement="right-start"
       offset={0}
       content={slots.default?.()}
@@ -19,14 +19,19 @@ export const ActionMenuSubmenu = defineComponent<Props>((props, { slots, attrs }
       nested
     >
       <ActionMenuItem
-        {...attrs as InheritedProps}
-        after={!props.disabledMenu && (
-          <Icon16ChevronRight color="var(--vkui--color_icon_secondary)" />
+        {...attrs as unknown as ActionMenuItemProps}
+        after={(props.after || !props.disabledMenu) && (
+          <>
+            {props.after}
+            {!props.disabledMenu && (
+              <Icon16ChevronRight color="var(--vkui--color_icon_secondary)" />
+            )}
+          </>
         )}
       />
     </Popper>
   )
 }, {
-  props: ['disabledMenu'],
+  props: ['disabledMenu', 'after'],
   inheritAttrs: false
 })
