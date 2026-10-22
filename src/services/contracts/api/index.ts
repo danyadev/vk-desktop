@@ -53,6 +53,8 @@ import {
   MessagesGetLongPollHistoryResponse,
   MessagesGetLongPollServerParams,
   MessagesGetLongPollServerResponse,
+  MessagesGetMessageReadPeersParams,
+  MessagesGetMessageReadPeersResponse,
   MessagesMarkAsPlayedParams,
   MessagesMarkAsPlayedResponse,
   MessagesMarkAsReadParams,
@@ -174,6 +176,10 @@ export type Methods = {
   'messages.getByConversationMessageId': {
     params: MessagesGetByConversationMessageIdParams
     response: MessagesGetByConversationMessageIdResponse
+  }
+  'messages.getMessageReadPeers': {
+    params: MessagesGetMessageReadPeersParams
+    response: MessagesGetMessageReadPeersResponse
   }
   'messages.getLongPollServer': {
     params: MessagesGetLongPollServerParams

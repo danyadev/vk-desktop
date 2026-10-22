@@ -24,6 +24,7 @@ type Props = {
   placement?: Placement
   offset?: OffsetOptions
   showOnHover?: boolean
+  hoverOpenDelay?: number
   closeOnContentClick?: boolean
   disabled?: boolean
   nested?: boolean
@@ -37,21 +38,28 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
   const isPointingAtContent = shallowRef(false)
   const isContextMenu = props.trigger === 'contextmenu'
   let hideContentTimeout = 0
+  let showContentTimeout = 0
 
-  watchEffect(() => {
-    if (!props.showOnHover) {
-      return
-    }
+  watchEffect((onCleanup) => {
+    if (!props.showOnHover) return
 
-    clearTimeout(hideContentTimeout)
+    onCleanup(() => {
+      clearTimeout(showContentTimeout)
+      clearTimeout(hideContentTimeout)
+    })
 
     if (props.disabled) {
       showContent.value = false
-      return
-    }
-
-    if (isPointingAtTrigger.value || isPointingAtContent.value) {
-      showContent.value = true
+    } else if (showContent.value && (isPointingAtContent.value || isPointingAtTrigger.value)) {
+      // keep showContent
+    } else if (isPointingAtTrigger.value) {
+      if (props.hoverOpenDelay) {
+        showContentTimeout = window.setTimeout(() => {
+          showContent.value = true
+        }, props.hoverOpenDelay)
+      } else {
+        showContent.value = true
+      }
     } else if (showContent.value) {
       hideContentTimeout = window.setTimeout(() => {
         showContent.value = false
@@ -69,8 +77,8 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     placement: props.placement ?? (isContextMenu ? 'bottom-start' : 'bottom-end'),
     middleware: [
       offset(props.offset ?? (isContextMenu ? 0 : 4)),
-      flip({ padding: 8 }),
-      shift({ padding: 8, crossAxis: true })
+      flip({ padding: 8, fallbackAxisSideDirection: 'end' }),
+      shift({ padding: 8 })
     ]
   })
 
@@ -196,6 +204,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     'placement',
     'offset',
     'showOnHover',
+    'hoverOpenDelay',
     'closeOnContentClick',
     'disabled',
     'nested'

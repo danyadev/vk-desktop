@@ -8,6 +8,10 @@
   flex: none;
 }
 
+.Avatar--size-24 {
+  font-size: 10px;
+}
+
 .Avatar--size-32 {
   font-size: var(--smallFontSize);
 }

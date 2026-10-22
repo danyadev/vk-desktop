@@ -119,6 +119,13 @@ export const ru = {
 
   me_convo_composer_menu_photo: 'Фото',
 
+  me_message_menu_readers_loading: 'Загрузка...',
+  me_message_menu_readers_count: {
+    one: '{count} просмотр',
+    few: '{count} просмотра',
+    many: '{count} просмотров'
+  },
+  me_message_menu_readers_error: 'Ошибка',
   me_message_menu_reply: 'Ответить',
   me_message_menu_edit: 'Редактировать',
   me_message_menu_copy: 'Скопировать текст',

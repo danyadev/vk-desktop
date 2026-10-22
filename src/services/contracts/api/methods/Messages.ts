@@ -30,6 +30,23 @@ export type MessagesGetConversationsResponse = {
   // contacts?: MessagesContact[]
 }
 
+// messages.getMessageReadPeers
+export type MessagesGetMessageReadPeersParams = {
+  peer_id: number
+  cmid: number
+  offset_major_id?: number
+  count?: number
+  extended: 1
+  fields: string
+}
+
+export type MessagesGetMessageReadPeersResponse = {
+  total_count: number
+  items: number[]
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+}
+
 // messages.getConversationsById
 export type MessagesGetConversationsByIdParams = {
   peer_ids: string | number
