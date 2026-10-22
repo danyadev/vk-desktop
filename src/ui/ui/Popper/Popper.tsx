@@ -24,7 +24,7 @@ type Props = {
   placement?: Placement
   offset?: OffsetOptions
   showOnHover?: boolean
-  hoverOpenDelay?: number
+  withDelayOnHoverOpen?: boolean
   closeOnContentClick?: boolean
   disabled?: boolean
   nested?: boolean
@@ -53,10 +53,10 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     } else if (showContent.value && (isPointingAtContent.value || isPointingAtTrigger.value)) {
       // keep showContent
     } else if (isPointingAtTrigger.value) {
-      if (props.hoverOpenDelay) {
+      if (props.withDelayOnHoverOpen) {
         showContentTimeout = window.setTimeout(() => {
           showContent.value = true
-        }, props.hoverOpenDelay)
+        }, 250)
       } else {
         showContent.value = true
       }
@@ -204,7 +204,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     'placement',
     'offset',
     'showOnHover',
-    'hoverOpenDelay',
+    'withDelayOnHoverOpen',
     'closeOnContentClick',
     'disabled',
     'nested'

@@ -5,14 +5,13 @@ import { Icon16ChevronRight } from 'assets/icons'
 
 type Props = {
   disabledMenu?: boolean
-  hoverOpenDelay?: number
 } & ActionMenuItemProps
 
 export const ActionMenuSubmenu = defineComponent<Props>((props, { slots, attrs }) => {
   return () => (
     <Popper
       showOnHover
-      hoverOpenDelay={props.hoverOpenDelay}
+      withDelayOnHoverOpen
       placement="right-start"
       offset={0}
       content={slots.default?.()}
@@ -33,6 +32,6 @@ export const ActionMenuSubmenu = defineComponent<Props>((props, { slots, attrs }
     </Popper>
   )
 }, {
-  props: ['disabledMenu', 'hoverOpenDelay', 'after'],
+  props: ['disabledMenu', 'after'],
   inheritAttrs: false
 })

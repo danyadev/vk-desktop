@@ -97,7 +97,6 @@ export const MessageReadersMenuItem = defineComponent<Props>((props) => {
           />
         )}
         disabledMenu={count === 0 && !isError.value}
-        hoverOpenDelay={150}
         onClickCapture={onClick}
       >
         <ActionMenu>
