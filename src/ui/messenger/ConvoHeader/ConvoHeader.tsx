@@ -4,7 +4,7 @@ import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useFormatDate, useGlobalModal } from 'hooks'
+import { useFormatOnlineStatus, useGlobalModal } from 'hooks'
 import { shortenCount } from 'misc/dateTime'
 import { ConvoActionMenu } from 'ui/messenger/ConvoActionMenu/ConvoActionMenu'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
@@ -23,25 +23,15 @@ export const ConvoHeader = defineComponent<Props>((props) => {
   const { peers } = usePeersStore()
   const peer = Peer.safeGet(peers, props.convo.id)
 
-  const formatDate = useFormatDate()
+  const formatOnlineStatus = useFormatOnlineStatus()
   const { peerInfoModal } = useGlobalModal()
 
   const peerInfo = computed<string>(() => {
     // TODO: показывать статус синхронизации или подключения, если что-то случилось с лп
 
     switch (peer.kind) {
-      case 'User': {
-        if (peer.onlineInfo.isOnline) {
-          return lang.use('me_user_online')
-        }
-
-        // TODO: поддержать onlineInfo.status
-        if (!peer.onlineInfo.lastSeen) {
-          return lang.use('me_user_was_online_a_long_time_ago')
-        }
-
-        return formatDate(peer.onlineInfo.lastSeen)
-      }
+      case 'User':
+        return formatOnlineStatus(peer)
 
       case 'Group': {
         return lang.usePlural('me_group_members_count', peer.membersCount, {

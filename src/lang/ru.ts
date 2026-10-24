@@ -180,7 +180,26 @@ export const ru = {
   me_convo_unread_messages: 'Новые сообщения',
   me_edited_label: 'ред.',
   me_user_online: 'online',
-  me_user_was_online_a_long_time_ago: 'заходил давно',
+  me_user_was_online_at: {
+    male: 'заходил {time}',
+    female: 'заходила {time}'
+  },
+  me_user_was_online_recently: {
+    male: 'заходил недавно',
+    female: 'заходила недавно'
+  },
+  me_user_was_online_last_week: {
+    male: 'заходил на этой неделе',
+    female: 'заходила на этой неделе'
+  },
+  me_user_was_online_last_month: {
+    male: 'заходил в этом месяце',
+    female: 'заходила в этом месяце'
+  },
+  me_user_was_online_a_long_time_ago: {
+    male: 'заходил давно',
+    female: 'заходила давно'
+  },
   me_attach_wall_empty: 'Пустая запись',
   me_attach_wall_open_button: 'Открыть запись',
   me_chat_leaved_status: 'Вы вышли из чата',

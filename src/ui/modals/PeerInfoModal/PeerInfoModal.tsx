@@ -4,7 +4,7 @@ import { useServices } from 'services'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
 import { insertPeers } from 'actions'
-import { useFormatDate, useGlobalModal } from 'hooks'
+import { useFormatOnlineStatus, useGlobalModal } from 'hooks'
 import { normalizeUrl } from 'misc/utils'
 import { PEER_GROUP_EXTRA_FIELDS, PEER_USER_EXTRA_FIELDS } from 'misc/constants'
 import { shortenCount } from 'misc/dateTime'
@@ -44,7 +44,7 @@ export const PeerInfoModal = defineComponent<PeerInfoModalProps>((props) => {
   const router = useRouter()
   const { peers } = usePeersStore()
   const { peerInfoModal, photoViewerModal } = useGlobalModal()
-  const formatDate = useFormatDate()
+  const formatOnlineStatus = useFormatOnlineStatus()
 
   const $modal = shallowRef<HTMLElement | null>(null)
   const $header = shallowRef<HTMLElement | null>(null)
@@ -90,13 +90,7 @@ export const PeerInfoModal = defineComponent<PeerInfoModalProps>((props) => {
         : lang.use('peerInfo_banned')
     }
 
-    if (currentUser.onlineInfo.isOnline) {
-      return lang.use('me_user_online')
-    }
-
-    return currentUser.onlineInfo.lastSeen
-      ? formatDate(currentUser.onlineInfo.lastSeen)
-      : lang.use('me_user_was_online_a_long_time_ago')
+    return formatOnlineStatus(currentUser)
   })
 
   const load = async () => {
