@@ -6,21 +6,25 @@ import { fromApiGroup, fromApiUser } from 'converters/PeerConverter'
 type Props = {
   profiles?: UsersUser[]
   groups?: GroupsGroup[]
+  withExtraFields?: boolean
 }
 
-export function insertPeers({ profiles, groups }: Props) {
+export function insertPeers({ profiles, groups, withExtraFields }: Props) {
   const { peers } = usePeersStore()
 
   for (const apiUser of profiles ?? []) {
-    const user = fromApiUser(apiUser)
+    const user = fromApiUser(apiUser, withExtraFields)
     const localUser = peers.get(user.id)
 
     if (localUser) {
-      // Само присваивание нового объекта является триггером для перерисовки всех компонентов,
-      // где был запрошен указанный пир, поэтому для дальнейшей оптимизации можно не создавать
-      // новый объект, а перезаписывать его поля, многие их которых почти никогда не меняются.
-      // Это безопасно: все объекты одинакового типа (kind) имеют полный и одинаковый набор полей,
-      // опциональные поля всегда заполняются как явный undefined, сохраняя единую форму
+      // Обновляем объект на месте, сохраняя его ссылку в store и не вызывая
+      // лишних реактивных обновлений из-за замены объекта целиком.
+      // Для корректной работы Object.assign важно решить проблему опциональных полей:
+      // например, если попытаться обновить { optional: 1 } на {}, само поле никуда не денется.
+      // Поэтому в моделях вместо опциональных полей теперь всегда явно выставляется undefined.
+      // Это также позволяет сохранять стабильную форму объектов (см. V8 hidden class):
+      // одинаковый набор и порядок свойств позволяют JS-движку переиспользовать
+      // оптимизированные способы доступа к ним через inline caches
       Object.assign(localUser, user)
     } else {
       peers.set(user.id, user)
@@ -28,7 +32,7 @@ export function insertPeers({ profiles, groups }: Props) {
   }
 
   for (const apiGroup of groups ?? []) {
-    const group = fromApiGroup(apiGroup)
+    const group = fromApiGroup(apiGroup, withExtraFields)
     const localGroup = peers.get(group.id)
 
     if (localGroup) {

@@ -5,8 +5,10 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
 import { insertPeers } from 'actions'
+import { useGlobalModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
+import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ActionMenuSubmenu } from 'ui/ui/ActionMenuSubmenu/ActionMenuSubmenu'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { AvatarStack } from 'ui/ui/AvatarStack/AvatarStack'
@@ -24,6 +26,8 @@ type Props = {
 export const MessageReadersMenuItem = defineComponent<Props>((props) => {
   const { api, lang } = useServices()
   const { peers } = usePeersStore()
+  const { peerInfoModal } = useGlobalModal()
+
   const readers = shallowRef<Peer.OwnerId[]>([])
   const totalCount = shallowRef<number>()
   const isLoading = shallowRef(false)
@@ -99,28 +103,28 @@ export const MessageReadersMenuItem = defineComponent<Props>((props) => {
         disabledMenu={count === 0 && !isError.value}
         onClickCapture={onClick}
       >
-        <ActionMenu>
-          <div class="MessageReadersMenuItem__list" onClick={(event) => event.stopPropagation()}>
-            {readers.value.map((id) => {
-              const peer = Peer.safeGet(peers, id)
-              return (
-                <div class="MessageReadersMenuItem__reader" key={id}>
-                  <Avatar peer={peer} size={24} />
-                  <span class="MessageReadersMenuItem__name">{Peer.name(peer)}</span>
-                </div>
-              )
-            })}
+        <ActionMenu class="MessageReadersMenuItem__list">
+          {readers.value.map((id) => {
+            const peer = Peer.safeGet(peers, id)
+            return (
+              <ActionMenuItem
+                key={id}
+                icon={<Avatar peer={peer} size={24} />}
+                text={Peer.name(peer)}
+                onClick={() => peerInfoModal.open({ peerId: id })}
+              />
+            )
+          })}
 
-            {isError.value ? (
-              <LoadError onRetry={loadMore} />
-            ) : hasMore.value ? (
-              <IntersectionWrapper key={readers.value.length} onIntersect={loadMore}>
-                <div class="MessageReadersMenuItem__loader">
-                  <Spinner />
-                </div>
-              </IntersectionWrapper>
-            ) : null}
-          </div>
+          {isError.value ? (
+            <LoadError onRetry={loadMore} />
+          ) : hasMore.value ? (
+            <IntersectionWrapper key={readers.value.length} onIntersect={loadMore}>
+              <div class="MessageReadersMenuItem__loader">
+                <Spinner />
+              </div>
+            </IntersectionWrapper>
+          ) : null}
         </ActionMenu>
       </ActionMenuSubmenu>
     )

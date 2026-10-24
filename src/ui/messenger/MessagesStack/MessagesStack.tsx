@@ -4,13 +4,14 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useConvoSession } from 'hooks'
+import { useConvoSession, useGlobalModal } from 'hooks'
 import { JSXElement, NonEmptyArray } from 'misc/utils'
 import { ConvoMessage } from 'ui/messenger/ConvoMessage/ConvoMessage'
 import { ExpiredMessage } from 'ui/messenger/ExpiredMessage/ExpiredMessage'
 import { MessageActionMenu } from 'ui/messenger/MessageActionMenu/MessageActionMenu'
 import { ServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
+import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
 import './MessagesStack.css'
 
 type Props = {
@@ -21,6 +22,7 @@ type Props = {
 export const MessagesStack = defineComponent<Props>((props) => {
   const { convos } = useConvosStore()
   const { peers } = usePeersStore()
+  const { peerInfoModal } = useGlobalModal()
 
   return () => {
     const [message] = props.messages
@@ -32,7 +34,13 @@ export const MessagesStack = defineComponent<Props>((props) => {
     return (
       <div class={['MessagesStack', message.isOut && 'MessagesStack--out']}>
         {message.kind === 'Normal' && !message.isOut && isChat && !isChannel && (
-          <Avatar class="MessagesStack__avatar" peer={author} size={32} />
+          <ButtonBase
+            class="MessagesStack__avatar"
+            onClick={() => peerInfoModal.open({ peerId: author.id })}
+            tabindex={-1}
+          >
+            <Avatar peer={author} size={32} />
+          </ButtonBase>
         )}
         <div class="MessagesStack__messages">
           {props.messages.map((message, index) => (

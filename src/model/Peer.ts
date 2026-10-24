@@ -41,6 +41,24 @@ export type User = {
     status?: 'recently' | 'last_week' | 'last_month' | 'long_ago' | 'not_show'
     appId?: number
   }
+  blacklistedByMe: boolean
+
+  // Дополнительные данные профиля, загружаемые по запросу
+  photo200?: string
+  photoOriginal?: string
+  screenName?: string
+  phone?: string
+  status?: string
+  birthDate?: string
+  city?: string
+  country?: string
+  site?: string
+  career?: Array<{ company?: string, position?: string, until?: number }>
+  universities?: string[]
+  followersCount?: number
+  deactivated?: 'deleted' | 'banned'
+  isClosed?: boolean
+  canAccessClosed?: boolean
 }
 
 export type Group = {
@@ -51,6 +69,18 @@ export type Group = {
   photo50?: string
   photo100?: string
   membersCount: number
+  messagesBlocked: boolean
+
+  // Дополнительные данные группы, загружаемые по запросу
+  photo200?: string
+  photoOriginal?: string
+  phone?: string
+  status?: string
+  description?: string
+  activity?: string
+  city?: string
+  country?: string
+  site?: string
 }
 
 export type Chat = {
@@ -137,6 +167,7 @@ export function isChatPeerId(peerId: Id): peerId is ChatId {
 export function safeGet(peers: Map<Id, Peer>, id: UserId): User
 export function safeGet(peers: Map<Id, Peer>, id: GroupId): Group
 export function safeGet(peers: Map<Id, Peer>, id: ChatId): Chat
+export function safeGet(peers: Map<Id, Peer>, id: UserId | GroupId): User | Group
 export function safeGet(peers: Map<Id, Peer>, id: Id): Peer
 export function safeGet(peers: Map<Id, Peer>, id: Id): Peer {
   const peer = peers.get(id)
@@ -166,7 +197,8 @@ function mock(id: Id): Peer {
       lastName: String(id),
       lastNameAcc: String(id),
       gender: 'unknown',
-      onlineInfo: { visible: false }
+      onlineInfo: { visible: false },
+      blacklistedByMe: false
     } satisfies User
   }
 
@@ -176,7 +208,8 @@ function mock(id: Id): Peer {
       id,
       name: `Group ${id}`,
       screenName: `club${toRealId(id)}`,
-      membersCount: 0
+      membersCount: 0,
+      messagesBlocked: false
     } satisfies Group
   }
 

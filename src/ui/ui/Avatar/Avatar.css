@@ -21,6 +21,10 @@
   font-size: calc(var(--smallFontSize) + 4px);
 }
 
+.Avatar--size-80 {
+  font-size: 28px;
+}
+
 .Avatar--color-0 {
   background: radial-gradient(circle at center 0px, #ff6952, #e6404b);
 }

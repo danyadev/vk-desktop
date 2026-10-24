@@ -32,7 +32,7 @@ export const ServiceMessage = defineComponent<Props>((props) => {
             }
             onClick={() => {
               if (photoUpdateAction.photo) {
-                photoViewerModal.open({ photo: photoUpdateAction.photo })
+                photoViewerModal.open({ url: photoUpdateAction.photo.image.url })
               }
             }}
           />

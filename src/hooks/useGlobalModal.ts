@@ -1,13 +1,15 @@
 import { reactive, shallowRef } from 'vue'
 import { createSingletonHook } from 'misc/utils'
 import { CaptchaModalParams } from 'ui/modals/CaptchaModal/CaptchaModal'
+import { PeerInfoModalProps } from 'ui/modals/PeerInfoModal/PeerInfoModal'
 import { PhotoViewerModalProps } from 'ui/modals/PhotoViewerModal/PhotoViewerModal'
 
 export const useGlobalModal = createSingletonHook(() => {
   return {
     captchaModal: createGlobalModal<CaptchaModalParams>('CaptchaModal'),
     photoViewerModal: createGlobalModal<PhotoViewerModalProps>('PhotoViewerModal'),
-    settingsModal: createGlobalModal<object>('SettingsModal')
+    settingsModal: createGlobalModal<object>('SettingsModal'),
+    peerInfoModal: createGlobalModal<PeerInfoModalProps>('PeerInfoModal')
   }
 })
 

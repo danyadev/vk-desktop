@@ -4,10 +4,11 @@ import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useFormatDate } from 'hooks'
+import { useFormatDate, useGlobalModal } from 'hooks'
 import { shortenCount } from 'misc/dateTime'
 import { ConvoActionMenu } from 'ui/messenger/ConvoActionMenu/ConvoActionMenu'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
+import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Icon16Muted, Icon24ChevronCompactLeft, Icon24MoreHorizontal } from 'assets/icons'
 import './ConvoHeader.css'
@@ -23,6 +24,7 @@ export const ConvoHeader = defineComponent<Props>((props) => {
   const peer = Peer.safeGet(peers, props.convo.id)
 
   const formatDate = useFormatDate()
+  const { peerInfoModal } = useGlobalModal()
 
   const peerInfo = computed<string>(() => {
     // TODO: показывать статус синхронизации или подключения, если что-то случилось с лп
@@ -81,19 +83,24 @@ export const ConvoHeader = defineComponent<Props>((props) => {
         }}
       />
 
-      <Avatar class="ConvoHeader__avatar" peer={peer} size={32} />
-
-      <div class="ConvoHeader__name">
-        <span class="ConvoHeader__nameText">
-          {Peer.name(peer)}
-        </span>
-        <span class="ConvoHeader__nameIcons">
-          {!props.convo.notifications.enabled && (
-            <Icon16Muted color="var(--vkui--color_icon_tertiary)" />
-          )}
-        </span>
-      </div>
-      <span class="ConvoHeader__info">{peerInfo.value}</span>
+      <ButtonBase
+        class="ConvoHeader__peer"
+        disabled={peer.kind === 'Chat'}
+        onClick={() => {
+          if (peer.kind !== 'Chat') peerInfoModal.open({ peerId: peer.id })
+        }}
+      >
+        <Avatar class="ConvoHeader__avatar" peer={peer} size={32} />
+        <div class="ConvoHeader__name">
+          <span class="ConvoHeader__nameText">{Peer.name(peer)}</span>
+          <span class="ConvoHeader__nameIcons">
+            {!props.convo.notifications.enabled && (
+              <Icon16Muted color="var(--vkui--color_icon_tertiary)" />
+            )}
+          </span>
+        </div>
+        <span class="ConvoHeader__info">{peerInfo.value}</span>
+      </ButtonBase>
 
       <ConvoActionMenu convo={props.convo}>
         <ButtonIcon

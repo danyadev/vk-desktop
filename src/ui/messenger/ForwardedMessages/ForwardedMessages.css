@@ -28,6 +28,7 @@
   grid-area: avatar;
   align-self: center;
   margin-right: 8px;
+  border-radius: 50%;
 }
 
 .ForwardedMessage__name,
@@ -40,8 +41,10 @@
 
 .ForwardedMessage__name {
   grid-area: name;
-  color: var(--vkui--color_text_link);
+  justify-self: start;
+  max-width: 100%;
   font-weight: 500;
+  text-align: left;
 }
 
 .ForwardedMessage__date {

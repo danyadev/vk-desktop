@@ -3,16 +3,12 @@
   justify-content: center;
   align-items: center;
   flex: none;
-  position: relative;
   border-radius: 6px;
   line-height: 0;
-  /* Блокируем выделение текста вокруг при двойном нажатии на кнопку */
-  user-select: none;
   transition: background-color var(--fastTransition), opacity var(--fastTransition);
 }
 
 .ButtonIcon[disabled] {
-  pointer-events: none;
   opacity: 0.6;
 }
 

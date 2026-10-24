@@ -6,11 +6,13 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useConvoSession, useFormatDate } from 'hooks'
+import { useConvoSession, useFormatDate, useGlobalModal } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
+import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import { Icon20MessageArrowRightOutline } from 'assets/icons'
 import './ForwardedMessages.css'
 
@@ -24,6 +26,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
   const session = useConvoSession()
   const convosStore = useConvosStore()
   const { peers } = usePeersStore()
+  const { peerInfoModal } = useGlobalModal()
   const formatDate = useFormatDate({ relativeTime: false })
 
   const goToMessage = (message: Message.Foreign) => {
@@ -66,9 +69,20 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
       return (
         <div class="ForwardedMessage">
           <div class="ForwardedMessage__header">
-            <Avatar class="ForwardedMessage__avatar" peer={author} size={32} />
+            <ButtonBase
+              class="ForwardedMessage__avatar"
+              onClick={() => peerInfoModal.open({ peerId: author.id })}
+              tabindex={-1}
+            >
+              <Avatar peer={author} size={32} />
+            </ButtonBase>
 
-            <div class="ForwardedMessage__name">{Peer.name(author)}</div>
+            <ButtonText
+              class="ForwardedMessage__name"
+              onClick={() => peerInfoModal.open({ peerId: author.id })}
+            >
+              {Peer.name(author)}
+            </ButtonText>
             <div class="ForwardedMessage__date">
               {formatDate(message.sentAt)}
               {message.updatedAt && (' · ' + lang.use('me_edited_label'))}

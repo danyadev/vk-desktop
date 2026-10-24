@@ -1,0 +1,115 @@
+.PeerInfoModal {
+  width: 100%;
+  max-width: var(--vkui--size_popup_small);
+  max-height: 100%;
+  overflow-y: overlay;
+  background: var(--vkui--color_background_modal);
+  border-radius: 12px;
+  box-shadow: var(--vkui--elevation3);
+}
+
+.PeerInfoModal__header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  margin-bottom: -56px;
+  padding: 0 12px;
+  pointer-events: none;
+  transition: background-color var(--fastTransition), box-shadow var(--fastTransition);
+}
+
+.PeerInfoModal__header--compact {
+  background: var(--vkui--color_background_modal);
+  box-shadow: 0 1px 0 var(--vkui--color_separator_primary);
+  pointer-events: auto;
+}
+
+.PeerInfoModal__headerPeer {
+  position: absolute;
+  inset: 0 12px;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--fastTransition);
+}
+
+.PeerInfoModal__header--compact .PeerInfoModal__headerPeer {
+  opacity: 1;
+}
+
+.PeerInfoModal__headerName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  text-align: center;
+}
+
+.PeerInfoModal__headerClose {
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  color: var(--vkui--color_icon_secondary);
+  pointer-events: auto;
+}
+
+.PeerInfoModal__hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 24px 22px 24px;
+  text-align: center;
+}
+
+.PeerInfoModal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  color: var(--vkui--color_icon_secondary);
+}
+
+.PeerInfoModal__loading {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+.PeerInfoModal__avatar {
+  border-radius: 50%;
+}
+
+.PeerInfoModal__name {
+  max-width: 100%;
+  margin: 16px 0 8px 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+.PeerInfoModal__subtitle {
+  color: var(--vkui--color_text_secondary);
+  font: var(--smallFont);
+  user-select: text;
+}
+
+.PeerInfoModal__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 24px 20px 24px;
+}
+
+.PeerInfoModal__details {
+  padding: 12px 24px;
+  border-top: 1px solid var(--vkui--color_separator_primary);
+}

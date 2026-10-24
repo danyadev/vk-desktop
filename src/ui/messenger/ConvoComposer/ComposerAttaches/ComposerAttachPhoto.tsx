@@ -26,7 +26,7 @@ export const ComposerAttachPhoto = defineComponent<Props>((props) => {
       <img
         class={['ComposerAttachPhoto', photo && 'ComposerAttachPhoto--clickable']}
         src={src}
-        onClick={() => photo && photoViewerModal.open({ photo })}
+        onClick={() => photo && photoViewerModal.open({ url: photo.image.url })}
       />
     )
   }

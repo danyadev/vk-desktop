@@ -1,11 +1,9 @@
 .Button {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
   padding: 0 16px;
-  user-select: none;
   transition: opacity var(--fastTransition), background-color var(--fastTransition);
 }
 
@@ -16,7 +14,6 @@
 }
 
 .Button[disabled] {
-  pointer-events: none;
   opacity: 0.6;
 }
 

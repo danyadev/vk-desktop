@@ -246,3 +246,15 @@ export function getMapValueOrCompute<K, V>(
   // потому что в случае с реактивной мапой важно достать реактивное значение
   return map.get(key)!
 }
+
+export function normalizeUrl(url: string) {
+  if (url.startsWith('mailto:') || url.startsWith('tel:')) {
+    return url
+  }
+
+  if (!url.startsWith('/') && !url.startsWith('http://') && !url.startsWith('https://')) {
+    return 'https://' + url
+  }
+
+  return url
+}
