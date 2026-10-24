@@ -8,6 +8,7 @@
   position: sticky;
   bottom: 4px;
   margin-right: 8px;
+  border-radius: 50%;
 }
 
 .MessagesStack__messages {

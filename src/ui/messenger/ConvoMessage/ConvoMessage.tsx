@@ -4,11 +4,12 @@ import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useConvoSession } from 'hooks'
+import { useConvoSession, useGlobalModal } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { ForwardedMessages } from 'ui/messenger/ForwardedMessages/ForwardedMessages'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
 import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
+import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import './ConvoMessage.css'
 
 type Props = {
@@ -21,6 +22,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const session = useConvoSession()
   const { peers } = usePeersStore()
+  const { peerInfoModal } = useGlobalModal()
 
   const navigateToReplyMessage = (reply: Message.Foreign) => {
     if (!reply.cmid) {
@@ -56,7 +58,12 @@ export const ConvoMessage = defineComponent<Props>((props) => {
       >
         <div class="ConvoMessage__content">
           {showName && !message.isOut && (
-            <div class="ConvoMessage__author">{Peer.name(author)}</div>
+            <ButtonText
+              class="ConvoMessage__author"
+              onClick={() => peerInfoModal.open({ peerId: author.id })}
+            >
+              {Peer.name(author)}
+            </ButtonText>
           )}
 
           {message.replyMessage && (

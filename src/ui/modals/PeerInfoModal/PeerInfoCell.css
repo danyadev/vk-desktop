@@ -1,0 +1,19 @@
+.PeerInfoCell {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 12px;
+  padding: 4px 0;
+}
+
+.PeerInfoCell__icon {
+  color: var(--vkui--color_icon_secondary);
+}
+
+.PeerInfoCell__content {
+  min-width: 0;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  user-select: text;
+}

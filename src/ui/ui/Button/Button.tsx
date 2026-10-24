@@ -1,14 +1,9 @@
-import { defineComponent, HTMLAttributes } from 'vue'
-import { useFocusVisible } from 'hooks'
+import { defineComponent } from 'vue'
 import { JSXElement } from 'misc/utils'
-import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
+import { ButtonBase, ButtonBaseProps } from 'ui/ui/ButtonBase/ButtonBase'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './Button.css'
 
-type InheritedProps = HTMLAttributes & {
-  href?: string
-  disabled?: boolean
-}
 type Props = {
   size?: 'small' | 'medium' | 'large'
   mode?: 'primary' | 'secondary' | 'destructive' | 'tertiary' | 'outline'
@@ -16,31 +11,18 @@ type Props = {
   before?: JSXElement
   after?: JSXElement
   loading?: boolean
-} & InheritedProps
+} & ButtonBaseProps
 
-export const Button = defineComponent<Props>((props, { slots, attrs }) => {
-  const { isFocused, onBlur, onFocus } = useFocusVisible()
-
+export const Button = defineComponent<Props>((props, { slots }) => {
   return () => {
     const { size = 'medium', mode = 'primary' } = props
-    const restProps = attrs as InheritedProps
-
-    const Component = restProps.href ? 'a' : 'button'
-    const componentRelatedProps = Component === 'button'
-      ? { type: 'button' } as const
-      : { target: '_blank' } as const
-    const disableFocusProps = restProps.disabled && { tabindex: -1 }
 
     return (
-      <Component
+      <ButtonBase
         class={['Button', `Button--${size}`, `Button--${mode}`, {
           'Button--wide': props.wide,
           'Button--loading': props.loading
         }]}
-        {...componentRelatedProps}
-        {...disableFocusProps}
-        onBlur={onBlur}
-        onFocus={onFocus}
       >
         <span class="Button__in">
           {props.before}
@@ -48,8 +30,7 @@ export const Button = defineComponent<Props>((props, { slots, attrs }) => {
           {props.after}
         </span>
         {props.loading && <Spinner class="Button__spinner" color="inherit" />}
-        <FocusVisible isFocused={isFocused.value} />
-      </Component>
+      </ButtonBase>
     )
   }
 }, {

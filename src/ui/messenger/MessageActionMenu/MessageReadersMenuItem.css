@@ -9,18 +9,9 @@
   overflow-y: overlay;
 }
 
-.MessageReadersMenuItem__reader {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px;
-}
-
-.MessageReadersMenuItem__name {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.Popper--leave-active .MessageReadersMenuItem__list {
+  /* Prevent the scrollbar from showing up when closing the submenu */
+  overflow-y: hidden;
 }
 
 .MessageReadersMenuItem__loader {

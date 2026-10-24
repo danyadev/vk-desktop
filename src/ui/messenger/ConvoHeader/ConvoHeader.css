@@ -1,10 +1,7 @@
 .ConvoHeader {
   display: grid;
-  grid-template-areas:
-    'button avatar name menu'
-    'button avatar info menu';
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-areas: 'button peer menu';
+  grid-template-columns: auto minmax(0, 1fr) auto;
   height: 48px;
   padding: 0 8px;
   gap: 0 8px;
@@ -18,6 +15,37 @@
   align-self: center;
   width: 32px;
   height: 32px;
+}
+
+.ConvoHeader__peer {
+  grid-area: peer;
+  display: grid;
+  grid-template-areas:
+    'avatar name'
+    'avatar info';
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  gap: 0 8px;
+  padding: 0 8px;
+  margin: 4px 0;
+  border-radius: 8px;
+  color: inherit;
+  text-align: left;
+}
+
+.ConvoHeader__peer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: background-color var(--fastTransition);
+}
+
+.ConvoHeader__peer:not(:disabled):hover::after {
+  background: var(--vkui--color_transparent--hover);
 }
 
 .ConvoHeader__avatar {

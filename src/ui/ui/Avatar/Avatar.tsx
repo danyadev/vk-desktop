@@ -4,7 +4,7 @@ import { usePixelDensity } from 'hooks'
 import { ClassName } from 'misc/utils'
 import './Avatar.css'
 
-export type AvatarSize = 24 | 32 | 48 | 56
+export type AvatarSize = 24 | 32 | 48 | 56 | 80
 
 type Props = {
   peer: Peer.Peer
@@ -18,6 +18,9 @@ export const Avatar = defineComponent<Props>((props) => {
 
   const src = computed(() => {
     const screenSize = isDense.value ? props.size * 2 : props.size
+    if (screenSize > 100 && props.peer.kind !== 'Chat' && props.peer.photo200) {
+      return props.peer.photo200
+    }
     return screenSize > 50 ? props.peer.photo100 : props.peer.photo50
   })
 

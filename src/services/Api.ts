@@ -16,6 +16,8 @@ const METHODS_TO_BE_FETCHED_WITH_OFFICIAL_TOKEN: Array<keyof Methods> = [
   'messages.getDiffContent',
   'messages.getDiff',
   'account.setSilenceMode',
+  'account.ban',
+  'account.unban',
   'messages.archiveConversation',
   'messages.unarchiveConversation',
   'messages.markAsUnreadConversation',

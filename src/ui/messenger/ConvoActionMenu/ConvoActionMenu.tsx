@@ -4,6 +4,7 @@ import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
+import { usePeersStore } from 'store/peers'
 import { useViewerStore } from 'store/viewer'
 import {
   setConvoNotifications,
@@ -24,17 +25,20 @@ import {
   Icon20ArrowDownOutline,
   Icon20ArrowUpOutline,
   Icon20ArrowUturnLeftOutline,
+  Icon20BlockOutline,
   Icon20ClearDataOutline,
   Icon20CopyOutline,
   Icon20DoorArrowRightOutline,
   Icon20HideOutline,
   Icon20MessageCheckOutline,
+  Icon20MessageCrossOutline,
   Icon20MessageUnreadTopOutline,
   Icon20NotificationOutline,
   Icon20NotificationSlashOutline,
   Icon20PinOutline,
   Icon20PinSlashOutline,
   Icon20UnarchiveOutline,
+  Icon20UnlockOutline,
   Icon20ViewOutline
 } from 'assets/icons'
 
@@ -46,6 +50,8 @@ type LoadingAction =
   | 'sound'
   | 'clear'
   | 'membership'
+  | 'blockUser'
+  | 'denyGroupMessages'
 
 type Props = {
   convo: Convo.Convo
@@ -55,14 +61,18 @@ type Props = {
 export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
   const { api, lang } = useServices()
   const { convos, lists, hiddenPinnedMessages } = useConvosStore()
+  const { peers } = usePeersStore()
   const session = props.fromConvoList ? undefined : useConvoSession()
   const viewer = useViewerStore()
 
   const loadingAction = shallowRef<LoadingAction>()
   const clearHistoryModal = useModal()
   const leaveChatModal = useModal()
+  const blockUserModal = useModal()
+  const denyGroupMessagesModal = useModal()
   const errorModal = useModal()
 
+  const peer = computed(() => Peer.safeGet(peers, props.convo.id))
   const pinnedConvos = computed(() => {
     return [...lists.main.peerIds]
       .map((peerId) => Convo.safeGet(convos, peerId))
@@ -191,6 +201,44 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
       user_id: viewer.id
     })
     leaveChatModal.close()
+  })
+
+  const blockUser = makeAction('blockUser', async () => {
+    if (peer.value.kind !== 'User') return
+
+    await api.fetch('account.ban', {
+      owner_id: peer.value.id
+    })
+    peer.value.blacklistedByMe = true
+    blockUserModal.close()
+  })
+
+  const unblockUser = makeAction('blockUser', async () => {
+    if (peer.value.kind !== 'User') return
+
+    await api.fetch('account.unban', {
+      owner_id: peer.value.id
+    })
+    peer.value.blacklistedByMe = false
+  })
+
+  const denyGroupMessages = makeAction('denyGroupMessages', async () => {
+    if (peer.value.kind !== 'Group') return
+
+    await api.fetch('messages.denyMessagesFromGroup', {
+      group_id: Peer.toRealId(peer.value.id)
+    })
+    peer.value.messagesBlocked = true
+    denyGroupMessagesModal.close()
+  })
+
+  const allowGroupMessages = makeAction('denyGroupMessages', async () => {
+    if (peer.value.kind !== 'Group') return
+
+    await api.fetch('messages.allowMessagesFromGroup', {
+      group_id: Peer.toRealId(peer.value.id)
+    })
+    peer.value.messagesBlocked = false
   })
 
   return () => {
@@ -353,6 +401,36 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
                   onClick={leaveChatModal.open}
                 />
               )}
+              {peer.value.kind === 'User' && peer.value.id !== viewer.id && (
+                <ActionMenuItem
+                  icon={peer.value.blacklistedByMe
+                    ? <Icon20UnlockOutline />
+                    : <Icon20BlockOutline />}
+                  text={lang.use(peer.value.blacklistedByMe
+                    ? 'me_convo_menu_unblock_user'
+                    : 'me_convo_menu_block_user')}
+                  mode={peer.value.blacklistedByMe ? 'default' : 'destructive'}
+                  disabled={disabled}
+                  loading={loadingAction.value === 'blockUser'}
+                  onClick={peer.value.blacklistedByMe ? unblockUser : blockUserModal.open}
+                />
+              )}
+              {peer.value.kind === 'Group' && (
+                <ActionMenuItem
+                  icon={peer.value.messagesBlocked
+                    ? <Icon20MessageCheckOutline />
+                    : <Icon20MessageCrossOutline />}
+                  text={lang.use(peer.value.messagesBlocked
+                    ? 'me_convo_menu_allow_group_messages'
+                    : 'me_convo_menu_deny_group_messages')}
+                  mode={peer.value.messagesBlocked ? 'default' : 'destructive'}
+                  disabled={disabled}
+                  loading={loadingAction.value === 'denyGroupMessages'}
+                  onClick={peer.value.messagesBlocked
+                    ? allowGroupMessages
+                    : denyGroupMessagesModal.open}
+                />
+              )}
             </ActionMenu>
           }
         >
@@ -399,6 +477,48 @@ export const ConvoActionMenu = defineComponent<Props>((props, { slots }) => {
           ]}
         >
           {lang.use('me_convo_menu_leave_confirm_text')}
+        </Modal>
+
+        <Modal
+          opened={blockUserModal.opened}
+          onClose={blockUserModal.close}
+          title={lang.use('me_convo_menu_block_user_confirm_title')}
+          buttons={[
+            <Button mode="secondary" onClick={blockUserModal.close}>
+              {lang.use('modal_cancel_label')}
+            </Button>,
+            <Button
+              mode="destructive"
+              disabled={disabled}
+              loading={loadingAction.value === 'blockUser'}
+              onClick={blockUser}
+            >
+              {lang.use('me_convo_menu_block_user')}
+            </Button>
+          ]}
+        >
+          {lang.use('me_convo_menu_block_user_confirm_text')}
+        </Modal>
+
+        <Modal
+          opened={denyGroupMessagesModal.opened}
+          onClose={denyGroupMessagesModal.close}
+          title={lang.use('me_convo_menu_deny_group_messages_confirm_title')}
+          buttons={[
+            <Button mode="secondary" onClick={denyGroupMessagesModal.close}>
+              {lang.use('modal_cancel_label')}
+            </Button>,
+            <Button
+              mode="destructive"
+              disabled={disabled}
+              loading={loadingAction.value === 'denyGroupMessages'}
+              onClick={denyGroupMessages}
+            >
+              {lang.use('me_convo_menu_deny_group_messages')}
+            </Button>
+          ]}
+        >
+          {lang.use('me_convo_menu_deny_group_messages_confirm_text')}
         </Modal>
 
         <Modal

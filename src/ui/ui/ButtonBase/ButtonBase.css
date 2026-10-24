@@ -1,0 +1,8 @@
+.ButtonBase {
+  position: relative;
+  user-select: none;
+}
+
+.ButtonBase[disabled] {
+  pointer-events: none;
+}

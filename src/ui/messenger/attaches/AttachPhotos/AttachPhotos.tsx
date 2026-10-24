@@ -26,7 +26,7 @@ export const AttachPhotos = defineComponent<Props>((props) => {
               previewSrc={photo.photo.sizes.get('s')?.url}
               width={photo.width}
               height={photo.height}
-              onClick={() => photoViewerModal.open({ photo: photo.photo })}
+              onClick={() => photoViewerModal.open({ url: photo.photo.image.url })}
             />
           ))}
         </span>

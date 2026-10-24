@@ -17,9 +17,11 @@
 }
 
 .ConvoMessage__author {
-  color: var(--vkui--color_text_link);
-  font: 500 var(--smallFontSize) / var(--smallLineHeight) var(--fontFamily);
+  display: block;
+  max-width: 100%;
   margin-bottom: 2px;
+  font: 500 var(--smallFontSize) / var(--smallLineHeight) var(--fontFamily);
+  text-align: left;
 }
 
 .ConvoMessage__time {

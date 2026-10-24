@@ -340,3 +340,11 @@ export type MessagesMarkAsReadParams = {
   group_id?: number
 }
 export type MessagesMarkAsReadResponse = 1
+
+// messages.allowMessagesFromGroup
+export type MessagesAllowMessagesFromGroupParams = { group_id: number }
+export type MessagesAllowMessagesFromGroupResponse = 1
+
+// messages.denyMessagesFromGroup
+export type MessagesDenyMessagesFromGroupParams = { group_id: number }
+export type MessagesDenyMessagesFromGroupResponse = 1

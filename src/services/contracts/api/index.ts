@@ -1,6 +1,10 @@
 import {
+  AccountBanParams,
+  AccountBanResponse,
   AccountSetSilenceModeParams,
-  AccountSetSilenceModeResponse
+  AccountSetSilenceModeResponse,
+  AccountUnbanParams,
+  AccountUnbanResponse
 } from 'services/contracts/api/methods/Account'
 import {
   AuthCheckAuthCodeParams,
@@ -29,12 +33,16 @@ import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'services/contracts/a
 import {
   MessagesAddChatUserParams,
   MessagesAddChatUserResponse,
+  MessagesAllowMessagesFromGroupParams,
+  MessagesAllowMessagesFromGroupResponse,
   MessagesArchiveConversationParams,
   MessagesArchiveConversationResponse,
   MessagesDeleteConversationParams,
   MessagesDeleteConversationResponse,
   MessagesDeleteParams,
   MessagesDeleteResponse,
+  MessagesDenyMessagesFromGroupParams,
+  MessagesDenyMessagesFromGroupResponse,
   MessagesEditParams,
   MessagesEditResponse,
   MessagesGetByConversationMessageIdParams,
@@ -151,6 +159,14 @@ export type Methods = {
     response: CaptchaForceResponse
   }
 
+  'account.ban': {
+    params: AccountBanParams
+    response: AccountBanResponse
+  }
+  'account.unban': {
+    params: AccountUnbanParams
+    response: AccountUnbanResponse
+  }
   'account.setSilenceMode': {
     params: AccountSetSilenceModeParams
     response: AccountSetSilenceModeResponse
@@ -256,6 +272,14 @@ export type Methods = {
   'messages.markAsRead': {
     params: MessagesMarkAsReadParams
     response: MessagesMarkAsReadResponse
+  }
+  'messages.allowMessagesFromGroup': {
+    params: MessagesAllowMessagesFromGroupParams
+    response: MessagesAllowMessagesFromGroupResponse
+  }
+  'messages.denyMessagesFromGroup': {
+    params: MessagesDenyMessagesFromGroupParams
+    response: MessagesDenyMessagesFromGroupResponse
   }
 
   'users.get': {

@@ -116,6 +116,14 @@ export const ru = {
   me_convo_menu_clear_confirm_text: 'Очистить историю переписки в этом диалоге?',
   me_convo_menu_leave_confirm_title: 'Выйти из чата?',
   me_convo_menu_leave_confirm_text: 'Вы действительно хотите выйти из этого чата?',
+  me_convo_menu_block_user: 'Заблокировать',
+  me_convo_menu_unblock_user: 'Разблокировать',
+  me_convo_menu_deny_group_messages: 'Запретить сообщения',
+  me_convo_menu_allow_group_messages: 'Разрешить сообщения',
+  me_convo_menu_block_user_confirm_title: 'Заблокировать пользователя?',
+  me_convo_menu_block_user_confirm_text: 'Пользователь будет добавлен в чёрный список.',
+  me_convo_menu_deny_group_messages_confirm_title: 'Запретить сообщения?',
+  me_convo_menu_deny_group_messages_confirm_text: 'Сообщество больше не сможет отправлять вам сообщения.',
 
   me_convo_composer_menu_photo: 'Фото',
 
@@ -447,6 +455,13 @@ export const ru = {
 
   settings_changeWindowSetting_title: 'Изменение настройки окна',
   settings_changeWindowSetting_description: 'Изменение вступит в силу после перезагрузки приложения',
+
+  peerInfo_message: 'Написать',
+  peerInfo_open_in_vk: 'Открыть в VK',
+  peerInfo_community: 'Сообщество',
+  peerInfo_deleted: 'Страница удалена',
+  peerInfo_banned: 'Страница заблокирована',
+  peerInfo_private: 'Закрытый профиль',
 
   app_menu_labels: {
     appMenuTitle: 'VK Desktop',
