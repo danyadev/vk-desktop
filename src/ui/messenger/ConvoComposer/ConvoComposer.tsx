@@ -159,7 +159,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       return
     }
 
-    if (event.code === 'ArrowUp' && ConvoDraft.isEmpty(draft)) {
+    if (event.code === 'ArrowUp' && !draft.editing) {
       const message = Convo.lastEditableMessage(props.convo, viewer.id)
       if (message) {
         event.preventDefault()
