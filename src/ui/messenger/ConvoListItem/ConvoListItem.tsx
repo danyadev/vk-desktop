@@ -36,6 +36,11 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   const active = computed(() => route.name === 'Convo' && +route.params.peerId === props.convo.id)
   const authorName = useAuthorName(lastMessage, computed(() => props.convo))
   const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
+  const draftMessage = computed(() => (
+    draft && !ConvoDraft.isEmpty(draft)
+      ? ConvoDraft.toPreviewMessage(draft, props.convo.id, viewer.id)
+      : undefined
+  ))
 
   function openConvo() {
     router.push({
@@ -70,7 +75,6 @@ export const ConvoListItem = defineComponent<Props>((props) => {
       )
     }
 
-    const nonEmptyDraft = !ConvoDraft.isEmpty(draft) && draft
     const typingUsers = typings.get(props.convo.id)
 
     return (
@@ -102,7 +106,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           ) : (
             <>
               <span class="ConvoListItem__text">
-                {nonEmptyDraft ? (
+                {draftMessage.value ? (
                   <span class="ConvoListItem__draftLabel">
                     {lang.use('me_convo_list_draft_label')}
                   </span>
@@ -110,10 +114,8 @@ export const ConvoListItem = defineComponent<Props>((props) => {
                   <span class="ConvoListItem__messageAuthor">{authorName.value}</span>
                 ) : null}
 
-                {nonEmptyDraft ? (
-                  <MessagePreview
-                    message={ConvoDraft.toPreviewMessage(nonEmptyDraft, props.convo.id, viewer.id)}
-                  />
+                {draftMessage.value ? (
+                  <MessagePreview message={draftMessage.value} />
                 ) : lastMessage.value ? (
                   <MessagePreview message={lastMessage.value} />
                 ) : (

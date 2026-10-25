@@ -1,5 +1,6 @@
 import { computed, shallowRef } from 'vue'
 import * as Convo from 'model/Convo'
+import * as ConvoDraft from 'model/ConvoDraft'
 import * as Lists from 'model/Lists'
 import { useConvosStore } from 'store/convos'
 
@@ -23,9 +24,20 @@ export const useConvoList = () => {
     }
   }
 
-  const convoList = computed(() => [...list.value.peerIds]
-    .map((peerId) => Convo.safeGet(convos, peerId))
-    .sort((a, b) => Convo.sorter(a, b, convoDrafts)))
+  const convoList = computed(() => {
+    const peerIds = new Set(list.value.peerIds)
+
+    for (const [peerId, draft] of convoDrafts) {
+      const convo = convos.get(peerId)
+      if (convo && !ConvoDraft.isEmpty(draft) && Lists.matches(list.value, convo)) {
+        peerIds.add(peerId)
+      }
+    }
+
+    return [...peerIds]
+      .map((peerId) => Convo.safeGet(convos, peerId))
+      .sort((a, b) => Convo.sorter(a, b, convoDrafts))
+  })
 
   return computed(() => ({
     convoList: convoList.value,

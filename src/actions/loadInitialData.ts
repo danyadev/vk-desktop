@@ -1,5 +1,6 @@
 import { useServices } from 'services'
 import * as IEngine from 'services/contracts/IEngine'
+import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers, syncDraftsOnLoad } from 'actions'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
@@ -9,7 +10,7 @@ export async function loadInitialData(
   onEngineFail: (reason: IEngine.FailReason) => void
 ) {
   const { api, engine } = useServices()
-  const { lists, connection } = useConvosStore()
+  const { convoDrafts, lists, connection } = useConvosStore()
 
   // Не инициализируем повторно приложение во время разработки
   if (import.meta.env.DEV && connection.status !== 'init' && connection.status !== 'initFailed') {
@@ -18,14 +19,24 @@ export async function loadInitialData(
 
   connection.status = 'init'
 
+  const draftPeerIds = [...convoDrafts]
+    .filter(([, draft]) => !ConvoDraft.isEmpty(draft))
+    .map(([peerId]) => peerId)
+
   try {
-    const [longpollParams, conversations] = await api.fetchParallel([
+    const [longpollParams, conversations, draftedConversations] = await api.fetchParallel([
       api.buildMethod('messages.getLongPollServer', {
         lp_version: IEngine.VERSION,
         need_pts: 1
       }),
       api.buildMethod('messages.getConversations', {
         count: CONVOS_PER_PAGE,
+        extended: 1,
+        fields: PEER_FIELDS
+      }),
+      draftPeerIds.length > 0 && api.buildMethod('messages.getConversationsById', {
+        peer_ids: draftPeerIds.join(','),
+        with_last_messages: 1,
         extended: 1,
         fields: PEER_FIELDS
       })
@@ -36,6 +47,21 @@ export async function loadInitialData(
       groups: conversations.groups
     })
     insertConvos(conversations.items, { list: lists.main })
+
+    if (draftedConversations) {
+      insertPeers({
+        profiles: draftedConversations.profiles,
+        groups: draftedConversations.groups
+      })
+
+      const lastMessages = new Map(
+        draftedConversations.last_messages?.map((message) => [message.peer_id, message])
+      )
+      insertConvos(draftedConversations.items.map((conversation) => ({
+        conversation,
+        last_message: lastMessages.get(conversation.peer.id)
+      })))
+    }
 
     lists.main.status = conversations.items.length === CONVOS_PER_PAGE ? 'hasMore' : 'complete'
 
