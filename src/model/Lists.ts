@@ -104,6 +104,24 @@ function isWithinBoundary(list: List, convo: Convo.Convo, respectCompletedList =
 }
 
 /**
+ * Проверяет, что беседа относится к листу
+ */
+export function matches(list: List, convo: Convo.Convo) {
+  switch (list.name) {
+    case 'main':
+      return !convo.isArchived
+    case 'unread':
+      return !convo.isArchived && Convo.isUnread(convo)
+    case 'archive':
+      return convo.isArchived
+    case 'folder':
+      return convo.folderIds.includes(list.id)
+    case 'unreadFolder':
+      return convo.folderIds.includes(list.id) && Convo.isUnread(convo)
+  }
+}
+
+/**
  * Возвращает все листы в виде массива
  */
 function getAllLists(lists: Lists): List[] {
@@ -121,34 +139,8 @@ function getAllLists(lists: Lists): List[] {
  * Определяет список листов, в которых должна находиться беседа
  */
 function getTargetLists(lists: Lists, convo: Convo.Convo) {
-  const targetLists = new Set<List>()
-
-  for (const folderId of convo.folderIds) {
-    const folder = lists.folders.get(folderId)
-    if (folder) {
-      if (isWithinBoundary(folder.all, convo)) {
-        targetLists.add(folder.all)
-      }
-      if (Convo.isUnread(convo) && isWithinBoundary(folder.unread, convo)) {
-        targetLists.add(folder.unread)
-      }
-    }
-  }
-
-  if (convo.isArchived) {
-    if (isWithinBoundary(lists.archive, convo)) {
-      targetLists.add(lists.archive)
-    }
-    return targetLists
-  }
-
-  if (Convo.isUnread(convo) && isWithinBoundary(lists.unread, convo)) {
-    targetLists.add(lists.unread)
-  }
-
-  if (isWithinBoundary(lists.main, convo)) {
-    targetLists.add(lists.main)
-  }
-
-  return targetLists
+  return new Set(
+    getAllLists(lists)
+      .filter((list) => matches(list, convo) && isWithinBoundary(list, convo))
+  )
 }

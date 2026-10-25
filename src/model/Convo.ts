@@ -1,3 +1,4 @@
+import * as ConvoDraft from 'model/ConvoDraft'
 import * as History from 'model/History'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
@@ -182,9 +183,28 @@ function mock(id: Peer.Id): Convo {
 }
 
 // TODO: поддержать pending сообщения
-export function sorter(a: Convo, b: Convo) {
+export function sorter(a: Convo, b: Convo, convoDrafts?: Map<Peer.Id, ConvoDraft.ConvoDraft>) {
   if (a.majorSortId !== b.majorSortId) {
     return b.majorSortId - a.majorSortId
+  }
+
+  const aDraft = convoDrafts?.get(a.id)
+  const bDraft = convoDrafts?.get(b.id)
+  const aHasDraft = !!aDraft && !ConvoDraft.isEmpty(aDraft)
+  const bHasDraft = !!bDraft && !ConvoDraft.isEmpty(bDraft)
+
+  if (aHasDraft || bHasDraft) {
+    const aTime = aHasDraft
+      ? aDraft.updatedAt
+      : lastMessage(a, true)?.sentAt ?? 0
+
+    const bTime = bHasDraft
+      ? bDraft.updatedAt
+      : lastMessage(b, true)?.sentAt ?? 0
+
+    if (aTime !== bTime) {
+      return bTime - aTime
+    }
   }
 
   return b.minorSortId - a.minorSortId

@@ -76,6 +76,7 @@ export const ru = {
 
   me_convo_list_author: '{author}:',
   me_convo_list_author_you: 'Вы',
+  me_convo_list_draft_label: 'Черновик: ',
   me_convo_list_date_mins: '{mins}м',
   me_convo_list_date_hours: '{hours}ч',
   me_convo_list_date_days: '{days}д',

@@ -2,11 +2,12 @@ import { computed, defineComponent, Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
+import * as ConvoDraft from 'model/ConvoDraft'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useNow } from 'hooks'
+import { useNow, useViewer } from 'hooks'
 import { isNonEmptyArray } from 'misc/utils'
 import { ONE_DAY, ONE_HOUR, ONE_MINUTE, ONE_MONTH, ONE_WEEK } from 'misc/dateTime'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
@@ -26,12 +27,20 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   const router = useRouter()
   const route = useRoute()
   const { lang } = useServices()
-  const { typings } = useConvosStore()
+  const { convoDrafts, typings } = useConvosStore()
   const { peers } = usePeersStore()
+  const viewer = useViewer()
+
   const peer = computed(() => Peer.safeGet(peers, props.convo.id))
   const lastMessage = computed(() => Convo.lastMessage(props.convo, true))
   const active = computed(() => route.name === 'Convo' && +route.params.peerId === props.convo.id)
   const authorName = useAuthorName(lastMessage, computed(() => props.convo))
+  const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
+  const draftMessage = computed(() => (
+    draft && !ConvoDraft.isEmpty(draft)
+      ? ConvoDraft.toPreviewMessage(draft, props.convo.id, viewer.id)
+      : undefined
+  ))
 
   function openConvo() {
     router.push({
@@ -70,7 +79,10 @@ export const ConvoListItem = defineComponent<Props>((props) => {
 
     return (
       <div
-        class={['ConvoListItem', { 'ConvoListItem--active': active.value }]}
+        class={['ConvoListItem', {
+          'ConvoListItem--active': active.value,
+          'ConvoListItem--pinned': props.convo.majorSortId !== 0
+        }]}
         onClick={openConvo}
       >
         <Avatar class="ConvoListItem__avatar" peer={peer.value} size={48} />
@@ -97,8 +109,17 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           ) : (
             <>
               <span class="ConvoListItem__text">
-                {authorName.value && <span class="ConvoListItem__messageAuthor">{authorName.value}</span>}
-                {lastMessage.value ? (
+                {draftMessage.value ? (
+                  <span class="ConvoListItem__draftLabel">
+                    {lang.use('me_convo_list_draft_label')}
+                  </span>
+                ) : authorName.value ? (
+                  <span class="ConvoListItem__messageAuthor">{authorName.value}</span>
+                ) : null}
+
+                {draftMessage.value ? (
+                  <MessagePreview message={draftMessage.value} />
+                ) : lastMessage.value ? (
                   <MessagePreview message={lastMessage.value} />
                 ) : (
                   <span class="MessagePreview">

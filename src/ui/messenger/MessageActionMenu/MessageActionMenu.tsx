@@ -98,7 +98,10 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
             <ActionMenuItem
               icon={<Icon20ReplyOutline />}
               text={lang.use('me_message_menu_reply')}
-              onClick={() => (draft.replyMessage = Message.toForeign(message))}
+              onClick={() => {
+                draft.replyMessage = Message.toForeign(message)
+                ConvoDraft.touch(draft)
+              }}
               disabled={!!draft.editing}
             />
           )}
