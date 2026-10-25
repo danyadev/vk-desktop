@@ -23,6 +23,19 @@
   background: var(--vkui--color_transparent--active);
 }
 
+.ConvoListItem--pinned + .ConvoListItem:not(.ConvoListItem--pinned) {
+  margin-top: 12px;
+}
+
+.ConvoListItem--pinned + .ConvoListItem:not(.ConvoListItem--pinned)::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--vkui--color_separator_primary);
+}
+
 .ConvoListItem__avatar {
   grid-area: avatar;
   margin-right: 10px;

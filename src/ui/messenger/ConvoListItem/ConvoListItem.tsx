@@ -79,7 +79,10 @@ export const ConvoListItem = defineComponent<Props>((props) => {
 
     return (
       <div
-        class={['ConvoListItem', { 'ConvoListItem--active': active.value }]}
+        class={['ConvoListItem', {
+          'ConvoListItem--active': active.value,
+          'ConvoListItem--pinned': props.convo.majorSortId !== 0
+        }]}
         onClick={openConvo}
       >
         <Avatar class="ConvoListItem__avatar" peer={peer.value} size={48} />
