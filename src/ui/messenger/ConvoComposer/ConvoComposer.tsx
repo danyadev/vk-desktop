@@ -169,7 +169,11 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const onInput = (event: ChangeEvent<HTMLElement>) => {
-    draft.text = event.currentTarget.innerText ?? ''
+    const text = event.currentTarget.innerText ?? ''
+    if (draft.text !== text) {
+      draft.text = text
+      ConvoDraft.touch(draft)
+    }
   }
 
   const onPaste = (event: ClipboardEvent) => {
@@ -316,6 +320,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               disabled={isSaving.value}
               onClick={() => {
                 draft.replyMessage = undefined
+                ConvoDraft.touch(draft)
                 $input.value?.focus()
               }}
             />

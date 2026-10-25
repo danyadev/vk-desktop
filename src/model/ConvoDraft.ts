@@ -8,6 +8,7 @@ export type Draft = {
   attaches: Attach.Attaches
   replyMessage: Message.Foreign | undefined
   uploadingAttaches: UploadingAttach[]
+  updatedAt: number
 }
 
 export type ConvoDraft = Draft & {
@@ -33,13 +34,40 @@ const emptyDraft = (): Draft => ({
   text: '',
   attaches: {},
   replyMessage: undefined,
-  uploadingAttaches: []
+  uploadingAttaches: [],
+  updatedAt: 0
 })
 
 const emptyConvoDraft = (): ConvoDraft => ({
   ...emptyDraft(),
   editing: undefined
 })
+
+/**
+ * Возвращает драфт сообщения в беседе.
+ * Гарантируется, что всегда будет возвращаться один и тот же объект, и все изменения
+ * будут происходить через его мутацию. Это позволяет избегать создание рефов в компонентах
+ */
+export function safeGet(convoDrafts: Map<Peer.Id, ConvoDraft>, peerId: Peer.Id): ConvoDraft {
+  return getMapValueOrCompute(convoDrafts, peerId, emptyConvoDraft)
+}
+
+export function hasContent(draft: Draft) {
+  return draft.text.trim() !== '' || Attach.kindsCount(draft.attaches) > 0
+}
+
+export function isEmpty(convoDraft: ConvoDraft) {
+  return !convoDraft.editing && !convoDraft.replyMessage && !hasContent(convoDraft)
+}
+
+export function touch(convoDraft: ConvoDraft) {
+  convoDraft.updatedAt = Date.now()
+}
+
+export function reset(convoDraft: ConvoDraft) {
+  cancelUploads(convoDraft)
+  Object.assign(convoDraft, emptyConvoDraft())
+}
 
 /**
  * Снимок текущего драфта. Полезен, когда нужно читать и записывать данные в реактивные поля
@@ -58,6 +86,7 @@ export function startEditing(draft: ConvoDraft, message: Message.Normal) {
     attaches: Attach.copy(message.attaches),
     replyMessage: message.replyMessage,
     uploadingAttaches: [],
+    updatedAt: Date.now(),
     editing: { message, previousDraft }
   } satisfies ConvoDraft)
 }
@@ -79,39 +108,6 @@ export function isEdited(draft: Draft, message: Message.Normal) {
   )
 }
 
-/**
- * Возвращает драфт сообщения в беседе.
- * Гарантируется, что всегда будет возвращаться один и тот же объект, и все изменения
- * будут происходить через его мутацию. Это позволяет избегать создание рефов в компонентах
- */
-export function safeGet(drafts: Map<Peer.Id, ConvoDraft>, peerId: Peer.Id): ConvoDraft {
-  return getMapValueOrCompute(drafts, peerId, emptyConvoDraft)
-}
-
-export function hasContent(draft: Draft) {
-  return draft.text.trim() !== '' || Attach.kindsCount(draft.attaches) > 0
-}
-
-export function isEmpty(convoDraft: ConvoDraft) {
-  return (
-    !convoDraft.editing &&
-    !convoDraft.replyMessage &&
-    !convoDraft.uploadingAttaches.length &&
-    !hasContent(convoDraft)
-  )
-}
-
-function cancelUploads(draft: Draft) {
-  for (const attach of draft.uploadingAttaches.splice(0)) {
-    attach.abortController.abort()
-  }
-}
-
-export function reset(convoDraft: ConvoDraft) {
-  cancelUploads(convoDraft)
-  Object.assign(convoDraft, emptyConvoDraft())
-}
-
 let uploadingAttachId = 0
 
 export function getNewUploadingAttachId() {
@@ -131,5 +127,33 @@ export function removeUploadingAttach(draft: Draft, uploadingAttach: UploadingAt
   if (index !== -1) {
     draft.uploadingAttaches.splice(index, 1)
     uploadingAttach.abortController.abort()
+  }
+}
+
+function cancelUploads(draft: Draft) {
+  for (const attach of draft.uploadingAttaches.splice(0)) {
+    attach.abortController.abort()
+  }
+}
+
+export function toPreviewMessage(
+  draft: Draft,
+  peerId: Peer.Id,
+  authorId: Peer.OwnerId
+): Message.Pending {
+  return {
+    kind: 'Pending',
+    peerId,
+    cmid: undefined,
+    randomId: 0,
+    authorId,
+    isOut: true,
+    sentAt: 0,
+    updatedAt: undefined,
+    text: draft.text,
+    attaches: draft.attaches,
+    replyMessage: draft.replyMessage,
+    forwardedMessages: undefined,
+    isFailed: false
   }
 }

@@ -64,6 +64,10 @@
   white-space: nowrap;
 }
 
+.ConvoListItem__draftLabel {
+  color: var(--vkui--color_text_negative);
+}
+
 .ConvoListItem__messageAuthor {
   color: var(--vkui--color_text_secondary--active);
 }

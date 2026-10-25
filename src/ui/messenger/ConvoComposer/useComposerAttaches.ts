@@ -43,6 +43,7 @@ export function useComposerAttaches(convo: Convo.Convo, convoDraft: ConvoDraft.C
     } else {
       Attach.remove(convoDraft.attaches, attachPreview.attach)
     }
+    ConvoDraft.touch(convoDraft)
   }
 
   const uploadPhoto = (draft: ConvoDraft.Draft, uploadingPhoto: ConvoDraft.UploadingPhoto) => {
@@ -76,6 +77,7 @@ export function useComposerAttaches(convo: Convo.Convo, convoDraft: ConvoDraft.C
       failed: false,
       abortController: new AbortController()
     })
+    ConvoDraft.touch(convoDraft)
 
     switch (kind) {
       case 'Photo':
@@ -92,6 +94,7 @@ export function useComposerAttaches(convo: Convo.Convo, convoDraft: ConvoDraft.C
     uploadingAttach.progress = 0
     uploadingAttach.failed = false
     uploadingAttach.abortController = new AbortController()
+    ConvoDraft.touch(convoDraft)
 
     switch (uploadingAttach.kind) {
       case 'Photo':
@@ -102,6 +105,7 @@ export function useComposerAttaches(convo: Convo.Convo, convoDraft: ConvoDraft.C
 
   const abortUploadingAttach = (uploadingAttach: ConvoDraft.UploadingAttach) => {
     uploadingAttach.abortController.abort()
+    ConvoDraft.touch(convoDraft)
   }
 
   return {
