@@ -1,4 +1,4 @@
-import { watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
@@ -40,6 +40,13 @@ export type ConvoSession = {
   viewportPosition?: ViewportPosition
   navigationRequest?: NavigationRequest
   loadLocks: Partial<Record<'around' | 'up' | 'down', LoadConvoHistoryLock>>
+}
+
+export function createConvoSession(anchorCmid: Message.Cmid | 0 = 0): ConvoSession {
+  return reactive({
+    anchorCmid,
+    loadLocks: {}
+  })
 }
 
 export type TypingUser = {
@@ -87,10 +94,9 @@ export const useConvosStore = defineStore('convos', {
 
   actions: {
     getDefaultSession(peerId: Peer.Id, initialAnchor: Message.Cmid | 0): ConvoSession {
-      return getMapValueOrCompute(this.convoSessions, peerId, () => ({
-        anchorCmid: initialAnchor,
-        loadLocks: {}
-      }))
+      return getMapValueOrCompute(this.convoSessions, peerId, () => (
+        createConvoSession(initialAnchor)
+      ))
     },
 
     requestNavigation(peerId: Peer.Id, request: NavigationRequest) {

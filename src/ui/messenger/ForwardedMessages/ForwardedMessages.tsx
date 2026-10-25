@@ -6,9 +6,10 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useConvoSession, useFormatDate, useGlobalModal } from 'hooks'
+import { useFormatDate, useGlobalModal } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
+import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
@@ -23,10 +24,9 @@ type Props = {
 export const ForwardedMessages = defineComponent<Props>((props) => {
   const router = useRouter()
   const { lang } = useServices()
-  const session = useConvoSession()
   const convosStore = useConvosStore()
   const { peers } = usePeersStore()
-  const { peerInfoModal } = useGlobalModal()
+  const { peerInfoModal, messagesModal } = useGlobalModal()
   const formatDate = useFormatDate({ relativeTime: false })
 
   const goToMessage = (message: Message.Foreign) => {
@@ -39,9 +39,10 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
       cmid: message.cmid
     }
 
-    if (message.peerId === message.rootPeerId) {
-      session.navigationRequest = request
-    } else {
+    convosStore.requestNavigation(message.peerId, request)
+
+    const route = router.currentRoute.value
+    if (route.name !== 'Convo' || Number(route.params.peerId) !== message.peerId) {
       router.push({
         name: 'Convo',
         params: {
@@ -51,8 +52,6 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
           canGoBack: 1
         }
       })
-
-      convosStore.requestNavigation(message.peerId, request)
     }
   }
 
@@ -88,7 +87,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
               {message.updatedAt && (' · ' + lang.use('me_edited_label'))}
             </div>
 
-            {!message.isUnavailable && (
+            {!message.isUnavailable && message.peerId && message.cmid && (
               <ButtonIcon
                 class="ForwardedMessage__goToMessage"
                 shiftOnClick
@@ -98,20 +97,26 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
             )}
           </div>
 
+          {message.replyMessage && (
+            <ReplyMessage
+              class="ForwardedMessage__reply"
+              reply={message.replyMessage}
+              onClick={() => messagesModal.open({ messages: [message.replyMessage!] })}
+            />
+          )}
+
           {message.text && <span class="ForwardedMessage__text">{message.text}</span>}
           {hasAttaches && (
             <Attaches class="ForwardedMessage__attaches" attaches={message.attaches} message={message} />
           )}
 
-          {message.replyMessage && (
-            <div class="ForwardedMessage__nested">
-              {lang.use('me_in_reply_to_message')}
-            </div>
-          )}
           {message.forwardedMessages && (
-            <div class="ForwardedMessage__nested">
+            <ButtonText
+              class="ForwardedMessage__nested"
+              onClick={() => messagesModal.open({ messages: [message] })}
+            >
               {lang.usePlural('me_messages', message.forwardedMessages.length)}
-            </div>
+            </ButtonText>
           )}
 
           {isEmpty && (

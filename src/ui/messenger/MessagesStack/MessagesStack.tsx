@@ -2,7 +2,6 @@ import { defineComponent, shallowRef, watch } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { useConvoSession, useGlobalModal } from 'hooks'
 import { JSXElement, NonEmptyArray } from 'misc/utils'
@@ -15,21 +14,19 @@ import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
 import './MessagesStack.css'
 
 type Props = {
-  messages: NonEmptyArray<Message.Message>
-  openMessagePreview: (cmid: Message.Cmid) => void
+  convo?: Convo.Convo
+  messages: NonEmptyArray<Message.Message | Message.Foreign>
 }
 
 export const MessagesStack = defineComponent<Props>((props) => {
-  const { convos } = useConvosStore()
   const { peers } = usePeersStore()
   const { peerInfoModal } = useGlobalModal()
 
   return () => {
     const [message] = props.messages
     const author = Peer.safeGet(peers, message.authorId)
-    const convo = Convo.safeGet(convos, message.peerId)
-    const isChat = Peer.isChatPeerId(convo.id)
-    const isChannel = Convo.isChannel(convo)
+    const isChat = message.peerId && Peer.isChatPeerId(message.peerId)
+    const isChannel = props.convo && Convo.isChannel(props.convo)
 
     return (
       <div class={['MessagesStack', message.isOut && 'MessagesStack--out']}>
@@ -45,11 +42,14 @@ export const MessagesStack = defineComponent<Props>((props) => {
         <div class="MessagesStack__messages">
           {props.messages.map((message, index) => (
             <StackMessage
-              key={message.kind === 'Pending' ? message.randomId : message.cmid}
-              convo={convo}
+              key={message.kind === 'Foreign'
+                ? index
+                : message.kind === 'Pending'
+                  ? message.randomId
+                  : message.cmid}
+              convo={props.convo}
               message={message}
               isHead={index === 0}
-              openMessagePreview={props.openMessagePreview}
             />
           ))}
         </div>
@@ -57,14 +57,13 @@ export const MessagesStack = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['messages', 'openMessagePreview']
+  props: ['convo', 'messages']
 })
 
 type StackMessageProps = {
-  convo: Convo.Convo
-  message: Message.Message
+  convo?: Convo.Convo
+  message: Message.Message | Message.Foreign
   isHead: boolean
-  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 const StackMessage = defineComponent<StackMessageProps>((props) => {
@@ -87,44 +86,46 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
   return () => {
     const { message, isHead } = props
     const isCentered = message.kind === 'Service' || message.kind === 'Expired'
-    let content: JSXElement
+    let messageComponent: JSXElement
 
     switch (message.kind) {
       case 'Normal':
       case 'Pending':
-        content = (
+      case 'Foreign':
+        messageComponent = (
           <ConvoMessage
             message={message}
-            showName={isHead && Peer.isChatPeerId(message.peerId)}
-            openMessagePreview={props.openMessagePreview}
+            showName={isHead && !!message.peerId && Peer.isChatPeerId(message.peerId)}
           />
         )
         break
 
       case 'Service':
-        content = <ServiceMessage message={message} />
+        messageComponent = <ServiceMessage message={message} />
         break
 
       case 'Expired':
-        content = <ExpiredMessage count={1} />
+        messageComponent = <ExpiredMessage count={1} />
         break
     }
 
-    return (
-      <MessageActionMenu message={message} convo={props.convo}>
-        <div
-          class={[
-            'MessagesStack__message',
-            isCentered && 'MessagesStack__message--centered',
-            highlightTimeoutId.value && 'MessagesStack__message--highlighted'
-          ]}
-          data-cmid={message.cmid}
-        >
-          {content}
-        </div>
-      </MessageActionMenu>
+    const content = (
+      <div
+        class={[
+          'MessagesStack__message',
+          isCentered && 'MessagesStack__message--centered',
+          highlightTimeoutId.value && 'MessagesStack__message--highlighted'
+        ]}
+        data-cmid={message.kind === 'Foreign' ? undefined : message.cmid}
+      >
+        {messageComponent}
+      </div>
     )
+
+    return props.convo && message.kind !== 'Foreign'
+      ? <MessageActionMenu message={message} convo={props.convo}>{content}</MessageActionMenu>
+      : content
   }
 }, {
-  props: ['convo', 'message', 'isHead', 'openMessagePreview']
+  props: ['convo', 'message', 'isHead']
 })

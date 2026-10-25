@@ -1,0 +1,23 @@
+.HistoryMessages__dateBlock {
+  font: var(--smallFont);
+  color: var(--vkui--color_text_subhead);
+  margin: 8px auto;
+  text-align: center;
+}
+
+.HistoryMessages__unreadBlock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: var(--smallFont);
+  color: var(--vkui--color_text_subhead);
+  margin: 8px -100%;
+}
+
+.HistoryMessages__unreadBlock::before,
+.HistoryMessages__unreadBlock::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: var(--vkui--color_separator_secondary);
+}

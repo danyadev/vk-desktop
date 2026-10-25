@@ -1,0 +1,5 @@
+.MessagesModal {
+  overflow: hidden overlay;
+  max-width: var(--convoHistoryMaxWidth);
+  background: var(--vkd--color_background_convo_history);
+}

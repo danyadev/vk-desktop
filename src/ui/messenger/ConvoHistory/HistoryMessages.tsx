@@ -5,17 +5,17 @@ import * as Message from 'model/Message'
 import { NonEmptyArray } from 'misc/utils'
 import { isPreviousDay, isSameDay } from 'misc/dateTime'
 import { MessagesStack } from 'ui/messenger/MessagesStack/MessagesStack'
+import './HistoryMessages.css'
 
 type HistoryMessagesProps = {
-  convo: Convo.Convo
-  messages: Message.Message[]
+  convo?: Convo.Convo
+  messages: Array<Message.Message | Message.Foreign>
   hasMessagesAbove: boolean
-  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 type HistoryBlock =
   | { kind: 'Date', date: number }
-  | { kind: 'Stack', stack: NonEmptyArray<Message.Message> }
+  | { kind: 'Stack', stack: NonEmptyArray<Message.Message | Message.Foreign> }
   | { kind: 'Unread', inReadBy: Message.Cmid }
 
 export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => {
@@ -29,7 +29,7 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
       // Otherwise, we'll have a risk of scrolling to a wrong unread block via an anchor
       if (
         !message.isOut &&
-        props.convo.inReadBy &&
+        props.convo?.inReadBy &&
         Message.isUnread(message, props.convo) &&
         (prevMessage ? !Message.isUnread(prevMessage, props.convo) : !props.hasMessagesAbove)
       ) {
@@ -67,12 +67,7 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
       case 'Stack':
         // Не указываем key, чтобы vue сам определял, какие стеки нужно создать, а какие обновить.
         // Нет способа выразить key так, чтобы он не менялся при изменении того же стека(
-        return (
-          <MessagesStack
-            messages={block.stack}
-            openMessagePreview={props.openMessagePreview}
-          />
-        )
+        return <MessagesStack convo={props.convo} messages={block.stack} />
 
       case 'Date': {
         const blockDate = new Date(block.date)
@@ -92,13 +87,13 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
           }).format(block.date)
         }
 
-        return <div class="ConvoHistory__dateBlock" key={`date-${block.date}`}>{date}</div>
+        return <div class="HistoryMessages__dateBlock" key={`date-${block.date}`}>{date}</div>
       }
 
       case 'Unread':
         return (
           <div
-            class="ConvoHistory__unreadBlock"
+            class="HistoryMessages__unreadBlock"
             key={`unread-${block.inReadBy}`}
           >
             {lang.use('me_convo_unread_messages')}
@@ -107,5 +102,5 @@ export const HistoryMessages = defineComponent<HistoryMessagesProps>((props) => 
     }
   })
 }, {
-  props: ['convo', 'messages', 'hasMessagesAbove', 'openMessagePreview']
+  props: ['convo', 'messages', 'hasMessagesAbove']
 })

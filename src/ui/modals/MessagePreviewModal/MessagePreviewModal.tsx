@@ -1,10 +1,12 @@
 import { defineComponent, onUnmounted, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
 import * as IApi from 'services/contracts/IApi'
-import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
+import * as Peer from 'model/Peer'
+import { createConvoSession } from 'store/convos'
 import { insertPeers } from 'actions'
 import { fromApiMessage } from 'converters/MessageConverter'
+import { provideConvoSession, useGlobalModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { Modal } from 'ui/modals/parts'
@@ -13,74 +15,70 @@ import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './MessagePreviewModal.css'
 
-type Props = {
-  opened: boolean
-  onClose: () => void
-  convo: Convo.Convo
+type LoadStatus = 'loading' | 'loaded' | 'loadError' | 'unavailable'
+
+export type MessagePreviewModalProps = {
+  peerId: Peer.Id
   cmid: Message.Cmid
 }
 
-export const MessagePreviewModal = defineComponent<Props>((props) => {
+export const MessagePreviewModal = defineComponent<MessagePreviewModalProps>((props) => {
   const { api, lang } = useServices()
+  const { messagePreviewModal } = useGlobalModal()
+  const session = createConvoSession()
+  provideConvoSession(session)
+
   const message = shallowRef<Message.Confirmed>()
-  const status = shallowRef<'loading' | 'loaded' | 'loadError' | 'unavailable'>('loading')
-  const activeCmid = shallowRef<Message.Cmid>(props.cmid)
+  const status = shallowRef<LoadStatus>('loading')
   let abortController: AbortController | undefined
 
-  const loadMessage = async (cmid: Message.Cmid) => {
-    activeCmid.value = cmid
+  const loadMessage = async () => {
     abortController?.abort('Message preview request superseded')
+    message.value = undefined
 
     const controller = new AbortController()
     abortController = controller
-
-    message.value = undefined
     status.value = 'loading'
 
     try {
       const { items, profiles, groups } = await api.fetch('messages.getByConversationMessageId', {
-        peer_id: props.convo.id,
-        conversation_message_ids: cmid,
+        peer_id: props.peerId,
+        conversation_message_ids: props.cmid,
         extended: 1,
         fields: PEER_FIELDS
       }, { signal: controller.signal })
 
-      if (controller.signal.aborted) {
-        return
-      }
+      if (controller.signal.aborted) return
 
-      const apiMessage = items[0]
-      if (!apiMessage) {
+      if (!items[0]) {
         status.value = 'unavailable'
         return
       }
 
       insertPeers({ profiles, groups })
-
-      message.value = fromApiMessage(apiMessage)
+      message.value = fromApiMessage(items[0])
       status.value = 'loaded'
     } catch (err) {
-      if (controller.signal.aborted) {
-        return
-      }
+      if (controller.signal.aborted) return
 
       console.warn('[MessagePreviewModal] loading error', err)
-
-      if (err instanceof IApi.MethodError) {
-        status.value = 'unavailable'
-      } else {
-        status.value = 'loadError'
-      }
+      status.value = err instanceof IApi.MethodError ? 'unavailable' : 'loadError'
     }
   }
 
-  watch([() => props.opened, () => props.cmid], ([opened]) => {
-    if (opened) {
-      loadMessage(props.cmid)
-    } else {
-      abortController?.abort('Message preview closed')
+  watch(() => [props.peerId, props.cmid], loadMessage, { immediate: true })
+  watch(() => messagePreviewModal.opened, (opened) => {
+    if (!opened) abortController?.abort('Message preview closed')
+  })
+
+  watch(() => session.navigationRequest, (request) => {
+    if (!request) return
+    session.navigationRequest = undefined
+
+    if (request.kind === 'Message') {
+      messagePreviewModal.open({ peerId: props.peerId, cmid: request.cmid })
     }
-  }, { immediate: true })
+  })
 
   onUnmounted(() => {
     abortController?.abort('Message preview unmounted')
@@ -88,11 +86,12 @@ export const MessagePreviewModal = defineComponent<Props>((props) => {
 
   return () => (
     <Modal
-      opened={props.opened}
-      onClose={props.onClose}
+      opened={messagePreviewModal.opened}
+      onClose={messagePreviewModal.close}
+      onVisibilityChange={messagePreviewModal.onVisibilityChange}
       title={lang.use('messagePreviewModal_title')}
       buttons={
-        <Button onClick={props.onClose}>
+        <Button onClick={messagePreviewModal.close}>
           {lang.use('modal_close_label')}
         </Button>
       }
@@ -100,7 +99,6 @@ export const MessagePreviewModal = defineComponent<Props>((props) => {
     >
       <div
         class={[
-          'MessagePreviewModal__content',
           (status.value === 'loading' || status.value === 'unavailable') &&
             'MessagePreviewModal__content--centered'
         ]}
@@ -108,22 +106,15 @@ export const MessagePreviewModal = defineComponent<Props>((props) => {
         {status.value === 'loading' ? (
           <Spinner size="regular" />
         ) : status.value === 'loadError' ? (
-          <LoadError onRetry={() => loadMessage(activeCmid.value)} />
+          <LoadError onRetry={loadMessage} />
         ) : status.value === 'unavailable' ? (
           <div class="MessagePreviewModal__unavailable">
             {lang.use('messagePreviewModal_unavailable')}
           </div>
         ) : message.value ? (
-          <HistoryMessages
-            convo={props.convo}
-            messages={[message.value]}
-            hasMessagesAbove={false}
-            openMessagePreview={loadMessage}
-          />
+          <HistoryMessages messages={[message.value]} hasMessagesAbove={false} />
         ) : null}
       </div>
     </Modal>
   )
-}, {
-  props: ['opened', 'onClose', 'convo', 'cmid']
-})
+}, { props: ['peerId', 'cmid'] })

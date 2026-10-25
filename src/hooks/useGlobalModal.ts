@@ -1,30 +1,30 @@
 import { reactive, shallowRef } from 'vue'
 import { createSingletonHook } from 'misc/utils'
 import { CaptchaModalParams } from 'ui/modals/CaptchaModal/CaptchaModal'
+import { MessagePreviewModalProps } from 'ui/modals/MessagePreviewModal/MessagePreviewModal'
+import { MessagesModalProps } from 'ui/modals/MessagesModal/MessagesModal'
 import { PeerInfoModalProps } from 'ui/modals/PeerInfoModal/PeerInfoModal'
 import { PhotoViewerModalProps } from 'ui/modals/PhotoViewerModal/PhotoViewerModal'
 
 export const useGlobalModal = createSingletonHook(() => {
   return {
-    captchaModal: createGlobalModal<CaptchaModalParams>('CaptchaModal'),
-    photoViewerModal: createGlobalModal<PhotoViewerModalProps>('PhotoViewerModal'),
-    settingsModal: createGlobalModal<object>('SettingsModal'),
-    peerInfoModal: createGlobalModal<PeerInfoModalProps>('PeerInfoModal')
+    captchaModal: createGlobalModal<CaptchaModalParams>(),
+    photoViewerModal: createGlobalModal<PhotoViewerModalProps>(),
+    settingsModal: createGlobalModal<object>(),
+    peerInfoModal: createGlobalModal<PeerInfoModalProps>(),
+    messagePreviewModal: createGlobalModal<MessagePreviewModalProps>(),
+    messagesModal: createGlobalModal<MessagesModalProps>()
   }
 })
 
-function createGlobalModal<ModalParams>(modalName: string) {
+function createGlobalModal<ModalParams>() {
   const opened = shallowRef(false)
   const visible = shallowRef(false)
   const params = shallowRef<ModalParams>()
 
   function open(modalParams: ModalParams) {
-    if (opened.value) {
-      throw new Error(`Модалка ${modalName} уже открыта`)
-    }
-
-    opened.value = true
     params.value = modalParams
+    opened.value = true
   }
 
   function close() {

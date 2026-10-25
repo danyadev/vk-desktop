@@ -28,7 +28,6 @@ import './ConvoHistory.css'
 
 type Props = {
   convo: Convo.Convo
-  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 const SHOW_HOP_NAVIGATION_THRESHOLD = 200
@@ -39,7 +38,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { typings, historyLoadCompleteListeners } = useConvosStore()
   const session = useConvoSession()
-  const { convo, openMessagePreview } = props
+  const { convo } = props
 
   const historySlice = computed(() => History.around(
     convo.history,
@@ -83,8 +82,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     convo,
     session,
     $historyElement,
-    computed(() => !!historySlice.value.gapAround),
-    openMessagePreview
+    computed(() => !!historySlice.value.gapAround)
   )
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
@@ -265,7 +263,6 @@ export const ConvoHistory = defineComponent<Props>((props) => {
               convo={convo}
               messages={messages}
               hasMessagesAbove={!!gapBefore || hasStartWindowOffset}
-              openMessagePreview={openMessagePreview}
             />
 
             {windowEnd && hasEndWindowOffset ? (
@@ -316,7 +313,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['convo', 'openMessagePreview']
+  props: ['convo']
 })
 
 type HistoryBoundaryProps = {

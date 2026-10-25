@@ -182,7 +182,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
                 ref={setPopperRef}
                 class={['Popper', `Popper--placement-${effectivePlacement.value}`]}
                 tabindex={-1}
-                onClickCapture={() => props.closeOnContentClick && (showContent.value = false)}
+                onClick={() => props.closeOnContentClick && (showContent.value = false)}
                 onMouseenter={() => (isPointingAtContent.value = true)}
                 onMouseleave={() => (isPointingAtContent.value = false)}
                 onKeydown={handleEscape}

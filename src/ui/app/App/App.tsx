@@ -10,6 +10,8 @@ import { exposeFeatures } from './exposeFeatures'
 import { useThemeScheme } from './useThemeScheme'
 import { Titlebar } from 'ui/app/Titlebar/Titlebar'
 import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
+import { MessagePreviewModal } from 'ui/modals/MessagePreviewModal/MessagePreviewModal'
+import { MessagesModal } from 'ui/modals/MessagesModal/MessagesModal'
 import { ModalsContainer } from 'ui/modals/parts'
 import { PeerInfoModal } from 'ui/modals/PeerInfoModal/PeerInfoModal'
 import { PhotoViewerModal } from 'ui/modals/PhotoViewerModal/PhotoViewerModal'
@@ -51,7 +53,14 @@ export const App = defineComponent(() => {
 })
 
 const GlobalModals = defineComponent(() => {
-  const { captchaModal, photoViewerModal, settingsModal, peerInfoModal } = useGlobalModal()
+  const {
+    captchaModal,
+    photoViewerModal,
+    settingsModal,
+    peerInfoModal,
+    messagePreviewModal,
+    messagesModal
+  } = useGlobalModal()
 
   return () => [
     // Параметры появляются при открытии модалки,
@@ -59,6 +68,8 @@ const GlobalModals = defineComponent(() => {
     captchaModal.params && <CaptchaModal {...captchaModal.params} />,
     photoViewerModal.params && <PhotoViewerModal {...photoViewerModal.params} />,
     settingsModal.params && <SettingsModal {...settingsModal.params} />,
-    peerInfoModal.params && <PeerInfoModal {...peerInfoModal.params} />
+    peerInfoModal.params && <PeerInfoModal {...peerInfoModal.params} />,
+    messagePreviewModal.params && <MessagePreviewModal {...messagePreviewModal.params} />,
+    messagesModal.params && <MessagesModal {...messagesModal.params} />
   ]
 })

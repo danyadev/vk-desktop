@@ -132,10 +132,9 @@ export function resolveCmid(cmid: number): Cmid {
   return cmid as Cmid
 }
 
-export function isUnread(message: Message, convo: Convo.Convo): boolean {
-  if (message.kind === 'Pending') {
-    return true
-  }
+export function isUnread(message: Message | Foreign, convo: Convo.Convo): boolean {
+  if (message.kind === 'Pending') return true
+  if (message.kind === 'Foreign') return false
 
   return message.isOut
     ? message.cmid > convo.outReadBy
