@@ -21,7 +21,7 @@ type ConvoViewProps = {
 
 const ConvoView = defineComponent<ConvoViewProps>((props) => {
   const convosStore = useConvosStore()
-  const { messagePreviewModal } = useGlobalModal()
+  const { messageViewerModal } = useGlobalModal()
   const session = convosStore.getDefaultSession(props.convo.id, props.convo.inReadBy)
   provideConvoSession(session)
 
@@ -37,7 +37,10 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
             pinnedMessage={pinnedMessage}
             onClick={() => {
               if (pinnedMessage.isUnavailable) {
-                messagePreviewModal.open({ peerId: props.convo.id, cmid: pinnedMessage.cmid })
+                messageViewerModal.open({
+                  peerId: props.convo.id,
+                  cmid: pinnedMessage.cmid
+                })
                 return
               }
               session.navigationRequest = {

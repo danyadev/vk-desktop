@@ -20,14 +20,14 @@ type Props = {
 export const ConvoMessage = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { peers } = usePeersStore()
-  const { peerInfoModal, messagePreviewModal, messagesModal } = useGlobalModal()
+  const { peerInfoModal, messageViewerModal } = useGlobalModal()
   const session = useConvoSession()
 
   const navigateToReply = (reply: Message.Foreign) => {
     if (props.message.kind === 'Foreign') {
-      messagesModal.open({ messages: [reply] })
+      messageViewerModal.open({ messages: [reply] })
     } else if (reply.isUnavailable && reply.cmid) {
-      messagePreviewModal.open({ peerId: props.message.peerId, cmid: reply.cmid })
+      messageViewerModal.open({ peerId: props.message.peerId, cmid: reply.cmid })
     } else if (reply.cmid) {
       session.navigationRequest = { kind: 'Message', cmid: reply.cmid }
     }

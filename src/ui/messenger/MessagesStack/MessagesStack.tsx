@@ -30,7 +30,10 @@ export const MessagesStack = defineComponent<Props>((props) => {
 
     return (
       <div class={['MessagesStack', message.isOut && 'MessagesStack--out']}>
-        {message.kind === 'Normal' && !message.isOut && isChat && !isChannel && (
+        {(message.kind === 'Normal' || message.kind === 'Foreign') &&
+          !message.isOut &&
+          (!props.convo || isChat) &&
+          !isChannel && (
           <ButtonBase
             class="MessagesStack__avatar"
             onClick={() => peerInfoModal.open({ peerId: author.id })}
@@ -95,7 +98,9 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
         messageComponent = (
           <ConvoMessage
             message={message}
-            showName={isHead && !!message.peerId && Peer.isChatPeerId(message.peerId)}
+            showName={isHead && (
+              !props.convo || (!!message.peerId && Peer.isChatPeerId(message.peerId))
+            )}
           />
         )
         break

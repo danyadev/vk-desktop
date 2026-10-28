@@ -1,0 +1,37 @@
+.MessageViewerModal {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-width: var(--convoHistoryMaxWidth);
+  background: var(--vkd--color_background_convo_history);
+}
+
+.MessageViewerModal__scroll {
+  min-height: 0;
+  padding: 15px 20px;
+  overflow: hidden overlay;
+}
+
+.MessageViewerModal__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.MessageViewerModal__back {
+  width: 32px;
+  height: 32px;
+  margin-left: -8px;
+  color: var(--vkui--color_icon_secondary);
+}
+
+.MessageViewerModal__centered {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: center;
+}
+
+.MessageViewerModal__unavailable {
+  color: var(--vkui--color_text_subhead);
+}

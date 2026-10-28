@@ -26,7 +26,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const convosStore = useConvosStore()
   const { peers } = usePeersStore()
-  const { peerInfoModal, messagesModal } = useGlobalModal()
+  const { peerInfoModal, messageViewerModal } = useGlobalModal()
   const formatDate = useFormatDate({ relativeTime: false })
 
   const goToMessage = (message: Message.Foreign) => {
@@ -39,6 +39,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
       cmid: message.cmid
     }
 
+    messageViewerModal.close()
     convosStore.requestNavigation(message.peerId, request)
 
     const route = router.currentRoute.value
@@ -101,19 +102,23 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
             <ReplyMessage
               class="ForwardedMessage__reply"
               reply={message.replyMessage}
-              onClick={() => messagesModal.open({ messages: [message.replyMessage!] })}
+              onClick={() => messageViewerModal.open({ messages: [message.replyMessage!] })}
             />
           )}
 
           {message.text && <span class="ForwardedMessage__text">{message.text}</span>}
           {hasAttaches && (
-            <Attaches class="ForwardedMessage__attaches" attaches={message.attaches} message={message} />
+            <Attaches
+              class="ForwardedMessage__attaches"
+              attaches={message.attaches}
+              message={message}
+            />
           )}
 
           {message.forwardedMessages && (
             <ButtonText
               class="ForwardedMessage__nested"
-              onClick={() => messagesModal.open({ messages: [message] })}
+              onClick={() => messageViewerModal.open({ messages: [message] })}
             >
               {lang.usePlural('me_messages', message.forwardedMessages.length)}
             </ButtonText>

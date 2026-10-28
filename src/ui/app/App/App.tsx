@@ -10,8 +10,7 @@ import { exposeFeatures } from './exposeFeatures'
 import { useThemeScheme } from './useThemeScheme'
 import { Titlebar } from 'ui/app/Titlebar/Titlebar'
 import { CaptchaModal } from 'ui/modals/CaptchaModal/CaptchaModal'
-import { MessagePreviewModal } from 'ui/modals/MessagePreviewModal/MessagePreviewModal'
-import { MessagesModal } from 'ui/modals/MessagesModal/MessagesModal'
+import { MessageViewerModal } from 'ui/modals/MessageViewerModal/MessageViewerModal'
 import { ModalsContainer } from 'ui/modals/parts'
 import { PeerInfoModal } from 'ui/modals/PeerInfoModal/PeerInfoModal'
 import { PhotoViewerModal } from 'ui/modals/PhotoViewerModal/PhotoViewerModal'
@@ -58,8 +57,7 @@ const GlobalModals = defineComponent(() => {
     photoViewerModal,
     settingsModal,
     peerInfoModal,
-    messagePreviewModal,
-    messagesModal
+    messageViewerModal
   } = useGlobalModal()
 
   return () => [
@@ -69,7 +67,6 @@ const GlobalModals = defineComponent(() => {
     photoViewerModal.params && <PhotoViewerModal {...photoViewerModal.params} />,
     settingsModal.params && <SettingsModal {...settingsModal.params} />,
     peerInfoModal.params && <PeerInfoModal {...peerInfoModal.params} />,
-    messagePreviewModal.params && <MessagePreviewModal {...messagePreviewModal.params} />,
-    messagesModal.params && <MessagesModal {...messagesModal.params} />
+    messageViewerModal.current && <MessageViewerModal />
   ]
 })

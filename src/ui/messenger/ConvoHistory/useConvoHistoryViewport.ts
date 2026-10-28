@@ -19,7 +19,7 @@ export const useConvoHistoryViewport = (
   $historyElement: Ref<HTMLElement | null>,
   hasAroundGap: Ref<boolean>
 ) => {
-  const { messagePreviewModal } = useGlobalModal()
+  const { messageViewerModal } = useGlobalModal()
   const messagesWindowWingSize = shallowRef(WINDOW_WING_MIN_MESSAGES)
 
   const resizeObserver = new ResizeObserver(([entry]) => {
@@ -150,7 +150,7 @@ export const useConvoHistoryViewport = (
           origin: request.origin
         }
       }
-      messagePreviewModal.open({ peerId: convo.id, cmid: request.cmid })
+      messageViewerModal.open({ peerId: convo.id, cmid: request.cmid })
     }
 
     if (!session.navigationRequest) {

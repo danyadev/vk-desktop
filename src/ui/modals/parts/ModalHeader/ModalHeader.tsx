@@ -15,12 +15,12 @@ export const ModalHeader = defineComponent<Props>((props) => {
   return () => (
     <div class="ModalHeader">
       {props.title}
-      <div class="ModalHeader__closeIcon" onClick={props.onClose}>
-        <ButtonIcon
-          icon={<Icon24Cancel color="var(--vkui--color_icon_medium)" />}
-          withHoverBackground
-        />
-      </div>
+      <ButtonIcon
+        class="ModalHeader__closeIcon"
+        onClick={props.onClose}
+        icon={<Icon24Cancel color="var(--vkui--color_icon_medium)" />}
+        withHoverBackground
+      />
     </div>
   )
 }, {

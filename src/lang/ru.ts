@@ -438,8 +438,8 @@ export const ru = {
   modal_send_label: 'Отправить',
   modal_delete_label: 'Удалить',
 
-  messagePreviewModal_title: 'Просмотр сообщения',
-  messagePreviewModal_unavailable: 'Сообщение недоступно',
+  messageViewerModal_title: 'Просмотр сообщения',
+  messageViewerModal_unavailable: 'Сообщение недоступно',
 
   messageDeleteModal_confirm_title: 'Удалить сообщение?',
   messageDeleteModal_confirm_text: 'Сообщение будет удалено из переписки.',
