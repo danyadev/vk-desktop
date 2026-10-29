@@ -13,30 +13,23 @@ import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import './ConvoMessage.css'
 
 type Props = {
-  message: Message.Normal | Message.Pending
+  message: Message.Normal | Message.Pending | Message.Foreign
   showName: boolean
-  openMessagePreview: (cmid: Message.Cmid) => void
 }
 
 export const ConvoMessage = defineComponent<Props>((props) => {
   const { lang } = useServices()
-  const session = useConvoSession()
   const { peers } = usePeersStore()
-  const { peerInfoModal } = useGlobalModal()
+  const { peerInfoModal, messageViewerModal } = useGlobalModal()
+  const session = useConvoSession()
 
-  const navigateToReplyMessage = (reply: Message.Foreign) => {
-    if (!reply.cmid) {
-      return
-    }
-
-    if (reply.isUnavailable) {
-      props.openMessagePreview(reply.cmid)
-      return
-    }
-
-    session.navigationRequest = {
-      kind: 'Message',
-      cmid: reply.cmid
+  const navigateToReply = (reply: Message.Foreign) => {
+    if (props.message.kind === 'Foreign') {
+      messageViewerModal.open({ messages: [reply] })
+    } else if (reply.isUnavailable && reply.cmid) {
+      messageViewerModal.open({ peerId: props.message.peerId, cmid: reply.cmid })
+    } else if (reply.cmid) {
+      session.navigationRequest = { kind: 'Message', cmid: reply.cmid }
     }
   }
 
@@ -70,7 +63,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             <ReplyMessage
               class="ConvoMessage__reply"
               reply={message.replyMessage}
-              onClick={() => navigateToReplyMessage(message.replyMessage!)}
+              onClick={() => navigateToReply(message.replyMessage!)}
             />
           )}
 
@@ -90,7 +83,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             {lang
               .dateTimeFormatter({ hour: '2-digit', minute: '2-digit' })
               .format(message.sentAt)}
-            {props.message.isOut && (
+            {props.message.isOut && props.message.kind !== 'Foreign' && (
               <span class="ConvoMessage__status">
                 <MessageOutStatusIcon message={props.message} />
               </span>
@@ -101,5 +94,5 @@ export const ConvoMessage = defineComponent<Props>((props) => {
     )
   }
 }, {
-  props: ['message', 'showName', 'openMessagePreview']
+  props: ['message', 'showName']
 })

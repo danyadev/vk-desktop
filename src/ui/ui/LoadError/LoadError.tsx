@@ -1,11 +1,11 @@
-import { defineComponent } from 'vue'
+import { defineComponent, MouseEvent } from 'vue'
 import { useServices } from 'services'
 import { ClassName } from 'misc/utils'
 import { Button } from 'ui/ui/Button/Button'
 import './LoadError.css'
 
 type Props = {
-  onRetry: () => void
+  onRetry: (event: MouseEvent) => void
   class?: ClassName
 }
 

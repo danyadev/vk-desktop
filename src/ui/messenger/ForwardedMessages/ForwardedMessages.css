@@ -44,7 +44,11 @@
   justify-self: start;
   max-width: 100%;
   font-weight: 500;
-  text-align: left;
+}
+
+.ForwardedMessage__name:focus-visible {
+  /* because overflow: hidden cuts the focus-visible outline */
+  text-decoration: underline;
 }
 
 .ForwardedMessage__date {
@@ -63,14 +67,16 @@
   opacity: 0.8;
 }
 
-.ForwardedMessage__text + .ForwardedMessage__attaches {
+.ForwardedMessage__text + .ForwardedMessage__attaches,
+.ForwardedMessage__reply + .ForwardedMessage__attaches {
   margin-top: 6px;
 }
 
 .ForwardedMessage__nested {
+  display: block;
   font-weight: 500;
   color: var(--vkui--color_text_accent);
-  padding: 4px 0;
+  margin: 4px 0;
 }
 
 .ForwardedMessage__empty {

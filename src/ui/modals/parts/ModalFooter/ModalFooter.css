@@ -1,5 +1,6 @@
 .ModalFooter {
   display: flex;
+  flex-shrink: 0;
   padding: 15px 20px;
 }
 

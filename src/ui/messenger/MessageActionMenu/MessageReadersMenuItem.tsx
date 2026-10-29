@@ -117,7 +117,12 @@ export const MessageReadersMenuItem = defineComponent<Props>((props) => {
           })}
 
           {isError.value ? (
-            <LoadError onRetry={loadMore} />
+            <LoadError
+              onRetry={(event) => {
+                event.stopPropagation()
+                loadMore()
+              }}
+            />
           ) : hasMore.value ? (
             <IntersectionWrapper key={readers.value.length} onIntersect={loadMore}>
               <div class="MessageReadersMenuItem__loader">

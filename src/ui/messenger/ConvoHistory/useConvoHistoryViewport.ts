@@ -2,6 +2,7 @@ import { nextTick, onBeforeUnmount, Ref, shallowRef, watch } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import { ConvoSession, ViewportPosition } from 'store/convos'
+import { useGlobalModal } from 'hooks'
 
 type VisibleMessageRange =
   | [firstCmid: undefined, lastCmid: undefined, firstRect: undefined, lastRect: undefined]
@@ -16,9 +17,9 @@ export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   session: ConvoSession,
   $historyElement: Ref<HTMLElement | null>,
-  hasAroundGap: Ref<boolean>,
-  openMessagePreview: (cmid: Message.Cmid) => void
+  hasAroundGap: Ref<boolean>
 ) => {
+  const { messageViewerModal } = useGlobalModal()
   const messagesWindowWingSize = shallowRef(WINDOW_WING_MIN_MESSAGES)
 
   const resizeObserver = new ResizeObserver(([entry]) => {
@@ -63,7 +64,7 @@ export const useConvoHistoryViewport = (
   })
 
   const getUnreadElement = () => {
-    return $historyElement.value?.querySelector<HTMLElement>('.ConvoHistory__unreadBlock')
+    return $historyElement.value?.querySelector<HTMLElement>('.HistoryMessages__unreadBlock')
   }
 
   const getMessageElement = (cmid: Message.Cmid) => {
@@ -149,7 +150,7 @@ export const useConvoHistoryViewport = (
           origin: request.origin
         }
       }
-      openMessagePreview(request.cmid)
+      messageViewerModal.open({ peerId: convo.id, cmid: request.cmid })
     }
 
     if (!session.navigationRequest) {
