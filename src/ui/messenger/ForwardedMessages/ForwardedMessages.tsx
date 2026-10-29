@@ -120,7 +120,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
               class="ForwardedMessage__nested"
               onClick={() => messageViewerModal.open({ messages: [message] })}
             >
-              {lang.usePlural('me_messages', message.forwardedMessages.length)}
+              {lang.usePlural('me_messages_preview', message.forwardedMessages.length)}
             </ButtonText>
           )}
 

@@ -171,8 +171,11 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
           {showContent.value && !props.showOnHover && (
             <div
               class="Popper__backdrop"
-              onClick={() => (showContent.value = false)}
-              onContextmenu={() => (showContent.value = false)}
+              onMousedown={(event) => {
+                if (event.button === MouseButton.LEFT || event.button === MouseButton.RIGHT) {
+                  showContent.value = false
+                }
+              }}
             />
           )}
 

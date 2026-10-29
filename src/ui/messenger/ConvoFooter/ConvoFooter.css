@@ -1,0 +1,18 @@
+.ConvoFooter {
+  flex: none;
+  width: calc(100% - 2 * var(--convoHistoryIndent));
+  max-width: calc(var(--convoHistoryMaxWidth) - 2 * var(--convoHistoryIndent));
+  margin: 0 auto var(--convoHistoryIndent);
+  border-radius: 12px;
+  background: var(--vkd--color_background_composer);
+  box-shadow: var(--vkui--elevation3);
+}
+
+.ConvoFooter__panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 4px 10px;
+  color: var(--vkui--color_text_subhead);
+}

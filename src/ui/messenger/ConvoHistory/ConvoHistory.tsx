@@ -13,7 +13,7 @@ import * as History from 'model/History'
 import * as Message from 'model/Message'
 import { LoadConvoHistoryLock, useConvosStore } from 'store/convos'
 import { loadConvoHistory } from 'actions'
-import { useConvoSession } from 'hooks'
+import { useConvoSession, useIsMounted } from 'hooks'
 import { getMapValueOrCompute, isNonEmptyArray, throttle } from 'misc/utils'
 import { HistoryMessages } from 'ui/messenger/ConvoHistory/HistoryMessages'
 import { useConvoHistoryViewport } from 'ui/messenger/ConvoHistory/useConvoHistoryViewport'
@@ -38,6 +38,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { typings, historyLoadCompleteListeners } = useConvosStore()
   const session = useConvoSession()
+  const isMounted = useIsMounted()
   const { convo } = props
 
   const historySlice = computed(() => History.around(
@@ -67,7 +68,7 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   })
 
   const $historyElement = shallowRef<HTMLElement | null>(null)
-  const pinnedToBottom = shallowRef(true)
+  const pinnedToBottom = shallowRef(false)
   const showHopNavigation = shallowRef(false)
 
   const {
@@ -82,7 +83,8 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     convo,
     session,
     $historyElement,
-    computed(() => !!historySlice.value.gapAround)
+    computed(() => !!historySlice.value.gapAround),
+    pinnedToBottom
   )
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {
@@ -101,12 +103,11 @@ export const ConvoHistory = defineComponent<Props>((props) => {
 
     if (session.viewportPosition) {
       restoreViewportPosition(session.viewportPosition)
-      return
+    } else if (session.anchorCmid) {
+      scrollToInitialPosition(session.anchorCmid, true)
     }
 
-    if (session.anchorCmid) {
-      scrollToInitialPosition(session.anchorCmid)
-    }
+    updateScrollState()
   })
 
   onBeforeUnmount(() => {
@@ -143,11 +144,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     }
   }, { flush: 'pre' })
 
-  const onScroll = throttle(() => {
+  const updateScrollState = () => {
     const historyElement = $historyElement.value
-    if (!historyElement) {
-      return
-    }
+    if (!historyElement) return
 
     const distanceFromBottom =
       historyElement.scrollHeight - historyElement.scrollTop - historyElement.offsetHeight
@@ -157,7 +156,9 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       !historySlice.value.gapAfter &&
       !windowSlice.value.hasEndWindowOffset &&
       distanceFromBottom < PINNED_TO_BOTTOM_THRESHOLD
-  }, 50)
+  }
+
+  const onScroll = throttle(updateScrollState, 50)
 
   const handleHopNavigation = () => {
     const [, lastVisibleCmid] = findVisibleMessageRange()
@@ -281,25 +282,27 @@ export const ConvoHistory = defineComponent<Props>((props) => {
           </div>
         </div>
 
-        <Transition name="ConvoHistory__hopNavigation-">
-          {(showHopNavigation.value || !!gapAfter || hasEndWindowOffset) && (
-            <div class="ConvoHistory__hopNavigation">
-              <div class="ConvoHistory__hopNavigationControl">
-                <ButtonIcon
-                  class="ConvoHistory__hopNavigationButton"
-                  shiftOnClick
-                  icon={<Icon24ChevronDown />}
-                  onClick={handleHopNavigation}
-                />
-                <Counter
-                  class="ConvoHistory__hopNavigationCounter"
-                  count={convo.unreadCount}
-                  mode={convo.notifications.enabled ? 'primary' : 'secondary'}
-                />
+        {isMounted.value && (
+          <Transition name="ConvoHistory__hopNavigation-">
+            {(showHopNavigation.value || !!gapAfter || hasEndWindowOffset) && (
+              <div class="ConvoHistory__hopNavigation">
+                <div class="ConvoHistory__hopNavigationControl">
+                  <ButtonIcon
+                    class="ConvoHistory__hopNavigationButton"
+                    shiftOnClick
+                    icon={<Icon24ChevronDown />}
+                    onClick={handleHopNavigation}
+                  />
+                  <Counter
+                    class="ConvoHistory__hopNavigationCounter"
+                    count={convo.unreadCount}
+                    mode={convo.notifications.enabled ? 'primary' : 'secondary'}
+                  />
+                </div>
               </div>
-            </div>
-          )}
-        </Transition>
+            )}
+          </Transition>
+        )}
       </div>
     )
   }

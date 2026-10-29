@@ -6,7 +6,7 @@ import * as Message from 'model/Message'
 import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
 import { retryAllPendingMessages, retryPendingMessage } from 'actions'
-import { useModal } from 'hooks'
+import { useConvoSession, useModal } from 'hooks'
 import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
 import { MessageReadersMenuItem } from 'ui/messenger/MessageActionMenu/MessageReadersMenuItem'
 import { Modal } from 'ui/modals/parts'
@@ -17,6 +17,7 @@ import { Button } from 'ui/ui/Button/Button'
 import { Popper } from 'ui/ui/Popper/Popper'
 import {
   Icon20ArrowUturnLeftOutline,
+  Icon20CheckCircleOutline,
   Icon20CopyOutline,
   Icon20EditOutline,
   Icon20PinOutline,
@@ -35,6 +36,7 @@ type Props = {
 export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
   const { api, lang } = useServices()
   const viewer = useViewerStore()
+  const session = useConvoSession()
   const { convoDrafts } = useConvosStore()
   const deleteModal = useModal()
   const pinModal = useModal()
@@ -78,6 +80,11 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
 
     await api.fetch('messages.unpin', { peer_id: message.peerId })
   })
+
+  const selectMessage = (cmid: Message.Cmid) => {
+    session.selectedCmids.add(cmid)
+    session.selectionAnchorCmid = cmid
+  }
 
   const getMenuContent = () => {
     const { message, convo } = props
@@ -134,6 +141,11 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
             text={lang.use('me_message_menu_copy_cmid')}
             onClick={() => navigator.clipboard.writeText(String(message.cmid))}
           />
+          <ActionMenuItem
+            icon={<Icon20CheckCircleOutline />}
+            text={lang.use('me_message_menu_select')}
+            onClick={() => selectMessage(message.cmid)}
+          />
           <ActionMenuSeparator />
           <ActionMenuItem
             icon={<Icon20TrashOutline />}
@@ -149,6 +161,12 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
     if (message.kind === 'Service' || message.kind === 'Expired') {
       return (
         <ActionMenu>
+          <ActionMenuItem
+            icon={<Icon20CheckCircleOutline />}
+            text={lang.use('me_message_menu_select')}
+            onClick={() => selectMessage(message.cmid)}
+          />
+          <ActionMenuSeparator />
           <ActionMenuItem
             icon={<Icon20TrashOutline />}
             text={lang.use('me_message_menu_delete')}
@@ -203,7 +221,12 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
 
     return (
       <>
-        <Popper trigger="contextmenu" closeOnContentClick content={content}>
+        <Popper
+          trigger="contextmenu"
+          closeOnContentClick
+          content={content}
+          disabled={session.selectedCmids.size > 0}
+        >
           {slots.default?.()}
         </Popper>
 
@@ -212,7 +235,7 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
             opened={deleteModal.opened}
             onClose={deleteModal.close}
             convo={convo}
-            message={message}
+            messages={[message]}
           />
         )}
 

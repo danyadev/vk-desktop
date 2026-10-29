@@ -3,3 +3,7 @@
   flex-direction: column;
   gap: 12px;
 }
+
+.DeleteMessageModal__error {
+  color: var(--vkui--color_text_negative);
+}

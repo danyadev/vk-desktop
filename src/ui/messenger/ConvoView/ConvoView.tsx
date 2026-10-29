@@ -7,7 +7,7 @@ import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
 import { provideConvoSession, useGlobalModal, useKeyboardZones } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
-import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
+import { ConvoFooter } from 'ui/messenger/ConvoFooter/ConvoFooter'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
 import { ConvoHistory } from 'ui/messenger/ConvoHistory/ConvoHistory'
 import { PinnedMessage } from 'ui/messenger/PinnedMessage/PinnedMessage'
@@ -55,7 +55,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
           />
         )}
         <ConvoHistory convo={props.convo} />
-        <ConvoComposer convo={props.convo} />
+        <ConvoFooter convo={props.convo} />
       </div>
     )
   }

@@ -1,7 +1,13 @@
 .MessagesStack {
+  --selection-content-shift: 24px;
+  container-type: inline-size;
   display: flex;
   align-items: flex-end;
   padding: 4px 0;
+}
+
+.MessagesStack--out {
+  --selection-content-shift: 0px;
 }
 
 .MessagesStack__avatar {
@@ -9,6 +15,11 @@
   bottom: 4px;
   margin-right: 8px;
   border-radius: 50%;
+  transition: transform var(--mediumTransition);
+}
+
+.MessagesStack--selecting .MessagesStack__avatar {
+  pointer-events: none;
 }
 
 .MessagesStack__messages {
@@ -17,6 +28,12 @@
   gap: 8px;
   width: 100%;
   min-width: 0;
+  transition: transform var(--mediumTransition);
+}
+
+.MessagesStack--selecting:not(.MessagesStack--out) .MessagesStack__avatar,
+.MessagesStack--selecting:not(.MessagesStack--out) .MessagesStack__messages {
+  transform: translateX(var(--selection-content-shift));
 }
 
 .MessagesStack__message {
@@ -32,6 +49,90 @@
 
 .MessagesStack--out .ConvoMessage {
   grid-column: 2;
+}
+
+.MessagesStack__message--selectable {
+  cursor: pointer;
+}
+
+.MessagesStack--selecting .MessagesStack__message--service {
+  padding-inline: 24px;
+}
+
+.MessagesStack--selecting .MessagesStack__message > :not(.MessagesStack__selection) {
+  pointer-events: none;
+}
+
+.MessagesStack__selection {
+  position: absolute;
+  bottom: 0;
+  /*
+   * 100% - 100cqw — разница ширины строки и всего стека, учитывающая место под аватарку.
+   * -12px — положение иконки относительно левого края стека.
+   * -var(...) — компенсация сдвига сообщений при переходе в режим выделения.
+   */
+  left: calc(100% - 100cqw - 12px - var(--selection-content-shift));
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vkui--color_icon_tertiary);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--mediumTransition),
+    transform var(--mediumTransition),
+    visibility var(--mediumTransition),
+    color var(--mediumTransition);
+  z-index: 1;
+}
+
+.MessagesStack__message--service .MessagesStack__selection {
+  bottom: calc(50% - 12px);
+  left: calc(100% - 100cqw - 8px - var(--selection-content-shift));
+  width: 24px;
+  height: 24px;
+}
+
+.MessagesStack--out .MessagesStack__selection {
+  transform: translateX(-24px);
+}
+
+.MessagesStack--selecting .MessagesStack__selection {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.MessagesStack__message--selected .MessagesStack__selection {
+  color: var(--vkui--color_icon_accent_themed);
+}
+
+.MessagesStack__selection::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+}
+
+.MessagesStack__message--service .MessagesStack__selection::before {
+  inset: 4px;
+}
+
+.MessagesStack__selection > svg {
+  opacity: 0;
+  transition: opacity var(--fastTransition);
+}
+
+.MessagesStack__message--service .MessagesStack__selection > svg {
+  width: 16px;
+  height: 16px;
+}
+
+.MessagesStack__message--selected .MessagesStack__selection > svg {
+  opacity: 1;
 }
 
 .MessagesStack__message--centered {
@@ -50,9 +151,10 @@
   background: var(--vkui--color_background_content_inverse);
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--slowTransition), visibility var(--slowTransition);
+  transition: opacity var(--mediumTransition), visibility var(--mediumTransition);
 }
 
+.MessagesStack__message--selected::after,
 .MessagesStack__message--highlighted::after,
 .MessagesStack__message.Popper__trigger--active::after {
   opacity: 0.1;

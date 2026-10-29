@@ -39,6 +39,9 @@
       "overflow-x": ["visible", "auto"],
       "overflow-y": ["visible", "auto"]
     },
+    "property-no-vendor-prefix": [true, {
+      "ignoreProperties": ["-webkit-mask-image"]
+    }],
 
     "@stylistic/string-quotes": "single",
     "@stylistic/selector-list-comma-newline-after": null
