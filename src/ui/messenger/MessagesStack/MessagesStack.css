@@ -9,6 +9,11 @@
   bottom: 4px;
   margin-right: 8px;
   border-radius: 50%;
+  transition: transform var(--mediumTransition);
+}
+
+.MessagesStack--selecting .MessagesStack__avatar {
+  pointer-events: none;
 }
 
 .MessagesStack__messages {
@@ -17,6 +22,12 @@
   gap: 8px;
   width: 100%;
   min-width: 0;
+  transition: transform var(--mediumTransition);
+}
+
+.MessagesStack--selecting:not(.MessagesStack--out) .MessagesStack__avatar,
+.MessagesStack--selecting:not(.MessagesStack--out) .MessagesStack__messages {
+  transform: translateX(24px);
 }
 
 .MessagesStack__message {
@@ -32,6 +43,70 @@
 
 .MessagesStack--out .ConvoMessage {
   grid-column: 2;
+}
+
+.MessagesStack__message--selectable {
+  cursor: pointer;
+}
+
+.MessagesStack--selecting .MessagesStack__message > :not(.MessagesStack__selection) {
+  pointer-events: none;
+}
+
+.MessagesStack__selection {
+  position: absolute;
+  bottom: 0;
+  left: -36px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vkui--color_icon_tertiary);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--mediumTransition),
+    transform var(--mediumTransition),
+    visibility var(--mediumTransition),
+    color var(--mediumTransition);
+  z-index: 1;
+}
+
+.MessagesStack--withAvatar .MessagesStack__selection {
+  left: -76px;
+}
+
+.MessagesStack--out .MessagesStack__selection {
+  left: -12px;
+  transform: translateX(-24px);
+}
+
+.MessagesStack--selecting .MessagesStack__selection {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.MessagesStack__message--selected .MessagesStack__selection {
+  color: var(--vkui--color_icon_accent_themed);
+}
+
+.MessagesStack__selection::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+}
+
+.MessagesStack__selection > svg {
+  opacity: 0;
+  transition: opacity var(--fastTransition);
+}
+
+.MessagesStack__message--selected .MessagesStack__selection > svg {
+  opacity: 1;
 }
 
 .MessagesStack__message--centered {
@@ -50,9 +125,10 @@
   background: var(--vkui--color_background_content_inverse);
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--slowTransition), visibility var(--slowTransition);
+  transition: opacity var(--mediumTransition), visibility var(--mediumTransition);
 }
 
+.MessagesStack__message--selected::after,
 .MessagesStack__message--highlighted::after,
 .MessagesStack__message.Popper__trigger--active::after {
   opacity: 0.1;

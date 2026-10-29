@@ -1,4 +1,4 @@
-import { computed, defineComponent, shallowRef, watchEffect } from 'vue'
+import { computed, defineComponent, KeyboardEvent, shallowRef, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
@@ -7,7 +7,7 @@ import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
 import { provideConvoSession, useGlobalModal } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
-import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
+import { ConvoFooter } from 'ui/messenger/ConvoFooter/ConvoFooter'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
 import { ConvoHistory } from 'ui/messenger/ConvoHistory/ConvoHistory'
 import { PinnedMessage } from 'ui/messenger/PinnedMessage/PinnedMessage'
@@ -22,15 +22,24 @@ type ConvoViewProps = {
 const ConvoView = defineComponent<ConvoViewProps>((props) => {
   const convosStore = useConvosStore()
   const { messageViewerModal } = useGlobalModal()
+
   const session = convosStore.getDefaultSession(props.convo.id, props.convo.inReadBy)
   provideConvoSession(session)
+
+  const onKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && session.selectedCmids.size > 0) {
+      event.preventDefault()
+      event.stopPropagation()
+      session.selectedCmids.clear()
+    }
+  }
 
   return () => {
     const pinnedMessage = props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage
     const hiddenPinnedMessageCmid = convosStore.hiddenPinnedMessages.get(props.convo.id)
 
     return (
-      <div class="ConvoView">
+      <div class="ConvoView" onKeydown={onKeydown}>
         <ConvoHeader convo={props.convo} />
         {pinnedMessage && pinnedMessage.cmid !== hiddenPinnedMessageCmid && (
           <PinnedMessage
@@ -51,7 +60,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
           />
         )}
         <ConvoHistory convo={props.convo} />
-        <ConvoComposer convo={props.convo} />
+        <ConvoFooter convo={props.convo} />
       </div>
     )
   }

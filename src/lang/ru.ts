@@ -142,6 +142,12 @@ export const ru = {
   me_message_menu_unpin: 'Открепить',
   me_message_menu_delete: 'Удалить',
   me_message_menu_copy_cmid: 'Скопировать cmid',
+  me_message_menu_select: 'Выбрать',
+  me_message_selection_count: {
+    one: 'Выбрано {count} сообщение',
+    few: 'Выбрано {count} сообщения',
+    many: 'Выбрано {count} сообщений'
+  },
   me_message_menu_retry: 'Повторить отправку',
   me_message_menu_retry_all: 'Повторить все ({count})',
   me_message_menu_pin_confirm_title: 'Закрепить сообщение?',

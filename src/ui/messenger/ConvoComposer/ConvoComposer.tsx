@@ -7,13 +7,13 @@ import { editMessage, sendMessage } from 'actions'
 import { useConvoSession, useModal, useViewer } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttaches } from 'ui/messenger/ConvoComposer/ComposerAttaches/ComposerAttaches'
-import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
 import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
 import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
+import { AutoHeightTransition } from 'ui/ui/AutoHeightTransition/AutoHeightTransition'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Popper } from 'ui/ui/Popper/Popper'
@@ -23,7 +23,6 @@ import {
   Icon24AddCircleOutline,
   Icon24Cancel,
   Icon24CheckOutline,
-  Icon24Info,
   Icon24Send
 } from 'assets/icons'
 import './ConvoComposer.css'
@@ -201,22 +200,77 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }
   }
 
-  const renderPanel = () => {
-    if (props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked') {
-      return (
-        <div class="ConvoComposer__restriction">
-          <Icon24Info color="var(--vkui--color_accent_orange)" />
-          {lang.use('me_chat_kicked_status')}
+  return () => (
+    <AutoHeightTransition
+      class="ConvoComposer"
+      onKeydown={onEscape}
+      anchor="bottom"
+      triggerKey={[
+        !!draft.editing,
+        !!draft.replyMessage,
+        attachPreviews.value.length > 0
+      ].join('-')}
+    >
+      {draft.editing && (
+        <div class="ConvoComposer__messageBar">
+          <ReplyMessage
+            reply={draft.editing.message}
+            customName={lang.use('me_convo_composer_editing')}
+            onClick={() => {
+              session.navigationRequest = {
+                kind: 'Message',
+                cmid: draft.editing!.message.cmid
+              }
+            }}
+          />
+          <ButtonIcon
+            class="ConvoComposer__messageBarCancel"
+            icon={<Icon24Cancel />}
+            withHoverBackground
+            disabled={isSaving.value}
+            onClick={cancelEditing}
+          />
         </div>
-      )
-    }
+      )}
 
-    if (Convo.isChannel(props.convo)) {
-      return <ComposerMuteChannelButton convo={props.convo} />
-    }
+      {draft.replyMessage && (
+        <div class="ConvoComposer__messageBar">
+          <ReplyMessage
+            reply={draft.replyMessage}
+            onClick={() => {
+              if (draft.replyMessage?.cmid) {
+                session.navigationRequest = {
+                  kind: 'Message',
+                  cmid: draft.replyMessage.cmid
+                }
+              }
+            }}
+          />
+          <ButtonIcon
+            class="ConvoComposer__messageBarCancel"
+            icon={<Icon24Cancel />}
+            withHoverBackground
+            disabled={isSaving.value}
+            onClick={() => {
+              draft.replyMessage = undefined
+              ConvoDraft.touch(draft)
+              $input.value?.focus()
+            }}
+          />
+        </div>
+      )}
 
-    return (
-      <>
+      {attachPreviews.value.length > 0 && (
+        <ComposerAttaches
+          previews={attachPreviews.value}
+          disabled={isSaving.value}
+          onRemove={removeAttachPreview}
+          onRetry={retryUploadingAttach}
+          onCancel={abortUploadingAttach}
+        />
+      )}
+
+      <div class="ConvoComposer__inputRow">
         <Popper
           placement="top-start"
           offset={{
@@ -268,78 +322,6 @@ export const ConvoComposer = defineComponent<Props>((props) => {
           // Предотвращаем сброс фокуса с поля ввода
           onMousedown={(event) => event.preventDefault()}
         />
-      </>
-    )
-  }
-
-  return () => (
-    <div
-      class={['ConvoComposer', isSaving.value && 'ConvoComposer--saving']}
-      onKeydown={onEscape}
-    >
-      <div class="ConvoComposer__inner">
-        {draft.editing && (
-          <div class="ConvoComposer__messageBar">
-            <ReplyMessage
-              reply={draft.editing.message}
-              customName={lang.use('me_convo_composer_editing')}
-              onClick={() => {
-                session.navigationRequest = {
-                  kind: 'Message',
-                  cmid: draft.editing!.message.cmid
-                }
-              }}
-            />
-            <ButtonIcon
-              class="ConvoComposer__messageBarCancel"
-              icon={<Icon24Cancel />}
-              withHoverBackground
-              disabled={isSaving.value}
-              onClick={cancelEditing}
-            />
-          </div>
-        )}
-
-        {draft.replyMessage && (
-          <div class="ConvoComposer__messageBar">
-            <ReplyMessage
-              reply={draft.replyMessage}
-              onClick={() => {
-                if (draft.replyMessage?.cmid) {
-                  session.navigationRequest = {
-                    kind: 'Message',
-                    cmid: draft.replyMessage.cmid
-                  }
-                }
-              }}
-            />
-            <ButtonIcon
-              class="ConvoComposer__messageBarCancel"
-              icon={<Icon24Cancel />}
-              withHoverBackground
-              disabled={isSaving.value}
-              onClick={() => {
-                draft.replyMessage = undefined
-                ConvoDraft.touch(draft)
-                $input.value?.focus()
-              }}
-            />
-          </div>
-        )}
-
-        {attachPreviews.value.length > 0 && (
-          <ComposerAttaches
-            previews={attachPreviews.value}
-            disabled={isSaving.value}
-            onRemove={removeAttachPreview}
-            onRetry={retryUploadingAttach}
-            onCancel={abortUploadingAttach}
-          />
-        )}
-
-        <div class="ConvoComposer__panel">
-          {renderPanel()}
-        </div>
       </div>
 
       {draft.editing && (
@@ -383,7 +365,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       >
         {lang.use('me_convo_composer_edit_error_text')}
       </Modal>
-    </div>
+    </AutoHeightTransition>
   )
 }, {
   props: ['convo']

@@ -1,17 +1,3 @@
-.ConvoComposer {
-  display: flex;
-  justify-content: center;
-  padding: 0 var(--convoHistoryIndent) var(--convoHistoryIndent) var(--convoHistoryIndent);
-}
-
-.ConvoComposer__inner {
-  background: var(--vkd--color_background_composer);
-  width: 100%;
-  max-width: calc(var(--convoHistoryMaxWidth) - 2 * var(--convoHistoryIndent));
-  border-radius: 12px;
-  box-shadow: var(--vkui--elevation3);
-}
-
 .ConvoComposer__messageBar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -27,19 +13,28 @@
   color: var(--vkui--color_icon_secondary);
 }
 
-.ConvoComposer__panel {
+.ConvoComposer__inputRow {
   display: flex;
   align-items: center;
-  padding: 4px 6px;
+  padding: 0 6px;
   min-height: 42px;
 }
 
 .ConvoComposer__input {
   width: 100%;
-  margin: 8px 6px;
+  margin: 0 6px;
+  padding: 12px 0;
   font: var(--font);
-  max-height: calc(10 * var(--lineHeight));
+  max-height: calc(10 * var(--lineHeight) + 12px * 2);
   overflow: overlay;
+  -webkit-mask-image:
+    linear-gradient(
+      to bottom,
+      transparent,
+      black 12px,
+      black calc(100% - 8px),
+      transparent
+    );
 }
 
 .ConvoComposer__input:empty::before {
@@ -53,6 +48,7 @@
   width: 34px;
   height: 34px;
   align-self: flex-end;
+  margin-bottom: 4px;
   opacity: 0.8;
   transition: opacity var(--fastTransition);
 }
@@ -72,12 +68,4 @@
 
 .ConvoComposer__send--delete {
   color: var(--vkui--color_icon_negative);
-}
-
-.ConvoComposer__restriction {
-  display: flex;
-  align-items: center;
-  margin: 0 4px;
-  gap: 8px;
-  color: var(--vkui--color_text_subhead);
 }

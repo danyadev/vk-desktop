@@ -82,7 +82,8 @@ export const ConvoHistory = defineComponent<Props>((props) => {
     convo,
     session,
     $historyElement,
-    computed(() => !!historySlice.value.gapAround)
+    computed(() => !!historySlice.value.gapAround),
+    pinnedToBottom
   )
 
   const moveWindowSlice = (anchorCmid: Message.Cmid) => {

@@ -1,0 +1,13 @@
+.ConvoSelectionToolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 4px 6px;
+}
+
+.ConvoSelectionToolbar__cancel {
+  width: 34px;
+  height: 34px;
+  color: var(--vkui--color_icon_secondary);
+}

@@ -1,4 +1,4 @@
-import { defineComponent, shallowRef, watch } from 'vue'
+import { defineComponent, MouseEvent, shallowRef, watch } from 'vue'
 import * as Convo from 'model/Convo'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
@@ -11,6 +11,7 @@ import { MessageActionMenu } from 'ui/messenger/MessageActionMenu/MessageActionM
 import { ServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
+import { Icon20CheckCircleOn } from 'assets/icons'
 import './MessagesStack.css'
 
 type Props = {
@@ -21,19 +22,25 @@ type Props = {
 export const MessagesStack = defineComponent<Props>((props) => {
   const { peers } = usePeersStore()
   const { peerInfoModal } = useGlobalModal()
+  const session = useConvoSession()
 
   return () => {
     const [message] = props.messages
     const author = Peer.safeGet(peers, message.authorId)
     const isChat = message.peerId && Peer.isChatPeerId(message.peerId)
     const isChannel = props.convo && Convo.isChannel(props.convo)
+    const showAvatar = (message.kind === 'Normal' || message.kind === 'Foreign') &&
+      !message.isOut && (!props.convo || isChat) && !isChannel
 
     return (
-      <div class={['MessagesStack', message.isOut && 'MessagesStack--out']}>
-        {(message.kind === 'Normal' || message.kind === 'Foreign') &&
-          !message.isOut &&
-          (!props.convo || isChat) &&
-          !isChannel && (
+      <div
+        class={['MessagesStack', {
+          'MessagesStack--out': message.isOut,
+          'MessagesStack--withAvatar': showAvatar,
+          'MessagesStack--selecting': !!props.convo && session.selectedCmids.size > 0
+        }]}
+      >
+        {showAvatar && (
           <ButtonBase
             class="MessagesStack__avatar"
             onClick={() => peerInfoModal.open({ peerId: author.id })}
@@ -71,6 +78,12 @@ type StackMessageProps = {
 
 const StackMessage = defineComponent<StackMessageProps>((props) => {
   const session = useConvoSession()
+  const { selectedCmids } = session
+
+  const toggleSelection = (cmid: Message.Cmid) => {
+    if (selectedCmids.has(cmid)) selectedCmids.delete(cmid)
+    else selectedCmids.add(cmid)
+  }
   const highlightTimeoutId = shallowRef<number>()
 
   watch(() => session.navigationRequest, (request) => {
@@ -86,9 +99,22 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
     }
   }, { immediate: true })
 
+  const onSelect = (event: MouseEvent) => {
+    const { message } = props
+    if (!selectedCmids.size || message.kind !== 'Normal' || window.getSelection()?.toString()) {
+      return
+    }
+    event.preventDefault()
+    event.stopPropagation()
+    toggleSelection(message.cmid)
+  }
+
   return () => {
     const { message, isHead } = props
     const isCentered = message.kind === 'Service' || message.kind === 'Expired'
+    const isSelecting = !!props.convo && selectedCmids.size > 0
+    const selectable = isSelecting && message.kind === 'Normal'
+    const selected = message.kind === 'Normal' && selectedCmids.has(message.cmid)
     let messageComponent: JSXElement
 
     switch (message.kind) {
@@ -119,11 +145,29 @@ const StackMessage = defineComponent<StackMessageProps>((props) => {
         class={[
           'MessagesStack__message',
           isCentered && 'MessagesStack__message--centered',
-          highlightTimeoutId.value && 'MessagesStack__message--highlighted'
+          highlightTimeoutId.value && 'MessagesStack__message--highlighted',
+          selectable && 'MessagesStack__message--selectable',
+          selected && 'MessagesStack__message--selected'
         ]}
         data-cmid={message.kind === 'Foreign' ? undefined : message.cmid}
+        onClickCapture={selectable ? onSelect : undefined}
+        onContextmenu={isSelecting ? (event) => event.preventDefault() : undefined}
+        tabindex={selectable ? 0 : undefined}
+        onKeydown={selectable ? (event) => {
+          if (event.target !== event.currentTarget) return
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            event.stopPropagation()
+            if (message.kind === 'Normal') toggleSelection(message.cmid)
+          }
+        } : undefined}
       >
         {messageComponent}
+        {props.convo && message.kind === 'Normal' && (
+          <span class="MessagesStack__selection" aria-hidden="true">
+            <Icon20CheckCircleOn />
+          </span>
+        )}
       </div>
     )
 

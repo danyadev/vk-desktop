@@ -17,7 +17,8 @@ export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   session: ConvoSession,
   $historyElement: Ref<HTMLElement | null>,
-  hasAroundGap: Ref<boolean>
+  hasAroundGap: Ref<boolean>,
+  pinnedToBottom: Ref<boolean>
 ) => {
   const { messageViewerModal } = useGlobalModal()
   const messagesWindowWingSize = shallowRef(WINDOW_WING_MIN_MESSAGES)
@@ -26,6 +27,11 @@ export const useConvoHistoryViewport = (
     const viewportHeight = entry?.contentRect.height
     if (!viewportHeight) {
       return
+    }
+
+    const history = $historyElement.value
+    if (history && pinnedToBottom.value) {
+      history.scrollTop = history.scrollHeight
     }
 
     const calculatedSize = Math.ceil(
