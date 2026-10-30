@@ -90,6 +90,22 @@ export const useConvoHistoryViewport = (
     return Message.resolveCmid(Number(messageElement.dataset.cmid))
   }
 
+  const scrollToMessage = (element: HTMLElement, behavior: ScrollBehavior) => {
+    const history = $historyElement.value
+    if (!history) return
+
+    const viewport = history.getBoundingClientRect()
+    const target = element.getBoundingClientRect()
+
+    history.scrollTo({
+      top: history.scrollTop +
+        target.top - viewport.top -
+        (history.clientHeight - target.height) / 2,
+      left: 0,
+      behavior
+    })
+  }
+
   const advanceNavigationRequest = (instantScroll: boolean) => {
     const request = session.navigationRequest
     if (!request) {
@@ -120,10 +136,7 @@ export const useConvoHistoryViewport = (
       } else {
         // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
         nextTick(() => {
-          element.scrollIntoView({
-            block: 'center',
-            behavior: instantScroll ? 'instant' : 'smooth'
-          })
+          scrollToMessage(element, instantScroll ? 'instant' : 'smooth')
         })
       }
       session.navigationRequest = undefined
@@ -175,10 +188,9 @@ export const useConvoHistoryViewport = (
     }
 
     const messageElement = getNearbyMessageElement(startCmid)
-    messageElement?.scrollIntoView({
-      block: 'center',
-      behavior: 'instant'
-    })
+    if (messageElement) {
+      scrollToMessage(messageElement, 'instant')
+    }
   }
 
   const findVisibleMessageRange = (): VisibleMessageRange => {
