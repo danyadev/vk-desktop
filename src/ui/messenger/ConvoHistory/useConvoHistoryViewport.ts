@@ -96,11 +96,12 @@ export const useConvoHistoryViewport = (
 
     const viewport = history.getBoundingClientRect()
     const target = element.getBoundingClientRect()
+    const desiredTop = target.height > viewport.height
+      ? viewport.height / 4
+      : (viewport.height - target.height) / 2
 
     history.scrollTo({
-      top: history.scrollTop +
-        target.top - viewport.top -
-        (history.clientHeight - target.height) / 2,
+      top: history.scrollTop + target.top - viewport.top - desiredTop,
       left: 0,
       behavior
     })
