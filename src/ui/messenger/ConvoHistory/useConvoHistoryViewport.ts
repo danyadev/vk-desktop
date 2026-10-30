@@ -90,9 +90,68 @@ export const useConvoHistoryViewport = (
     return Message.resolveCmid(Number(messageElement.dataset.cmid))
   }
 
+  const scrollToMessage = (element: HTMLElement, behavior: ScrollBehavior) => {
+    const history = $historyElement.value
+    if (!history) return
+
+    const viewport = history.getBoundingClientRect()
+    const target = element.getBoundingClientRect()
+    const desiredTop = target.height > viewport.height
+      ? viewport.height / 4
+      : (viewport.height - target.height) / 2
+
+    history.scrollTo({
+      top: history.scrollTop + target.top - viewport.top - desiredTop,
+      behavior
+    })
+  }
+
   const advanceNavigationRequest = (instantScroll: boolean) => {
     const request = session.navigationRequest
     if (!request) {
+      return
+    }
+
+    let element: HTMLElement | null | undefined
+    let requestedCmid: Message.Cmid | undefined
+
+    if (request.kind === 'Bottom') {
+      requestedCmid = Convo.lastMessage(convo)?.cmid
+    } else {
+      requestedCmid = request.cmid
+
+      if (request.kind === 'Unread') {
+        element = getUnreadElement() ?? getMessageElement(request.cmid)
+      } else if (request.landNearbyIfMissing && session.anchorCmid === request.cmid) {
+        element = getNearbyMessageElement(request.cmid)
+      } else {
+        element = getMessageElement(request.cmid)
+      }
+    }
+
+    if (element) {
+      if (request.kind === 'Message' && request.cmid === request.origin?.cmid) {
+        restoreViewportPosition(request.origin)
+      } else {
+        // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
+        nextTick(() => {
+          scrollToMessage(element, instantScroll ? 'instant' : 'smooth')
+        })
+      }
+      session.navigationRequest = undefined
+      return
+    }
+
+    if (!requestedCmid) {
+      session.navigationRequest = undefined
+      return
+    }
+
+    if (session.anchorCmid !== requestedCmid) {
+      if (request.kind === 'Message' && !request.landNearbyIfMissing) {
+        request.origin = captureViewportPosition()
+      }
+      session.anchorCmid = requestedCmid
       return
     }
 
@@ -105,36 +164,15 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    let element: HTMLElement | null | undefined
-    if (request.kind === 'Unread') {
-      element = getUnreadElement() ?? getMessageElement(request.cmid)
-    } else if (request.landNearbyIfMissing && session.anchorCmid === request.cmid) {
-      element = getNearbyMessageElement(request.cmid)
-    } else {
-      element = getMessageElement(request.cmid)
-    }
-
-    if (element) {
-      if (request.kind === 'Message' && request.cmid === request.origin?.cmid) {
-        restoreViewportPosition(request.origin)
-      } else {
-        // По неведомой причине scrollIntoView с behavior: smooth не работает сразу же
-        nextTick(() => {
-          element.scrollIntoView({
-            block: 'center',
-            behavior: instantScroll ? 'instant' : 'smooth'
-          })
+    if (request.kind === 'Bottom') {
+      nextTick(() => {
+        const history = $historyElement.value
+        history?.scrollTo({
+          top: history.scrollHeight,
+          behavior: instantScroll ? 'instant' : 'smooth'
         })
-      }
+      })
       session.navigationRequest = undefined
-      return
-    }
-
-    if (session.anchorCmid !== request.cmid) {
-      if (request.kind === 'Message' && !request.landNearbyIfMissing) {
-        request.origin = captureViewportPosition()
-      }
-      session.anchorCmid = request.cmid
       return
     }
 
@@ -175,10 +213,9 @@ export const useConvoHistoryViewport = (
     }
 
     const messageElement = getNearbyMessageElement(startCmid)
-    messageElement?.scrollIntoView({
-      block: 'center',
-      behavior: 'instant'
-    })
+    if (messageElement) {
+      scrollToMessage(messageElement, 'instant')
+    }
   }
 
   const findVisibleMessageRange = (): VisibleMessageRange => {

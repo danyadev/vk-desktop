@@ -160,21 +160,12 @@ export const ConvoHistory = defineComponent<Props>((props) => {
   }, 50)
 
   const handleHopNavigation = () => {
-    const lastMessage = Convo.lastMessage(convo)
-    if (!lastMessage) {
-      return
-    }
-
     const [, lastVisibleCmid] = findVisibleMessageRange()
 
-    if (convo.inReadBy && lastVisibleCmid && convo.inReadBy >= lastVisibleCmid) {
+    if (convo.inReadBy && lastVisibleCmid && convo.inReadBy > lastVisibleCmid) {
       session.navigationRequest = { kind: 'Unread', cmid: convo.inReadBy }
     } else {
-      session.navigationRequest = {
-        kind: 'Message',
-        cmid: lastMessage.cmid,
-        highlight: false
-      }
+      session.navigationRequest = { kind: 'Bottom' }
     }
   }
 
