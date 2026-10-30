@@ -102,7 +102,6 @@ export const useConvoHistoryViewport = (
 
     history.scrollTo({
       top: history.scrollTop + target.top - viewport.top - desiredTop,
-      left: 0,
       behavior
     })
   }
@@ -113,22 +112,21 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    /**
-     * При навигации History.around() не переключается на соседний слайс на границе гэпа,
-     * поэтому hasAroundGap означает, что запрошенная позиция все еще не загружена.
-     * Эта проверка нужна, чтобы предотвратить преждевременный фоллбэк на превью сообщения
-     */
-    if (hasAroundGap.value) {
-      return
-    }
-
     let element: HTMLElement | null | undefined
-    if (request.kind === 'Unread') {
-      element = getUnreadElement() ?? getMessageElement(request.cmid)
-    } else if (request.landNearbyIfMissing && session.anchorCmid === request.cmid) {
-      element = getNearbyMessageElement(request.cmid)
+    let requestedCmid: Message.Cmid | undefined
+
+    if (request.kind === 'Bottom') {
+      requestedCmid = Convo.lastMessage(convo)?.cmid
     } else {
-      element = getMessageElement(request.cmid)
+      requestedCmid = request.cmid
+
+      if (request.kind === 'Unread') {
+        element = getUnreadElement() ?? getMessageElement(request.cmid)
+      } else if (request.landNearbyIfMissing && session.anchorCmid === request.cmid) {
+        element = getNearbyMessageElement(request.cmid)
+      } else {
+        element = getMessageElement(request.cmid)
+      }
     }
 
     if (element) {
@@ -144,11 +142,37 @@ export const useConvoHistoryViewport = (
       return
     }
 
-    if (session.anchorCmid !== request.cmid) {
+    if (!requestedCmid) {
+      session.navigationRequest = undefined
+      return
+    }
+
+    if (session.anchorCmid !== requestedCmid) {
       if (request.kind === 'Message' && !request.landNearbyIfMissing) {
         request.origin = captureViewportPosition()
       }
-      session.anchorCmid = request.cmid
+      session.anchorCmid = requestedCmid
+      return
+    }
+
+    /**
+     * При навигации History.around() не переключается на соседний слайс на границе гэпа,
+     * поэтому hasAroundGap означает, что запрошенная позиция все еще не загружена.
+     * Эта проверка нужна, чтобы предотвратить преждевременный фоллбэк на превью сообщения
+     */
+    if (hasAroundGap.value) {
+      return
+    }
+
+    if (request.kind === 'Bottom') {
+      nextTick(() => {
+        const history = $historyElement.value
+        history?.scrollTo({
+          top: history.scrollHeight,
+          behavior: instantScroll ? 'instant' : 'smooth'
+        })
+      })
+      session.navigationRequest = undefined
       return
     }
 
