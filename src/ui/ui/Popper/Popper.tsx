@@ -82,7 +82,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     ]
   })
 
-  const { onFocusIn, onFocusOut } = useFocusTrap($popper, computed(() => (
+  useFocusTrap($popper, computed(() => (
     showContent.value && !props.nested && !props.showOnHover
   )))
 
@@ -186,8 +186,6 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
                 onMouseenter={() => (isPointingAtContent.value = true)}
                 onMouseleave={() => (isPointingAtContent.value = false)}
                 onKeydown={handleEscape}
-                onFocusin={onFocusIn}
-                onFocusout={onFocusOut}
               >
                 {props.content}
               </div>
