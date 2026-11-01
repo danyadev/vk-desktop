@@ -96,7 +96,7 @@ export const ModalView = defineComponent<Props>((props, { slots }) => {
 
 const View = defineComponent<Props>((props, { slots }) => {
   const $modalContainer = shallowRef<HTMLElement | null>(null)
-  const { onFocusIn, onFocusOut } = useFocusTrap($modalContainer, computed(() => !props.hidden))
+  useFocusTrap($modalContainer, computed(() => !props.hidden))
 
   return () => (
     <div
@@ -110,8 +110,6 @@ const View = defineComponent<Props>((props, { slots }) => {
         class={['ModalView__container', props.class]}
         tabindex="-1"
         onKeydown={(event) => event.key === 'Escape' && props.onClose()}
-        onFocusin={onFocusIn}
-        onFocusout={onFocusOut}
         ref={$modalContainer}
       >
         {slots.default?.()}

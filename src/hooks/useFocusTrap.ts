@@ -1,4 +1,4 @@
-import { FocusEvent, onUnmounted, Ref, shallowRef, watch } from 'vue'
+import { onBeforeUnmount, Ref, shallowRef, watch } from 'vue'
 import { NonEmptyArray } from 'misc/utils'
 
 const activeTraps: symbol[] = []
@@ -11,30 +11,68 @@ export function useFocusTrap(
   const isTopTrap = () => activeTraps.at(-1) === trapId
 
   let initialFocusedElement: Element | null = null
-  let isPageBecomeActive = false
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (!isTopTrap() || event.key !== 'Tab' || event.defaultPrevented) return
+    if (event.ctrlKey || event.altKey || event.metaKey) return
+
+    const root = $focusRoot.value
+    if (!root) return
+
+    const focusableElements = getAllFocusableElements(root)
+    const first = focusableElements[0]
+    const last = focusableElements.at(-1)!
+    const focused = document.activeElement
+
+    if (event.shiftKey && (focused === first || focused === root)) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && focused === last) {
+      event.preventDefault()
+      first.focus()
+    }
+  }
 
   const deactivate = () => {
     const index = activeTraps.indexOf(trapId)
     if (index === -1) return
 
-    const shouldRestoreFocus = isTopTrap()
+    /**
+     * - If focus is still inside, restore it to the previously focused element.
+     * - If focus has fallen back to document.body (e.g. because the focused element
+     *   was disabled or removed), restore it as well.
+     * - If focus has moved outside the trap, preserve it, since the focus-trapped component
+     *   may have deliberately focused another element during closing.
+     */
+    const shouldRestoreFocus = isTopTrap() && (
+      document.activeElement === document.body ||
+      $focusRoot.value?.contains(document.activeElement)
+    )
+
     activeTraps.splice(index, 1)
+
     if (shouldRestoreFocus && initialFocusedElement instanceof HTMLElement) {
       initialFocusedElement.focus()
     }
   }
+
+  watch($focusRoot, (root, prevRoot, onCleanup) => {
+    if (!root) return
+
+    root.addEventListener('keydown', onKeyDown)
+    onCleanup(() => root.removeEventListener('keydown', onKeyDown))
+  }, { immediate: true })
 
   watch(active, (enabled) => {
     if (enabled) {
       if (activeTraps.includes(trapId)) return
 
       initialFocusedElement = document.activeElement
-      isPageBecomeActive = false
       activeTraps.push(trapId)
     } else {
       deactivate()
     }
-  }, { immediate: true, flush: 'sync' })
+  }, { immediate: true })
 
   watch([active, $focusRoot], ([enabled, root]) => {
     if (!enabled || !root || !isTopTrap()) {
@@ -45,69 +83,7 @@ export function useFocusTrap(
     }
   }, { immediate: true })
 
-  onUnmounted(deactivate)
-
-  /**
-   * event.relatedTarget - предыдущий сфокусированный элемент
-   * event.target - текущий сфокусированный элемент
-   */
-  function onFocusIn(event: FocusEvent<HTMLElement>) {
-    /**
-     * Произошла активация окна страницы, фокус автоматически выставился на то место,
-     * где он был в момент деактивации окна страницы.
-     * Поэтому в данном случае мы игнорируем первоначально вызванный onFocusOut,
-     * в котором нам покажется, что человек сделал Tab и вышел за пределы focusRoot
-     */
-    if (!isTopTrap()) return
-    if (event.relatedTarget === null && event.target !== null) {
-      isPageBecomeActive = true
-    }
-  }
-
-  /**
-   * event.target - предыдущий сфокусированный элемент
-   * event.relatedTarget - текущий сфокусированный элемент
-   */
-  async function onFocusOut(event: FocusEvent<HTMLElement>) {
-    /**
-     * Сначала происходит событие onFocusOut, затем фокус переводится на новый элемент.
-     * Если мы попытаемся вручную выставить фокус сразу при onFocusOut, не дожидаясь onFocusIn,
-     * то наш фокус сразу перетрется
-     */
-    if (!isTopTrap()) return
-    await new Promise((resolve) => {
-      window.addEventListener('focusin', resolve, { once: true })
-    })
-    if (!isTopTrap()) return
-
-    if (isPageBecomeActive) {
-      isPageBecomeActive = false
-      return
-    }
-
-    if (!$focusRoot.value) {
-      return
-    }
-
-    const focusableElements = getAllFocusableElements($focusRoot.value)
-
-    /**
-     * Если значение null, то мы вышли за пределы focusRoot обычным путем - через Tab
-     */
-    if (event.relatedTarget === null) {
-      focusableElements[0].focus()
-    }
-
-    /**
-     * Если значение существует, но вне focusRoot, то мы вышли за его пределы
-     * используя Shift + Tab, то есть в обратном направлении
-     */
-    if (event.relatedTarget && !$focusRoot.value.contains(event.relatedTarget)) {
-      focusableElements.at(-1)?.focus()
-    }
-  }
-
-  return { onFocusIn, onFocusOut }
+  onBeforeUnmount(deactivate)
 }
 
 function getAllFocusableElements(parent: HTMLElement): NonEmptyArray<HTMLElement> {
@@ -118,7 +94,7 @@ function getAllFocusableElements(parent: HTMLElement): NonEmptyArray<HTMLElement
     'select',
     'textarea',
     '[tabindex]:not([tabindex="-1"])',
-    'div[contenteditable]',
+    '[contenteditable]',
     'iframe',
     'audio',
     'video'
