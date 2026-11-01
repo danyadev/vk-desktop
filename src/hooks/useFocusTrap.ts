@@ -3,6 +3,8 @@ import { NonEmptyArray } from 'misc/utils'
 
 const activeTraps: symbol[] = []
 
+export const hasActiveFocusTrap = () => activeTraps.length > 0
+
 export function useFocusTrap(
   $focusRoot: Ref<HTMLElement | null>,
   active: Ref<boolean> = shallowRef(true)

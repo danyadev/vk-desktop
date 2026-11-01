@@ -1,10 +1,10 @@
-import { defineComponent } from 'vue'
+import { defineComponent, shallowRef } from 'vue'
 import { useServices } from 'services'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
-import { useGlobalModal, useViewer } from 'hooks'
+import { useGlobalModal, useKeyboardZones, useViewer } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { ConvoActionMenu } from 'ui/messenger/ConvoActionMenu/ConvoActionMenu'
 import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
@@ -33,13 +33,21 @@ export const ConvoList = defineComponent<Props>((props) => {
   const { logout } = useViewerStore()
   const { connection, lists } = useConvosStore()
   const { settingsModal } = useGlobalModal()
+  const { registerZone } = useKeyboardZones()
   const computedConvoList = useConvoList()
+  const $convoList = shallowRef<HTMLElement | null>(null)
+
+  registerZone('convoList', $convoList)
 
   return () => {
     const { convoList, list, selectList } = computedConvoList.value
 
     return (
-      <div class={['ConvoList', { 'ConvoList--compact': props.compact }]}>
+      <div
+        ref={$convoList}
+        tabindex={-1}
+        class={['ConvoList', { 'ConvoList--compact': props.compact }]}
+      >
         <div class="ConvoList__header">
           <Avatar class="ConvoList__headerAvatar" peer={viewer} size={32} />
 

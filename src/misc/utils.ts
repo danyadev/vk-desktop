@@ -2,8 +2,6 @@ import {
   ComponentPublicInstance,
   EffectScope,
   effectScope,
-  KeyboardEvent,
-  type MouseEvent,
   onScopeDispose,
   Ref,
   unref
@@ -222,14 +220,19 @@ export function unrefElement(ref: Ref<RawRefElement> | RawRefElement): NormalEle
   return null
 }
 
+export enum MouseButton {
+  LEFT = 0,
+  WHEEL = 1,
+  RIGHT = 2
+}
+
 export function isEventWithModifier(event: MouseEvent | KeyboardEvent): boolean {
   return (
     event.ctrlKey ||
     event.metaKey ||
     event.altKey ||
     event.shiftKey ||
-    // Нажатие на колесико мыши
-    (event instanceof MouseEvent && event.button === 1)
+    (event instanceof MouseEvent && event.button === MouseButton.WHEEL)
   )
 }
 

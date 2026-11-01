@@ -5,7 +5,7 @@ import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { insertConvos, insertPeers } from 'actions'
-import { provideConvoSession, useGlobalModal } from 'hooks'
+import { provideConvoSession, useGlobalModal, useKeyboardZones } from 'hooks'
 import { PEER_FIELDS } from 'misc/constants'
 import { ConvoComposer } from 'ui/messenger/ConvoComposer/ConvoComposer'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
@@ -22,15 +22,19 @@ type ConvoViewProps = {
 const ConvoView = defineComponent<ConvoViewProps>((props) => {
   const convosStore = useConvosStore()
   const { messageViewerModal } = useGlobalModal()
+  const { registerZone } = useKeyboardZones()
+  const $convoView = shallowRef<HTMLElement | null>(null)
+
   const session = convosStore.getDefaultSession(props.convo.id, props.convo.inReadBy)
   provideConvoSession(session)
+  registerZone('convoView', $convoView)
 
   return () => {
     const pinnedMessage = props.convo.kind === 'ChatConvo' && props.convo.pinnedMessage
     const hiddenPinnedMessageCmid = convosStore.hiddenPinnedMessages.get(props.convo.id)
 
     return (
-      <div class="ConvoView">
+      <div class="ConvoView" ref={$convoView} tabindex={-1}>
         <ConvoHeader convo={props.convo} />
         {pinnedMessage && pinnedMessage.cmid !== hiddenPinnedMessageCmid && (
           <PinnedMessage
