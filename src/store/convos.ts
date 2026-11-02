@@ -41,12 +41,15 @@ export type ConvoSession = {
   viewportPosition?: ViewportPosition
   navigationRequest?: NavigationRequest
   loadLocks: Partial<Record<'around' | 'up' | 'down', LoadConvoHistoryLock>>
+  selectedCmids: Set<Message.Cmid>
+  selectionAnchorCmid?: Message.Cmid
 }
 
 export function createConvoSession(anchorCmid: Message.Cmid | 0 = 0): ConvoSession {
   return reactive({
     anchorCmid,
-    loadLocks: {}
+    loadLocks: {},
+    selectedCmids: new Set<Message.Cmid>()
   })
 }
 

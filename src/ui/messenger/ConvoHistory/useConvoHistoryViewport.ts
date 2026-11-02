@@ -17,7 +17,8 @@ export const useConvoHistoryViewport = (
   convo: Convo.Convo,
   session: ConvoSession,
   $historyElement: Ref<HTMLElement | null>,
-  hasAroundGap: Ref<boolean>
+  hasAroundGap: Ref<boolean>,
+  pinnedToBottom: Ref<boolean>
 ) => {
   const { messageViewerModal } = useGlobalModal()
   const messagesWindowWingSize = shallowRef(WINDOW_WING_MIN_MESSAGES)
@@ -26,6 +27,11 @@ export const useConvoHistoryViewport = (
     const viewportHeight = entry?.contentRect.height
     if (!viewportHeight) {
       return
+    }
+
+    const history = $historyElement.value
+    if (history && pinnedToBottom.value) {
+      history.scrollTop = history.scrollHeight
     }
 
     const calculatedSize = Math.ceil(
@@ -106,6 +112,14 @@ export const useConvoHistoryViewport = (
     })
   }
 
+  const scrollToBottom = (behavior: ScrollBehavior) => {
+    const history = $historyElement.value
+    history?.scrollTo({
+      top: history.scrollHeight,
+      behavior
+    })
+  }
+
   const advanceNavigationRequest = (instantScroll: boolean) => {
     const request = session.navigationRequest
     if (!request) {
@@ -165,13 +179,7 @@ export const useConvoHistoryViewport = (
     }
 
     if (request.kind === 'Bottom') {
-      nextTick(() => {
-        const history = $historyElement.value
-        history?.scrollTo({
-          top: history.scrollHeight,
-          behavior: instantScroll ? 'instant' : 'smooth'
-        })
-      })
+      nextTick(() => scrollToBottom(instantScroll ? 'instant' : 'smooth'))
       session.navigationRequest = undefined
       return
     }
@@ -196,13 +204,21 @@ export const useConvoHistoryViewport = (
     }
   }
 
-  const scrollToInitialPosition = (startCmid: Message.Cmid) => {
+  const scrollToInitialPosition = (
+    startCmid: Message.Cmid,
+    preferUnreadBoundary = false
+  ) => {
     const historyElement = $historyElement.value
     if (!historyElement) {
       return
     }
 
-    if (startCmid === convo.inReadBy) {
+    if (preferUnreadBoundary && startCmid === convo.inReadBy) {
+      if (convo.unreadCount === 0) {
+        scrollToBottom('instant')
+        return
+      }
+
       const unreadElement = getUnreadElement()
       if (unreadElement) {
         // Скроллим к блоку непрочитанных так, чтобы он начинался в верхней четверти вьюпорта

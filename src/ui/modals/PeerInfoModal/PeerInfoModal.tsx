@@ -10,6 +10,7 @@ import { PEER_GROUP_EXTRA_FIELDS, PEER_USER_EXTRA_FIELDS } from 'misc/constants'
 import { shortenCount } from 'misc/dateTime'
 import { PeerInfoCell } from './PeerInfoCell'
 import { ModalView } from 'ui/modals/parts'
+import { AutoHeightTransition } from 'ui/ui/AutoHeightTransition/AutoHeightTransition'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
@@ -242,7 +243,11 @@ export const PeerInfoModal = defineComponent<PeerInfoModalProps>((props) => {
             </Button>
           </div>
 
-          <div class="PeerInfoModal__details">
+          <AutoHeightTransition
+            class="PeerInfoModal__details"
+            anchor="top"
+            triggerKey={[props.peerId, loading.value, failed.value].join('-')}
+          >
             {failed.value && <LoadError onRetry={load} />}
 
             <PeerInfoCell icon={<Icon20MentionOutline />}>
@@ -322,7 +327,7 @@ export const PeerInfoModal = defineComponent<PeerInfoModalProps>((props) => {
             <PeerInfoCell icon={<Icon20HashtagOutline />}>
               {Peer.toRealId(props.peerId)}
             </PeerInfoCell>
-          </div>
+          </AutoHeightTransition>
         </div>
       </ModalView>
     )

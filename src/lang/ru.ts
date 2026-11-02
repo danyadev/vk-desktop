@@ -142,6 +142,7 @@ export const ru = {
   me_message_menu_unpin: 'Открепить',
   me_message_menu_delete: 'Удалить',
   me_message_menu_copy_cmid: 'Скопировать cmid',
+  me_message_menu_select: 'Выбрать',
   me_message_menu_retry: 'Повторить отправку',
   me_message_menu_retry_all: 'Повторить все ({count})',
   me_message_menu_pin_confirm_title: 'Закрепить сообщение?',
@@ -158,8 +159,13 @@ export const ru = {
     few: '{0} вложения',
     many: '{0} вложений'
   },
-  me_messages: {
+  me_messages_preview: {
     single: 'Сообщение',
+    one: '{0} сообщение',
+    few: '{0} сообщения',
+    many: '{0} сообщений'
+  },
+  me_messages_count: {
     one: '{0} сообщение',
     few: '{0} сообщения',
     many: '{0} сообщений'
@@ -441,11 +447,20 @@ export const ru = {
   messageViewerModal_title: 'Просмотр сообщения',
   messageViewerModal_unavailable: 'Сообщение недоступно',
 
-  messageDeleteModal_confirm_title: 'Удалить сообщение?',
+  messageDeleteModal_confirm_title: {
+    single: 'Удалить сообщение',
+    one: 'Удалить {0} сообщение?',
+    few: 'Удалить {0} сообщения?',
+    many: 'Удалить {0} сообщений?'
+  },
   messageDeleteModal_confirm_text: 'Сообщение будет удалено из переписки.',
+  messageDeleteModal_confirm_text_multiple: 'Выбранные сообщения будут удалены из переписки.',
   messageDeleteModal_delete_for_all: 'Удалить для всех',
-  messageDeleteModal_error_title: 'Не удалось удалить сообщение',
-  messageDeleteModal_error_text: 'Попробуйте ещё раз.',
+  messageDeleteModal_error: {
+    one: 'Произошла ошибка удаления {0} сообщения',
+    few: 'Произошла ошибка удаления {0} сообщений',
+    many: 'Произошла ошибка удаления {0} сообщений'
+  },
 
   captchaModal_title: 'Введите капчу',
   captchaModal_enter_code: 'Введите код',

@@ -4,13 +4,13 @@ import * as Convo from 'model/Convo'
 import { toggleConvoNotifications } from 'actions'
 import { Button } from 'ui/ui/Button/Button'
 import { Icon24MuteOutline, Icon24VolumeOutline } from 'assets/icons'
-import './ComposerMuteChannelButton.css'
+import './ConvoMuteChannelButton.css'
 
 type Props = {
   convo: Convo.Convo
 }
 
-export const ComposerMuteChannelButton = defineComponent<Props>((props) => {
+export const ConvoMuteChannelButton = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const isLoading = shallowRef(false)
 
@@ -25,7 +25,7 @@ export const ComposerMuteChannelButton = defineComponent<Props>((props) => {
 
   return () => (
     <Button
-      class="ComposerMuteChannelButton"
+      class="ConvoMuteChannelButton"
       mode="tertiary"
       loading={isLoading.value}
       onClick={toggleNotifications}

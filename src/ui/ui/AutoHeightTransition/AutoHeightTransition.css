@@ -1,0 +1,45 @@
+.AutoHeightTransition {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.AutoHeightTransition--center {
+  justify-content: center;
+}
+
+.AutoHeightTransition--bottom {
+  justify-content: flex-end;
+}
+
+.AutoHeightTransition--enter-active,
+.AutoHeightTransition--leave-active {
+  transition: opacity var(--fastTransition) ease;
+}
+
+.AutoHeightTransition--leave-active {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+.AutoHeightTransition--center > .AutoHeightTransition--leave-active {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.AutoHeightTransition--bottom > .AutoHeightTransition--leave-active {
+  top: auto;
+  bottom: 0;
+}
+
+.AutoHeightTransition--enter-from,
+.AutoHeightTransition--leave-to {
+  opacity: 0;
+}
+
+.AutoHeightTransition > * {
+  flex-shrink: 0;
+}

@@ -5,13 +5,18 @@
   padding: 4px 0;
   gap: 8px;
   /* Для FocusVisible */
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   transition: opacity var(--fastTransition);
 }
 
-.Checkbox:hover {
+.Checkbox:not(.Checkbox--disabled):hover {
   opacity: 0.8;
+}
+
+.Checkbox--disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .Checkbox__icon {

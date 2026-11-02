@@ -82,10 +82,10 @@ const getAttachmentPreview = (
   }
 
   if (message.replyMessage) {
-    return lang.usePlural('me_messages', 1)
+    return lang.usePlural('me_messages_preview', 1)
   }
 
   if (message.forwardedMessages) {
-    return lang.usePlural('me_messages', message.forwardedMessages.length)
+    return lang.usePlural('me_messages_preview', message.forwardedMessages.length)
   }
 }

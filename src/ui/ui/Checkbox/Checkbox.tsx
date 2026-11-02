@@ -7,18 +7,20 @@ import './Checkbox.css'
 type Props = {
   label: string
   checked: boolean
+  disabled?: boolean
   onChange: (checked: boolean) => void
 }
 
 export const Checkbox = defineComponent<Props>((props) => {
   const { isFocused, onFocus, onBlur } = useFocusVisible()
+  const toggle = () => !props.disabled && props.onChange(!props.checked)
 
   return () => (
     <div
-      class={['Checkbox', !props.checked && 'Checkbox--off']}
-      tabindex="0"
-      onClick={() => props.onChange(!props.checked)}
-      onKeydown={(e) => e.key === 'Enter' && props.onChange(!props.checked)}
+      class={['Checkbox', !props.checked && 'Checkbox--off', props.disabled && 'Checkbox--disabled']}
+      tabindex={props.disabled ? -1 : 0}
+      onClick={toggle}
+      onKeydown={(e) => e.key === 'Enter' && toggle()}
       onFocus={onFocus}
       onBlur={onBlur}
     >
@@ -32,5 +34,5 @@ export const Checkbox = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['label', 'checked', 'onChange']
+  props: ['label', 'checked', 'disabled', 'onChange']
 })
