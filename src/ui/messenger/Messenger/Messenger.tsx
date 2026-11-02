@@ -1,9 +1,9 @@
-import { computed, defineComponent, KeyboardEvent, onMounted, shallowRef } from 'vue'
+import { computed, defineComponent, onMounted, shallowRef } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import { useServices } from 'services'
 import * as IEngine from 'services/contracts/IEngine'
 import { loadInitialData } from 'actions'
-import { useModal } from 'hooks'
+import { useKeyboardZones, useModal } from 'hooks'
 import { ConvoList } from 'ui/messenger/ConvoList/ConvoList'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
@@ -17,20 +17,24 @@ export const Messenger = defineComponent(() => {
   const engineFailModal = useModal()
   const engineFailReason = shallowRef('')
   const { lang } = useServices()
+  const $messenger = shallowRef<HTMLElement | null>(null)
+  const { registerZone, registerZoneHandler } = useKeyboardZones()
+
+  registerZone('messenger', $messenger)
+  registerZoneHandler('messenger', (event) => {
+    if (event.key !== 'Escape' || route.name !== 'Convo') return
+
+    if (route.query.canGoBack) {
+      router.back()
+    } else {
+      router.push({ name: 'NoConvo' })
+    }
+    return true
+  })
 
   onMounted(() => {
     loadInitialData(initErrorModal.open, onEngineFail)
   })
-
-  const onKeydown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape' && route.name === 'Convo') {
-      if (route.query.canGoBack) {
-        router.back()
-      } else {
-        router.push({ name: 'NoConvo' })
-      }
-    }
-  }
 
   const onEngineFail = (reason: IEngine.FailReason) => {
     engineFailModal.open()
@@ -59,7 +63,7 @@ export const Messenger = defineComponent(() => {
   return () => (
     <div
       class={['Messenger', route.name === 'Convo' && 'Messenger--withConvo']}
-      onKeydown={onKeydown}
+      ref={$messenger}
       tabindex={-1}
     >
       <ConvoList class="Messenger__convoList" compact={columnsLayout.value === 'compact'} />

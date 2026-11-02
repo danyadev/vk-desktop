@@ -12,11 +12,6 @@ interface SyntheticEvent<T = Element> extends Event {
   currentTarget: T & EventTarget
 }
 
-interface UIEvent<T = Element> extends SyntheticEvent<T> {
-  detail: number
-  view: Window
-}
-
 declare module 'vue' {
   /**
    * Дополняем интерфейсы атрибутов существующих элементов.
@@ -50,29 +45,17 @@ declare module 'vue' {
    */
 
   type InputEvent<T = Element> = SyntheticEvent<T>
-
-  interface KeyboardEvent<T = Element> extends SyntheticEvent<T> {
-    altKey: boolean
-    /** @deprecated */
-    charCode: number
-    ctrlKey: boolean
-    code: string
-    getModifierState: (key: string) => boolean
-    key: string
-    /** @deprecated */
-    keyCode: number
-    locale: string
-    location: number
-    metaKey: boolean
-    repeat: boolean
-    shiftKey: boolean
-    /** @deprecated */
-    which: number
-  }
+  type KeyboardEvent<T = Element> = globalThis.KeyboardEvent & SyntheticEvent<T>
+  type MouseEvent<T = Element> = globalThis.MouseEvent & SyntheticEvent<T>
+  type PointerEvent<T = Element> = globalThis.PointerEvent & SyntheticEvent<T>
 
   interface FocusEvent<T = Element> extends SyntheticEvent<T> {
     currentTarget: null
     relatedTarget: T & EventTarget | null
+  }
+
+  interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
+    target: T & EventTarget
   }
 
   // interface ClipboardEvent<T = Element> extends SyntheticEvent<T> {
@@ -92,43 +75,7 @@ declare module 'vue' {
   // interface InvalidEvent<T = Element> extends SyntheticEvent<T> {
   //   target: EventTarget & T
   // }
-
-  interface PointerEvent<T = Element> extends MouseEvent<T> {
-    pointerId: number
-    pressure: number
-    tangentialPressure: number
-    tiltX: number
-    tiltY: number
-    twist: number
-    width: number
-    height: number
-    pointerType: 'mouse' | 'pen' | 'touch'
-    isPrimary: boolean
-  }
-
-  interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
-    target: T & EventTarget
-  }
-
-  interface MouseEvent<T = Element> extends UIEvent<T> {
-    altKey: boolean
-    button: number
-    buttons: number
-    clientX: number
-    clientY: number
-    ctrlKey: boolean
-    getModifierState(key: string): boolean
-    metaKey: boolean
-    movementX: number
-    movementY: number
-    pageX: number
-    pageY: number
-    relatedTarget: EventTarget | null
-    screenX: number
-    screenY: number
-    shiftKey: boolean
-  }
-
+  //
   // interface TouchEvent<T = Element> extends UIEvent<T> {
   //   altKey: boolean
   //   changedTouches: TouchList

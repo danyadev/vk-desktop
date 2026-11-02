@@ -3,7 +3,6 @@ import {
   defineComponent,
   KeyboardEvent,
   MouseEvent,
-  PointerEvent,
   shallowRef,
   Teleport,
   Transition,
@@ -13,7 +12,7 @@ import {
 } from 'vue'
 import { flip, offset, OffsetOptions, Placement, shift } from '@floating-ui/dom'
 import { useFocusTrap } from 'hooks'
-import { JSXElement, RawRefElement, unrefElement } from 'misc/utils'
+import { JSXElement, MouseButton, RawRefElement, unrefElement } from 'misc/utils'
 import { useFloatingUI } from './useFloatingUI'
 import { RenderSlotWithProps } from 'ui/ui/RenderSlotWithProps/RenderSlotWithProps'
 import './Popper.css'
@@ -36,7 +35,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
   const isVisible = shallowRef(false)
   const isPointingAtTrigger = shallowRef(false)
   const isPointingAtContent = shallowRef(false)
-  const isContextMenu = props.trigger === 'contextmenu'
+  const isContextMenuTrigger = props.trigger === 'contextmenu'
   let hideContentTimeout = 0
   let showContentTimeout = 0
 
@@ -68,15 +67,15 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
   })
 
   watch(showContent, () => {
-    if (isContextMenu && !showContent.value) {
+    if (isContextMenuTrigger && !showContent.value) {
       setVirtualTrigger(null)
     }
   })
 
   const { setTriggerRef, setVirtualTrigger, setContentRef, effectivePlacement } = useFloatingUI({
-    placement: props.placement ?? (isContextMenu ? 'bottom-start' : 'bottom-end'),
+    placement: props.placement ?? (isContextMenuTrigger ? 'bottom-start' : 'bottom-end'),
     middleware: [
-      offset(props.offset ?? (isContextMenu ? 0 : 4)),
+      offset(props.offset ?? (isContextMenuTrigger ? 0 : 4)),
       flip({ padding: 8, fallbackAxisSideDirection: 'end' }),
       shift({ padding: 8 })
     ]
@@ -98,7 +97,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     if (props.disabled) {
       return
     }
-    if (isContextMenu) {
+    if (isContextMenuTrigger) {
       if (showContent.value) {
         event.stopImmediatePropagation()
         showContent.value = false
@@ -109,7 +108,7 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
     showContent.value = !showContent.value
   }
 
-  const onContextMenu = (event: PointerEvent) => {
+  const onContextMenu = (event: MouseEvent) => {
     if (props.disabled) {
       return
     }
@@ -150,10 +149,16 @@ export const Popper = defineComponent<Props>((props, { slots }) => {
   return () => (
     <>
       <RenderSlotWithProps
-        ref={isContextMenu ? undefined : setTriggerRef}
+        ref={isContextMenuTrigger ? undefined : setTriggerRef}
         class={showContent.value && 'Popper__trigger--active'}
         onClickCapture={onTriggerClick}
-        onContextmenu={isContextMenu ? onContextMenu : undefined}
+        onMousedown={(event) => {
+          if (event.button === MouseButton.RIGHT && isContextMenuTrigger) {
+            onContextMenu(event)
+          }
+        }}
+        // Cancel the word selection on right click
+        onContextmenu={(event) => isContextMenuTrigger && event.preventDefault()}
         onMouseenter={() => (isPointingAtTrigger.value = true)}
         onMouseleave={() => (isPointingAtTrigger.value = false)}
         onKeydown={handleEscape}

@@ -367,7 +367,8 @@ export default defineConfig([
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-misused-spread': 'error',
       // Wait for https://github.com/vuejs/pinia/pull/3195 to be released
-      '@typescript-eslint/unbound-method': 'off'
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-unsafe-enum-comparison': 'off'
     }
   },
 

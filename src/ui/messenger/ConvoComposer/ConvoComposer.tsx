@@ -4,7 +4,7 @@ import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
 import { editMessage, sendMessage } from 'actions'
-import { useConvoSession, useModal, useViewer } from 'hooks'
+import { useConvoSession, useKeyboardZones, useModal, useViewer } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttaches } from 'ui/messenger/ConvoComposer/ComposerAttaches/ComposerAttaches'
 import { ComposerMuteChannelButton } from 'ui/messenger/ConvoComposer/ComposerMuteChannelButton'
@@ -36,6 +36,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const viewer = useViewer()
   const { convoDrafts } = useConvosStore()
+  const { registerZoneHandler } = useKeyboardZones()
   const session = useConvoSession()
   const $input = shallowRef<HTMLSpanElement | null>(null)
   const isSaving = shallowRef(false)
@@ -142,29 +143,29 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     if ($input.value) $input.value.innerText = ''
   }
 
-  const onEscape = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.key === 'Escape' && draft.editing && !isEventWithModifier(event)) {
-      event.stopPropagation()
+  registerZoneHandler('convoView', (event) => {
+    if (!$input.value) return
+
+    if (event.key === 'Escape' && !isEventWithModifier(event) && draft.editing) {
       cancelEditing()
-    }
-  }
-
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (isEventWithModifier(event)) return
-
-    if (event.code === 'Enter') {
-      // Предотвращаем перенос строки
-      event.preventDefault()
-      onSubmit()
-      return
+      return true
     }
 
-    if (event.code === 'ArrowUp' && !draft.editing) {
+    if (event.key === 'ArrowUp' && !isEventWithModifier(event) && ConvoDraft.isEmpty(draft)) {
       const message = Convo.lastEditableMessage(props.convo, viewer.id)
       if (message) {
         event.preventDefault()
         ConvoDraft.startEditing(draft, message)
+        return true
       }
+    }
+  })
+
+  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.code === 'Enter' && !isEventWithModifier(event)) {
+      // Предотвращаем перенос строки
+      event.preventDefault()
+      onSubmit()
     }
   }
 
@@ -273,10 +274,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   return () => (
-    <div
-      class={['ConvoComposer', isSaving.value && 'ConvoComposer--saving']}
-      onKeydown={onEscape}
-    >
+    <div class={['ConvoComposer', isSaving.value && 'ConvoComposer--saving']}>
       <div class="ConvoComposer__inner">
         {draft.editing && (
           <div class="ConvoComposer__messageBar">
