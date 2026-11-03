@@ -7,8 +7,10 @@ import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
 import { retryAllPendingMessages, retryPendingMessage } from 'actions'
 import { useConvoSession, useModal } from 'hooks'
+import { NonEmptyArray } from 'misc/utils'
 import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
 import { MessageReadersMenuItem } from 'ui/messenger/MessageActionMenu/MessageReadersMenuItem'
+import { ForwardMessageModal } from 'ui/modals/ForwardMessageModal/ForwardMessageModal'
 import { Modal } from 'ui/modals/parts'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
@@ -23,6 +25,7 @@ import {
   Icon20PinOutline,
   Icon20PinSlashOutline,
   Icon20ReplyOutline,
+  Icon20ShareOutline,
   Icon20TrashOutline
 } from 'assets/icons'
 
@@ -39,6 +42,8 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
   const session = useConvoSession()
   const { convoDrafts } = useConvosStore()
   const deleteModal = useModal()
+  const forwardModal = useModal()
+  const forwardingMessages = shallowRef<NonEmptyArray<Message.Foreign>>()
   const pinModal = useModal()
   const errorModal = useModal()
   const loadingAction = shallowRef<LoadingAction>()
@@ -113,6 +118,14 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
               disabled={!!draft.editing}
             />
           )}
+          <ActionMenuItem
+            icon={<Icon20ShareOutline />}
+            text={lang.use('me_message_menu_forward')}
+            onClick={() => {
+              forwardingMessages.value = [Message.toForeign(message)]
+              forwardModal.open()
+            }}
+          />
           {Convo.canEditMessage(convo, message, viewer.id) && (
             <ActionMenuItem
               icon={<Icon20EditOutline />}
@@ -230,6 +243,14 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
         >
           {slots.default?.()}
         </Popper>
+
+        {forwardingMessages.value && (
+          <ForwardMessageModal
+            opened={forwardModal.opened}
+            onClose={forwardModal.close}
+            messages={forwardingMessages.value}
+          />
+        )}
 
         {message.kind !== 'Pending' && (
           <DeleteMessageModal

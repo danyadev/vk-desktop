@@ -75,6 +75,8 @@ import {
   MessagesPinResponse,
   MessagesRemoveChatUserParams,
   MessagesRemoveChatUserResponse,
+  MessagesSearchConversationsParams,
+  MessagesSearchConversationsResponse,
   MessagesSendParams,
   MessagesSendResponse,
   MessagesUnarchiveConversationParams,
@@ -280,6 +282,10 @@ export type Methods = {
   'messages.denyMessagesFromGroup': {
     params: MessagesDenyMessagesFromGroupParams
     response: MessagesDenyMessagesFromGroupResponse
+  }
+  'messages.searchConversations': {
+    params: MessagesSearchConversationsParams
+    response: MessagesSearchConversationsResponse
   }
 
   'users.get': {

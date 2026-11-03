@@ -34,6 +34,7 @@ export const ru = {
   },
 
   select_not_selected: 'Не выбрано',
+  input_search: 'Поиск',
   load_error: 'Ошибка загрузки',
   retry_loading: 'Повторить',
 
@@ -184,7 +185,6 @@ export const ru = {
   me_convo_composer_edit_cancel_dismiss: 'Не отменять',
   me_convo_composer_edit_error_title: 'Не удалось отредактировать сообщение',
   me_convo_composer_edit_error_text: 'Не удалось сохранить изменения. Попробуйте ещё раз.',
-  me_convo_selection_toolbar_forward_here: 'Переслать сюда',
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
   me_convo_empty_placeholder: 'История переписки пуста',
   me_convo_unread_messages: 'Новые сообщения',
@@ -464,6 +464,12 @@ export const ru = {
     few: 'Произошла ошибка удаления {0} сообщений',
     many: 'Произошла ошибка удаления {0} сообщений'
   },
+
+  convoPicker_empty: 'Беседы не найдены',
+  convoPicker_favorites: 'Избранное',
+  convoPicker_favorites_description: 'Ваши сообщения',
+  forwardMessageModal_title: 'Переслать сообщения',
+  forwardMessageModal_cannot_write: 'Нельзя отправлять сообщения',
 
   captchaModal_title: 'Введите капчу',
   captchaModal_enter_code: 'Введите код',

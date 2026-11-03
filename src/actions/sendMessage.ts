@@ -54,20 +54,28 @@ async function sendNextPendingMessage(convo: Convo.Convo) {
   sendMessageLock.add(convo.id)
 
   try {
+    let forward: MessagesForward | undefined
+
+    if (pending.replyMessage) {
+      forward = {
+        peer_id: pending.peerId,
+        cmids: [pending.replyMessage.rootCmid],
+        is_reply: true
+      }
+    } else if (pending.forwardedMessages) {
+      forward = {
+        peer_id: pending.forwardedMessages[0].rootPeerId,
+        cmids: pending.forwardedMessages.map((message) => message.rootCmid),
+        is_reply: false
+      }
+    }
+
     const { cmid } = await api.fetch('messages.send', {
       peer_id: pending.peerId,
       random_id: pending.randomId,
       message: pending.text,
       attachment: Attach.ids(pending.attaches),
-      forward: pending.replyMessage?.cmid || pending.forwardedMessages
-        ? JSON.stringify({
-            peer_id: pending.peerId,
-            cmids: pending.replyMessage?.cmid
-              ? [pending.replyMessage.cmid]
-              : pending.forwardedMessages!.map((message) => message.rootCmid),
-            is_reply: !!pending.replyMessage?.cmid
-          } satisfies MessagesForward)
-        : undefined
+      forward: forward && JSON.stringify(forward)
     })
     pending.cmid = Message.resolveCmid(cmid)
   } catch (err) {

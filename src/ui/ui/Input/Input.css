@@ -6,10 +6,10 @@
   background: var(--vkui--color_field_background);
   border: 1px solid var(--vkui--color_field_border_alpha);
   border-radius: 8px;
-  transition: border-color var(--fastTransition);
+  transition: background-color var(--fastTransition), border-color var(--fastTransition);
 }
 
-.Input--inLayer {
+.Input--layer {
   background: var(--vkd--color_field_background_in_layer);
 }
 
@@ -19,6 +19,24 @@
 
 .Input:focus-within {
   border-color: var(--vkui--color_stroke_accent);
+}
+
+.Input--search {
+  background: var(--vkui--color_search_field_background);
+}
+
+.Input--search,
+.Input--search:hover,
+.Input--search:focus-within {
+  border-color: transparent;
+}
+
+.Input--search:hover {
+  background-color: var(--vkui--color_search_field_background--hover);
+}
+
+.Input--search:active {
+  background-color: var(--vkui--color_search_field_background--active);
 }
 
 .Input__el {
@@ -39,11 +57,11 @@
   color: var(--vkui--color_text_secondary);
 }
 
-.Input--hasBefore .Input__el {
+.Input:has(.Input__before) .Input__el {
   padding-left: 0;
 }
 
-.Input--hasAfter .Input__el {
+.Input:has(:where(.Input__after, .Input__clear)) .Input__el {
   padding-right: 0;
 }
 
@@ -56,4 +74,28 @@
   min-width: 36px;
   height: 100%;
   color: var(--vkui--color_icon_secondary);
+}
+
+.Input--search .Input__el::-webkit-search-cancel-button {
+  display: none;
+}
+
+.Input__clear {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--vkui--color_icon_secondary);
+  transition: opacity var(--fastTransition);
+}
+
+.Input__clear:hover {
+  opacity: 0.8;
+}
+
+.Input__clear:focus-visible {
+  outline: 2px solid var(--vkui--color_stroke_accent);
 }
