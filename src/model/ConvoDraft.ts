@@ -92,7 +92,7 @@ export function startEditing(draft: ConvoDraft, message: Message.Normal) {
     text: message.text,
     attaches: Attach.copy(message.attaches),
     replyMessage: message.replyMessage,
-    forwardedMessages: message.forwardedMessages,
+    forwardedMessages: message.forwardedMessages && [...message.forwardedMessages],
     uploadingAttaches: [],
     updatedAt: Date.now(),
     editing: { message, previousDraft }
@@ -110,6 +110,7 @@ export function isEdited(draft: Draft, message: Message.Normal) {
   return (
     draft.text !== message.text ||
     draft.replyMessage?.cmid !== message.replyMessage?.cmid ||
+    !!draft.forwardedMessages !== !!message.forwardedMessages ||
     Attach.ids(draft.attaches) !== Attach.ids(message.attaches) ||
     Attach.count(draft.attaches) !== Attach.count(message.attaches) ||
     draft.uploadingAttaches.length > 0

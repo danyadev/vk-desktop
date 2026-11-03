@@ -125,17 +125,17 @@ export async function syncDraftsOnLoad() {
       })
     )))
 
-    responses.forEach(({ items, profiles, groups }, index) => {
+    responses.forEach(({ items: apiMessages, profiles, groups }, index) => {
       const { peerId, cmids } = requests[index]!
       insertPeers({ profiles, groups })
 
-      const messages = new Map(items.map((message) => [
-        Message.resolveCmid(message.conversation_message_id),
-        message
+      const apiMessagesMap = new Map(apiMessages.map((apiMessage) => [
+        Message.resolveCmid(apiMessage.conversation_message_id),
+        apiMessage
       ]))
 
       for (const cmid of cmids) {
-        const message = messages.get(cmid)
+        const message = apiMessagesMap.get(cmid)
         syncDraftMessage(
           peerId,
           cmid,

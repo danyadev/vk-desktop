@@ -48,6 +48,7 @@
 
 .Button--small {
   height: 26px;
+  padding: 0 12px;
 }
 
 .Button--medium {

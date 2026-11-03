@@ -184,6 +184,7 @@ export const ru = {
   me_convo_composer_edit_cancel_dismiss: 'Не отменять',
   me_convo_composer_edit_error_title: 'Не удалось отредактировать сообщение',
   me_convo_composer_edit_error_text: 'Не удалось сохранить изменения. Попробуйте ещё раз.',
+  me_convo_selection_toolbar_forward_here: 'Переслать сюда',
   me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
   me_convo_empty_placeholder: 'История переписки пуста',
   me_convo_unread_messages: 'Новые сообщения',
