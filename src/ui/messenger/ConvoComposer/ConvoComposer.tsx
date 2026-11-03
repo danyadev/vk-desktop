@@ -4,7 +4,7 @@ import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
 import { editMessage, sendMessage } from 'actions'
-import { useConvoSession, useKeyboardZones, useModal, useViewer } from 'hooks'
+import { useConvoSession, useGlobalModal, useKeyboardZones, useModal, useViewer } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
 import { ComposerAttaches } from 'ui/messenger/ConvoComposer/ComposerAttaches/ComposerAttaches'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
@@ -36,7 +36,9 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const viewer = useViewer()
   const { convoDrafts } = useConvosStore()
   const { registerZoneHandler } = useKeyboardZones()
+  const { messageViewerModal } = useGlobalModal()
   const session = useConvoSession()
+
   const $input = shallowRef<HTMLSpanElement | null>(null)
   const isSaving = shallowRef(false)
   const cancelEditModal = useModal()
@@ -56,7 +58,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     !!draft.editing &&
     !ConvoDraft.hasContent(draft) &&
     !draft.replyMessage &&
-    !draft.editing.message.forwardedMessages &&
+    !draft.forwardedMessages &&
     draft.uploadingAttaches.length === 0
   ))
 
@@ -125,7 +127,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
           draft.editing.message.cmid,
           draft.text,
           draft.attaches,
-          !!draft.replyMessage || !!draft.editing.message.forwardedMessages
+          !!draft.replyMessage || !!draft.forwardedMessages
         )
         ConvoDraft.finishEditing(draft)
       } catch (error) {
@@ -137,7 +139,13 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       return
     }
 
-    sendMessage(props.convo.id, draft.text, draft.attaches, draft.replyMessage)
+    sendMessage(
+      props.convo.id,
+      draft.text,
+      draft.attaches,
+      draft.replyMessage,
+      draft.forwardedMessages
+    )
     ConvoDraft.reset(draft)
     if ($input.value) $input.value.innerText = ''
   }
@@ -208,6 +216,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
       triggerKey={[
         !!draft.editing,
         !!draft.replyMessage,
+        !!draft.forwardedMessages,
         attachPreviews.value.length > 0
       ].join('-')}
     >
@@ -253,6 +262,30 @@ export const ConvoComposer = defineComponent<Props>((props) => {
             disabled={isSaving.value}
             onClick={() => {
               draft.replyMessage = undefined
+              ConvoDraft.touch(draft)
+              $input.value?.focus()
+            }}
+          />
+        </div>
+      )}
+
+      {draft.forwardedMessages && (
+        <div class="ConvoComposer__messageBar">
+          <ReplyMessage
+            reply={ConvoDraft.toPreviewMessage({
+              ...ConvoDraft.emptyDraft(),
+              forwardedMessages: draft.forwardedMessages
+            }, props.convo.id, viewer.id)}
+            customName={lang.use('me_convo_composer_forwarded_messages')}
+            onClick={() => messageViewerModal.open({ messages: draft.forwardedMessages! })}
+          />
+          <ButtonIcon
+            class="ConvoComposer__messageBarCancel"
+            icon={<Icon24Cancel />}
+            withHoverBackground
+            disabled={isSaving.value}
+            onClick={() => {
+              draft.forwardedMessages = undefined
               ConvoDraft.touch(draft)
               $input.value?.focus()
             }}

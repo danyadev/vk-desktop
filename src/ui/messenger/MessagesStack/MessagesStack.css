@@ -1,6 +1,7 @@
 .MessagesStack {
   --selection-content-shift: 24px;
-  container-type: inline-size;
+  --selection-avatar-offset: 0px;
+  --selection-padding: 12px;
   display: flex;
   align-items: flex-end;
   padding: 4px 0;
@@ -20,6 +21,10 @@
 
 .MessagesStack--selecting .MessagesStack__avatar {
   pointer-events: none;
+}
+
+.MessagesStack__avatar + .MessagesStack__messages {
+  --selection-avatar-offset: 40px;
 }
 
 .MessagesStack__messages {
@@ -66,12 +71,7 @@
 .MessagesStack__selection {
   position: absolute;
   bottom: 0;
-  /*
-   * 100% - 100cqw — разница ширины строки и всего стека, учитывающая место под аватарку.
-   * -12px — положение иконки относительно левого края стека.
-   * -var(...) — компенсация сдвига сообщений при переходе в режим выделения.
-   */
-  left: calc(100% - 100cqw - 12px - var(--selection-content-shift));
+  left: calc(-1 * (var(--selection-avatar-offset) + var(--selection-content-shift) + var(--selection-padding)));
   width: 32px;
   height: 32px;
   display: flex;
@@ -89,8 +89,8 @@
 }
 
 .MessagesStack__message--service .MessagesStack__selection {
+  --selection-padding: 8px;
   bottom: calc(50% - 12px);
-  left: calc(100% - 100cqw - 8px - var(--selection-content-shift));
   width: 24px;
   height: 24px;
 }

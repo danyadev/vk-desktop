@@ -1,21 +1,22 @@
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
-import { getMapValueOrCompute } from 'misc/utils'
+import { getMapValueOrCompute, NonEmptyArray } from 'misc/utils'
 
 export type Draft = {
   text: string
   attaches: Attach.Attaches
   replyMessage: Message.Foreign | undefined
+  forwardedMessages: NonEmptyArray<Message.Foreign> | undefined
   uploadingAttaches: UploadingAttach[]
   updatedAt: number
 }
 
 export type ConvoDraft = Draft & {
-  editing?: {
+  editing: {
     message: Message.Normal
     previousDraft: Draft
-  }
+  } | undefined
 }
 
 export type UploadingAttach = UploadingPhoto
@@ -30,10 +31,11 @@ type GenericUploadingAttach<Kind extends Attach.SingleAttach['kind']> = {
   abortController: AbortController
 }
 
-const emptyDraft = (): Draft => ({
+export const emptyDraft = (): Draft => ({
   text: '',
   attaches: {},
   replyMessage: undefined,
+  forwardedMessages: undefined,
   uploadingAttaches: [],
   updatedAt: 0
 })
@@ -52,8 +54,13 @@ export function safeGet(convoDrafts: Map<Peer.Id, ConvoDraft>, peerId: Peer.Id):
   return getMapValueOrCompute(convoDrafts, peerId, emptyConvoDraft)
 }
 
+/** Whether the draft has enough content to be sent */
 export function hasContent(draft: Draft) {
-  return draft.text.trim() !== '' || Attach.kindsCount(draft.attaches) > 0
+  return (
+    draft.text.trim() !== '' ||
+    Attach.kindsCount(draft.attaches) > 0 ||
+    !!draft.forwardedMessages
+  )
 }
 
 export function isEmpty(convoDraft: ConvoDraft) {
@@ -85,6 +92,7 @@ export function startEditing(draft: ConvoDraft, message: Message.Normal) {
     text: message.text,
     attaches: Attach.copy(message.attaches),
     replyMessage: message.replyMessage,
+    forwardedMessages: message.forwardedMessages && [...message.forwardedMessages],
     uploadingAttaches: [],
     updatedAt: Date.now(),
     editing: { message, previousDraft }
@@ -102,6 +110,7 @@ export function isEdited(draft: Draft, message: Message.Normal) {
   return (
     draft.text !== message.text ||
     draft.replyMessage?.cmid !== message.replyMessage?.cmid ||
+    !!draft.forwardedMessages !== !!message.forwardedMessages ||
     Attach.ids(draft.attaches) !== Attach.ids(message.attaches) ||
     Attach.count(draft.attaches) !== Attach.count(message.attaches) ||
     draft.uploadingAttaches.length > 0
@@ -153,7 +162,7 @@ export function toPreviewMessage(
     text: draft.text,
     attaches: draft.attaches,
     replyMessage: draft.replyMessage,
-    forwardedMessages: undefined,
+    forwardedMessages: draft.forwardedMessages,
     isFailed: false
   }
 }

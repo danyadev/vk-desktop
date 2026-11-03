@@ -107,6 +107,7 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
               text={lang.use('me_message_menu_reply')}
               onClick={() => {
                 draft.replyMessage = Message.toForeign(message)
+                draft.forwardedMessages = undefined
                 ConvoDraft.touch(draft)
               }}
               disabled={!!draft.editing}
