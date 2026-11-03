@@ -7,7 +7,7 @@ import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import './ReplyMessage.css'
 
 type Props = {
-  reply: Message.Normal | Message.Foreign
+  reply: Message.Message | Message.Foreign
   customName?: string
   onClick: () => void
   class?: ClassName

@@ -6,18 +6,19 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { useViewer } from 'hooks'
-import { random } from 'misc/utils'
+import { NonEmptyArray, random } from 'misc/utils'
 import { INTEGER_BOUNDARY } from 'misc/constants'
 
 export function sendMessage(
   peerId: Peer.Id,
   text: string,
   attaches: Attach.Attaches,
-  replyMessage?: Message.Foreign
+  replyMessage?: Message.Foreign,
+  forwardedMessages?: NonEmptyArray<Message.Foreign>
 ) {
   const { convos } = useConvosStore()
   const convo = Convo.safeGet(convos, peerId)
-  const pendingMessage = toPendingMessage(peerId, text, attaches, replyMessage)
+  const pendingMessage = toPendingMessage(peerId, text, attaches, replyMessage, forwardedMessages)
 
   convo.pendingMessages.push(pendingMessage)
   sendNextPendingMessage(convo)
@@ -58,11 +59,13 @@ async function sendNextPendingMessage(convo: Convo.Convo) {
       random_id: pending.randomId,
       message: pending.text,
       attachment: Attach.ids(pending.attaches),
-      forward: pending.replyMessage?.cmid
+      forward: pending.replyMessage?.cmid || pending.forwardedMessages
         ? JSON.stringify({
             peer_id: pending.peerId,
-            cmids: [pending.replyMessage.cmid],
-            is_reply: true
+            cmids: pending.replyMessage?.cmid
+              ? [pending.replyMessage.cmid]
+              : pending.forwardedMessages!.map((message) => message.rootCmid),
+            is_reply: !!pending.replyMessage?.cmid
           } satisfies MessagesForward)
         : undefined
     })
@@ -80,7 +83,8 @@ function toPendingMessage(
   peerId: Peer.Id,
   text: string,
   attaches: Attach.Attaches,
-  replyMessage: Message.Foreign | undefined
+  replyMessage: Message.Foreign | undefined,
+  forwardedMessages: NonEmptyArray<Message.Foreign> | undefined
 ): Message.Pending {
   const viewer = useViewer()
   const randomId = random(-INTEGER_BOUNDARY, INTEGER_BOUNDARY)
@@ -97,7 +101,7 @@ function toPendingMessage(
     text,
     attaches,
     replyMessage,
-    forwardedMessages: undefined,
+    forwardedMessages,
     isFailed: false
   }
 }
