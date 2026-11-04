@@ -1,5 +1,6 @@
 import { GroupsGroup } from 'services/contracts/api/objects/GroupsGroup'
 import { UsersUser } from 'services/contracts/api/objects/UsersUser'
+import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
 import { fromApiGroup, fromApiUser } from 'converters/PeerConverter'
 
@@ -10,35 +11,30 @@ type Props = {
 }
 
 export function insertPeers({ profiles, groups, withExtraFields }: Props) {
-  const { peers } = usePeersStore()
-
   for (const apiUser of profiles ?? []) {
-    const user = fromApiUser(apiUser, withExtraFields)
-    const localUser = peers.get(user.id)
-
-    if (localUser) {
-      // Обновляем объект на месте, сохраняя его ссылку в store и не вызывая
-      // лишних реактивных обновлений из-за замены объекта целиком.
-      // Для корректной работы Object.assign важно решить проблему опциональных полей:
-      // например, если попытаться обновить { optional: 1 } на {}, само поле никуда не денется.
-      // Поэтому в моделях вместо опциональных полей теперь всегда явно выставляется undefined.
-      // Это также позволяет сохранять стабильную форму объектов (см. V8 hidden class):
-      // одинаковый набор и порядок свойств позволяют JS-движку переиспользовать
-      // оптимизированные способы доступа к ним через inline caches
-      Object.assign(localUser, user)
-    } else {
-      peers.set(user.id, user)
-    }
+    insertPeerModel(fromApiUser(apiUser, withExtraFields))
   }
 
   for (const apiGroup of groups ?? []) {
-    const group = fromApiGroup(apiGroup, withExtraFields)
-    const localGroup = peers.get(group.id)
+    insertPeerModel(fromApiGroup(apiGroup, withExtraFields))
+  }
+}
 
-    if (localGroup) {
-      Object.assign(localGroup, group)
-    } else {
-      peers.set(group.id, group)
-    }
+export function insertPeerModel(peer: Peer.Peer) {
+  const { peers } = usePeersStore()
+  const localPeer = peers.get(peer.id)
+
+  if (localPeer) {
+    // Обновляем объект на месте, сохраняя его ссылку в store и не вызывая
+    // лишних реактивных обновлений из-за замены объекта целиком.
+    // Для корректной работы Object.assign важно решить проблему опциональных полей:
+    // например, если попытаться обновить { optional: 1 } на {}, само поле никуда не денется.
+    // Поэтому в моделях вместо опциональных полей теперь всегда явно выставляется undefined.
+    // Это также позволяет сохранять стабильную форму объектов (см. V8 hidden class):
+    // одинаковый набор и порядок свойств позволяют JS-движку переиспользовать
+    // оптимизированные способы доступа к ним через inline caches
+    Object.assign(localPeer, peer)
+  } else {
+    peers.set(peer.id, peer)
   }
 }

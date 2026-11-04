@@ -16,6 +16,7 @@
   font-size: var(--smallFontSize);
 }
 
+.Avatar--size-40,
 .Avatar--size-48,
 .Avatar--size-56 {
   font-size: calc(var(--smallFontSize) + 4px);

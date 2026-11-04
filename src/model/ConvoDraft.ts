@@ -67,7 +67,7 @@ export function isEmpty(convoDraft: ConvoDraft) {
   return !convoDraft.editing && !convoDraft.replyMessage && !hasContent(convoDraft)
 }
 
-export function touch(convoDraft: ConvoDraft) {
+export function touch(convoDraft: Draft) {
   convoDraft.updatedAt = Date.now()
 }
 

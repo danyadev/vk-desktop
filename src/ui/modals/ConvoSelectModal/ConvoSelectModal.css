@@ -1,0 +1,7 @@
+.ConvoSelectModal {
+  display: flex;
+  width: 450px;
+  max-width: 100%;
+  height: min(600px, 80vh);
+  min-height: 0;
+}

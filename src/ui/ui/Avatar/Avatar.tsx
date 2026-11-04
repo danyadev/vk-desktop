@@ -4,7 +4,7 @@ import { usePixelDensity } from 'hooks'
 import { ClassName } from 'misc/utils'
 import './Avatar.css'
 
-export type AvatarSize = 24 | 32 | 48 | 56 | 80
+export type AvatarSize = 24 | 32 | 40 | 48 | 56 | 80
 
 type Props = {
   peer: Peer.Peer

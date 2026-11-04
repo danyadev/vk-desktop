@@ -61,7 +61,7 @@ export const CaptchaModal = defineComponent<CaptchaModalParams>((params) => {
         onInput={(event) => (captchaKey.value = event.target.value)}
         onKeydown={onKeyDown}
         autofocus
-        inLayer
+        mode="layer"
       />
     </Modal>
   )

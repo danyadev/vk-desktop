@@ -2,7 +2,7 @@ import { MessagesConversationWithMessage } from 'services/contracts/api/objects/
 import * as History from 'model/History'
 import * as Lists from 'model/Lists'
 import { useConvosStore } from 'store/convos'
-import { usePeersStore } from 'store/peers'
+import { insertPeerModel } from 'actions'
 import { fromApiConvo } from 'converters/ConvoConverter'
 
 export function insertConvos(
@@ -10,7 +10,6 @@ export function insertConvos(
   { list, invalidateHistory }: { list?: Lists.List, invalidateHistory?: boolean } = {}
 ) {
   const { convos } = useConvosStore()
-  const { peers } = usePeersStore()
 
   for (const apiConvo of conversations) {
     const { convo, peer } = fromApiConvo(apiConvo.conversation, apiConvo.last_message)
@@ -52,12 +51,7 @@ export function insertConvos(
     }
 
     if (peer) {
-      const localPeer = peers.get(peer.id)
-      if (localPeer) {
-        Object.assign(localPeer, peer)
-      } else {
-        peers.set(peer.id, peer)
-      }
+      insertPeerModel(peer)
     }
   }
 }

@@ -348,3 +348,18 @@ export type MessagesAllowMessagesFromGroupResponse = 1
 // messages.denyMessagesFromGroup
 export type MessagesDenyMessagesFromGroupParams = { group_id: number }
 export type MessagesDenyMessagesFromGroupResponse = 1
+
+// messages.searchConversations
+export type MessagesSearchConversationsParams = {
+  q: string
+  count?: number
+  extended: 1
+  fields: string
+}
+
+export type MessagesSearchConversationsResponse = {
+  count: number
+  items: MessagesConversation[]
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+}
