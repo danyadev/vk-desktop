@@ -75,11 +75,13 @@ type Convos = {
 type PersistedState = {
   convoDrafts: Map<Peer.Id, ConvoDraft.ConvoDraft>
   hiddenPinnedMessages: Map<Peer.Id, Message.Cmid>
+  recentSearches: Peer.Id[]
 }
 
 const getDefaultPersistedState = (): PersistedState => ({
   convoDrafts: new Map<Peer.Id, ConvoDraft.ConvoDraft>(),
-  hiddenPinnedMessages: new Map<Peer.Id, Message.Cmid>()
+  hiddenPinnedMessages: new Map<Peer.Id, Message.Cmid>(),
+  recentSearches: []
 })
 
 export const useConvosStore = defineStore('convos', {
@@ -166,6 +168,10 @@ export function init() {
   watch(() => store.hiddenPinnedMessages, (hiddenPinnedMessages) => {
     storage.set('hiddenPinnedMessages', hiddenPinnedMessages)
   }, { deep: true })
+
+  watch(() => store.recentSearches, (recentSearches) => {
+    storage.set('recentSearches', recentSearches)
+  })
 }
 
 // defineStore оборачивает стейт в UnwrapRef, заставляя IDE показывать полный бред.

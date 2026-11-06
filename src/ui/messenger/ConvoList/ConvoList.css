@@ -1,56 +1,92 @@
+.ConvoList {
+  overflow: hidden;
+}
+
 .ConvoList__header {
-  display: grid;
-  grid-template-areas:
-    'avatar name menu'
-    'avatar status menu';
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
+  gap: 8px;
+  flex: none;
   height: 48px;
   padding: 0 8px;
-  flex: none;
   border-bottom: 1px solid var(--vkui--color_separator_primary);
 }
 
 .ConvoList--compact .ConvoList__header {
-  justify-items: center;
-  grid-template: 'avatar' 1fr / 1fr;
+  justify-content: center;
 }
 
-.ConvoList__headerAvatar {
-  grid-area: avatar;
-  margin-right: 8px;
+.ConvoList__headerAction {
+  width: 32px;
+  height: 32px;
+  color: var(--vkui--color_icon_secondary);
 }
 
-.ConvoList--compact .ConvoList__headerAvatar {
-  margin-right: 0;
+.ConvoList__headerActionIcon-enter-active,
+.ConvoList__headerActionIcon-leave-active {
+  transition: opacity 100ms, transform 100ms;
 }
 
-.ConvoList__headerName {
-  grid-area: name;
-  align-self: end;
+.ConvoList__headerActionIcon-enter-from {
+  opacity: 0;
+  transform: translateX(6px) scale(0.85);
 }
 
-.ConvoList__headerStatus {
-  grid-area: status;
-  align-self: start;
-  font: var(--smallFont);
-  color: var(--vkui--color_text_secondary);
+.ConvoList__headerActionIcon-leave-to {
+  opacity: 0;
+  transform: translateX(-6px) scale(0.85);
 }
 
-.ConvoList__burgerMenu {
-  grid-area: menu;
-  padding: 2px;
+.ConvoList__searchInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.ConvoList__pages {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ConvoList__page {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ConvoList__page-enter-active,
+.ConvoList__page-leave-active {
+  transition: transform var(--mediumTransition) cubic-bezier(0.2, 0, 0, 1);
+}
+
+.ConvoList--searchOpen .ConvoList__page-enter-from,
+.ConvoList:not(.ConvoList--searchOpen) .ConvoList__page-leave-to {
+  transform: translateX(100%);
+}
+
+.ConvoList--searchOpen .ConvoList__page-leave-to,
+.ConvoList:not(.ConvoList--searchOpen) .ConvoList__page-enter-from {
+  transform: translateX(-100%);
 }
 
 .ConvoList__list {
-  overflow: overlay;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: overlay;
   padding: 6px 8px;
 }
 
 .ConvoList__folders + .ConvoList__list {
   padding-top: 0;
+}
+
+.ConvoList__page-leave-active .ConvoList__list,
+.ConvoList__page-leave-active .ConvoList__searchList {
+  /* Hide scrollbars while animating */
+  overflow: hidden;
 }
 
 .ConvoList__empty {
@@ -62,6 +98,6 @@
 }
 
 .ConvoList__spinner {
-  display: flex;
+  display: block;
   margin: 16px auto;
 }

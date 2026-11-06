@@ -3,9 +3,10 @@ import { ClassName, JSXElement } from 'misc/utils'
 import { Icon24Cancel, Icon24SearchOutline } from 'assets/icons'
 import './Input.css'
 
-type InheritedProps = InputHTMLAttributes
+type InheritedProps = Omit<InputHTMLAttributes, 'size'>
 type Props = {
   mode?: 'default' | 'layer' | 'search'
+  size?: 'regular' | 'small'
   before?: JSXElement
   after?: JSXElement
   autofocus?: boolean
@@ -32,7 +33,7 @@ export const Input = defineComponent<Props>((props, { attrs }) => {
   }
 
   return () => {
-    const { mode = 'default' } = props
+    const { mode = 'default', size = 'regular' } = props
     const { type = 'text', onInput, ...restProps } = attrs as InheritedProps
     const before = props.before ??
       (mode === 'search' && <Icon24SearchOutline width={20} height={20} />)
@@ -40,28 +41,30 @@ export const Input = defineComponent<Props>((props, { attrs }) => {
       String(restProps.value ?? inputValue.value).length > 0
 
     return (
-      <div class={['Input', props.class, `Input--${mode}`]}>
-        {before && <div class="Input__before">{before}</div>}
-        <input
-          class="Input__el"
-          type={mode === 'search' ? 'search' : type}
-          {...restProps}
-          onInput={(event) => {
-            inputValue.value = event.target.value
-            onInput?.(event)
-          }}
-          ref={$input}
-        />
-        {hasClear && (
-          <button type="button" class="Input__clear" onClick={clear}>
-            <Icon24Cancel width={20} height={20} />
-          </button>
-        )}
-        {props.after && <div class="Input__after">{props.after}</div>}
+      <div class={['Input', props.class, `Input--${mode}`, `Input--${size}`]}>
+        <label class="Input__field">
+          {before && <div class="Input__before">{before}</div>}
+          <input
+            class="Input__el"
+            type={mode === 'search' ? 'search' : type}
+            {...restProps}
+            onInput={(event) => {
+              inputValue.value = event.target.value
+              onInput?.(event)
+            }}
+            ref={$input}
+          />
+          {hasClear && (
+            <button type="button" class="Input__clear" onClick={clear}>
+              <Icon24Cancel width={20} height={20} />
+            </button>
+          )}
+          {props.after && <div class="Input__after">{props.after}</div>}
+        </label>
       </div>
     )
   }
 }, {
-  props: ['mode', 'before', 'after', 'autofocus', 'class'],
+  props: ['mode', 'size', 'before', 'after', 'autofocus', 'class'],
   inheritAttrs: false
 })

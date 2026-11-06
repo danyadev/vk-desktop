@@ -5,7 +5,7 @@ import { useConvosStore } from 'store/convos'
 import { handleEngineResync, handleEngineUpdates } from 'actions'
 import { sleep, toUrlParams } from 'misc/utils'
 
-const ENGINE_MAX_CONNECTION_DURATION_SEC = 20
+const ENGINE_MAX_CONNECTION_DURATION_SEC = 10
 const ENGINE_FETCH_TIMEOUT = (ENGINE_MAX_CONNECTION_DURATION_SEC + 5) * 1000
 const ENGINE_MODE =
   (1 << 1) | // возвращать кладжи

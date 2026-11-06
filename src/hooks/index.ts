@@ -1,4 +1,6 @@
 export { provideConvoSession, useConvoSession } from './providers'
+export { useConvoSearch } from './useConvoSearch'
+export { useConvoSubtitle } from './useConvoSubtitle'
 export { useFocusTrap } from './useFocusTrap'
 export { useFocusVisible } from './useFocusVisible'
 export { useFormatDate } from './useFormatDate'

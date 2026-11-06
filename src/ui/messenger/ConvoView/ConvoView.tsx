@@ -11,6 +11,7 @@ import { ConvoFooter } from 'ui/messenger/ConvoFooter/ConvoFooter'
 import { ConvoHeader } from 'ui/messenger/ConvoHeader/ConvoHeader'
 import { ConvoHistory } from 'ui/messenger/ConvoHistory/ConvoHistory'
 import { PinnedMessage } from 'ui/messenger/PinnedMessage/PinnedMessage'
+import { SyncStatus } from 'ui/messenger/SyncStatus/SyncStatus'
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import './ConvoView.css'
@@ -54,6 +55,7 @@ const ConvoView = defineComponent<ConvoViewProps>((props) => {
             }}
           />
         )}
+        <SyncStatus edge="bottom" />
         <ConvoHistory convo={props.convo} />
         <ConvoFooter convo={props.convo} />
       </div>

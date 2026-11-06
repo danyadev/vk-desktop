@@ -84,6 +84,10 @@ export const ru = {
   me_convo_list_date_weeks: '{weeks}н',
   me_convo_list_empty_convo: 'Пустой диалог',
   me_convo_list_empty: 'Список сообщений пуст',
+  me_convo_list_search_placeholder: 'Введите имя или название беседы для поиска',
+  me_convo_list_search_empty_results: 'Беседы не найдены',
+  me_convo_list_search_recent: 'Недавние',
+  me_convo_list_search_remove_recent: 'Удалить из недавних',
 
   me_action_menu_error_title: 'Не удалось выполнить действие',
   me_action_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',
@@ -172,10 +176,32 @@ export const ru = {
     few: '{0} сообщения',
     many: '{0} сообщений'
   },
+  me_chat_members_count: {
+    one: '{count} участник',
+    few: '{count} участника',
+    many: '{count} участников'
+  },
+  me_group_members_count: {
+    one: '{count} подписчик',
+    few: '{count} подписчика',
+    many: '{count} подписчиков'
+  },
   me_in_reply_to_message: 'В ответ на сообщение',
   me_empty_message: 'Пустое сообщение',
   me_unknown_attach: 'Неизвестное вложение',
   me_unsupported_service_message: 'Сервисное сообщение не поддерживается',
+  me_peer_favorites: 'Избранное',
+  me_peer_favorites_description: 'Ваши сообщения',
+  me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
+  me_convo_empty_placeholder: 'История переписки пуста',
+  me_convo_unread_messages: 'Новые сообщения',
+  me_edited_label: 'ред.',
+  me_attach_wall_empty: 'Пустая запись',
+  me_attach_wall_open_button: 'Открыть запись',
+  me_chat_leaved_status: 'Вы вышли из чата',
+  me_chat_kicked_status: 'Вы были исключены из чата',
+  me_syncing: 'Синхронизация...',
+
   me_convo_composer_placeholder: 'Напишите сообщение...',
   me_convo_composer_editing: 'Редактирование сообщения',
   me_convo_composer_forwarded_messages: 'Пересланные сообщения',
@@ -185,10 +211,7 @@ export const ru = {
   me_convo_composer_edit_cancel_dismiss: 'Не отменять',
   me_convo_composer_edit_error_title: 'Не удалось отредактировать сообщение',
   me_convo_composer_edit_error_text: 'Не удалось сохранить изменения. Попробуйте ещё раз.',
-  me_choose_chat_to_write: 'Выберите, кому хотели бы написать',
-  me_convo_empty_placeholder: 'История переписки пуста',
-  me_convo_unread_messages: 'Новые сообщения',
-  me_edited_label: 'ред.',
+
   me_user_online: 'online',
   me_user_was_online_at: {
     male: 'заходил {time}',
@@ -210,25 +233,10 @@ export const ru = {
     male: 'заходил давно',
     female: 'заходила давно'
   },
-  me_attach_wall_empty: 'Пустая запись',
-  me_attach_wall_open_button: 'Открыть запись',
-  me_chat_leaved_status: 'Вы вышли из чата',
-  me_chat_kicked_status: 'Вы были исключены из чата',
 
   me_voice_transcription_error: 'Ошибка составления транскрипции',
   me_voice_transcription_in_progress: 'Расшифровка...',
   me_voice_transcript_empty: 'Слова не распознаны',
-
-  me_chat_members_count: {
-    one: '{count} участник',
-    few: '{count} участника',
-    many: '{count} участников'
-  },
-  me_group_members_count: {
-    one: '{count} подписчик',
-    few: '{count} подписчика',
-    many: '{count} подписчиков'
-  },
 
   me_convo_typing_text: {
     one: 'печатает',
@@ -465,9 +473,6 @@ export const ru = {
     many: 'Произошла ошибка удаления {0} сообщений'
   },
 
-  convoPicker_empty: 'Беседы не найдены',
-  convoPicker_favorites: 'Избранное',
-  convoPicker_favorites_description: 'Ваши сообщения',
   forwardMessageModal_title: 'Переслать сообщения',
   forwardMessageModal_cannot_write: 'Нельзя отправлять сообщения',
 

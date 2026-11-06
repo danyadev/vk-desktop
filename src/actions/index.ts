@@ -6,6 +6,7 @@ export { insertPeers, insertPeerModel } from './insertPeers'
 export { loadConvoHistory } from './loadConvoHistory'
 export { loadInitialData } from './loadInitialData'
 export { loadMoreConvos } from './loadMoreConvos'
+export { loadRecentlySearchedConvos } from './loadRecentlySearchedConvos'
 export { sendMessage, retryPendingMessage, retryAllPendingMessages } from './sendMessage'
 export { syncDraftMessage, syncDraftsOnHistoryClear, syncDraftsOnLoad } from './syncConvoDrafts'
 export {

@@ -7,19 +7,21 @@
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr auto auto;
   row-gap: 2px;
+  width: 100%;
   padding: 6px 8px;
   margin: 2px 0;
   border-radius: 12px;
-  cursor: pointer;
+  text-align: left;
   transition: background var(--fastTransition);
 }
 
-.ConvoListItem:not(.ConvoListItem--active):hover,
-.ConvoListItem:not(.ConvoListItem--active).Popper__trigger--active {
+.ConvoListItem:hover,
+.ConvoListItem:focus-visible,
+.ConvoListItem.Popper__trigger--active {
   background: var(--vkui--color_transparent--hover);
 }
 
-.ConvoListItem--active {
+.ConvoListItem.ConvoListItem--active {
   background: var(--vkui--color_transparent--active);
 }
 
