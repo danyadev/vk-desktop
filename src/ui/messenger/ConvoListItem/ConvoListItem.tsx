@@ -54,7 +54,8 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   return () => {
     if (props.compact) {
       return (
-        <div
+        <button
+          type="button"
           class={['ConvoListItem', 'ConvoListItem--compact', {
             'ConvoListItem--active': active.value
           }]}
@@ -71,14 +72,15 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           {props.convo.kind === 'ChatConvo' && props.convo.mentionedCmids.size > 0 && (
             <Icon12Mention class="ConvoListItem__mentioned ConvoListItem__compactMentioned" />
           )}
-        </div>
+        </button>
       )
     }
 
     const typingUsers = typings.get(props.convo.id)
 
     return (
-      <div
+      <button
+        type="button"
         class={['ConvoListItem', {
           'ConvoListItem--active': active.value,
           'ConvoListItem--pinned': props.convo.majorSortId !== 0
@@ -151,7 +153,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             allowEmpty={props.convo.isMarkedUnread}
           />
         </div>
-      </div>
+      </button>
     )
   }
 }, {

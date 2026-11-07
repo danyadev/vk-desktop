@@ -2,7 +2,7 @@ import { useServices } from 'services'
 import * as IEngine from 'services/contracts/IEngine'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
-import { insertConvos, insertPeers, syncDraftsOnLoad } from 'actions'
+import { insertConvos, insertPeers, loadRecentlySearchedConvos, syncDraftsOnLoad } from 'actions'
 import { CONVOS_PER_PAGE, PEER_FIELDS } from 'misc/constants'
 
 export async function loadInitialData(
@@ -67,7 +67,9 @@ export async function loadInitialData(
 
     connection.status = 'connected'
     engine.start(longpollParams, onEngineFail)
+
     syncDraftsOnLoad()
+    loadRecentlySearchedConvos()
 
     if (!import.meta.env.DEV) {
       api

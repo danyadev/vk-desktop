@@ -1,7 +1,4 @@
 .Input {
-  position: relative;
-  display: flex;
-  align-items: center;
   width: 100%;
   background: var(--vkui--color_field_background);
   border: 1px solid var(--vkui--color_field_border_alpha);
@@ -39,9 +36,16 @@
   background-color: var(--vkui--color_search_field_background--active);
 }
 
+.Input__field {
+  display: flex;
+  align-items: center;
+  cursor: text;
+}
+
 .Input__el {
   background: none;
   border: none;
+  min-width: 0;
   width: 100%;
   color: var(--vkui--color_text_primary);
   font: var(--font);
@@ -55,6 +59,11 @@
 
 .Input__el::placeholder {
   color: var(--vkui--color_text_secondary);
+}
+
+.Input--small .Input__el {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .Input:has(.Input__before) .Input__el {
@@ -86,7 +95,7 @@
   align-items: center;
   flex: none;
   width: 32px;
-  height: 32px;
+  height: 100%;
   border-radius: 8px;
   color: var(--vkui--color_icon_secondary);
   transition: opacity var(--fastTransition);

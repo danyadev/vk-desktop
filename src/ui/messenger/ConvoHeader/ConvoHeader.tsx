@@ -1,11 +1,9 @@
-import { computed, defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
-import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useFormatOnlineStatus, useGlobalModal } from 'hooks'
-import { shortenCount } from 'misc/dateTime'
+import { useConvoSubtitle, useGlobalModal } from 'hooks'
 import { ConvoActionMenu } from 'ui/messenger/ConvoActionMenu/ConvoActionMenu'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
@@ -18,45 +16,12 @@ type Props = {
 }
 
 export const ConvoHeader = defineComponent<Props>((props) => {
-  const { lang } = useServices()
   const router = useRouter()
   const { peers } = usePeersStore()
   const peer = Peer.safeGet(peers, props.convo.id)
 
-  const formatOnlineStatus = useFormatOnlineStatus()
+  const getConvoSubtitle = useConvoSubtitle()
   const { peerInfoModal } = useGlobalModal()
-
-  const peerInfo = computed<string>(() => {
-    // TODO: показывать статус синхронизации или подключения, если что-то случилось с лп
-
-    switch (peer.kind) {
-      case 'User':
-        return formatOnlineStatus(peer)
-
-      case 'Group': {
-        return lang.usePlural('me_group_members_count', peer.membersCount, {
-          count: shortenCount(peer.membersCount)
-        })
-      }
-
-      case 'Chat': {
-        if (props.convo.kind === 'ChatConvo' && props.convo.status === 'left') {
-          return lang.use('me_chat_leaved_status')
-        }
-
-        if (props.convo.kind === 'ChatConvo' && props.convo.status === 'kicked') {
-          return lang.use('me_chat_kicked_status')
-        }
-
-        const langKey = Convo.isChannel(props.convo)
-          ? 'me_group_members_count'
-          : 'me_chat_members_count'
-        return lang.usePlural(langKey, peer.membersCount, {
-          count: shortenCount(peer.membersCount)
-        })
-      }
-    }
-  })
 
   return () => (
     <div class="ConvoHeader">
@@ -89,7 +54,7 @@ export const ConvoHeader = defineComponent<Props>((props) => {
             )}
           </span>
         </div>
-        <span class="ConvoHeader__info">{peerInfo.value}</span>
+        <span class="ConvoHeader__info">{getConvoSubtitle(props.convo, peer)}</span>
       </ButtonBase>
 
       <ConvoActionMenu convo={props.convo}>

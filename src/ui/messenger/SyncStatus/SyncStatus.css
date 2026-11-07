@@ -1,0 +1,55 @@
+.SyncStatus {
+  position: relative;
+  flex: none;
+  height: 22px;
+  overflow: hidden;
+  background: var(--vkui--color_background_content);
+  box-shadow: inset 0 1px var(--vkui--color_separator_primary);
+  color: var(--vkui--color_text_tertiary);
+  font: var(--smallFont);
+  line-height: 21px;
+  text-align: center;
+}
+
+.SyncStatus--bottom {
+  box-shadow: inset 0 -1px var(--vkui--color_separator_primary);
+}
+
+.SyncStatus::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30%;
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--vkui--color_icon_tertiary) 30%,
+      var(--vkui--color_icon_tertiary) 70%,
+      transparent
+    );
+  animation: sync-status-progress 2s ease-in-out infinite;
+}
+
+.SyncStatus--bottom::after {
+  top: auto;
+  bottom: 0;
+}
+
+.SyncStatus-enter-active,
+.SyncStatus-leave-active {
+  transition: height var(--mediumTransition) ease, opacity var(--mediumTransition) ease;
+}
+
+.SyncStatus-enter-from,
+.SyncStatus-leave-to {
+  height: 0;
+  opacity: 0;
+}
+
+@keyframes sync-status-progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(500%); }
+}

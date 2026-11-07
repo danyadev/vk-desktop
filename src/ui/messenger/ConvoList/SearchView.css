@@ -1,0 +1,91 @@
+.SearchView {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: overlay;
+  padding: 8px;
+  background: var(--vkui--color_background_content);
+}
+
+.SearchView__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 100%;
+  padding: 24px;
+  color: var(--vkui--color_text_secondary);
+  text-align: center;
+}
+
+.SearchView__sectionTitle {
+  padding: 8px 12px;
+  color: var(--vkui--color_text_secondary);
+  font-weight: 500;
+}
+
+.SearchView__remove {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  color: var(--vkui--color_icon_secondary);
+}
+
+.SearchView__empty {
+  padding: 24px 12px;
+  color: var(--vkui--color_text_secondary);
+  text-align: center;
+}
+
+.SearchView__spinner {
+  display: block;
+  margin: 16px auto;
+}
+
+.SearchView__item {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  transition: background-color var(--fastTransition);
+}
+
+.SearchView__item:hover,
+.SearchView__item:has(:focus-visible) {
+  background: var(--vkui--color_transparent--hover);
+}
+
+.SearchView__itemMain {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 12px;
+  padding: 8px;
+  text-align: left;
+}
+
+.SearchView__details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.SearchView__itemName,
+.SearchView__subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.SearchView__itemName {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.SearchView__subtitle {
+  color: var(--vkui--color_text_secondary);
+  font-size: 13px;
+}
