@@ -8,10 +8,7 @@ type Props = {
 
 export const Tabs = defineComponent<Props>((props, { slots }) => {
   return () => (
-    <HorizontalScroll
-      innerClass={['Tabs', props.wide && 'Tabs--wide']}
-      size="small"
-    >
+    <HorizontalScroll innerClass={['Tabs', props.wide && 'Tabs--wide']} size="small">
       {slots.default?.()}
     </HorizontalScroll>
   )

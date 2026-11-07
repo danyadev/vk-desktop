@@ -8,7 +8,7 @@ import { PEER_FIELDS } from 'misc/constants'
 
 const PAGE_SIZE = 20
 
-export const useMessageSearch = (query: Ref<string>, enabled: Ref<boolean>) => {
+export const useMessageSearch = (query: Ref<string>) => {
   const { api } = useServices()
   const results = shallowRef<Message.Confirmed[]>([])
   const status = shallowRef<'idle' | 'loading' | 'complete' | 'error'>('idle')
@@ -17,7 +17,7 @@ export const useMessageSearch = (query: Ref<string>, enabled: Ref<boolean>) => {
 
   const fetchPage = async (reset: boolean) => {
     const q = query.value.trim()
-    if (!enabled.value || !q) return
+    if (!q) return
 
     const controller = new AbortController()
     currentController?.abort()
@@ -55,11 +55,11 @@ export const useMessageSearch = (query: Ref<string>, enabled: Ref<boolean>) => {
     }
   }
 
-  watch([query, enabled], ([value, isEnabled], _, onCleanup) => {
+  watch(query, (value, _, onCleanup) => {
     results.value = []
     hasMore.value = false
-    status.value = isEnabled && value.trim() ? 'loading' : 'idle'
-    if (!isEnabled || !value.trim()) return
+    status.value = value.trim() ? 'loading' : 'idle'
+    if (!value.trim()) return
 
     const timeout = window.setTimeout(() => fetchPage(true), 300)
     onCleanup(() => {
