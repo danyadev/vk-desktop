@@ -1,4 +1,4 @@
-import { defineComponent, shallowRef, watch } from 'vue'
+import { defineComponent, shallowRef, Transition, watch } from 'vue'
 import { useServices } from 'services'
 import { type ConvoSearchProps, ConvoSearchResults } from 'ui/messenger/ConvoList/ConvoSearchResults'
 import { MessageSearchResults } from 'ui/messenger/ConvoList/MessageSearchResults'
@@ -11,12 +11,18 @@ type SearchTab = 'convos' | 'messages'
 export const SearchView = defineComponent<ConvoSearchProps>((props) => {
   const { lang } = useServices()
   const activeTab = shallowRef<SearchTab>('convos')
-  const $list = shallowRef<HTMLElement | null>(null)
+  const $convoResults = shallowRef<HTMLElement | null>(null)
+  const $messageResults = shallowRef<HTMLElement | null>(null)
 
-  watch([() => props.query, activeTab], () => $list.value?.scrollTo({ top: 0 }))
+  watch(() => props.query, () => {
+    const results = activeTab.value === 'convos'
+      ? $convoResults.value
+      : $messageResults.value
+    results?.scrollTo({ top: 0 })
+  })
 
   return () => (
-    <div class="SearchView">
+    <div class={['SearchView', activeTab.value === 'messages' && 'SearchView--messages']}>
       <Tabs wide class="SearchView__tabs">
         <TabsItem
           active={activeTab.value === 'convos'}
@@ -32,12 +38,18 @@ export const SearchView = defineComponent<ConvoSearchProps>((props) => {
         </TabsItem>
       </Tabs>
 
-      <div class="SearchView__results" ref={$list}>
-        {activeTab.value === 'convos' ? (
-          <ConvoSearchResults {...props} />
-        ) : (
-          <MessageSearchResults query={props.query} />
-        )}
+      <div class="SearchView__pages">
+        <Transition name="SearchView__page">
+          {activeTab.value === 'convos' ? (
+            <div class="SearchView__results" key="convos" ref={$convoResults}>
+              <ConvoSearchResults {...props} />
+            </div>
+          ) : (
+            <div class="SearchView__results" key="messages" ref={$messageResults}>
+              <MessageSearchResults query={props.query} />
+            </div>
+          )}
+        </Transition>
       </div>
     </div>
   )
