@@ -17,7 +17,7 @@ type Props = {
   query: string
 }
 
-export const MessageSearchResults = defineComponent<Props>((props) => {
+export const MessageSearchPage = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const router = useRouter()
   const viewer = useViewer()
@@ -40,28 +40,28 @@ export const MessageSearchResults = defineComponent<Props>((props) => {
   const renderMessage = (message: Message.Confirmed) => {
     const peer = Peer.safeGet(peers, message.peerId)
     return (
-      <div class="SearchView__item" key={`${message.peerId}:${message.cmid}`}>
+      <div class="SearchPage__item" key={`${message.peerId}:${message.cmid}`}>
         <button
           type="button"
-          class="SearchView__itemMain"
+          class="SearchPage__itemMain"
           onClick={() => openMessage(message)}
         >
           <Avatar peer={peer} size={40} />
-          <span class="SearchView__details">
-            <span class="SearchView__messageHeader">
-              <span class="SearchView__itemName">
+          <span class="SearchPage__details">
+            <span class="SearchPage__messageHeader">
+              <span class="SearchPage__itemName">
                 {message.peerId === viewer.id ? lang.use('me_peer_favorites') : Peer.name(peer)}
               </span>
-              <span class="SearchView__messageDate">
+              <span class="SearchPage__messageDate">
                 {dateFormatter.format(message.sentAt)}
               </span>
             </span>
             {message.authorId !== message.peerId && (
-              <span class="SearchView__subtitle">
+              <span class="SearchPage__subtitle">
                 {Peer.name(Peer.safeGet(peers, message.authorId))}
               </span>
             )}
-            <span class="SearchView__messageText">
+            <span class="SearchPage__messageText">
               <MessagePreview message={message} />
             </span>
           </span>
@@ -73,7 +73,7 @@ export const MessageSearchResults = defineComponent<Props>((props) => {
   const renderResults = () => {
     if (!props.query.trim()) {
       return (
-        <div class="SearchView__placeholder">
+        <div class="SearchPage__placeholder">
           <Icon56SearchOutline color="var(--vkui--color_icon_tertiary)" />
           <span>{lang.use('me_convo_list_search_message_placeholder')}</span>
         </div>
@@ -82,7 +82,7 @@ export const MessageSearchResults = defineComponent<Props>((props) => {
 
     if (search.status.value === 'complete' && search.results.value.length === 0) {
       return (
-        <div class="SearchView__empty">
+        <div class="SearchPage__empty">
           {lang.use('me_convo_list_search_message_empty')}
         </div>
       )
@@ -94,19 +94,19 @@ export const MessageSearchResults = defineComponent<Props>((props) => {
 
         {search.status.value === 'error' && <LoadError onRetry={search.retry} />}
         {search.status.value === 'loading' && (
-          <Spinner class="SearchView__spinner" size="regular" />
+          <Spinner class="SearchPage__spinner" size="regular" />
         )}
 
         {search.status.value === 'complete' && search.hasMore.value && (
           <IntersectionWrapper key={search.results.value.length} onIntersect={search.loadMore}>
-            <Spinner class="SearchView__spinner" size="regular" />
+            <Spinner class="SearchPage__spinner" size="regular" />
           </IntersectionWrapper>
         )}
       </>
     )
   }
 
-  return () => <div class="SearchView__results" ref={$results}>{renderResults()}</div>
+  return () => <div class="SearchPage__results" ref={$results}>{renderResults()}</div>
 }, {
   props: ['query']
 })

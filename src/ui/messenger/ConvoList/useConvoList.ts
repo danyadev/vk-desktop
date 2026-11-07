@@ -1,35 +1,18 @@
-import { computed, shallowRef } from 'vue'
+import { computed } from 'vue'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import * as Lists from 'model/Lists'
 import { useConvosStore } from 'store/convos'
 
-type ListConfig =
-  | { name: 'main' | 'unread' | 'archive' }
-  | { name: 'folder' | 'unreadFolder', folderId: number }
+export const useConvoList = (list: Lists.List) => {
+  const { convos, convoDrafts } = useConvosStore()
 
-export const useConvoList = () => {
-  const { convos, convoDrafts, lists } = useConvosStore()
-  const list = shallowRef<Lists.List>(lists.main)
-
-  const selectList = (config: ListConfig) => {
-    if (config.name === 'folder' || config.name === 'unreadFolder') {
-      const sublist = config.name === 'folder' ? 'all' : 'unread'
-      const folder = lists.folders.get(config.folderId)
-      if (folder) {
-        list.value = folder[sublist]
-      }
-    } else {
-      list.value = lists[config.name]
-    }
-  }
-
-  const convoList = computed(() => {
-    const peerIds = new Set(list.value.peerIds)
+  return computed(() => {
+    const peerIds = new Set(list.peerIds)
 
     for (const [peerId, draft] of convoDrafts) {
       const convo = convos.get(peerId)
-      if (convo && !ConvoDraft.isEmpty(draft) && Lists.matches(list.value, convo)) {
+      if (convo && !ConvoDraft.isEmpty(draft) && Lists.matches(list, convo)) {
         peerIds.add(peerId)
       }
     }
@@ -38,10 +21,4 @@ export const useConvoList = () => {
       .map((peerId) => Convo.safeGet(convos, peerId))
       .sort((a, b) => Convo.sorter(a, b, convoDrafts))
   })
-
-  return computed(() => ({
-    convoList: convoList.value,
-    selectList,
-    list: list.value
-  }))
 }

@@ -26,7 +26,7 @@ export const ConvoPicker = defineComponent<Props>((props) => {
   const { peers } = usePeersStore()
   const viewer = useViewer()
   const getSubtitle = useConvoSubtitle()
-  const convoList = useConvoList()
+  const convoList = useConvoList(lists.main)
 
   const $list = shallowRef<HTMLElement | null>(null)
   const query = shallowRef('')
@@ -34,7 +34,7 @@ export const ConvoPicker = defineComponent<Props>((props) => {
   watch(query, () => $list.value?.scrollTo({ top: 0 }))
 
   const items = computed(() => (
-    query.value.trim() ? searchResults.value : convoList.value.convoList
+    query.value.trim() ? searchResults.value : convoList.value
   ))
 
   return () => {

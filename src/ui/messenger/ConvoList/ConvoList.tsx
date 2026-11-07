@@ -1,26 +1,18 @@
-import { defineComponent, shallowRef, Transition, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { defineComponent, KeepAlive, shallowRef, Transition, watch } from 'vue'
 import { useServices } from 'services'
-import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
-import { loadMoreConvos } from 'actions'
 import { useGlobalModal, useKeyboardZones } from 'hooks'
 import { ClassName } from 'misc/utils'
-import { ConvoActionMenu } from 'ui/messenger/ConvoActionMenu/ConvoActionMenu'
-import { SearchView } from 'ui/messenger/ConvoList/SearchView'
-import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
-import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
-import { SyncStatus } from 'ui/messenger/SyncStatus/SyncStatus'
+import { ConvoListPage } from 'ui/messenger/ConvoList/ConvoListPage'
+import { ConvoSearchPage } from 'ui/messenger/ConvoList/ConvoSearchPage'
+import { MessageSearchPage } from 'ui/messenger/ConvoList/MessageSearchPage'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Input } from 'ui/ui/Input/Input'
-import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
-import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Popper } from 'ui/ui/Popper/Popper'
-import { Spinner } from 'ui/ui/Spinner/Spinner'
-import { Tabs } from 'ui/ui/Tabs/Tabs'
-import { TabsItem } from 'ui/ui/TabsItem/TabsItem'
+import { TabPage } from 'ui/ui/TabPage/TabPage'
+import { TabView } from 'ui/ui/TabView/TabView'
 import {
   Icon20MenuOutline,
   Icon24ChevronCompactLeft,
@@ -28,6 +20,7 @@ import {
   Icon24GearOutline
 } from 'assets/icons'
 import './ConvoList.css'
+import './SearchPage.css'
 
 type Props = {
   class?: ClassName
@@ -36,12 +29,9 @@ type Props = {
 
 export const ConvoList = defineComponent<Props>((props) => {
   const { lang } = useServices()
-  const route = useRoute()
   const { logout } = useViewerStore()
-  const { lists } = useConvosStore()
   const { settingsModal } = useGlobalModal()
   const { registerZone } = useKeyboardZones()
-  const computedConvoList = useConvoList()
   const query = shallowRef('')
   const $convoList = shallowRef<HTMLElement | null>(null)
   const searchOpen = shallowRef(false)
@@ -62,131 +52,94 @@ export const ConvoList = defineComponent<Props>((props) => {
 
   registerZone('convoList', $convoList)
 
-  return () => {
-    const { convoList, list, selectList } = computedConvoList.value
-
-    return (
-      <div
-        ref={$convoList}
-        tabindex={-1}
-        class={['ConvoList', {
-          'ConvoList--compact': props.compact,
-          'ConvoList--searchOpen': searchOpen.value
-        }]}
-      >
-        <div class="ConvoList__header">
-          <Popper
-            disabled={searchOpen.value}
-            closeOnContentClick
-            content={
-              <ActionMenu>
-                <ActionMenuItem
-                  icon={<Icon24GearOutline />}
-                  text={lang.use('me_convo_list_menu_settings')}
-                  onClick={() => settingsModal.open({})}
-                />
-                <ActionMenuItem
-                  mode="destructive"
-                  icon={<Icon24DoorArrowRightOutline />}
-                  text={lang.use('me_convo_list_menu_logout')}
-                  onClick={logout}
-                />
-              </ActionMenu>
+  return () => (
+    <div
+      ref={$convoList}
+      tabindex={-1}
+      class={['ConvoList', {
+        'ConvoList--compact': props.compact,
+        'ConvoList--searchOpen': searchOpen.value
+      }]}
+    >
+      <div class="ConvoList__header">
+        <Popper
+          disabled={searchOpen.value}
+          closeOnContentClick
+          content={
+            <ActionMenu>
+              <ActionMenuItem
+                icon={<Icon24GearOutline />}
+                text={lang.use('me_convo_list_menu_settings')}
+                onClick={() => settingsModal.open({})}
+              />
+              <ActionMenuItem
+                mode="destructive"
+                icon={<Icon24DoorArrowRightOutline />}
+                text={lang.use('me_convo_list_menu_logout')}
+                onClick={logout}
+              />
+            </ActionMenu>
+          }
+        >
+          <ButtonIcon
+            class="ConvoList__headerAction"
+            icon={
+              <Transition name="ConvoList__headerActionIcon" mode="out-in">
+                {searchOpen.value
+                  ? <Icon24ChevronCompactLeft key="back" />
+                  : <Icon20MenuOutline key="menu" />}
+              </Transition>
             }
-          >
-            <ButtonIcon
-              class="ConvoList__headerAction"
-              icon={
-                <Transition name="ConvoList__headerActionIcon" mode="out-in">
-                  {searchOpen.value
-                    ? <Icon24ChevronCompactLeft key="back" />
-                    : <Icon20MenuOutline key="menu" />}
-                </Transition>
-              }
-              withHoverBackground
-              shiftOnClick
-              onClick={searchOpen.value ? closeSearch : undefined}
-            />
-          </Popper>
+            withHoverBackground
+            shiftOnClick
+            onClick={searchOpen.value ? closeSearch : undefined}
+          />
+        </Popper>
 
-          {!props.compact && (
-            <Input
-              class="ConvoList__searchInput"
-              mode="search"
-              size="small"
-              placeholder={lang.use('input_search')}
-              value={query.value}
-              onClick={openSearch}
-              onInput={(event) => {
-                query.value = event.target.value
-                if (event.target.value) openSearch()
-              }}
-              onKeydown={(event) => {
-                if (event.key === 'Enter') openSearch()
-                if (event.key !== 'Escape' || !searchOpen.value) return
+        {!props.compact && (
+          <Input
+            class="ConvoList__searchInput"
+            mode="search"
+            size="small"
+            placeholder={lang.use('input_search')}
+            value={query.value}
+            onClick={openSearch}
+            onInput={(event) => {
+              query.value = event.target.value
+              if (event.target.value) openSearch()
+            }}
+            onKeydown={(event) => {
+              if (event.key === 'Enter') openSearch()
+              if (event.key !== 'Escape' || !searchOpen.value) return
 
-                event.stopPropagation()
-                if (query.value) query.value = ''
-                else closeSearch()
-              }}
-            />
-          )}
-        </div>
-
-        <div class="ConvoList__pages">
-          <Transition name="ConvoList__page" css={!props.compact}>
-            {searchOpen.value ? (
-              <div class="ConvoList__page" key="search">
-                <SearchView query={query.value} />
-              </div>
-            ) : (
-              <div class="ConvoList__page" key="convos">
-                {!props.compact && (
-                  <Tabs class="ConvoList__folders">
-                    {[lists.main, lists.unread, lists.archive].map((listItem) => (
-                      <TabsItem
-                        active={list.name === listItem.name}
-                        onClick={() => selectList({ name: listItem.name })}
-                      >
-                        {listItem.name}
-                      </TabsItem>
-                    ))}
-                  </Tabs>
-                )}
-
-                <div class="ConvoList__list">
-                  {convoList.map((convo) => (
-                    <ConvoActionMenu key={convo.id} convo={convo} fromConvoList>
-                      <ConvoListItem convo={convo} compact={props.compact} />
-                    </ConvoActionMenu>
-                  ))}
-
-                  {convoList.length === 0 && list.status === 'complete' && (
-                    <div class="ConvoList__empty">
-                      {lang.use('me_convo_list_empty')}
-                    </div>
-                  )}
-
-                  {list.status === 'error' && <LoadError onRetry={() => loadMoreConvos(list)} />}
-
-                  {(list.status === 'loading' || list.status === 'hasMore') && (
-                    <IntersectionWrapper
-                      onIntersect={() => loadMoreConvos(list)}
-                      key={convoList.length}
-                    >
-                      <Spinner size="regular" class="ConvoList__spinner" />
-                    </IntersectionWrapper>
-                  )}
-                </div>
-
-                {!props.compact && <SyncStatus edge="top" show={route.name !== 'Convo'} />}
-              </div>
-            )}
-          </Transition>
-        </div>
+              event.stopPropagation()
+              if (query.value) query.value = ''
+              else closeSearch()
+            }}
+          />
+        )}
       </div>
-    )
-  }
+
+      <div class="ConvoList__pages">
+        <Transition name="ConvoList__page" css={!props.compact}>
+          <KeepAlive>
+            {searchOpen.value ? (
+              <TabView key="search" class={['ConvoList__page', 'SearchPage']} wide keepAlive>
+                <TabPage key="convos" title={lang.use('me_convo_list_search_convos')}>
+                  <ConvoSearchPage query={query.value} />
+                </TabPage>
+                <TabPage key="messages" title={lang.use('me_convo_list_search_messages')}>
+                  <MessageSearchPage query={query.value} />
+                </TabPage>
+              </TabView>
+            ) : (
+              <ConvoListPage key="convos" compact={props.compact} />
+            )}
+          </KeepAlive>
+        </Transition>
+      </div>
+    </div>
+  )
 }, {
   props: ['compact']
 })

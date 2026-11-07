@@ -1,14 +1,14 @@
-.SearchView {
+.SearchPage {
   background: var(--vkui--color_background_content);
 }
 
-.SearchView__results {
+.SearchPage__results {
   height: 100%;
   overflow-y: overlay;
   padding: 8px;
 }
 
-.SearchView__placeholder {
+.SearchPage__placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,43 +20,43 @@
   text-align: center;
 }
 
-.SearchView__sectionTitle {
+.SearchPage__sectionTitle {
   padding: 8px 12px;
   color: var(--vkui--color_text_secondary);
   font-weight: 500;
 }
 
-.SearchView__remove {
+.SearchPage__remove {
   width: 32px;
   height: 32px;
   margin-right: 8px;
   color: var(--vkui--color_icon_secondary);
 }
 
-.SearchView__empty {
+.SearchPage__empty {
   padding: 24px 12px;
   color: var(--vkui--color_text_secondary);
   text-align: center;
 }
 
-.SearchView__spinner {
+.SearchPage__spinner {
   display: block;
   margin: 16px auto;
 }
 
-.SearchView__item {
+.SearchPage__item {
   display: flex;
   align-items: center;
   border-radius: 10px;
   transition: background-color var(--fastTransition);
 }
 
-.SearchView__item:hover,
-.SearchView__item:has(:focus-visible) {
+.SearchPage__item:hover,
+.SearchPage__item:has(:focus-visible) {
   background: var(--vkui--color_transparent--hover);
 }
 
-.SearchView__itemMain {
+.SearchPage__itemMain {
   display: flex;
   align-items: center;
   flex: 1;
@@ -66,7 +66,7 @@
   text-align: left;
 }
 
-.SearchView__details {
+.SearchPage__details {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -74,42 +74,42 @@
   gap: 3px;
 }
 
-.SearchView__itemName,
-.SearchView__subtitle {
+.SearchPage__itemName,
+.SearchPage__subtitle {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.SearchView__itemName {
+.SearchPage__itemName {
   font-size: 15px;
   font-weight: 500;
 }
 
-.SearchView__subtitle {
+.SearchPage__subtitle {
   color: var(--vkui--color_text_secondary);
   font-size: 13px;
 }
 
-.SearchView__messageHeader {
+.SearchPage__messageHeader {
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
 }
 
-.SearchView__messageHeader .SearchView__itemName {
+.SearchPage__messageHeader .SearchPage__itemName {
   flex: 1;
   min-width: 0;
 }
 
-.SearchView__messageDate {
+.SearchPage__messageDate {
   flex: none;
   color: var(--vkui--color_text_tertiary);
   font-size: 12px;
 }
 
-.SearchView__messageText {
+.SearchPage__messageText {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;

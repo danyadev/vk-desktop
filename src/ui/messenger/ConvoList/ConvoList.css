@@ -79,12 +79,30 @@
   padding: 6px 8px;
 }
 
-.ConvoList__folders + .ConvoList__list {
+.ConvoList__folders .TabView__page {
+  display: flex;
+  flex-direction: column;
+}
+
+.ConvoList__folders .ConvoList__list {
   padding-top: 0;
 }
 
+.ConvoList--compact .ConvoList__folders .TabView__tabs {
+  display: none;
+}
+
+.ConvoList--compact .ConvoList__folders .ConvoList__list {
+  padding-top: 6px;
+}
+
+.ConvoList__folders .TabView__page-enter-active .ConvoList__list,
+.ConvoList__folders .TabView__page-leave-active .ConvoList__list {
+  overflow: hidden;
+}
+
 .ConvoList__page-leave-active .ConvoList__list,
-.ConvoList__page-leave-active .SearchView__results {
+.ConvoList__page-leave-active .SearchPage__results {
   /* Hide scrollbars while animating */
   overflow: hidden;
 }
