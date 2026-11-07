@@ -1,4 +1,4 @@
-import { Ref, shallowRef, watch } from 'vue'
+import { onActivated, onDeactivated, Ref, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
 import * as Message from 'model/Message'
 import { insertPeerModel, insertPeers } from 'actions'
@@ -13,6 +13,8 @@ export const useMessageSearch = (query: Ref<string>) => {
   const results = shallowRef<Message.Confirmed[]>([])
   const status = shallowRef<'idle' | 'loading' | 'complete' | 'error'>('idle')
   const hasMore = shallowRef(false)
+  const active = shallowRef(true)
+  let searchedQuery = ''
   let currentController: AbortController | undefined
 
   const fetchPage = async (reset: boolean) => {
@@ -55,13 +57,23 @@ export const useMessageSearch = (query: Ref<string>) => {
     }
   }
 
-  watch(query, (value, _, onCleanup) => {
-    results.value = []
-    hasMore.value = false
-    status.value = value.trim() ? 'loading' : 'idle'
-    if (!value.trim()) return
+  onActivated(() => (active.value = true))
+  onDeactivated(() => (active.value = false))
 
-    const timeout = window.setTimeout(() => fetchPage(true), 300)
+  watch([query, active], ([value, isActive], _, onCleanup) => {
+    if (!isActive) return
+
+    const q = value.trim()
+    const changed = q !== searchedQuery
+    if (changed) {
+      searchedQuery = q
+      results.value = []
+      hasMore.value = false
+      status.value = q ? 'loading' : 'idle'
+    }
+    if (!q || (!changed && (status.value === 'complete' || status.value === 'error'))) return
+
+    const timeout = window.setTimeout(() => fetchPage(results.value.length === 0), 300)
     onCleanup(() => {
       window.clearTimeout(timeout)
       currentController?.abort()

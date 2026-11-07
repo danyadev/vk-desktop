@@ -29,7 +29,8 @@ export const ConvoPicker = defineComponent<Props>((props) => {
   const convoList = useConvoList()
 
   const $list = shallowRef<HTMLElement | null>(null)
-  const { query, status: searchStatus, results: searchResults, search } = useConvoSearch()
+  const query = shallowRef('')
+  const { status: searchStatus, results: searchResults, search } = useConvoSearch(query)
   watch(query, () => $list.value?.scrollTo({ top: 0 }))
 
   const items = computed(() => (

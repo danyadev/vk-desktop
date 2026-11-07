@@ -1,58 +1,24 @@
-import { defineComponent, shallowRef, Transition, watch } from 'vue'
+import { defineComponent } from 'vue'
 import { useServices } from 'services'
-import { type ConvoSearchProps, ConvoSearchResults } from 'ui/messenger/ConvoList/ConvoSearchResults'
+import { ConvoSearchResults } from 'ui/messenger/ConvoList/ConvoSearchResults'
 import { MessageSearchResults } from 'ui/messenger/ConvoList/MessageSearchResults'
-import { Tabs } from 'ui/ui/Tabs/Tabs'
-import { TabsItem } from 'ui/ui/TabsItem/TabsItem'
+import { TabPage } from 'ui/ui/TabPage/TabPage'
+import { TabView } from 'ui/ui/TabView/TabView'
 import './SearchView.css'
 
-type SearchTab = 'convos' | 'messages'
-
-export const SearchView = defineComponent<ConvoSearchProps>((props) => {
+export const SearchView = defineComponent<{ query: string }>((props) => {
   const { lang } = useServices()
-  const activeTab = shallowRef<SearchTab>('convos')
-  const $convoResults = shallowRef<HTMLElement | null>(null)
-  const $messageResults = shallowRef<HTMLElement | null>(null)
-
-  watch(() => props.query, () => {
-    const results = activeTab.value === 'convos'
-      ? $convoResults.value
-      : $messageResults.value
-    results?.scrollTo({ top: 0 })
-  })
 
   return () => (
-    <div class={['SearchView', activeTab.value === 'messages' && 'SearchView--messages']}>
-      <Tabs wide class="SearchView__tabs">
-        <TabsItem
-          active={activeTab.value === 'convos'}
-          onClick={() => (activeTab.value = 'convos')}
-        >
-          {lang.use('me_convo_list_search_convos')}
-        </TabsItem>
-        <TabsItem
-          active={activeTab.value === 'messages'}
-          onClick={() => (activeTab.value = 'messages')}
-        >
-          {lang.use('me_convo_list_search_messages')}
-        </TabsItem>
-      </Tabs>
-
-      <div class="SearchView__pages">
-        <Transition name="SearchView__page">
-          {activeTab.value === 'convos' ? (
-            <div class="SearchView__results" key="convos" ref={$convoResults}>
-              <ConvoSearchResults {...props} />
-            </div>
-          ) : (
-            <div class="SearchView__results" key="messages" ref={$messageResults}>
-              <MessageSearchResults query={props.query} />
-            </div>
-          )}
-        </Transition>
-      </div>
-    </div>
+    <TabView class="SearchView" wide keepAlive>
+      <TabPage key="convos" title={lang.use('me_convo_list_search_convos')}>
+        <ConvoSearchResults query={props.query} />
+      </TabPage>
+      <TabPage key="messages" title={lang.use('me_convo_list_search_messages')}>
+        <MessageSearchResults query={props.query} />
+      </TabPage>
+    </TabView>
   )
 }, {
-  props: ['query', 'status', 'results', 'onRetry']
+  props: ['query']
 })

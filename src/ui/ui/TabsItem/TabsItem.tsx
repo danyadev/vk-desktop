@@ -10,7 +10,6 @@ export const TabsItem = defineComponent<Props>((props, { slots }) => {
     <button
       type="button"
       class={['TabsItem', props.active && 'TabsItem--active']}
-      aria-pressed={props.active}
     >
       {slots.default?.()}
     </button>

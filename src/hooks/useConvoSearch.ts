@@ -1,4 +1,4 @@
-import { computed, shallowRef, watch } from 'vue'
+import { computed, onActivated, onDeactivated, Ref, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
@@ -9,11 +9,12 @@ import { fromApiConvo } from 'converters/ConvoConverter'
 import { PEER_FIELDS } from 'misc/constants'
 import { RULES_EN_RU, RULES_RU_EN, translitPrefixes } from 'misc/transliteration'
 
-export const useConvoSearch = () => {
+export const useConvoSearch = (query: Ref<string>) => {
   const { api } = useServices()
   const { convos, convoDrafts } = useConvosStore()
   const { peers } = usePeersStore()
-  const query = shallowRef('')
+  const active = shallowRef(true)
+  let searchedQuery = ''
   const status = shallowRef<'loading' | 'complete' | 'error'>('loading')
   const apiResults = shallowRef<Convo.Convo[]>([])
   const cachedResults = shallowRef<Convo.Convo[]>([])
@@ -61,18 +62,27 @@ export const useConvoSearch = () => {
     }
   }
 
-  watch(query, (value, _, onCleanup) => {
-    currentController?.abort()
-    status.value = 'loading'
-    apiResults.value = []
-    if (!value.trim()) return
+  onActivated(() => (active.value = true))
+  onDeactivated(() => (active.value = false))
+
+  watch([query, active], ([value, isActive], _, onCleanup) => {
+    if (!isActive) return
+
+    const q = value.trim()
+    const changed = q !== searchedQuery
+    if (changed) {
+      searchedQuery = q
+      status.value = 'loading'
+      apiResults.value = []
+    }
+    if (!q || (!changed && (status.value === 'complete' || status.value === 'error'))) return
 
     const timeout = window.setTimeout(search, 300)
     onCleanup(() => {
       window.clearTimeout(timeout)
       currentController?.abort()
     })
-  })
+  }, { immediate: true })
 
   const localConvos = computed(() => (
     [...convos.values()].sort((a, b) => Convo.sorter(a, b, convoDrafts))
@@ -103,7 +113,7 @@ export const useConvoSearch = () => {
     ))
   })
 
-  return { query, status, results, search }
+  return { status, results, search }
 }
 
 /**

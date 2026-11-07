@@ -4,7 +4,7 @@ import { useServices } from 'services'
 import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
 import { loadMoreConvos } from 'actions'
-import { useConvoSearch, useGlobalModal, useKeyboardZones } from 'hooks'
+import { useGlobalModal, useKeyboardZones } from 'hooks'
 import { ClassName } from 'misc/utils'
 import { ConvoActionMenu } from 'ui/messenger/ConvoActionMenu/ConvoActionMenu'
 import { SearchView } from 'ui/messenger/ConvoList/SearchView'
@@ -42,7 +42,7 @@ export const ConvoList = defineComponent<Props>((props) => {
   const { settingsModal } = useGlobalModal()
   const { registerZone } = useKeyboardZones()
   const computedConvoList = useConvoList()
-  const search = useConvoSearch()
+  const query = shallowRef('')
   const $convoList = shallowRef<HTMLElement | null>(null)
   const searchOpen = shallowRef(false)
 
@@ -53,7 +53,7 @@ export const ConvoList = defineComponent<Props>((props) => {
 
   const closeSearch = () => {
     searchOpen.value = false
-    search.query.value = ''
+    query.value = ''
   }
 
   watch(() => props.compact, (compact) => {
@@ -115,10 +115,10 @@ export const ConvoList = defineComponent<Props>((props) => {
               mode="search"
               size="small"
               placeholder={lang.use('input_search')}
-              value={search.query.value}
+              value={query.value}
               onClick={openSearch}
               onInput={(event) => {
-                search.query.value = event.target.value
+                query.value = event.target.value
                 if (event.target.value) openSearch()
               }}
               onKeydown={(event) => {
@@ -126,7 +126,7 @@ export const ConvoList = defineComponent<Props>((props) => {
                 if (event.key !== 'Escape' || !searchOpen.value) return
 
                 event.stopPropagation()
-                if (search.query.value) search.query.value = ''
+                if (query.value) query.value = ''
                 else closeSearch()
               }}
             />
@@ -137,13 +137,7 @@ export const ConvoList = defineComponent<Props>((props) => {
           <Transition name="ConvoList__page" css={!props.compact}>
             {searchOpen.value ? (
               <div class="ConvoList__page" key="search">
-                <SearchView
-                  class="ConvoList__searchList"
-                  query={search.query.value}
-                  status={search.status.value}
-                  results={search.results.value}
-                  onRetry={search.search}
-                />
+                <SearchView query={query.value} />
               </div>
             ) : (
               <div class="ConvoList__page" key="convos">

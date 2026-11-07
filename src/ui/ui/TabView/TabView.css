@@ -1,0 +1,75 @@
+.TabView {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.TabView__tabs {
+  flex: none;
+}
+
+.TabView__pages {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.TabView__page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.TabView__page-enter-active,
+.TabView__page-leave-active {
+  pointer-events: none;
+  transition: transform var(--mediumTransition) cubic-bezier(0.2, 0, 0, 1);
+}
+
+.TabView--animateForward .TabView__page-enter-from,
+.TabView:not(.TabView--animateForward) .TabView__page-leave-to {
+  transform: translateX(100%);
+}
+
+.TabView--animateForward .TabView__page-leave-to,
+.TabView:not(.TabView--animateForward) .TabView__page-enter-from {
+  transform: translateX(-100%);
+}
+
+.TabView--wide .Tabs {
+  position: relative;
+}
+
+.TabView--wide .Tabs::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 12px;
+  width: calc((100% - 24px - var(--tab-gap-total)) / var(--tab-count));
+  border: 1px solid var(--vkui--color_separator_primary);
+  border-radius: 8px;
+  background: var(--vkui--color_background_contrast_themed);
+  box-shadow: var(--vkui--elevation2);
+  transform: translateX(calc(var(--tab-offset) + var(--tab-gap-offset)));
+  transition: transform var(--mediumTransition) cubic-bezier(0.2, 0, 0, 1);
+  pointer-events: none;
+}
+
+.TabView--wide .TabsItem {
+  z-index: 1;
+}
+
+.TabView--wide .TabsItem--active,
+.TabView--wide .TabsItem--active:hover,
+.TabView--wide .TabsItem--active:focus-visible {
+  background: transparent;
+  box-shadow: none;
+}
+
+.TabView--wide .TabsItem--active::before {
+  border-color: transparent;
+}

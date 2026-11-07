@@ -1,4 +1,4 @@
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useServices } from 'services'
 import * as Message from 'model/Message'
@@ -24,6 +24,9 @@ export const MessageSearchResults = defineComponent<Props>((props) => {
   const convosStore = useConvosStore()
   const { peers } = usePeersStore()
   const search = useMessageSearch(computed(() => props.query))
+  const $results = shallowRef<HTMLElement | null>(null)
+
+  watch(() => props.query, () => $results.value?.scrollTo({ top: 0 }))
   const dateFormatter = lang.dateTimeFormatter({ day: 'numeric', month: 'short', year: 'numeric' })
 
   const openMessage = (message: Message.Confirmed) => {
@@ -67,7 +70,7 @@ export const MessageSearchResults = defineComponent<Props>((props) => {
     )
   }
 
-  return () => {
+  const renderResults = () => {
     if (!props.query.trim()) {
       return (
         <div class="SearchView__placeholder">
@@ -102,6 +105,8 @@ export const MessageSearchResults = defineComponent<Props>((props) => {
       </>
     )
   }
+
+  return () => <div class="SearchView__results" ref={$results}>{renderResults()}</div>
 }, {
   props: ['query']
 })

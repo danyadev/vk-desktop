@@ -1,44 +1,11 @@
 .SearchView {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-width: 0;
-  min-height: 0;
   background: var(--vkui--color_background_content);
 }
 
-.SearchView__tabs {
-  flex: none;
-}
-
-.SearchView__pages {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
 .SearchView__results {
-  position: absolute;
-  inset: 0;
+  height: 100%;
   overflow-y: overlay;
   padding: 8px;
-}
-
-.SearchView__page-enter-active,
-.SearchView__page-leave-active {
-  overflow: hidden;
-  transition: transform var(--mediumTransition) cubic-bezier(0.2, 0, 0, 1);
-}
-
-.SearchView--messages .SearchView__page-enter-from,
-.SearchView:not(.SearchView--messages) .SearchView__page-leave-to {
-  transform: translateX(100%);
-}
-
-.SearchView--messages .SearchView__page-leave-to,
-.SearchView:not(.SearchView--messages) .SearchView__page-enter-from {
-  transform: translateX(-100%);
 }
 
 .SearchView__placeholder {
