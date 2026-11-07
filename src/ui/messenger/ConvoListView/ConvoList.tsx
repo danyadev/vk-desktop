@@ -3,23 +3,24 @@ import { useServices } from 'services'
 import * as Lists from 'model/Lists'
 import { loadMoreConvos } from 'actions'
 import { ConvoActionMenu } from 'ui/messenger/ConvoActionMenu/ConvoActionMenu'
-import { useConvoList } from 'ui/messenger/ConvoList/useConvoList'
-import { ConvoListItem } from 'ui/messenger/ConvoListItem/ConvoListItem'
+import { ConvoListItem } from 'ui/messenger/ConvoListView/ConvoListItem'
+import { useConvoList } from 'ui/messenger/ConvoListView/useConvoList'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
+import './ConvoList.css'
 
 type Props = {
   list: Lists.List
   compact?: boolean
 }
 
-export const ConvoListContent = defineComponent<Props>((props) => {
+export const ConvoList = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const convoList = useConvoList(props.list)
 
   return () => (
-    <div class="ConvoList__list">
+    <div class="ConvoList">
       {convoList.value.map((convo) => (
         <ConvoActionMenu key={convo.id} convo={convo} fromConvoList>
           <ConvoListItem convo={convo} compact={props.compact} />

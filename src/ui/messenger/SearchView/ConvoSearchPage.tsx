@@ -48,19 +48,19 @@ export const ConvoSearchPage = defineComponent<Props>((props) => {
     const peer = Peer.safeGet(peers, peerId)
 
     return (
-      <div key={peerId} class="SearchPage__item">
-        <button type="button" class="SearchPage__itemMain" onClick={() => openConvo(peerId)}>
+      <div key={peerId} class="SearchView__item">
+        <button type="button" class="SearchView__itemMain" onClick={() => openConvo(peerId)}>
           <Avatar peer={peer} size={40} />
-          <span class="SearchPage__details">
-            <span class="SearchPage__itemName">
+          <span class="SearchView__details">
+            <span class="SearchView__itemName">
               {peerId === viewer.id ? lang.use('me_peer_favorites') : Peer.name(peer)}
             </span>
-            <span class="SearchPage__subtitle">{getSubtitle(convo, peer)}</span>
+            <span class="SearchView__subtitle">{getSubtitle(convo, peer)}</span>
           </span>
         </button>
         {recent && (
           <ButtonIcon
-            class="SearchPage__remove"
+            class="SearchView__remove"
             icon={<Icon24Cancel width={20} height={20} />}
             withHoverBackground
             title={lang.use('me_convo_list_search_remove_recent')}
@@ -76,7 +76,7 @@ export const ConvoSearchPage = defineComponent<Props>((props) => {
       const recentSearches = convosStore.recentSearches.filter((peerId) => peers.has(peerId))
       if (recentSearches.length === 0) {
         return (
-          <div class="SearchPage__placeholder">
+          <div class="SearchView__placeholder">
             <Icon56SearchOutline color="var(--vkui--color_icon_tertiary)" />
             <span>{lang.use('me_convo_list_search_placeholder')}</span>
           </div>
@@ -85,7 +85,7 @@ export const ConvoSearchPage = defineComponent<Props>((props) => {
 
       return (
         <>
-          <div class="SearchPage__sectionTitle">
+          <div class="SearchView__sectionTitle">
             {lang.use('me_convo_list_search_recent')}
           </div>
           {recentSearches.map((peerId) => renderConvo(peerId, convos.get(peerId), true))}
@@ -95,7 +95,7 @@ export const ConvoSearchPage = defineComponent<Props>((props) => {
 
     if (search.status.value === 'complete' && search.results.value.length === 0) {
       return (
-        <div class="SearchPage__empty">
+        <div class="SearchView__empty">
           {lang.use('me_convo_list_search_empty_results')}
         </div>
       )
@@ -106,12 +106,12 @@ export const ConvoSearchPage = defineComponent<Props>((props) => {
         {search.results.value.map((convo) => renderConvo(convo.id, convo, false))}
 
         {search.status.value === 'error' && <LoadError onRetry={search.search} />}
-        {search.status.value === 'loading' && <Spinner class="SearchPage__spinner" size="regular" />}
+        {search.status.value === 'loading' && <Spinner class="SearchView__spinner" size="regular" />}
       </>
     )
   }
 
-  return () => <div class="SearchPage__results" ref={$results}>{renderResults()}</div>
+  return () => <div class="SearchView__results" ref={$results}>{renderResults()}</div>
 }, {
   props: ['query']
 })

@@ -1,0 +1,21 @@
+.ConvoListView .TabView__page {
+  display: flex;
+  flex-direction: column;
+}
+
+.ConvoListView .ConvoList {
+  padding-top: 0;
+}
+
+.ConvoListPane--compact .ConvoListView .TabView__tabs {
+  display: none;
+}
+
+.ConvoListPane--compact .ConvoListView .ConvoList {
+  padding-top: 6px;
+}
+
+.ConvoListView .TabView__page-enter-active .ConvoList,
+.ConvoListView .TabView__page-leave-active .ConvoList {
+  overflow: hidden;
+}

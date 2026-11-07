@@ -1,0 +1,79 @@
+.ConvoListPane {
+  overflow: hidden;
+}
+
+.ConvoListPane__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  height: 48px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--vkui--color_separator_primary);
+}
+
+.ConvoListPane--compact .ConvoListPane__header {
+  justify-content: center;
+}
+
+.ConvoListPane__headerAction {
+  width: 32px;
+  height: 32px;
+  color: var(--vkui--color_icon_secondary);
+}
+
+.ConvoListPane__headerActionIcon-enter-active,
+.ConvoListPane__headerActionIcon-leave-active {
+  transition: opacity 100ms, transform 100ms;
+}
+
+.ConvoListPane__headerActionIcon-enter-from {
+  opacity: 0;
+  transform: translateX(6px) scale(0.85);
+}
+
+.ConvoListPane__headerActionIcon-leave-to {
+  opacity: 0;
+  transform: translateX(-6px) scale(0.85);
+}
+
+.ConvoListPane__searchInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.ConvoListPane__pages {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ConvoListPane__page {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ConvoListPane__page-enter-active,
+.ConvoListPane__page-leave-active {
+  transition: transform var(--mediumTransition) cubic-bezier(0.2, 0, 0, 1);
+}
+
+.ConvoListPane--searchOpen .ConvoListPane__page-enter-from,
+.ConvoListPane:not(.ConvoListPane--searchOpen) .ConvoListPane__page-leave-to {
+  transform: translateX(100%);
+}
+
+.ConvoListPane--searchOpen .ConvoListPane__page-leave-to,
+.ConvoListPane:not(.ConvoListPane--searchOpen) .ConvoListPane__page-enter-from {
+  transform: translateX(-100%);
+}
+
+.ConvoListPane__page-leave-active .ConvoList,
+.ConvoListPane__page-leave-active .SearchView__results {
+  /* Hide scrollbars while animating */
+  overflow: hidden;
+}

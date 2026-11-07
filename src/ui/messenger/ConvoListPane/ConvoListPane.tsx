@@ -1,40 +1,40 @@
 import { defineComponent, KeepAlive, shallowRef, Transition, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useServices } from 'services'
 import { useViewerStore } from 'store/viewer'
 import { useGlobalModal, useKeyboardZones } from 'hooks'
 import { ClassName } from 'misc/utils'
-import { ConvoListPage } from 'ui/messenger/ConvoList/ConvoListPage'
-import { ConvoSearchPage } from 'ui/messenger/ConvoList/ConvoSearchPage'
-import { MessageSearchPage } from 'ui/messenger/ConvoList/MessageSearchPage'
+import { ConvoListView } from 'ui/messenger/ConvoListView/ConvoListView'
+import { SearchView } from 'ui/messenger/SearchView/SearchView'
+import { SyncStatus } from 'ui/messenger/SyncStatus/SyncStatus'
 import { ActionMenu } from 'ui/ui/ActionMenu/ActionMenu'
 import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Input } from 'ui/ui/Input/Input'
 import { Popper } from 'ui/ui/Popper/Popper'
-import { TabPage } from 'ui/ui/TabPage/TabPage'
-import { TabView } from 'ui/ui/TabView/TabView'
 import {
   Icon20MenuOutline,
   Icon24ChevronCompactLeft,
   Icon24DoorArrowRightOutline,
   Icon24GearOutline
 } from 'assets/icons'
-import './ConvoList.css'
-import './SearchPage.css'
+import './ConvoListPane.css'
 
 type Props = {
   class?: ClassName
   compact?: boolean
 }
 
-export const ConvoList = defineComponent<Props>((props) => {
+export const ConvoListPane = defineComponent<Props>((props) => {
   const { lang } = useServices()
+  const route = useRoute()
   const { logout } = useViewerStore()
   const { settingsModal } = useGlobalModal()
   const { registerZone } = useKeyboardZones()
-  const query = shallowRef('')
-  const $convoList = shallowRef<HTMLElement | null>(null)
+
+  const $pane = shallowRef<HTMLElement | null>(null)
   const searchOpen = shallowRef(false)
+  const searchQuery = shallowRef('')
 
   const openSearch = () => {
     if (props.compact) return
@@ -43,25 +43,25 @@ export const ConvoList = defineComponent<Props>((props) => {
 
   const closeSearch = () => {
     searchOpen.value = false
-    query.value = ''
+    searchQuery.value = ''
   }
 
   watch(() => props.compact, (compact) => {
     if (compact) closeSearch()
   })
 
-  registerZone('convoList', $convoList)
+  registerZone('convoList', $pane)
 
   return () => (
     <div
-      ref={$convoList}
+      ref={$pane}
       tabindex={-1}
-      class={['ConvoList', {
-        'ConvoList--compact': props.compact,
-        'ConvoList--searchOpen': searchOpen.value
+      class={['ConvoListPane', {
+        'ConvoListPane--compact': props.compact,
+        'ConvoListPane--searchOpen': searchOpen.value
       }]}
     >
-      <div class="ConvoList__header">
+      <div class="ConvoListPane__header">
         <Popper
           disabled={searchOpen.value}
           closeOnContentClick
@@ -82,9 +82,9 @@ export const ConvoList = defineComponent<Props>((props) => {
           }
         >
           <ButtonIcon
-            class="ConvoList__headerAction"
+            class="ConvoListPane__headerAction"
             icon={
-              <Transition name="ConvoList__headerActionIcon" mode="out-in">
+              <Transition name="ConvoListPane__headerActionIcon" mode="out-in">
                 {searchOpen.value
                   ? <Icon24ChevronCompactLeft key="back" />
                   : <Icon20MenuOutline key="menu" />}
@@ -98,14 +98,14 @@ export const ConvoList = defineComponent<Props>((props) => {
 
         {!props.compact && (
           <Input
-            class="ConvoList__searchInput"
+            class="ConvoListPane__searchInput"
             mode="search"
             size="small"
             placeholder={lang.use('input_search')}
-            value={query.value}
+            value={searchQuery.value}
             onClick={openSearch}
             onInput={(event) => {
-              query.value = event.target.value
+              searchQuery.value = event.target.value
               if (event.target.value) openSearch()
             }}
             onKeydown={(event) => {
@@ -113,31 +113,28 @@ export const ConvoList = defineComponent<Props>((props) => {
               if (event.key !== 'Escape' || !searchOpen.value) return
 
               event.stopPropagation()
-              if (query.value) query.value = ''
+              if (searchQuery.value) searchQuery.value = ''
               else closeSearch()
             }}
           />
         )}
       </div>
 
-      <div class="ConvoList__pages">
-        <Transition name="ConvoList__page" css={!props.compact}>
+      <div class="ConvoListPane__pages">
+        <Transition name="ConvoListPane__page" css={!props.compact}>
           <KeepAlive>
             {searchOpen.value ? (
-              <TabView key="search" class={['ConvoList__page', 'SearchPage']} wide keepAlive>
-                <TabPage key="convos" title={lang.use('me_convo_list_search_convos')}>
-                  <ConvoSearchPage query={query.value} />
-                </TabPage>
-                <TabPage key="messages" title={lang.use('me_convo_list_search_messages')}>
-                  <MessageSearchPage query={query.value} />
-                </TabPage>
-              </TabView>
+              <SearchView key="search" class="ConvoListPane__page" query={searchQuery.value} />
             ) : (
-              <ConvoListPage key="convos" compact={props.compact} />
+              <ConvoListView key="convos" class="ConvoListPane__page" compact={props.compact} />
             )}
           </KeepAlive>
         </Transition>
       </div>
+
+      {!props.compact && (
+        <SyncStatus edge="top" show={!searchOpen.value && route.name !== 'Convo'} />
+      )}
     </div>
   )
 }, {

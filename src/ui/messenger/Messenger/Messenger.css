@@ -3,7 +3,7 @@
   height: 100%;
 }
 
-.Messenger__convoList {
+.Messenger__convoListPane {
   display: flex;
   flex-direction: column;
   flex: none;
@@ -21,7 +21,7 @@
 }
 
 @media (width < 500px) {
-  .Messenger__convoList {
+  .Messenger__convoListPane {
     width: 100%;
     border-right: none;
   }
@@ -30,7 +30,7 @@
     display: none;
   }
 
-  .Messenger--withConvo .Messenger__convoList {
+  .Messenger--withConvo .Messenger__convoListPane {
     display: none;
   }
 
@@ -40,19 +40,19 @@
 }
 
 @media (500px <= width <= 700px) {
-  .Messenger__convoList {
+  .Messenger__convoListPane {
     width: 80px;
   }
 }
 
 @media (width > 700px) {
-  .Messenger__convoList {
+  .Messenger__convoListPane {
     width: 42%;
   }
 }
 
 @media (width > 950px) {
-  .Messenger__convoList {
+  .Messenger__convoListPane {
     width: calc(950px * 0.42);
   }
 }

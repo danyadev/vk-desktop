@@ -1,0 +1,19 @@
+.ConvoList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: overlay;
+  padding: 6px 8px;
+}
+
+.ConvoList__empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--vkui--color_text_subhead);
+}
+
+.ConvoList__spinner {
+  display: block;
+  margin: 16px auto;
+}

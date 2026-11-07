@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordInfo } from 'vue-router'
 import * as Peer from 'model/Peer'
 import { useViewerStore } from 'store/viewer'
 import { Auth } from 'ui/Auth/Auth'
-import { ConvoWrapper } from 'ui/messenger/ConvoView/ConvoView'
+import { ConvoPane } from 'ui/messenger/ConvoPane/ConvoPane'
 import { Messenger } from 'ui/messenger/Messenger/Messenger'
 import { NoConvo } from 'ui/messenger/NoConvo/NoConvo'
 
@@ -27,7 +27,7 @@ export const router = createRouter({
         {
           name: 'Convo',
           path: '/convo/:peerId',
-          component: ConvoWrapper
+          component: ConvoPane
         }
       ]
     },
