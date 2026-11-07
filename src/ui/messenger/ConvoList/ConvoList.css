@@ -84,7 +84,7 @@
 }
 
 .ConvoList__page-leave-active .ConvoList__list,
-.ConvoList__page-leave-active .ConvoList__searchList {
+.ConvoList__page-leave-active .SearchView__results {
   /* Hide scrollbars while animating */
   overflow: hidden;
 }

@@ -1,10 +1,22 @@
 .SearchView {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-width: 0;
+  min-height: 0;
+  background: var(--vkui--color_background_content);
+}
+
+.SearchView__tabs {
+  flex: none;
+  border-bottom: 1px solid var(--vkui--color_separator_primary);
+}
+
+.SearchView__results {
+  flex: 1;
   min-height: 0;
   overflow-y: overlay;
   padding: 8px;
-  background: var(--vkui--color_background_content);
 }
 
 .SearchView__placeholder {
@@ -88,4 +100,31 @@
 .SearchView__subtitle {
   color: var(--vkui--color_text_secondary);
   font-size: 13px;
+}
+
+.SearchView__messageHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.SearchView__messageHeader .SearchView__itemName {
+  flex: 1;
+  min-width: 0;
+}
+
+.SearchView__messageDate {
+  flex: none;
+  color: var(--vkui--color_text_tertiary);
+  font-size: 12px;
+}
+
+.SearchView__messageText {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
 }
