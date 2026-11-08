@@ -39,37 +39,39 @@
   transform: translateX(-100%);
 }
 
-.TabView--wide .Tabs {
+.TabView .Tabs {
   position: relative;
 }
 
-.TabView--wide .Tabs::before {
-  content: '';
+.TabView .TabsItem--active {
+  anchor-name: --active-tab;
+}
+
+.TabView__indicator {
   position: absolute;
   top: 8px;
   bottom: 8px;
-  left: 12px;
-  width: calc((100% - 24px - var(--tab-gap-total)) / var(--tab-count));
+  left: anchor(--active-tab left);
+  width: anchor-size(--active-tab width);
+  box-sizing: border-box;
   border: 1px solid var(--vkui--color_separator_primary);
   border-radius: 8px;
   background: var(--vkui--color_background_contrast_themed);
   box-shadow: var(--vkui--elevation2);
-  transform: translateX(calc(var(--tab-offset) + var(--tab-gap-offset)));
-  transition: transform var(--mediumTransition) cubic-bezier(0.2, 0, 0, 1);
   pointer-events: none;
 }
 
-.TabView--wide .TabsItem {
+.TabView .TabsItem {
   z-index: 1;
 }
 
-.TabView--wide .TabsItem--active,
-.TabView--wide .TabsItem--active:hover,
-.TabView--wide .TabsItem--active:focus-visible {
+.TabView .TabsItem--active,
+.TabView .TabsItem--active:hover,
+.TabView .TabsItem--active:focus-visible {
   background: transparent;
   box-shadow: none;
 }
 
-.TabView--wide .TabsItem--active::before {
+.TabView .TabsItem--active::before {
   border-color: transparent;
 }

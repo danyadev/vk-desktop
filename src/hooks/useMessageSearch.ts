@@ -41,7 +41,6 @@ export const useMessageSearch = (query: Ref<string>) => {
 
       insertPeers({ profiles, groups })
       for (const conversation of conversations ?? []) {
-        if (conversation.peer.type !== 'chat' || !conversation.chat_settings) continue
         const { peer } = fromApiConvo(conversation)
         if (peer) insertPeerModel(peer)
       }

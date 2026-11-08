@@ -1,4 +1,12 @@
-import { defineComponent, HTMLAttributes, KeepAlive, shallowRef, Transition, VNode } from 'vue'
+import {
+  defineComponent,
+  HTMLAttributes,
+  KeepAlive,
+  nextTick,
+  shallowRef,
+  Transition,
+  VNode
+} from 'vue'
 import { TabPage } from 'ui/ui/TabPage/TabPage'
 import { Tabs } from 'ui/ui/Tabs/Tabs'
 import { TabsItem } from 'ui/ui/TabsItem/TabsItem'
@@ -12,6 +20,7 @@ type Props = {
 export const TabView = defineComponent<Props>((props, { slots }) => {
   const selectedKey = shallowRef<VNode['key']>()
   const animateForward = shallowRef(true)
+  const $indicator = shallowRef<HTMLElement | null>(null)
 
   return () => {
     const pages = slots.default?.() ?? []
@@ -31,10 +40,24 @@ export const TabView = defineComponent<Props>((props, { slots }) => {
 
     const selectedIndex = Math.max(0, pages.findIndex((page) => page.key === selectedKey.value))
 
-    const select = (index: number) => {
+    const select = async (index: number) => {
       if (index === selectedIndex) return
+
+      const indicator = $indicator.value
+      const from = indicator?.getBoundingClientRect()
+      if (!indicator || !from) return
+
+      indicator.getAnimations().forEach((animation) => animation.cancel())
       animateForward.value = index > selectedIndex
       selectedKey.value = pages[index]!.key
+
+      await nextTick()
+
+      const to = indicator.getBoundingClientRect()
+      indicator.animate([
+        { transform: `translateX(${from.left - to.left}px)`, width: `${from.width}px` },
+        { transform: 'none', width: `${to.width}px` }
+      ], { duration: 200, easing: 'cubic-bezier(0.2, 0, 0, 1)' })
     }
 
     const currentPage = pages[selectedIndex]
@@ -46,20 +69,16 @@ export const TabView = defineComponent<Props>((props, { slots }) => {
           'TabView--wide': props.wide,
           'TabView--animateForward': animateForward.value
         }]}
-        style={props.wide ? {
-          '--tab-count': pages.length,
-          '--tab-gap-total': `${(pages.length - 1) * 6}px`,
-          '--tab-offset': `${selectedIndex * 100}%`,
-          '--tab-gap-offset': `${selectedIndex * 6}px`
-        } : undefined}
       >
         <Tabs wide={props.wide} class="TabView__tabs" role="tablist">
+          <div class="TabView__indicator" ref={$indicator} />
+
           {pages.map((page, index) => (
             <TabsItem
               key={page.key!}
               active={index === selectedIndex}
               role="tab"
-              tabindex={index === selectedIndex ? 0 : -1}
+              aria-selected={index === selectedIndex}
               onClick={() => select(index)}
             >
               {page.props!.title}
