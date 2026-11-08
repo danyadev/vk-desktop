@@ -1,4 +1,13 @@
-import { computed, onActivated, onDeactivated, Ref, shallowRef, watch } from 'vue'
+import {
+  computed,
+  onActivated,
+  onDeactivated,
+  onScopeDispose,
+  reactive,
+  Ref,
+  shallowRef,
+  watch
+} from 'vue'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
@@ -13,12 +22,24 @@ export const useConvoSearch = (query: Ref<string>) => {
   const { api } = useServices()
   const { convos, convoDrafts } = useConvosStore()
   const { peers } = usePeersStore()
+
   const active = shallowRef(true)
-  let searchedQuery = ''
-  const status = shallowRef<'loading' | 'complete' | 'error'>('loading')
-  const apiResults = shallowRef<Convo.Convo[]>([])
+  const status = shallowRef<'idle' | 'loading' | 'complete' | 'error'>('idle')
+  const searchResults = shallowRef<Convo.Convo[]>([])
   const cachedResults = shallowRef<Convo.Convo[]>([])
+  let searchedQuery = ''
   let currentController: AbortController | undefined
+
+  const updateQuery = (q: string) => {
+    if (q === searchedQuery) return false
+
+    searchedQuery = q
+    currentController?.abort()
+    status.value = q ? 'loading' : 'idle'
+    searchResults.value = []
+
+    return !!q
+  }
 
   const search = async () => {
     if (!query.value.trim()) return
@@ -27,7 +48,7 @@ export const useConvoSearch = (query: Ref<string>) => {
     const controller = new AbortController()
     currentController = controller
     status.value = 'loading'
-    apiResults.value = []
+    searchResults.value = []
 
     try {
       const { items, profiles, groups } = await api.fetch('messages.searchConversations', {
@@ -41,14 +62,14 @@ export const useConvoSearch = (query: Ref<string>) => {
       status.value = 'complete'
 
       insertPeers({ profiles, groups })
-      apiResults.value = items.map((apiConvo) => {
+      searchResults.value = items.map((apiConvo) => {
         const { convo, peer } = fromApiConvo(apiConvo)
         if (convo && peer) insertPeerModel(peer)
         return convo
       }).filter((convo) => convo !== undefined)
 
       const seen = new Set<Peer.Id>()
-      cachedResults.value = [...apiResults.value, ...cachedResults.value]
+      cachedResults.value = [...searchResults.value, ...cachedResults.value]
         .filter((convo) => {
           if (seen.has(convo.id)) return false
           seen.add(convo.id)
@@ -64,24 +85,19 @@ export const useConvoSearch = (query: Ref<string>) => {
 
   onActivated(() => (active.value = true))
   onDeactivated(() => (active.value = false))
+  onScopeDispose(() => currentController?.abort())
 
-  watch([query, active], ([value, isActive], _, onCleanup) => {
-    if (!isActive) return
-
-    const q = value.trim()
-    const changed = q !== searchedQuery
-    if (changed) {
-      searchedQuery = q
-      status.value = 'loading'
-      apiResults.value = []
-    }
-    if (!q || (!changed && (status.value === 'complete' || status.value === 'error'))) return
+  watch(query, (value, _, onCleanup) => {
+    if (!active.value || !updateQuery(value.trim())) return
 
     const timeout = window.setTimeout(search, 300)
-    onCleanup(() => {
-      window.clearTimeout(timeout)
-      currentController?.abort()
-    })
+    onCleanup(() => window.clearTimeout(timeout))
+  })
+
+  watch(active, (isActive) => {
+    if (isActive && updateQuery(query.value.trim())) {
+      search()
+    }
   }, { immediate: true })
 
   const localConvos = computed(() => (
@@ -92,8 +108,8 @@ export const useConvoSearch = (query: Ref<string>) => {
     const queryText = query.value.toLocaleLowerCase().trim()
     if (!queryText) return []
 
-    if (status.value !== 'loading') {
-      return apiResults.value
+    if (status.value === 'complete') {
+      return searchResults.value
     }
 
     const queryVariants = extractSearchWords(queryText).map(expandQueryWord)
@@ -113,7 +129,7 @@ export const useConvoSearch = (query: Ref<string>) => {
     ))
   })
 
-  return { status, results, search }
+  return reactive({ results, status, retry: search })
 }
 
 /**

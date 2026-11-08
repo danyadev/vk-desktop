@@ -93,7 +93,7 @@ export const ConvoSearchPage = defineComponent<Props>((props) => {
       )
     }
 
-    if (search.status.value === 'complete' && search.results.value.length === 0) {
+    if (search.status === 'complete' && search.results.length === 0) {
       return (
         <div class="SearchView__empty">
           {lang.use('me_convo_list_search_empty_results')}
@@ -103,10 +103,10 @@ export const ConvoSearchPage = defineComponent<Props>((props) => {
 
     return (
       <>
-        {search.results.value.map((convo) => renderConvo(convo.id, convo, false))}
+        {search.results.map((convo) => renderConvo(convo.id, convo, false))}
 
-        {search.status.value === 'error' && <LoadError onRetry={search.search} />}
-        {search.status.value === 'loading' && <Spinner class="SearchView__spinner" size="regular" />}
+        {search.status === 'error' && <LoadError onRetry={search.retry} />}
+        {search.status === 'loading' && <Spinner class="SearchView__spinner" size="regular" />}
       </>
     )
   }

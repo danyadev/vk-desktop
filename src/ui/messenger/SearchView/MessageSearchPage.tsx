@@ -80,7 +80,7 @@ export const MessageSearchPage = defineComponent<Props>((props) => {
       )
     }
 
-    if (search.status.value === 'complete' && search.results.value.length === 0) {
+    if (search.status === 'complete' && search.results.length === 0) {
       return (
         <div class="SearchView__empty">
           {lang.use('me_convo_list_search_message_empty')}
@@ -90,15 +90,15 @@ export const MessageSearchPage = defineComponent<Props>((props) => {
 
     return (
       <>
-        {search.results.value.map(renderMessage)}
+        {search.results.map(renderMessage)}
 
-        {search.status.value === 'error' && <LoadError onRetry={search.retry} />}
-        {search.status.value === 'loading' && (
+        {search.status === 'error' && <LoadError onRetry={search.loadMore} />}
+        {search.status === 'loading' && (
           <Spinner class="SearchView__spinner" size="regular" />
         )}
 
-        {search.status.value === 'complete' && search.hasMore.value && (
-          <IntersectionWrapper key={search.results.value.length} onIntersect={search.loadMore}>
+        {search.status === 'hasMore' && (
+          <IntersectionWrapper key={search.results.length} onIntersect={search.loadMore}>
             <Spinner class="SearchView__spinner" size="regular" />
           </IntersectionWrapper>
         )}

@@ -1,4 +1,4 @@
-import { computed, defineComponent, shallowRef, watch } from 'vue'
+import { defineComponent, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
 import * as Convo from 'model/Convo'
 import * as Peer from 'model/Peer'
@@ -30,15 +30,13 @@ export const ConvoPicker = defineComponent<Props>((props) => {
 
   const $list = shallowRef<HTMLElement | null>(null)
   const query = shallowRef('')
-  const { status: searchStatus, results: searchResults, search } = useConvoSearch(query)
-  watch(query, () => $list.value?.scrollTo({ top: 0 }))
+  const search = useConvoSearch(query)
 
-  const items = computed(() => (
-    query.value.trim() ? searchResults.value : convoList.value
-  ))
+  watch(query, () => $list.value?.scrollTo({ top: 0 }))
 
   return () => {
     const hasQuery = !!query.value.trim()
+    const items = hasQuery ? search.results : convoList.value
 
     return (
       <div class="ConvoPicker">
@@ -58,7 +56,7 @@ export const ConvoPicker = defineComponent<Props>((props) => {
         />
 
         <div class="ConvoPicker__list" ref={$list}>
-          {items.value.map((convo) => {
+          {items.map((convo) => {
             const peer = Peer.safeGet(peers, convo.id)
             const disabledReason = props.getDisabledReason?.(convo)
 
@@ -86,16 +84,16 @@ export const ConvoPicker = defineComponent<Props>((props) => {
             )
           })}
 
-          {items.value.length === 0 &&
-            ((hasQuery ? searchStatus.value : lists.main.status) === 'complete') && (
+          {items.length === 0 &&
+            ((hasQuery ? search.status : lists.main.status) === 'complete') && (
             <div class="ConvoPicker__empty">
               {lang.use('me_convo_list_search_empty_results')}
             </div>
           )}
 
-          {hasQuery && searchStatus.value === 'error' ? (
-            <LoadError onRetry={search} />
-          ) : hasQuery && searchStatus.value !== 'complete' ? (
+          {hasQuery && search.status === 'error' ? (
+            <LoadError onRetry={search.retry} />
+          ) : hasQuery && search.status !== 'complete' ? (
             <Spinner class="ConvoPicker__spinner" size="regular" />
           ) : !hasQuery && lists.main.status === 'error' ? (
             <LoadError onRetry={() => loadMoreConvos(lists.main)} />
