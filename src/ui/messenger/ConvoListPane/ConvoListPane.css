@@ -72,8 +72,7 @@
   transform: translateX(-100%);
 }
 
-.ConvoListPane__page-leave-active .ConvoList,
-.ConvoListPane__page-leave-active .SearchView__results {
-  /* Hide scrollbars while animating */
-  overflow: hidden;
+.ConvoListPane__page-enter-active ::-webkit-scrollbar,
+.ConvoListPane__page-leave-active ::-webkit-scrollbar {
+  display: none;
 }

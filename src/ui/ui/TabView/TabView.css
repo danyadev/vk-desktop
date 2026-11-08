@@ -39,6 +39,11 @@
   transform: translateX(-100%);
 }
 
+.TabView__page-enter-active ::-webkit-scrollbar,
+.TabView__page-leave-active ::-webkit-scrollbar {
+  display: none;
+}
+
 .TabView .Tabs {
   position: relative;
 }
@@ -53,12 +58,16 @@
   bottom: 8px;
   left: anchor(--active-tab left);
   width: anchor-size(--active-tab width);
-  box-sizing: border-box;
+  pointer-events: none;
   border: 1px solid var(--vkui--color_separator_primary);
   border-radius: 8px;
   background: var(--vkui--color_background_contrast_themed);
   box-shadow: var(--vkui--elevation2);
-  pointer-events: none;
+  transition: background-color var(--fastTransition) ease-out;
+}
+
+.TabView .Tabs:has(> .TabsItem--active:is(:hover, :focus-visible)) .TabView__indicator {
+  background-color: var(--vkui--color_background_contrast_themed--hover);
 }
 
 .TabView .TabsItem {
