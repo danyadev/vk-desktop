@@ -39,13 +39,16 @@ export const TabView = defineComponent<Props>((props, { slots }) => {
   }, { flush: 'sync' })
 
   watch(selectedTab, (tab) => {
+    if (tab !== undefined) {
+      props.onTabChange?.(tab)
+    }
+  })
+
+  watch(selectedTab, (tab) => {
     const tabIndex = tabs.indexOf(tab!)
     if (tabIndex !== -1) {
       animateForward.value = tabIndex > lastTabIndex
       lastTabIndex = tabIndex
-    }
-    if (tab !== undefined) {
-      props.onTabChange?.(tab)
     }
   }, { flush: 'sync' })
 

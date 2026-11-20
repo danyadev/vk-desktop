@@ -11,6 +11,7 @@ import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24Cancel, Icon56SearchOutline } from 'assets/icons'
+import './ConvoSearch.css'
 
 type Props = {
   query: string
@@ -48,19 +49,19 @@ export const ConvoSearch = defineComponent<Props>((props) => {
     const peer = Peer.safeGet(peers, peerId)
 
     return (
-      <div key={peerId} class="SearchView__item">
-        <button type="button" class="SearchView__itemMain" onClick={() => openConvo(peerId)}>
+      <div key={peerId} class="ConvoSearch__item">
+        <button type="button" class="ConvoSearch__itemMain" onClick={() => openConvo(peerId)}>
           <Avatar peer={peer} size={40} />
-          <span class="SearchView__details">
-            <span class="SearchView__itemName">
+          <span class="ConvoSearch__details">
+            <span class="ConvoSearch__name">
               {peerId === viewer.id ? lang.use('me_peer_favorites') : Peer.name(peer)}
             </span>
-            <span class="SearchView__subtitle">{getSubtitle(convo, peer)}</span>
+            <span class="ConvoSearch__subtitle">{getSubtitle(convo, peer)}</span>
           </span>
         </button>
         {recent && (
           <ButtonIcon
-            class="SearchView__remove"
+            class="ConvoSearch__remove"
             icon={<Icon24Cancel width={20} height={20} />}
             withHoverBackground
             title={lang.use('me_convo_list_search_remove_recent')}
@@ -85,7 +86,7 @@ export const ConvoSearch = defineComponent<Props>((props) => {
 
       return (
         <>
-          <div class="SearchView__sectionTitle">
+          <div class="ConvoSearch__sectionTitle">
             {lang.use('me_convo_list_search_recent')}
           </div>
           {recentSearches.map((peerId) => renderConvo(peerId, convos.get(peerId), true))}

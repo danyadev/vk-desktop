@@ -1,0 +1,59 @@
+.ConvoSearch__sectionTitle {
+  padding: 8px 12px;
+  color: var(--vkui--color_text_secondary);
+  font-weight: 500;
+}
+
+.ConvoSearch__item {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  transition: background-color var(--fastTransition);
+}
+
+.ConvoSearch__item:hover,
+.ConvoSearch__item:has(:focus-visible) {
+  background: var(--vkui--color_transparent--hover);
+}
+
+.ConvoSearch__itemMain {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 12px;
+  padding: 8px;
+  text-align: left;
+}
+
+.ConvoSearch__details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.ConvoSearch__name,
+.ConvoSearch__subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ConvoSearch__name {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.ConvoSearch__subtitle {
+  color: var(--vkui--color_text_secondary);
+  font-size: 13px;
+}
+
+.ConvoSearch__remove {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  color: var(--vkui--color_icon_secondary);
+}

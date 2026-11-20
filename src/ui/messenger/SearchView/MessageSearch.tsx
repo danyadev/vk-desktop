@@ -12,6 +12,7 @@ import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapp
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon56SearchOutline } from 'assets/icons'
+import './MessageSearch.css'
 
 type Props = {
   query: string
@@ -40,28 +41,28 @@ export const MessageSearch = defineComponent<Props>((props) => {
   const renderMessage = (message: Message.Confirmed) => {
     const peer = Peer.safeGet(peers, message.peerId)
     return (
-      <div class="SearchView__item" key={`${message.peerId}:${message.cmid}`}>
+      <div class="MessageSearch__item" key={`${message.peerId}:${message.cmid}`}>
         <button
           type="button"
-          class="SearchView__itemMain"
+          class="MessageSearch__itemMain"
           onClick={() => openMessage(message)}
         >
           <Avatar peer={peer} size={40} />
-          <span class="SearchView__details">
-            <span class="SearchView__messageHeader">
-              <span class="SearchView__itemName">
+          <span class="MessageSearch__details">
+            <span class="MessageSearch__header">
+              <span class="MessageSearch__name">
                 {message.peerId === viewer.id ? lang.use('me_peer_favorites') : Peer.name(peer)}
               </span>
-              <span class="SearchView__messageDate">
+              <span class="MessageSearch__date">
                 {dateFormatter.format(message.sentAt)}
               </span>
             </span>
             {message.authorId !== message.peerId && (
-              <span class="SearchView__subtitle">
+              <span class="MessageSearch__subtitle">
                 {Peer.name(Peer.safeGet(peers, message.authorId))}
               </span>
             )}
-            <span class="SearchView__messageText">
+            <span class="MessageSearch__text">
               <MessagePreview message={message} />
             </span>
           </span>

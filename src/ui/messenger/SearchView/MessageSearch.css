@@ -1,0 +1,70 @@
+.MessageSearch__item {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  transition: background-color var(--fastTransition);
+}
+
+.MessageSearch__item:hover,
+.MessageSearch__item:has(:focus-visible) {
+  background: var(--vkui--color_transparent--hover);
+}
+
+.MessageSearch__itemMain {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 12px;
+  padding: 8px;
+  text-align: left;
+}
+
+.MessageSearch__details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.MessageSearch__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.MessageSearch__name,
+.MessageSearch__subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.MessageSearch__name {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.MessageSearch__subtitle {
+  color: var(--vkui--color_text_secondary);
+  font-size: 13px;
+}
+
+.MessageSearch__date {
+  flex: none;
+  color: var(--vkui--color_text_tertiary);
+  font-size: 12px;
+}
+
+.MessageSearch__text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
