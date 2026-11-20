@@ -6,8 +6,6 @@ import { fromApiConvo } from 'converters/ConvoConverter'
 import { fromApiMessage } from 'converters/MessageConverter'
 import { PEER_FIELDS } from 'misc/constants'
 
-const PAGE_SIZE = 20
-
 export const useMessageSearch = (query: Ref<string>) => {
   const { api } = useServices()
   const results = shallowRef<Message.Confirmed[]>([])
@@ -40,7 +38,7 @@ export const useMessageSearch = (query: Ref<string>) => {
       const { count, items, profiles, groups, conversations } = await api.fetch('messages.search', {
         q,
         offset: results.value.length,
-        count: PAGE_SIZE,
+        count: 20,
         extended: 1,
         fields: PEER_FIELDS
       }, { signal: controller.signal })

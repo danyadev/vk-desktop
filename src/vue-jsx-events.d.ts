@@ -30,6 +30,7 @@ declare module 'vue' {
     onClick?: (event: MouseEvent<HTMLElement>) => void
     onClickCapture?: (event: MouseEvent<HTMLElement>) => void
     onScrollPassive?: (event: Event) => void
+    onScrollCapture?: (event: Event) => void
     onWheelPassive?: (event: WheelEvent) => void
     onContextmenu?: (event: PointerEvent<HTMLElement>) => void
   }

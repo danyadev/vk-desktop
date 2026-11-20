@@ -7,8 +7,12 @@
 .ConvoSearch__item {
   display: flex;
   align-items: center;
-  border-radius: 10px;
-  transition: background-color var(--fastTransition);
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  margin: 2px 0;
+  border-radius: 12px;
+  transition: background var(--fastTransition);
 }
 
 .ConvoSearch__item:hover,
@@ -21,8 +25,7 @@
   align-items: center;
   flex: 1;
   min-width: 0;
-  gap: 12px;
-  padding: 8px;
+  gap: 10px;
   text-align: left;
 }
 
@@ -30,8 +33,10 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  align-self: stretch;
+  justify-content: space-evenly;
   min-width: 0;
-  gap: 3px;
+  gap: 2px;
 }
 
 .ConvoSearch__name,
@@ -42,18 +47,15 @@
 }
 
 .ConvoSearch__name {
-  font-size: 15px;
   font-weight: 500;
 }
 
 .ConvoSearch__subtitle {
-  color: var(--vkui--color_text_secondary);
-  font-size: 13px;
+  color: var(--vkui--color_text_subhead);
 }
 
 .ConvoSearch__remove {
   width: 32px;
   height: 32px;
-  margin-right: 8px;
   color: var(--vkui--color_icon_secondary);
 }

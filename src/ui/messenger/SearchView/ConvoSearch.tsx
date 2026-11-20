@@ -51,7 +51,7 @@ export const ConvoSearch = defineComponent<Props>((props) => {
     return (
       <div key={peerId} class="ConvoSearch__item">
         <button type="button" class="ConvoSearch__itemMain" onClick={() => openConvo(peerId)}>
-          <Avatar peer={peer} size={40} />
+          <Avatar peer={peer} size={48} />
           <span class="ConvoSearch__details">
             <span class="ConvoSearch__name">
               {peerId === viewer.id ? lang.use('me_peer_favorites') : Peer.name(peer)}

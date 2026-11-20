@@ -24,7 +24,7 @@ export const ConvoPane = defineComponent(() => {
 
     try {
       const {
-        items,
+        items: apiConvos,
         last_messages: apiLastMessages = [],
         profiles,
         groups
@@ -35,7 +35,7 @@ export const ConvoPane = defineComponent(() => {
         fields: PEER_FIELDS
       })
 
-      const [apiConvo] = items
+      const [apiConvo] = apiConvos
       const [apiLastMessage] = apiLastMessages
       if (!apiConvo) {
         throw new Error('No conversation fetched for ' + peerId.value)
