@@ -7,9 +7,12 @@ type Props = {
 
 export const TabsItem = defineComponent<Props>((props, { slots }) => {
   return () => (
-    <div class={['TabsItem', props.active && 'TabsItem--active']}>
+    <button
+      type="button"
+      class={['TabsItem', props.active && 'TabsItem--active']}
+    >
       {slots.default?.()}
-    </div>
+    </button>
   )
 }, {
   props: ['active']

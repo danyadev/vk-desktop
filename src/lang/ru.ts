@@ -88,6 +88,10 @@ export const ru = {
   me_convo_list_search_empty_results: 'Беседы не найдены',
   me_convo_list_search_recent: 'Недавние',
   me_convo_list_search_remove_recent: 'Удалить из недавних',
+  me_convo_list_search_convos: 'Беседы',
+  me_convo_list_search_messages: 'Сообщения',
+  me_convo_list_search_message_placeholder: 'Введите текст для поиска сообщений',
+  me_convo_list_search_message_empty: 'Сообщения не найдены',
 
   me_action_menu_error_title: 'Не удалось выполнить действие',
   me_action_menu_error_text: 'Произошла ошибка. Попробуйте ещё раз.',

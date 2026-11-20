@@ -4,7 +4,7 @@ import { useServices } from 'services'
 import * as IEngine from 'services/contracts/IEngine'
 import { loadInitialData } from 'actions'
 import { useKeyboardZones, useModal } from 'hooks'
-import { ConvoList } from 'ui/messenger/ConvoList/ConvoList'
+import { ConvoListPane } from 'ui/messenger/ConvoListPane/ConvoListPane'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import './Messenger.css'
@@ -66,7 +66,7 @@ export const Messenger = defineComponent(() => {
       ref={$messenger}
       tabindex={-1}
     >
-      <ConvoList class="Messenger__convoList" compact={columnsLayout.value === 'compact'} />
+      <ConvoListPane class="Messenger__convoListPane" compact={columnsLayout.value === 'compact'} />
 
       <div class="Messenger__content">
         <RouterView key={route.path} />

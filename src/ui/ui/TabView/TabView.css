@@ -1,0 +1,79 @@
+.TabView {
+  --page-enter-offset: -100%;
+  --page-leave-offset: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.TabView--animateForward {
+  --page-enter-offset: 100%;
+  --page-leave-offset: -100%;
+}
+
+.TabView__tabs > .Tabs {
+  position: relative;
+}
+
+.TabView__indicator {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: anchor(--active-tab left);
+  width: anchor-size(--active-tab width);
+  pointer-events: none;
+  border: 1px solid var(--vkui--color_separator_primary);
+  border-radius: 8px;
+  background: var(--vkui--color_background_contrast_themed);
+  box-shadow: var(--vkui--elevation2);
+  transition: background-color var(--fastTransition) ease-out;
+}
+
+.TabView__tabs:has(.TabsItem--active:is(:hover, :focus-visible)) .TabView__indicator {
+  background-color: var(--vkui--color_background_contrast_themed--hover);
+}
+
+.TabView__tabs > .Tabs > .TabsItem--active {
+  anchor-name: --active-tab;
+  background: transparent;
+  box-shadow: none;
+}
+
+.TabView__tabs > .Tabs > .TabsItem--active::before {
+  border-color: transparent;
+}
+
+.TabView__pages {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.TabView__page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.TabView__page-enter-active,
+.TabView__page-leave-active {
+  pointer-events: none;
+  transition: transform var(--mediumTransition) cubic-bezier(0.2, 0, 0, 1);
+}
+
+.TabView__page-enter-from {
+  transform: translateX(var(--page-enter-offset));
+}
+
+.TabView__page-leave-to {
+  transform: translateX(var(--page-leave-offset));
+}
+
+.TabView__page-enter-active ::-webkit-scrollbar,
+.TabView__page-leave-active ::-webkit-scrollbar {
+  display: none;
+}

@@ -363,3 +363,22 @@ export type MessagesSearchConversationsResponse = {
   profiles?: UsersUser[]
   groups?: GroupsGroup[]
 }
+
+// messages.search
+export type MessagesSearchParams = {
+  q: string
+  peer_id?: number
+  date?: number
+  offset?: number
+  count?: number
+  extended: 1
+  fields: string
+}
+
+export type MessagesSearchResponse = {
+  count: number
+  items: MessagesMessage[]
+  profiles?: UsersUser[]
+  groups?: GroupsGroup[]
+  conversations?: MessagesConversation[]
+}

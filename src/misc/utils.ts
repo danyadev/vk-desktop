@@ -22,7 +22,7 @@ type RawElement = NormalElement | Element
 export type RefElement = NormalElement | ComponentPublicInstance
 export type RawRefElement = RawElement | ComponentPublicInstance
 
-type ClassNameUnit = string | false | 0
+type ClassNameUnit = string | false | 0 | undefined
 export type ClassName =
   | ClassNameUnit
   | ClassNameUnit[]

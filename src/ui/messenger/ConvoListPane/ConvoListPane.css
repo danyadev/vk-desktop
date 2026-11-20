@@ -1,0 +1,33 @@
+.ConvoListPane__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--vkui--color_separator_primary);
+}
+
+.ConvoListPane--compact .ConvoListPane__header {
+  justify-content: center;
+}
+
+.ConvoListPane__headerAction {
+  width: 32px;
+  height: 32px;
+  color: var(--vkui--color_icon_secondary);
+}
+
+.ConvoListPane__headerActionIcon-enter-active,
+.ConvoListPane__headerActionIcon-leave-active {
+  transition: opacity 100ms, transform 100ms;
+}
+
+.ConvoListPane__headerActionIcon-enter-from {
+  opacity: 0;
+  transform: translateX(6px) scale(0.85);
+}
+
+.ConvoListPane__headerActionIcon-leave-to {
+  opacity: 0;
+  transform: translateX(-6px) scale(0.85);
+}

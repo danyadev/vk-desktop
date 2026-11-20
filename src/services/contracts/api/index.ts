@@ -77,6 +77,8 @@ import {
   MessagesRemoveChatUserResponse,
   MessagesSearchConversationsParams,
   MessagesSearchConversationsResponse,
+  MessagesSearchParams,
+  MessagesSearchResponse,
   MessagesSendParams,
   MessagesSendResponse,
   MessagesUnarchiveConversationParams,
@@ -286,6 +288,10 @@ export type Methods = {
   'messages.searchConversations': {
     params: MessagesSearchConversationsParams
     response: MessagesSearchConversationsResponse
+  }
+  'messages.search': {
+    params: MessagesSearchParams
+    response: MessagesSearchResponse
   }
 
   'users.get': {

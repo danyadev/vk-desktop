@@ -225,13 +225,11 @@ export function lastEditableMessage(
   viewerId: Peer.OwnerId
 ): Message.Normal | undefined {
   for (let i = convo.history.length - 1; i >= 0; i--) {
-    const node = convo.history[i]
-
-    if (
-      node?.kind === 'Item' &&
-      node.item.kind === 'Normal' &&
-      canEditMessage(convo, node.item, viewerId)
-    ) {
+    const node = convo.history[i]!
+    if (node.kind === 'Gap') {
+      return
+    }
+    if (node.item.kind === 'Normal' && canEditMessage(convo, node.item, viewerId)) {
       return node.item
     }
   }

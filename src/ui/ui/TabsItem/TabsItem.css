@@ -32,6 +32,7 @@
   border-color: var(--vkui--color_separator_primary);
 }
 
-.TabsItem:hover {
+.TabsItem:hover,
+.TabsItem:focus-visible {
   background-color: var(--vkui--color_background_contrast_themed--hover);
 }

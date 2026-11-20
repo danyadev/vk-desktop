@@ -29,6 +29,7 @@ export const ConvoHeader = defineComponent<Props>((props) => {
         icon={<Icon24ChevronCompactLeft color="var(--vkui--color_icon_secondary)" />}
         class="ConvoHeader__back"
         withHoverBackground
+        shiftOnClick
         onClick={() => {
           if (router.currentRoute.value.query.canGoBack) {
             router.back()
