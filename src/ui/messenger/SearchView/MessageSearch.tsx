@@ -5,7 +5,9 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useMessageSearch, useViewer } from 'hooks'
+import { useMessageSearch, useNow, useViewer } from 'hooks'
+import { isSameDay, ONE_MINUTE } from 'misc/dateTime'
+import { useMessageAuthorName } from 'ui/messenger/ConvoListView/useMessageAuthorName'
 import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { IntersectionWrapper } from 'ui/ui/IntersectionWrapper/IntersectionWrapper'
@@ -22,52 +24,83 @@ export const MessageSearch = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const router = useRouter()
   const viewer = useViewer()
+  const now = useNow(ONE_MINUTE)
   const convosStore = useConvosStore()
   const { peers } = usePeersStore()
   const search = useMessageSearch(computed(() => props.query))
+  const getAuthorName = useMessageAuthorName()
   const $results = shallowRef<HTMLElement | null>(null)
 
   watch(() => props.query, () => $results.value?.scrollTo({ top: 0 }))
-  const dateFormatter = lang.dateTimeFormatter({ day: 'numeric', month: 'short', year: 'numeric' })
+
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp)
+    const current = new Date(now.value)
+
+    if (isSameDay(current, date)) {
+      return lang.dateTimeFormatter({
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(timestamp)
+    }
+    if (date.getFullYear() === current.getFullYear()) {
+      return lang.dateTimeFormatter({
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(timestamp)
+    }
+    return lang.dateTimeFormatter({
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(timestamp)
+  }
 
   const openMessage = (message: Message.Confirmed) => {
     convosStore.requestNavigation(message.peerId, {
       kind: 'Message',
       cmid: message.cmid
     })
-    router.push({ name: 'Convo', params: { peerId: message.peerId } })
+    router.push({
+      name: 'Convo',
+      params: { peerId: message.peerId },
+      query: { canGoBack: 1 }
+    })
   }
 
   const renderMessage = (message: Message.Confirmed) => {
     const peer = Peer.safeGet(peers, message.peerId)
+    const authorName = getAuthorName(message, convosStore.convos.get(message.peerId))
+
     return (
-      <div class="MessageSearch__item" key={`${message.peerId}:${message.cmid}`}>
-        <button
-          type="button"
-          class="MessageSearch__itemMain"
-          onClick={() => openMessage(message)}
-        >
-          <Avatar peer={peer} size={40} />
-          <span class="MessageSearch__details">
-            <span class="MessageSearch__header">
-              <span class="MessageSearch__name">
-                {message.peerId === viewer.id ? lang.use('me_peer_favorites') : Peer.name(peer)}
-              </span>
-              <span class="MessageSearch__date">
-                {dateFormatter.format(message.sentAt)}
-              </span>
+      <button
+        type="button"
+        class="MessageSearch__item"
+        key={`${message.peerId}-${message.cmid}`}
+        onClick={() => openMessage(message)}
+      >
+        <Avatar peer={peer} size={48} />
+
+        <span class="MessageSearch__details">
+          <span class="MessageSearch__header">
+            <span class="MessageSearch__name">
+              {message.peerId === viewer.id ? lang.use('me_peer_favorites') : Peer.name(peer)}
             </span>
-            {message.authorId !== message.peerId && (
-              <span class="MessageSearch__subtitle">
-                {Peer.name(Peer.safeGet(peers, message.authorId))}
-              </span>
-            )}
-            <span class="MessageSearch__text">
-              <MessagePreview message={message} />
+            <span class="MessageSearch__date">
+              {formatDate(message.sentAt)}
             </span>
           </span>
-        </button>
-      </div>
+
+          <span class="MessageSearch__text">
+            {authorName && <span class="MessageSearch__author">{authorName}</span>}
+            <MessagePreview message={message} />
+          </span>
+        </span>
+      </button>
     )
   }
 
