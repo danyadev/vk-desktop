@@ -87,8 +87,8 @@ export const useConvoSearch = (query: Ref<string>) => {
   onDeactivated(() => (active.value = false))
   onScopeDispose(() => currentController?.abort())
 
-  watch(query, (value, _, onCleanup) => {
-    if (!active.value || !updateQuery(value.trim())) return
+  watch(() => query.value.trim(), (value, _, onCleanup) => {
+    if (!active.value || !updateQuery(value)) return
 
     const timeout = window.setTimeout(search, 300)
     onCleanup(() => window.clearTimeout(timeout))
