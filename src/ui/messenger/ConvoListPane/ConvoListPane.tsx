@@ -1,4 +1,4 @@
-import { defineComponent, KeepAlive, shallowRef, Transition, watch } from 'vue'
+import { defineComponent, shallowRef, Transition, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useServices } from 'services'
 import { useViewerStore } from 'store/viewer'
@@ -12,6 +12,8 @@ import { ActionMenuItem } from 'ui/ui/ActionMenuItem/ActionMenuItem'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Input } from 'ui/ui/Input/Input'
 import { Popper } from 'ui/ui/Popper/Popper'
+import { TabPage } from 'ui/ui/TabPage/TabPage'
+import { TabView } from 'ui/ui/TabView/TabView'
 import {
   Icon20MenuOutline,
   Icon24ChevronCompactLeft,
@@ -98,7 +100,6 @@ export const ConvoListPane = defineComponent<Props>((props) => {
 
         {!props.compact && (
           <Input
-            class="ConvoListPane__searchInput"
             mode="search"
             size="small"
             placeholder={lang.use('input_search')}
@@ -120,17 +121,19 @@ export const ConvoListPane = defineComponent<Props>((props) => {
         )}
       </div>
 
-      <div class="ConvoListPane__pages">
-        <Transition name="ConvoListPane__page" css={!props.compact}>
-          <KeepAlive>
-            {searchOpen.value ? (
-              <SearchView key="search" class="ConvoListPane__page" query={searchQuery.value} />
-            ) : (
-              <ConvoListView key="convos" class="ConvoListPane__page" compact={props.compact} />
-            )}
-          </KeepAlive>
-        </Transition>
-      </div>
+      <TabView
+        keepAlive
+        noTabs
+        noAnimation={props.compact}
+        selectedTab={searchOpen.value ? 'search' : 'convos'}
+      >
+        <TabPage key="convos" title="convos">
+          <ConvoListView compact={props.compact} />
+        </TabPage>
+        <TabPage key="search" title="search">
+          <SearchView query={searchQuery.value} />
+        </TabPage>
+      </TabView>
 
       {!props.compact && (
         <SyncStatus edge="top" show={!searchOpen.value && route.name !== 'Convo'} />

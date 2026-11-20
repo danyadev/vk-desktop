@@ -17,7 +17,7 @@ type Props = {
   query: string
 }
 
-export const MessageSearchPage = defineComponent<Props>((props) => {
+export const MessageSearch = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const router = useRouter()
   const viewer = useViewer()

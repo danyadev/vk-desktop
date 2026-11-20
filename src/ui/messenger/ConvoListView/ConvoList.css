@@ -1,8 +1,11 @@
 .ConvoList {
-  flex: 1;
-  min-height: 0;
+  height: 100%;
   overflow-y: overlay;
-  padding: 6px 8px;
+  padding: 0 8px 6px 8px;
+}
+
+.ConvoList--compact {
+  padding-top: 8px;
 }
 
 .ConvoList__empty {

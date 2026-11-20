@@ -3,7 +3,6 @@ import { useConvosStore } from 'store/convos'
 import { ConvoList } from 'ui/messenger/ConvoListView/ConvoList'
 import { TabPage } from 'ui/ui/TabPage/TabPage'
 import { TabView } from 'ui/ui/TabView/TabView'
-import './ConvoListView.css'
 
 type Props = {
   compact?: boolean
@@ -13,7 +12,7 @@ export const ConvoListView = defineComponent<Props>((props) => {
   const { lists } = useConvosStore()
 
   return () => (
-    <TabView class="ConvoListView" keepAlive>
+    <TabView keepAlive noTabs={props.compact}>
       <TabPage key="main" title={lists.main.name}>
         <ConvoList list={lists.main} compact={props.compact} />
       </TabPage>

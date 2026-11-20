@@ -20,7 +20,7 @@ export const ConvoList = defineComponent<Props>((props) => {
   const convoList = useConvoList(props.list)
 
   return () => (
-    <div class="ConvoList">
+    <div class={['ConvoList', props.compact && 'ConvoList--compact']}>
       {convoList.value.map((convo) => (
         <ConvoActionMenu key={convo.id} convo={convo} fromConvoList>
           <ConvoListItem convo={convo} compact={props.compact} />

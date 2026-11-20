@@ -18,7 +18,7 @@ type Props = {
 
 const RECENT_LIMIT = 20
 
-export const ConvoSearchPage = defineComponent<Props>((props) => {
+export const ConvoSearch = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const router = useRouter()
   const viewer = useViewer()
