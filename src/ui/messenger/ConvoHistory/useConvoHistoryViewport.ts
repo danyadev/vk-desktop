@@ -62,6 +62,8 @@ export const useConvoHistoryViewport = (
 
     if (element) {
       resizeObserver.observe(element)
+    } else {
+      pinnedToBottom.value = false
     }
   }, { flush: 'post' })
 
