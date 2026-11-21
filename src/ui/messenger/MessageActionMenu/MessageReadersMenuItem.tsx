@@ -20,7 +20,7 @@ import './MessageReadersMenuItem.css'
 
 type Props = {
   convo: Convo.Convo
-  message: Message.Normal
+  message: Message.Confirmed
 }
 
 export const MessageReadersMenuItem = defineComponent<Props>((props) => {
