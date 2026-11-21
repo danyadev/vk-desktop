@@ -348,14 +348,11 @@ export function canDeleteMessageForAll(
   if (message.kind === 'Service') return false
   if (message.authorId === viewerId) return true
 
-  if (convo.kind === 'ChatConvo') {
-    const isViewerAdmin = convo.ownerId === viewerId || convo.adminIds.has(viewerId)
-    const isAuthorAdmin =
-      convo.ownerId === message.authorId || convo.adminIds.has(message.authorId)
-    if (isViewerAdmin && !isAuthorAdmin) return true
-  }
+  if (convo.kind !== 'ChatConvo') return false
+  if (convo.ownerId === viewerId) return true
+  if (!convo.adminIds.has(viewerId)) return false
 
-  return false
+  return convo.ownerId !== message.authorId && !convo.adminIds.has(message.authorId)
 }
 
 export function isCasper(convo: Convo): boolean {
