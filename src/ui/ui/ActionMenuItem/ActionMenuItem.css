@@ -10,6 +10,11 @@
   transition: background-color var(--fastTransition);
 }
 
+.ActionMenuItem--small {
+  padding-block: 2px;
+  font: var(--smallFont);
+}
+
 .ActionMenuItem:has(> .ActionMenuItem__icon) {
   padding-left: 4px;
 }
@@ -20,13 +25,15 @@
 
 .ActionMenuItem__icon {
   display: flex;
+  width: 20px;
+  height: 20px;
   flex: none;
   align-items: center;
   justify-content: center;
   color: var(--vkui--color_icon_secondary);
 }
 
-.ActionMenuItem__icon > svg {
+.ActionMenuItem__icon > svg[width='24'][height='24'] {
   width: 20px;
   height: 20px;
 }

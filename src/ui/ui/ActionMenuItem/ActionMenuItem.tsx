@@ -8,6 +8,7 @@ export type ActionMenuItemProps = {
   after?: JSXElement
   text: string
   mode?: 'default' | 'accent' | 'destructive'
+  size?: 'regular' | 'small'
   loading?: boolean
   disabled?: boolean
 } & ButtonHTMLAttributes
@@ -17,7 +18,8 @@ export const ActionMenuItem = defineComponent<ActionMenuItemProps>((props) => {
     <button
       class={['ActionMenuItem', {
         'ActionMenuItem--accent': props.mode === 'accent',
-        'ActionMenuItem--destructive': props.mode === 'destructive'
+        'ActionMenuItem--destructive': props.mode === 'destructive',
+        'ActionMenuItem--small': props.size === 'small'
       }]}
       type="button"
       disabled={!!props.disabled || props.loading}
@@ -32,5 +34,5 @@ export const ActionMenuItem = defineComponent<ActionMenuItemProps>((props) => {
     </button>
   )
 }, {
-  props: ['icon', 'after', 'text', 'mode', 'loading', 'disabled']
+  props: ['icon', 'after', 'text', 'mode', 'size', 'loading', 'disabled']
 })

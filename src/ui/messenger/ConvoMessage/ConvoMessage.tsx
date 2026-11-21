@@ -104,7 +104,7 @@ export const ConvoMessage = defineComponent<Props>((props) => {
           {message.forwardedMessages && <ForwardedMessages messages={message.forwardedMessages} />}
 
           <span class="ConvoMessage__time">
-            {message.updatedAt && (lang.use('me_edited_label') + ' · ')}
+            {message.editedAt && (lang.use('me_edited_label') + ' · ')}
             {lang
               .dateTimeFormatter({ hour: '2-digit', minute: '2-digit' })
               .format(message.sentAt)}

@@ -158,7 +158,7 @@ export function toPreviewMessage(
     authorId,
     isOut: true,
     sentAt: 0,
-    updatedAt: undefined,
+    editedAt: undefined,
     text: draft.text,
     attaches: draft.attaches,
     replyMessage: draft.replyMessage,

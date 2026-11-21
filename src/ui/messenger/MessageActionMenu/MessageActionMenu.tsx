@@ -6,7 +6,7 @@ import * as Message from 'model/Message'
 import { useConvosStore } from 'store/convos'
 import { useViewerStore } from 'store/viewer'
 import { retryAllPendingMessages, retryPendingMessage } from 'actions'
-import { useConvoSession, useModal } from 'hooks'
+import { useConvoSession, useFormatDate, useModal } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
 import { MessageReadersMenuItem } from 'ui/messenger/MessageActionMenu/MessageReadersMenuItem'
@@ -24,10 +24,12 @@ import {
   Icon20EditOutline,
   Icon20PinOutline,
   Icon20PinSlashOutline,
+  Icon20RecentOutline,
   Icon20ReplyOutline,
   Icon20ShareOutline,
   Icon20TrashOutline
 } from 'assets/icons'
+import './MessageActionMenu.css'
 
 type LoadingAction = 'pin'
 
@@ -41,6 +43,7 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
   const viewer = useViewerStore()
   const session = useConvoSession()
   const { convoDrafts } = useConvosStore()
+  const formatDate = useFormatDate({ shortMonth: true })
   const deleteModal = useModal()
   const forwardModal = useModal()
   const forwardingMessages = shallowRef<NonEmptyArray<Message.Foreign>>()
@@ -100,6 +103,21 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
 
       return (
         <ActionMenu>
+          {message.editedAt && (
+            <>
+              <ActionMenuItem
+                class="MessageActionMenu__editedItem"
+                size="small"
+                icon={<Icon20RecentOutline width={16} height={16} />}
+                text={lang.use('me_message_menu_edited_at', {
+                  date: formatDate(message.editedAt)
+                })}
+                disabled
+              />
+              <ActionMenuSeparator />
+            </>
+          )}
+
           {message.isOut &&
             !Message.isUnread(message, convo) &&
             convo.kind === 'ChatConvo' &&

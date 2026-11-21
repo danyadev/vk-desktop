@@ -19,7 +19,7 @@ type Props = {
 export const AttachWall = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { peers } = usePeersStore()
-  const formatDate = useFormatDate({ relativeTime: false })
+  const formatDate = useFormatDate()
 
   return () => {
     const author = Peer.safeGet(peers, props.wall.authorId)
