@@ -45,7 +45,7 @@ export class Engine {
           ts,
           version: IEngine.VERSION,
           mode: ENGINE_MODE,
-          wait: ENGINE_MAX_CONNECTION_DURATION_SEC
+          wait: connection.status === 'syncing' ? 0 : ENGINE_MAX_CONNECTION_DURATION_SEC
         }),
         signal: timeoutSignal
       })
