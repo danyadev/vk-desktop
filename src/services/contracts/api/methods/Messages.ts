@@ -382,3 +382,12 @@ export type MessagesSearchResponse = {
   groups?: GroupsGroup[]
   conversations?: MessagesConversation[]
 }
+
+// messages.recogniseAudioMessage
+export type MessagesRecogniseAudioMessageParams = {
+  peer_id: number
+  cmid: number
+  audio_message_id: string
+}
+
+export type MessagesRecogniseAudioMessageResponse = 1

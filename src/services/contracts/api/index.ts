@@ -73,6 +73,8 @@ import {
   MessagesPinConversationResponse,
   MessagesPinParams,
   MessagesPinResponse,
+  MessagesRecogniseAudioMessageParams,
+  MessagesRecogniseAudioMessageResponse,
   MessagesRemoveChatUserParams,
   MessagesRemoveChatUserResponse,
   MessagesSearchConversationsParams,
@@ -292,6 +294,10 @@ export type Methods = {
   'messages.search': {
     params: MessagesSearchParams
     response: MessagesSearchResponse
+  }
+  'messages.recogniseAudioMessage': {
+    params: MessagesRecogniseAudioMessageParams
+    response: MessagesRecogniseAudioMessageResponse
   }
 
   'users.get': {

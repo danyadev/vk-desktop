@@ -51,7 +51,7 @@ export type Voice = {
   waveform: number[]
   wasListened: boolean
   transcript: string
-  transcriptState: 'in_progress' | 'done' | 'error'
+  transcriptState: 'not_started' | 'in_progress' | 'done' | 'error'
 }
 
 export type Wall = {

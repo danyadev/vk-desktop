@@ -263,6 +263,26 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
         break
       }
 
+      case 10019: {
+        const [, rawCmid, rawPeerId] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const cmid = Message.resolveCmid(rawCmid)
+
+        const convo = convos.get(peerId)
+        if (!convo || !Convo.findMessage(convo, cmid)) break
+
+        const apiMessage = apiMessagesMap.get(peerId)?.get(cmid)
+        const message = apiMessage && fromApiMessage(apiMessage)
+        if (!message) break
+
+        Convo.insertMessages(convo, [message], {
+          up: true,
+          down: true,
+          aroundId: cmid
+        })
+        break
+      }
+
       case 20: {
         const [, rawPeerId, majorId] = update
         const peerId = Peer.resolveId(rawPeerId)
@@ -653,6 +673,18 @@ function collectMissingData(updates: IEngine.Update[]): MissingDataMeta {
           ) {
             missingConvos.add(peerId)
           }
+        }
+        break
+      }
+
+      case 10019: {
+        const [, rawCmid, rawPeerId] = update
+        const peerId = Peer.resolveId(rawPeerId)
+        const cmid = Message.resolveCmid(rawCmid)
+        const convo = convos.get(peerId)
+
+        if (convo && Convo.findMessage(convo, cmid)) {
+          addMissingCmid(peerId, cmid)
         }
         break
       }

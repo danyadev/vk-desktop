@@ -60,7 +60,7 @@ export function fromApiAttaches(
           waveform: apiAttach.audio_message.waveform,
           wasListened: wasVoiceMessageListened,
           transcript: apiAttach.audio_message.transcript?.trim() ?? '',
-          transcriptState: apiAttach.audio_message.transcript_state
+          transcriptState: apiAttach.audio_message.transcript_state ?? 'not_started'
         }
         break
       }
