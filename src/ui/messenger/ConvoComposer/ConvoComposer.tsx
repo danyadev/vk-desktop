@@ -1,11 +1,13 @@
 import { ChangeEvent, computed, defineComponent, KeyboardEvent, onMounted, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
+import * as Attach from 'model/Attach'
 import * as Convo from 'model/Convo'
 import * as ConvoDraft from 'model/ConvoDraft'
 import { useConvosStore } from 'store/convos'
 import { editMessage, sendMessage } from 'actions'
 import { useConvoSession, useGlobalModal, useKeyboardZones, useModal, useViewer } from 'hooks'
 import { isEventWithModifier } from 'misc/utils'
+import { MAX_MESSAGE_ATTACHES } from 'misc/constants'
 import { ComposerAttaches } from 'ui/messenger/ConvoComposer/ComposerAttaches/ComposerAttaches'
 import { useComposerAttaches } from 'ui/messenger/ConvoComposer/useComposerAttaches'
 import { DeleteMessageModal } from 'ui/messenger/DeleteMessageModal/DeleteMessageModal'
@@ -54,18 +56,14 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     abortUploadingAttach
   } = useComposerAttaches(props.convo, draft)
 
-  const isEmptyEditedMessage = computed(() => (
-    !!draft.editing &&
-    !ConvoDraft.hasContent(draft) &&
-    !draft.replyMessage &&
-    !draft.forwardedMessages &&
-    draft.uploadingAttaches.length === 0
-  ))
-
   const canSubmit = computed(() => (
     !isSaving.value &&
     draft.uploadingAttaches.length === 0 &&
     (!!draft.editing || ConvoDraft.hasContent(draft))
+  ))
+
+  const canAddAttach = computed(() => (
+    Attach.count(draft.attaches) + draft.uploadingAttaches.length < MAX_MESSAGE_ATTACHES
   ))
 
   const isLoading = computed(() => (
@@ -73,6 +71,14 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     attachPreviews.value.some((preview) => (
       preview.kind === 'UploadingAttach' && !preview.attach.failed
     ))
+  ))
+
+  const isEmptyEditedMessage = computed(() => (
+    !!draft.editing &&
+    !ConvoDraft.hasContent(draft) &&
+    !draft.replyMessage &&
+    !draft.forwardedMessages &&
+    draft.uploadingAttaches.length === 0
   ))
 
   const cancelEditing = () => {
@@ -185,6 +191,8 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const onPaste = (event: ClipboardEvent) => {
+    if (!canAddAttach.value) return
+
     for (const file of event.clipboardData?.files ?? []) {
       if (['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
         event.preventDefault()
@@ -318,6 +326,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
               <ActionMenuItem
                 icon={<Icon20PictureOutline />}
                 text={lang.use('me_convo_composer_menu_photo')}
+                disabled={!canAddAttach.value}
                 onClick={openPhotoPicker}
               />
             </ActionMenu>
