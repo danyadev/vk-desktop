@@ -13,7 +13,7 @@ import './ConvoSelectionToolbar.css'
 
 type Props = {
   convo: Convo.Convo
-  selectedMessages: NonEmptyArray<Message.Confirmed> | null
+  selectedMessages: NonEmptyArray<Message.Confirmed>
 }
 
 export const ConvoSelectionToolbar = defineComponent<Props>((props) => {
@@ -32,8 +32,6 @@ export const ConvoSelectionToolbar = defineComponent<Props>((props) => {
   })
 
   const forwardMessages = () => {
-    if (!props.selectedMessages) return
-
     const messages = props.selectedMessages
       .filter((message): message is Message.Normal => message.kind === 'Normal')
       .sort((a, b) => a.cmid - b.cmid)
@@ -62,7 +60,10 @@ export const ConvoSelectionToolbar = defineComponent<Props>((props) => {
         size="small"
         mode="tertiary"
         before={<Icon20ShareOutline color="var(--vkui--color_icon_secondary)" />}
-        disabled={!props.selectedMessages?.every((message) => message.kind === 'Normal')}
+        disabled={
+          props.selectedMessages.length > 100 ||
+          !props.selectedMessages.every((message) => message.kind === 'Normal')
+        }
         onClick={forwardMessages}
       >
         {lang.use('me_message_menu_forward')}
@@ -72,7 +73,7 @@ export const ConvoSelectionToolbar = defineComponent<Props>((props) => {
         icon={<Icon20TrashOutline />}
         title={lang.use('me_message_menu_delete')}
         withHoverBackground
-        disabled={!props.selectedMessages}
+        disabled={props.selectedMessages.length > 100}
         onClick={deleteModal.open}
       />
 
@@ -85,17 +86,15 @@ export const ConvoSelectionToolbar = defineComponent<Props>((props) => {
         />
       )}
 
-      {props.selectedMessages && (
-        <DeleteMessageModal
-          convo={props.convo}
-          messages={props.selectedMessages}
-          opened={deleteModal.opened}
-          onClose={deleteModal.close}
-          onDeleted={(cmids) => {
-            cmids.forEach((cmid) => session.selectedCmids.delete(cmid))
-          }}
-        />
-      )}
+      <DeleteMessageModal
+        convo={props.convo}
+        messages={props.selectedMessages}
+        opened={deleteModal.opened}
+        onClose={deleteModal.close}
+        onDeleted={(cmids) => {
+          cmids.forEach((cmid) => session.selectedCmids.delete(cmid))
+        }}
+      />
     </div>
   )
 }, {
