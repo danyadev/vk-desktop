@@ -193,6 +193,12 @@ export const MessageActionMenu = defineComponent<Props>((props, { slots }) => {
     if (message.kind === 'Service' || message.kind === 'Expired') {
       return (
         <ActionMenu>
+          {message.isOut &&
+            !Message.isUnread(message, convo) &&
+            convo.kind === 'ChatConvo' &&
+            convo.status === 'in' && (
+            <MessageReadersMenuItem convo={convo} message={message} />
+          )}
           <ActionMenuItem
             icon={<Icon20CheckCircleOutline />}
             text={lang.use('me_message_menu_select')}
