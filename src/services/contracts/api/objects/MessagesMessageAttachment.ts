@@ -153,7 +153,8 @@ type MessagesMessageAttachmentAudioMessage = {
   duration: number
   waveform: number[]
   transcript?: string
-  transcript_state: 'in_progress' | 'done' | 'error'
+  /** Absent when the transcription generation haven't started */
+  transcript_state?: 'in_progress' | 'done' | 'error'
 }
 
 export type MessagesMessageAttachmentWall = {

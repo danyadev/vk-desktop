@@ -33,6 +33,7 @@ export type Update =
   | Update12
   | Update10013
   | Update10018
+  | Update10019
   | Update20
   | Update21
   | Update52
@@ -243,6 +244,14 @@ type IncompleteUpdate10018 = [
   cmid: Update10018[1],
   flags: Update10018[2],
   peerId: Update10018[3]
+]
+
+// Инвалидация кеша сообщения
+type Update10019 = [
+  type: 10019,
+  conversationMessageId: number,
+  peerId: number,
+  messageId: number
 ]
 
 // Изменился majorId

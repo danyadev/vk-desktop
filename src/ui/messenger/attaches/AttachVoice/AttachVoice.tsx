@@ -23,18 +23,56 @@ export const AttachVoice = defineComponent<Props>((props) => {
   let rAFId = 0
 
   const transcriptNotReadyStatus = computed(() => {
-    if (props.voice.transcriptState === 'error') {
-      return lang.use('me_voice_transcription_error')
-    }
+    switch (props.voice.transcriptState) {
+      case 'error':
+        return lang.use('me_voice_transcription_error')
 
-    if (props.voice.transcriptState === 'in_progress') {
-      return lang.use('me_voice_transcription_in_progress')
-    }
+      case 'not_started':
+      case 'in_progress':
+        return lang.use('me_voice_transcription_in_progress')
 
-    if (!props.voice.transcript) {
-      return lang.use('me_voice_transcript_empty')
+      case 'done':
+        if (!props.voice.transcript) {
+          return lang.use('me_voice_transcript_empty')
+        }
     }
   })
+
+  const requestTranscription = async () => {
+    const { message, voice } = props
+
+    if (!message?.peerId || !message.cmid) return
+    if (voice.transcriptState !== 'not_started') return
+
+    try {
+      voice.transcriptState = 'in_progress'
+      await api.fetch('messages.recogniseAudioMessage', {
+        peer_id: message.peerId,
+        cmid: message.cmid,
+        audio_message_id: `${message.authorId}_${voice.id}`
+      })
+    } catch (error) {
+      voice.transcriptState = 'error'
+      console.error('[AttachVoice] Transcription request failed', error)
+    }
+  }
+
+  const markAsListened = () => {
+    if (props.voice.wasListened) {
+      return
+    }
+
+    if (!props.message?.peerId || !props.message.cmid || props.message.isOut) {
+      return
+    }
+
+    props.voice.wasListened = true
+
+    api.fetch('messages.markAsPlayed', {
+      peer_id: props.message.peerId,
+      cmid: props.message.cmid
+    })
+  }
 
   const onRangeChange = (event: InputEvent<HTMLInputElement>) => {
     audio.pause()
@@ -57,23 +95,6 @@ export const AttachVoice = defineComponent<Props>((props) => {
     } else {
       audio.play()
     }
-  }
-
-  const markAsListened = () => {
-    if (props.voice.wasListened) {
-      return
-    }
-
-    if (!props.message?.peerId || !props.message.cmid || props.message.isOut) {
-      return
-    }
-
-    props.voice.wasListened = true
-
-    api.fetch('messages.markAsPlayed', {
-      peer_id: props.message.peerId,
-      cmid: props.message.cmid
-    })
   }
 
   audio.addEventListener('play', () => {
@@ -140,7 +161,12 @@ export const AttachVoice = defineComponent<Props>((props) => {
           class="AttachVoice__toggleTranscription"
           shiftOnClick
           icon={showTranscript.value ? <Icon20ChevronUp /> : <Icon16Text />}
-          onClick={() => (showTranscript.value = !showTranscript.value)}
+          onClick={() => {
+            if (!showTranscript.value) {
+              requestTranscription()
+            }
+            showTranscript.value = !showTranscript.value
+          }}
         />
       </div>
       {showTranscript.value && (
