@@ -42,7 +42,11 @@ export const ConvoSearch = defineComponent<Props>((props) => {
       ...convosStore.recentSearches.filter((id) => id !== peerId)
     ].slice(0, RECENT_LIMIT)
 
-    router.push({ name: 'Convo', params: { peerId } })
+    router.push({
+      name: 'Convo',
+      params: { peerId },
+      query: { canGoBack: 1 }
+    })
   }
 
   const renderConvo = (peerId: Peer.Id, convo: Convo.Convo | undefined, recent: boolean) => {

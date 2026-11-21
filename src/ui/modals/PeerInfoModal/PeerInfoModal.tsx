@@ -143,12 +143,6 @@ export const PeerInfoModal = defineComponent<PeerInfoModalProps>((props) => {
 
   const openConversation = () => {
     peerInfoModal.close()
-
-    const route = router.currentRoute.value
-    if (route.name === 'Convo' && Number(route.params.peerId) === props.peerId) {
-      return
-    }
-
     router.push({
       name: 'Convo',
       params: { peerId: props.peerId },

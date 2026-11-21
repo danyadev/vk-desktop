@@ -1,4 +1,5 @@
 .ConvoMessage {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: fit-content;
@@ -55,4 +56,22 @@
 .ConvoMessage__text + .ConvoMessage__attaches,
 .ConvoMessage__reply + .ConvoMessage__attaches {
   margin-top: 6px;
+}
+
+.ConvoMessage__goToMessage {
+  position: absolute;
+  top: 8px;
+  left: calc(100% + 12px);
+  color: var(--vkui--color_text_accent_themed);
+  opacity: 0.8;
+  transition: opacity var(--fastTransition);
+}
+
+.ConvoMessage__goToMessage:hover {
+  opacity: 1;
+}
+
+.ConvoMessage--out .ConvoMessage__goToMessage {
+  right: calc(100% + 12px);
+  left: auto;
 }
