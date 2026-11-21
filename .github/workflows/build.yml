@@ -13,10 +13,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
+            otherArch: arm64
             files: '"app/VK Desktop linux x64.zip" "app/VK Desktop linux arm64.zip"'
           - os: windows-latest
+            otherArch: x32
             files: '"app/VK Desktop Setup x64.exe" "app/VK Desktop Setup x32.exe"'
           - os: macos-latest
+            otherArch: arm64
             files: '"app/VK Desktop mac x64.dmg" "app/VK Desktop mac arm64.dmg"'
 
     steps:
@@ -38,15 +41,21 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: yarn win-setup
 
-      - name: Upload workflow artifacts
+      - name: Upload x64 artifact
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
         with:
-          name: VK-Desktop-${{ runner.os }}
-          path: |
-            app/*.exe
-            app/*.dmg
-            app/*.zip
+          path: app/*x64.*
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload ${{ matrix.otherArch }} artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v7
+        with:
+          path: app/*${{ matrix.otherArch }}.*
+          archive: false
           if-no-files-found: error
           retention-days: 90
 
