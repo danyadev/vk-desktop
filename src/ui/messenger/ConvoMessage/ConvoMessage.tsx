@@ -1,15 +1,19 @@
 import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
 import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
+import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
 import { useConvoSession, useGlobalModal } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { ForwardedMessages } from 'ui/messenger/ForwardedMessages/ForwardedMessages'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
 import { ReplyMessage } from 'ui/messenger/ReplyMessage/ReplyMessage'
+import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
+import { Icon20MessageArrowRightOutline } from 'assets/icons'
 import './ConvoMessage.css'
 
 type Props = {
@@ -18,8 +22,10 @@ type Props = {
 }
 
 export const ConvoMessage = defineComponent<Props>((props) => {
+  const router = useRouter()
   const { lang } = useServices()
   const { peers } = usePeersStore()
+  const convosStore = useConvosStore()
   const { peerInfoModal, messageViewerModal } = useGlobalModal()
   const session = useConvoSession()
 
@@ -31,6 +37,23 @@ export const ConvoMessage = defineComponent<Props>((props) => {
     } else if (reply.cmid) {
       session.navigationRequest = { kind: 'Message', cmid: reply.cmid }
     }
+  }
+
+  const goToMessage = () => {
+    if (!props.message.peerId || !props.message.cmid) {
+      return
+    }
+
+    messageViewerModal.close()
+    convosStore.requestNavigation(props.message.peerId, {
+      kind: 'Message',
+      cmid: props.message.cmid
+    })
+    router.push({
+      name: 'Convo',
+      params: { peerId: props.message.peerId },
+      query: { canGoBack: 1 }
+    })
   }
 
   return () => {
@@ -68,12 +91,14 @@ export const ConvoMessage = defineComponent<Props>((props) => {
           )}
 
           {message.text && <span class="ConvoMessage__text">{message.text}</span>}
-          {hasAttaches && <Attaches class="ConvoMessage__attaches" attaches={message.attaches} message={message} />}
+          {isEmpty && <span class="ConvoMessage__empty">{lang.use('me_empty_message')}</span>}
 
-          {isEmpty && (
-            <span class="ConvoMessage__empty">
-              {lang.use('me_empty_message')}
-            </span>
+          {hasAttaches && (
+            <Attaches
+              class="ConvoMessage__attaches"
+              attaches={message.attaches}
+              message={message}
+            />
           )}
 
           {message.forwardedMessages && <ForwardedMessages messages={message.forwardedMessages} />}
@@ -90,6 +115,18 @@ export const ConvoMessage = defineComponent<Props>((props) => {
             )}
           </span>
         </div>
+
+        {props.message.kind === 'Foreign' &&
+          !props.message.isUnavailable &&
+          props.message.peerId &&
+          props.message.cmid && (
+          <ButtonIcon
+            class="ConvoMessage__goToMessage"
+            icon={<Icon20MessageArrowRightOutline />}
+            shiftOnClick
+            onClick={goToMessage}
+          />
+        )}
       </div>
     )
   }

@@ -34,26 +34,16 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
       return
     }
 
-    const request = {
-      kind: 'Message' as const,
-      cmid: message.cmid
-    }
-
     messageViewerModal.close()
-    convosStore.requestNavigation(message.peerId, request)
-
-    const route = router.currentRoute.value
-    if (route.name !== 'Convo' || Number(route.params.peerId) !== message.peerId) {
-      router.push({
-        name: 'Convo',
-        params: {
-          peerId: message.peerId
-        },
-        query: {
-          canGoBack: 1
-        }
-      })
-    }
+    convosStore.requestNavigation(message.peerId, {
+      kind: 'Message',
+      cmid: message.cmid
+    })
+    router.push({
+      name: 'Convo',
+      params: { peerId: message.peerId },
+      query: { canGoBack: 1 }
+    })
   }
 
   return () => (
