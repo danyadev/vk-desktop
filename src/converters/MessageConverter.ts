@@ -21,7 +21,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
     authorId: Peer.resolveOwnerId(message.from_id),
     isOut: message.out === 1,
     sentAt: message.date * 1000,
-    updatedAt: message.update_time
+    editedAt: message.update_time
       ? message.update_time * 1000
       : undefined,
     randomId: message.random_id ?? 0
@@ -127,7 +127,7 @@ export function fromEngineMessage(
     authorId,
     isOut,
     sentAt: timestamp * 1000,
-    updatedAt: updateTimestamp ? updateTimestamp * 1000 : undefined,
+    editedAt: updateTimestamp ? updateTimestamp * 1000 : undefined,
     randomId
   }
 
@@ -351,7 +351,7 @@ function fromApiForeignMessage(
       rootPeerId,
       rootCmid
     ),
-    updatedAt: foreignMessage.update_time
+    editedAt: foreignMessage.update_time
       ? foreignMessage.update_time * 1000
       : undefined,
     isUnavailable: !!foreignMessage.is_unavailable

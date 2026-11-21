@@ -5,7 +5,7 @@ import { useFormatDate } from './useFormatDate'
 
 export const useFormatOnlineStatus = () => {
   const { lang } = useServices()
-  const formatDate = useFormatDate()
+  const formatDate = useFormatDate({ relativeTime: true })
 
   return (user: Peer.User): string => {
     const { isOnline, status, lastSeen } = user.onlineInfo

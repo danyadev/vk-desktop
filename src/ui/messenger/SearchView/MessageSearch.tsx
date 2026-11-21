@@ -5,8 +5,7 @@ import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { useConvosStore } from 'store/convos'
 import { usePeersStore } from 'store/peers'
-import { useMessageSearch, useNow, useViewer } from 'hooks'
-import { isSameDay, ONE_MINUTE } from 'misc/dateTime'
+import { useFormatDate, useMessageSearch, useViewer } from 'hooks'
 import { useMessageAuthorName } from 'ui/messenger/ConvoListView/useMessageAuthorName'
 import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
@@ -24,41 +23,14 @@ export const MessageSearch = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const router = useRouter()
   const viewer = useViewer()
-  const now = useNow(ONE_MINUTE)
   const convosStore = useConvosStore()
   const { peers } = usePeersStore()
   const search = useMessageSearch(computed(() => props.query))
   const getAuthorName = useMessageAuthorName()
+  const formatDate = useFormatDate({ shortMonth: true })
   const $results = shallowRef<HTMLElement | null>(null)
 
   watch(() => props.query, () => $results.value?.scrollTo({ top: 0 }))
-
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp)
-    const current = new Date(now.value)
-
-    if (isSameDay(current, date)) {
-      return lang.dateTimeFormatter({
-        hour: '2-digit',
-        minute: '2-digit'
-      }).format(timestamp)
-    }
-    if (date.getFullYear() === current.getFullYear()) {
-      return lang.dateTimeFormatter({
-        day: 'numeric',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit'
-      }).format(timestamp)
-    }
-    return lang.dateTimeFormatter({
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(timestamp)
-  }
 
   const openMessage = (message: Message.Confirmed) => {
     convosStore.requestNavigation(message.peerId, {

@@ -105,7 +105,7 @@ function toPendingMessage(
     authorId: viewer.id,
     isOut: true,
     sentAt: Date.now(),
-    updatedAt: undefined,
+    editedAt: undefined,
     text,
     attaches,
     replyMessage,

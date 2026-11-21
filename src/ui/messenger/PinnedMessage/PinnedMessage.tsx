@@ -13,7 +13,7 @@ type Props = {
 }
 
 export const PinnedMessage = defineComponent<Props>((props) => {
-  const formatDate = useFormatDate({ relativeTime: false })
+  const formatDate = useFormatDate()
   const { peers } = usePeersStore()
 
   return () => (

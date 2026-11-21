@@ -14,7 +14,7 @@ export interface BaseMessage {
   authorId: Peer.OwnerId
   isOut: boolean
   sentAt: number
-  updatedAt: number | undefined
+  editedAt: number | undefined
   randomId: number
 }
 
@@ -49,7 +49,7 @@ export interface Foreign extends Omit<
   isUnavailable: boolean
 }
 
-export interface Pinned extends Omit<Normal, 'kind' | 'updatedAt' | 'randomId' | 'hasMentioned'> {
+export interface Pinned extends Omit<Normal, 'kind' | 'editedAt' | 'randomId' | 'hasMentioned'> {
   kind: 'Pinned'
   isUnavailable: boolean
 }
@@ -155,7 +155,7 @@ export function toForeign(message: Normal): Foreign {
     attaches: message.attaches,
     replyMessage: message.replyMessage,
     forwardedMessages: message.forwardedMessages,
-    updatedAt: message.updatedAt,
+    editedAt: message.editedAt,
     isUnavailable: false
   }
 }

@@ -27,7 +27,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
   const convosStore = useConvosStore()
   const { peers } = usePeersStore()
   const { peerInfoModal, messageViewerModal } = useGlobalModal()
-  const formatDate = useFormatDate({ relativeTime: false })
+  const formatDate = useFormatDate()
 
   const goToMessage = (message: Message.Foreign) => {
     if (!message.peerId || !message.cmid) {
@@ -75,7 +75,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
             </ButtonText>
             <div class="ForwardedMessage__date">
               {formatDate(message.sentAt)}
-              {message.updatedAt && (' · ' + lang.use('me_edited_label'))}
+              {message.editedAt && (' · ' + lang.use('me_edited_label'))}
             </div>
 
             {!message.isUnavailable && message.peerId && message.cmid && (

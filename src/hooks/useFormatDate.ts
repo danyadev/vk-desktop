@@ -4,12 +4,13 @@ import { isPreviousDay, isSameDay, ONE_DAY, ONE_HOUR, ONE_MINUTE } from 'misc/da
 
 type Options = {
   relativeTime?: boolean
+  shortMonth?: boolean
 }
 
 export const useFormatDate = (options: Options = {}) => {
   const { lang } = useServices()
   const now = useNow(10000)
-  const { relativeTime = true } = options
+  const { relativeTime, shortMonth } = options
 
   return (timestamp: number) => {
     const nowTimestamp = now.value
@@ -49,7 +50,7 @@ export const useFormatDate = (options: Options = {}) => {
       default: {
         const date = lang.dateTimeFormatter({
           day: 'numeric',
-          month: 'long'
+          month: shortMonth ? 'short' : 'long'
         }).format(timestamp)
         const year = timestampDate.getFullYear()
 
