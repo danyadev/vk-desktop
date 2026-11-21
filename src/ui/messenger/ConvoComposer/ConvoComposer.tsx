@@ -48,6 +48,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   const editErrorModal = useModal()
 
   const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
+  const initialDraftText = draft.text
   const {
     attachPreviews,
     removeAttachPreview,
@@ -342,6 +343,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
         <span
           class="ConvoComposer__input"
           contenteditable={isSaving.value ? 'false' : 'plaintext-only'}
+          innerText={initialDraftText}
           role="textbox"
           placeholder={lang.use('me_convo_composer_placeholder')}
           ref={$input}

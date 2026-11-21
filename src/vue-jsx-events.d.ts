@@ -20,6 +20,8 @@ declare module 'vue' {
    */
 
   interface HTMLAttributes {
+    // Keep until https://github.com/vuejs/core/pull/16392 is merged
+    innerText?: string
     onInput?: (event: InputEvent<HTMLElement>) => void
     onKeydown?: (event: KeyboardEvent<HTMLElement>) => void
     onFocusin?: (event: FocusEvent<HTMLElement>) => void
