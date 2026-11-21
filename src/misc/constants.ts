@@ -59,4 +59,5 @@ export const PEER_GROUP_EXTRA_FIELDS = [
 
 export const CONVOS_PER_PAGE = 20
 export const MAX_PINNED_CONVOS = 5
+export const MAX_MESSAGE_ATTACHES = 10
 export const INTEGER_BOUNDARY = (2 ** 31) - 1
