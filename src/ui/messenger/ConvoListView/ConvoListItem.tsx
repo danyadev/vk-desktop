@@ -83,8 +83,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
       <button
         type="button"
         class={['ConvoListItem', {
-          'ConvoListItem--active': active.value,
-          'ConvoListItem--pinned': props.convo.majorSortId !== 0
+          'ConvoListItem--active': active.value
         }]}
         onClick={openConvo}
       >

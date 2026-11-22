@@ -8,6 +8,11 @@
   padding-top: 8px;
 }
 
+.ConvoList__separator {
+  margin: 8px 0;
+  border-top: 1px solid var(--vkui--color_separator_primary);
+}
+
 .ConvoList__empty {
   display: flex;
   justify-content: center;
