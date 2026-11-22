@@ -53,7 +53,9 @@ export const ConvoListItem = defineComponent<Props>((props) => {
     const author = draftMessage.value
       ? lang.use('me_convo_list_draft_label')
       : getAuthorName(lastMessage.value, props.convo, true)
-    const text = message ? getMessagePreviewText(message, lang, peers) : emptyConvoDescription
+    const text = message
+      ? getMessagePreviewText(message, lang, peers, viewer.id)
+      : emptyConvoDescription
 
     return author + text
   })

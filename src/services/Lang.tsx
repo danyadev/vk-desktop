@@ -7,8 +7,15 @@ import { JSXElement, splitter } from 'misc/utils'
 type PluralKeys = PluralRules[Locale]
 type PluralValues = Record<PluralKeys, string> & { single?: string }
 
-type GenderKeys = 'male' | 'female'
-type GenderValues = Record<GenderKeys, string>
+type GenderValues = {
+  male: string
+  female: string
+  you?: string
+}
+
+type GenderForm<Key extends keyof DictionaryOfGenders> =
+  Peer.User['gender'] |
+  (DictionaryOfGenders[Key] extends { you: string } ? 'you' : never)
 
 type DictionaryOfStrings = {
   [Key in keyof Dictionary as Dictionary[Key] extends string ? Key : never]: Dictionary[Key]
@@ -149,16 +156,16 @@ export class Lang {
 
   useGender<Key extends keyof DictionaryOfGenders & keyof VariablesTypings>(
     key: Key,
-    gender: Peer.User['gender'],
+    gender: GenderForm<Key>,
     variables: VariablesTypings[Key]
   ): string
   useGender<Key extends Exclude<keyof DictionaryOfGenders, keyof VariablesTypings>>(
     key: Key,
-    gender: Peer.User['gender']
+    gender: GenderForm<Key>
   ): string
   useGender<Key extends keyof DictionaryOfGenders>(
     key: Key,
-    gender: Peer.User['gender'],
+    gender: GenderForm<Key>,
     variables?: Key extends keyof VariablesTypings
       ? VariablesTypings[Key]
       : never
@@ -166,7 +173,7 @@ export class Lang {
     const values = this.state.dictionary[key] as GenderValues
 
     return this.transform(
-      gender === 'female' ? values.female : values.male,
+      gender === 'you' ? values.you! : gender === 'female' ? values.female : values.male,
       variables,
       (chunks) => chunks.join('')
     )
@@ -174,16 +181,16 @@ export class Lang {
 
   useGenderJSX<Key extends keyof DictionaryOfGenders & keyof VariablesTypings>(
     key: Key,
-    gender: Peer.User['gender'],
+    gender: GenderForm<Key>,
     variables: VariablesTypings<JSXElement>[Key]
   ): JSXElement
   useGenderJSX<Key extends Exclude<keyof DictionaryOfGenders, keyof VariablesTypings>>(
     key: Key,
-    gender: Peer.User['gender']
+    gender: GenderForm<Key>
   ): JSXElement
   useGenderJSX<Key extends keyof DictionaryOfGenders>(
     key: Key,
-    gender: Peer.User['gender'],
+    gender: GenderForm<Key>,
     variables?: Key extends keyof VariablesTypings
       ? VariablesTypings<JSXElement>[Key]
       : never
@@ -191,7 +198,7 @@ export class Lang {
     const values = this.state.dictionary[key] as GenderValues
 
     return this.transform(
-      gender === 'female' ? values.female : values.male,
+      gender === 'you' ? values.you! : gender === 'female' ? values.female : values.male,
       variables,
       (chunks) => <>{chunks}</>
     )
