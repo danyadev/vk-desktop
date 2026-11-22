@@ -6,6 +6,7 @@ import './ButtonIcon.css'
 
 type Props = {
   icon?: JSXElement
+  overlay?: JSXElement
   stretched?: boolean
   withHoverBackground?: boolean
   loading?: boolean
@@ -25,7 +26,8 @@ export const ButtonIcon = defineComponent<Props>((props) => () => (
       {props.icon}
     </span>
     {props.loading && <Spinner class="ButtonIcon__spinner" color="inherit" />}
+    {props.overlay}
   </ButtonBase>
 ), {
-  props: ['icon', 'stretched', 'withHoverBackground', 'loading', 'shiftOnClick']
+  props: ['icon', 'overlay', 'stretched', 'withHoverBackground', 'loading', 'shiftOnClick']
 })

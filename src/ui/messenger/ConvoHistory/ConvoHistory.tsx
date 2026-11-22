@@ -286,19 +286,19 @@ export const ConvoHistory = defineComponent<Props>((props) => {
           <Transition name="ConvoHistory__hopNavigation-">
             {(showHopNavigation.value || !!gapAfter || hasEndWindowOffset) && (
               <div class="ConvoHistory__hopNavigation">
-                <div class="ConvoHistory__hopNavigationControl">
-                  <ButtonIcon
-                    class="ConvoHistory__hopNavigationButton"
-                    shiftOnClick
-                    icon={<Icon24ChevronDown />}
-                    onClick={handleHopNavigation}
-                  />
-                  <Counter
-                    class="ConvoHistory__hopNavigationCounter"
-                    count={convo.unreadCount}
-                    mode={convo.notifications.enabled ? 'primary' : 'secondary'}
-                  />
-                </div>
+                <ButtonIcon
+                  class="ConvoHistory__hopNavigationButton"
+                  shiftOnClick
+                  icon={<Icon24ChevronDown />}
+                  onClick={handleHopNavigation}
+                  overlay={
+                    <Counter
+                      class="ConvoHistory__hopNavigationCounter"
+                      count={convo.unreadCount}
+                      mode={convo.notifications.enabled ? 'primary' : 'secondary'}
+                    />
+                  }
+                />
               </div>
             )}
           </Transition>
