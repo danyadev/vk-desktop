@@ -58,7 +58,7 @@ export class Lang {
     return this.state.locale
   }
 
-  use<Key extends keyof VariablesTypings>(
+  use<Key extends keyof DictionaryOfStrings & keyof VariablesTypings>(
     key: Key,
     variables: VariablesTypings[Key]
   ): string
@@ -78,7 +78,7 @@ export class Lang {
     )
   }
 
-  useJSX<Key extends keyof VariablesTypings>(
+  useJSX<Key extends keyof DictionaryOfStrings & keyof VariablesTypings>(
     key: Key,
     variables: VariablesTypings<JSXElement>[Key]
   ): JSXElement
