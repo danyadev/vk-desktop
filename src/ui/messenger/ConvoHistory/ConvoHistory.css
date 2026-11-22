@@ -10,6 +10,7 @@
   /* чтобы подсветился фон по всей ширине истории, но по какой-то причине этот absolute ::after элемент */
   /* создает горизонтальный скролл... и overflow-x: hidden фиксит его */
   overflow: hidden overlay;
+  user-select: text;
 }
 
 .ConvoHistory__content {

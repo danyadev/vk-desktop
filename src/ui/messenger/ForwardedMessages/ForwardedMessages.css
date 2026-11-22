@@ -44,6 +44,9 @@
   justify-self: start;
   max-width: 100%;
   font-weight: 500;
+  user-select: text;
+  /* Reset focus-visible border radius as overflow: hidden cuts it either way */
+  border-radius: unset;
 }
 
 .ForwardedMessage__name:focus-visible {
@@ -77,6 +80,7 @@
   font-weight: 500;
   color: var(--vkui--color_text_accent);
   margin: 4px 0;
+  user-select: text;
 }
 
 .ForwardedMessage__empty {
