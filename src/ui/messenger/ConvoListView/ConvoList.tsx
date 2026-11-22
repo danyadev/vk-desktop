@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue'
+import { defineComponent, Fragment } from 'vue'
 import { useServices } from 'services'
 import * as Lists from 'model/Lists'
 import { loadMoreConvos } from 'actions'
@@ -21,10 +21,19 @@ export const ConvoList = defineComponent<Props>((props) => {
 
   return () => (
     <div class={['ConvoList', props.compact && 'ConvoList--compact']}>
-      {convoList.value.map((convo) => (
-        <ConvoActionMenu key={convo.id} convo={convo} fromConvoList>
-          <ConvoListItem convo={convo} compact={props.compact} />
-        </ConvoActionMenu>
+      {convoList.value.map((convo, index) => (
+        <Fragment key={convo.id}>
+          {!props.compact &&
+            index > 0 &&
+            convoList.value[index - 1]!.majorSortId !== 0 &&
+            convo.majorSortId === 0 && (
+            <div class="ConvoList__separator" />
+          )}
+
+          <ConvoActionMenu convo={convo} fromConvoList>
+            <ConvoListItem convo={convo} compact={props.compact} />
+          </ConvoActionMenu>
+        </Fragment>
       ))}
 
       {convoList.value.length === 0 && props.list.status === 'complete' && (

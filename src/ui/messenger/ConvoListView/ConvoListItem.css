@@ -1,6 +1,5 @@
 .ConvoListItem {
   display: grid;
-  position: relative;
   grid-template-areas:
     'avatar name name name'
     'avatar message status indicators';
@@ -8,10 +7,13 @@
   grid-template-columns: auto 1fr auto auto;
   row-gap: 2px;
   width: 100%;
+  height: 60px;
   padding: 6px 8px;
   margin: 2px 0;
   border-radius: 12px;
   text-align: left;
+  content-visibility: auto;
+  contain: size;
   transition: background var(--fastTransition);
 }
 
@@ -23,20 +25,6 @@
 
 .ConvoListItem.ConvoListItem--active {
   background: var(--vkui--color_transparent--active);
-}
-
-.ConvoListItem--pinned + .ConvoListItem:not(.ConvoListItem--pinned) {
-  margin-top: 12px;
-}
-
-.ConvoListItem--pinned + .ConvoListItem:not(.ConvoListItem--pinned)::before {
-  content: '';
-  position: absolute;
-  top: -7px;
-  left: 0;
-  right: 0;
-  border-top: 1px solid var(--vkui--color_separator_primary);
-  pointer-events: none;
 }
 
 .ConvoListItem__avatar {
