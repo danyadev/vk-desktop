@@ -7,11 +7,6 @@
   z-index: var(--zIndexPopperBackdrop);
 }
 
-.Popper__trigger--active {
-  /* Чтобы триггер оставался доступным и на нем мог сохраняться cursor: pointer */
-  z-index: var(--zIndexPopperBackdropBypass);
-}
-
 .Popper {
   position: absolute;
   z-index: var(--zIndexPopper);

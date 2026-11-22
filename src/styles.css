@@ -68,8 +68,7 @@ img, svg {
 
   --zIndexModal: 1;
   --zIndexPopperBackdrop: 2;
-  --zIndexPopperBackdropBypass: 3;
-  --zIndexPopper: 4;
+  --zIndexPopper: 3;
 }
 
 [data-scheme] {
