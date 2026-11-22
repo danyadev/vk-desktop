@@ -3,6 +3,7 @@
   color: var(--vkui--color_text_subhead);
   margin: 8px auto;
   text-align: center;
+  user-select: none;
 }
 
 .HistoryMessages__unreadBlock {
@@ -12,6 +13,7 @@
   font: var(--smallFont);
   color: var(--vkui--color_text_subhead);
   margin: 8px -100%;
+  user-select: none;
 }
 
 .HistoryMessages__unreadBlock::before,

@@ -10,7 +10,6 @@
   overflow-wrap: break-word;
   /* для поддержки нескольких пробелов подряд можно заюзать pre-wrap */
   white-space: pre-line;
-  user-select: text;
 }
 
 .ConvoMessage--out {
@@ -23,6 +22,7 @@
   margin-bottom: 2px;
   font: 500 var(--smallFontSize) / var(--smallLineHeight) var(--fontFamily);
   text-align: left;
+  user-select: text;
 }
 
 .ConvoMessage__time {
