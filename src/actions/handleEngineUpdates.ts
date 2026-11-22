@@ -62,20 +62,20 @@ export async function handleEngineUpdates(updates: IEngine.Update[]) {
           break
         }
 
+        const isUnread = cmid > convo.inReadBy
+        if (isDeleteMessageUpdate && isUnread && !apiConvosMap.has(peerId)) {
+          convo.unreadCount--
+          if (convo.kind === 'ChatConvo') {
+            convo.mentionedCmids.delete(cmid)
+          }
+        }
+
         const message = Convo.findMessage(convo, cmid)
         if (!message) {
           break
         }
 
         if (isDeleteMessageUpdate) {
-          if (!apiConvosMap.has(peerId) && !message.isOut && Message.isUnread(message, convo)) {
-            convo.unreadCount--
-
-            if (convo.kind === 'ChatConvo') {
-              convo.mentionedCmids.delete(message.cmid)
-            }
-          }
-
           Convo.removeMessage(convo, cmid)
           if (message.isOut) {
             Convo.removePendingMessage(convo, message.randomId)
