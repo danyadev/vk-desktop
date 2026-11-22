@@ -2,10 +2,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 100%;
   color: var(--vkui--color_text_subhead);
   overflow-wrap: break-word;
   text-align: center;
   gap: 10px;
+}
+
+.ServiceMessage__text {
+  max-width: 100%;
+}
+
+.ServiceMessage__link {
+  color: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ServiceMessage__link:hover {
+  text-decoration: underline;
 }
 
 .ServiceMessage__photo {
