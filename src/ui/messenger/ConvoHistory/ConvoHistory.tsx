@@ -129,6 +129,10 @@ export const ConvoHistory = defineComponent<Props>((props) => {
       if (prevSlice.gapAround && !slice.gapAround) {
         scrollToInitialPosition(Message.resolveCmid(slice.effectiveAroundId))
       }
+      if (prevRequest) {
+        // In case navigation did not change scroll position, but still navigated to another slice
+        updateScrollState()
+      }
     },
     { flush: 'post' }
   )
