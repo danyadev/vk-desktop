@@ -49,7 +49,7 @@ export const AttachVoice = defineComponent<Props>((props) => {
       await api.fetch('messages.recogniseAudioMessage', {
         peer_id: message.peerId,
         cmid: message.cmid,
-        audio_message_id: `${message.authorId}_${voice.id}`
+        audio_message_id: `${voice.ownerId}_${voice.id}`
       })
     } catch (error) {
       voice.transcriptState = 'error'
