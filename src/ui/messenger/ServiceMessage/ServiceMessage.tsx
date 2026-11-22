@@ -4,7 +4,7 @@ import * as ILang from 'services/contracts/ILang'
 import * as Message from 'model/Message'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useGlobalModal } from 'hooks'
+import { useGlobalModal, useViewer } from 'hooks'
 import './ServiceMessage.css'
 
 type Props = {
@@ -13,6 +13,7 @@ type Props = {
 
 export const ServiceMessage = defineComponent<Props>((props) => {
   const { lang } = useServices()
+  const viewer = useViewer()
   const { peers } = usePeersStore()
   const { photoViewerModal } = useGlobalModal()
 
@@ -23,7 +24,7 @@ export const ServiceMessage = defineComponent<Props>((props) => {
 
     return (
       <div class="ServiceMessage">
-        {getServiceMessageText(props.message, lang, peers)}
+        {getServiceMessageText(props.message, lang, peers, viewer.id)}
 
         {photoUpdateAction?.photo && (
           <img
@@ -50,10 +51,19 @@ export const ServiceMessage = defineComponent<Props>((props) => {
 export function getServiceMessageText(
   message: Message.Service,
   lang: ILang.Lang,
-  peers: Map<Peer.Id, Peer.Peer>
+  peers: Map<Peer.Id, Peer.Peer>,
+  viewerId: Peer.UserId
 ): string {
   const author = Peer.safeGet(peers, message.authorId)
-  const gender = author.kind === 'User' ? author.gender : 'unknown'
+  const gender = author.kind === 'User'
+    ? author.id === viewerId ? 'you' : author.gender
+    : 'unknown'
+
+  const targetName = (target: Peer.Peer) => (
+    target.id === viewerId
+      ? lang.use('me_service_target_you_acc')
+      : Peer.name(target, 'acc')
+  )
 
   switch (message.action.type) {
     case 'chat_create':
@@ -94,20 +104,18 @@ export function getServiceMessageText(
       }
 
       const target = Peer.safeGet(peers, message.action.peerId)
-
       return lang.useGender(`me_service_${message.action.type}`, gender, {
         author: Peer.name(author),
-        target: Peer.name(target, 'acc')
+        target: targetName(target)
       })
     }
 
     case 'chat_invite_user_by_message_request':
     case 'chat_invite_user_by_call': {
       const target = Peer.safeGet(peers, message.action.peerId)
-
       return lang.useGender(`me_service_${message.action.type}`, gender, {
         author: Peer.name(author),
-        target: Peer.name(target, 'acc')
+        target: targetName(target)
       })
     }
 
@@ -120,7 +128,11 @@ export function getServiceMessageText(
 
     case 'chat_kick_user_call_block': {
       const target = Peer.safeGet(peers, message.action.peerId)
-      return lang.useGender('me_service_chat_kick_user_call_block', gender, {
+      const targetGender = target.kind === 'User'
+        ? target.id === viewerId ? 'you' : target.gender
+        : 'unknown'
+
+      return lang.useGender('me_service_chat_kick_user_call_block', targetGender, {
         target: Peer.name(target)
       })
     }
@@ -129,14 +141,13 @@ export function getServiceMessageText(
     case 'chat_unpin_message':
       return lang.useGender(`me_service_${message.action.type}`, gender, {
         author: Peer.name(author),
-        message: message.action.message
+        message: message.action.message || lang.usePlural('me_messages_preview', 1)
       })
 
     case 'conversation_style_update':
     case 'conversation_style_update_action':
       if (message.action.style) {
         const styleTranslations = lang.useRaw('me_convo_styles')
-
         return lang.useGender('me_service_conversation_style_update', gender, {
           author: Peer.name(author),
           style: styleTranslations[message.action.style]
@@ -149,9 +160,9 @@ export function getServiceMessageText(
 
     case 'chat_owner_changed': {
       const target = Peer.safeGet(peers, message.action.peerId)
-      return lang.use('me_service_chat_owner_changed', {
+      return lang.useGender('me_service_chat_owner_changed', gender, {
         author: Peer.name(author),
-        target: Peer.name(target, 'acc')
+        target: targetName(target)
       })
     }
 
