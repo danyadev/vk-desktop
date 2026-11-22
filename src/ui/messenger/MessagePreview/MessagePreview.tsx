@@ -3,7 +3,9 @@ import { useServices } from 'services'
 import * as ILang from 'services/contracts/ILang'
 import * as Attach from 'model/Attach'
 import * as Message from 'model/Message'
-import { PlainServiceMessage } from 'ui/messenger/ServiceMessage/ServiceMessage'
+import * as Peer from 'model/Peer'
+import { usePeersStore } from 'store/peers'
+import { getServiceMessageText } from 'ui/messenger/ServiceMessage/ServiceMessage'
 import './MessagePreview.css'
 
 type Props = {
@@ -13,6 +15,7 @@ type Props = {
 
 export const MessagePreview = defineComponent<Props>((props) => {
   const { lang } = useServices()
+  const { peers } = usePeersStore()
 
   return () => {
     const { message, accent } = props
@@ -27,7 +30,7 @@ export const MessagePreview = defineComponent<Props>((props) => {
     }
 
     if (message.kind === 'Service') {
-      return <PlainServiceMessage message={message} />
+      return getServiceMessageText(message, lang, peers)
     }
 
     const attachmentPreview = getAttachmentPreview(message, lang)
@@ -56,6 +59,24 @@ export const MessagePreview = defineComponent<Props>((props) => {
 }, {
   props: ['message', 'accent']
 })
+
+export function getMessagePreviewText(
+  message: Message.Message | Message.Foreign | Message.Pinned,
+  lang: ILang.Lang,
+  peers: Map<Peer.Id, Peer.Peer>
+): string {
+  if (message.kind === 'Expired') {
+    return lang.usePlural('me_messages_disappeared', 1)
+  }
+
+  if (message.kind === 'Service') {
+    return getServiceMessageText(message, lang, peers)
+  }
+
+  const attachmentPreview = getAttachmentPreview(message, lang)
+  const text = [message.text.trim(), attachmentPreview].filter(Boolean).join(' ')
+  return text || lang.use('me_empty_message')
+}
 
 const getAttachmentPreview = (
   message: Message.Normal | Message.Pending | Message.Foreign | Message.Pinned,
