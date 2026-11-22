@@ -8,7 +8,7 @@ export const useMessageAuthorName = () => {
   const { lang } = useServices()
   const { peers } = usePeersStore()
 
-  return (message: Message.Message | undefined, convo?: Convo.Convo): string => {
+  return (message: Message.Message | undefined, convo?: Convo.Convo, fullName = false): string => {
     if (!message || message.kind === 'Service') return ''
     if (convo?.kind === 'ChatConvo' && convo.isChannel) return ''
 
@@ -17,7 +17,8 @@ export const useMessageAuthorName = () => {
     if (message.isOut) {
       author = lang.use('me_convo_list_author_you')
     } else if (Peer.isChatPeerId(message.peerId)) {
-      author = Peer.firstName(Peer.safeGet(peers, message.authorId))
+      const peer = Peer.safeGet(peers, message.authorId)
+      author = fullName ? Peer.name(peer) : Peer.firstName(peer)
     } else {
       return ''
     }

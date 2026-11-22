@@ -12,7 +12,7 @@ import { ONE_DAY, ONE_HOUR, ONE_MINUTE, ONE_MONTH, ONE_WEEK } from 'misc/dateTim
 import { useMessageAuthorName } from 'ui/messenger/ConvoListView/useMessageAuthorName'
 import { ConvoTyping } from 'ui/messenger/ConvoTyping/ConvoTyping'
 import { MessageOutStatusIcon } from 'ui/messenger/MessageOutStatusIcon/MessageOutStatusIcon'
-import { MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
+import { getMessagePreviewText, MessagePreview } from 'ui/messenger/MessagePreview/MessagePreview'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Counter } from 'ui/ui/Counter/Counter'
 import { Icon12Mention, Icon16Muted } from 'assets/icons'
@@ -32,16 +32,31 @@ export const ConvoListItem = defineComponent<Props>((props) => {
   const viewer = useViewer()
   const getAuthorName = useMessageAuthorName()
 
-  const peer = computed(() => Peer.safeGet(peers, props.convo.id))
-  const lastMessage = computed(() => Convo.lastMessage(props.convo, true))
   const active = computed(() => route.name === 'Convo' && +route.params.peerId === props.convo.id)
+  const peer = computed(() => Peer.safeGet(peers, props.convo.id))
   const authorName = computed(() => getAuthorName(lastMessage.value, props.convo))
+  const lastMessage = computed(() => Convo.lastMessage(props.convo, true))
+
   const draft = ConvoDraft.safeGet(convoDrafts, props.convo.id)
   const draftMessage = computed(() => (
     draft && !ConvoDraft.isEmpty(draft)
       ? ConvoDraft.toPreviewMessage(draft, props.convo.id, viewer.id)
       : undefined
   ))
+
+  const emptyConvoDescription = Convo.isCasper(props.convo)
+    ? lang.usePlural('me_messages_disappeared', 1)
+    : lang.use('me_convo_list_empty_convo')
+
+  const messageTitle = computed(() => {
+    const message = draftMessage.value ?? lastMessage.value
+    const author = draftMessage.value
+      ? lang.use('me_convo_list_draft_label')
+      : getAuthorName(lastMessage.value, props.convo, true)
+    const text = message ? getMessagePreviewText(message, lang, peers) : emptyConvoDescription
+
+    return author + text
+  })
 
   function openConvo() {
     router.push({
@@ -61,6 +76,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
             'ConvoListItem--active': active.value
           }]}
           onClick={openConvo}
+          title={`${Peer.name(peer.value)}\n\n${messageTitle.value}`}
         >
           <Avatar class="ConvoListItem__avatar" peer={peer.value} size={48} />
 
@@ -100,7 +116,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
           </span>
         </div>
 
-        <div class="ConvoListItem__message">
+        <div class="ConvoListItem__message" title={messageTitle.value}>
           {typingUsers && isNonEmptyArray(typingUsers) ? (
             <ConvoTyping
               class="ConvoListItem__typing"
@@ -124,11 +140,7 @@ export const ConvoListItem = defineComponent<Props>((props) => {
                 ) : lastMessage.value ? (
                   <MessagePreview message={lastMessage.value} />
                 ) : (
-                  <span class="MessagePreview">
-                    {Convo.isCasper(props.convo)
-                      ? lang.usePlural('me_messages_disappeared', 1)
-                      : lang.use('me_convo_list_empty_convo')}
-                  </span>
+                  <span class="MessagePreview">{emptyConvoDescription}</span>
                 )}
               </span>
               <span class="ConvoListItem__date">
