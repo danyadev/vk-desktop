@@ -197,6 +197,8 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     for (const file of event.clipboardData?.files ?? []) {
       if (['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
         event.preventDefault()
+
+        if (!canAddAttach.value) break
         uploadAttach('Photo', file)
       }
     }
@@ -214,6 +216,7 @@ export const ConvoComposer = defineComponent<Props>((props) => {
     }).catch(() => [])
 
     for (const fileHandle of fileHandles) {
+      if (!canAddAttach.value) break
       uploadAttach('Photo', await fileHandle.getFile())
     }
   }
