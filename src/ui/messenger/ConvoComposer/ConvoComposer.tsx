@@ -192,8 +192,6 @@ export const ConvoComposer = defineComponent<Props>((props) => {
   }
 
   const onPaste = (event: ClipboardEvent) => {
-    if (!canAddAttach.value) return
-
     for (const file of event.clipboardData?.files ?? []) {
       if (['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
         event.preventDefault()

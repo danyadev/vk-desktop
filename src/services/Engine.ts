@@ -87,7 +87,6 @@ export class Engine {
               }, { retries: Infinity })
 
               this.credentials.key = key
-              connection.status = 'connected'
               continue
             } catch (error) {
               onFail(IEngine.FailReason.RETRIEVE_KEY_ERROR)
@@ -103,11 +102,11 @@ export class Engine {
         }
       }
 
-      connection.status = 'connected'
       this.credentials.ts = result.ts
       this.credentials.pts = result.pts
 
       await handleEngineUpdates(result.updates)
+      connection.status = 'connected'
     }
   }
 
