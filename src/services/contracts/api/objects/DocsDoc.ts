@@ -1,25 +1,34 @@
+import { PhotosPhotoSizesType } from './PhotosPhotoSizesType'
+
+// docs_doc (fields used by VK Desktop; see vk schema.zip)
 export type DocsDoc = {
   id: number
   owner_id: number
-  access_key?: string
   title: string
-  type: number
+  size: number
   ext: string
   url?: string
-  preview?: {
-    photo?: {
-      sizes?: Array<{
-        src: string
-        width: number
-        height: number
-        type: string
-      }>
-    }
-    video?: {
-      src: string
-      width: number
-      height: number
-      file_size: number
-    }
+  date: number
+  type: number
+  preview?: DocsDocPreview
+  access_key?: string
+  is_unsafe?: 0 | 1
+  private_url?: string
+}
+
+export type DocsDocPreview = {
+  photo?: { sizes?: DocsDocPreviewPhotoSize[] }
+  video?: {
+    src: string
+    width: number
+    height: number
+    file_size: number
   }
+}
+
+type DocsDocPreviewPhotoSize = {
+  src: string
+  width: number
+  height: number
+  type: PhotosPhotoSizesType
 }

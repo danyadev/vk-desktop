@@ -1,7 +1,7 @@
 import { Ref, shallowRef, watchPostEffect } from 'vue'
 import { RefElement, unrefElement } from 'misc/utils'
 
-export function useInView() {
+export function useInView(options: IntersectionObserverInit = {}) {
   const ref = shallowRef<RefElement>(null)
   const inView = shallowRef(false)
 
@@ -17,14 +17,15 @@ export function useInView() {
     }
 
     inView.value = isIntersecting
-  })
+  }, options)
 
   return { ref, inView }
 }
 
 function useIntersectionObserver(
   targetRef: Ref<RefElement>,
-  callback: IntersectionObserverCallback
+  callback: IntersectionObserverCallback,
+  options: IntersectionObserverInit
 ) {
   watchPostEffect((onCleanup) => {
     const target = unrefElement(targetRef)
@@ -32,7 +33,7 @@ function useIntersectionObserver(
       return
     }
 
-    const observer = new IntersectionObserver(callback)
+    const observer = new IntersectionObserver(callback, options)
     observer.observe(target)
 
     onCleanup(() => {

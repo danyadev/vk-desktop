@@ -414,6 +414,12 @@ export const ru = {
     few: '{0} GIF',
     many: '{0} GIF'
   },
+  me_message_attach_media: {
+    single: 'Медиа',
+    one: '{0} медиа',
+    few: '{0} медиа',
+    many: '{0} медиа'
+  },
   me_message_attach_doc: {
     single: 'Файл',
     one: '{0} файл',
@@ -429,6 +435,12 @@ export const ru = {
   me_message_attach_gift: 'Подарок',
   me_message_attach_sticker: 'Стикер',
   me_message_attach_ugc_sticker: 'Стикер',
+  me_gif_play: 'Воспроизвести GIF',
+  me_gif_pause: 'Остановить GIF',
+  me_gif_save: 'Сохранить GIF в документы',
+  me_gif_remove: 'Удалить GIF из документов',
+  me_gif_save_error: 'Не удалось сохранить GIF',
+  me_gif_remove_error: 'Не удалось удалить GIF',
   me_message_attach_wall: 'Запись',
   me_message_attach_wall_reply: 'Комментарий',
   me_message_attach_event: 'Мероприятие',

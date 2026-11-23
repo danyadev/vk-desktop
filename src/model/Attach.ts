@@ -53,6 +53,7 @@ export type Gif = {
   ownerId: Peer.OwnerId
   accessKey?: string
   title: string
+  size: number
   url?: string
   videoUrl?: string
   thumbnail?: Image
@@ -241,16 +242,12 @@ export function preview(attach: Attach, lang: ILang.Lang): string {
       case 'Video':
       case 'Gif': {
         const media = attach as NonEmptyArray<Media>
-        return (['Photo', 'Video', 'Gif'] as const)
-          .map((kind) => {
-            const count = media.filter((item) => item.kind === kind).length
-            if (!count) return ''
+        if (media.some((item) => item.kind !== firstAttach.kind)) {
+          return lang.usePlural('me_message_attach_media', media.length)
+        }
 
-            const type = kind === 'Gif' ? 'gif' : kind === 'Photo' ? 'photo' : 'video'
-            return lang.usePlural(`me_message_attach_${type}`, count)
-          })
-          .filter(Boolean)
-          .join(', ')
+        const kind = firstAttach.kind === 'Photo' ? 'photo' : firstAttach.kind === 'Video' ? 'video' : 'gif'
+        return lang.usePlural(`me_message_attach_${kind}`, media.length)
       }
 
       case 'Link':

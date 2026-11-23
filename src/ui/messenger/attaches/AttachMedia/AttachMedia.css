@@ -63,29 +63,29 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgb(0 0 0 / 0.55);
+  color: white;
+  background: rgb(0 0 0 / 0.48);
   transform: translate(-50%, -50%);
   pointer-events: none;
+  transition: background-color var(--fastTransition);
 }
 
-.AttachMedia__play::before {
-  content: '';
-  margin-left: 4px;
-  border-top: 9px solid transparent;
-  border-bottom: 9px solid transparent;
-  border-left: 14px solid white;
+.AttachMedia__video:hover .AttachMedia__play,
+.AttachMedia__gif:hover .AttachMedia__play {
+  background: rgb(0 0 0 / 0.65);
 }
 
 .AttachMedia__duration,
 .AttachMedia__gifBadge {
   position: absolute;
   right: 6px;
-  bottom: 6px;
-  padding: 2px 5px;
-  border-radius: 4px;
-  background: rgb(0 0 0 / 0.65);
+  bottom: 8px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.58);
   color: white;
   font-size: 12px;
+  font-weight: 500;
   line-height: 16px;
   pointer-events: none;
 }
@@ -96,6 +96,53 @@
 }
 
 .AttachMedia__gifBadge {
-  top: 6px;
+  top: 8px;
+  right: auto;
   bottom: auto;
+  left: 8px;
+  max-width: calc(100% - 16px);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.AttachMedia__gifToggle {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.AttachMedia__gifSave {
+  position: absolute;
+  z-index: 3;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: white;
+  background: rgb(0 0 0 / 0.58);
+  cursor: pointer;
+  transition: background-color var(--fastTransition);
+}
+
+.AttachMedia__gifSave:hover {
+  background: rgb(0 0 0 / 0.75);
+}
+
+.AttachMedia__gifSave:disabled {
+  cursor: default;
+}
+
+.AttachMedia__gifSave .Spinner {
+  color: white;
 }

@@ -3,13 +3,13 @@ import { DocsDoc } from 'services/contracts/api/objects/DocsDoc'
 import { GroupsGroup } from 'services/contracts/api/objects/GroupsGroup'
 import { PhotosPhoto } from 'services/contracts/api/objects/PhotosPhoto'
 import { UsersUser } from 'services/contracts/api/objects/UsersUser'
-import { VideoVideo } from 'services/contracts/api/objects/VideoVideo'
+import { VideoVideo, VideoVideoFull } from 'services/contracts/api/objects/VideoVideo'
 
 export type MessagesMessageAttachment = {
   type: MessagesMessageAttachmentType
   photo?: PhotosPhoto
   audio?: unknown
-  video?: VideoVideo
+  video?: VideoVideo | VideoVideoFull
   video_playlist?: unknown
   video_message?: unknown
   doc?: DocsDoc

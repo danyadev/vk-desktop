@@ -29,6 +29,12 @@ import {
   AuthValidatePhoneResponse
 } from 'services/contracts/api/methods/Auth'
 import { CaptchaForceParams, CaptchaForceResponse } from 'services/contracts/api/methods/Captcha'
+import {
+  DocsAddParams,
+  DocsAddResponse,
+  DocsDeleteParams,
+  DocsDeleteResponse
+} from 'services/contracts/api/methods/Docs'
 import { GroupsGetByIdParams, GroupsGetByIdResponse } from 'services/contracts/api/methods/Groups'
 import {
   MessagesAddChatUserParams,
@@ -176,6 +182,15 @@ export type Methods = {
   'account.setSilenceMode': {
     params: AccountSetSilenceModeParams
     response: AccountSetSilenceModeResponse
+  }
+
+  'docs.add': {
+    params: DocsAddParams
+    response: DocsAddResponse
+  }
+  'docs.delete': {
+    params: DocsDeleteParams
+    response: DocsDeleteResponse
   }
 
   'groups.getById': {

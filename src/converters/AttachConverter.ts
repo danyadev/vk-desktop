@@ -234,6 +234,7 @@ function fromApiAttachGif(apiDoc: DocsDoc): Attach.Gif | undefined {
     ownerId: Peer.resolveOwnerId(apiDoc.owner_id),
     accessKey: apiDoc.access_key,
     title: apiDoc.title,
+    size: apiDoc.size,
     url: apiDoc.url,
     videoUrl: video?.src,
     thumbnail,

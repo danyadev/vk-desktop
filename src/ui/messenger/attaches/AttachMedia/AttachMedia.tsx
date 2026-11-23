@@ -5,10 +5,12 @@ import { NonEmptyArray } from 'misc/utils'
 import { AttachGif } from './AttachGif'
 import { generateMediaLayout } from './generateMediaLayout'
 import { Image } from 'ui/ui/Image/Image'
+import { Icon32PlayCircle } from 'assets/icons'
 import './AttachMedia.css'
 
 type Props = {
   media: NonEmptyArray<Attach.Media>
+  isOnly: boolean
 }
 
 type MediaLayoutItem = ReturnType<typeof generateMediaLayout>[number][number]
@@ -59,7 +61,7 @@ export const AttachMedia = defineComponent<Props>((props) => {
                 height={height}
               />
             )}
-            <span class="AttachMedia__play" />
+            <span class="AttachMedia__play"><Icon32PlayCircle /></span>
             {media.duration > 0 && (
               <span class="AttachMedia__duration">{formatDuration(media.duration)}</span>
             )}
@@ -67,7 +69,15 @@ export const AttachMedia = defineComponent<Props>((props) => {
         )
 
       case 'Gif':
-        return <AttachGif key={Attach.id(media)} gif={media} width={width} height={height} />
+        return (
+          <AttachGif
+            key={Attach.id(media)}
+            gif={media}
+            width={width}
+            height={height}
+            isOnly={props.isOnly}
+          />
+        )
     }
   }
 
@@ -81,5 +91,5 @@ export const AttachMedia = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['media']
+  props: ['media', 'isOnly']
 })

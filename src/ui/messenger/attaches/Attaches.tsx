@@ -22,7 +22,12 @@ export const Attaches = defineComponent<Props>((props) => {
   return () => (
     <div class={['Attaches', props.class]}>
       {props.attaches.sticker && <AttachSticker sticker={props.attaches.sticker} />}
-      {props.attaches.media && <AttachMedia media={props.attaches.media} />}
+      {props.attaches.media && (
+        <AttachMedia
+          media={props.attaches.media}
+          isOnly={Attach.count(props.attaches) === 1}
+        />
+      )}
       {props.attaches.links?.map((link) => <AttachLink link={link} />)}
       {props.attaches.wall && <AttachWall wall={props.attaches.wall} />}
       {props.attaches.voice && <AttachVoice voice={props.attaches.voice} message={props.message} />}
