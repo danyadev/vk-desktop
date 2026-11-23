@@ -32,7 +32,7 @@ export function fromApiMessage(message: MessagesMessage): Message.Confirmed {
   if (message.action) {
     return {
       kind: 'Service',
-      action: fromApiMessageAction(message.action, attaches.photos?.[0]),
+      action: fromApiMessageAction(message.action, attaches.media?.find((media): media is Attach.Photo => media.kind === 'Photo')),
       ...baseMessage
     }
   }

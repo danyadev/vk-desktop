@@ -1,10 +1,12 @@
 import { BaseImage } from 'services/contracts/api/objects/BaseImage'
+import { DocsDoc } from 'services/contracts/api/objects/DocsDoc'
 import {
   MessagesMessageAttachment,
   MessagesMessageAttachmentWall
 } from 'services/contracts/api/objects/MessagesMessageAttachment'
 import { PhotosPhoto } from 'services/contracts/api/objects/PhotosPhoto'
 import { PhotosPhotoSize } from 'services/contracts/api/objects/PhotosPhotoSize'
+import { VideoVideo } from 'services/contracts/api/objects/VideoVideo'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
 import { insertPeers } from 'actions'
@@ -73,7 +75,31 @@ export function fromApiAttaches(
           break
         }
 
-        attaches.photos = [...(attaches.photos ?? []), photo]
+        attaches.media = [...(attaches.media ?? []), photo]
+        break
+      }
+
+      case 'video': {
+        const video = apiAttach.video && fromApiAttachVideo(apiAttach.video)
+
+        if (!video) {
+          addUnknown(apiAttach)
+          break
+        }
+
+        attaches.media = [...(attaches.media ?? []), video]
+        break
+      }
+
+      case 'doc': {
+        const gif = apiAttach.doc && fromApiAttachGif(apiAttach.doc)
+
+        if (!gif) {
+          addUnknown(apiAttach)
+          break
+        }
+
+        attaches.media = [...(attaches.media ?? []), gif]
         break
       }
 
@@ -164,6 +190,64 @@ export function fromApiAttachPhoto(apiPhoto: PhotosPhoto): Attach.Photo | undefi
     image: apiPhoto.orig_photo,
     sizes: fromApiImageSizes(apiPhoto.sizes ?? [])
   }
+}
+
+function fromApiAttachVideo(apiVideo: VideoVideo): Attach.Video | undefined {
+  if (!apiVideo.id || !apiVideo.owner_id) return
+
+  const images = apiVideo.image?.length ? apiVideo.image : apiVideo.first_frame ?? []
+  const thumbnail = pickThumbnail(images, 640)
+  const dimensions = apiVideo.width && apiVideo.height
+    ? { width: apiVideo.width, height: apiVideo.height }
+    : thumbnail ?? { width: 640, height: 360 }
+
+  return {
+    kind: 'Video',
+    id: apiVideo.id,
+    ownerId: Peer.resolveOwnerId(apiVideo.owner_id),
+    accessKey: apiVideo.access_key,
+    title: apiVideo.title ?? '',
+    duration: apiVideo.duration ?? 0,
+    thumbnail,
+    width: dimensions.width,
+    height: dimensions.height,
+    playerUrl: apiVideo.player
+  }
+}
+
+function fromApiAttachGif(apiDoc: DocsDoc): Attach.Gif | undefined {
+  // VK returns GIFs as documents (type 3), rather than as a separate attachment type.
+  if (apiDoc.type !== 3 && apiDoc.ext.toLowerCase() !== 'gif') return
+
+  const images = apiDoc.preview?.photo?.sizes?.map((image) => ({
+    url: image.src,
+    width: image.width,
+    height: image.height
+  })) ?? []
+  const thumbnail = pickThumbnail(images, 510)
+  const video = apiDoc.preview?.video
+  if (!video?.src && !apiDoc.url) return
+
+  return {
+    kind: 'Gif',
+    id: apiDoc.id,
+    ownerId: Peer.resolveOwnerId(apiDoc.owner_id),
+    accessKey: apiDoc.access_key,
+    title: apiDoc.title,
+    url: apiDoc.url,
+    videoUrl: video?.src,
+    thumbnail,
+    width: thumbnail?.width ?? video?.width ?? 320,
+    height: thumbnail?.height ?? video?.height ?? 240
+  }
+}
+
+function pickThumbnail(images: BaseImage[], minWidth: number): BaseImage | undefined {
+  const sorted = images
+    .filter((image) => image.url && image.width > 0 && image.height > 0)
+    .sort((a, b) => a.width - b.width)
+
+  return sorted.find((image) => image.width >= minWidth) ?? sorted.at(-1)
 }
 
 function fromApiImageList(apiImages: BaseImage[]): Attach.ImageList | undefined {

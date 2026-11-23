@@ -408,6 +408,12 @@ export const ru = {
     few: '{0} видео',
     many: '{0} видео'
   },
+  me_message_attach_gif: {
+    single: 'GIF',
+    one: '{0} GIF',
+    few: '{0} GIF',
+    many: '{0} GIF'
+  },
   me_message_attach_doc: {
     single: 'Файл',
     one: '{0} файл',

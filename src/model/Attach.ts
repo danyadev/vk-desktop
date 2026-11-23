@@ -5,7 +5,7 @@ import { Flatten, isObject, NonEmptyArray, typeguard } from 'misc/utils'
 
 export type Attaches = {
   sticker?: Sticker
-  photos?: NonEmptyArray<Photo>
+  media?: NonEmptyArray<Media>
   links?: NonEmptyArray<Link>
   voice?: Voice
   wall?: Wall
@@ -30,6 +30,34 @@ export type Photo = {
   accessKey?: string
   image: Image
   sizes: ImageSizes
+}
+
+export type Media = Photo | Video | Gif
+
+export type Video = {
+  kind: 'Video'
+  id: number
+  ownerId: Peer.OwnerId
+  accessKey?: string
+  title: string
+  duration: number
+  thumbnail?: Image
+  width: number
+  height: number
+  playerUrl?: string
+}
+
+export type Gif = {
+  kind: 'Gif'
+  id: number
+  ownerId: Peer.OwnerId
+  accessKey?: string
+  title: string
+  url?: string
+  videoUrl?: string
+  thumbnail?: Image
+  width: number
+  height: number
 }
 
 export type Link = {
@@ -120,6 +148,10 @@ export function id(attach: SingleAttach): string {
   switch (attach.kind) {
     case 'Photo':
       return `photo${attach.ownerId}_${attach.id}` + optionalAccessKey(attach.accessKey)
+    case 'Video':
+      return `video${attach.ownerId}_${attach.id}` + optionalAccessKey(attach.accessKey)
+    case 'Gif':
+      return `doc${attach.ownerId}_${attach.id}` + optionalAccessKey(attach.accessKey)
     case 'Wall':
       return `wall${attach.ownerId}_${attach.id}` + optionalAccessKey(attach.accessKey)
     case 'Voice':
@@ -206,10 +238,23 @@ export function preview(attach: Attach, lang: ILang.Lang): string {
 
     switch (firstAttach.kind) {
       case 'Photo':
-      case 'Link': {
-        const lowerCaseName = firstAttach.kind.toLowerCase() as Lowercase<typeof firstAttach.kind>
-        return lang.usePlural(`me_message_attach_${lowerCaseName}`, attach.length)
+      case 'Video':
+      case 'Gif': {
+        const media = attach as NonEmptyArray<Media>
+        return (['Photo', 'Video', 'Gif'] as const)
+          .map((kind) => {
+            const count = media.filter((item) => item.kind === kind).length
+            if (!count) return ''
+
+            const type = kind === 'Gif' ? 'gif' : kind === 'Photo' ? 'photo' : 'video'
+            return lang.usePlural(`me_message_attach_${type}`, count)
+          })
+          .filter(Boolean)
+          .join(', ')
       }
+
+      case 'Link':
+        return lang.usePlural('me_message_attach_link', attach.length)
 
       case 'Unknown':
         return previewUnknown(attach as NonEmptyArray<Unknown>, lang)
@@ -299,10 +344,12 @@ export function copy(attaches: Attaches): Attaches {
 export function add(attaches: Attaches, attach: SingleAttach) {
   switch (attach.kind) {
     case 'Photo':
-      if (attaches.photos) {
-        attaches.photos.push(attach)
+    case 'Video':
+    case 'Gif':
+      if (attaches.media) {
+        attaches.media.push(attach)
       } else {
-        attaches.photos = [attach]
+        attaches.media = [attach]
       }
       break
 
@@ -338,20 +385,22 @@ export function add(attaches: Attaches, attach: SingleAttach) {
 
 export function remove(attaches: Attaches, attach: SingleAttach) {
   switch (attach.kind) {
-    case 'Photo': {
-      if (!attaches.photos) {
+    case 'Photo':
+    case 'Video':
+    case 'Gif': {
+      if (!attaches.media) {
         break
       }
 
-      const index = attaches.photos.indexOf(attach)
+      const index = attaches.media.indexOf(attach)
       if (index === -1) {
         break
       }
 
-      if (attaches.photos.length === 1) {
-        delete attaches.photos
+      if (attaches.media.length === 1) {
+        delete attaches.media
       } else {
-        attaches.photos.splice(index, 1)
+        attaches.media.splice(index, 1)
       }
       break
     }

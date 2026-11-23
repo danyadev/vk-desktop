@@ -35,6 +35,26 @@ export const ComposerAttach = defineComponent<Props>((props) => {
       case 'Photo':
         return <ComposerAttachPhoto photo={attach} />
 
+      case 'Video':
+        return (
+          <ComposerAttachCard
+            image={attach.thumbnail?.url}
+            icon={<Icon24Info />}
+            title={lang.usePlural('me_message_attach_video', 1)}
+            subtitle={attach.title}
+          />
+        )
+
+      case 'Gif':
+        return (
+          <ComposerAttachCard
+            image={attach.thumbnail?.url}
+            icon={<Icon24Info />}
+            title={lang.usePlural('me_message_attach_gif', 1)}
+            subtitle={attach.title}
+          />
+        )
+
       case 'Link':
         return (
           <ComposerAttachCard

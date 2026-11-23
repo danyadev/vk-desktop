@@ -1,16 +1,18 @@
 import { BaseImage } from 'services/contracts/api/objects/BaseImage'
+import { DocsDoc } from 'services/contracts/api/objects/DocsDoc'
 import { GroupsGroup } from 'services/contracts/api/objects/GroupsGroup'
 import { PhotosPhoto } from 'services/contracts/api/objects/PhotosPhoto'
 import { UsersUser } from 'services/contracts/api/objects/UsersUser'
+import { VideoVideo } from 'services/contracts/api/objects/VideoVideo'
 
 export type MessagesMessageAttachment = {
   type: MessagesMessageAttachmentType
   photo?: PhotosPhoto
   audio?: unknown
-  video?: unknown
+  video?: VideoVideo
   video_playlist?: unknown
   video_message?: unknown
-  doc?: unknown
+  doc?: DocsDoc
   link?: MessagesMessageAttachmentLink
   market?: unknown
   gift?: unknown

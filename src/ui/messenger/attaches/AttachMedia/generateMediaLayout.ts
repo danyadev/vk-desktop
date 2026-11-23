@@ -1,25 +1,24 @@
 import * as Attach from 'model/Attach'
 
 type LayoutItem = {
-  photo: Attach.Photo
+  media: Attach.Media
   width: number
   height: number
 }
 
-export function generatePhotosLayout(photos: Attach.Photo[]) {
-  const layoutItems = photos.map<LayoutItem>((photo) => ({
-    photo,
-    width: photo.image.width,
-    height: photo.image.height
-  }))
+export function generateMediaLayout(media: Attach.Media[]) {
+  const layoutItems = media.map<LayoutItem>((item) => {
+    const dimensions = item.kind === 'Photo' ? item.image : item
+    return { media: item, width: dimensions.width, height: dimensions.height }
+  })
 
-  return groupPhotosIntoRows(layoutItems)
+  return groupMediaIntoRows(layoutItems)
 }
 
-function groupPhotosIntoRows(layoutItems: LayoutItem[]) {
+function groupMediaIntoRows(layoutItems: LayoutItem[]) {
   const count = layoutItems.length
   const preferVerticalPositioning = layoutItems.reduce(
-    (ratio, photo) => ratio + photo.width / photo.height,
+    (ratio, item) => ratio + item.width / item.height,
     0
   ) / count > 1.2
 

@@ -5,7 +5,7 @@ import * as Message from 'model/Message'
 import { ClassName } from 'misc/utils'
 import { AttachVoice } from './AttachVoice/AttachVoice'
 import { AttachLink } from 'ui/messenger/attaches/AttachLink/AttachLink'
-import { AttachPhotos } from 'ui/messenger/attaches/AttachPhotos/AttachPhotos'
+import { AttachMedia } from 'ui/messenger/attaches/AttachMedia/AttachMedia'
 import { AttachSticker } from 'ui/messenger/attaches/AttachSticker/AttachSticker'
 import { AttachWall } from 'ui/messenger/attaches/AttachWall/AttachWall'
 import './Attaches.css'
@@ -22,7 +22,7 @@ export const Attaches = defineComponent<Props>((props) => {
   return () => (
     <div class={['Attaches', props.class]}>
       {props.attaches.sticker && <AttachSticker sticker={props.attaches.sticker} />}
-      {props.attaches.photos && <AttachPhotos photos={props.attaches.photos} />}
+      {props.attaches.media && <AttachMedia media={props.attaches.media} />}
       {props.attaches.links?.map((link) => <AttachLink link={link} />)}
       {props.attaches.wall && <AttachWall wall={props.attaches.wall} />}
       {props.attaches.voice && <AttachVoice voice={props.attaches.voice} message={props.message} />}
