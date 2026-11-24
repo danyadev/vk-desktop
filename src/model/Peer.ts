@@ -18,6 +18,9 @@ import { exhaustivenessCheck, getFirstLetter, Opaque } from 'misc/utils'
 export type UserId = Opaque<number, User>
 export type GroupId = Opaque<number, Group>
 export type ChatId = Opaque<number, Chat>
+// У некоторых аттачей типа документов или аудио может не быть реального владельца,
+// из-за чего используются айдишники из зоны ChatId
+export type FakeOwnerId = Opaque<number, 'FakeOwnerId'>
 
 export type Peer = User | Group | Chat
 export type Id = UserId | GroupId | ChatId
@@ -111,13 +114,17 @@ export function resolveZeroUserId(): UserId {
   return 0 as UserId
 }
 
-export function resolveOwnerId(id: number): UserId | GroupId {
-  const peerId = resolveId(id)
+export function resolveOwnerId(id: number, allowFake?: false): UserId | GroupId
+export function resolveOwnerId(id: number, allowFake: true): UserId | GroupId | FakeOwnerId
+export function resolveOwnerId(id: number, allowFake = false): UserId | GroupId | FakeOwnerId {
+  if (allowFake && isFakeOwnerId(id)) {
+    return id
+  }
 
+  const peerId = resolveId(id)
   if (!isUserPeerId(peerId) && !isGroupPeerId(peerId)) {
     throw new Error('Expected UserId or GroupId, got ' + id)
   }
-
   return peerId
 }
 
@@ -162,6 +169,12 @@ export function isGroupPeerId(peerId: Id): peerId is GroupId {
 
 export function isChatPeerId(peerId: Id): peerId is ChatId {
   return peerId > 2e9 && peerId <= 2.1e9
+}
+
+function isFakeOwnerId(peerId: number): peerId is FakeOwnerId {
+  // They overlap, but that's not a problem because chat ids are relative to the user,
+  // but owner ids are global, and they are not related at all
+  return isChatPeerId(resolveId(peerId))
 }
 
 export function safeGet(peers: Map<Id, Peer>, id: UserId): User

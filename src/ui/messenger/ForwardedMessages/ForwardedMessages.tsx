@@ -70,6 +70,7 @@ export const ForwardedMessages = defineComponent<Props>((props) => {
             <ButtonText
               class="ForwardedMessage__name"
               onClick={() => peerInfoModal.open({ peerId: author.id })}
+              underlineOnFocus
             >
               {Peer.name(author)}
             </ButtonText>

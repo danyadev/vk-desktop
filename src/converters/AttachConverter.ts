@@ -231,7 +231,7 @@ function fromApiAttachGif(apiDoc: DocsDoc): Attach.Gif | undefined {
   return {
     kind: 'Gif',
     id: apiDoc.id,
-    ownerId: Peer.resolveOwnerId(apiDoc.owner_id),
+    ownerId: Peer.resolveOwnerId(apiDoc.owner_id, true),
     accessKey: apiDoc.access_key,
     title: apiDoc.title,
     size: apiDoc.size,

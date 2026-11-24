@@ -1,9 +1,14 @@
 .ButtonText {
   color: var(--vkui--color_text_link);
+  -webkit-user-drag: none;
+}
+
+.ButtonText:not(.ButtonText--underlineOnFocus) {
   /* Для FocusVisible */
   border-radius: 4px;
 }
 
-.ButtonText:hover {
+.ButtonText:hover,
+.ButtonText--underlineOnFocus:focus-visible {
   text-decoration: underline;
 }

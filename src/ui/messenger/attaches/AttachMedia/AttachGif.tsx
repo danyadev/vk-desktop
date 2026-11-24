@@ -4,7 +4,7 @@ import * as Attach from 'model/Attach'
 import { useInView, useViewer } from 'hooks'
 import { Image } from 'ui/ui/Image/Image'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
-import { Icon24AddCircleOutline, Icon24CheckOutline, Icon32PlayCircle } from 'assets/icons'
+import { Icon24AddCircleOutline, Icon24CheckOutline, Icon24Play } from 'assets/icons'
 
 type Props = {
   gif: Attach.Gif
@@ -14,16 +14,13 @@ type Props = {
 }
 
 export const AttachGif = defineComponent<Props>((props) => {
-  const { api, lang } = useServices()
+  const { api } = useServices()
   const viewer = useViewer()
   const { ref, inView } = useInView({ threshold: 0.25 })
   const isPlaying = shallowRef(false)
   const isSaving = shallowRef(false)
   const savedId = shallowRef<number>()
-  const saveFailed = shallowRef(false)
 
-  // As in the official messenger: autoplay only a standalone visible GIF.
-  // Leaving the viewport stops playback, while a click can always toggle it.
   watch(inView, (visible) => {
     isPlaying.value = visible && props.isOnly
   })
@@ -32,7 +29,6 @@ export const AttachGif = defineComponent<Props>((props) => {
     if (isSaving.value) return
 
     isSaving.value = true
-    saveFailed.value = false
     const currentSavedId = savedId.value
 
     try {
@@ -50,7 +46,6 @@ export const AttachGif = defineComponent<Props>((props) => {
         })
       }
     } catch (error) {
-      saveFailed.value = true
       console.error('[AttachGif] Failed to update saved GIF', error)
     } finally {
       isSaving.value = false
@@ -69,9 +64,6 @@ export const AttachGif = defineComponent<Props>((props) => {
     const hasVideo = !!gif.videoUrl
     const gifImageSrc = isPlaying.value ? gif.url ?? gif.thumbnail?.url : gif.thumbnail?.url
     const saved = savedId.value !== undefined
-    const saveTitle = saveFailed.value
-      ? lang.use(saved ? 'me_gif_remove_error' : 'me_gif_save_error')
-      : lang.use(saved ? 'me_gif_remove' : 'me_gif_save')
 
     return (
       <div
@@ -103,12 +95,10 @@ export const AttachGif = defineComponent<Props>((props) => {
         <button
           class="AttachMedia__gifToggle"
           type="button"
-          title={lang.use(isPlaying.value ? 'me_gif_pause' : 'me_gif_play')}
-          aria-label={lang.use(isPlaying.value ? 'me_gif_pause' : 'me_gif_play')}
           onClick={() => (isPlaying.value = !isPlaying.value)}
         />
         {!isPlaying.value && (
-          <span class="AttachMedia__play"><Icon32PlayCircle /></span>
+          <span class="AttachMedia__play"><Icon24Play /></span>
         )}
         <span class="AttachMedia__gifBadge">GIF{props.isOnly && ` · ${fileSize()}`}</span>
 
@@ -116,8 +106,6 @@ export const AttachGif = defineComponent<Props>((props) => {
           <button
             class="AttachMedia__gifSave"
             type="button"
-            title={saveTitle}
-            aria-label={saveTitle}
             disabled={isSaving.value}
             onClick={toggleSave}
           >

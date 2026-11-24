@@ -15,7 +15,7 @@ import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
-import { Link } from 'ui/ui/Link/Link'
+import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import { LoadError } from 'ui/ui/LoadError/LoadError'
 import { Spinner } from 'ui/ui/Spinner/Spinner'
 import {
@@ -312,14 +312,14 @@ export const PeerInfoModal = defineComponent<PeerInfoModalProps>((props) => {
 
             {currentPeer?.site && (
               <PeerInfoCell icon={<Icon20GlobeOutline />}>
-                <Link href={normalizeUrl(currentPeer.site)}>
+                <ButtonText href={normalizeUrl(currentPeer.site)}>
                   {currentPeer.site}
-                </Link>
+                </ButtonText>
               </PeerInfoCell>
             )}
 
             <PeerInfoCell icon={<Icon20HashtagOutline />}>
-              {Peer.toRealId(props.peerId)}
+              {props.peerId}
             </PeerInfoCell>
           </AutoHeightTransition>
         </div>

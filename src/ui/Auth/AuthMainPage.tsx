@@ -4,8 +4,8 @@ import { AuthMultiaccount } from 'ui/Auth/AuthMultiaccount'
 import { Modal } from 'ui/modals/parts'
 import { Button } from 'ui/ui/Button/Button'
 import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
+import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import { Input } from 'ui/ui/Input/Input'
-import { Link } from 'ui/ui/Link/Link'
 import { Icon24HideOutline, Icon24ViewOutline } from 'assets/icons'
 import logo from 'assets/logo512.png'
 
@@ -81,9 +81,9 @@ export const AuthMainPage = defineComponent<AuthMainPageProps>((props) => {
       </div>
 
       <div class="Auth__footerLinks">
-        <Link href="https://vk.com/join">{lang.use('auth_register')}</Link>
+        <ButtonText href="https://vk.com/join">{lang.use('auth_register')}</ButtonText>
         •
-        <Link href="https://vk.com/restore">{lang.use('auth_forgot_password')}</Link>
+        <ButtonText href="https://vk.com/restore">{lang.use('auth_forgot_password')}</ButtonText>
       </div>
 
       <Modal

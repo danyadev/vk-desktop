@@ -3,11 +3,12 @@ import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import * as Peer from 'model/Peer'
 import { usePeersStore } from 'store/peers'
-import { useFormatDate } from 'hooks'
+import { useFormatDate, useGlobalModal } from 'hooks'
 import { Attaches } from 'ui/messenger/attaches/Attaches'
 import { Avatar } from 'ui/ui/Avatar/Avatar'
 import { Button } from 'ui/ui/Button/Button'
-import { Link } from 'ui/ui/Link/Link'
+import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
+import { ButtonText } from 'ui/ui/ButtonText/ButtonText'
 import { Icon16Repost, Icon28DeleteOutline, Icon32DonutCircleFillYellow } from 'assets/icons'
 import './AttachWall.css'
 
@@ -19,6 +20,7 @@ type Props = {
 export const AttachWall = defineComponent<Props>((props) => {
   const { lang } = useServices()
   const { peers } = usePeersStore()
+  const { peerInfoModal } = useGlobalModal()
   const formatDate = useFormatDate()
 
   return () => {
@@ -28,19 +30,33 @@ export const AttachWall = defineComponent<Props>((props) => {
       !props.wall.text &&
       !hasAttaches &&
       !props.wall.donutPlaceholder &&
-      !props.wall.isDeleted
+      !props.wall.isDeleted &&
+      !props.wall.repost
     const wallLink = `https://vk.com/wall${props.wall.ownerId}_${props.wall.id}`
 
     return (
       <div class="AttachWall">
         <div class="AttachWall__header">
           <Icon16Repost class="AttachWall__icon" color="var(--vkui--color_icon_secondary_alpha)" />
-          <Avatar class="AttachWall__avatar" peer={author} size={32} />
+          <ButtonBase
+            class="AttachWall__avatar"
+            onClick={() => peerInfoModal.open({ peerId: author.id })}
+            focusStyle="none"
+            tabindex={-1}
+          >
+            <Avatar peer={author} size={32} />
+          </ButtonBase>
 
-          <span class="AttachWall__name">{Peer.name(author)}</span>
-          <Link class="AttachWall__date" href={wallLink}>
+          <ButtonText
+            class="AttachWall__name"
+            onClick={() => peerInfoModal.open({ peerId: author.id })}
+            underlineOnFocus
+          >
+            {Peer.name(author)}
+          </ButtonText>
+          <ButtonText class="AttachWall__date" href={wallLink} underlineOnFocus>
             {formatDate(props.wall.createdAt)}
-          </Link>
+          </ButtonText>
         </div>
 
         {props.wall.text && !props.wall.isDeleted && (

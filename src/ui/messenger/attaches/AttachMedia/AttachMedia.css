@@ -78,15 +78,15 @@
 .AttachMedia__duration,
 .AttachMedia__gifBadge {
   position: absolute;
-  right: 6px;
-  bottom: 8px;
-  padding: 3px 7px;
+  top: 5px;
+  left: 5px;
+  padding: 3px 6px;
   border-radius: 6px;
-  background: rgb(0 0 0 / 0.58);
+  background: var(--vkui--color_overlay_primary);
   color: white;
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 14px;
   font-weight: 500;
-  line-height: 16px;
   pointer-events: none;
 }
 
@@ -96,11 +96,7 @@
 }
 
 .AttachMedia__gifBadge {
-  top: 8px;
-  right: auto;
-  bottom: auto;
-  left: 8px;
-  max-width: calc(100% - 16px);
+  max-width: calc(100% - 10px);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

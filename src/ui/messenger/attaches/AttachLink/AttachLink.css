@@ -5,6 +5,7 @@
     'photo caption';
   grid-template-rows: 1fr 1fr;
   grid-template-columns: auto 1fr;
+  border-radius: 8px;
   transition: opacity var(--fastTransition);
 }
 

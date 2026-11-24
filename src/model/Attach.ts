@@ -50,7 +50,7 @@ export type Video = {
 export type Gif = {
   kind: 'Gif'
   id: number
-  ownerId: Peer.OwnerId
+  ownerId: Peer.OwnerId | Peer.FakeOwnerId
   accessKey?: string
   title: string
   size: number

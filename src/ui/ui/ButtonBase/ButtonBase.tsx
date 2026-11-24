@@ -1,14 +1,11 @@
-import { defineComponent, HTMLAttributes } from 'vue'
+import { AnchorHTMLAttributes, ButtonHTMLAttributes, defineComponent } from 'vue'
 import { useFocusVisible } from 'hooks'
 import { FocusVisible } from 'ui/ui/FocusVisible/FocusVisible'
 import './ButtonBase.css'
 
-type InheritedProps = HTMLAttributes & {
-  href?: string
-  disabled?: boolean
-}
+type InheritedProps = ButtonHTMLAttributes | AnchorHTMLAttributes
 export type ButtonBaseProps = InheritedProps & {
-  focusOutside?: boolean
+  focusStyle?: 'inside' | 'outside' | 'none'
 }
 
 export const ButtonBase = defineComponent<ButtonBaseProps>((props, { slots, attrs }) => {
@@ -16,11 +13,11 @@ export const ButtonBase = defineComponent<ButtonBaseProps>((props, { slots, attr
 
   return () => {
     const restProps = attrs as InheritedProps
-    const Component = restProps.href ? 'a' : 'button'
+    const Component = 'href' in restProps ? 'a' : 'button'
     const componentRelatedProps = Component === 'button'
       ? { type: 'button' } as const
       : { target: '_blank' } as const
-    const disableFocusProps = restProps.disabled && { tabindex: -1 }
+    const disableFocusProps = 'disabled' in restProps && restProps.disabled && { tabindex: -1 }
 
     return (
       <Component
@@ -31,10 +28,12 @@ export const ButtonBase = defineComponent<ButtonBaseProps>((props, { slots, attr
         onFocus={onFocus}
       >
         {slots.default?.()}
-        <FocusVisible isFocused={isFocused.value} outside={props.focusOutside} />
+        {props.focusStyle !== 'none' && (
+          <FocusVisible isFocused={isFocused.value} outside={props.focusStyle === 'outside'} />
+        )}
       </Component>
     )
   }
 }, {
-  props: ['focusOutside']
+  props: ['focusStyle']
 })

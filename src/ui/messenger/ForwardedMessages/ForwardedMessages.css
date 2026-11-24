@@ -45,13 +45,6 @@
   max-width: 100%;
   font-weight: 500;
   user-select: text;
-  /* Reset focus-visible border radius as overflow: hidden cuts it either way */
-  border-radius: unset;
-}
-
-.ForwardedMessage__name:focus-visible {
-  /* because overflow: hidden cuts the focus-visible outline */
-  text-decoration: underline;
 }
 
 .ForwardedMessage__date {

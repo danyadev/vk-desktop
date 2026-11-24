@@ -21,12 +21,15 @@
 
 .AttachWall__name {
   grid-area: name;
+  justify-self: start;
   font: var(--smallFont);
   font-weight: 500;
   color: var(--vkui--color_text_link);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 100%;
+  user-select: text;
 }
 
 .AttachWall__date {
@@ -37,6 +40,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  user-select: text;
 }
 
 .AttachWall__text + .AttachWall__attaches,

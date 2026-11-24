@@ -44,6 +44,7 @@ export const MessagesStack = defineComponent<Props>((props) => {
           <ButtonBase
             class="MessagesStack__avatar"
             onClick={() => peerInfoModal.open({ peerId: author.id })}
+            focusStyle="none"
             tabindex={-1}
           >
             <Avatar peer={author} size={32} />

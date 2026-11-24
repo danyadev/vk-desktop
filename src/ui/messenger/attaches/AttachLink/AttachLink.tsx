@@ -1,5 +1,6 @@
 import { defineComponent } from 'vue'
 import * as Attach from 'model/Attach'
+import { ButtonBase } from 'ui/ui/ButtonBase/ButtonBase'
 import { Icon24LinkExternalOutline } from 'assets/icons'
 import './AttachLink.css'
 
@@ -12,7 +13,7 @@ export const AttachLink = defineComponent<Props>((props) => {
     const image = props.link.imageSizes?.get('o')
 
     return (
-      <a class="AttachLink" href={props.link.url} target="_blank">
+      <ButtonBase class="AttachLink" href={props.link.url}>
         <div class={['AttachLink__photo', !image && 'AttachLink__photo--placeholder']}>
           {image ? (
             <img class="AttachLink__photoImg" src={image.url} />
@@ -23,7 +24,7 @@ export const AttachLink = defineComponent<Props>((props) => {
 
         <div class="AttachLink__title">{props.link.title}</div>
         <div class="AttachLink__caption">{props.link.caption}</div>
-      </a>
+      </ButtonBase>
     )
   }
 }, {

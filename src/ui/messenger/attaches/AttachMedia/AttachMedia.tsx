@@ -5,7 +5,7 @@ import { NonEmptyArray } from 'misc/utils'
 import { AttachGif } from './AttachGif'
 import { generateMediaLayout } from './generateMediaLayout'
 import { Image } from 'ui/ui/Image/Image'
-import { Icon32PlayCircle } from 'assets/icons'
+import { Icon24Play } from 'assets/icons'
 import './AttachMedia.css'
 
 type Props = {
@@ -51,7 +51,6 @@ export const AttachMedia = defineComponent<Props>((props) => {
             href={media.playerUrl ?? `https://vk.com/video${media.ownerId}_${media.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            title={media.title}
           >
             {media.thumbnail && (
               <Image
@@ -61,7 +60,7 @@ export const AttachMedia = defineComponent<Props>((props) => {
                 height={height}
               />
             )}
-            <span class="AttachMedia__play"><Icon32PlayCircle /></span>
+            <span class="AttachMedia__play"><Icon24Play /></span>
             {media.duration > 0 && (
               <span class="AttachMedia__duration">{formatDuration(media.duration)}</span>
             )}
