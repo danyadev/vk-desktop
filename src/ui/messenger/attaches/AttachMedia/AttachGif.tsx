@@ -2,40 +2,40 @@ import { defineComponent, shallowRef, watch } from 'vue'
 import { useServices } from 'services'
 import * as Attach from 'model/Attach'
 import { useInView, useViewer } from 'hooks'
+import { ButtonIcon } from 'ui/ui/ButtonIcon/ButtonIcon'
 import { Image } from 'ui/ui/Image/Image'
-import { Spinner } from 'ui/ui/Spinner/Spinner'
 import { Icon24AddCircleOutline, Icon24CheckOutline, Icon24Play } from 'assets/icons'
 
 type Props = {
   gif: Attach.Gif
   width: number
   height: number
-  isOnly: boolean
+  isOnlyMedia: boolean
 }
 
 export const AttachGif = defineComponent<Props>((props) => {
-  const { api } = useServices()
+  const { api, lang } = useServices()
   const viewer = useViewer()
-  const { ref, inView } = useInView({ threshold: 0.25 })
+  const { ref, inView } = useInView(0.25)
   const isPlaying = shallowRef(false)
   const isSaving = shallowRef(false)
   const savedId = shallowRef<number>()
 
-  watch(inView, (visible) => {
-    isPlaying.value = visible && props.isOnly
+  watch([inView, () => props.isOnlyMedia], ([visible, isOnlyAttach]) => {
+    isPlaying.value = visible && isOnlyAttach
   })
 
-  const toggleSave = async () => {
+  const toggleSave = async (event: MouseEvent) => {
+    event.stopPropagation()
     if (isSaving.value) return
 
     isSaving.value = true
-    const currentSavedId = savedId.value
 
     try {
-      if (currentSavedId !== undefined) {
+      if (savedId.value !== undefined) {
         await api.fetch('docs.delete', {
           owner_id: viewer.id,
-          doc_id: currentSavedId
+          doc_id: savedId.value
         })
         savedId.value = undefined
       } else {
@@ -52,29 +52,21 @@ export const AttachGif = defineComponent<Props>((props) => {
     }
   }
 
-  const fileSize = () => {
-    const { size } = props.gif
-    if (size < 1024) return `${size} B`
-    if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`
-    return `${(size / 1024 / 1024).toFixed(1)} MB`
-  }
-
   return () => {
     const { gif } = props
-    const hasVideo = !!gif.videoUrl
-    const gifImageSrc = isPlaying.value ? gif.url ?? gif.thumbnail?.url : gif.thumbnail?.url
-    const saved = savedId.value !== undefined
+    const imageSrc = isPlaying.value ? gif.url ?? gif.thumbnail?.url : gif.thumbnail?.url
 
     return (
       <div
         ref={ref}
         class="AttachMedia__item AttachMedia__gif"
         style={{ aspectRatio: props.width / props.height }}
+        onClick={() => (isPlaying.value = !isPlaying.value)}
       >
-        {hasVideo ? (
+        {isPlaying.value && gif.videoUrl ? (
           <video
             class="AttachMedia__gifVideo"
-            src={isPlaying.value ? gif.videoUrl : undefined}
+            src={gif.videoUrl}
             poster={gif.thumbnail?.url}
             muted
             autoplay
@@ -83,40 +75,50 @@ export const AttachGif = defineComponent<Props>((props) => {
             preload="none"
             onError={() => (isPlaying.value = false)}
           />
-        ) : gifImageSrc && (
+        ) : imageSrc && (
           <Image
+            key={imageSrc}
             class="AttachMedia__image"
-            src={gifImageSrc}
+            src={imageSrc}
             width={props.width}
             height={props.height}
           />
         )}
 
-        <button
-          class="AttachMedia__gifToggle"
-          type="button"
-          onClick={() => (isPlaying.value = !isPlaying.value)}
-        />
         {!isPlaying.value && (
           <span class="AttachMedia__play"><Icon24Play /></span>
         )}
-        <span class="AttachMedia__gifBadge">GIF{props.isOnly && ` · ${fileSize()}`}</span>
+        <span class="AttachMedia__meta">
+          GIF{props.isOnlyMedia && ` · ${formatFileSize(gif.size, lang.getLocale())}`}
+        </span>
 
-        {props.isOnly && gif.ownerId !== viewer.id && (
-          <button
+        {props.isOnlyMedia && gif.ownerId !== viewer.id && (
+          <ButtonIcon
             class="AttachMedia__gifSave"
-            type="button"
-            disabled={isSaving.value}
-            onClick={toggleSave}
-          >
-            {isSaving.value ? <Spinner size="small" /> : saved
+            loading={isSaving.value}
+            icon={savedId.value !== undefined
               ? <Icon24CheckOutline width={20} height={20} />
               : <Icon24AddCircleOutline width={20} height={20} />}
-          </button>
+            onClick={toggleSave}
+          />
         )}
       </div>
     )
   }
 }, {
-  props: ['gif', 'width', 'height', 'isOnly']
+  props: ['gif', 'width', 'height', 'isOnlyMedia']
 })
+
+function formatFileSize(size: number, locale: string) {
+  const [value, unit] = size < 1024
+    ? [size, 'byte']
+    : size < 1024 ** 2
+      ? [size / 1024, 'kilobyte']
+      : [size / 1024 ** 2, 'megabyte']
+
+  return new Intl.NumberFormat(locale, {
+    style: 'unit',
+    unit,
+    maximumFractionDigits: 1
+  }).format(value)
+}

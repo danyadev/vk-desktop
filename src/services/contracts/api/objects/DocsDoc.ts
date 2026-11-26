@@ -1,6 +1,5 @@
-import { PhotosPhotoSizesType } from './PhotosPhotoSizesType'
+import { PhotosPhotoSizesType } from 'services/contracts/api/objects/PhotosPhotoSizesType'
 
-// docs_doc (fields used by VK Desktop; see vk schema.zip)
 export type DocsDoc = {
   id: number
   owner_id: number

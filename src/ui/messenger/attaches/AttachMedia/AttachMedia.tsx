@@ -3,17 +3,14 @@ import * as Attach from 'model/Attach'
 import { useGlobalModal } from 'hooks'
 import { NonEmptyArray } from 'misc/utils'
 import { AttachGif } from './AttachGif'
-import { generateMediaLayout } from './generateMediaLayout'
+import { generateMediaLayout, MediaLayoutItem } from './generateMediaLayout'
 import { Image } from 'ui/ui/Image/Image'
 import { Icon24Play } from 'assets/icons'
 import './AttachMedia.css'
 
 type Props = {
   media: NonEmptyArray<Attach.Media>
-  isOnly: boolean
 }
-
-type MediaLayoutItem = ReturnType<typeof generateMediaLayout>[number][number]
 
 const formatDuration = (seconds: number) => {
   const minutes = Math.floor(seconds / 60)
@@ -62,7 +59,7 @@ export const AttachMedia = defineComponent<Props>((props) => {
             )}
             <span class="AttachMedia__play"><Icon24Play /></span>
             {media.duration > 0 && (
-              <span class="AttachMedia__duration">{formatDuration(media.duration)}</span>
+              <span class="AttachMedia__meta">{formatDuration(media.duration)}</span>
             )}
           </a>
         )
@@ -74,7 +71,7 @@ export const AttachMedia = defineComponent<Props>((props) => {
             gif={media}
             width={width}
             height={height}
-            isOnly={props.isOnly}
+            isOnlyMedia={props.media.length === 1}
           />
         )
     }
@@ -90,5 +87,5 @@ export const AttachMedia = defineComponent<Props>((props) => {
     </div>
   )
 }, {
-  props: ['media', 'isOnly']
+  props: ['media']
 })

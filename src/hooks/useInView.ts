@@ -1,7 +1,7 @@
 import { Ref, shallowRef, watchPostEffect } from 'vue'
 import { RefElement, unrefElement } from 'misc/utils'
 
-export function useInView(options: IntersectionObserverInit = {}) {
+export function useInView(threshold = 0) {
   const ref = shallowRef<RefElement>(null)
   const inView = shallowRef(false)
 
@@ -12,12 +12,12 @@ export function useInView(options: IntersectionObserverInit = {}) {
     for (const entry of entries) {
       if (entry.time >= latestTime) {
         latestTime = entry.time
-        isIntersecting = entry.isIntersecting
+        isIntersecting = entry.isIntersecting && entry.intersectionRatio >= threshold
       }
     }
 
     inView.value = isIntersecting
-  }, options)
+  }, { threshold })
 
   return { ref, inView }
 }

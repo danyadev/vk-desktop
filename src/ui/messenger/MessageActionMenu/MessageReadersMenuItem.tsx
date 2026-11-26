@@ -61,7 +61,7 @@ export const MessageReadersMenuItem = defineComponent<Props>((props) => {
 
       insertPeers({ profiles: response.profiles, groups: response.groups })
       totalCount.value = response.total_count
-      readers.value = [...readers.value, ...response.items.map(Peer.resolveOwnerId)]
+      readers.value = [...readers.value, ...response.items.map((id) => Peer.resolveOwnerId(id))]
     } catch (error) {
       console.error('[MessageReadersMenuItem] Failed to load readers', error)
       isError.value = true

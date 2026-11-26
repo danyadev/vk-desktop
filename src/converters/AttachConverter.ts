@@ -216,7 +216,6 @@ function fromApiAttachVideo(apiVideo: VideoVideo): Attach.Video | undefined {
 }
 
 function fromApiAttachGif(apiDoc: DocsDoc): Attach.Gif | undefined {
-  // VK returns GIFs as documents (type 3), rather than as a separate attachment type.
   if (apiDoc.type !== 3 && apiDoc.ext.toLowerCase() !== 'gif') return
 
   const images = apiDoc.preview?.photo?.sizes?.map((image) => ({

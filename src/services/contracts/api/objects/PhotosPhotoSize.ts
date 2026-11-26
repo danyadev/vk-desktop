@@ -1,5 +1,7 @@
+import { PhotosPhotoSizesType } from 'services/contracts/api/objects/PhotosPhotoSizesType'
+
 export type PhotosPhotoSize = {
-  type: 't' | 's' | 'm' | 'x' | 'o' | 'p' | 'q' | 'r' | 'k' | 'l' | 'y' | 'z' | 'c' | 'w' | 'a' | 'b' | 'e' | 'i' | 'd' | 'j' | 'temp' | 'h' | 'g' | 'n' | 'f' | 'max' | 'base' | 'u' | 'v' | 'orig'
+  type: PhotosPhotoSizesType
   url: string
   width: number
   height: number

@@ -109,7 +109,8 @@ export function fromApiConvo(
           ownerId: apiConvo.chat_settings.owner_id
             ? Peer.resolveOwnerId(apiConvo.chat_settings.owner_id)
             : undefined,
-          adminIds: new Set((apiConvo.chat_settings.admin_ids ?? []).map(Peer.resolveOwnerId)),
+          adminIds: new Set((apiConvo.chat_settings.admin_ids ?? [])
+            .map((id) => Peer.resolveOwnerId(id))),
           permissions: {
             canChangePin: apiConvo.chat_settings.acl.can_change_pin,
             canModerate: apiConvo.chat_settings.acl.can_moderate,

@@ -246,8 +246,8 @@ export function preview(attach: Attach, lang: ILang.Lang): string {
           return lang.usePlural('me_message_attach_media', media.length)
         }
 
-        const kind = firstAttach.kind === 'Photo' ? 'photo' : firstAttach.kind === 'Video' ? 'video' : 'gif'
-        return lang.usePlural(`me_message_attach_${kind}`, media.length)
+        const lowerCaseName = firstAttach.kind.toLowerCase() as Lowercase<typeof firstAttach.kind>
+        return lang.usePlural(`me_message_attach_${lowerCaseName}`, media.length)
       }
 
       case 'Link':
