@@ -14,13 +14,16 @@ jobs:
         include:
           - os: ubuntu-latest
             otherArch: arm64
-            files: '"app/VK Desktop linux x64.zip" "app/VK Desktop linux arm64.zip"'
+            x64File: app/VK Desktop Linux x64.zip
+            otherFile: app/VK Desktop Linux arm64.zip
           - os: windows-latest
             otherArch: x32
-            files: '"app/VK Desktop Setup x64.exe" "app/VK Desktop Setup x32.exe"'
+            x64File: app/VK Desktop Setup x64.exe
+            otherFile: app/VK Desktop Setup x32.exe
           - os: macos-latest
             otherArch: arm64
-            files: '"app/VK Desktop mac x64.dmg" "app/VK Desktop mac arm64.dmg"'
+            x64File: app/VK Desktop macOS x64.dmg
+            otherFile: app/VK Desktop macOS arm64.dmg
 
     steps:
       - uses: actions/checkout@v6
@@ -45,7 +48,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
         with:
-          path: app/*x64.*
+          path: ${{ matrix.x64File }}
           archive: false
           if-no-files-found: error
           retention-days: 90
@@ -54,13 +57,13 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
         with:
-          path: app/*${{ matrix.otherArch }}.*
+          path: ${{ matrix.otherFile }}
           archive: false
           if-no-files-found: error
           retention-days: 90
 
       - name: Upload binaries to release
         if: github.event_name == 'release'
-        run: gh release upload ${{ github.event.release.tag_name }} ${{ matrix.files }}
+        run: gh release upload ${{ github.event.release.tag_name }} "${{ matrix.x64File }}" "${{ matrix.otherFile }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
